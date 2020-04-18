@@ -1,0 +1,64 @@
+{% load bread_tags %}
+
+{% if not hide_title %}
+    <h2>{% modelname view.model True %}
+    {% has_permission request.user "add" view.model as can_add %}
+    {% if can_add %}
+        <div class="right">
+            <a class="btn-floating btn-large waves-effect" href="{% createurl view.model %}"><i class="large material-icons">add</i></a>
+        </div>
+    {% endif %}
+    </h2>
+{% endif %}
+
+<table class="responsive-table striped highlight">
+    {% if not hide_heading %}
+        <thead>
+            <tr>
+                {% if not hide_actions %}<th></th>{% endif %}
+                {% for field in view.modelfields %}
+                    <th>
+                        {% if request and field.sortable != False %}
+                            <a href="?{% querystring_order request field.name %}">
+                                {% fieldname field %}
+                                {% if field.name == request.GET.order %}
+                                    <i class="material-icons tiny">keyboard_arrow_down</i>
+                                {% elif '-'|add:field.name == request.GET.order %}
+                                    <i class="material-icons tiny">keyboard_arrow_up</i>
+                                {% endif %}
+                            </a>
+                        {% else %}
+                            {% fieldname field %}
+                        {% endif %}
+                    </th>
+                {% endfor %}
+            </tr>
+        </thead>
+    {% endif %}
+    <tbody>
+        {% if not hide_summary %}
+            <tr style="font-style: italic">
+                <td>{{object_list|length}} {% modelname view.model True %}</td>
+                {% for field in view.modelfields %}
+                    <td>{% fieldsummary view.model field object_list %}</td>
+                {% endfor %}
+            </tr>
+        {% endif %}
+        {% for object in object_list %}
+        <tr>
+            {% if not hide_actions %}
+                <td>
+                    {% include "bread/object_actions.html" %}
+                </td>
+            {% endif %}
+            {% for field in view.modelfields %}
+            <td>{{ object|display_field:field }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        <script>
+            var elems = document.querySelectorAll('.custom-dropdown-trigger');
+            M.Dropdown.init(elems, {constrainWidth: false});
+        </script>
+    </tbody>
+</table>

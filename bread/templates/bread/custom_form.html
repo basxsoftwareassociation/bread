@@ -1,0 +1,20 @@
+{% extends "bread/base.html" %}
+{% load bread_tags %}
+
+{% block content %}
+    {% if object %}
+        <h2>Update {% modelname object %} <i>{{ object }}</i></h2>
+    {% elif form.instance %}
+        <h2>Create {% modelname form.instance %}</h2>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data" autocomplete="off">
+        {% csrf_token %}
+        <div class="row">
+            {{ form.media }}
+            {{ form|materializecss }}
+        </div>
+        <button class="btn waves-effect waves-light" type="submit" name="action">Save
+            <i class="material-icons right">send</i>
+        </button>
+    </form>
+{% endblock content %}

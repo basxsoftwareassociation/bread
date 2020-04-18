@@ -1,0 +1,36 @@
+{% load l10n %} 
+<div class="input-field col s12">
+    <input id="autocomplete-{{ field.auto_id }}" type="text" list="datalist-{{ field.auto_id }}" onchange="sync_select('{{ field.auto_id }}')()">
+    <datalist id="datalist-{{ field.auto_id }}">
+        {{ field }}
+    </datalist>
+
+    {% if field.id_for_label %}
+        <label class="{{ field.css_classes }}" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {% endif %}
+
+    {% for error in field.errors %}
+        <p class="help-block {{ field.form.error_css_class }}">{{ error }}</p>
+    {% endfor %}
+
+    {% if field.help_text %}
+        <p>
+            {{ field.help_text|safe }}
+        </p>
+    {% endif %}
+
+    <script>
+        function sync_select(id) {
+            $("#" + id).value = $('#autocomplete-' + id).value;
+            update_input_label(id);
+        }
+        function update_input_label(id) {
+            var select = $("#" + id);
+            if(select.selectedIndex >= 0)
+                $('#autocomplete-' + id).value = select.options[select.selectedIndex].innerHTML
+        }
+        document.addEventListener("DOMContentLoaded", update_input_label("{{ field.auto_id }}"));
+        document.addEventListener("DOMContentLoaded", M.updateTextFields);
+    </script>
+</div>
+

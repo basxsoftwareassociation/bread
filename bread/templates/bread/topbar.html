@@ -1,0 +1,17 @@
+{% load bread_tags %}
+
+<nav class="topbar">
+    <div class="nav-wrapper">
+        <a href="#" data-target="slide-out" class="sidenav-trigger hide-on-large-only"><i class="material-icons">menu</i></a>
+        <div class="brand-logo">
+            {% block title %}{{ request.resolver_match.app_names|last|underscore_to_space|title }}{% endblock title %}
+        </div>
+        <ul id="nav-mobile" class="right">
+            {% if request.user.is_authenticated %}
+                <li><a href="{% url 'logout' %}"><i class="material-icons right">exit_to_app</i>Log out</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}"><i class="material-icons right">person</i>Log in</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

@@ -1,0 +1,17 @@
+<div class="col s12">
+
+    {% for error in field.errors %}
+        <p class="help-block {{ form.error_css_class }}">{{ error }}</p>
+    {% endfor %}
+
+    <div class="file-field input-field">
+        <div class="btn">
+            <span>{{ field.label }}</span>
+            {{ field }}
+        </div>
+        <div class="file-path-wrapper">
+            <input class="file-path validate" type="text">
+        </div>
+    </div>
+
+</div>

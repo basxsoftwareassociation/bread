@@ -1,0 +1,35 @@
+{% load bread_tags %}
+
+{% has_permission request.user "change" object as can_change %}
+{% has_permission request.user "delete" object as can_delete %}
+{% if can_change or can_delete or object|has_actions %}
+    <a class="custom-dropdown-trigger btn-small no-autoinit" href="#" data-target="action-dropdown-{{ object.pk }}">
+        <i class="material-icons">arrow_drop_down</i>
+    </a>
+    <ul id='action-dropdown-{{ object.pk }}' class='dropdown-content' style="">
+        {% if object|has_actions %}
+            {# action is a 3-tuple: url, action_name, action_symbol #}
+            {% for action in object.actions %}
+                <li><a href="{% add_next_url_parameter action.0 request %}"><i class="material-icons" style="vertical-align:middle">{{ action.2 }}</i> {{ action.1 }}</a></li>
+            {% endfor %}
+        {% else %}
+            {% if object|has_additional_actions %}
+                {# action is a 3-tuple: url, action_name, action_symbol #}
+                {% for action in object.additional_actions %}
+                    <li><a href="{% add_next_url_parameter action.0 request %}"><i class="material-icons" style="vertical-align:middle">{{ action.2 }}</i> {{ action.1 }}</a></li>
+                {% endfor %}
+            {% endif %}
+
+            {% detailurl object as detail_url %}
+            <li><a href="{{ detail_url }}"><i class="material-icons" style="vertical-align:middle">search</i> Details</a></li>
+            {% if can_change %}
+                {% updateurl object as upd_url %}
+                <li><a href="{% add_next_url_parameter upd_url request %}"><i class="material-icons" style="vertical-align:middle">edit</i> Edit</a></li>
+            {% endif %}
+            {% if can_delete %}
+                {% deleteurl object as del_url %}
+                <li><a href="{{ del_url }}"><i class="material-icons" style="vertical-align:middle">delete_forever</i> Delete</a></li>
+            {% endif %}
+        {% endif %}
+    </ul>
+{% endif %}

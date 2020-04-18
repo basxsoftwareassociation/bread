@@ -1,0 +1,28 @@
+{% load bread_tags %}
+
+<ul id="slide-out" class="sidenav sidenav-fixed">
+    <li class="bold"><h2>{{ request.site.name|default:'Admin App' }}</h2></li>
+    {% if request.user.is_authenticated %}
+        <li>
+            <div style="padding: 0 32px">
+                <span class="white-text"><i class="material-icons tiny" style="vertical-align: middle">face</i> {{ request.user }}</span>
+            </div>
+        </li>
+        <li><div class="divider"></div></li>
+        {% menu request as menu %}
+        {% for menugroup, group_active, items in menu %}
+            <li>
+                <ul class="collapsible collapsible-accordion">
+                    <li {% if group_active %}class="active"{% endif %}>
+                        <a class="collapsible-header">{{ menugroup }}<i class="material-icons white-text">arrow_drop_down</i></a>
+                        <div class="collapsible-body"><ul>
+                            {% for item, item_active, item_url in items %}
+                                <li><a href="{{ item_url }}" {% if item_url|is_external_url %}target="_blank" rel="noopener noreferrer"{% endif %}>{{ item }}</a></li>
+                            {% endfor %}
+                        </ul></div>
+                    </li>
+                </ul>
+            </li>
+        {% endfor %}
+    {% endif %}
+</ul>

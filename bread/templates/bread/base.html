@@ -1,0 +1,95 @@
+{% load static compress bread_tags %}
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>{{ request.resolver_match.app_names|last|underscore_to_space|title }}</title>
+        <meta name="description" content="{% block description %}{% endblock%}" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="shortcut icon" href="{% static 'favicon.png' %}"/>
+
+        {% compress css %}
+        <link rel="stylesheet" type="text/x-scss" href="{% static "sass/main.scss" %}" />
+        {% endcompress %}
+
+        {% compress js %}
+        <script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/bliss.js' %}"></script>
+        {% endcompress js %}
+    </head>
+
+    <body>
+        <header>
+            {% include "bread/sidenav.html" %}
+        </header>
+
+        <main>
+            {% include "bread/topbar.html" %}
+
+            {% if messages %}
+                <ul id="django-system-messages" class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+
+                <script>
+                    document.getElementById("django-system-messages").style.display = "none";
+                    document.addEventListener('DOMContentLoaded', function() {
+                        {% for message in messages %}
+                        M.toast({
+                            html: '<div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>',
+                        });
+                        {% endfor %}
+                    });
+                </script>
+            {% endif %}
+
+            <div class="row">
+                <div class="col s12 m10">
+                    <div class="card">
+                        <div class="card-content">
+                            {% block content %}
+                            {% endblock content %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m2">
+                    {% block right-panel %}
+                    {% endblock right-panel %}
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            {% block footer %}{% endblock %}
+        </footer>
+
+        <script>
+            function disableMaterializeOnTemplateForms() {
+                var template_forms = document.getElementsByClassName("template-form");
+                for(var i = 0; i < template_forms.length; ++i) {
+                    var m_input_fields = template_forms[i].getElementsByClassName("input-field");
+                    for(var j = 0; j < m_input_fields.length; ++j) {
+                        m_input_fields[j].firstElementChild.classList.add('no-autoinit');
+                    }
+                }
+            }
+            function enableMaterializeOnForm(form) {
+                var m_input_fields = form.getElementsByClassName("input-field");
+                for(var j = 0; j < m_input_fields.length; ++j) {
+                    m_input_fields[j].firstElementChild.classList.remove('no-autoinit');
+                }
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                // we need to disable materialize auto init for the empty forms from django: they must be initialized on creating a new instance, see formset.html
+                disableMaterializeOnTemplateForms();
+                M.AutoInit();
+                M.Datepicker.init(document.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd'});
+                {% block oncontentloaded_js %}
+                {% endblock oncontentloaded_js %}
+            });
+        </script>
+    </body>
+
+</html>

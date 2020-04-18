@@ -1,0 +1,5 @@
+.venv
+.tox
+.egg
+__pycache__
+docs/build

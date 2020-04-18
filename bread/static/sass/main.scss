@@ -1,0 +1,61 @@
+@charset "UTF-8";
+
+@import "materialize";
+
+body {
+    font-family: arial;
+}
+
+header, main, footer {
+    padding-left: 300px;
+}
+
+header {
+    h2 {
+        padding: 5px;
+        color: #fff;
+        background-color: darken($primary-color, 7%);
+    }
+}
+
+.sidenav li > a {
+    font-weight: 600;
+}
+
+.error {
+    color: red;
+}
+
+main nav .brand-logo {
+    padding-left: 10px;
+}
+
+@media only screen and (max-width : 992px) {
+    header, main, footer {
+        padding-left: 0;
+    }
+}
+
+// display table better on mobile
+@media #{$small-and-down} {
+    tr th:first-child, tr td:first-child {
+        height: 4.5em;
+    }
+    .responsive-table thead {
+        max-width: 30vw;
+    }
+}
+
+// hide when printing
+
+@media print
+{    
+    header, footer, nav {
+        display: none !important;
+    }
+
+    main {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}

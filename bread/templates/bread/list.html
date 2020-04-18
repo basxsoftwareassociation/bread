@@ -1,0 +1,22 @@
+{% extends "bread/base.html" %}
+{% load bread_tags %}
+
+{% block content %}
+<div class="right"><a href="{{ request.get_full_path }}{% if request.GET %}&{% else %}?{% endif %}export"><span style="vertical-align: middle">Excel</span><i class="material-icons" style="vertical-align: middle">file_download</i></a></div>
+    {% include 'bread/inline_list.html' %}
+{% endblock %}
+
+{% block right-panel %}
+    <div class="right-panel">
+        <div class="card">
+            <div class="card-content">
+            <form>
+                {{ filter.form|materializecss }}
+                <button class="btn waves-effect waves-light" type="submit" name="action">Filter
+                    <i class="material-icons right">search</i>
+                </button>
+            </form>
+            </div>
+        </div>
+    </div>
+{% endblock right-panel %}

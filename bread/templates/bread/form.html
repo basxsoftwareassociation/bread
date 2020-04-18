@@ -1,0 +1,34 @@
+{% load bread_tags %}
+
+{% if form.non_field_errors %}
+    <blockquote>
+        {% for non_field_error in form.non_field_errors %}
+             {{ non_field_error }}
+        {% endfor %}
+    </blockquote>
+{% endif %}
+
+<!-- hidden fields -->
+{% for field in form.hidden_fields %}
+    {{ field }}
+{% endfor %}
+
+<!-- visible fields -->
+{% for field in form.visible_fields %}
+    {{ field|materializecss }}
+    {# {% template_for field as field_template %} #}
+    {# {% include field_template %} #}
+{% endfor %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // set cursor to first visible element and at end of the text
+        for (var i = 0; i < document.forms[0].elements.length; i++) {
+            var elem = document.forms[0].elements[i];
+            if(elem.type != 'hidden') {
+                elem.focus();
+                elem.selectionStart = elem.selectionEnd = elem.value.length;
+                break;
+            }
+        }
+    });
+</script>

@@ -1,0 +1,70 @@
+{% load bread_tags %}
+
+<div class="card-panel col s12">
+<h5>{% modelname formset.model True %}</h5>
+
+<table id="formset_{{ formset.prefix }}_table">
+    {{ formset.management_form }}
+
+    {% if form.non_field_errors %}
+        <blockquote>
+            {% for non_field_error in form.non_field_errors %}
+                 {{ non_field_error }}
+            {% endfor %}
+        </blockquote>
+    {% endif %}
+
+    {% for form in formset.forms %}
+        <tr>
+            {% for field in form.visible_fields %}
+            <td style="padding: 1px">
+                {% if forloop.first %}
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                {% endif %}
+                {{ field|materializecss }}
+            </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    <tfoot>
+        <tr>
+            <td>
+                <a class="btn waves-effect" onclick="formset_{{ formset.prefix }}_add();">Add item</a>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+<div id="empty_{{ formset.prefix }}_form" style="display:none;" class="template-form">
+    <table>
+        <tr>
+            {% for field in formset.empty_form.visible_fields %}
+                <td>
+                    {% if forloop.first %}
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                    {% endif %}
+                    {{ field|materializecss }}
+                </td>
+            {% endfor %}
+        </tr>
+    </table>
+</div>
+
+<script>
+    function formset_{{ formset.prefix }}_add() {
+        var formcount = document.getElementById('id_{{ formset.prefix }}-TOTAL_FORMS')
+        var newElementStr = document.getElementById('empty_{{ formset.prefix }}_form').innerHTML.replace(/__prefix__/g, formcount.value)
+		var newElem = new DOMParser().parseFromString(newElementStr, "text/html").getElementsByTagName('tr')[0];
+
+        document.getElementById('formset_{{ formset.prefix }}_table').getElementsByTagName('tbody')[0].appendChild(newElem);
+        formcount.value = parseInt(formcount.value) + 1;
+        enableMaterializeOnForm(newElem);
+        M.AutoInit(newElem);
+    }
+    function formset_{{ formset.prefix }}_remove() {
+    }
+</script>
+</div>

@@ -1,0 +1,13 @@
+{% extends "bread/base.html" %}
+{% load bread_tags %}
+
+{% block content %}
+
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        {{ form|materializecss }}
+        <input type="submit" value="login">
+        <input type="hidden" name="next" value="{{ next }}">
+    </form>
+
+{% endblock content %}

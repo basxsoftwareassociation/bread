@@ -1,0 +1,15 @@
+{% extends "bread/base.html" %}
+
+{% block content %}
+
+<h1>Overview</h1>
+
+Available apps
+
+<ul class="collection">
+    {% for app_url, label in app_urls %}
+        <li class="collection-item"><a href="{{ app_url }}">{{ label }}</a></li>
+    {% endfor %}
+</ul>
+
+{% endblock content %}

@@ -1,0 +1,23 @@
+{% extends "bread/base.html" %}
+{% load bread_tags %}
+
+{% block content %}
+    <h2>{% modelname object %} <i>{{ object }}</i></h2>
+
+    <table>
+    {% for field in view.modelfields %}
+        <tr>
+            <td style="vertical-align: top">{% pretty_fieldname field %}</td>
+            <td style="float: left">{{ object|display_field:field }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+    <div class="right">
+        {% include "bread/object_actions.html" %}
+    </div>
+    <script>
+        var elems = document.querySelectorAll('.custom-dropdown-trigger');
+        M.Dropdown.init(elems, {constrainWidth: false, alignment: "right"});
+    </script>
+{% endblock content %}
