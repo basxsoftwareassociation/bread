@@ -3,7 +3,7 @@ import pkg_resources
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
 from django.utils.html import mark_safe
 
-breadapps = set(["bread"])
+breadapps = set(["bread.apps.BreadConfig"])
 for entrypoint in pkg_resources.iter_entry_points(
     group="breadapp", name="installed_apps"
 ):

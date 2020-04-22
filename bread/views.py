@@ -24,27 +24,24 @@ from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin, PermissionRequiredMixin
 
 from .forms.forms import inlinemodelform_factory
-from .utils import (
-    get_modelfields,
-    listurl,
-    modelname,
-    parse_fieldlist,
-    pretty_fieldname,
-    xlsxresponse,
-)
+from .utils import get_modelfields, parse_fieldlist, pretty_fieldname, xlsxresponse
 
 
 class BrowseView(PermissionListMixin, FilterView):
     template_name = "bread/list.html"
     fields = None
 
-    def __init__(self, admin, fields=["__all__"], *args, **kwargs):
-        if "filterset_fields" not in kwargs:
-            kwargs["filterset_fields"] = parse_fieldlist(self.model, fields)
-        super().__init__(*args, **kwargs)
+    def __init__(self, admin, *args, **kwargs):
+        self.admin = admin
+        self.model = admin.model
         self.modelfields = get_modelfields(
-            self.model, parse_fieldlist(self.model, fields)
+            self.model, parse_fieldlist(self.model, self.admin.browsefields)
         )
+        kwargs["filterset_fields"] = parse_fieldlist(
+            self.model, self.admin.filterfields
+        )
+        kwargs["model"] = self.model
+        super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
@@ -57,48 +54,17 @@ class BrowseView(PermissionListMixin, FilterView):
 
         return super().get(*args, **kwargs)
 
-    def as_excel(self):
-        # openpyxl is an extra dependency
-        import openpyxl
-        from openpyxl.styles import Font
-
-        items = []
-        # from django_filters.views.BaseFilterView.get in order to apply filter to excel export
-        self.filterset = self.get_filterset(self.get_filterset_class())
-        if (
-            not self.filterset.is_bound
-            or self.filterset.is_valid()
-            or not self.get_strict()
-        ):
-            items = list(self.filterset.qs)
-
-        workbook = openpyxl.Workbook()
-        workbook.title = modelname(self.model, plural=True)
-        header_cells = workbook.active.iter_cols(
-            min_row=1, max_col=len(self.modelfields), max_row=len(items) + 1
-        )
-        htmlparser = HTMLParser()
-        for field, col in zip(self.modelfields, header_cells):
-            col[0].value = pretty_fieldname(field)
-            col[0].font = Font(bold=True)
-            for i, cell in enumerate(col[1:]):
-                cell.value = htmlparser.unescape(
-                    strip_tags(getattr(items[i], f"get_{field.name}_display")())
-                )
-
-        return xlsxresponse(workbook, workbook.title)
-
     def get_queryset(self):
         # prefetch fields
         ret = super().get_queryset()
-        for field in self.modelfields:
+        for name, field in self.modelfields.items():
             if field.is_relation and not isinstance(field, GenericForeignKey):
                 if field.many_to_one or field.one_to_one:
-                    ret = ret.select_related(field.name)
+                    ret = ret.select_related(name)
                 elif field.one_to_many:
                     ret = ret.prefetch_related(field.related_name)
                 elif field.many_to_many:
-                    ret = ret.prefetch_related(field.name)
+                    ret = ret.prefetch_related(name)
 
         # order fields
         order = self.request.GET.get("order")
@@ -152,20 +118,53 @@ class BrowseView(PermissionListMixin, FilterView):
         )
         return filterset
 
+    def as_excel(self):
+        # openpyxl is an extra dependency
+        import openpyxl
+        from openpyxl.styles import Font
+
+        items = []
+        # from django_filters.views.BaseFilterView.get in order to apply filter to excel export
+        self.filterset = self.get_filterset(self.get_filterset_class())
+        if (
+            not self.filterset.is_bound
+            or self.filterset.is_valid()
+            or not self.get_strict()
+        ):
+            items = list(self.filterset.qs)
+
+        workbook = openpyxl.Workbook()
+        workbook.title = self.admin.verbose_name_plural
+        header_cells = workbook.active.iter_cols(
+            min_row=1, max_col=len(self.modelfields), max_row=len(items) + 1
+        )
+        htmlparser = HTMLParser()
+        for field, col in zip(self.modelfields.values(), header_cells):
+            col[0].value = pretty_fieldname(field)
+            col[0].font = Font(bold=True)
+            for i, cell in enumerate(col[1:]):
+                cell.value = htmlparser.unescape(
+                    strip_tags(getattr(items[i], f"get_{field.name}_display")())
+                )
+
+        return xlsxresponse(workbook, workbook.title)
+
 
 class ReadView(PermissionRequiredMixin, DetailView):
     template_name = "bread/detail.html"
     fields = None
     accept_global_perms = True
 
-    def get_required_permissions(self, request):
-        return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
-
-    def __init__(self, admin, fields=["__all__"], *args, **kwargs):
+    def __init__(self, admin, *args, **kwargs):
+        self.admin = admin
+        self.model = admin.model
         super().__init__(*args, **kwargs)
         self.modelfields = get_modelfields(
-            self.model, parse_fieldlist(self.model, fields)
+            self.model, parse_fieldlist(self.model, self.admin.readfields)
         )
+
+    def get_required_permissions(self, request):
+        return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
 
 
 class CustomFormMixin:
@@ -180,7 +179,7 @@ class CustomFormMixin:
 
     def get_form_class(self, form=ModelForm):
         return inlinemodelform_factory(
-            self.request, self.model, self.object, self.modelfields, form
+            self.request, self.model, self.object, self.modelfields.values(), form
         )
 
     def get_form(self, form_class=None):
@@ -192,15 +191,15 @@ class CustomFormMixin:
                 form.fields[field].widget = HiddenInput()
 
         # make sure fields appear in original order
-        form.order_fields([field.name for field in self.modelfields])
+        form.order_fields(self.modelfields.keys())
         return form
 
     def form_valid(self, form):
         with transaction.atomic():
             # set generic foreign key values
-            for field in self.modelfields:
+            for name, field in self.modelfields.items():
                 if isinstance(field, GenericForeignKey):
-                    setattr(self.object, field.name, form.cleaned_data[field.name])
+                    setattr(self.object, name, form.cleaned_data[name])
             self.object = form.save()
             form.save_inline(self.object)
         return super().form_valid(form)
@@ -208,16 +207,34 @@ class CustomFormMixin:
     def get_success_url(self):
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
-        return listurl(self.model)
+        return self.admin.get_urls()["index"]
+
+
+class EditView(CustomFormMixin, PermissionRequiredMixin, UpdateView):
+    template_name = "bread/custom_form.html"
+    accept_global_perms = True
+
+    def __init__(self, admin, fields, *args, **kwargs):
+        self.admin = admin
+        self.model = admin.model
+        self.modelfields = get_modelfields(
+            self.model, parse_fieldlist(self.model, self.admin.editfields, is_form=True)
+        )
+        super().__init__(*args, **kwargs)
+
+    def get_required_permissions(self, request):
+        return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
 
 
 class AddView(CustomFormMixin, PermissionRequiredMixin, CreateView):
     template_name = "bread/custom_form.html"
     accept_global_perms = True
 
-    def __init__(self, admin, fields=["__all__"], *args, **kwargs):
+    def __init__(self, admin, *args, **kwargs):
+        self.admin = admin
+        self.model = admin.model
         self.modelfields = get_modelfields(
-            self.model, parse_fieldlist(kwargs["model"], fields, is_form=True)
+            self.model, parse_fieldlist(self.model, self.admin.addfields, is_form=True),
         )
         super().__init__(*args, **kwargs)
 
@@ -228,26 +245,13 @@ class AddView(CustomFormMixin, PermissionRequiredMixin, CreateView):
         return None
 
 
-class GeneralUpdate(CustomFormMixin, PermissionRequiredMixin, UpdateView):
-    template_name = "bread/custom_form.html"
-    accept_global_perms = True
-
-    def __init__(self, admin, fields=["__all__"], *args, **kwargs):
-        self.modelfields = get_modelfields(
-            self.model, parse_fieldlist(kwargs["model"], fields, is_form=True)
-        )
-        super().__init__(*args, **kwargs)
-
-    def get_required_permissions(self, request):
-        return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
-
-
 class GeneralDelete(PermissionRequiredMixin, DeleteView):
     template_name = "bread/confirm_delete.html"
     accept_global_perms = True
 
     def __init__(self, admin, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.admin = admin
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.delete_{self.model.__name__.lower()}"]
@@ -255,7 +259,7 @@ class GeneralDelete(PermissionRequiredMixin, DeleteView):
     def get_success_url(self):
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
-        return listurl(self.model)
+        return self.admin.get_urls()["index"]
 
 
 class Overview(LoginRequiredMixin, TemplateView):

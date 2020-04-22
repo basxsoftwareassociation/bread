@@ -9,9 +9,9 @@
         <ul class="collection with-header">
             {% for objectlist in delete_protection %}
                 {% if objectlist %}
-                    <li class="collection-header" ><b>{% modelname objectlist.model True %}</b></li>
+                    <li class="collection-header" ><b>{% pretty_modelname objectlist.model True %}</b></li>
                     {% for object in objectlist %}
-                        <li class="collection-item">{{ object|object_link }}</li>
+                        <li class="collection-item">{{ object|format_value }}</li>
                     {% endfor %}
                 {% endif %}
             {% endfor %}
@@ -25,9 +25,9 @@
                 <ul class="collection with-header">
                     {% for objectlist in delete_cascade %}
                         {% if objectlist %}
-                            <li class="collection-header" ><b>{% modelname objectlist.model True %}</b></li>
+                            <li class="collection-header" ><b>{% pretty_modelname objectlist.model True %}</b></li>
                             {% for object in objectlist %}
-                                <li class="collection-item">{{ object|object_link }}</li>
+                                <li class="collection-item">{{ object|format_value }}</li>
                             {% endfor %}
                         {% endif %}
                     {% endfor %}

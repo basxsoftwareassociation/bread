@@ -1,29 +1,29 @@
 {% load bread_tags %}
 
-{% if not hide_title %}
-    <h2>{% modelname view.model True %}
-    {% has_permission request.user "add" view.model as can_add %}
-    {% if can_add %}
-        <div class="right">
-            <a class="btn-floating btn-large waves-effect" href="{% createurl view.model %}"><i class="large material-icons">add</i></a>
-        </div>
-    {% endif %}
-    </h2>
+<h2>{{ view.admin.verbose_modelname_plural }}
+
+{% has_permission request.user "add" view.model as can_add %}
+{% if can_add %}
+    <div class="right">
+        <a class="btn-floating btn-large waves-effect" href="{% createurl view.model %}"><i class="large material-icons">add</i></a>
+    </div>
 {% endif %}
+</h2>
 
 <table class="responsive-table striped highlight">
     {% if not hide_heading %}
         <thead>
             <tr>
-                {% if not hide_actions %}<th></th>{% endif %}
-                {% for field in view.modelfields %}
+                <th></th>
+                {% for field in view.modelfields.values %}
                     <th>
                         {% if request and field.sortable != False %}
-                            <a href="?{% querystring_order request field.name %}">
+                            {% querystring_order view.admin request.GET.order field.name as new_order_string %}
+                            <a href="{% updated_querystring "order" new_order_string %}">
                                 {% fieldname field %}
-                                {% if field.name == request.GET.order %}
+                                {% if field.name in request.GET.order %}
                                     <i class="material-icons tiny">keyboard_arrow_down</i>
-                                {% elif '-'|add:field.name == request.GET.order %}
+                                {% elif '-'|add:field.name in request.GET.order %}
                                     <i class="material-icons tiny">keyboard_arrow_up</i>
                                 {% endif %}
                             </a>
@@ -36,27 +36,22 @@
         </thead>
     {% endif %}
     <tbody>
-        {% if not hide_summary %}
-            <tr style="font-style: italic">
-                <td>{{object_list|length}} {% modelname view.model True %}</td>
-                {% for field in view.modelfields %}
-                    <td>{% fieldsummary view.model field object_list %}</td>
-                {% endfor %}
-            </tr>
-        {% endif %}
-        {% for object in object_list %}
-        <tr>
-            {% if not hide_actions %}
-                <td>
-                    {% include "bread/object_actions.html" %}
-                </td>
-            {% endif %}
+        <tr style="font-style: italic">
+            <td>{{object_list|length}} {{ view.admin.verbose_modelname_plural }}</td>
             {% for field in view.modelfields %}
-            <td>{{ object|display_field:field }}</td>
+                <td>{% render_field_aggregation view.admin object_list field %}</td>
             {% endfor %}
         </tr>
+        {% for object in object_list %}
+            <tr>
+                <td>{% include "bread/object_actions.html" %}</td>
+                {% for field in view.modelfields %}
+                    <td>{% render_field view.admin object field %}</td>
+                {% endfor %}
+            </tr>
         {% endfor %}
         <script>
+            // used in bread/object_actions.html
             var elems = document.querySelectorAll('.custom-dropdown-trigger');
             M.Dropdown.init(elems, {constrainWidth: false});
         </script>

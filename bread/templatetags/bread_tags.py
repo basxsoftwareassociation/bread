@@ -1,100 +1,77 @@
 import ckeditor
 from bread import menu as menuregister
-from bread.utils import (
-    createurl,
-    deleteurl,
-    detailurl,
-    has_permission,
-    listurl,
-    modelname,
-    object_link,
-    pretty_fieldname,
-    updateurl,
-)
+from bread.formatter import format_value
+from bread.utils import has_permission, pretty_fieldname
 from django import forms, template
 from django.conf import settings
 from django.db import models
 from django.template.loader import render_to_string
-from django.utils.http import urlencode
 
 register = template.Library()
 
-register.simple_tag(modelname)
 register.simple_tag(pretty_fieldname)
-register.simple_tag(listurl)
-register.simple_tag(detailurl)
-register.simple_tag(createurl)
-register.simple_tag(updateurl)
-register.simple_tag(deleteurl)
 register.simple_tag(has_permission)
-register.filter(object_link)
+register.filter(format_value)
 
 
 @register.simple_tag
-def fieldsummary(model, field, queryset):
-    """Render a summary of the given field over the given queryset"""
-    return getattr(model, f"{field.name}_summary", lambda a: "")(queryset)
-
-
-@register.filter
-def display_field(object, field):
-    """Render the given field of this object by calling object.get_{field.name}_display()"""
-    return getattr(object, f"get_{field.name}_display", lambda: field)()
-
-
-@register.filter
-def underscore_to_space(value):
-    return value.replace("_", " ")
-
-
-@register.filter
-def has_actions(object):
-    """Check if the given object has custom actions defined (instead of edit and delete)"""
-    return hasattr(object, "actions")
-
-
-@register.filter
-def has_additional_actions(object):
-    """Check if the given object has any additional actions (adding to edit and delete)"""
-    return hasattr(object, "additional_actions")
+def pretty_modelname(model, plural=False):
+    if plural:
+        return model._meta.verbose_name_plural.title()
+    return model._meta.verbose_name.title()
 
 
 @register.simple_tag
-def querystring_order(request, fieldname):
-    """Return GET-parameters according to the current GET-parameters but change the order-parameter of the given field"""
-    query = request.GET.copy()
-    if query.get("order") == fieldname:
-        query["order"] = "-" + fieldname
-    elif query.get("order") == "-" + fieldname:
-        query.pop("order")
+def render_field(admin, object, fieldname):
+    return admin.render_field(object, fieldname)
+
+
+@register.simple_tag
+def render_field_aggregation(admin, queryset, fieldname):
+    return admin.render_field_aggregation(object, fieldname)
+
+
+@register.simple_tag
+def object_actions(admin, request, object):
+    return admin.object_actions(request, object)
+
+
+@register.simple_tag
+def list_actions(admin, request):
+    return admin.list_actions(request)
+
+
+@register.simple_tag
+def pagename(request):
+    return " / ".join(
+        [
+            namespace.replace("_", " ").title()
+            for namespace in request.resolver_match.namespaces
+        ]
+    )
+
+
+@register.simple_tag
+def querystring_order(admin, current_order, fieldname):
+    """Return order fields according to the current GET-parameters but change the order-parameter of the given field"""
+    fieldname_rev = "-" + fieldname
+    ordering = current_order.split(",")
+    if fieldname in ordering:
+        ordering.remove(fieldname)
+        ordering.insert(0, fieldname_rev)
+    elif fieldname_rev in ordering:
+        ordering.remove(fieldname_rev)
     else:
-        query["order"] = fieldname
-    return query.urlencode()
+        ordering.insert(0, fieldname)
+    return ",".join(ordering)
 
 
-@register.simple_tag
-def add_next_url_parameter(url, request):
-    """Adds a ``next`` url GET-parameter whose value is the current url
-
-    :param url str: value of target (next) url
-    :param request: current request object
-    """
-    concat = "&" if "?" in url else "?"
-    return url + concat + urlencode({"next": request.get_full_path()})
-
-
-@register.simple_tag
-def urlparams(args):
-    """Savely convert dict to url GET-parameters
-
-    :param args dict: name-value mapping of url parameters
-    """
-    if not args:
-        return ""
-    safe_args = {k: v for k, v in args.items() if v is not None}
-    if safe_args:
-        return "?{}".format(urlencode(safe_args))
-    return ""
+@register.simple_tag(takes_context=True)
+def updated_querystring(context, key, value):
+    """Take the current GET query and update/add an item"""
+    current_query = context["request"].GET.copy()
+    current_query[key] = value
+    return context["request"].path + "?" + current_query.urlencode()
 
 
 @register.filter
@@ -183,7 +160,7 @@ def prepare_widget(widget, field, has_error):
     if isinstance(widget, forms.TimeInput):
         widget.attrs.update({"class": "timepicker"})
 
-    # Textarea are often used for more special things like WYSIWYG editors and therefore
+    # Textareas are often used for more special things like WYSIWYG editors and therefore
     # we only apply materialize if this is a direct instance, not inherited
     if type(field) == forms.fields.CharField and type(field.widget) == forms.Textarea:
         widget.attrs.update({"class": "materialize-textarea"})

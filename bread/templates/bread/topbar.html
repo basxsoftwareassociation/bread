@@ -4,7 +4,7 @@
     <div class="nav-wrapper">
         <a href="#" data-target="slide-out" class="sidenav-trigger hide-on-large-only"><i class="material-icons">menu</i></a>
         <div class="brand-logo">
-            {% block title %}{{ request.resolver_match.app_names|last|underscore_to_space|title }}{% endblock title %}
+            {% block title %}{% pagename request %}{% endblock title %}
         </div>
         <ul id="nav-mobile" class="right">
             {% if request.user.is_authenticated %}

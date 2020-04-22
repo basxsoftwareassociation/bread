@@ -2,8 +2,8 @@
 {% load bread_tags %}
 
 {% block content %}
-<div class="right"><a href="{{ request.get_full_path }}{% if request.GET %}&{% else %}?{% endif %}export"><span style="vertical-align: middle">Excel</span><i class="material-icons" style="vertical-align: middle">file_download</i></a></div>
-    {% include 'bread/inline_list.html' %}
+    {% include "bread/list_actions.html" %}
+    {% include "bread/inline_list.html" %}
 {% endblock %}
 
 {% block right-panel %}

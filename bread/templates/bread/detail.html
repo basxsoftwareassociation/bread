@@ -2,13 +2,13 @@
 {% load bread_tags %}
 
 {% block content %}
-    <h2>{% modelname object %} <i>{{ object }}</i></h2>
+    <h2>{{ view.admin.verbose_modelname }} <i>{{ object }}</i></h2>
 
     <table>
-    {% for field in view.modelfields %}
+    {% for field in view.modelfields.values %}
         <tr>
             <td style="vertical-align: top">{% pretty_fieldname field %}</td>
-            <td style="float: left">{{ object|display_field:field }}</td>
+            <td style="float: left">{% render_field view.admin object field.name %}</td>
         </tr>
     {% endfor %}
     </table>

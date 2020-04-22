@@ -3,9 +3,9 @@
 
 {% block content %}
     {% if object %}
-        <h2>Update {% modelname object %} <i>{{ object }}</i></h2>
+        <h2>Update {{ view.admin.verbose_modelname }} <i>{{ object }}</i></h2>
     {% elif form.instance %}
-        <h2>Create {% modelname form.instance %}</h2>
+        <h2>Add {{ view.admin.verbose_modelname }}</h2>
     {% endif %}
     <form method="post" enctype="multipart/form-data" autocomplete="off">
         {% csrf_token %}

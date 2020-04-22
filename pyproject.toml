@@ -2,7 +2,7 @@
 requires = ["setuptools", "wheel", "setuptools_scm[toml]"]
 
 [tool.setuptools_scm]
-write_to = "breadengine/version.py"
+write_to = "bread/version.py"
 
 [tool.black]
 exclude = '(migrations|\.hg|\.venv|\.eggs|\.tox|version.py)'

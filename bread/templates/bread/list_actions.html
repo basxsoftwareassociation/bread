@@ -1,11 +1,11 @@
 {% load bread_tags %}
 
-{% object_actions view.admin request object as actions %}
+{% list_actions view.admin request as actions %}
 {% if actions %}
-    <a class="custom-dropdown-trigger btn-small no-autoinit" href="#" data-target="action-dropdown-{{ object.pk }}">
+    <a class="custom-dropdown-trigger btn-small no-autoinit" href="#" data-target="action-dropdown-{{ view.admin.modelname }}">
         <i class="material-icons">arrow_drop_down</i>
     </a>
-    <ul id='action-dropdown-{{ object.pk }}' class='dropdown-content'>
+    <ul id='action-dropdown-{{ view.admin.modelname }}' class='dropdown-content'>
             {% for action in actions %}
                 <li><a href="{{ action.url }}"><i class="material-icons" style="vertical-align:middle">{{ action.icon }}</i> {{ action.label }}</a></li>
             {% endfor %}
