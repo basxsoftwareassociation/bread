@@ -1,25 +1,17 @@
 import urllib
 from html.parser import HTMLParser
 
-import pkg_resources
-
 import django_filters
-from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models, transaction
 from django.forms import HiddenInput
 from django.forms.models import ModelForm
 from django.shortcuts import redirect
-from django.urls import reverse
 from django.utils.html import strip_tags
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    TemplateView,
-    UpdateView,
-)
+from django.views.generic import CreateView
+from django.views.generic import DeleteView as DjangoDeleteView
+from django.views.generic import DetailView, TemplateView, UpdateView
 from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin, PermissionRequiredMixin
 
@@ -29,7 +21,7 @@ from .utils import get_modelfields, parse_fieldlist, pretty_fieldname, xlsxrespo
 
 class BrowseView(PermissionListMixin, FilterView):
     template_name = "bread/list.html"
-    fields = None
+    admin = None
 
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
@@ -106,7 +98,7 @@ class BrowseView(PermissionListMixin, FilterView):
         config["exclude"] = [
             f.name
             for f in self.model._meta.get_fields()
-            if isinstance(f, models.FileField)
+            if isinstance(f, models.FileField) or isinstance(f, GenericForeignKey)
         ]
         config["fields"] = self.filterset_fields
 
@@ -134,7 +126,7 @@ class BrowseView(PermissionListMixin, FilterView):
             items = list(self.filterset.qs)
 
         workbook = openpyxl.Workbook()
-        workbook.title = self.admin.verbose_name_plural
+        workbook.title = self.admin.verbose_modelname_plural
         header_cells = workbook.active.iter_cols(
             min_row=1, max_col=len(self.modelfields), max_row=len(items) + 1
         )
@@ -144,7 +136,7 @@ class BrowseView(PermissionListMixin, FilterView):
             col[0].font = Font(bold=True)
             for i, cell in enumerate(col[1:]):
                 cell.value = htmlparser.unescape(
-                    strip_tags(getattr(items[i], f"get_{field.name}_display")())
+                    strip_tags(self.admin.render_field(items[i], field.name))
                 )
 
         return xlsxresponse(workbook, workbook.title)
@@ -152,7 +144,7 @@ class BrowseView(PermissionListMixin, FilterView):
 
 class ReadView(PermissionRequiredMixin, DetailView):
     template_name = "bread/detail.html"
-    fields = None
+    admin = None
     accept_global_perms = True
 
     def __init__(self, admin, *args, **kwargs):
@@ -197,24 +189,25 @@ class CustomFormMixin:
     def form_valid(self, form):
         with transaction.atomic():
             # set generic foreign key values
+            self.object = form.save()
             for name, field in self.modelfields.items():
                 if isinstance(field, GenericForeignKey):
                     setattr(self.object, name, form.cleaned_data[name])
-            self.object = form.save()
             form.save_inline(self.object)
         return super().form_valid(form)
 
     def get_success_url(self):
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
-        return self.admin.get_urls()["index"]
+        return self.admin.reverse("index")
 
 
 class EditView(CustomFormMixin, PermissionRequiredMixin, UpdateView):
     template_name = "bread/custom_form.html"
+    admin = None
     accept_global_perms = True
 
-    def __init__(self, admin, fields, *args, **kwargs):
+    def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
         self.modelfields = get_modelfields(
@@ -228,6 +221,7 @@ class EditView(CustomFormMixin, PermissionRequiredMixin, UpdateView):
 
 class AddView(CustomFormMixin, PermissionRequiredMixin, CreateView):
     template_name = "bread/custom_form.html"
+    admin = None
     accept_global_perms = True
 
     def __init__(self, admin, *args, **kwargs):
@@ -245,8 +239,9 @@ class AddView(CustomFormMixin, PermissionRequiredMixin, CreateView):
         return None
 
 
-class GeneralDelete(PermissionRequiredMixin, DeleteView):
+class DeleteView(PermissionRequiredMixin, DjangoDeleteView):
     template_name = "bread/confirm_delete.html"
+    admin = None
     accept_global_perms = True
 
     def __init__(self, admin, *args, **kwargs):
@@ -259,25 +254,27 @@ class GeneralDelete(PermissionRequiredMixin, DeleteView):
     def get_success_url(self):
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
-        return self.admin.get_urls()["index"]
+        return self.admin.reverse("index")
 
 
 class Overview(LoginRequiredMixin, TemplateView):
     """Lists all breadapps which have an index url"""
 
+    # adminsite = None
     template_name = "bread/overview.html"
+    adminsite = None
+
+    def __init__(self, adminsite, *args, **kwargs):
+        self.adminsite = adminsite
+        super().__init__(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["app_urls"] = []
-
-        for entrypoint in pkg_resources.iter_entry_points(
-            group="breadapp", name="appname"
-        ):
-            fullappname = entrypoint.load()
-            appname = fullappname.split(".")[-1]
-            label = apps.get_app_config(appname).verbose_name
-            context["app_urls"].append((reverse(f"bread:{appname}:index"), label))
+        for admin in self.adminsite._registry.values():
+            context["app_urls"].append(
+                (admin.reverse("index"), admin.verbose_modelname)
+            )
         context["app_urls"] = sorted(context["app_urls"], key=lambda a: a[1])
 
         return context

@@ -12,18 +12,21 @@ from sorl.thumbnail import get_thumbnail
 
 
 def format_value(value, fieldtype=None):
+    print(value, type(value))
     CONSTANTS = {
-        None: settings.HTML_NONE,
-        True: settings.HTML_TRUE,
-        False: settings.HTML_FALSE,
+        None: getattr(settings, "HTML_NONE", app_settings.HTML_NONE),
+        True: getattr(settings, "HTML_TRUE", app_settings.HTML_TRUE),
+        False: getattr(settings, "HTML_FALSE", app_settings.HTML_FALSE),
     }
-    if value in CONSTANTS:
+    if isinstance(value, bool) or value is None:
         return CONSTANTS[value]
 
+    if isinstance(value, models.Manager):
+        value = value.all()
     # if there is a hint passed via fieldtype, use the accoring conversion function first (identity otherwise)
     value = MODELFIELD_FORMATING_FUNCS.get(fieldtype, lambda a: a)(value)
 
-    if value in CONSTANTS:
+    if isinstance(value, bool) or value is None:
         return CONSTANTS[value]
     if isinstance(value, str):
         return value
@@ -113,7 +116,6 @@ MODELFIELD_FORMATING_FUNCS = {
     models.URLField: as_url,
     models.TextField: as_text,
     models.DurationField: as_duration,
-    models.Manager: lambda a: a.all(),
     RichTextField: as_richtext,
     RichTextUploadingField: as_richtext,
     CountryField: as_countries,

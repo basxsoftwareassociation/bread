@@ -1,11 +1,12 @@
 import ckeditor
 from bread import menu as menuregister
-from bread.formatter import format_value
-from bread.utils import has_permission, pretty_fieldname
 from django import forms, template
 from django.conf import settings
 from django.db import models
 from django.template.loader import render_to_string
+
+from ..formatters import format_value
+from ..utils import has_permission, pretty_fieldname
 
 register = template.Library()
 
@@ -28,7 +29,7 @@ def render_field(admin, object, fieldname):
 
 @register.simple_tag
 def render_field_aggregation(admin, queryset, fieldname):
-    return admin.render_field_aggregation(object, fieldname)
+    return admin.render_field_aggregation(queryset, fieldname)
 
 
 @register.simple_tag
@@ -96,7 +97,7 @@ def menu(request):
     )
     """
     user = request.user
-    for group in sorted(menuregister.main.registry.values()):
+    for group in sorted(menuregister.main._registry.values()):
         if group.has_permission(user):
             yield group.label, group.active(request), (
                 (item.label, item.active(request), item.get_url())

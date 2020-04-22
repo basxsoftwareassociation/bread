@@ -1,14 +1,6 @@
 {% load bread_tags %}
 
-<h2>{{ view.admin.verbose_modelname_plural }}
-
-{% has_permission request.user "add" view.model as can_add %}
-{% if can_add %}
-    <div class="right">
-        <a class="btn-floating btn-large waves-effect" href="{% createurl view.model %}"><i class="large material-icons">add</i></a>
-    </div>
-{% endif %}
-</h2>
+<h2>{{ view.admin.verbose_modelname_plural }}</h2>
 
 <table class="responsive-table striped highlight">
     {% if not hide_heading %}
@@ -20,7 +12,7 @@
                         {% if request and field.sortable != False %}
                             {% querystring_order view.admin request.GET.order field.name as new_order_string %}
                             <a href="{% updated_querystring "order" new_order_string %}">
-                                {% fieldname field %}
+                                {% pretty_fieldname field %}
                                 {% if field.name in request.GET.order %}
                                     <i class="material-icons tiny">keyboard_arrow_down</i>
                                 {% elif '-'|add:field.name in request.GET.order %}
@@ -28,7 +20,7 @@
                                 {% endif %}
                             </a>
                         {% else %}
-                            {% fieldname field %}
+                            {% pretty_fieldname  field %}
                         {% endif %}
                     </th>
                 {% endfor %}

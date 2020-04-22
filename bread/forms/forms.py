@@ -11,8 +11,8 @@ from django.forms import (
 from django.forms.models import inlineformset_factory
 from django.template.loader import render_to_string
 from guardian.shortcuts import get_objects_for_user
-from utils import get_modelfields, parse_fieldlist
 
+from ..utils import get_modelfields, parse_fieldlist
 from .fields import GenericForeignKeyField
 
 
@@ -40,7 +40,6 @@ class InlineField(Field):
 
 # patch modelform_factory to handl inline forms
 def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
-
     attribs = {
         "error_css_class": "error",
         "required_css_class": "required",
@@ -64,12 +63,16 @@ def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
                 parse_fieldlist(modelfield.related_model, ["__all__"], is_form=True),
             )
             formclass = inlinemodelform_factory(
-                request, modelfield.related_model, None, child_fields, baseformclass
+                request,
+                modelfield.related_model,
+                None,
+                child_fields.values(),
+                baseformclass,
             )
             formset = inlineformset_factory(
                 model,
                 modelfield.related_model,
-                fields=child_fields,
+                fields=child_fields.keys(),
                 formfield_callback=lambda field: formfield_callback_with_request(
                     field, request
                 ),
@@ -91,7 +94,7 @@ def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
     ret = modelform_factory(
         model,
         form=patched_formclass,
-        fields=[f for f in modelfields if not f.one_to_many and f.editable],
+        fields=[f.name for f in modelfields if not f.one_to_many and f.editable],
         formfield_callback=lambda field: formfield_callback_with_request(
             field, request
         ),

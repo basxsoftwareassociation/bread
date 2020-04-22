@@ -1,7 +1,7 @@
 {% load bread_tags %}
 
 <div class="card-panel col s12">
-<h5>{{ view.admin.verbose_modelname_plural }}</h5>
+<h5>{% pretty_modelname formset.model True %}</h5>
 
 <table id="formset_{{ formset.prefix }}_table">
     {{ formset.management_form }}

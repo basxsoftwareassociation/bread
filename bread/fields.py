@@ -1,4 +1,4 @@
-from django.db.models.mixin import FieldCacheMixin
+from django.db.models.fields.mixins import FieldCacheMixin
 
 
 class VirtualField(FieldCacheMixin):

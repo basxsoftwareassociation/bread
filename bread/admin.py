@@ -1,12 +1,12 @@
 from collections import namedtuple
 
 from django.apps import apps
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
 from django.db.models import Count
 from django.http import HttpResponse
-from django.url import include, path
-from django.utils import reverse, reverse_lazy
-from django.views.generic import DeleteView, DetailView, RedirectView, UpdateView
+from django.urls import include, path, reverse
+from django.views.generic import DeleteView, DetailView, UpdateView
 
 from . import menu, views
 from .formatters import format_value
@@ -38,7 +38,7 @@ class BreadAdmin:
         self.readfields = self.readfields or ["__all__"]
         self.editfields = self.editfields or ["__all__"]
         self.addfields = self.addfields or ["__all__"]
-        self.createmenu = self.createmenu or True
+        self.createmenu = self.createmenu is not False
         if self.createmenu:
             grouplabel = apps.get_app_config(
                 self.model._meta.app_label
@@ -49,18 +49,18 @@ class BreadAdmin:
                 menu.Item(
                     label=self.verbose_modelname_plural,
                     group=grouplabel,
-                    url=self.reverse(self.get_views()[self.indexview]),
+                    url=self.get_urlname("index"),
                     permissions=[f"{self.model._meta.app_label}.view_{self.modelname}"],
                 )
             )
 
     def get_views(self):
         return {
-            "browse": views.BrowseView.as_view(self, model=self.model),
-            "read": views.ReadView.as_view(self, model=self.model),
-            "edit": views.EditView.as_view(self, model=self.model),
-            "add": views.AddView.as_view(self, model=self.model),
-            "delete": views.DeleteView.as_view(self, model=self.model),
+            "browse": views.BrowseView.as_view(admin=self, model=self.model),
+            "read": views.ReadView.as_view(admin=self, model=self.model),
+            "edit": views.EditView.as_view(admin=self, model=self.model),
+            "add": views.AddView.as_view(admin=self, model=self.model),
+            "delete": views.DeleteView.as_view(admin=self, model=self.model),
         }
 
     def reverse(self, viewname, *args, **kwargs):
@@ -76,18 +76,18 @@ class BreadAdmin:
 
     def get_urls(self):
         urls = {}
-        for viewname, view in self.get_views():
+        for viewname, view in self.get_views().items():
             viewpath = f"{self.modelname}/{viewname}"
             if (
-                isinstance(view, UpdateView)
-                or isinstance(DetailView)
-                or isinstance(DeleteView)
+                issubclass(view.view_class, UpdateView)
+                or issubclass(view.view_class, DetailView)
+                or issubclass(view.view_class, DeleteView)
             ):
-                viewpath += (f"/<int:pk>",)
+                viewpath += f"/<int:pk>"
             urls[viewname] = path(viewpath, view, name=self.get_urlname(viewname),)
         urls["index"] = path(
-            "",
-            RedirectView.as_view(url=self.reverse(self.get_views()[self.indexview])),
+            self.modelname,
+            self.get_views()[self.indexview],
             name=self.get_urlname("index"),
         )
         return urls
@@ -99,13 +99,16 @@ class BreadAdmin:
         except FieldDoesNotExist:
             pass
         return format_value(
-            getattr(self.model, fieldname, getattr(self, fieldname)), fieldtype
+            getattr(object, fieldname, None) or getattr(self, fieldname, None),
+            fieldtype,
         )
 
     def render_field_aggregation(self, queryset, fieldname):
         fieldtype = None
         try:
             fieldtype = self.model._meta.get_field(fieldname)
+            if isinstance(fieldtype, GenericForeignKey):
+                fieldtype = None
         except FieldDoesNotExist:
             pass
         aggregation = getattr(getattr(self, fieldname, None), "aggregation", None)
@@ -114,13 +117,14 @@ class BreadAdmin:
                 getattr(self.model, fieldname, None), "aggregation", None
             )
         if aggregation is None:
-            aggregation = Count(fieldname)
-            pass  # add default
-        if fieldtype is not None:
+            if fieldtype is None:
+                return ""
             return format_value(
-                queryset.aggregate(value=aggregation)["value"], fieldtype
+                queryset.aggregate(value=Count(fieldname))["value"], fieldtype
             )
-        return ""
+        return format_value(
+            queryset.aggregate(value=Count(fieldname))["value"], fieldtype
+        )
 
     def object_actions(self, request, object):
         """
@@ -130,20 +134,42 @@ class BreadAdmin:
         urls = self.get_urls()
         actions = []
         if "read" in urls and has_permission(request.user, "view", object):
-            actions.append(Action(urls["read"], "View", "search"))
+            actions.append(
+                Action(
+                    reverse(self.get_urlname("read"), args=[object.pk]),
+                    "View",
+                    "search",
+                )
+            )
         if "edit" in urls and has_permission(request.user, "change", object):
-            actions.append(Action(urls["edit"], "Edit", "edit"))
+            actions.append(
+                Action(
+                    reverse(self.get_urlname("edit"), args=[object.pk]), "Edit", "edit"
+                )
+            )
         if "delete" in urls and has_permission(request.user, "delete", object):
-            actions.append(Action(urls["delete"], "Delete", "delete_forever"))
+            actions.append(
+                Action(
+                    reverse(self.get_urlname("delete"), args=[object.pk]),
+                    "Delete",
+                    "delete_forever",
+                )
+            )
         return actions
 
     def list_actions(self, request):
         urls = self.get_urls()
         actions = []
-        if "browse" in urls:
-            actions.append(Action(urls["browse"] + "?export=1", "Excel", "view_column"))
         if "add" in urls and has_permission(request.user, "add", self.model):
-            actions.append(Action(urls["browse"] + "?export=1", "Add", "add"))
+            actions.append(Action(reverse(self.get_urlname("add")), "Add", "add"))
+        if "browse" in urls:
+            actions.append(
+                Action(
+                    reverse(self.get_urlname("browse")) + "?export=1",
+                    "Excel",
+                    "file_download",
+                )
+            )
         return actions
 
     def get_modelname(self):
@@ -153,7 +179,8 @@ class BreadAdmin:
     @property
     def urls(self):
         """Urls for inclusion in django urls"""
-        return include((self.get_urls().values(), self.app_namespace), self.namespace)
+        return list(self.get_urls().values())
+        # return include((self.get_urls().values(), self.app_namespace), self.namespace)
 
     @property
     def modelname(self):
@@ -181,27 +208,34 @@ class BreadAdminSite:
         self._registry = {}
 
     def register(self, modeladmin):
-        self._registry[modeladmin.model] = modeladmin
+        self._registry[modeladmin.model] = modeladmin()
 
     def get_urls(self):
         ret = [
-            path("bread/", views.Overview.as_view(), name="bread_overview"),
             path(
                 "preferences/",
                 include("dynamic_preferences.urls", namespace="preferences"),
             ),
             path("accounts/", include("django.contrib.auth.urls")),
             path("ckeditor/", include("ckeditor_uploader.urls")),
-            path("", RedirectView.as_view(url=reverse_lazy("bread_overview"))),
+            path(
+                "overview",
+                views.Overview.as_view(adminsite=self),
+                name="bread_overview",
+            ),
         ]
 
         for modeladmin in self._registry.values():
             ret.extend(modeladmin.urls)
         return ret
 
+    @property
+    def urls(self):
+        return include(self.get_urls())
+
 
 def register(modeladmin):
-    site.register(modeladmin.model, modeladmin)
+    site.register(modeladmin)
     return modeladmin
 
 
