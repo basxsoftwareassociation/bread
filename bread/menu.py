@@ -97,6 +97,7 @@ registeritem(
         permissions=["dynamic_preferences:change_globalpreferencemodel"],
     )
 )
+registeritem(Item(group="Admin", label="Datamodel", url=reverse_lazy("datamodel"),))
 system_settings = Item(
     group="Admin", label="System Settings", url=reverse_lazy("admin:index"),
 )

@@ -1,7 +1,9 @@
+import re
 import urllib
 from html.parser import HTMLParser
 
 import django_filters
+import pygraphviz
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models, transaction
@@ -12,6 +14,7 @@ from django.utils.html import strip_tags
 from django.views.generic import CreateView
 from django.views.generic import DeleteView as DjangoDeleteView
 from django.views.generic import DetailView, TemplateView, UpdateView
+from django_extensions.management.modelviz import ModelGraph, generate_dot
 from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin, PermissionRequiredMixin
 
@@ -260,7 +263,6 @@ class DeleteView(PermissionRequiredMixin, DjangoDeleteView):
 class Overview(LoginRequiredMixin, TemplateView):
     """Lists all breadapps which have an index url"""
 
-    # adminsite = None
     template_name = "bread/overview.html"
     adminsite = None
 
@@ -278,3 +280,29 @@ class Overview(LoginRequiredMixin, TemplateView):
         context["app_urls"] = sorted(context["app_urls"], key=lambda a: a[1])
 
         return context
+
+
+class DataModel(LoginRequiredMixin, TemplateView):
+    template_name = "bread/datamodel.html"
+
+    def get_context_data(self, **kwargs):
+        # TODO: make this display nicer and split by app
+        ret = super().get_context_data(**kwargs)
+
+        graph_models = ModelGraph(all_applications=True, app_labels=None)
+        graph_models.generate_graph_data()
+        svg = (
+            pygraphviz.AGraph(
+                generate_dot(
+                    graph_models.get_graph_data(),
+                    template="django_extensions/graph_models/django2018/digraph.dot",
+                )
+            )
+            .draw(format="svg", prog="dot")
+            .decode()
+        )
+
+        # force SVG to be match page-layout instead of fixed width and height
+        ret["datamodel"] = re.sub('svg width="[0-9]*pt" height="[0-9]*pt"', "svg", svg)
+
+        return ret

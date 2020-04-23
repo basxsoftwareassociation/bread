@@ -223,6 +223,7 @@ class BreadAdminSite:
                 views.Overview.as_view(adminsite=self),
                 name="bread_overview",
             ),
+            path("datamodel", views.DataModel.as_view(), name="datamodel",),
         ]
 
         for modeladmin in self._registry.values():
