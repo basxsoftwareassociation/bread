@@ -64,7 +64,7 @@ def querystring_order(admin, current_order, fieldname):
         ordering.remove(fieldname_rev)
     else:
         ordering.insert(0, fieldname)
-    return ",".join(ordering)
+    return ",".join(filter(None, ordering))
 
 
 @register.simple_tag(takes_context=True)

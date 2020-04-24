@@ -5,8 +5,8 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
 from django.db.models import Count
 from django.http import HttpResponse
-from django.urls import include, path, reverse
-from django.views.generic import DeleteView, DetailView, UpdateView
+from django.urls import include, path, reverse, reverse_lazy
+from django.views.generic import DeleteView, DetailView, RedirectView, UpdateView
 
 from . import menu, views
 from .formatters import format_value
@@ -27,18 +27,28 @@ class BreadAdmin:
     addfields = None
     createmenu = None
     app_namespace = None  # should not be overriden in general I think
+    browseview = None
+    readview = None
+    editview = None
+    addview = None
+    deleteview = None
 
     def __init__(self):
         assert self.model is not None
         self.namespace = self.namespace or "bread"
         self.app_namespace = self.app_namespace or self.model._meta.app_label
-        self.indexview = self.indexview or "browse"
+        self.indexview = self.indexview or self.get_urlname("browse")
         self.browsefields = self.browsefields or ["__all__"]
         self.filterfields = self.filterfields or self.browsefields
         self.readfields = self.readfields or ["__all__"]
         self.editfields = self.editfields or ["__all__"]
         self.addfields = self.addfields or ["__all__"]
         self.createmenu = self.createmenu is not False
+        self.browseview = self.browseview or views.BrowseView
+        self.readview = self.readview or views.ReadView
+        self.editview = self.editview or views.EditView
+        self.addview = self.addview or views.AddView
+        self.deleteview = self.deleteview or views.DeleteView
         if self.createmenu:
             grouplabel = apps.get_app_config(
                 self.model._meta.app_label
@@ -55,13 +65,13 @@ class BreadAdmin:
             )
 
     def get_views(self):
-        return {
-            "browse": views.BrowseView.as_view(admin=self, model=self.model),
-            "read": views.ReadView.as_view(admin=self, model=self.model),
-            "edit": views.EditView.as_view(admin=self, model=self.model),
-            "add": views.AddView.as_view(admin=self, model=self.model),
-            "delete": views.DeleteView.as_view(admin=self, model=self.model),
-        }
+        ret = {}
+        for viewname in ["browse", "read", "edit", "add", "delete"]:
+            ret[viewname] = getattr(self, f"{viewname}view").as_view(
+                admin=self, model=self.model
+            )
+
+        return ret
 
     def reverse(self, viewname, *args, **kwargs):
         return reverse(
@@ -78,16 +88,18 @@ class BreadAdmin:
         urls = {}
         for viewname, view in self.get_views().items():
             viewpath = f"{self.modelname}/{viewname}"
-            if (
+            if hasattr(view, "view_class") and (
                 issubclass(view.view_class, UpdateView)
                 or issubclass(view.view_class, DetailView)
                 or issubclass(view.view_class, DeleteView)
             ):
                 viewpath += f"/<int:pk>"
+            elif hasattr(view, "url_params"):
+                viewpath += view.url_params
             urls[viewname] = path(viewpath, view, name=self.get_urlname(viewname),)
         urls["index"] = path(
             self.modelname,
-            self.get_views()[self.indexview],
+            RedirectView.as_view(url=reverse_lazy(self.indexview)),
             name=self.get_urlname("index"),
         )
         return urls
@@ -99,7 +111,7 @@ class BreadAdmin:
         except FieldDoesNotExist:
             pass
         return format_value(
-            getattr(object, fieldname, None) or getattr(self, fieldname, None),
+            getattr(self, fieldname, None) or getattr(object, fieldname, None),
             fieldtype,
         )
 
@@ -163,9 +175,13 @@ class BreadAdmin:
         if "add" in urls and has_permission(request.user, "add", self.model):
             actions.append(Action(reverse(self.get_urlname("add")), "Add", "add"))
         if "browse" in urls:
+            # need to preserve filter and ordering from query parameters
             actions.append(
                 Action(
-                    reverse(self.get_urlname("browse")) + "?export=1",
+                    reverse(self.get_urlname("browse"))
+                    + "?"
+                    + request.GET.urlencode()
+                    + "&export=1",
                     "Excel",
                     "file_download",
                 )
@@ -218,11 +234,7 @@ class BreadAdminSite:
             ),
             path("accounts/", include("django.contrib.auth.urls")),
             path("ckeditor/", include("ckeditor_uploader.urls")),
-            path(
-                "overview",
-                views.Overview.as_view(adminsite=self),
-                name="bread_overview",
-            ),
+            path("", views.Overview.as_view(adminsite=self), name="bread_overview",),
             path("datamodel", views.DataModel.as_view(), name="datamodel",),
         ]
 

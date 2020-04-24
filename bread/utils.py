@@ -131,7 +131,10 @@ def parse_fieldlist(model, fields_parameter, is_form=False):
 
     # filter fields which cannot be processed in a form
     def form_filter(field):
-        field = model._meta.get_field(field)
+        try:
+            field = model._meta.get_field(field)
+        except FieldDoesNotExist:
+            return False
         return (
             field.editable
             or isinstance(field, GenericForeignKey)
@@ -186,4 +189,6 @@ def get_modelfields(model, fieldlist):
             )
         else:
             raise FieldDoesNotExist(field)
+        if isinstance(fields[field], GenericForeignKey):
+            fields[field].sortable = False
     return fields

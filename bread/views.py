@@ -7,6 +7,7 @@ import pygraphviz
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models, transaction
+from django.db.models.functions import Lower
 from django.forms import HiddenInput
 from django.forms.models import ModelForm
 from django.shortcuts import redirect
@@ -33,7 +34,7 @@ class BrowseView(PermissionListMixin, FilterView):
             self.model, parse_fieldlist(self.model, self.admin.browsefields)
         )
         kwargs["filterset_fields"] = parse_fieldlist(
-            self.model, self.admin.filterfields
+            self.model, self.admin.filterfields, is_form=True
         )
         kwargs["model"] = self.model
         super().__init__(*args, **kwargs)
@@ -64,7 +65,11 @@ class BrowseView(PermissionListMixin, FilterView):
         # order fields
         order = self.request.GET.get("order")
         if order:
-            ret = ret.order_by(*order.split(","))
+            fields = order.split(",")
+            ordering = [
+                Lower(f[1:]).desc() if f.startswith("-") else Lower(f) for f in fields
+            ]
+            ret = ret.order_by(*ordering)
         return ret
 
     def get_filterset_class(self):
@@ -127,6 +132,7 @@ class BrowseView(PermissionListMixin, FilterView):
             or not self.get_strict()
         ):
             items = list(self.filterset.qs)
+        items = list(self.filterset.qs)
 
         workbook = openpyxl.Workbook()
         workbook.title = self.admin.verbose_modelname_plural

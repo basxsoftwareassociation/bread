@@ -1,3 +1,4 @@
+import datetime
 import numbers
 from collections.abc import Iterable
 
@@ -12,30 +13,32 @@ from sorl.thumbnail import get_thumbnail
 
 
 def format_value(value, fieldtype=None):
-    print(value, type(value))
-    CONSTANTS = {
-        None: getattr(settings, "HTML_NONE", app_settings.HTML_NONE),
-        True: getattr(settings, "HTML_TRUE", app_settings.HTML_TRUE),
-        False: getattr(settings, "HTML_FALSE", app_settings.HTML_FALSE),
-    }
     if isinstance(value, bool) or value is None:
         return CONSTANTS[value]
 
+    # make referencing fields iterable (normaly RelatedManagers)
     if isinstance(value, models.Manager):
         value = value.all()
-    # if there is a hint passed via fieldtype, use the accoring conversion function first (identity otherwise)
-    value = MODELFIELD_FORMATING_FUNCS.get(fieldtype, lambda a: a)(value)
+
+    # If there is a hint passed via fieldtype, use the accoring conversion function first (identity otherwise)
+    # This is mostly helpfull for string-based fields like URLS, emails etc.
+    value = MODELFIELD_FORMATING_HELPERS.get(fieldtype, lambda a: a)(value)
 
     if isinstance(value, bool) or value is None:
         return CONSTANTS[value]
-    if isinstance(value, str):
-        return value
+    if isinstance(value, datetime.timedelta):
+        return as_duration(value)
     if isinstance(value, numbers.Number):
         return f"{value:f}".rstrip("0").rstrip(".")
-    if isinstance(value, Iterable):
+    if isinstance(value, models.fields.files.ImageFieldFile):
+        return as_image(value)
+    if isinstance(value, models.fields.files.FieldFile):
+        return as_download(value)
+    if isinstance(value, Iterable) and not isinstance(value, (str, bytes)):
         return as_list(value)
     if isinstance(value, models.Model):
         return as_object_link(value)
+    return value
 
 
 # Formatting functions: never pass None, always return string
@@ -82,44 +85,30 @@ def as_richtext(value):
 
 
 def as_download(value):
-    # urls may have a blank value when meaning "no value"
-    if value != "":
-        return mark_safe(
-            f'<a class="center" style="display: block" href="{value.url}"><i class="material-icons">open_in_browser</i></a>'
-        )
-    return app_settings.HTML_NONE
+    if not value:
+        return CONSTANTS[None]
+    if not value.storage.exists(value.name):
+        return mark_safe("<small><emph>File not found</emph></small>")
+    return mark_safe(
+        f'<a class="center" style="display: block" href="{value.url}"><i class="material-icons">open_in_browser</i></a>'
+    )
 
 
 def as_image(value):
-    # images may have a blank value when meaning "no value"
-    if value != "":
-        im = get_thumbnail(value, "100x100", crop="center", quality=75)
-        return mark_safe(
-            f'<a class="center" style="display: block" href="{value.url}"><img src={im.url} width="{im.width}" height="{im.height}"/></a>'
-        )
-    return app_settings.HTML_NONE
+    if not value:
+        return CONSTANTS[None]
+    if not value.storage.exists(value.name):
+        return mark_safe("<small><emph>Image not found</emph></small>")
+    im = get_thumbnail(value, "100x100", crop="center", quality=75)
+    return mark_safe(
+        f'<a class="center" style="display: block" href="{value.url}"><img src={im.url} width="{im.width}" height="{im.height}"/></a>'
+    )
 
 
 def as_object_link(value):
     if hasattr(value, "get_absolute_url"):
         return f'<a href="{value.get_absolute_url()}">{value}</a>'
     return str(value)
-
-
-# formatting hints for some fields, mostly used to format strings into something nicer
-
-MODELFIELD_FORMATING_FUNCS = {
-    None: lambda a: a,
-    models.EmailField: as_email,
-    models.ImageField: as_image,
-    models.FileField: as_download,
-    models.URLField: as_url,
-    models.TextField: as_text,
-    models.DurationField: as_duration,
-    RichTextField: as_richtext,
-    RichTextUploadingField: as_richtext,
-    CountryField: as_countries,
-}
 
 
 # decorator wrappers to format functions outputs
@@ -163,3 +152,22 @@ def returns_image(func):
 
 def returns_object(func):
     return lambda *args, **kwargs: as_object_link(func(*args, **kwargs))
+
+
+MODELFIELD_FORMATING_HELPERS = {
+    None: lambda a: a,
+    models.EmailField: as_email,
+    models.ImageField: as_image,
+    models.FileField: as_download,
+    models.URLField: as_url,
+    models.TextField: as_text,
+    RichTextField: as_richtext,
+    RichTextUploadingField: as_richtext,
+    CountryField: as_countries,
+}
+
+CONSTANTS = {
+    None: getattr(settings, "HTML_NONE", app_settings.HTML_NONE),
+    True: getattr(settings, "HTML_TRUE", app_settings.HTML_TRUE),
+    False: getattr(settings, "HTML_FALSE", app_settings.HTML_FALSE),
+}
