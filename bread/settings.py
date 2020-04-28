@@ -3,7 +3,7 @@ import pkg_resources
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
 from django.utils.html import mark_safe
 
-breadapps = set(["bread.apps.BreadConfig"])
+breadapps = set()
 for entrypoint in pkg_resources.iter_entry_points(
     group="breadapp", name="installed_apps"
 ):
@@ -33,7 +33,12 @@ third_party_apps = set(
 
 breadapps -= third_party_apps
 
-BREAD_DEPENDENCIES = ["django.contrib.admin"] + list(breadapps) + list(third_party_apps)
+BREAD_DEPENDENCIES = (
+    ["django.contrib.admin"]
+    + list(breadapps)
+    + list(third_party_apps)
+    + ["bread.apps.BreadConfig"]
+)
 
 
 CKEDITOR_UPLOAD_PATH = "ckeditor/"
