@@ -1,7 +1,11 @@
 {% load bread_tags %}
 
 <ul id="slide-out" class="sidenav sidenav-fixed">
-    <li class="bold"><a href={% url 'bread_overview' %}<h2>{{ request.site.name|default:'Admin App' }}</h2></a></li>
+    <li class="bold">
+        <a href={% url 'bread_overview' %}>
+            {{ request.site.name|default:'Admin App' }}
+        </a>
+    </li>
     {% if request.user.is_authenticated %}
         <li>
             <div style="padding: 0 32px">

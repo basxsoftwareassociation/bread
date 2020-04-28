@@ -9,29 +9,31 @@ for entrypoint in pkg_resources.iter_entry_points(
 ):
     breadapps.update(entrypoint.load())
 
-defaultapps = [
-    "ckeditor",
-    "ckeditor_uploader",
-    "guardian",
-    "dynamic_preferences",
-    "compressor",
-    "sorl.thumbnail",
-    "django_markdown2",
-    "django_filters",
-    "django_extensions",
-    "django.forms",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "django.contrib.humanize",
-    "django.contrib.sites",
-]
+third_party_apps = set(
+    [
+        "ckeditor",
+        "ckeditor_uploader",
+        "guardian",
+        "dynamic_preferences",
+        "compressor",
+        "sorl.thumbnail",
+        "django_markdown2",
+        "django_filters",
+        "django_extensions",
+        "django.forms",
+        "django.contrib.auth",
+        "django.contrib.contenttypes",
+        "django.contrib.sessions",
+        "django.contrib.messages",
+        "django.contrib.staticfiles",
+        "django.contrib.humanize",
+        "django.contrib.sites",
+    ]
+)
 
-breadapps -= set(defaultapps)
+breadapps -= third_party_apps
 
-BREAD_ENGINE_APPS = ["django.contrib.admin"] + list(breadapps) + defaultapps
+BREAD_DEPENDENCIES = ["django.contrib.admin"] + list(breadapps) + list(third_party_apps)
 
 
 CKEDITOR_UPLOAD_PATH = "ckeditor/"
@@ -42,11 +44,6 @@ CKEDITOR_CONFIGS = {
         "width": "100%",
     }
 }
-
-for entrypoint in pkg_resources.iter_entry_points(
-    group="breadapp", name="ckeditor_configs"
-):
-    CKEDITOR_CONFIGS.update(entrypoint.load())
 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
