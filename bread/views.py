@@ -31,10 +31,13 @@ class BrowseView(PermissionListMixin, FilterView):
         self.admin = admin
         self.model = admin.model
         self.modelfields = get_modelfields(
-            self.model, parse_fieldlist(self.model, self.admin.browsefields)
+            self.model,
+            parse_fieldlist(
+                self.model, kwargs.get("fields") or self.admin.browsefields
+            ),
         )
         kwargs["filterset_fields"] = parse_fieldlist(
-            self.model, self.admin.filterfields, is_form=True
+            self.model, kwargs.get("fields") or self.admin.filterfields, is_form=True
         )
         kwargs["model"] = self.model
         super().__init__(*args, **kwargs)
@@ -161,7 +164,8 @@ class ReadView(PermissionRequiredMixin, DetailView):
         self.model = admin.model
         super().__init__(*args, **kwargs)
         self.modelfields = get_modelfields(
-            self.model, parse_fieldlist(self.model, self.admin.readfields)
+            self.model,
+            parse_fieldlist(self.model, kwargs.get("fields") or self.admin.readfields),
         )
 
     def get_required_permissions(self, request):
@@ -220,7 +224,10 @@ class EditView(CustomFormMixin, PermissionRequiredMixin, UpdateView):
         self.admin = admin
         self.model = admin.model
         self.modelfields = get_modelfields(
-            self.model, parse_fieldlist(self.model, self.admin.editfields, is_form=True)
+            self.model,
+            parse_fieldlist(
+                self.model, kwargs.get("fields") or self.admin.editfields, is_form=True
+            ),
         )
         super().__init__(*args, **kwargs)
 
@@ -237,7 +244,10 @@ class AddView(CustomFormMixin, PermissionRequiredMixin, CreateView):
         self.admin = admin
         self.model = admin.model
         self.modelfields = get_modelfields(
-            self.model, parse_fieldlist(self.model, self.admin.addfields, is_form=True),
+            self.model,
+            parse_fieldlist(
+                self.model, kwargs.get("fields") or self.admin.addfields, is_form=True
+            ),
         )
         super().__init__(*args, **kwargs)
 
