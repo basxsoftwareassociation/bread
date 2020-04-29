@@ -94,8 +94,16 @@ class BreadAdmin:
                 or issubclass(view.view_class, DeleteView)
             ):
                 viewpath += f"/<int:pk>"
-            elif hasattr(view, "url_params"):
-                viewpath += view.url_params
+            # normal function views are also supported but require some inspection
+            elif callable(view):
+                params = view.__code__.co_varnames[: view.__code__.co_argcount]
+                annotations = view.__annotations__
+                for param in params:
+                    viewpath += (
+                        f"/<{annotations[param]}:{param}>"
+                        if param in annotations
+                        else f"/{param}"
+                    )
             urls[viewname] = path(viewpath, view, name=self.get_urlname(viewname),)
         urls["index"] = path(
             self.modelname,
@@ -224,7 +232,15 @@ class BreadAdminSite:
         self._registry = {}
 
     def register(self, modeladmin):
-        self._registry[modeladmin.model] = modeladmin()
+        self._registry[modeladmin] = modeladmin()
+
+    def unregister(self, modeladmin):
+        del self._registry[modeladmin]
+
+    def get_default_admin(self, model):
+        for modeladmin in self._registry.values():
+            if modeladmin.model == model:
+                return modeladmin
 
     def get_urls(self):
         ret = [
