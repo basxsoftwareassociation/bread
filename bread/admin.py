@@ -96,7 +96,7 @@ class BreadAdmin:
                 viewpath += f"/<int:pk>"
             # normal function views are also supported but require some inspection
             elif callable(view):
-                params = view.__code__.co_varnames[: view.__code__.co_argcount]
+                params = view.__code__.co_varnames[1 : view.__code__.co_argcount]
                 annotations = view.__annotations__
                 for param in params:
                     viewpath += (
