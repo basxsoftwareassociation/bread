@@ -26,6 +26,7 @@ from .utils import get_modelfields, parse_fieldlist, pretty_fieldname, xlsxrespo
 class BrowseView(PermissionListMixin, FilterView):
     template_name = "bread/list.html"
     admin = None
+    fields = None
 
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
