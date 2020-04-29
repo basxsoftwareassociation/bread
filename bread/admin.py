@@ -102,7 +102,7 @@ class BreadAdmin:
                     viewpath += (
                         f"/<{annotations[param]}:{param}>"
                         if param in annotations
-                        else f"/{param}"
+                        else f"/<{param}>"
                     )
             urls[viewname] = path(viewpath, view, name=self.get_urlname(viewname),)
         urls["index"] = path(
