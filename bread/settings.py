@@ -36,8 +36,8 @@ breadapps -= third_party_apps
 BREAD_DEPENDENCIES = (
     ["django.contrib.admin"]
     + list(breadapps)
-    + list(third_party_apps)
     + ["bread.apps.BreadConfig"]
+    + list(third_party_apps)
 )
 
 
@@ -67,6 +67,7 @@ DATETIME_INPUT_FORMATS += ["%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M"]
 # auth settings
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+LOGIN_URL = "login"
 
 # compressor settings
 COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
