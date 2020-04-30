@@ -6,6 +6,7 @@ import django_filters
 import pygraphviz
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models, transaction
 from django.db.models.functions import Lower
 from django.forms import HiddenInput
@@ -37,8 +38,21 @@ class BrowseView(PermissionListMixin, FilterView):
                 self.model, kwargs.get("fields") or self.admin.browsefields
             ),
         )
-        kwargs["filterset_fields"] = parse_fieldlist(
-            self.model, kwargs.get("fields") or self.admin.filterfields, is_form=True
+
+        def filterset_fields(field):
+            try:
+                field = self.model._meta.get_field(field)
+            except FieldDoesNotExist:
+                return False
+            if field.one_to_many:
+                return False
+            return True
+
+        kwargs["filterset_fields"] = filter(
+            filterset_fields,
+            parse_fieldlist(
+                self.model, kwargs.get("filterfields") or self.admin.filterfields,
+            ),
         )
         kwargs["model"] = self.model
         super().__init__(*args, **kwargs)
