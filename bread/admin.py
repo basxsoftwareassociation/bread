@@ -88,13 +88,16 @@ class BreadAdmin:
         urls = {}
         for viewname, view in self.get_views().items():
             viewpath = f"{self.modelname}/{viewname}"
-            if hasattr(view, "view_class") and (
-                issubclass(view.view_class, UpdateView)
-                or issubclass(view.view_class, DetailView)
-                or issubclass(view.view_class, DeleteView)
-            ):
-                viewpath += f"/<int:pk>"
-            # normal function views are also supported but require some inspection
+            if hasattr(view, "view_class"):
+                if (
+                    issubclass(view.view_class, UpdateView)
+                    or issubclass(view.view_class, DetailView)
+                    or issubclass(view.view_class, DeleteView)
+                ):
+                    viewpath += f"/<int:pk>"
+                if hasattr(view, "urlparams"):
+                    for param, _type in view.urlparams.items():
+                        viewpath += f"/<{_type}:{param}>"
             elif callable(view):
                 params = view.__code__.co_varnames[1 : view.__code__.co_argcount]
                 annotations = view.__annotations__

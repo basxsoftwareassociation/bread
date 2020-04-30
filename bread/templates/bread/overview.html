@@ -6,10 +6,13 @@
 
 Available apps
 
-<ul class="collection">
-    {% for app_url, label in app_urls %}
+{% for app, admins in app_urls.items %}
+    <h4>{{ app|title }}</h4>
+    <ul class="collection">
+    {% for app_url, label in admins %}
         <li class="collection-item"><a href="{{ app_url }}">{{ label }}</a></li>
     {% endfor %}
-</ul>
+    </ul>
+{% endfor %}
 
 {% endblock content %}

@@ -289,12 +289,17 @@ class Overview(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["app_urls"] = []
+        context["app_urls"] = {}
         for admin in self.adminsite._registry.values():
-            context["app_urls"].append(
+            if admin.model._meta.app_label not in context["app_urls"]:
+                context["app_urls"][admin.model._meta.app_label] = []
+            context["app_urls"][admin.model._meta.app_label].append(
                 (admin.reverse("index"), admin.verbose_modelname)
             )
-        context["app_urls"] = sorted(context["app_urls"], key=lambda a: a[1])
+            for app, admins in context["app_urls"].items():
+                context["app_urls"][app] = sorted(admins, key=lambda a: a[1])
+
+        context["app_urls"] = {k: v for k, v in sorted(context["app_urls"].items())}
 
         return context
 

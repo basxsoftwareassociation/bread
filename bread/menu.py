@@ -45,7 +45,7 @@ class Item:
         return resolve(urlparse(str(self.get_url())).path).namespace
 
     def active(self, request):
-        return self.namespace() == request.resolver_match.namespace
+        return request.path.startswith(str(self.get_url()))
 
 
 class Menu:
