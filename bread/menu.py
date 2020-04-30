@@ -12,7 +12,18 @@ class Group:
         self.items = []
 
     def __lt__(self, other):
-        return (self.order or 0) < (other.order or 0)
+        if self.order is None:
+            if other.order is None:
+                return self.label.lower() < other.label.lower()
+            return 0 < other.order
+        if other.order is None:
+            return self.order < 0
+        return self.order < other.order
+
+    def val(self):
+        if self.order is None:
+            return self.label
+        return str(self.order) if self.order >= 0 else str(self.order)
 
     def has_permission(self, user):
         return all([user.has_perm(perm) for perm in self.permissions])
@@ -30,7 +41,13 @@ class Item:
         self.order = order
 
     def __lt__(self, other):
-        return (self.order or 0) < (other.order or 0)
+        if self.order is None:
+            if other.order is None:
+                return self.label.lower() < other.label.lower()
+            return 0 < other.order
+        if other.order is None:
+            return self.order < 0
+        return self.order < other.order
 
     def has_permission(self, user):
         return all([user.has_perm(perm) for perm in self.permissions])

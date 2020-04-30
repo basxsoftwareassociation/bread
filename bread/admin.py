@@ -5,7 +5,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
 from django.db.models import Count
 from django.http import HttpResponse
-from django.urls import include, path, reverse, reverse_lazy
+from django.urls import include, path, reverse_lazy
 from django.views.generic import DeleteView, DetailView, RedirectView, UpdateView
 
 from . import menu, views
@@ -17,7 +17,6 @@ Action = namedtuple("Action", ["url", "label", "icon"])
 
 class BreadAdmin:
     # for overwriting
-    namespace = None
     model = None
     indexview = None
     browsefields = None
@@ -26,7 +25,6 @@ class BreadAdmin:
     editfields = None
     addfields = None
     createmenu = None
-    app_namespace = None  # should not be overriden in general I think
     browseview = None
     readview = None
     editview = None
@@ -35,9 +33,7 @@ class BreadAdmin:
 
     def __init__(self):
         assert self.model is not None
-        self.namespace = self.namespace or "bread"
-        self.app_namespace = self.app_namespace or self.model._meta.app_label
-        self.indexview = self.indexview or self.get_urlname("browse")
+        self.indexview = self.indexview or "browse"
         self.browsefields = self.browsefields or ["__all__"]
         self.filterfields = self.filterfields or self.browsefields
         self.readfields = self.readfields or ["__all__"]
@@ -49,20 +45,6 @@ class BreadAdmin:
         self.editview = self.editview or views.EditView
         self.addview = self.addview or views.AddView
         self.deleteview = self.deleteview or views.DeleteView
-        if self.createmenu:
-            grouplabel = apps.get_app_config(
-                self.model._meta.app_label
-            ).verbose_name.title()
-            if not menu.main.hasgroup(grouplabel):
-                menu.registergroup(menu.Group(label=grouplabel))
-            menu.registeritem(
-                menu.Item(
-                    label=self.verbose_modelname_plural,
-                    group=grouplabel,
-                    url=self.get_urlname("index"),
-                    permissions=[f"{self.model._meta.app_label}.view_{self.modelname}"],
-                )
-            )
 
     def get_views(self):
         ret = {}
@@ -73,21 +55,10 @@ class BreadAdmin:
 
         return ret
 
-    def reverse(self, viewname, *args, **kwargs):
-        return reverse(
-            self.get_urlname(viewname),
-            args=args,
-            kwargs=kwargs,
-            current_app=self.namespace,
-        )
-
-    def get_urlname(self, viewname):
-        return f"{self.modelname}_{viewname}"
-
     def get_urls(self):
         urls = {}
         for viewname, view in self.get_views().items():
-            viewpath = f"{self.modelname}/{viewname}"
+            viewpath = viewname
             if hasattr(view, "view_class"):
                 if (
                     issubclass(view.view_class, UpdateView)
@@ -95,8 +66,8 @@ class BreadAdmin:
                     or issubclass(view.view_class, DeleteView)
                 ):
                     viewpath += f"/<int:pk>"
-                if hasattr(view, "urlparams"):
-                    for param, _type in view.urlparams.items():
+                if "urlparams" in view.view_initkwargs:
+                    for param, _type in view.view_initkwargs["urlparams"].items():
                         viewpath += f"/<{_type}:{param}>"
             elif callable(view):
                 params = view.__code__.co_varnames[1 : view.__code__.co_argcount]
@@ -107,13 +78,24 @@ class BreadAdmin:
                         if param in annotations
                         else f"/<{param}>"
                     )
-            urls[viewname] = path(viewpath, view, name=self.get_urlname(viewname),)
+            urls[viewname] = path(viewpath, view, name=viewname)
         urls["index"] = path(
-            self.modelname,
-            RedirectView.as_view(url=reverse_lazy(self.indexview)),
-            name=self.get_urlname("index"),
+            f"", RedirectView.as_view(url=self.reverse(self.indexview)), name="index",
         )
         return urls
+
+    def get_menuitems(self):
+        grouplabel = apps.get_app_config(
+            self.model._meta.app_label
+        ).verbose_name.title()
+        return [
+            menu.Item(
+                label=self.verbose_modelname_plural,
+                group=grouplabel,
+                url=self.reverse("index"),
+                permissions=[f"{self.model._meta.app_label}.view_{self.modelname}"],
+            )
+        ]
 
     def render_field(self, object, fieldname):
         fieldtype = None
@@ -158,24 +140,14 @@ class BreadAdmin:
         actions = []
         if "read" in urls and has_permission(request.user, "view", object):
             actions.append(
-                Action(
-                    reverse(self.get_urlname("read"), args=[object.pk]),
-                    "View",
-                    "search",
-                )
+                Action(self.reverse("read", pk=object.pk), "View", "search",)
             )
         if "edit" in urls and has_permission(request.user, "change", object):
-            actions.append(
-                Action(
-                    reverse(self.get_urlname("edit"), args=[object.pk]), "Edit", "edit"
-                )
-            )
+            actions.append(Action(self.reverse("edit", pk=object.pk), "Edit", "edit",))
         if "delete" in urls and has_permission(request.user, "delete", object):
             actions.append(
                 Action(
-                    reverse(self.get_urlname("delete"), args=[object.pk]),
-                    "Delete",
-                    "delete_forever",
+                    self.reverse("delete", pk=object.pk), "Delete", "delete_forever",
                 )
             )
         return actions
@@ -184,12 +156,12 @@ class BreadAdmin:
         urls = self.get_urls()
         actions = []
         if "add" in urls and has_permission(request.user, "add", self.model):
-            actions.append(Action(reverse(self.get_urlname("add")), "Add", "add"))
+            actions.append(Action(self.reverse("add"), "Add", "add"))
         if "browse" in urls:
             # need to preserve filter and ordering from query parameters
             actions.append(
                 Action(
-                    reverse(self.get_urlname("browse"))
+                    self.reverse("browse")
                     + "?"
                     + request.GET.urlencode()
                     + "&export=1",
@@ -203,11 +175,20 @@ class BreadAdmin:
         """Machine-readable name for the model"""
         return self.model._meta.model_name
 
+    def reverse(self, viewname, *args, **kwargs):
+        namespace = f"{self.model._meta.app_label}:{self.modelname}"
+        return reverse_lazy(
+            f"{namespace}:{viewname}", args=args, kwargs=kwargs, current_app=namespace
+        )
+
     @property
     def urls(self):
         """Urls for inclusion in django urls"""
-        return list(self.get_urls().values())
-        # return include((self.get_urls().values(), self.app_namespace), self.namespace)
+        urls = path(
+            self.modelname + "/",
+            include((self.get_urls().values(), self.modelname), self.modelname),
+        )
+        return urls
 
     @property
     def modelname(self):
@@ -245,6 +226,24 @@ class BreadAdminSite:
             if modeladmin.model == model:
                 return modeladmin
 
+    def get_apps(self):
+        applist = {}
+        for admin in self._registry.values():
+            app = apps.get_app_config(admin.model._meta.app_label)
+            if app not in applist:
+                applist[app] = []
+            applist[app].append(admin)
+        return applist
+
+    def register_menus(self):
+        for app, admins in self.get_apps().items():
+            grouplabel = app.verbose_name.title()
+            if not menu.main.hasgroup(grouplabel):
+                menu.registergroup(menu.Group(label=grouplabel))
+            for admin in admins:
+                for menuitem in admin.get_menuitems():
+                    menu.registeritem(menuitem)
+
     def get_urls(self):
         ret = [
             path(
@@ -257,8 +256,13 @@ class BreadAdminSite:
             path("datamodel", views.DataModel.as_view(), name="datamodel",),
         ]
 
-        for modeladmin in self._registry.values():
-            ret.extend(modeladmin.urls)
+        for app, admins in self.get_apps().items():
+            ret.append(
+                path(
+                    f"{app.label}/",
+                    include(([admin.urls for admin in admins], app.label), app.label),
+                )
+            )
         return ret
 
     @property
