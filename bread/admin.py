@@ -223,7 +223,7 @@ class BreadAdminSite:
 
     def get_default_admin(self, model):
         for modeladmin in self._registry.values():
-            if modeladmin.model == model:
+            if modeladmin.model == model._meta.model:
                 return modeladmin
 
     def get_apps(self):

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db import models
 from django.template.loader import render_to_string
 
+from ..admin import site
 from ..formatters import format_value
 from ..utils import has_permission, pretty_fieldname
 
@@ -20,6 +21,11 @@ def pretty_modelname(model, plural=False):
     if plural:
         return model._meta.verbose_name_plural.title()
     return model._meta.verbose_name.title()
+
+
+@register.simple_tag
+def adminurl(model, urlname, *args, **kwargs):
+    return site.get_default_admin(model).reverse(urlname, *args, **kwargs)
 
 
 @register.simple_tag
