@@ -107,7 +107,7 @@ class BreadAdmin:
         if value is None:
             if hasattr(object, f"get_{fieldname}_display"):
                 value = getattr(object, f"get_{fieldname}_display")()
-            else:
+            elif hasattr(object, fieldname):
                 value = getattr(object, fieldname)
         return format_value(value, fieldtype)
 
