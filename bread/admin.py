@@ -3,7 +3,7 @@ from collections import namedtuple
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
-from django.db.models import Count, IntegerField
+from django.db.models import Aggregate, Count, IntegerField
 from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
 from django.views.generic import DeleteView, DetailView, RedirectView, UpdateView
@@ -122,18 +122,26 @@ class BreadAdmin:
                 fieldtype = None
         except FieldDoesNotExist:
             pass
-        aggregation = getattr(self, f"{fieldname}_aggregation", None)
-        if aggregation is None:
-            aggregation = getattr(
+        # check if there are aggrations defined on the breadadmin or on the model field
+        aggregation_func = getattr(self, f"{fieldname}_aggregation", None)
+        if aggregation_func is None:
+            aggregation_func = getattr(
                 getattr(self.model, fieldname, None), "aggregation", None
             )
-        if aggregation is None:
+        # if there is no custom aggregation defined but the field is a database fields, we just count distinct
+        if aggregation_func is None:
             if fieldtype is None:
                 return ""
+            fieldtype = IntegerField()
+            aggregation = Count(fieldname, distinct=True)
+        else:
+            aggregation = aggregation_func(queryset)
+
+        if isinstance(aggregation, Aggregate):
             return format_value(
-                queryset.aggregate(value=Count(fieldname))["value"], IntegerField(),
+                queryset.aggregate(value=aggregation)["value"], fieldtype
             )
-        return format_value(queryset.aggregate(value=aggregation)["value"], fieldtype)
+        return format_value(aggregation, fieldtype)
 
     def object_actions(self, request, object):
         """
