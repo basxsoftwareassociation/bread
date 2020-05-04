@@ -3,10 +3,11 @@ from collections import namedtuple
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
-from django.db.models import Count
+from django.db.models import Count, IntegerField
 from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
 from django.views.generic import DeleteView, DetailView, RedirectView, UpdateView
+from django_countries.fields import CountryField
 
 from . import menu, views
 from .formatters import format_value
@@ -105,10 +106,12 @@ class BreadAdmin:
             pass
         value = getattr(self, fieldname, None)
         if value is None:
-            if hasattr(object, f"get_{fieldname}_display"):
+            if hasattr(object, f"get_{fieldname}_display") and not isinstance(
+                fieldtype, CountryField
+            ):
                 value = getattr(object, f"get_{fieldname}_display")()
-            elif hasattr(object, fieldname):
-                value = getattr(object, fieldname)
+            else:
+                value = getattr(object, fieldname, None)
         return format_value(value, fieldtype)
 
     def render_field_aggregation(self, queryset, fieldname):
@@ -119,7 +122,7 @@ class BreadAdmin:
                 fieldtype = None
         except FieldDoesNotExist:
             pass
-        aggregation = getattr(getattr(self, fieldname, None), "aggregation", None)
+        aggregation = getattr(self, f"{fieldname}_aggregation", None)
         if aggregation is None:
             aggregation = getattr(
                 getattr(self.model, fieldname, None), "aggregation", None
@@ -128,11 +131,9 @@ class BreadAdmin:
             if fieldtype is None:
                 return ""
             return format_value(
-                queryset.aggregate(value=Count(fieldname))["value"], fieldtype
+                queryset.aggregate(value=Count(fieldname))["value"], IntegerField(),
             )
-        return format_value(
-            queryset.aggregate(value=Count(fieldname))["value"], fieldtype
-        )
+        return format_value(queryset.aggregate(value=aggregation)["value"], fieldtype)
 
     def object_actions(self, request, object):
         """
