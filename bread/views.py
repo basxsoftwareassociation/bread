@@ -119,6 +119,14 @@ class BrowseView(PermissionListMixin, FilterView):
                         )
                     },
                 },
+                models.DateTimeField: {
+                    "filter_class": django_filters.DateFromToRangeFilter,
+                    "extra": lambda f: {
+                        "widget": django_filters.widgets.DateRangeWidget(
+                            attrs={"type": "date", "class": "validate datepicker"}
+                        )
+                    },
+                },
             },
         }
         config["exclude"] = [
