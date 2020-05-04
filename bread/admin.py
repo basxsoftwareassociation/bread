@@ -3,7 +3,7 @@ from collections import namedtuple
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
-from django.db.models import Aggregate, Count, IntegerField
+from django.db import models
 from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
 from django.views.generic import DeleteView, DetailView, RedirectView, UpdateView
@@ -115,11 +115,12 @@ class BreadAdmin:
         return format_value(value, fieldtype)
 
     def render_field_aggregation(self, queryset, fieldname):
-        fieldtype = None
+        DEFAULT_AGGREGATORS = {models.DurationField: models.Sum(fieldname)}
+        modelfield = None
         try:
-            fieldtype = self.model._meta.get_field(fieldname)
-            if isinstance(fieldtype, GenericForeignKey):
-                fieldtype = None
+            modelfield = self.model._meta.get_field(fieldname)
+            if isinstance(modelfield, GenericForeignKey):
+                modelfield = None
         except FieldDoesNotExist:
             pass
         # check if there are aggrations defined on the breadadmin or on the model field
@@ -130,18 +131,22 @@ class BreadAdmin:
             )
         # if there is no custom aggregation defined but the field is a database fields, we just count distinct
         if aggregation_func is None:
-            if fieldtype is None:
+            if modelfield is None:
                 return ""
-            fieldtype = IntegerField()
-            aggregation = Count(fieldname, distinct=True)
+            aggregation = DEFAULT_AGGREGATORS.get(
+                type(modelfield), models.Count(fieldname, distinct=True)
+            )
+            # we use the count aggregator and therefore have an integer
+            if type(modelfield) not in DEFAULT_AGGREGATORS:
+                modelfield = models.IntegerField()
         else:
             aggregation = aggregation_func(queryset)
 
-        if isinstance(aggregation, Aggregate):
+        if isinstance(aggregation, models.Aggregate):
             return format_value(
-                queryset.aggregate(value=aggregation)["value"], fieldtype
+                queryset.aggregate(value=aggregation)["value"], modelfield
             )
-        return format_value(aggregation, fieldtype)
+        return format_value(aggregation, modelfield)
 
     def object_actions(self, request, object):
         """
