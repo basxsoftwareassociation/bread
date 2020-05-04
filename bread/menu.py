@@ -1,7 +1,5 @@
-from urllib.parse import urlparse
-
 from django.core.exceptions import ImproperlyConfigured
-from django.urls import resolve, reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 
 
 class Group:
@@ -52,17 +50,14 @@ class Item:
     def has_permission(self, user):
         return all([user.has_perm(perm) for perm in self.permissions])
 
-    def get_url(self):
+    def get_url(self, request):
         # already reversed or raw url
         if self.url.startswith("/") or self.url.startswith("http"):
             return self.url
         return reverse(self.url)
 
-    def namespace(self):
-        return resolve(urlparse(str(self.get_url())).path).namespace
-
     def active(self, request):
-        return request.path.startswith(str(self.get_url()))
+        return request.path.startswith(str(self.get_url(request)))
 
 
 class Menu:

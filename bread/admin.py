@@ -103,10 +103,13 @@ class BreadAdmin:
             fieldtype = self.model._meta.get_field(fieldname)
         except FieldDoesNotExist:
             pass
-        return format_value(
-            getattr(self, fieldname, None) or getattr(object, fieldname, None),
-            fieldtype,
-        )
+        value = getattr(self, fieldname, None)
+        if value is None:
+            if hasattr(object, f"get_{fieldname}_display"):
+                value = getattr(object, f"get_{fieldname}_display")()
+            else:
+                value = getattr(object, fieldname)
+        return format_value(value, fieldtype)
 
     def render_field_aggregation(self, queryset, fieldname):
         fieldtype = None

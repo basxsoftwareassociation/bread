@@ -106,7 +106,7 @@ def menu(request):
     for group in sorted(menuregister.main._registry.values()):
         if group.has_permission(user):
             yield group.label, group.active(request), (
-                (item.label, item.active(request), item.get_url())
+                (item.label, item.active(request), item.get_url(request))
                 for item in sorted(group.items)
                 if item.has_permission(user)
             )
