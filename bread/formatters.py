@@ -23,7 +23,6 @@ def format_value(value, fieldtype=None):
     # If there is a hint passed via fieldtype, use the accoring conversion function first (identity otherwise)
     # This is mostly helpfull for string-based fields like URLS, emails etc.
     value = MODELFIELD_FORMATING_HELPERS.get(fieldtype, lambda a: a)(value)
-    value = if hasattr(fieldtype, "choices")
 
     if isinstance(value, bool) or value is None:
         return CONSTANTS[value]
