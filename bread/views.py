@@ -38,6 +38,7 @@ class BrowseView(PermissionListMixin, FilterView):
             parse_fieldlist(
                 self.model, kwargs.get("fields") or self.admin.browsefields
             ),
+            admin=self.admin,
         )
 
         def filterset_fields(field):
@@ -226,6 +227,7 @@ class ReadView(PermissionRequiredMixin, DetailView):
         self.modelfields = get_modelfields(
             self.model,
             parse_fieldlist(self.model, kwargs.get("fields") or self.admin.readfields),
+            admin=self.admin,
         )
 
     def get_required_permissions(self, request):
@@ -289,6 +291,7 @@ class EditView(CustomFormMixin, PermissionRequiredMixin, UpdateView):
             parse_fieldlist(
                 self.model, kwargs.get("fields") or self.admin.editfields, is_form=True
             ),
+            admin=self.admin,
         )
         super().__init__(*args, **kwargs)
 
@@ -309,6 +312,7 @@ class AddView(CustomFormMixin, PermissionRequiredMixin, CreateView):
             parse_fieldlist(
                 self.model, kwargs.get("fields") or self.admin.addfields, is_form=True
             ),
+            admin=self.admin,
         )
         super().__init__(*args, **kwargs)
 

@@ -170,7 +170,7 @@ def parse_fieldlist(model, fields_parameter, is_form=False):
 
 
 # similar to parse_fieldlist but will return django Field instances
-def get_modelfields(model, fieldlist):
+def get_modelfields(model, fieldlist, admin=None):
     fields = {}
     modelfields = {f.name: f for f in model._meta.get_fields()}
     modelfields_rel = {
@@ -183,7 +183,7 @@ def get_modelfields(model, fieldlist):
             fields[field] = modelfields[field]
         elif field in modelfields_rel:
             fields[field] = modelfields_rel[field]
-        elif hasattr(model, field):
+        elif hasattr(model, field) or hasattr(admin, field):
             fields[field] = VirtualField(
                 name=field, verbose_name=field.replace("_", " ")
             )

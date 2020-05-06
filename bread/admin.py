@@ -104,8 +104,9 @@ class BreadAdmin:
             fieldtype = self.model._meta.get_field(fieldname)
         except FieldDoesNotExist:
             pass
-        value = getattr(self, fieldname, None)
-        if value is None:
+        if hasattr(self, fieldname):
+            value = getattr(self, fieldname)(object)
+        else:
             if hasattr(object, f"get_{fieldname}_display") and not isinstance(
                 fieldtype, CountryField
             ):
