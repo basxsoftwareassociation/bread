@@ -251,9 +251,10 @@ class CustomFormMixin:
         form = super().get_form(form_class)
 
         # hide predefined fields passed in GET parameters
-        for field in form.fields:
-            if field in self.request.GET:
-                form.fields[field].widget = HiddenInput()
+        if self.request.method != "POST":
+            for field in form.fields:
+                if field in self.request.GET:
+                    form.fields[field].widget = HiddenInput()
 
         # make sure fields appear in original order
         form.order_fields(self.modelfields.keys())
