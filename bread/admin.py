@@ -242,6 +242,7 @@ class BreadAdminSite:
         for modeladmin in self._registry.values():
             if modeladmin.model == model._meta.model:
                 return modeladmin
+        return None
 
     def get_apps(self):
         applist = {}

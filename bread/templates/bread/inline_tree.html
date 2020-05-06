@@ -1,0 +1,29 @@
+{% load bread_tags %}
+
+<ul class="collapsible expandable no-autoinit">
+    {% for object, children in nodes.items %}
+        <li>
+            <div class="collapsible-header">{{ object }}</div>
+            <div class="collapsible-body">
+                <div class="row">
+                    <div class="col s12 m10">
+                        <table>
+                            {% for field in view.modelfields.values %}
+                                <tr>
+                                    <td>{% pretty_fieldname field %}</td>
+                                    <td>{% render_field view.admin object field.name %}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="col s12 m2">
+                        <div class="right">{% include "bread/object_actions.html" %}</div>
+                    </div>
+                </div>
+                {% if children %}
+                    {% include "bread/inline_tree.html" with nodes=children %}
+                {% endif %}
+            </div>
+        </li>
+    {% endfor %}
+</ul>

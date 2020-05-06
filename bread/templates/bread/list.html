@@ -4,6 +4,10 @@
 {% block content %}
     {% include "bread/list_actions.html" %}
     {% include "bread/inline_list.html" %}
+    <script>
+        var elems = document.querySelectorAll('.custom-dropdown-trigger');
+        M.Dropdown.init(elems, {constrainWidth: false});
+    </script>
 {% endblock %}
 
 {% block right-panel %}

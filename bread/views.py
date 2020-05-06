@@ -11,6 +11,7 @@ from django.db import models, transaction
 from django.db.models.functions import Lower
 from django.forms import HiddenInput
 from django.forms.models import ModelForm
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
 from django.views.generic import CreateView
@@ -177,6 +178,42 @@ class BrowseView(PermissionListMixin, FilterView):
         return xlsxresponse(workbook, workbook.title)
 
 
+class TreeView(BrowseView):
+    template_name = "bread/tree.html"
+    parent_accessor = None
+
+    def __init__(self, parent_accessor, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parent_accessor = parent_accessor
+
+    def nodes(self):
+        # we do this here a bit more complicated in order to hit database only once
+        # and to make use of the filtered queryset
+        objects = list(self.object_list)
+
+        # first pass: get child relationships
+        children = {None: []}
+        for object in objects:
+            parent_pk = None
+            parent = getattr(object, self.parent_accessor)
+            if parent is not None and parent in objects:
+                parent_pk = parent.pk
+            if parent_pk not in children:
+                children[parent_pk] = []
+            children[parent_pk].append(object)
+
+        # second pass: build tree recursively
+        def build_tree(nodes):
+            ret = {}
+            for node in nodes:
+                ret[node] = None
+                if node.pk in children:
+                    ret[node] = build_tree(children[node.pk])
+            return ret
+
+        return build_tree(children[None])
+
+
 class ReadView(PermissionRequiredMixin, DetailView):
     template_name = "bread/detail.html"
     admin = None
@@ -329,13 +366,20 @@ class Overview(LoginRequiredMixin, TemplateView):
 class DataModel(LoginRequiredMixin, TemplateView):
     template_name = "bread/datamodel.html"
 
-    def get_context_data(self, **kwargs):
-        # TODO: make this display nicer and split by app
-        ret = super().get_context_data(**kwargs)
+    def get(self, request, *args, **kwargs):
+        if "download" in request.GET:
+            response = HttpResponse(
+                self._render_svg().encode(), content_type="image/svg+xml"
+            )
+            response["Content-Disposition"] = f'inline; filename="datamodel.svg"'
+            return response
+        return super().get(request, *args, **kwargs)
 
+    def _render_svg(self):
+        # TODO: make this display nicer and split by app
         graph_models = ModelGraph(all_applications=True, app_labels=None)
         graph_models.generate_graph_data()
-        svg = (
+        return (
             pygraphviz.AGraph(
                 generate_dot(
                     graph_models.get_graph_data(),
@@ -346,7 +390,10 @@ class DataModel(LoginRequiredMixin, TemplateView):
             .decode()
         )
 
+    def get_context_data(self, **kwargs):
+        ret = super().get_context_data(**kwargs)
         # force SVG to be match page-layout instead of fixed width and height
-        ret["datamodel"] = re.sub('svg width="[0-9]*pt" height="[0-9]*pt"', "svg", svg)
-
+        ret["datamodel"] = re.sub(
+            'svg width="[0-9]*pt" height="[0-9]*pt"', "svg", self._render_svg()
+        )
         return ret

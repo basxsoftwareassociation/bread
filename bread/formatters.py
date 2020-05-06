@@ -107,7 +107,14 @@ def as_image(value):
 
 def as_object_link(value):
     if hasattr(value, "get_absolute_url"):
-        return f'<a href="{value.get_absolute_url()}">{value}</a>'
+        return mark_safe(f'<a href="{value.get_absolute_url()}">{value}</a>')
+    from .admin import site
+
+    defaultadmin = site.get_default_admin(value)
+    if defaultadmin is not None:
+        return mark_safe(
+            f'<a href="{defaultadmin.reverse("read", value.pk)}">{value}</a>'
+        )
     return str(value)
 
 

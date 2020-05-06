@@ -1,0 +1,13 @@
+{% extends "bread/list.html" %}
+
+{% block content %}
+    {% include "bread/list_actions.html" %}
+    <h2>{{ view.admin.verbose_modelname_plural }}</h2>
+    {% include "bread/inline_tree.html" with nodes=view.nodes %}
+    <script>
+        var collapsibles = document.querySelectorAll('.collapsible.expandable');
+        M.Collapsible.init(collapsibles, { accordion: false });
+        var dropdowns = document.querySelectorAll('.custom-dropdown-trigger');
+        M.Dropdown.init(dropdowns, {constrainWidth: false});
+    </script>
+{% endblock %}
