@@ -85,7 +85,7 @@
                 // we need to disable materialize auto init for the empty forms from django: they must be initialized on creating a new instance, see formset.html
                 disableMaterializeOnTemplateForms();
                 M.AutoInit();
-                M.Datepicker.init(document.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd'});
+                M.Datepicker.init(document.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});
                 {% block oncontentloaded_js %}
                 {% endblock oncontentloaded_js %}
             });

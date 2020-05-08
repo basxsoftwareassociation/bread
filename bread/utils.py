@@ -131,10 +131,14 @@ def parse_fieldlist(model, fields_parameter, is_form=False):
 
     # filter fields which cannot be processed in a form
     def form_filter(field):
-        try:
-            field = model._meta.get_field(field)
-        except FieldDoesNotExist:
+        modelfields = {
+            f.get_accessor_name() if hasattr(f, "get_accessor_name") else f.name: f
+            for f in model._meta.get_fields(include_hidden=True)
+        }
+        if field not in modelfields:
             return False
+        field = modelfields[field]
+
         return (
             field.editable
             or isinstance(field, GenericForeignKey)
