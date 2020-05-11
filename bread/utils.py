@@ -158,14 +158,10 @@ def parse_fieldlist(model, fields_parameter, is_form=False):
 
     # default configuration: display only direct defined fields on the modle (no reverse related models)
     if "__all__" in fields_parameter:
-        __allfields__ = [
-            f.name
-            for f in model._meta.get_fields()
-            if not f.one_to_many and not f.many_to_many
-        ]
+        concrete_fields = [f.name for f in model._meta.get_fields() if f.concrete]
         i = fields_parameter.index("__all__")
         fields_parameter = (
-            fields_parameter[:i] + __allfields__ + fields_parameter[i + 1 :]
+            fields_parameter[:i] + concrete_fields + fields_parameter[i + 1 :]
         )
     ret = filter(unwanted_fields_filter, fields_parameter)
     if is_form:

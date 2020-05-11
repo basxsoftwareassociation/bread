@@ -369,6 +369,8 @@ class Overview(LoginRequiredMixin, TemplateView):
 
 
 class DataModel(LoginRequiredMixin, TemplateView):
+    """Show the datamodel of the whole application"""
+
     template_name = "bread/datamodel.html"
 
     def get(self, request, *args, **kwargs):

@@ -72,7 +72,7 @@ def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
             formset = inlineformset_factory(
                 model,
                 modelfield.related_model,
-                fields=child_fields.keys(),
+                fields=list(child_fields.keys()),
                 formfield_callback=lambda field: formfield_callback_with_request(
                     field, request
                 ),
