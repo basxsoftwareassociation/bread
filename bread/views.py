@@ -25,7 +25,7 @@ from .forms.forms import inlinemodelform_factory
 from .utils import get_modelfields, parse_fieldlist, pretty_fieldname, xlsxresponse
 
 
-class BrowseView(PermissionListMixin, FilterView):
+class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
     template_name = "bread/list.html"
     admin = None
     fields = None
