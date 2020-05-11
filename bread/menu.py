@@ -24,7 +24,12 @@ class Group:
         return str(self.order) if self.order >= 0 else str(self.order)
 
     def has_permission(self, user):
-        return all([user.has_perm(perm) for perm in self.permissions])
+        print(self.label, [user.has_perm(perm) for perm in self.permissions])
+        return (
+            all((user.has_perm(perm) for perm in self.permissions))
+            and self.items
+            and any((item.has_permission(user) for item in self.items))
+        )
 
     def active(self, request):
         return any((item.active(request) for item in self.items))
@@ -109,9 +114,11 @@ registeritem(
         permissions=["dynamic_preferences:change_globalpreferencemodel"],
     )
 )
-registeritem(Item(group="Admin", label="Datamodel", url=reverse_lazy("datamodel"),))
+datamodel = Item(group="Admin", label="Datamodel", url=reverse_lazy("datamodel"),)
 system_settings = Item(
     group="Admin", label="System Settings", url=reverse_lazy("admin:index"),
 )
 system_settings.has_permission = lambda user: user.is_superuser
+datamodel.has_permission = lambda user: user.is_superuser
+registeritem(datamodel)
 registeritem(system_settings)
