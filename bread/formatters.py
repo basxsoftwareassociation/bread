@@ -1,5 +1,6 @@
 import datetime
 import numbers
+import random
 from collections.abc import Iterable
 
 import bread.settings as app_settings
@@ -57,7 +58,20 @@ def as_url(value):
 
 
 def as_text(value):
-    return mark_safe(linebreaks(value))
+    text = linebreaks(value[:32])
+    if len(value) > 32:
+        modalid = int(random.random() * 100000000)
+        text = f"""{text}... <a class="modal-trigger" href="#modal_{modalid}">Show</a>
+        <div id="modal_{modalid}" class="modal modal-fixed-footer">
+            <div class="modal-content">
+                <p>{linebreaks(value)}</p>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close btn-flat">Close</a>
+            </div>
+        </div>
+        """
+    return mark_safe(text)
 
 
 def as_duration(value):
