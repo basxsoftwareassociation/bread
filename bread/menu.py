@@ -24,7 +24,6 @@ class Group:
         return str(self.order) if self.order >= 0 else str(self.order)
 
     def has_permission(self, user):
-        print(self.label, [user.has_perm(perm) for perm in self.permissions])
         return (
             all((user.has_perm(perm) for perm in self.permissions))
             and self.items

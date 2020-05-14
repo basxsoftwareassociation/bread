@@ -1,4 +1,7 @@
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.forms import generic_inlineformset_factory
+
+# BaseGenericInlineFormSet,
 from django.db import models
 from django.forms import (
     BoundField,
@@ -69,17 +72,31 @@ def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
                 child_fields.values(),
                 baseformclass,
             )
-            formset = inlineformset_factory(
-                model,
-                modelfield.related_model,
-                fields=list(child_fields.keys()),
-                formfield_callback=lambda field: formfield_callback_with_request(
-                    field, request
-                ),
-                form=formclass,
-                extra=1,
-                can_delete=True,
-            )
+            if isinstance(modelfield, GenericRelation):
+                formset = generic_inlineformset_factory(
+                    modelfield.related_model,
+                    ct_field=modelfield.content_type_field_name,
+                    fk_field=modelfield.object_id_field_name,
+                    fields=list(child_fields.keys()),
+                    formfield_callback=lambda field: formfield_callback_with_request(
+                        field, request
+                    ),
+                    form=formclass,
+                    extra=1,
+                    can_delete=True,
+                )
+            else:
+                formset = inlineformset_factory(
+                    model,
+                    modelfield.related_model,
+                    fields=list(child_fields.keys()),
+                    formfield_callback=lambda field: formfield_callback_with_request(
+                        field, request
+                    ),
+                    form=formclass,
+                    extra=1,
+                    can_delete=True,
+                )
             if request.POST:
                 attribs[modelfield.name] = InlineField(
                     formset(request.POST, request.FILES, instance=object)

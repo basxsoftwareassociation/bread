@@ -1,5 +1,7 @@
 import io
+import os
 
+import ffmpeg
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
@@ -192,3 +194,31 @@ def get_modelfields(model, fieldlist, admin=None):
         if isinstance(fields[field], GenericForeignKey):
             fields[field].sortable = False
     return fields
+
+
+def get_audio_thumbnail(file_):
+    # TODO: make this working with any storage (not only local disk)
+    """Generate audio mp3 which can be played in all browsers.
+    """
+    thumbnail_name = file_.name + "_thumbnail.mp3"
+    inputname = os.path.join(settings.MEDIA_ROOT, file_.name)
+    outputname = os.path.join(settings.MEDIA_ROOT, thumbnail_name)
+    outputurl = os.path.join(settings.MEDIA_URL, thumbnail_name)
+    if not os.path.exists(outputname):
+        ffmpeg.input(inputname).output(outputname, format="mp3",).run()
+    return outputurl
+
+
+def get_video_thumbnail(file_):
+    # TODO: make this working with any storage (not only local disk)
+    """Generate video mp3 which can be played in all browsers.
+    """
+    thumbnail_name = file_.name + "_thumbnail.mp4"
+    inputname = os.path.join(settings.MEDIA_ROOT, file_.name)
+    outputname = os.path.join(settings.MEDIA_ROOT, thumbnail_name)
+    outputurl = os.path.join(settings.MEDIA_URL, thumbnail_name)
+    if not os.path.exists(outputname):
+        ffmpeg.input(inputname).filter("scale", 200, -2).output(
+            outputname, format="mp4", preset="ultrafast", acodec="copy"
+        ).run()
+    return outputurl

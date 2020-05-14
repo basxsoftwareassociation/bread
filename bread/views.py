@@ -4,12 +4,15 @@ from html.parser import HTMLParser
 
 import django_filters
 import pygraphviz
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models, transaction
 from django.db.models.functions import Lower
-from django.forms import HiddenInput
+
+# from django.forms import HiddenInput
 from django.forms.models import ModelForm
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -77,7 +80,7 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
             if field.is_relation and not isinstance(field, GenericForeignKey):
                 if field.many_to_one or field.one_to_one:
                     ret = ret.select_related(name)
-                elif field.one_to_many:
+                elif field.one_to_many and not isinstance(field, GenericRelation):
                     ret = ret.prefetch_related(field.related_name)
                 elif field.many_to_many:
                     ret = ret.prefetch_related(name)
@@ -252,11 +255,12 @@ class CustomFormMixin:
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
 
-        # hide predefined fields passed in GET parameters
+        # hide or disable predefined fields passed in GET parameters
         if self.request.method != "POST":
             for field in form.fields:
                 if field in self.request.GET:
-                    form.fields[field].widget = HiddenInput()
+                    # form.fields[field].widget = HiddenInput()
+                    form.fields[field].widget.attrs["readonly"] = True
 
         # make sure fields appear in original order
         form.order_fields(self.modelfields.keys())
@@ -278,10 +282,15 @@ class CustomFormMixin:
         return self.admin.reverse("index")
 
 
-class EditView(CustomFormMixin, PermissionRequiredMixin, UpdateView):
+class EditView(
+    CustomFormMixin, SuccessMessageMixin, PermissionRequiredMixin, UpdateView
+):
     template_name = "bread/custom_form.html"
     admin = None
     accept_global_perms = True
+
+    def get_success_message(self, cleaned_data):
+        return f"Saved {self.object}"
 
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
@@ -299,10 +308,15 @@ class EditView(CustomFormMixin, PermissionRequiredMixin, UpdateView):
         return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
 
 
-class AddView(CustomFormMixin, PermissionRequiredMixin, CreateView):
+class AddView(
+    CustomFormMixin, SuccessMessageMixin, PermissionRequiredMixin, CreateView
+):
     template_name = "bread/custom_form.html"
     admin = None
     accept_global_perms = True
+
+    def get_success_message(self, cleaned_data):
+        return f"Added {self.object}"
 
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
@@ -323,7 +337,7 @@ class AddView(CustomFormMixin, PermissionRequiredMixin, CreateView):
         return None
 
 
-class DeleteView(PermissionRequiredMixin, DjangoDeleteView):
+class DeleteView(PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView):
     template_name = "bread/confirm_delete.html"
     admin = None
     accept_global_perms = True
@@ -336,6 +350,7 @@ class DeleteView(PermissionRequiredMixin, DjangoDeleteView):
         return [f"{self.model._meta.app_label}.delete_{self.model.__name__.lower()}"]
 
     def get_success_url(self):
+        messages.info(self.request, f"Deleted {self.object}")
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
         return self.admin.reverse("index")

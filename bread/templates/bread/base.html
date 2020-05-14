@@ -13,8 +13,8 @@
         {% endcompress %}
 
         {% compress js %}
-        <script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/bliss.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>
         {% endcompress js %}
     </head>
 
@@ -85,7 +85,11 @@
                 // we need to disable materialize auto init for the empty forms from django: they must be initialized on creating a new instance, see formset.html
                 disableMaterializeOnTemplateForms();
                 M.AutoInit();
+                // make the datepicker a bit nicer and compatible with the django format
                 M.Datepicker.init(document.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});
+                // when a select is readonly, we need to set the materialized select to disabled
+                // (but not the original/hidden select because disabled form fields will not get sent to the server
+                $$("select[readonly]").forEach(elem => elem.M_FormSelect.dropdown.el.disabled = true);
                 {% block oncontentloaded_js %}
                 {% endblock oncontentloaded_js %}
             });

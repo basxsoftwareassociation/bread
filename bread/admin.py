@@ -9,7 +9,8 @@ from django.urls import include, path, reverse_lazy
 from django.views.generic import DeleteView, DetailView, RedirectView, UpdateView
 from django_countries.fields import CountryField
 
-from . import menu, views
+from . import menu
+from . import views as bread_views
 from .formatters import format_value
 from .utils import has_permission
 
@@ -17,20 +18,41 @@ Action = namedtuple("Action", ["url", "label", "icon"])
 
 
 class BreadAdmin:
-    # for overwriting
+    """
+    The BreadAdmin class must be inherited and the model-class attribute must be set in
+    the child class. This will create a default admin interface to handle objects of the
+    according model. The interface can be further customized by overwriting attributes
+    and methods in child admin class.
+    The admin class will by default generate views for the follwing actions:
+    - browse
+    - read
+    - edit
+    - add
+    - delete
+    In order to define which fields should be displayed on a given view, the follwing attributes
+    can be set to iterables of fieldnames:
+    - browsefields: Fields to display in the browse page (i. e. which the columns the table will have)
+    - filterfields: Fields which should be displayed in the filter-form of the browse page (supports relationships via __)
+    - readfields: Fields to display on the detail page
+    - editfields: Fields to display on the edit form
+    - addfields: Fields to display on the add form
+    """
+
     model = None
-    indexview = None
     browsefields = None
     filterfields = None
     readfields = None
     editfields = None
     addfields = None
     createmenu = None
+    indexview = None
     browseview = None
     readview = None
     editview = None
     addview = None
     deleteview = None
+
+    views = None
 
     def __init__(self):
         assert self.model is not None
@@ -41,18 +63,31 @@ class BreadAdmin:
         self.editfields = self.editfields or ["__all__"]
         self.addfields = self.addfields or ["__all__"]
         self.createmenu = self.createmenu is not False
-        self.browseview = self.browseview or views.BrowseView
-        self.readview = self.readview or views.ReadView
-        self.editview = self.editview or views.EditView
-        self.addview = self.addview or views.AddView
-        self.deleteview = self.deleteview or views.DeleteView
+        self.browseview = self.browseview or bread_views.BrowseView
+        self.readview = self.readview or bread_views.ReadView
+        self.editview = self.editview or bread_views.EditView
+        self.addview = self.addview or bread_views.AddView
+        self.deleteview = self.deleteview or bread_views.DeleteView
+        self.views = self.views or ["browse", "read", "edit", "add", "delete"]
+
+    def get_views_kwargs(self):
+        """Takes the name of a view and returns keyword arguments for the view"""
+        return {view: {} for view in self.views}
 
     def get_views(self):
+        """Returns a dictionary with view names as keys and view instances as values
+        The default views are browse, read, edit, add and delete. If the view has an
+        attribute "admin" it will be set to this admin instance. Keyword arguments for
+        a view can be given by returning them from the method get_views_kwargs
+        """
         ret = {}
-        for viewname in ["browse", "read", "edit", "add", "delete"]:
-            ret[viewname] = getattr(self, f"{viewname}view").as_view(
-                admin=self, model=self.model
-            )
+        for viewname in self.views:
+            kwargs = {"model": self.model}
+            viewclass = getattr(self, f"{viewname}view")
+            if hasattr(viewclass, "admin"):
+                kwargs["admin"] = self
+            kwargs.update(self.get_views_kwargs()[viewname])
+            ret[viewname] = viewclass.as_view(**kwargs)
 
         return ret
 
@@ -271,8 +306,10 @@ class BreadAdminSite:
             ),
             path("accounts/", include("django.contrib.auth.urls")),
             path("ckeditor/", include("ckeditor_uploader.urls")),
-            path("", views.Overview.as_view(adminsite=self), name="bread_overview",),
-            path("datamodel", views.DataModel.as_view(), name="datamodel",),
+            path(
+                "", bread_views.Overview.as_view(adminsite=self), name="bread_overview",
+            ),
+            path("datamodel", bread_views.DataModel.as_view(), name="datamodel",),
         ]
 
         for app, admins in self.get_apps().items():

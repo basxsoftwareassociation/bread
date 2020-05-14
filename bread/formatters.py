@@ -11,6 +11,8 @@ from django.utils.html import format_html_join, linebreaks, mark_safe
 from django_countries.fields import CountryField
 from sorl.thumbnail import get_thumbnail
 
+from .utils import get_audio_thumbnail, get_video_thumbnail
+
 
 def format_value(value, fieldtype=None):
     if isinstance(value, bool) or value is None:
@@ -102,6 +104,35 @@ def as_image(value):
     im = get_thumbnail(value, "100x100", crop="center", quality=75)
     return mark_safe(
         f'<a class="center" style="display: block" href="{value.url}"><img src={im.url} width="{im.width}" height="{im.height}"/></a>'
+    )
+
+
+def as_audio(value):
+    if not value:
+        return CONSTANTS[None]
+    if not value.storage.exists(value.name):
+        return mark_safe("<small><emph>Audio file not found</emph></small>")
+    audio_url = get_audio_thumbnail(value)
+    return mark_safe(
+        f"""
+        <audio controls>
+            <source src="{audio_url}" type="audio/mp3">
+        </audio>
+    """
+    )
+
+
+def as_video(value):
+    if not value:
+        return CONSTANTS[None]
+    if not value.storage.exists(value.name):
+        return mark_safe("<small><emph>Video file not found</emph></small>")
+    return mark_safe(
+        f"""
+        <video controls width="320" height="240">
+            <source src="{get_video_thumbnail(value)}" type="video/mp4">
+        </video>
+    """
     )
 
 

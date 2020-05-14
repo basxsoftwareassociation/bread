@@ -29,7 +29,7 @@
             if(select.selectedIndex >= 0)
                 $('#autocomplete-' + id).value = select.options[select.selectedIndex].innerHTML
         }
-        document.addEventListener("DOMContentLoaded", update_input_label("{{ field.auto_id }}"));
+        document.addEventListener("DOMContentLoaded", e => update_input_label("{{ field.auto_id }}"));
         document.addEventListener("DOMContentLoaded", M.updateTextFields);
     </script>
 </div>

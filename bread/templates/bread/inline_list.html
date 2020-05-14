@@ -9,7 +9,7 @@
                 <th></th>
                 {% for field in view.modelfields.values %}
                     <th>
-                        {% if field.sortable != False %}
+                        {% if field.sortable != False and not field.one_to_many  and not field.many_to_many %}
                             {% querystring_order view.admin request.GET.order field.name as new_order_string %}
                             <a href="{% updated_querystring "order" new_order_string %}">
                                 {% pretty_fieldname field %}

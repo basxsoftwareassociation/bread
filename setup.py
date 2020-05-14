@@ -34,6 +34,7 @@ setup(
         "sorl-thumbnail",
         "openpyxl",
         "WeasyPrint",
+        "ffmpeg-python",
     ],
     extras_require={"postgresql": ["psycopg2"]},
     setup_requires=["setuptools_scm"],

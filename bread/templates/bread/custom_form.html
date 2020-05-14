@@ -6,6 +6,7 @@
         <h2>Update {{ view.admin.verbose_modelname }} <i>{{ object }}</i></h2>
     {% elif form.instance %}
         <h2>Add {{ view.admin.verbose_modelname }}</h2>
+        <script>document.addEventListener("DOMContentLoaded", e => $$("form").forEach(form => form.reset()))</script>
     {% endif %}
     <form method="post" enctype="multipart/form-data" autocomplete="off">
         {% csrf_token %}
@@ -13,8 +14,10 @@
             {{ form.media }}
             {{ form|materializecss }}
         </div>
-        <button class="btn waves-effect waves-light" type="submit" name="action">Save
+        {% block form_actions %}
+        <button class="btn waves-effect waves-light" type="submit" name="save">Save
             <i class="material-icons right">send</i>
         </button>
+        {% endblock %}
     </form>
 {% endblock content %}
