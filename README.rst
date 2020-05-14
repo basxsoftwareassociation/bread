@@ -22,3 +22,12 @@ Installation
     pip install bread
     django-admin startproject --template .venv/lib/python3.7/site-packages/bread/resources/project_template.tar.gz myproject .
     ./manage.py migrate
+
+Necessary tools for certain multimedia features (thumbnails etc)
+----------------------------------------------------------------
+- ffmpeg
+- libreoffice
+- inkscape
+- poppler-utils
+
+(install with apt and flag --no-install-recommends)

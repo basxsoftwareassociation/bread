@@ -129,7 +129,7 @@ def as_audio(value):
     audio_url = get_audio_thumbnail(value)
     return mark_safe(
         f"""
-        <audio controls>
+        <audio controls controlsList="nodownload">
             <source src="{audio_url}" type="audio/mp3">
         </audio>
     """
@@ -143,7 +143,7 @@ def as_video(value):
         return mark_safe("<small><emph>Video file not found</emph></small>")
     return mark_safe(
         f"""
-        <video controls width="320" height="240">
+        <video controls width="320" height="240" controlsList="nodownload">
             <source src="{get_video_thumbnail(value)}" type="video/mp4">
         </video>
     """
