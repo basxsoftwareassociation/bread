@@ -32,9 +32,11 @@ class Group:
         )
 
     def active(self, request):
-        appname = apps.get_app_config(
-            request.resolver_match.app_names[0]
-        ).verbose_name.title()
+        appname = ""
+        if request.resolver_match.app_names:
+            appname = apps.get_app_config(
+                request.resolver_match.app_names[0]
+            ).verbose_name.title()
         return (
             any((item.active(request) for item in self.items)) or self.label == appname
         )
