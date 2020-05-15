@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from django.urls import reverse, reverse_lazy
 
@@ -31,7 +32,12 @@ class Group:
         )
 
     def active(self, request):
-        return any((item.active(request) for item in self.items))
+        appname = apps.get_app_config(
+            request.resolver_match.app_names[0]
+        ).verbose_name.title()
+        return (
+            any((item.active(request) for item in self.items)) or self.label == appname
+        )
 
 
 class Item:
