@@ -42,9 +42,7 @@ class InlineField(Field):
 
 
 # patch modelform_factory to handl inline forms
-def inlinemodelform_factory(
-    request, model, object, modelfields, baseformclass, **inlineformset_factory_kwargs
-):
+def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
     attribs = {
         "error_css_class": "error",
         "required_css_class": "required",
@@ -72,15 +70,12 @@ def inlinemodelform_factory(
                 for fieldname, field in child_fields.items()
                 if field != modelfield.remote_field and field.editable is not False
             }
-            if modelfield.one_to_one:
-                inlineformset_factory_kwargs["max_num"] = 1
             formclass = inlinemodelform_factory(
                 request,
                 modelfield.related_model,
                 None,
                 child_fields.values(),
                 baseformclass,
-                **inlineformset_factory_kwargs,
             )
             if isinstance(modelfield, GenericRelation):
                 formset = generic_inlineformset_factory(
@@ -94,7 +89,6 @@ def inlinemodelform_factory(
                     form=formclass,
                     extra=1,
                     can_delete=True,
-                    **inlineformset_factory_kwargs,
                 )
             else:
                 formset = inlineformset_factory(
@@ -107,8 +101,8 @@ def inlinemodelform_factory(
                     form=formclass,
                     extra=1,
                     can_delete=True,
-                    **inlineformset_factory_kwargs,
                 )
+                print(formset, formset.max_num)
             if request.POST:
                 attribs[modelfield.name] = InlineField(
                     formset(request.POST, request.FILES, instance=object)
