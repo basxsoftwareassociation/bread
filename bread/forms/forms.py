@@ -42,7 +42,9 @@ class InlineField(Field):
 
 
 # patch modelform_factory to handl inline forms
-def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
+def inlinemodelform_factory(
+    request, model, object, modelfields, baseformclass, **inlineformset_factory_kwargs
+):
     attribs = {
         "error_css_class": "error",
         "required_css_class": "required",
@@ -60,17 +62,25 @@ def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
             attribs[modelfield.name] = GenericForeignKeyField(
                 choices=choices, initial=initial, required=required
             )
-        elif modelfield.one_to_many:
+        elif modelfield.one_to_many or modelfield.one_to_one:
             child_fields = get_modelfields(
                 modelfield.related_model,
                 parse_fieldlist(modelfield.related_model, ["__all__"], is_form=True),
             )
+            child_fields = {
+                fieldname: field
+                for fieldname, field in child_fields.items()
+                if field != modelfield.remote_field and field.editable is not False
+            }
+            if modelfield.one_to_one:
+                inlineformset_factory_kwargs["max_num"] = 1
             formclass = inlinemodelform_factory(
                 request,
                 modelfield.related_model,
                 None,
                 child_fields.values(),
                 baseformclass,
+                **inlineformset_factory_kwargs,
             )
             if isinstance(modelfield, GenericRelation):
                 formset = generic_inlineformset_factory(
@@ -84,6 +94,7 @@ def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
                     form=formclass,
                     extra=1,
                     can_delete=True,
+                    **inlineformset_factory_kwargs,
                 )
             else:
                 formset = inlineformset_factory(
@@ -96,6 +107,7 @@ def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
                     form=formclass,
                     extra=1,
                     can_delete=True,
+                    **inlineformset_factory_kwargs,
                 )
             if request.POST:
                 attribs[modelfield.name] = InlineField(

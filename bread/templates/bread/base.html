@@ -66,24 +66,7 @@
         </footer>
 
         <script>
-            function disableMaterializeOnTemplateForms() {
-                var template_forms = document.getElementsByClassName("template-form");
-                for(var i = 0; i < template_forms.length; ++i) {
-                    var m_input_fields = template_forms[i].getElementsByClassName("input-field");
-                    for(var j = 0; j < m_input_fields.length; ++j) {
-                        m_input_fields[j].firstElementChild.classList.add('no-autoinit');
-                    }
-                }
-            }
-            function enableMaterializeOnForm(form) {
-                var m_input_fields = form.getElementsByClassName("input-field");
-                for(var j = 0; j < m_input_fields.length; ++j) {
-                    m_input_fields[j].firstElementChild.classList.remove('no-autoinit');
-                }
-            }
             document.addEventListener('DOMContentLoaded', function() {
-                // we need to disable materialize auto init for the empty forms from django: they must be initialized on creating a new instance, see formset.html
-                disableMaterializeOnTemplateForms();
                 M.AutoInit();
                 // make the datepicker a bit nicer and compatible with the django format
                 M.Datepicker.init(document.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});

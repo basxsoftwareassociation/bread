@@ -140,12 +140,12 @@ def parse_fieldlist(model, fields_parameter, is_form=False):
         if field not in modelfields:
             return False
         field = modelfields[field]
-
         return (
             field.editable
             or isinstance(field, GenericForeignKey)
             or field.many_to_many
             or field.one_to_many
+            or field.one_to_one,
         )
 
     # filter generic foreign key and id field out

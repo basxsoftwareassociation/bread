@@ -259,7 +259,6 @@ class CustomFormMixin:
         if self.request.method != "POST":
             for field in form.fields:
                 if field in self.request.GET:
-                    # form.fields[field].widget = HiddenInput()
                     form.fields[field].widget.attrs["readonly"] = True
 
         # make sure fields appear in original order
