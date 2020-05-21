@@ -44,7 +44,6 @@ class BreadAdmin:
     readfields = None
     editfields = None
     addfields = None
-    createmenu = None
     indexview = None
     browseview = None
     readview = None
@@ -62,7 +61,6 @@ class BreadAdmin:
         self.readfields = self.readfields or ["__all__"]
         self.editfields = self.editfields or ["__all__"]
         self.addfields = self.addfields or ["__all__"]
-        self.createmenu = self.createmenu is not False
         self.browseview = self.browseview or bread_views.BrowseView
         self.readview = self.readview or bread_views.ReadView
         self.editview = self.editview or bread_views.EditView

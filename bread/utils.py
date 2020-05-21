@@ -12,8 +12,18 @@ from .fields import VirtualField
 
 
 def pretty_fieldname(field):
-    if field.is_relation and (field.one_to_many or field.many_to_many):
+    if field.is_relation and field.one_to_many:
         return field.target_field.model._meta.verbose_name_plural.title()
+    elif field.is_relation and field.many_to_many and field.auto_created:
+        return (
+            getattr(
+                field.target_field,
+                "related_name",
+                field.related_model._meta.verbose_name_plural.title(),
+            )
+            .replace("_", " ")
+            .title()
+        )
     elif field.is_relation and field.one_to_one:
         return field.target_field.model._meta.verbose_name.title()
     elif isinstance(field, GenericForeignKey):
@@ -156,6 +166,17 @@ def parse_fieldlist(model, fields_parameter, is_form=False):
             genericfk_exclude.add(f.fk_field)
 
     def unwanted_fields_filter(field):
+        modelfield = {
+            f.get_accessor_name() if hasattr(f, "get_accessor_name") else f.name: f
+            for f in model._meta.get_fields()
+        }[field]
+        # do not include the one-to-one field to a parent-model table
+        if (
+            hasattr(modelfield, "remote_field")
+            and modelfield.remote_field
+            and getattr(modelfield.remote_field, "parent_link", False) is True
+        ):
+            return False
         return field not in genericfk_exclude and field != "id"
 
     # default configuration: display only direct defined fields on the modle (no reverse related models)
