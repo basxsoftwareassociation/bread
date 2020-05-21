@@ -169,7 +169,7 @@ def parse_fieldlist(model, fields_parameter, is_form=False):
         modelfield = {
             f.get_accessor_name() if hasattr(f, "get_accessor_name") else f.name: f
             for f in model._meta.get_fields()
-        }[field]
+        }.get(field)
         # do not include the one-to-one field to a parent-model table
         if (
             hasattr(modelfield, "remote_field")
