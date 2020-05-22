@@ -41,7 +41,7 @@ $primary-color-dark: darken($primary-color, 15%) !default;
 $secondary-color: hsl(225, 17.6%, 26.7%) !default;
 $success-color: color("green", "base") !default;
 $error-color: color("red", "base") !default;
-$link-color: $primary-color;
+$link-color: color("light-blue", "darken-1") !default;;
 
 
 // 2. Badges
