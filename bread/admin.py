@@ -6,7 +6,8 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
-from django.views.generic import DeleteView, DetailView, RedirectView, UpdateView
+from django.views.generic import CreateView, RedirectView
+from django.views.generic.edit import SingleObjectMixin
 from django_countries.fields import CountryField
 
 from . import menu
@@ -16,42 +17,69 @@ from .utils import has_permission
 
 Action = namedtuple("Action", ["url", "label", "icon"])
 
+DEFAULT_BREAD_VIEWS = {
+    "browse": bread_views.BrowseView,
+    "read": bread_views.ReadView,
+    "edit": bread_views.EditView,
+    "add": bread_views.AddView,
+    "delete": bread_views.DeleteView,
+}
+
 
 class BreadAdmin:
     """
     The BreadAdmin class must be inherited and the model-class attribute must be set in
     the child class. This will create a default admin interface to handle objects of the
     according model. The interface can be further customized by overwriting attributes
-    and methods in child admin class.
-    The admin class will by default generate views for the follwing actions:
-    - browse
-    - read
-    - edit
-    - add
-    - delete
-    In order to define which fields should be displayed on a given view, the follwing attributes
-    can be set to iterables of fieldnames:
-    - browsefields: Fields to display in the browse page (i. e. which the columns the table will have)
-    - filterfields: Fields which should be displayed in the filter-form of the browse page (supports relationships via __)
-    - readfields: Fields to display on the detail page
-    - editfields: Fields to display on the edit form
-    - addfields: Fields to display on the add form
+    and methods in the child admin class.
+
+    The admin class will by default automatically generate django views for the follwing pages:
+    - browse: table which lists all objects and has a filter form
+    - read: table which lists all fields of a certain object
+    - edit: form to edit an object
+    - add: form to add a new object
+    - delete: confirmation with some additional information for deleting an object
     """
 
     model = None
+    "The django model which will be managed in this class"
     browsefields = None
+    """List of fields to be listed in the table of the browse-page. Defaults to ``["__all__"]``."""
     filterfields = None
+    """List of fields which should appear in the filter-form of the browse-page. Defaults to ``["__all__"]``. Can span relationships."""
     readfields = None
+    """List of fields to be displaye on the read-page. Defaults to ``["__all__"]``."""
     editfields = None
+    """List of fields to be displaye on the edit-page. Defaults to ``["__all__"]``."""
     addfields = None
+    """List of fields to be displaye on the add-page. Defaults to ``["__all__"]``."""
     indexview = None
+    """Name of the view which servers as the index for this admin class. Defaults to "browse"."""
     browseview = None
+    """Class which will be used to create the browse-view. Defaults to ``bread.views.BrowseView``."""
     readview = None
+    """Class which will be used to create the read-view. Defaults to ``bread.views.ReadView``."""
     editview = None
+    """Class which will be used to create the edit-view. Defaults to ``bread.views.EditView``."""
     addview = None
+    """Class which will be used to create the add-view. Defaults to ``bread.views.AddView``."""
     deleteview = None
+    """Class which will be used to create the delete-view. Defaults to ``bread.views.DeleteView``."""
 
-    views = None
+    autoviews = None
+    """List of names for which views should automatically be generated.
+    Defaults to ``["browse", "read", "edit", "add", "delete"]``.
+    Can be used to remove certain actions entirely e.g. preventing to ever access the delete view.
+    When adding custom views to this list an according attribute with name <viewname>view assigned to the view
+    class should be set on the class instance.
+    ``
+    from . import models
+    from . import views
+    class InvoiceAdmin(BreadAdmin):
+        model = models.Invoice
+        autoviews = ["browse", "edit", "add", "mark_payed"]
+        mark_payedview = views.MarkPayedConfirmation
+    """
 
     def __init__(self):
         assert self.model is not None
@@ -66,43 +94,62 @@ class BreadAdmin:
         self.editview = self.editview or bread_views.EditView
         self.addview = self.addview or bread_views.AddView
         self.deleteview = self.deleteview or bread_views.DeleteView
-        self.views = self.views or ["browse", "read", "edit", "add", "delete"]
+        self.autoviews = self.autoviews or list(DEFAULT_BREAD_VIEWS.keys())
 
     def get_views_kwargs(self):
-        """Takes the name of a view and returns keyword arguments for the view"""
-        return {view: {} for view in self.views}
+        """Returns a dict with the name of a view as key and a dict as value
+        The dict from the value contains additional kwargs for construction the view.
+        This can be used if a custom view needs additional parameters in the as_view call
+        """
+        return {}
 
     def get_views(self):
-        """Returns a dictionary with view names as keys and view instances as values
-        The default views are browse, read, edit, add and delete. If the view has an
-        attribute "admin" it will be set to this admin instance. Keyword arguments for
-        a view can be given by returning them from the method get_views_kwargs
+        """Returns a dictionary with view names as keys and view instances as values.
+        The default views are browse, read, edit, add and delete.
+        If the view has model attribute it will be set to this admin classe's model.
+        If the viewclass is one of the default bread admin views (see DEFAULT_BREAD_VIEWS) or a subclass of one of them,
+        the attribute "admin" it will be set to this admin instance.
+        On creating the instance of the view the values from get_views_kwargs will be passed to the as_view call.
         """
         ret = {}
-        for viewname in self.views:
-            kwargs = {"model": self.model}
+        for viewname in self.autoviews:
+            kwargs = {}
             viewclass = getattr(self, f"{viewname}view")
-            if hasattr(viewclass, "admin"):
+            if hasattr(viewclass, "model"):
+                kwargs["model"] = self.model
+            if issubclass(viewclass, (tuple(DEFAULT_BREAD_VIEWS.values())),):
                 kwargs["admin"] = self
-            kwargs.update(self.get_views_kwargs()[viewname])
+            kwargs.update(self.get_views_kwargs().get(viewname, {}))
             ret[viewname] = viewclass.as_view(**kwargs)
 
         return ret
 
     def get_urls(self):
+        """Generates a URL for each view returned by get_views.
+        The url will start with the name of the view.
+        If the view's class is a subclass of SingleObjectMixin but not a create view, the
+        according pk url-path argument is added.
+        Custom url-path arguments should be specified in the "urlparams" attribute of the
+        view. "urlparams" must be a dict with url-path argument as key and type as value.
+        If the view is purely function based, the function arguments are converted to url-path
+        arguments, using python annotations to determine the argument type if available.
+        A url with name "index" is added as redirect view to the view with the name of
+        ``self.indexview`` ("browse" by default).
+        """
         urls = {}
         for viewname, view in self.get_views().items():
             viewpath = viewname
+            # handle class-based views
             if hasattr(view, "view_class"):
-                if (
-                    issubclass(view.view_class, UpdateView)
-                    or issubclass(view.view_class, DetailView)
-                    or issubclass(view.view_class, DeleteView)
+                if issubclass(view.view_class, SingleObjectMixin) and not issubclass(
+                    view.view_class, CreateView
                 ):
-                    viewpath += f"/<int:pk>"
+                    viewpath += f"/<int:{view.view_class.pk_url_kwarg}>"
                 if "urlparams" in view.view_initkwargs:
                     for param, _type in view.view_initkwargs["urlparams"].items():
                         viewpath += f"/<{_type}:{param}>"
+            # handle purely function based views
+            # try to get the django-path type from the parameter anotation
             elif callable(view):
                 params = view.__code__.co_varnames[1 : view.__code__.co_argcount]
                 annotations = view.__annotations__
@@ -119,9 +166,11 @@ class BreadAdmin:
         return urls
 
     def menugroup(self):
+        """Returns the name of the menu-group under which items for this admin class should appear"""
         return apps.get_app_config(self.model._meta.app_label).verbose_name.title()
 
     def menuitems(self):
+        """Iterable of bread.menu.Item objects which should be added to the menu for this admin class"""
         return [
             menu.Item(
                 label=self.verbose_modelname_plural,
@@ -184,7 +233,7 @@ class BreadAdmin:
 
     def object_actions(self, request, object):
         """
-        Actions which will be available for an object
+        Actions which will be available for an object.
         returns: List of named tuples of type Action
         """
         urls = self.get_urls()
@@ -204,6 +253,10 @@ class BreadAdmin:
         return actions
 
     def list_actions(self, request):
+        """
+        Actions which will be available for a model.
+        returns: List of named tuples of type Action
+        """
         urls = self.get_urls()
         actions = []
         if "add" in urls and has_permission(request.user, "add", self.model):
@@ -222,10 +275,6 @@ class BreadAdmin:
             )
         return actions
 
-    def get_modelname(self):
-        """Machine-readable name for the model"""
-        return self.model._meta.model_name
-
     def reverse(self, viewname, *args, **kwargs):
         namespace = f"{self.model._meta.app_label}:{self.modelname}"
         return reverse_lazy(
@@ -240,6 +289,10 @@ class BreadAdmin:
             include((self.get_urls().values(), self.modelname), self.modelname),
         )
         return urls
+
+    def get_modelname(self):
+        """Machine-readable name for the model"""
+        return self.model._meta.model_name
 
     @property
     def modelname(self):
