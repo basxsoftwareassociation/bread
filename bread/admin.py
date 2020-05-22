@@ -118,14 +118,14 @@ class BreadAdmin:
         )
         return urls
 
-    def get_menuitems(self):
-        grouplabel = apps.get_app_config(
-            self.model._meta.app_label
-        ).verbose_name.title()
+    def menugroup(self):
+        return apps.get_app_config(self.model._meta.app_label).verbose_name.title()
+
+    def menuitems(self):
         return [
             menu.Item(
                 label=self.verbose_modelname_plural,
-                group=grouplabel,
+                group=self.menugroup(),
                 url=self.reverse("index"),
                 permissions=[f"{self.model._meta.app_label}.view_{self.modelname}"],
             )
@@ -293,7 +293,7 @@ class BreadAdminSite:
             if not menu.main.hasgroup(grouplabel):
                 menu.registergroup(menu.Group(label=grouplabel))
             for admin in admins:
-                for menuitem in admin.get_menuitems():
+                for menuitem in admin.menuitems():
                     menu.registeritem(menuitem)
 
     def get_urls(self):

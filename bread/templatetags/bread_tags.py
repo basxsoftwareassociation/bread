@@ -91,25 +91,41 @@ def is_external_url(url):
 def menu(request):
     """
     returns nested iterables:
-    (
-        (group, active, (
+    [
+        [group, active, (
             (item, active, url),
             (item, active, url),
-        )),
-        (group, active, (
+        )],
+        [group, active, (
             (item, active, url),
             (item, active, url),
-        ))
-    )
+        )]
+    ]
+    If no menu group is active will try to find active menu by comparing labels to current appname
     """
     user = request.user
+    menugroups = []
+    has_active_menu = False
     for group in sorted(menuregister.main._registry.values()):
         if group.has_permission(user):
-            yield group.label, group.active(request), (
-                (item.label, item.active(request), item.get_url(request))
-                for item in sorted(group.items)
-                if item.has_permission(user)
+            has_active_menu = has_active_menu or group.active(request)
+            menugroups.append(
+                [
+                    group.label,
+                    group.active(request),
+                    (
+                        (item.label, item.active(request), item.get_url(request))
+                        for item in sorted(group.items)
+                        if item.has_permission(user)
+                    ),
+                ]
             )
+    if not has_active_menu:
+        for group in menugroups:
+            if menuregister.main._registry[group[0]].active_in_current_app(request):
+                group[1] = True
+                break
+    return menugroups
 
 
 @register.filter

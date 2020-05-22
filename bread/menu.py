@@ -13,7 +13,7 @@ class Group:
     def __lt__(self, other):
         if self.order is None:
             if other.order is None:
-                return self.label.lower() < other.label.lower()
+                return False
             return 0 < other.order
         if other.order is None:
             return self.order < 0
@@ -31,15 +31,16 @@ class Group:
             and any((item.has_permission(user) for item in self.items))
         )
 
-    def active(self, request):
-        appname = ""
-        if request.resolver_match.app_names:
-            appname = apps.get_app_config(
+    def active_in_current_app(self, request):
+        return request.resolver_match.app_names and (
+            self.label
+            == apps.get_app_config(
                 request.resolver_match.app_names[0]
             ).verbose_name.title()
-        return (
-            any((item.active(request) for item in self.items)) or self.label == appname
         )
+
+    def active(self, request):
+        return any((item.active(request) for item in self.items))
 
 
 class Item:
@@ -53,7 +54,7 @@ class Item:
     def __lt__(self, other):
         if self.order is None:
             if other.order is None:
-                return self.label.lower() < other.label.lower()
+                return False
             return 0 < other.order
         if other.order is None:
             return self.order < 0
@@ -90,9 +91,7 @@ class Menu:
 
     def registeritem(self, menuitem):
         if menuitem.group not in self._registry:
-            raise ImproperlyConfigured(
-                f"Group {menuitem.group} is not a registered menu group"
-            )
+            self._registry[menuitem.group] = Group(menuitem.group)
         self._registry[menuitem.group].items.append(menuitem)
 
 
