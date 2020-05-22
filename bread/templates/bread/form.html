@@ -26,7 +26,7 @@
             var elem = document.forms[0].elements[i];
             if(elem.type != 'hidden') {
                 elem.focus();
-                elem.selectionStart = elem.selectionEnd = elem.value.length;
+                elem.select();
                 break;
             }
         }
