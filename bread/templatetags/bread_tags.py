@@ -207,7 +207,9 @@ def list_delete_cascade(object):
             and hasattr(object, field.get_accessor_name())
         ):
             related_objects = getattr(object, field.get_accessor_name())
-            if related_objects.exists():
+            if isinstance(related_objects, models.Model):
+                ret.append([related_objects])
+            elif related_objects.exists():
                 ret.append(related_objects.all())
     return ret
 
@@ -223,6 +225,8 @@ def list_delete_protection(object):
             and hasattr(object, field.get_accessor_name())
         ):
             related_objects = getattr(object, field.get_accessor_name())
-            if related_objects.exists():
+            if isinstance(related_objects, models.Model):
+                ret.append([related_objects])
+            elif related_objects.exists():
                 ret.append(related_objects.all())
     return ret
