@@ -60,7 +60,9 @@ def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
             attribs[modelfield.name] = GenericForeignKeyField(
                 choices=choices, initial=initial, required=required
             )
-        elif modelfield.one_to_many or modelfield.one_to_one:
+        elif modelfield.one_to_many or (
+            modelfield.one_to_one and not modelfield.concrete
+        ):
             child_fields = get_modelfields(
                 modelfield.related_model,
                 parse_fieldlist(modelfield.related_model, ["__all__"], is_form=True),
