@@ -258,7 +258,11 @@ class BreadAdmin:
         """
         urls = self.get_urls()
         actions = []
-        if "read" in urls and has_permission(request.user, "view", object):
+        if (
+            "read" in urls
+            and has_permission(request.user, "view", object)
+            and not self.viewlink_field
+        ):
             actions.append(
                 Action(self.reverse("read", pk=object.pk), "View", "search",)
             )
