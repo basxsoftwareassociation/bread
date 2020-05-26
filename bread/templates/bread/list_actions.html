@@ -3,13 +3,8 @@
 {% list_actions view.admin request as actions %}
 {% if actions %}
 <div class="right">
-    <a class="custom-dropdown-trigger btn-small no-autoinit" href="#" data-target="action-dropdown-{{ view.admin.modelname }}">
-        <i class="material-icons">arrow_drop_down</i>
-    </a>
-    <ul id='action-dropdown-{{ view.admin.modelname }}' class='dropdown-content'>
-        {% for action in actions %}
-            <li><a href="{{ action.url }}"><i class="material-icons" style="vertical-align:middle">{{ action.icon }}</i> {{ action.label }}</a></li>
-        {% endfor %}
-    </ul>
+    {% for action in actions %}
+        <a href="{{ action.url }}" class="btn"><i class="material-icons" style="vertical-align:middle">{{ action.icon }}</i> {{ action.label }}</a>
+    {% endfor %}
 </div>
 {% endif %}

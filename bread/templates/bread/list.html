@@ -4,6 +4,10 @@
 {% block content %}
     {% include "bread/list_actions.html" %}
     {% include "bread/inline_list.html" %}
+    {% add_action view.admin request as action %}
+    {% if action %}
+        <a href={{ action.url }} class="btn-floating btn-large" style="float: right; position: sticky"><i class="material-icons">{{ action.icon }}</i>{{ action.label }}</a>
+    {% endif %}
     <script>
         var elems = document.querySelectorAll('.custom-dropdown-trigger');
         M.Dropdown.init(elems, {constrainWidth: false});

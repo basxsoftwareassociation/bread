@@ -18,7 +18,7 @@ from dynamic_preferences.registries import global_preferences_registry
 
 from . import menu
 from . import views as bread_views
-from .formatters import format_value
+from .formatters import as_object_link, format_value
 from .utils import has_permission
 
 Action = namedtuple("Action", ["url", "label", "icon"])
@@ -51,6 +51,8 @@ class BreadAdmin:
     "The django model which will be managed in this class"
     browsefields = None
     """List of fields to be listed in the table of the browse-page. Defaults to ``["__all__"]``."""
+    viewlink_field = None
+    """Column with this name will be rendered as link to view the object in the browse page"""
     filterfields = None
     """List of fields which should appear in the filter-form of the browse-page. Defaults to ``["__all__"]``. Can span relationships."""
     readfields = None
@@ -211,6 +213,8 @@ class BreadAdmin:
                 value = getattr(object, f"get_{fieldname}_display")()
             else:
                 value = getattr(object, fieldname, None)
+        if fieldname == self.viewlink_field:
+            return as_object_link(object, format_value(value, fieldtype))
         return format_value(value, fieldtype)
 
     def render_field_aggregation(self, queryset, fieldname):
@@ -275,8 +279,6 @@ class BreadAdmin:
         """
         urls = self.get_urls()
         actions = []
-        if "add" in urls and has_permission(request.user, "add", self.model):
-            actions.append(Action(self.reverse("add"), "Add", "add"))
         if "browse" in urls:
             # need to preserve filter and ordering from query parameters
             actions.append(
@@ -290,6 +292,11 @@ class BreadAdmin:
                 )
             )
         return actions
+
+    def add_action(self, request):
+        if "add" in self.get_urls() and has_permission(request.user, "add", self.model):
+            return Action(self.reverse("add"), "Add", "add")
+        return None
 
     def reverse(self, viewname, *args, **kwargs):
         namespace = f"{self.model._meta.app_label}:{self.modelname}"

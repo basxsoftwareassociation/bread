@@ -1,7 +1,6 @@
 import ckeditor
 from bread import menu as menuregister
 from django import forms, template
-from django.conf import settings
 from django.db import models
 from django.template.loader import render_to_string
 
@@ -46,6 +45,11 @@ def object_actions(admin, request, object):
 @register.simple_tag
 def list_actions(admin, request):
     return admin.list_actions(request)
+
+
+@register.simple_tag
+def add_action(admin, request):
+    return admin.add_action(request)
 
 
 @register.simple_tag
