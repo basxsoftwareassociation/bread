@@ -1,0 +1,10 @@
+{% if form.non_field_errors %}
+    <div class="card red lighten-4">
+        <div class="card-content">
+            {% if form_error_title %}<span class="card-title">{{ form_error_title }}</span>{% endif %}
+            <ul>
+                {{ form.non_field_errors|unordered_list }}
+            </ul>
+        </div>
+    </div>
+{% endif %}

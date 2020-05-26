@@ -1,0 +1,33 @@
+{% load crispy_forms_field %}
+
+{% if field.is_hidden %}
+    {{ field }}
+{% else %}
+<{% if tag %}{{ tag }}{% else %}div{% endif %} class="{%if field|is_file or field|is_clearable_file %}file-field{% endif %} {% if not field|is_checkbox %}input-field{% endif %} {% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if form_show_errors%}{% if field.errors %} error{% endif %}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
+
+        {% if field.label and not field|is_checkbox and form_show_labels %}
+            <label for="{{ field.id_for_label }}" class="active">
+                {{ field.label|safe }}{% if field.field.required %}<span>*</span>{% endif %}
+            </label>
+        {% endif %}
+
+        {% if field|is_checkboxselectmultiple %}
+            {% include 'materialize/layout/checkboxselectmultiple.html' %}
+        {% elif field|is_radioselect %}
+            {% include 'materialize/layout/radioselect.html' %}
+        {% elif field|is_file or field|is_clearable_file %}
+            {% include 'materialize/layout/file.html' %}
+        {% else %}
+            {% if field|is_checkbox %}
+                <label>
+                    {% crispy_field field %}
+                    <span>{{ field.label|safe }}{% if field.field.required %}<span>*</span>{% endif %}</span>
+                </label>
+                {% include 'materialize/layout/help_text_and_errors.html' %}
+            {% else %}
+                {% crispy_field field %}
+                {% include 'materialize/layout/help_text_and_errors.html' %}
+            {% endif %}
+        {% endif %}
+    </{% if tag %}{{ tag }}{% else %}div{% endif %}>
+{% endif %}

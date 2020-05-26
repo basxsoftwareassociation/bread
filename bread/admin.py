@@ -1,7 +1,10 @@
 from collections import namedtuple
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.http import HttpResponse
@@ -9,6 +12,9 @@ from django.urls import include, path, reverse_lazy
 from django.views.generic import CreateView, RedirectView
 from django.views.generic.edit import SingleObjectMixin
 from django_countries.fields import CountryField
+from dynamic_preferences import views as preferences_views
+from dynamic_preferences.forms import GlobalPreferenceForm
+from dynamic_preferences.registries import global_preferences_registry
 
 from . import menu
 from . import views as bread_views
@@ -51,8 +57,12 @@ class BreadAdmin:
     """List of fields to be displaye on the read-page. Defaults to ``["__all__"]``."""
     editfields = None
     """List of fields to be displaye on the edit-page. Defaults to ``["__all__"]``."""
+    editlayout = None
+    """django-crispy-form Layout object for the edit-form. See https://django-crispy-forms.readthedocs.io/en/latest/layouts.html"""
     addfields = None
     """List of fields to be displaye on the add-page. Defaults to ``["__all__"]``."""
+    addlayout = None
+    """django-crispy-form Layout object for the add-form. See https://django-crispy-forms.readthedocs.io/en/latest/layouts.html"""
     indexview = None
     """Name of the view which servers as the index for this admin class. Defaults to "browse"."""
     browseview = None
@@ -179,6 +189,12 @@ class BreadAdmin:
                 permissions=[f"{self.model._meta.app_label}.view_{self.modelname}"],
             )
         ]
+
+    def get_editlayout(self, request):
+        return self.editlayout
+
+    def get_addlayout(self, request):
+        return self.addlayout
 
     def render_field(self, object, fieldname):
         fieldtype = None
@@ -341,6 +357,28 @@ class BreadAdminSite:
         return applist
 
     def register_menus(self):
+        # admin menu items
+        menu.registergroup(menu.Group(label="Admin", order=999))
+        menu.registeritem(
+            menu.Item(
+                group="Admin",
+                label="Preferences",
+                url=reverse_lazy("dynamic_preferences:global"),
+                permissions=["dynamic_preferences:change_globalpreferencemodel"],
+            )
+        )
+        datamodel = menu.Item(
+            group="Admin", label="Datamodel", url=reverse_lazy("datamodel"),
+        )
+        system_settings = menu.Item(
+            group="Admin", label="System Settings", url=reverse_lazy("admin:index"),
+        )
+        system_settings.has_permission = lambda user: user.is_superuser
+        datamodel.has_permission = lambda user: user.is_superuser
+        menu.registeritem(datamodel)
+        menu.registeritem(system_settings)
+
+        # app menu itmes
         for app, admins in self.get_apps().items():
             grouplabel = app.verbose_name.title()
             if not menu.main.hasgroup(grouplabel):
@@ -350,10 +388,32 @@ class BreadAdminSite:
                     menu.registeritem(menuitem)
 
     def get_urls(self):
+        # add success message to preferences view
+        PreferencesView = type(
+            "PreferencesView",
+            (SuccessMessageMixin, preferences_views.PreferenceFormView),
+            {"success_message": "Preferences updated"},
+        )
+        preferences = [
+            path(
+                "global/",
+                PreferencesView.as_view(
+                    registry=global_preferences_registry, form_class=PreferencesForm,
+                ),
+                name="global",
+            ),
+            path(
+                "global/<slug:section>",
+                PreferencesView.as_view(
+                    registry=global_preferences_registry, form_class=PreferencesForm,
+                ),
+                name="global.section",
+            ),
+        ]
         ret = [
             path(
                 "preferences/",
-                include("dynamic_preferences.urls", namespace="preferences"),
+                include((preferences, "dynamic_preferences"), namespace="preferences"),
             ),
             path("accounts/", include("django.contrib.auth.urls")),
             path("ckeditor/", include("ckeditor_uploader.urls")),
@@ -383,6 +443,13 @@ def register(modeladmin):
 
 
 site = BreadAdminSite()
+
+
+class PreferencesForm(GlobalPreferenceForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.add_input(Submit("submit", "Save"))
 
 
 def protectedMedia(request, path):

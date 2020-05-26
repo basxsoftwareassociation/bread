@@ -1,0 +1,10 @@
+{% if formset.non_form_errors %}
+    <div class="card red lighten-4">
+        <div class="card-content">
+            {% if formset_error_title %}<span class="card-title">{{ formset_error_title }}</span>{% endif %}
+            <ul>
+                {{ formset.non_form_errors|unordered_list }}
+            </ul>
+        </div>
+    </div>
+{% endif %}

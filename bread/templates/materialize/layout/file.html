@@ -1,0 +1,17 @@
+{% load crispy_forms_field %}
+
+<div class="btn">
+    <span>{{ field.label }}</span>
+    <input type="file" name="{{ field.html_name }}">
+</div>
+{% if field|is_clearable_file %}
+<div style="height: 3rem; line-height: 3rem; display: inline-block; float: right">
+    <label>
+        <input type="checkbox" name="{{ field.html_name }}-clear"/>
+        <span>Clear</span>
+    </label>
+</div>
+{% endif %}
+<div class="file-path-wrapper" style="display: inline-block; width: 80%">
+    <input class="file-path validate" type="text" value="{{ field.value }}">
+</div>

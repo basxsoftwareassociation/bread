@@ -1,23 +1,14 @@
 {% extends "bread/base.html" %}
-{% load bread_tags %}
+{% load bread_tags crispy_forms_tags  %}
+
 
 {% block content %}
     {% if object %}
         <h2>Update {{ view.admin.verbose_modelname }} <i>{{ object }}</i></h2>
     {% elif form.instance %}
         <h2>Add {{ view.admin.verbose_modelname }}</h2>
+        <!-- try to prevent browser auto-fill -->
         <script>document.addEventListener("DOMContentLoaded", e => $$("form").forEach(form => form.reset()))</script>
     {% endif %}
-    <form method="post" enctype="multipart/form-data" autocomplete="off">
-        {% csrf_token %}
-        <div class="row">
-            {{ form.media }}
-            {{ form|materializecss }}
-        </div>
-        {% block form_actions %}
-        <button class="btn waves-effect waves-light" type="submit" name="save">Save
-            <i class="material-icons right">send</i>
-        </button>
-        {% endblock %}
-    </form>
+    {% crispy form %}
 {% endblock content %}

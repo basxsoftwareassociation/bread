@@ -1,6 +1,6 @@
 from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 
 
 class Group:
@@ -95,9 +95,6 @@ class Menu:
         self._registry[menuitem.group].items.append(menuitem)
 
 
-main = Menu()
-
-
 def registeritem(item):
     main.registeritem(item)
     return item
@@ -108,23 +105,5 @@ def registergroup(group):
     return group
 
 
-# default menu and default items
-# there is only one main menu support right now
-
-registergroup(Group(label="Admin", order=-1))
-registeritem(
-    Item(
-        group="Admin",
-        label="Preferences",
-        url=reverse_lazy("dynamic_preferences:global"),
-        permissions=["dynamic_preferences:change_globalpreferencemodel"],
-    )
-)
-datamodel = Item(group="Admin", label="Datamodel", url=reverse_lazy("datamodel"),)
-system_settings = Item(
-    group="Admin", label="System Settings", url=reverse_lazy("admin:index"),
-)
-system_settings.has_permission = lambda user: user.is_superuser
-datamodel.has_permission = lambda user: user.is_superuser
-registeritem(datamodel)
-registeritem(system_settings)
+# global main menu
+main = Menu()
