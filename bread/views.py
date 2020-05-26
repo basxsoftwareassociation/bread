@@ -348,7 +348,6 @@ class AddView(
             ),
             admin=self.admin,
         )
-        self.layout = admin.get_addlayout(self.request)
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
