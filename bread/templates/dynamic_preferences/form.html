@@ -1,17 +1,9 @@
 {% extends "dynamic_preferences/base.html" %}
-{% load bread_tags %}
+{% load bread_tags crispy_forms_tags  %}
 
 {% block content %}
 
     {# we continue to pass the sections key in case someone subclassed the template and use these #}
     {% include "dynamic_preferences/sections.html" with registry=registry sections=registry.sections %}
-
-    <form action="" enctype="multipart/form-data" method="post">
-        {% csrf_token %}
-        {{ form.media }}
-        {{ form|materializecss}}
-        <button class="btn waves-effect waves-light" type="submit" name="action">Submit
-            <i class="material-icons right">send</i>
-        </button>
-    </form>
+    {% crispy form %}
 {% endblock %}

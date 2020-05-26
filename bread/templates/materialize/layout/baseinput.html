@@ -1,0 +1,6 @@
+<input type="{{ input.input_type }}"
+    name="{{ input.name|slugify }}"
+    value="{{ input.value }}"
+    {% if input.input_type != "hidden" %}class="{{ input.field_classes }}"{% endif %}
+    {{ input.flat_attrs|safe }}
+    />

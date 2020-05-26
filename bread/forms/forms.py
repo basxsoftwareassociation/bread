@@ -1,7 +1,8 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
-
-# BaseGenericInlineFormSet,
 from django.db import models
 from django.forms import (
     BoundField,
@@ -9,9 +10,7 @@ from django.forms import (
     ModelChoiceField,
     ModelMultipleChoiceField,
     modelform_factory,
-    widgets,
 )
-from django.forms.models import inlineformset_factory
 from django.template.loader import render_to_string
 from guardian.shortcuts import get_objects_for_user
 
@@ -25,7 +24,9 @@ class BoundInlineField(BoundField):
         self.label = ""
 
     def as_widget(self, widget=None, attrs=None, only_initial=False):
-        return render_to_string("bread/formset.html", {"formset": self.field.formset})
+        return render_to_string(
+            "materialize/table_inline_formset.html", {"formset": self.field.formset},
+        )
 
 
 class InlineField(Field):
@@ -42,10 +43,21 @@ class InlineField(Field):
 
 
 # patch modelform_factory to handl inline forms
-def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
+def inlinemodelform_factory(
+    request, model, object, modelfields, baseformclass, layout=None
+):
+    """Returns a form class which can handle inline-modelform sets.
+    Also enable crispy forms.
+    """
+
+    def crispy_form_init(self, *args, **kwargs):
+        super(baseformclass, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.add_input(Submit("submit", "Save"))
+        self.helper.layout = layout
+
     attribs = {
-        "error_css_class": "error",
-        "required_css_class": "required",
+        "__init__": crispy_form_init,
         "is_valid": is_valid_inline,
         "save_inline": save_inline,
     }
@@ -91,7 +103,7 @@ def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
                     can_delete=True,
                 )
             else:
-                formset = inlineformset_factory(
+                formset = forms.models.inlineformset_factory(
                     model,
                     modelfield.related_model,
                     fields=list(child_fields.keys()),
@@ -102,7 +114,6 @@ def inlinemodelform_factory(request, model, object, modelfields, baseformclass):
                     extra=1,
                     can_delete=True,
                 )
-                print(formset, formset.max_num)
             if request.POST:
                 attribs[modelfield.name] = InlineField(
                     formset(request.POST, request.FILES, instance=object)
@@ -143,11 +154,30 @@ def save_inline(form, parent_object):
 
 
 def formfield_callback_with_request(field, request):
+    ret = field.formfield()
+
     # customize certain widgets
     if isinstance(field, models.DateTimeField):
-        ret = field.formfield(widget=widgets.SplitDateTimeWidget)
-    else:
-        ret = field.formfield()
+        ret = forms.SplitDateTimeField()
+        for f, _class in zip(ret.fields, ["datepicker", "timepicker"]):
+            if "class" not in f.widget.attrs:
+                f.widget.attrs["class"] = ""
+            f.widget.attrs["type"] = "text"
+            f.widget.attrs["class"] += " " + _class
+
+    if isinstance(field, models.DateField):
+        ret.widget = forms.TextInput(attrs={"class": "datepicker"})
+
+    if isinstance(field, models.TimeField):
+        ret.widget = forms.TextInput(attrs={"class": "timepicker"})
+
+    if type(ret) == forms.fields.CharField and type(ret.widget) == forms.Textarea:
+        ret.widget.attrs.update({"class": "materialize-textarea"})
+
+    if "class" not in ret.widget.attrs:
+        ret.widget.attrs["class"] = ""
+    ret.widget.attrs["class"] += " " + "validate"
+
     # lazy choices
     if hasattr(field, "lazy_choices"):
         field.choices = field.lazy_choices(request, object)

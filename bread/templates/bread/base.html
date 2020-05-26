@@ -6,15 +6,15 @@
         <title>{% pagename request %}</title>
         <meta name="description" content="{% block description %}{% endblock%}" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="shortcut icon" href="{% static 'favicon.png' %}"/>
+        <link rel="shortcut icon" href="{% static "favicon.png" %}"/>
 
         {% compress css %}
         <link rel="stylesheet" type="text/x-scss" href="{% static "sass/main.scss" %}" />
         {% endcompress %}
 
         {% compress js %}
-        <script type="text/javascript" src="{% static 'js/bliss.js' %}"></script>
-        <script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>
+        <script type="text/javascript" src="{% static "js/bliss.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/materialize.js" %}"></script>
         {% endcompress js %}
     </head>
 
@@ -35,10 +35,10 @@
 
                 <script>
                     document.getElementById("django-system-messages").style.display = "none";
-                    document.addEventListener('DOMContentLoaded', function() {
+                    document.addEventListener("DOMContentLoaded", function() {
                         {% for message in messages %}
                         M.toast({
-                            html: '<div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>',
+                            html: "<div{% if message.tags %} class='{{ message.tags }}'{% endif %}>{{ message }}</div>",
                         });
                         {% endfor %}
                     });
@@ -66,13 +66,31 @@
         </footer>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            $.ready(e => {
+                // do materialize initialization and some customizations
                 M.AutoInit();
+
                 // make the datepicker a bit nicer and compatible with the django format
-                M.Datepicker.init(document.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});
+                M.Datepicker.init(document.querySelectorAll(".datepicker"), {format: "yyyy-mm-dd", showClearBtn: true, autoClose: true});
+
                 // when a select is readonly, we need to set the materialized select to disabled
                 // (but not the original/hidden select because disabled form fields will not get sent to the server
                 $$("select[readonly]").forEach(elem => elem.M_FormSelect.dropdown.el.disabled = true);
+                // add invalid class to fields with errors
+                $$(".error input").forEach(elem => elem.classList.add("invalid"));
+
+                // set cursor to first visible element and mark the text
+                if(document.forms.length > 0) {
+                    for (var i = 0; i < document.forms[0].elements.length; i++) {
+                        var elem = document.forms[0].elements[i];
+                        if((elem.tagName == "INPUT" || elem.tagName == "SELECT") && elem.type !== "hidden") {
+                            elem.focus();
+                            elem.select();
+                            break;
+                        }
+                    }
+                }
+                M.updateTextFields();
                 {% block oncontentloaded_js %}
                 {% endblock oncontentloaded_js %}
             });

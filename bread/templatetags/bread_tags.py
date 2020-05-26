@@ -128,72 +128,11 @@ def menu(request):
     return menugroups
 
 
-@register.filter
 def materializecss(element):
-    """Filter to print an element in materializecss style
-    Just adds some materialcss classes to the input widgets and renders ``bread/form.html``
-    """
-    if isinstance(element, forms.fields.BoundField):
-        if isinstance(element.field.widget, forms.CheckboxInput):
-            return render_to_string("bread/fields/checkbox.html", {"field": element})
-        elif isinstance(element.field.widget, ckeditor.widgets.CKEditorWidget):
-            return render_to_string("bread/fields/ckeditor.html", {"field": element})
-        elif isinstance(element.field.widget, forms.FileInput):
-            return render_to_string("bread/fields/file.html", {"field": element})
-        elif isinstance(element.field.widget, forms.Select) and len(
-            element.field.widget.choices
-        ) > getattr(settings, "AUTOCOMPLETE_IF_MORE_THAN", 7):
-            element.field.widget.attrs.update({"class": "no-autoinit"})
-            element.field.empty_label = ""
-            return render_to_string(
-                "bread/fields/autocomplete.html", {"field": element}
-            )
-        else:
-            prepare_widget(element.field.widget, element.field, element.errors)
-            return render_to_string("bread/fields/wrapper.html", {"field": element})
-
-    return render_to_string("bread/form.html", {"form": element})
-
-
-def prepare_widget(widget, field, has_error):
-    """
-    Adds classes and makes changes to the widget in order to be materialize compatible
-    Sometimes information from the form field is necessary, therefore the field parameter
-    If we have a MultiWidget, widget != field.widget
-    """
-
-    unstyled_widgets = [
-        forms.CheckboxSelectMultiple,
-        forms.RadioSelect,
-        forms.FileInput,
-    ]
-    # TODO: handle subwidgets
-    if isinstance(widget, forms.MultiWidget):
-        for subwidget in widget.widgets:
-            prepare_widget(subwidget, field, has_error)
-
-    # TODO: Bug with materializecss, select will not use html5-required attribute
-    # does not affect form submitssion
-    if isinstance(widget, forms.Select) or isinstance(widget, forms.SelectMultiple):
-        field.required = False
-
-    if isinstance(widget, forms.DateInput):
-        widget.attrs.update({"class": "datepicker"})
-
-    if isinstance(widget, forms.TimeInput):
-        widget.attrs.update({"class": "timepicker"})
-
-    # Textareas are often used for more special things like WYSIWYG editors and therefore
-    # we only apply materialize if this is a direct instance, not inherited
-    if type(field) == forms.fields.CharField and type(field.widget) == forms.Textarea:
-        widget.attrs.update({"class": "materialize-textarea"})
-
-    if not any([isinstance(widget, fieldtype) for fieldtype in unstyled_widgets]):
-        classes = widget.attrs.get("class", "")
-        classes += " validate"
-        if has_error:
-            classes += " invalid"
-        widget.attrs["class"] = classes
+    if isinstance(element.field.widget, ckeditor.widgets.CKEditorWidget):
+        return render_to_string("bread/fields/ckeditor.html", {"field": element})
+    elif isinstance(element.field.widget, forms.FileInput):
+        return render_to_string("bread/fields/file.html", {"field": element})
 
 
 # TODO: check recursively?

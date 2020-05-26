@@ -1,5 +1,6 @@
-{% load bread_tags %}
+{% load bread_tags crispy_forms_utils  %}
 
+{% specialspaceless %}
 <div class="card-panel col s12">
 <h5>
 {% if formset.max_num > 1 %}
@@ -9,28 +10,24 @@
 {% endif %}
 </h5>
 
+{% include "materialize/errors_formset.html" %}
 <table id="formset_{{ formset.prefix }}_table">
     {{ formset.management_form }}
 
     {% if form.non_field_errors %}
-        <blockquote>
-            {% for non_field_error in form.non_field_errors %}
-                 {{ non_field_error }}
-            {% endfor %}
-        </blockquote>
+        {% for non_field_error in form.non_field_errors %}
+             {{ non_field_error }}
+        {% endfor %}
     {% endif %}
 
-    {% for form in formset.forms %}
+    {% for form in formset %}
+        {% if not form.is_extra %}
+            {% include "materialize/errors.html" %}
+        {% endif %}
+
         <tr>
-            {% for field in form.visible_fields %}
-            <td style="padding: 1px">
-                {% if forloop.first %}
-                    {% for hidden in form.hidden_fields %}
-                        {{ hidden }}
-                    {% endfor %}
-                {% endif %}
-                {{ field|materializecss }}
-            </td>
+            {% for field in form %}
+                {% include 'materialize/field.html' with tag="td" form_show_errors=True %}
             {% endfor %}
         </tr>
     {% endfor %}
@@ -42,18 +39,13 @@
         </tr>
     </tfoot>
 </table>
+
+<!-- template form to insert new entry when clicking add-button -->
 <div id="empty_{{ formset.prefix }}_form" style="display:none;" class="template-form">
     <table>
         <tr>
-            {% for field in formset.empty_form.visible_fields %}
-                <td>
-                    {% if forloop.first %}
-                        {% for hidden in form.hidden_fields %}
-                            {{ hidden }}
-                        {% endfor %}
-                    {% endif %}
-                    {{ field|materializecss }}
-                </td>
+            {% for field in formset.empty_form%}
+                {% include 'materialize/field.html' with tag="td" form_show_errors=True %}
             {% endfor %}
         </tr>
     </table>
@@ -64,6 +56,13 @@
     // TODO: maybe move to external javascript
     // TODO: maybe use bliss
     // TODO: nicer "remove" functionality (disable fields and gray out, or hide column)
+    function init_{{ formset.prefix }}_formset() {
+        var m_input_fields  = $$('#empty_{{ formset.prefix }}_form .input-field')
+        for(var j = 0; j < m_input_fields.length; ++j) {
+            m_input_fields[j].firstElementChild.classList.add('no-autoinit');
+        }
+        update_add_{{ formset.prefix }}_button();
+    }
     function enable_materialize_newform(form) {
         var m_input_fields = form.getElementsByClassName("input-field");
         for(var j = 0; j < m_input_fields.length; ++j) {
@@ -72,14 +71,7 @@
         M.AutoInit(form);
         M.Datepicker.init(form.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});
     }
-    function init_{{ formset.prefix }}_formset() {
-        var m_input_fields  = $$('#empty_{{ formset.prefix }}_form .input-field')
-        for(var j = 0; j < m_input_fields.length; ++j) {
-            m_input_fields[j].firstElementChild.classList.add('no-autoinit');
-        }
-        show_add_{{ formset.prefix }}_button();
-    }
-    function show_add_{{ formset.prefix }}_button() {
+    function update_add_{{ formset.prefix }}_button() {
         var formcount = $('#id_{{ formset.prefix }}-TOTAL_FORMS')
         var maxforms = $('#id_{{ formset.prefix }}-MAX_NUM_FORMS')
         var addbutton = $('#add_{{ formset.prefix }}_button')
@@ -96,11 +88,11 @@
         $('#formset_{{ formset.prefix }}_table tbody').appendChild(newElem);
         formcount.value = parseInt(formcount.value) + 1;
         enable_materialize_newform(newElem);
-        M.AutoInit(newElem);
-        show_add_{{ formset.prefix }}_button();
+        update_add_{{ formset.prefix }}_button();
     }
     function formset_{{ formset.prefix }}_remove() {
     }
     document.addEventListener("DOMContentLoaded", e => init_{{ formset.prefix }}_formset());
 </script>
 </div>
+{% endspecialspaceless %}

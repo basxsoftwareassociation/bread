@@ -17,6 +17,7 @@ setup(
     license="Private",
     install_requires=[
         "Django",
+        "django-crispy-forms",
         "django-filepreview",
         "django-ckeditor",
         "django-model-utils",

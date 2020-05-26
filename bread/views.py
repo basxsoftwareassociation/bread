@@ -4,6 +4,9 @@ from html.parser import HTMLParser
 
 import django_filters
 import pygraphviz
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -11,9 +14,6 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models, transaction
 from django.db.models.functions import Lower
-
-# from django.forms import HiddenInput
-from django.forms.models import ModelForm
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
@@ -26,6 +26,14 @@ from guardian.mixins import PermissionListMixin, PermissionRequiredMixin
 
 from .forms.forms import inlinemodelform_factory
 from .utils import get_modelfields, parse_fieldlist, pretty_fieldname, xlsxresponse
+
+
+class FilterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.form_method = "get"
+        self.helper.add_input(Submit("submit", "Filter"))
 
 
 class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
@@ -120,7 +128,7 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
                     "filter_class": django_filters.DateFromToRangeFilter,
                     "extra": lambda f: {
                         "widget": django_filters.widgets.DateRangeWidget(
-                            attrs={"type": "date", "class": "validate datepicker"}
+                            attrs={"type": "text", "class": "validate datepicker"}
                         )
                     },
                 },
@@ -128,7 +136,7 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
                     "filter_class": django_filters.DateFromToRangeFilter,
                     "extra": lambda f: {
                         "widget": django_filters.widgets.DateRangeWidget(
-                            attrs={"type": "date", "class": "validate datepicker"}
+                            attrs={"type": "text", "class": "validate datepicker"}
                         )
                     },
                 },
@@ -140,6 +148,7 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
             if isinstance(f, models.FileField) or isinstance(f, GenericForeignKey)
         ]
         config["fields"] = self.filterset_fields
+        config["form"] = FilterForm
 
         meta = type("Meta", (object,), config)
         filterset = type(
@@ -238,8 +247,11 @@ class ReadView(PermissionRequiredMixin, DetailView):
 
 
 class CustomFormMixin:
-    """Allows to pass initial parameters via GET parameters and
-    converts n-to-many fields into inline forms
+    """This mixin takes care of the following things:
+    - Allows to pass initial values for form fields via the GET query
+    - Converts n-to-many fields into inline forms
+    - Set GenericForeignKey fields before saving (not supported by default in django)
+    - If "next" is in the GET query redirect to there on success
     """
 
     def get_initial(self, *args, **kwargs):
@@ -247,9 +259,14 @@ class CustomFormMixin:
         ret.update(self.request.GET.dict())
         return ret
 
-    def get_form_class(self, form=ModelForm):
+    def get_form_class(self, form=forms.models.ModelForm):
         return inlinemodelform_factory(
-            self.request, self.model, self.object, self.modelfields.values(), form
+            self.request,
+            self.model,
+            self.object,
+            self.modelfields.values(),
+            form,
+            self.layout,
         )
 
     def get_form(self, form_class=None):
@@ -303,6 +320,10 @@ class EditView(
         )
         super().__init__(*args, **kwargs)
 
+    @property
+    def layout(self):
+        return self.admin.get_editlayout(self.request)
+
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
 
@@ -327,10 +348,15 @@ class AddView(
             ),
             admin=self.admin,
         )
+        self.layout = admin.get_addlayout(self.request)
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.add_{self.model.__name__.lower()}"]
+
+    @property
+    def layout(self):
+        return self.admin.get_addlayout(self.request)
 
     def get_permission_object(self):
         return None

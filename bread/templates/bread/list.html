@@ -1,5 +1,5 @@
 {% extends "bread/base.html" %}
-{% load bread_tags %}
+{% load bread_tags crispy_forms_tags %}
 
 {% block content %}
     {% include "bread/list_actions.html" %}
@@ -15,10 +15,7 @@
         <div class="card">
             <div class="card-content">
             <form>
-                {{ filter.form|materializecss }}
-                <button class="btn waves-effect waves-light" type="submit" name="action">Filter
-                    <i class="material-icons right">search</i>
-                </button>
+                {% crispy filter.form %}
             </form>
             </div>
         </div>

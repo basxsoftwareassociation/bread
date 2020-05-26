@@ -11,6 +11,7 @@ for entrypoint in pkg_resources.iter_entry_points(
 
 third_party_apps = set(
     [
+        "crispy_forms",
         "ckeditor",
         "ckeditor_uploader",
         "guardian",
@@ -71,6 +72,10 @@ LOGIN_URL = "login"
 
 # compressor settings
 COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
+
+# crispy forms
+CRISPY_TEMPLATE_PACK = "materialize"
+CRISPY_ALLOWED_TEMPLATE_PACKS = [CRISPY_TEMPLATE_PACK]
 
 HTML_TRUE = mark_safe("&#x2714;")  # ✔
 HTML_FALSE = mark_safe("&#x2716;")  # ✖
