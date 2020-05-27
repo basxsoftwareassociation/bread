@@ -51,7 +51,7 @@ class BreadAdmin:
     "The django model which will be managed in this class"
     browsefields = None
     """List of fields to be listed in the table of the browse-page. Defaults to ``["__all__"]``."""
-    viewlink_field = None
+    readlink_field = None
     """Column with this name will be rendered as link to view the object in the browse page"""
     filterfields = None
     """List of fields which should appear in the filter-form of the browse-page. Defaults to ``["__all__"]``. Can span relationships."""
@@ -213,7 +213,7 @@ class BreadAdmin:
                 value = getattr(object, f"get_{fieldname}_display")()
             else:
                 value = getattr(object, fieldname, None)
-        if fieldname == self.viewlink_field:
+        if fieldname == self.readlink_field:
             return as_object_link(object, format_value(value, fieldtype))
         return format_value(value, fieldtype)
 
@@ -261,7 +261,7 @@ class BreadAdmin:
         if (
             "read" in urls
             and has_permission(request.user, "view", object)
-            and not self.viewlink_field
+            and not self.readlink_field
         ):
             actions.append(
                 Action(self.reverse("read", pk=object.pk), "View", "search",)
