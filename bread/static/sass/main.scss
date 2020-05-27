@@ -26,6 +26,12 @@ header {
     color: red;
 }
 
+.help-block {
+    color: #666;
+    font-style: italic;
+    font-size: small;
+}
+
 main nav .brand-logo {
     padding-left: 10px;
 }
@@ -46,8 +52,8 @@ main nav .brand-logo {
     }
 }
 
-// hide when printing
 
+// hide when printing
 @media print
 {    
     header, footer, nav {
