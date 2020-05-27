@@ -19,7 +19,7 @@ from dynamic_preferences.registries import global_preferences_registry
 from . import menu
 from . import views as bread_views
 from .formatters import as_object_link, format_value
-from .utils import has_permission
+from .utils import has_permission, title
 
 Action = namedtuple("Action", ["url", "label", "icon"])
 
@@ -179,7 +179,7 @@ class BreadAdmin:
 
     def menugroup(self):
         """Returns the name of the menu-group under which items for this admin class should appear"""
-        return apps.get_app_config(self.model._meta.app_label).verbose_name.title()
+        return title(apps.get_app_config(self.model._meta.app_label).verbose_name)
 
     def menuitems(self):
         """Iterable of bread.menu.Item objects which should be added to the menu for this admin class"""
@@ -329,12 +329,12 @@ class BreadAdmin:
     @property
     def verbose_modelname(self):
         """Shortcut to use in templates"""
-        return self.model._meta.verbose_name.title()
+        return title(self.model._meta.verbose_name)
 
     @property
     def verbose_modelname_plural(self):
         """Shortcut to use in templates"""
-        return self.model._meta.verbose_name_plural.title()
+        return title(self.model._meta.verbose_name_plural)
 
     def __str__(self):
         return self.verbose_modelname + " Admin"
@@ -391,7 +391,7 @@ class BreadAdminSite:
 
         # app menu itmes
         for app, admins in self.get_apps().items():
-            grouplabel = app.verbose_name.title()
+            grouplabel = title(app.verbose_name)
             if not menu.main.hasgroup(grouplabel):
                 menu.registergroup(menu.Group(label=grouplabel))
             for admin in admins:

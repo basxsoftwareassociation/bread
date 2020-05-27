@@ -243,3 +243,9 @@ def get_video_thumbnail(file_):
             outputname, format="mp4", preset="ultrafast", acodec="copy"
         ).run()
     return outputurl
+
+
+def title(label):
+    if label and label[0].islower():
+        return label.title()
+    return label

@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 
 from ..admin import site
 from ..formatters import format_value
-from ..utils import has_permission, pretty_fieldname
+from ..utils import has_permission, pretty_fieldname, title
 
 register = template.Library()
 
@@ -18,8 +18,8 @@ register.filter(format_value)
 @register.simple_tag
 def pretty_modelname(model, plural=False):
     if plural:
-        return model._meta.verbose_name_plural.title()
-    return model._meta.verbose_name.title()
+        return title(model._meta.verbose_name_plural)
+    return title(model._meta.verbose_name)
 
 
 @register.simple_tag
@@ -56,7 +56,7 @@ def add_action(admin, request):
 def pagename(request):
     return " / ".join(
         [
-            namespace.replace("_", " ").title()
+            title(namespace.replace("_", " "))
             for namespace in request.resolver_match.namespaces
         ]
     )
