@@ -27,7 +27,9 @@
 
         <tr>
             {% for field in form %}
-                {% include 'materialize/field.html' with tag="td" form_show_errors=True %}
+            <td>
+                {% include 'materialize/field.html' with form_show_errors=True form_show_labels=True %}
+            </td>
             {% endfor %}
         </tr>
     {% endfor %}
