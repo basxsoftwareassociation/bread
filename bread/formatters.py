@@ -74,6 +74,10 @@ def as_text(value):
     return mark_safe(text)
 
 
+def as_time(value):
+    return f"{value.hour:02}:{value.minute:02}:{value.second:02}"
+
+
 def as_duration(value):
     return mark_safe(":".join(str(value).split(":")[:3]))
 
@@ -178,6 +182,10 @@ def returns_text(func):
     return lambda *args, **kwargs: as_text(func(*args, **kwargs))
 
 
+def returns_time(func):
+    return lambda *args, **kwargs: as_time(func(*args, **kwargs))
+
+
 def returns_duation(func):
     return lambda *args, **kwargs: as_duration(func(*args, **kwargs))
 
@@ -213,6 +221,7 @@ MODELFIELD_FORMATING_HELPERS = {
     models.FileField: as_download,
     models.URLField: as_url,
     models.TextField: as_text,
+    models.TimeField: as_time,
     RichTextField: as_richtext,
     RichTextUploadingField: as_richtext,
     CountryField: as_countries,
