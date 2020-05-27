@@ -3,6 +3,7 @@
 
 
 {% block content %}
+<div style="overflow: hidden"> <!-- necessary in order to make the container have the correct height (because we use float-positioning) -->
     {% if object %}
         <h2>Update {{ view.admin.verbose_modelname }} <i>{{ object }}</i></h2>
     {% elif form.instance %}
@@ -11,4 +12,5 @@
         <script>document.addEventListener("DOMContentLoaded", e => $$("form").forEach(form => form.reset()))</script>
     {% endif %}
     {% crispy form %}
+</div>
 {% endblock content %}
