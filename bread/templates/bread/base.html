@@ -78,6 +78,9 @@
                 $$("select[readonly]").forEach(elem => elem.M_FormSelect.dropdown.el.disabled = true);
                 // add invalid class to fields with errors
                 $$(".error input").forEach(elem => elem.classList.add("invalid"));
+                // hack to display "required field" message for selects which are materialize-d
+                $$("select[required]")._.style({display: "block", height: 0, padding: 0, width: 0, position: 'absolute'});
+
 
                 // set cursor to first visible element and mark the text
                 if(document.forms.length > 0) {

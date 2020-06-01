@@ -178,8 +178,12 @@ def formfield_callback_with_request(field, request):
     if isinstance(field, models.TimeField):
         ret.widget = forms.TextInput(attrs={"class": "timepicker"})
 
-    if type(ret) == forms.fields.CharField and type(ret.widget) == forms.Textarea:
+    if type(ret) == forms.CharField and type(ret.widget) == forms.Textarea:
         ret.widget.attrs.update({"class": "materialize-textarea"})
+
+    if isinstance(ret.widget, forms.Select):
+        ret.widget.attrs["required"] = False
+        print(ret.widget.attrs)
 
     if "class" not in ret.widget.attrs:
         ret.widget.attrs["class"] = ""
