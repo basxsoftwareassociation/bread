@@ -2,6 +2,26 @@
 {% load bread_tags crispy_forms_tags %}
 
 {% block content %}
+    {% if chartdata %}
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <canvas id="chart" width="400" height="400"></canvas>
+        <script>
+            $.ready(e => {
+                let data = {{ chartdata }};
+                new Chart($("#chart"), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(data),
+                        datasets: [{
+                            data: Object.values(data),
+                        }]
+                    },
+                });
+            });
+        </script>
+    {% endif %}
+
+
     {% include "bread/list_actions.html" %}
     {% include "bread/inline_list.html" %}
     {% add_action view.admin request as action %}

@@ -25,7 +25,12 @@ class BoundInlineField(BoundField):
 
     def as_widget(self, widget=None, attrs=None, only_initial=False):
         return render_to_string(
-            "materialize/table_inline_formset.html", {"formset": self.field.formset},
+            "materialize/table_inline_formset.html",
+            {
+                "formset": self.field.formset,
+                "form_show_errors": True,
+                "form_show_labels": True,
+            },
         )
 
 

@@ -20,19 +20,24 @@
         {% endfor %}
     {% endif %}
 
+    <tbody>
     {% for form in formset %}
         {% if not form.is_extra %}
             {% include "materialize/errors.html" %}
         {% endif %}
 
         <tr>
-            {% for field in form %}
+            {% for field in form.hidden_fields %}
+                {% include 'materialize/field.html' %}
+            {% endfor %}
+            {% for field in form.visible_fields %}
             <td>
-                {% include 'materialize/field.html' with form_show_errors=True form_show_labels=True %}
+                {% include 'materialize/field.html' %}
             </td>
             {% endfor %}
         </tr>
     {% endfor %}
+    </tbody>
     <tfoot>
         <tr>
             <td>
@@ -46,8 +51,13 @@
 <div id="empty_{{ formset.prefix }}_form" style="display:none;" class="template-form">
     <table>
         <tr>
-            {% for field in formset.empty_form%}
-                {% include 'materialize/field.html' with tag="td" form_show_errors=True %}
+            {% for field in formset.empty_form.hidden_fields %}
+                {% include 'materialize/field.html' %}
+            {% endfor %}
+            {% for field in formset.empty_form.visible_fields %}
+            <td>
+                {% include 'materialize/field.html' %}
+            </td>
             {% endfor %}
         </tr>
     </table>
@@ -61,17 +71,17 @@
     function init_{{ formset.prefix }}_formset() {
         var m_input_fields  = $$('#empty_{{ formset.prefix }}_form .input-field')
         for(var j = 0; j < m_input_fields.length; ++j) {
-            m_input_fields[j].firstElementChild.classList.add('no-autoinit');
+            $("input, select", m_input_fields[j]).classList.add('no-autoinit');
         }
         update_add_{{ formset.prefix }}_button();
     }
     function enable_materialize_newform(form) {
         var m_input_fields = form.getElementsByClassName("input-field");
         for(var j = 0; j < m_input_fields.length; ++j) {
-            m_input_fields[j].firstElementChild.classList.remove('no-autoinit');
+            $("input, select", m_input_fields[j]).classList.remove('no-autoinit');
         }
-        M.AutoInit(form);
         M.Datepicker.init(form.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});
+        M.AutoInit(form);
     }
     function update_add_{{ formset.prefix }}_button() {
         var formcount = $('#id_{{ formset.prefix }}-TOTAL_FORMS')
@@ -86,7 +96,6 @@
         var formcount = $('#id_{{ formset.prefix }}-TOTAL_FORMS')
         var newElementStr = $('#empty_{{ formset.prefix }}_form').innerHTML.replace(/__prefix__/g, formcount.value)
 		var newElem = new DOMParser().parseFromString(newElementStr, "text/html").getElementsByTagName('tr')[0];
-
         $('#formset_{{ formset.prefix }}_table tbody').appendChild(newElem);
         formcount.value = parseInt(formcount.value) + 1;
         enable_materialize_newform(newElem);
