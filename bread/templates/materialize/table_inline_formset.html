@@ -1,66 +1,67 @@
 {% load bread_tags crispy_forms_utils  %}
 
 {% specialspaceless %}
-<div class="card-panel col s12">
-<h5>
-{% if formset.max_num > 1 %}
-    {% pretty_modelname formset.model True %}
-{% else %}
-    {% pretty_modelname formset.model %}
-{% endif %}
-</h5>
-
-{% include "materialize/errors_formset.html" %}
-<table id="formset_{{ formset.prefix }}_table">
-    {{ formset.management_form }}
-
-    {% if form.non_field_errors %}
-        {% for non_field_error in form.non_field_errors %}
-             {{ non_field_error }}
-        {% endfor %}
+<div class="card-panel">
+    <h5>
+    {% if formset.max_num > 1 %}
+        {% pretty_modelname formset.model True %}
+    {% else %}
+        {% pretty_modelname formset.model %}
     {% endif %}
+    </h5>
 
-    <tbody>
-    {% for form in formset %}
-        {% if not form.is_extra %}
-            {% include "materialize/errors.html" %}
+    {% include "materialize/errors_formset.html" %}
+    <table id="formset_{{ formset.prefix }}_table">
+        {{ formset.management_form }}
+
+        {% if form.non_field_errors %}
+            {% for non_field_error in form.non_field_errors %}
+                 {{ non_field_error }}
+            {% endfor %}
         {% endif %}
 
-        <tr>
-            {% for field in form.hidden_fields %}
-                {% include 'materialize/field.html' %}
-            {% endfor %}
-            {% for field in form.visible_fields %}
-            <td>
-                {% include 'materialize/field.html' %}
-            </td>
-            {% endfor %}
-        </tr>
-    {% endfor %}
-    </tbody>
-    <tfoot>
-        <tr>
-            <td>
-                <a id="add_{{ formset.prefix }}_button" class="btn waves-effect" onclick="formset_{{ formset.prefix }}_add();">Add {% pretty_modelname formset.model %}</a>
-            </td>
-        </tr>
-    </tfoot>
-</table>
+        <tbody>
+        {% for form in formset %}
+            {% if not form.is_extra %}
+                {% include "materialize/errors.html" %}
+            {% endif %}
 
-<!-- template form to insert new entry when clicking add-button -->
-<div id="empty_{{ formset.prefix }}_form" style="display:none;" class="template-form">
-    <table>
-        <tr>
-            {% for field in formset.empty_form.hidden_fields %}
-                {% include 'materialize/field.html' %}
-            {% endfor %}
-            {% for field in formset.empty_form.visible_fields %}
-            <td>
-                {% include 'materialize/field.html' %}
-            </td>
-            {% endfor %}
-        </tr>
+            <tr>
+                {% for field in form.hidden_fields %}
+                    {% include 'materialize/field.html' %}
+                {% endfor %}
+                {% for field in form.visible_fields %}
+                <td>
+                    {% include 'materialize/field.html' %}
+                </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>
+                    <a id="add_{{ formset.prefix }}_button" class="btn waves-effect" onclick="formset_{{ formset.prefix }}_add();">Add {% pretty_modelname formset.model %}</a>
+                </td>
+            </tr>
+        </tfoot>
     </table>
+
+    <!-- template form to insert new entry when clicking add-button -->
+    <div id="empty_{{ formset.prefix }}_form" style="display:none;" class="template-form">
+        <table>
+            <tr>
+                {% for field in formset.empty_form.hidden_fields %}
+                    {% include 'materialize/field.html' %}
+                {% endfor %}
+                {% for field in formset.empty_form.visible_fields %}
+                <td>
+                    {% include 'materialize/field.html' %}
+                </td>
+                {% endfor %}
+            </tr>
+        </table>
+    </div>
 </div>
 
 <script>
@@ -105,5 +106,4 @@
     }
     document.addEventListener("DOMContentLoaded", e => init_{{ formset.prefix }}_formset());
 </script>
-</div>
 {% endspecialspaceless %}
