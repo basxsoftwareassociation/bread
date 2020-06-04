@@ -1,7 +1,3 @@
 {% if field.help_text %}
-    {% if help_text_inline %}
-        <span class="help-inline">{{ field.help_text|safe }}</span>
-    {% else %}
-        <p class="help-block">{{ field.help_text|safe }}</p>
-    {% endif %}
+    <span class="helper-text">{{ field.help_text|safe }}</span>
 {% endif %}
