@@ -79,7 +79,7 @@ def as_time(value):
 
 
 def as_duration(value):
-    return mark_safe(":".join(str(value).split(":")[:3]))
+    return str(value - datetime.timedelta(microseconds=value.microseconds))
 
 
 def as_boolean(value):
