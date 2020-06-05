@@ -234,14 +234,9 @@ class BreadAdmin:
             )
         # if there is no custom aggregation defined but the field is a database fields, we just count distinct
         if aggregation_func is None:
-            if modelfield is None:
-                return ""
-            aggregation = DEFAULT_AGGREGATORS.get(
-                type(modelfield), models.Count(fieldname, distinct=True)
-            )
-            # we use the count aggregator and therefore have an integer
             if type(modelfield) not in DEFAULT_AGGREGATORS:
-                modelfield = models.IntegerField()
+                return ""
+            aggregation = DEFAULT_AGGREGATORS[type(modelfield)]
         else:
             aggregation = aggregation_func(queryset)
 
