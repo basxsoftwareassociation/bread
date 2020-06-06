@@ -172,9 +172,12 @@ class BreadAdmin:
                         else f"/<{param}>"
                     )
             urls[viewname] = path(viewpath, view, name=viewname)
-        urls["index"] = path(
-            f"", RedirectView.as_view(url=self.reverse(self.indexview)), name="index",
-        )
+        if self.indexview:
+            urls["index"] = path(
+                f"",
+                RedirectView.as_view(url=self.reverse(self.indexview)),
+                name="index",
+            )
         return urls
 
     def menugroup(self):
@@ -335,6 +338,51 @@ class BreadAdmin:
         return self.verbose_modelname + " Admin"
 
 
+class BreadGenericAdmin(BreadAdmin):
+    """Admin class which works without model, for generic menu items and URLS"""
+
+    class model(models.Model):
+        """Stub model because this admin is not coupled to a model"""
+
+        class Meta:
+            managed = False
+
+    app_label = None
+    """app_label needs to be set because we cannot determine the app from the model"""
+
+    def __init__(self):
+        assert self.app_label
+        self.indexview = self.indexview
+        self.browsefields = []
+        self.filterfields = []
+        self.readfields = []
+        self.editfields = []
+        self.addfields = []
+        self.browseview = None
+        self.readview = None
+        self.editview = None
+        self.addview = None
+        self.deleteview = None
+        self.autoviews = []
+
+    def get_modelname(self):
+        return self.app_label
+
+    @property
+    def verbose_modelname(self):
+        return title(self.app_label)
+
+    @property
+    def verbose_modelname_plural(self):
+        return title(self.app_label)
+
+    def menugroup(self):
+        return self.app_label
+
+    def menuitems(self):
+        return ()
+
+
 class BreadAdminSite:
     _registry = None
 
@@ -356,7 +404,10 @@ class BreadAdminSite:
     def get_apps(self):
         applist = {}
         for admin in self._registry.values():
-            app = apps.get_app_config(admin.model._meta.app_label)
+            if isinstance(admin, BreadGenericAdmin):
+                app = apps.get_app_config(admin.app_label)
+            else:
+                app = apps.get_app_config(admin.model._meta.app_label)
             if app not in applist:
                 applist[app] = []
             applist[app].append(admin)
