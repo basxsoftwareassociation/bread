@@ -189,7 +189,7 @@ def formfield_callback_with_request(field, request):
     if hasattr(field, "lazy_choices"):
         field.choices = field.lazy_choices(request, object)
     # lazy initial
-    if ret and (not ret.initial and hasattr(field, "lazy_initial")):
+    if ret and hasattr(field, "lazy_initial"):
         ret.initial = field.lazy_initial(request, object)
 
     # apply permissions for foreign key choices
