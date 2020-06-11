@@ -155,16 +155,23 @@ def as_video(value):
 
 
 def as_object_link(value, label=None):
+    def get_link_from_admin(object):
+        from .admin import site
+
+        defaultadmin = site.get_default_admin(object)
+        if defaultadmin is not None:
+            return mark_safe(
+                f'<a href="{defaultadmin.reverse("read", object.pk)}">{label or object}</a>'
+            )
+
     if hasattr(value, "get_absolute_url"):
         return mark_safe(f'<a href="{value.get_absolute_url()}">{value}</a>')
-    from .admin import site
 
-    defaultadmin = site.get_default_admin(value)
-    if defaultadmin is not None:
-        return mark_safe(
-            f'<a href="{defaultadmin.reverse("read", value.pk)}">{label or value}</a>'
-        )
-    return str(value)
+    if hasattr(value, "get_child"):
+        child = value.get_child()
+        if child:
+            return as_object_link(value.get_child())
+    return get_link_from_admin(value) or str(value)
 
 
 # decorator wrappers to format functions outputs
