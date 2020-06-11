@@ -4,18 +4,13 @@ from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.db import models
-from django.forms import (
-    BoundField,
-    Field,
-    ModelChoiceField,
-    ModelMultipleChoiceField,
-    modelform_factory,
-)
+from django.forms import BoundField, Field, Select, SelectMultiple, modelform_factory
 from django.template.loader import render_to_string
 from guardian.shortcuts import get_objects_for_user
 
 from ..utils import get_modelfields, parse_fieldlist
 from .fields import GenericForeignKeyField
+from .widgets import AutocompleteSelect, AutocompleteSelectMultiple
 
 
 class BoundInlineField(BoundField):
@@ -161,9 +156,16 @@ def save_inline(form, parent_object):
 
 
 def formfield_callback_with_request(field, request):
+
     ret = field.formfield()
 
-    # customize certain widgets
+    # check if autocomplete is necessary
+    if isinstance(ret.widget, SelectMultiple):
+        ret = field.formfield(widget=AutocompleteSelectMultiple)
+    elif isinstance(ret.widget, Select):
+        ret = field.formfield(widget=AutocompleteSelect)
+
+    # always use splitdatetimefield because we have no good datetime picker
     if isinstance(field, models.DateTimeField):
         ret = forms.SplitDateTimeField()
         for f, _class in zip(ret.fields, ["datepicker", "timepicker"]):
@@ -172,28 +174,34 @@ def formfield_callback_with_request(field, request):
             f.widget.attrs["type"] = "text"
             f.widget.attrs["class"] += " " + _class
 
+    # activate materializecss datepicker
     if isinstance(field, models.DateField):
         ret.widget = forms.TextInput(attrs={"class": "datepicker"})
 
+    # activate materializecss timepicker
     if isinstance(field, models.TimeField):
         ret.widget = forms.TextInput(attrs={"class": "timepicker"})
 
+    # activate materializecss text area. Be a bit more selective here
+    # Some external widgets want to use textarea for special things (e.g. CKEditor)
     if type(ret) == forms.CharField and type(ret.widget) == forms.Textarea:
         ret.widget.attrs.update({"class": "materialize-textarea"})
 
+    # activate materializecss validation
     if "class" not in ret.widget.attrs:
         ret.widget.attrs["class"] = ""
-    ret.widget.attrs["class"] += " " + "validate"
+    ret.widget.attrs["class"] += " validate"
 
     # lazy choices
     if hasattr(field, "lazy_choices"):
         field.choices = field.lazy_choices(request, object)
+
     # lazy initial
     if ret and hasattr(field, "lazy_initial"):
         ret.initial = field.lazy_initial(request, object)
 
-    # apply permissions for foreign key choices
-    if isinstance(ret, ModelChoiceField) or isinstance(ret, ModelMultipleChoiceField):
+    # apply permissions for querysets
+    if hasattr(ret, "queryset"):
         qs = ret.queryset
         ret.queryset = get_objects_for_user(
             request.user, f"view_{qs.model.__name__.lower()}", qs, with_superuser=True,

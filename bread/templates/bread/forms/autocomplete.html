@@ -1,0 +1,17 @@
+<div id="autocomplete_{{ widget.name }}" style="margin-top: 0.5rem">
+    {% include "django/forms/widgets/select.html" %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var choices = new Choices('#autocomplete_{{ widget.name }} select', {
+                /*
+                classNames: {
+                    input: 'choices__input browser-default',
+                }
+                */
+            });
+            // TODO: wait for choices.js to fix the error when using space to separate classes
+            // when fixed we can uncomment the code above and remove the line below
+            $('#autocomplete_{{ widget.name }} input').classList.add("browser-default");
+        });
+    </script>
+</div>
