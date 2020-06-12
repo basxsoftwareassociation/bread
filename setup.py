@@ -25,6 +25,7 @@ setup(
         "django-filter",
         "django-guardian",
         "django-dynamic-preferences",
+        "django-dynamic-fixture",
         "django-compressor",
         "django-libsass",
         "django-markdown2",
