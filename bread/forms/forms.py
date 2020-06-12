@@ -4,7 +4,15 @@ from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.db import models
-from django.forms import BoundField, Field, Select, SelectMultiple, modelform_factory
+from django.forms import (
+    BoundField,
+    ClearableFileInput,
+    Field,
+    FileInput,
+    Select,
+    SelectMultiple,
+    modelform_factory,
+)
 from django.template.loader import render_to_string
 from guardian.shortcuts import get_objects_for_user
 
@@ -164,6 +172,8 @@ def formfield_callback_with_request(field, request):
         ret = field.formfield(widget=AutocompleteSelectMultiple)
     elif isinstance(ret.widget, Select):
         ret = field.formfield(widget=AutocompleteSelect)
+    elif isinstance(ret.widget, ClearableFileInput):
+        ret = field.formfield(widget=FileInput)
 
     # always use splitdatetimefield because we have no good datetime picker
     if isinstance(field, models.DateTimeField):
