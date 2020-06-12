@@ -75,11 +75,12 @@
 
                 // when a select is readonly, we need to set the materialized select to disabled
                 // (but not the original/hidden select because disabled form fields will not get sent to the server
-                $$("select[readonly]").forEach(elem => elem.M_FormSelect.dropdown.el.disabled = true);
+                $$("select[readonly]:not(.browser-default):not(.choices__input)").forEach(elem => elem.M_FormSelect.dropdown.el.disabled = true);
                 // add invalid class to fields with errors
                 $$(".error input").forEach(elem => elem.classList.add("invalid"));
-                // hack to display "required field" message for selects which are materialize-d
-                $$("select[required]")._.style({display: "block", height: 0, padding: 0, width: 0, position: 'absolute'});
+                // hack to display "required field" message for selects which are materialized
+                $$("select[required]")._.removeAttribute("required");
+
 
 
                 // set cursor to first visible element and mark the text

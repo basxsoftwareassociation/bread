@@ -1,4 +1,4 @@
-<div id="autocomplete_{{ widget.name }}" style="margin-top: 0.5rem">
+<div id="autocomplete_{{ widget.name }}" style="margin-top: 0.5rem;{% if widget.attrs.readonly %} pointer-events: none; cursor: not-allowed;{% endif %}">
     {% include "django/forms/widgets/select.html" %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -12,6 +12,9 @@
             // TODO: wait for choices.js to fix the error when using space to separate classes
             // when fixed we can uncomment the code above and remove the line below
             $('#autocomplete_{{ widget.name }} input').classList.add("browser-default");
+            {% if widget.attrs.readonly %}
+                $('#autocomplete_{{ widget.name }}').parentNode._.style({cursor: "not-allowed"});
+            {% endif %}
         });
     </script>
 </div>
