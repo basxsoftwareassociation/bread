@@ -1,10 +1,15 @@
 {% if form.non_field_errors %}
-    <div class="card red lighten-4">
-        <div class="card-content">
-            {% if form_error_title %}<span class="card-title">{{ form_error_title }}</span>{% endif %}
-            <ul>
-                {{ form.non_field_errors|unordered_list }}
-            </ul>
-        </div>
+    <div class="card-panel red lighten-4">
+        {% if form_error_title %}<span class="card-title">{{ form_error_title }}</span>{% endif %}
+        <ul>
+            {{ form.non_field_errors|unordered_list }}
+        </ul>
     </div>
+{% elif form.errors %}
+    <script>
+    M.toast({
+        html: "There are some errors",
+        classes: "red ligthen-4 white-text"
+    });
+    </script>
 {% endif %}

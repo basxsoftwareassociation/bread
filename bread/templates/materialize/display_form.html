@@ -1,8 +1,6 @@
 {% if form.form_html %}
     {% if include_media %}{{ form.media }}{% endif %}
-    {% if form_show_errors %}
-        {% include "materialize/errors.html" %}
-    {% endif %}
+    {% include "materialize/errors.html" %}
     {{ form.form_html }}
 {% else %}
     {% include "materialize/uni_form.html" %}
