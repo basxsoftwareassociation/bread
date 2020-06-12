@@ -1,4 +1,5 @@
 from collections import namedtuple
+from urllib.parse import urlencode
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -9,6 +10,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
+from django.utils.text import format_lazy
 from django.views.generic import CreateView, RedirectView
 from django.views.generic.edit import SingleObjectMixin
 from django_countries.fields import CountryField
@@ -301,7 +303,21 @@ class BreadAdmin:
         return None
 
     def reverse(self, viewname, *args, **kwargs):
+        """Will do a lazay reverse on the view with the given name. If kwargs contains
+        a key "query_arguments", it must be of instance dict and will be used to set
+        query arguments.
+        """
         namespace = f"{self.model._meta.app_label}:{self.modelname}"
+        if "query_arguments" in kwargs:
+            querystring = urlencode(kwargs.pop("query_arguments"), doseq=True)
+            url = reverse_lazy(
+                f"{namespace}:{viewname}",
+                args=args,
+                kwargs=kwargs,
+                current_app=namespace,
+            )
+            return format_lazy("{url}?{querystring}", url=url, querystring=querystring)
+
         return reverse_lazy(
             f"{namespace}:{viewname}", args=args, kwargs=kwargs, current_app=namespace
         )
