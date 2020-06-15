@@ -19,7 +19,11 @@ header {
 }
 
 .sidenav li > a {
-    font-weight: 600;
+    text-transform: uppercase;
+}
+
+form .row {
+    margin-bottom: 0;
 }
 
 .error {
