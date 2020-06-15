@@ -95,6 +95,10 @@ class BreadAdmin:
         mark_payedview = views.MarkPayedConfirmation
     """
 
+    login_required = True
+    """For later use. Right now this will only be considered in automatic tests to allow
+    anonymous access to the views of this admin's views without beeing logged in"""
+
     def __init__(self):
         assert self.model is not None
         self.indexview = self.indexview or "browse"
@@ -307,7 +311,10 @@ class BreadAdmin:
         a key "query_arguments", it must be of instance dict and will be used to set
         query arguments.
         """
-        namespace = f"{self.model._meta.app_label}:{self.modelname}"
+        if isinstance(self, BreadGenericAdmin):
+            namespace = f"{self.app_label}:{self.modelname}"
+        else:
+            namespace = f"{self.model._meta.app_label}:{self.modelname}"
         if "query_arguments" in kwargs:
             querystring = urlencode(kwargs.pop("query_arguments"), doseq=True)
             url = reverse_lazy(
@@ -367,6 +374,7 @@ class BreadGenericAdmin(BreadAdmin):
     """app_label needs to be set because we cannot determine the app from the model"""
 
     def __init__(self):
+        assert self.app_label
         assert self.app_label
         self.indexview = self.indexview
         self.browsefields = []

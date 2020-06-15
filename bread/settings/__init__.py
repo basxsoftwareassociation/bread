@@ -77,6 +77,7 @@ COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 CRISPY_TEMPLATE_PACK = "materialize"
 CRISPY_ALLOWED_TEMPLATE_PACKS = [CRISPY_TEMPLATE_PACK]
 
+# custom unicode symbols
 HTML_TRUE = mark_safe("&#x2714;")  # ✔
 HTML_FALSE = mark_safe("&#x2716;")  # ✖
 HTML_NONE = mark_safe('<div class="center">&empty;</div>')  # ∅
