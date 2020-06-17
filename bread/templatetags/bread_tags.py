@@ -15,6 +15,9 @@ register.simple_tag(has_permission)
 register.filter(format_value)
 
 
+# tags
+
+
 @register.simple_tag
 def pretty_modelname(model, plural=False):
     if plural:
@@ -85,10 +88,19 @@ def updated_querystring(context, key, value):
     return context["request"].path + "?" + current_query.urlencode()
 
 
+# filters
+
+
 @register.filter
 def is_external_url(url):
     """Return ``True`` if the url is linked to an external page"""
     return url.startswith("http")
+
+
+@register.filter
+def to_underscore(string):
+    """Return string with dash (-) replaced with underscore (_)"""
+    return string.replace("-", "_")
 
 
 @register.simple_tag
