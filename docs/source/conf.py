@@ -23,22 +23,22 @@ import django
 
 sys.path.insert(0, os.path.abspath("../.."))
 sys.path.insert(0, os.path.abspath("../../.venv/lib/python3.7/site-packages/"))
-os.environ["DJANGO_SETTINGS_MODULE"] = "breadengine.settings_test"
+os.environ["DJANGO_SETTINGS_MODULE"] = "bread.settings"
 django.setup()
 
-import breadengine.version  # isort:skip # noqa
+import bread.version  # isort:skip # noqa
 
 
 # -- Project information -----------------------------------------------------
 
-project = "breadengine"
+project = "bread"
 copyright = "2020, basx Software Development Co., Ltd."
 author = "basx Software Development Co., Ltd."
 
 # The short X.Y version
-version = ".".join(breadengine.version.version.split(".")[:2])
+version = ".".join(bread.version.version.split(".")[:2])
 # The full version, including alpha/beta/rc tags
-release = breadengine.version.version
+release = bread.version.version
 
 
 # -- General configuration ---------------------------------------------------
@@ -117,7 +117,7 @@ html_static_path = ["_static"]
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "breadenginedoc"
+htmlhelp_basename = "breaddoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -143,8 +143,8 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "breadengine.tex",
-        "breadengine Documentation",
+        "bread.tex",
+        "bread Documentation",
         "basx Software Development Co., Ltd.",
         "manual",
     )
@@ -155,7 +155,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "breadengine", "breadengine Documentation", [author], 1)]
+man_pages = [(master_doc, "bread", "bread Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -166,10 +166,10 @@ man_pages = [(master_doc, "breadengine", "breadengine Documentation", [author], 
 texinfo_documents = [
     (
         master_doc,
-        "breadengine",
-        "breadengine Documentation",
+        "bread",
+        "bread Documentation",
         author,
-        "breadengine",
+        "bread",
         "One line description of project.",
         "Miscellaneous",
     )

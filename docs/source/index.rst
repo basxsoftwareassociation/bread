@@ -1,9 +1,9 @@
-.. breadengine documentation master file, created by
+.. bread documentation master file, created by
    sphinx-quickstart on Wed Mar  4 14:49:20 2020.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to breadengine's documentation!
+Welcome to bread's documentation!
 =======================================
 
 
@@ -30,9 +30,9 @@ Main features
         lazy_choices is a function which takes a request object and an instance object in order to generate a dynamic list of choices
       - Add lazy_initial as an attribute to any modelfield in order to apply an initial value when generating the form (no migration necessary)
         lazy_choices is a function which takes a request object and an instance object in order to generate a dynamic default/initial value for a field
-- Generate URLs for the views automatically e.g. ``breadengine.urls.generateBREADurls(MyModel)`` (create list, details, create, edit delete views and urls)
+- Generate URLs for the views automatically e.g. ``bread.urls.generateBREADurls(MyModel)`` (create list, details, create, edit delete views and urls)
 - Scan python packages for menu-entries
-- Scan python packages for django "registered bread-apps" and hook their urls in to the breadengine
+- Scan python packages for django "registered bread-apps" and hook their urls in to the bread
 - Scan python packages for django "registered menus"
 - Add dynamic preferences settings and render, render all registered dynamic preferences
 - Setup ready to use CKEditor

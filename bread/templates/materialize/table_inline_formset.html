@@ -82,7 +82,7 @@
     function enable_materialize_newform(form) {
         var m_input_fields = form.getElementsByClassName("input-field");
         for(var j = 0; j < m_input_fields.length; ++j) {
-            var field = $("input, select", m_input_fields[j]);
+            var field = $("input", m_input_fields[j]);
             if(field)
                 field.classList.remove('no-autoinit');
         }

@@ -87,7 +87,7 @@
                 if(document.forms.length > 0) {
                     for (var i = 0; i < document.forms[0].elements.length; i++) {
                         var elem = document.forms[0].elements[i];
-                        if((elem.tagName == "INPUT" || elem.tagName == "SELECT") && elem.type !== "hidden") {
+                        if(elem.select && elem.focus && elem.type !== "hidden") {
                             elem.focus({preventScroll: true});
                             elem.select();
                             break;
