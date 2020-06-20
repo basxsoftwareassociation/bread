@@ -241,8 +241,16 @@ def get_video_thumbnail(file_):
     outputname = os.path.join(settings.MEDIA_ROOT, thumbnail_name)
     outputurl = os.path.join(settings.MEDIA_URL, thumbnail_name)
     if not os.path.exists(outputname):
-        ffmpeg.input(inputname).filter("scale", 200, -2).output(
-            outputname, format="mp4", preset="ultrafast", acodec="copy"
+        _in = ffmpeg.input(inputname)
+        v = _in.video
+        a = _in.audio
+        ffmpeg.output(
+            v.trim(start=0, duration=60).filter("scale", 200, -2),
+            a.filter("atrim", start=0, duration=60),
+            outputname,
+            preset="ultrafast",
+            acodec="mp3",
+            audio_bitrate=64,
         ).run()
     return outputurl
 
