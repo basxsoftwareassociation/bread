@@ -226,7 +226,9 @@ def get_audio_thumbnail(file_):
     outputname = os.path.join(settings.MEDIA_ROOT, thumbnail_name)
     outputurl = os.path.join(settings.MEDIA_URL, thumbnail_name)
     if not os.path.exists(outputname):
-        ffmpeg.input(inputname).output(outputname, format="mp3",).run()
+        ffmpeg.input(inputname).trim(start=0, duration=60).output(
+            outputname, format="mp3", audio_bitrate=64
+        ).run()
     return outputurl
 
 
