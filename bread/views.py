@@ -180,12 +180,16 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
             min_row=1, max_col=len(self.modelfields), max_row=len(items) + 1
         )
         htmlparser = HTMLParser()
+        newline_regex = re.compile(
+            r"<\s*br\s*/?\s*>"
+        )  # replace HTML line breaks with newlines
         for field, col in zip(self.modelfields.values(), header_cells):
             col[0].value = pretty_fieldname(field)
             col[0].font = Font(bold=True)
             for i, cell in enumerate(col[1:]):
+                html_value = self.admin.render_field(items[i], field.name)
                 cell.value = htmlparser.unescape(
-                    strip_tags(self.admin.render_field(items[i], field.name))
+                    strip_tags(newline_regex.sub(r"\n", html_value))
                 )
 
         return xlsxresponse(workbook, workbook.title)
