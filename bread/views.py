@@ -51,6 +51,7 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
             ),
             admin=self.admin,
         )
+        self.paginate_by = getattr(self.admin, "paginate_by", 100)
 
         def filterset_fields(field):
             try:

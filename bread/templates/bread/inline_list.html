@@ -1,7 +1,5 @@
 {% load bread_tags %}
 
-<h2>{{ view.admin.verbose_modelname_plural }}</h2>
-
 <table class="responsive-table striped highlight">
     {% if not hide_heading %}
         <thead>
@@ -29,7 +27,10 @@
     {% endif %}
     <tbody>
         <tr style="font-style: italic">
-            <td>{{object_list|length}} {{ view.admin.verbose_modelname_plural }}</td>
+            <td>
+                {{ object_list|length }} {{ view.admin.verbose_modelname_plural }}
+                {% if page_obj.paginator %}of {{page_obj.paginator.count }}{% endif %}
+            </td>
             {% for field in view.modelfields %}
                 <td>{% render_field_aggregation view.admin object_list field %}</td>
             {% endfor %}
