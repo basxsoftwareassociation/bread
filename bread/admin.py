@@ -215,6 +215,7 @@ class BreadAdmin:
             pass
         if hasattr(self, fieldname):
             value = getattr(self, fieldname)(object)
+            fieldtype = None
         else:
             if hasattr(object, f"get_{fieldname}_display") and not isinstance(
                 fieldtype, CountryField
