@@ -33,6 +33,7 @@ class FilterForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.form_method = "get"
+        self.helper.add_input(Submit("reset", "Reset"))
         self.helper.add_input(Submit("submit", "Filter"))
 
 
@@ -57,6 +58,9 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
             try:
                 field = self.model._meta.get_field(field)
             except FieldDoesNotExist:
+                # TODO: make this work (see TODO below)
+                # if field in self.model.objects.none().query.annotations:
+                # return True
                 return False
             if field.one_to_many:
                 return False
@@ -151,10 +155,14 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
         config["fields"] = self.filterset_fields
         config["form"] = FilterForm
 
+        # todo: filter for annotated fields
+        class FilterSetWithAnnotations(django_filters.FilterSet):
+            pass
+
         meta = type("Meta", (object,), config)
         filterset = type(
             f"{self.model._meta.object_name}FilterSet",
-            (django_filters.FilterSet,),
+            (FilterSetWithAnnotations,),
             {"Meta": meta},
         )
         return filterset

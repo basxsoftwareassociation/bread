@@ -4,3 +4,7 @@ from django.db.models.fields.mixins import FieldCacheMixin
 
 class VirtualField(Field, FieldCacheMixin):
     sortable = False
+
+
+class SortableVirtualField(Field, FieldCacheMixin):
+    sortable = True

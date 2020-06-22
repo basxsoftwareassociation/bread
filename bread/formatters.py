@@ -3,6 +3,8 @@ import numbers
 import random
 from collections.abc import Iterable
 
+from dateutil import tz
+
 import bread.settings as app_settings
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -31,6 +33,8 @@ def format_value(value, fieldtype=None):
         return CONSTANTS[value]
     if isinstance(value, datetime.timedelta):
         return as_duration(value)
+    if isinstance(value, datetime.datetime):
+        return as_datetime(value)
     if isinstance(value, numbers.Number):
         return f"{value:f}".rstrip("0").rstrip(".")
     if isinstance(value, models.fields.files.ImageFieldFile):
@@ -75,11 +79,20 @@ def as_text(value):
 
 
 def as_time(value):
+    if value.tzinfo:
+        value = value.astimezone(tz.gettz(settings.TIME_ZONE))
     return f"{value.hour:02}:{value.minute:02}:{value.second:02}"
 
 
 def as_duration(value):
     return str(value - datetime.timedelta(microseconds=value.microseconds))
+
+
+def as_datetime(value):
+    if value.tzinfo:
+        value = value.astimezone(tz.gettz(settings.TIME_ZONE))
+
+    return value.isoformat(sep=" ", timespec="seconds").rsplit("+", 1)[0]
 
 
 def as_boolean(value):
@@ -229,6 +242,7 @@ MODELFIELD_FORMATING_HELPERS = {
     models.URLField: as_url,
     models.TextField: as_text,
     models.TimeField: as_time,
+    models.DateTimeField: as_datetime,
     RichTextField: as_richtext,
     RichTextUploadingField: as_richtext,
     CountryField: as_countries,

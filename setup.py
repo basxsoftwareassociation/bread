@@ -17,6 +17,7 @@ setup(
     license="Private",
     install_requires=[
         "Django",
+        "python-dateutil",
         "django-crispy-forms",
         "django-filepreview",
         "django-ckeditor",
@@ -37,6 +38,7 @@ setup(
         "openpyxl",
         "WeasyPrint",
         "ffmpeg-python",
+        "celery",
     ],
     extras_require={"postgresql": ["psycopg2"]},
     setup_requires=["setuptools_scm"],

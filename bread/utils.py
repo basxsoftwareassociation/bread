@@ -8,7 +8,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.http import HttpResponse
 from django.template import Context, Template
 
-from .fields import VirtualField
+from .fields import SortableVirtualField, VirtualField
 
 
 def pretty_fieldname(field):
@@ -208,6 +208,10 @@ def get_modelfields(model, fieldlist, admin=None):
             fields[field] = modelfields_rel[field]
         elif hasattr(model, field) or hasattr(admin, field):
             fields[field] = VirtualField(
+                name=field, verbose_name=field.replace("_", " ")
+            )
+        elif field in model.objects.none().query.annotations:
+            fields[field] = SortableVirtualField(
                 name=field, verbose_name=field.replace("_", " ")
             )
         else:
