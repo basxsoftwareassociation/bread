@@ -239,9 +239,7 @@ class BreadAdmin:
         # check if there are aggrations defined on the breadadmin or on the model field
         aggregation_func = getattr(self, f"{fieldname}_aggregation", None)
         if aggregation_func is None:
-            aggregation_func = getattr(
-                getattr(self.model, fieldname, None), "aggregation", None
-            )
+            aggregation_func = getattr(self.model, f"{fieldname}_aggregation", None)
         # if there is no custom aggregation defined but the field is a database fields, we just count distinct
         if aggregation_func is None:
             if type(modelfield) not in DEFAULT_AGGREGATORS:
