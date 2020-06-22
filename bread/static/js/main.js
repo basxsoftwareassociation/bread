@@ -10,3 +10,35 @@ function tableToExcel(downloadelement, tableelement, worksheetname, filename) {
     downloadelement.download = filename;
     downloadelement.click();
 }
+
+function initAllChoices() {
+    var selectElements = $$("select.autocompleteselect");
+    for(var i = 0; i < selectElements.length; ++i) {
+        makeChoices(selectElements[i]);
+    }
+}
+
+function makeChoices(selectElem) {
+    // prevent initialization in template forms for django formsets
+    if(selectElem.closest(".template-form")) {
+        return null;
+    }
+    var choices = new Choices(selectElem, {
+        /*
+        classNames: {
+            input: 'choices__input browser-default',
+        }
+        */
+    });
+    // TODO: wait for choices.js to fix the error when using space to separate classes
+    // when fixed we can uncomment the code above and remove the line below
+    $('input.choices__input', selectElem.parentNode.parentNode).classList.add("browser-default");
+
+    // check readonly
+    if(selectElem.hasAttribute("readonly")) {
+        $(selectElem.parentNode)._.style({cursor: "not-allowed", pointerEvents: "none"});
+        $(selectElem.parentNode.parentNode)._.style({cursor: "not-allowed", pointerEvents: "none"});
+        $(selectElem.parentNode.parentNode.parentNode)._.style({cursor: "not-allowed"});
+    }
+    return choices;
+}

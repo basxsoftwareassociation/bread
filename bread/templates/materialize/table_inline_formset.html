@@ -80,6 +80,11 @@
         update_add_{{ form_prefix }}_button();
     }
     function enable_materialize_newform(form) {
+        var select_choices = $$("select.autocompleteselect", form);
+        for(var i = 0; i < select_choices.length; ++i) {
+            makeChoices(select_choices[i])
+        }
+
         var m_input_fields = form.getElementsByClassName("input-field");
         for(var j = 0; j < m_input_fields.length; ++j) {
             var field = $("input", m_input_fields[j]);
@@ -88,6 +93,7 @@
         }
         M.Datepicker.init(form.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});
         M.AutoInit(form);
+
     }
     function update_add_{{ form_prefix }}_button() {
         var formcount = $('#id_{{ formset.prefix }}-TOTAL_FORMS')

@@ -14,6 +14,7 @@
 
         {% compress js %}
         <script type="text/javascript" src="{% static "js/bliss.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/main.js" %}"></script>
         <script type="text/javascript" src="{% static "js/choices.js" %}"></script>
         <script type="text/javascript" src="{% static "js/materialize.js" %}"></script>
         {% endcompress js %}
@@ -67,6 +68,9 @@
 
         <script>
             $.ready(e => {
+                // choices.js elements to enable autocomplete on select widgets
+                initAllChoices();
+
                 // do materialize initialization and some customizations
                 M.AutoInit();
 
@@ -76,12 +80,12 @@
                 // when a select is readonly, we need to set the materialized select to disabled
                 // (but not the original/hidden select because disabled form fields will not get sent to the server
                 $$("select[readonly]:not(.browser-default):not(.choices__input)").forEach(elem => elem.M_FormSelect.dropdown.el.disabled = true);
+
                 // add invalid class to fields with errors
                 $$(".error input").forEach(elem => elem.classList.add("invalid"));
+
                 // hack to display "required field" message for selects which are materialized
                 $$("select[required]")._.removeAttribute("required");
-
-
 
                 // set cursor to first visible element and mark the text
                 if(document.forms.length > 0) {
