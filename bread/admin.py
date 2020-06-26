@@ -11,7 +11,7 @@ from django.db import models
 from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
 from django.utils.text import format_lazy
-from django.views.generic import CreateView, RedirectView
+from django.views.generic import CreateView, RedirectView, View
 from django.views.generic.edit import SingleObjectMixin
 from django_countries.fields import CountryField
 from dynamic_preferences import views as preferences_views
@@ -132,13 +132,19 @@ class BreadAdmin:
         ret = {}
         for viewname in self.autoviews:
             kwargs = {}
-            viewclass = getattr(self, f"{viewname}view")
-            if hasattr(viewclass, "model"):
-                kwargs["model"] = self.model
-            if issubclass(viewclass, (tuple(DEFAULT_BREAD_VIEWS.values())),):
-                kwargs["admin"] = self
-            kwargs.update(self.get_views_kwargs().get(viewname, {}))
-            ret[viewname] = viewclass.as_view(**kwargs)
+            viewattr = getattr(self, f"{viewname}view")
+
+            # class passed, must be a class-based view
+            if isinstance(viewattr, type):
+                if hasattr(viewattr, "model"):
+                    kwargs["model"] = self.model
+                if issubclass(viewattr, (tuple(DEFAULT_BREAD_VIEWS.values())),):
+                    kwargs["admin"] = self
+                kwargs.update(self.get_views_kwargs().get(viewname, {}))
+
+                ret[viewname] = viewattr.as_view(**kwargs)
+            else:
+                ret[viewname] = viewattr
 
         return ret
 
