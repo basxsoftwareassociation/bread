@@ -71,12 +71,15 @@
     // TODO: maybe use bliss
     // TODO: nicer "remove" functionality (disable fields and gray out, or hide column)
     function init_{{ form_prefix }}_formset() {
+        // prevent materialize init in template form
         var m_input_fields  = $$('#empty_{{ form_prefix }}_form .input-field')
         for(var j = 0; j < m_input_fields.length; ++j) {
             var field = $("input, select", m_input_fields[j]);
             if(field)
                 field.classList.add('no-autoinit');
         }
+        improve_delete_checkbox_behaviour();
+        // create an "Add" button if appropriate
         update_add_{{ form_prefix }}_button();
     }
     function enable_materialize_newform(form) {
@@ -95,6 +98,16 @@
         M.AutoInit(form);
 
     }
+    function improve_delete_checkbox_behaviour() {
+        $$("input[type=checkbox].delete")._.unbind("click");
+        $$("input[type=checkbox].delete")._.bind({
+            "click": function(e){
+                $$("td:not(:last-child) > *", e.target.closest("tr")).map(function(elem){
+                    elem.classList.toggle("hide");
+                });
+            }
+        });
+    }
     function update_add_{{ form_prefix }}_button() {
         var formcount = $('#id_{{ formset.prefix }}-TOTAL_FORMS')
         var maxforms = $('#id_{{ formset.prefix }}-MAX_NUM_FORMS')
@@ -112,8 +125,7 @@
         formcount.value = parseInt(formcount.value) + 1;
         enable_materialize_newform(newElem);
         update_add_{{ form_prefix }}_button();
-    }
-    function formset_{{ form_prefix }}_remove() {
+        improve_delete_checkbox_behaviour(newElem);
     }
     document.addEventListener("DOMContentLoaded", e => init_{{ form_prefix }}_formset());
 </script>

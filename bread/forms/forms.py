@@ -4,15 +4,6 @@ from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.db import models
-from django.forms import (
-    BoundField,
-    ClearableFileInput,
-    Field,
-    FileInput,
-    Select,
-    SelectMultiple,
-    modelform_factory,
-)
 from django.template.loader import render_to_string
 from guardian.shortcuts import get_objects_for_user
 
@@ -21,7 +12,7 @@ from .fields import GenericForeignKeyField
 from .widgets import AutocompleteSelect, AutocompleteSelectMultiple
 
 
-class BoundInlineField(BoundField):
+class BoundInlineField(forms.BoundField):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.label = ""
@@ -37,7 +28,7 @@ class BoundInlineField(BoundField):
         )
 
 
-class InlineField(Field):
+class InlineField(forms.Field):
     def __init__(self, formset, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.formset = formset
@@ -124,6 +115,16 @@ def inlinemodelform_factory(
                     extra=1,
                     can_delete=True,
                 )
+
+            def customize_delete_checkbox(formset_self, form, index):
+                ret = super(formset, formset_self).add_fields(form, index)
+                form.fields[forms.formsets.DELETION_FIELD_NAME].widget.attrs[
+                    "class"
+                ] = "delete"
+                return ret
+
+            formset.add_fields = customize_delete_checkbox
+
             if request.POST:
                 attribs[modelfield.name] = InlineField(
                     formset(request.POST, request.FILES, instance=object)
@@ -135,7 +136,7 @@ def inlinemodelform_factory(
         f"{model.__name__}GenericForeignKeysModelForm", (baseformclass,), attribs
     )
 
-    ret = modelform_factory(
+    ret = forms.modelform_factory(
         model,
         form=patched_formclass,
         fields=[f.name for f in modelfields if not f.one_to_many and f.editable],
@@ -164,16 +165,15 @@ def save_inline(form, parent_object):
 
 
 def formfield_callback_with_request(field, request):
-
     ret = field.formfield()
 
     # check if autocomplete is necessary
-    if isinstance(ret.widget, SelectMultiple):
+    if isinstance(ret.widget, forms.SelectMultiple):
         ret = field.formfield(widget=AutocompleteSelectMultiple)
-    elif isinstance(ret.widget, Select):
+    elif isinstance(ret.widget, forms.Select):
         ret = field.formfield(widget=AutocompleteSelect)
-    elif isinstance(ret.widget, ClearableFileInput):
-        ret = field.formfield(widget=FileInput)
+    elif isinstance(ret.widget, forms.ClearableFileInput):
+        ret = field.formfield(widget=forms.FileInput)
 
     # always use splitdatetimefield because we have no good datetime picker
     if isinstance(field, models.DateTimeField):
