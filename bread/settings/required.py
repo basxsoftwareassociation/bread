@@ -17,6 +17,8 @@ __third_party_apps = set(
         "dynamic_preferences",
         "compressor",
         "sorl.thumbnail",
+        "django_celery_results",
+        "django_celery_beat",
         "django_markdown2",
         "django_filters",
         "django_extensions",
@@ -77,3 +79,7 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     "compressor.finders.CompressorFinder",
 ]
+
+# celery related settings
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_CACHE_BACKEND = "django-cache"
