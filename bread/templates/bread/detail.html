@@ -21,3 +21,18 @@
         M.Dropdown.init(elems, {constrainWidth: false, alignment: "right"});
     </script>
 {% endblock content %}
+
+{% block right-panel %}
+    {% if view.admin.sidebarfields %}
+        <div class="right-panel">
+            <div class="card">
+                <div class="card-content">
+                    {% for field in view.admin.sidebarfields %}
+                        <div class="card-title">Notes</div>
+                        <p>{% render_field view.admin object field %}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock right-panel %}

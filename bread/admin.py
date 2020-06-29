@@ -11,7 +11,7 @@ from django.db import models
 from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
 from django.utils.text import format_lazy
-from django.views.generic import CreateView, RedirectView, View
+from django.views.generic import CreateView, RedirectView
 from django.views.generic.edit import SingleObjectMixin
 from django_countries.fields import CountryField
 from dynamic_preferences import views as preferences_views
@@ -61,6 +61,8 @@ class BreadAdmin:
     """List of fields to be displaye on the read-page. Defaults to ``["__all__"]``."""
     editfields = None
     """List of fields to be displaye on the edit-page. Defaults to ``["__all__"]``."""
+    sidebarfields = None
+    """List of fields to be display on the right side of the read and edit pages. Defaults to ``[]``."""
     editlayout = None
     """django-crispy-form Layout object for the edit-form. See https://django-crispy-forms.readthedocs.io/en/latest/layouts.html"""
     addfields = None
@@ -107,6 +109,7 @@ class BreadAdmin:
         self.readfields = self.readfields or ["__all__"]
         self.editfields = self.editfields or ["__all__"]
         self.addfields = self.addfields or ["__all__"]
+        self.sidebarfields = self.sidebarfields or []
         self.browseview = self.browseview or bread_views.BrowseView
         self.readview = self.readview or bread_views.ReadView
         self.editview = self.editview or bread_views.EditView

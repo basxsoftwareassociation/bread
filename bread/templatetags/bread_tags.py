@@ -1,8 +1,6 @@
-import ckeditor
 from bread import menu as menuregister
-from django import forms, template
+from django import template
 from django.db import models
-from django.template.loader import render_to_string
 
 from ..admin import site
 from ..formatters import format_value
@@ -16,8 +14,6 @@ register.filter(format_value)
 
 
 # tags
-
-
 @register.simple_tag
 def pretty_modelname(model, plural=False):
     if plural:
@@ -142,13 +138,6 @@ def menu(request):
                 group[1] = True
                 break
     return menugroups
-
-
-def materializecss(element):
-    if isinstance(element.field.widget, ckeditor.widgets.CKEditorWidget):
-        return render_to_string("bread/fields/ckeditor.html", {"field": element})
-    elif isinstance(element.field.widget, forms.FileInput):
-        return render_to_string("bread/fields/file.html", {"field": element})
 
 
 # TODO: check recursively?
