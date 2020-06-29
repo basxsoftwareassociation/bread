@@ -30,7 +30,7 @@
     <div style="display: flex; justify-content: space-between; font-size: 150%">
         <span>
             {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}">❮❮</a>
+                <a href="?{{ view.page_kwarg }}={{ page_obj.previous_page_number }}">❮❮</a>
             {% else %}
                 <span style="visibility: hidden">❮❮</span>
             {% endif %}
@@ -41,14 +41,14 @@
                 {% if i == page_obj.number %}
                     <span style="padding: 0 1rem; font-size: 120%">{{ i }}</span>
                 {% else %}
-                    <a href="?page={{ i }}" style="padding: 0 1rem">{{ i }}</a>
+                    <a href="?{{ view.page_kwarg }}={{ i }}" style="padding: 0 1rem">{{ i }}</a>
                 {% endif %}
             {% endfor %}
         </span>
 
         <span>
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">❯❯</a>
+                <a href="?{{ view.page_kwarg }}={{ page_obj.next_page_number }}">❯❯</a>
             {% else %}
                 <span style="visibility: hidden">❯❯</span>
             {% endif %}

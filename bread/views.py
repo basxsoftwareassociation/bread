@@ -41,6 +41,7 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
     template_name = "bread/list.html"
     admin = None
     fields = None
+    page_kwarg = "browsepage"  # need to use something different than the default "page" because we also filter through kwargs
 
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
