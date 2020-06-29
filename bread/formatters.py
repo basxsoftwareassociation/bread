@@ -150,7 +150,7 @@ def as_audio(value):
         )
     return mark_safe(
         f"""
-        <audio controls controlsList="nodownload" preload="none">
+        <audio controls controlsList="nodownload" preload="metadata">
             <source src="{thumbnail}" type="audio/mp3">
         </audio>
     """
@@ -169,7 +169,7 @@ def as_video(value):
         )
     return mark_safe(
         f"""
-        <video controls width="320" height="240" controlsList="nodownload" preload="none">
+        <video controls width="320" height="240" controlsList="nodownload" preload="metadata">
             <source src="{thumbnail}" type="video/mp4">
         </video>
     """
