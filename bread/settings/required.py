@@ -4,7 +4,7 @@ from django.conf.global_settings import DATETIME_INPUT_FORMATS
 
 __breadapps = set()
 for entrypoint in pkg_resources.iter_entry_points(
-    group="breadapp", name="installed_apps"
+    group="breadapp", name="app_dependencies"
 ):
     __breadapps.update(entrypoint.load())
 
@@ -17,6 +17,8 @@ __third_party_apps = set(
         "dynamic_preferences",
         "compressor",
         "sorl.thumbnail",
+        "djmoney",
+        "djmoney.contrib.exchange",
         "django_celery_results",
         "django_celery_beat",
         "django_markdown2",
@@ -83,3 +85,14 @@ STATICFILES_FINDERS = [
 # celery related settings
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_CACHE_BACKEND = "django-cache"
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "bread.middleware.RequireAuthenticationMiddleware",
+]
