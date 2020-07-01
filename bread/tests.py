@@ -1,4 +1,5 @@
 import datetime
+import inspect
 import random
 
 from ddf import G, teach
@@ -33,15 +34,13 @@ def generate_testable_url(modeladmin, urlname):
             )
             return None
     elif callable(view):
-        params = view.__code__.co_varnames[1 : view.__code__.co_argcount]
-        if len(params) > 1:
+        signature = inspect.signature(view)
+        if len(signature.parameters) > 1:
             print(
                 f"""Warning: Cannot test view {view} because it has multiple parameters
                 (presently this test framework can only test very simple views automatically)"""
             )
             return None
-        for param in params:
-            pk_param_name = param
     if pk_param_name is not None:
         if isinstance(modeladmin, admin.BreadGenericAdmin):
             print(
@@ -65,8 +64,6 @@ def register_custom_generators():
     }
 
     ddflib = DDFLibrary.get_instance()
-    # yes, the 3rd level loop is a bit ugly...
-    # but necessary because we want to use isinstance and not a dict-lookup
     for modeladmin in admin.site._registry.values():
         if (
             not modeladmin.model._meta.managed
@@ -75,6 +72,10 @@ def register_custom_generators():
         ):
             continue
         lessons = {}
+        # yes, the 3-level loop is a bit ugly...
+        # but necessary because we want to use isinstance and not a dict-lookup
+        # get along with! it is not performance critical, MAN! IT IS JUSTS TEEEEST! WHO CARES ABOUT TEEEESTS!?!
+        # (reminder: edit this comment when we open-source)
         for field in modeladmin.model._meta.get_fields():
             for fieldtype, generator in GENERATORS.items():
                 if isinstance(field, fieldtype):
