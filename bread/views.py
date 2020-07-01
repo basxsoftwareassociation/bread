@@ -198,9 +198,10 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
             col[0].font = Font(bold=True)
             for i, cell in enumerate(col[1:]):
                 html_value = self.admin.render_field(items[i], field.name)
-                cell.value = htmlparser.unescape(
-                    strip_tags(newline_regex.sub(r"\n", html_value))
+                cleaned = htmlparser.unescape(
+                    newline_regex.sub(r"\n", strip_tags(html_value))
                 )
+                cell.value = cleaned
 
         return xlsxresponse(workbook, workbook.title)
 

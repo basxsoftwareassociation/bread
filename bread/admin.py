@@ -1,3 +1,5 @@
+import inspect
+import itertools
 from collections import namedtuple
 from urllib.parse import urlencode
 
@@ -176,15 +178,14 @@ class BreadAdmin:
                     for param, _type in view.view_initkwargs["urlparams"].items():
                         viewpath += f"/<{_type}:{param}>"
             # handle purely function based views
-            # try to get the django-path type from the parameter anotation
+            # try to get the django-path type from the parameter annotation
             elif callable(view):
-                params = view.__code__.co_varnames[1 : view.__code__.co_argcount]
-                annotations = view.__annotations__
-                for param in params:
+                signature = inspect.signature(view)
+                for param in itertools.islice(signature.parameters.values(), 1, None):
                     viewpath += (
-                        f"/<{annotations[param]}:{param}>"
-                        if param in annotations
-                        else f"/<{param}>"
+                        f"/<{param.annotation}:{param.name}>"
+                        if param.annotation != inspect.Parameter.empty
+                        else f"/<{param.name}>"
                     )
             urls[viewname] = path(viewpath, view, name=viewname)
         if self.indexview:
