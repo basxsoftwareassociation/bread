@@ -3,10 +3,8 @@ import pkg_resources
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
 
 __breadapps = set()
-for entrypoint in pkg_resources.iter_entry_points(
-    group="breadapp", name="app_dependencies"
-):
-    __breadapps.update(entrypoint.load())
+for entrypoint in pkg_resources.iter_entry_points(group="breadapp", name="appconfig"):
+    __breadapps.update(entrypoint.load().bread_dependencies)
 
 __third_party_apps = set(
     [
