@@ -94,3 +94,4 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "bread.middleware.RequireAuthenticationMiddleware",
 ]
+WAGTAIL_SITE_NAME = "Website Editor"
