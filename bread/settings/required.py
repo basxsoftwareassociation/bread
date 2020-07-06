@@ -1,5 +1,4 @@
 import pkg_resources
-
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
 
 __breadapps = set()
@@ -95,3 +94,4 @@ MIDDLEWARE = [
     "bread.middleware.RequireAuthenticationMiddleware",
 ]
 WAGTAIL_SITE_NAME = "Website Editor"
+SITE_ID = 1
