@@ -1,10 +1,7 @@
 import inspect
 import itertools
-from collections import namedtuple
 from urllib.parse import urlencode
 
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.messages.views import SuccessMessageMixin
@@ -15,6 +12,9 @@ from django.urls import include, path, reverse_lazy
 from django.utils.text import format_lazy
 from django.views.generic import CreateView, RedirectView
 from django.views.generic.edit import SingleObjectMixin
+
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django_countries.fields import CountryField
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.forms import GlobalPreferenceForm
@@ -25,7 +25,15 @@ from . import views as bread_views
 from .formatters import as_object_link, format_value
 from .utils import has_permission, title
 
-Action = namedtuple("Action", ["url", "label", "icon"])
+
+class Link:
+    # url:
+    def __init__(self, url, label, materialicon=None, permissions=[]):
+        self._url = url
+        self._label = label
+        self._icon = materialicon
+        self._permissions = permissions
+
 
 DEFAULT_BREAD_VIEWS = {
     "browse": bread_views.BrowseView,
@@ -267,7 +275,7 @@ class BreadAdmin:
     def object_actions(self, request, object):
         """
         Actions which will be available for an object.
-        returns: List of named tuples of type Action
+        returns: List of named tuples of type Link
         """
         urls = self.get_urls()
         actions = []
@@ -276,30 +284,26 @@ class BreadAdmin:
             and has_permission(request.user, "view", object)
             and not self.readlink_field
         ):
-            actions.append(
-                Action(self.reverse("read", pk=object.pk), "View", "search",)
-            )
+            actions.append(Link(self.reverse("read", pk=object.pk), "View", "search",))
         if "edit" in urls and has_permission(request.user, "change", object):
-            actions.append(Action(self.reverse("edit", pk=object.pk), "Edit", "edit",))
+            actions.append(Link(self.reverse("edit", pk=object.pk), "Edit", "edit",))
         if "delete" in urls and has_permission(request.user, "delete", object):
             actions.append(
-                Action(
-                    self.reverse("delete", pk=object.pk), "Delete", "delete_forever",
-                )
+                Link(self.reverse("delete", pk=object.pk), "Delete", "delete_forever",)
             )
         return actions
 
     def list_actions(self, request):
         """
         Actions which will be available for a model.
-        returns: List of named tuples of type Action
+        returns: List of named tuples of type Link
         """
         urls = self.get_urls()
         actions = []
         if "browse" in urls:
             # need to preserve filter and ordering from query parameters
             actions.append(
-                Action(
+                Link(
                     self.reverse("browse")
                     + "?"
                     + request.GET.urlencode()
@@ -312,7 +316,7 @@ class BreadAdmin:
 
     def add_action(self, request):
         if "add" in self.get_urls() and has_permission(request.user, "add", self.model):
-            return Action(self.reverse("add"), "Add", "add")
+            return Link(self.reverse("add"), "Add", "add")
         return None
 
     def reverse(self, viewname, *args, **kwargs):
