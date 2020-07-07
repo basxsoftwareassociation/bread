@@ -1,6 +1,8 @@
-from bread import menu as menuregister
 from django import template
 from django.db import models
+from django.utils.html import mark_safe
+
+from bread import menu as menuregister
 
 from ..admin import site
 from ..formatters import format_value
@@ -14,6 +16,30 @@ register.filter(format_value)
 
 
 # tags
+
+
+@register.simple_tag
+def display_link(link, request, obj=None, as_button=False):
+    ret = ""
+    if link.has_permission(request, obj):
+        if as_button:
+            ret += f'<a href="{link.url(request)}" class="btn">'
+        else:
+            ret += f'<a href="{link.url(request)}">'
+
+        if link.icon(request):
+            ret += f'<i class="material-icons" style="vertical-align:middle">{link.icon(request)}</i> '
+        if link.label(request):
+            ret += link.label(request)
+        ret += "</a>"
+    return mark_safe(ret)
+
+
+@register.simple_tag
+def has_link_permission(link, request, obj=None):
+    return link.has_permission(request, obj)
+
+
 @register.simple_tag
 def pretty_modelname(model, plural=False):
     if plural:

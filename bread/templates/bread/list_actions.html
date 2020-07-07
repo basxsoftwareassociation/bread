@@ -4,7 +4,7 @@
 {% if actions %}
 <div class="right">
     {% for action in actions %}
-        <a href="{{ action.url }}" class="btn"><i class="material-icons" style="vertical-align:middle">{{ action.icon }}</i> {{ action.label }}</a>
+        {% display_link action request as_button=True %}
     {% endfor %}
 </div>
 {% endif %}

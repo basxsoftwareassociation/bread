@@ -9,6 +9,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
+from django.utils.encoding import force_str
 from django.utils.text import format_lazy
 from django.views.generic import CreateView, RedirectView
 from django.views.generic.edit import SingleObjectMixin
@@ -26,13 +27,39 @@ from .formatters import as_object_link, format_value
 from .utils import has_permission, title
 
 
+def try_call(var, *args, **kwargs):
+    var = force_str(var, strings_only=True)
+    return var(*args, **kwargs) if callable(var) else var
+
+
 class Link:
-    # url:
-    def __init__(self, url, label, materialicon=None, permissions=[]):
+    """Represents a user-clickable link
+    url, label, icon and permissions can be str, lazy string or a callable function.
+    The function takes the current request as the only argument.
+    """
+
+    def __init__(self, url, label="", materialicon=None, permissions=[]):
         self._url = url
         self._label = label
         self._icon = materialicon
         self._permissions = permissions
+
+    def url(self, request):
+        return try_call(self._url, request)
+
+    def label(self, request):
+        return try_call(self._label, request)
+
+    def icon(self, request):
+        return try_call(self._icon, request)
+
+    def has_permission(self, request, obj=None):
+        return all(
+            [
+                request.user.has_perm(perm, obj) or request.user.has_perm(perm)
+                for perm in try_call(self._permissions, request)
+            ]
+        )
 
 
 DEFAULT_BREAD_VIEWS = {
@@ -187,7 +214,7 @@ class BreadAdmin:
                         viewpath += f"/<{_type}:{param}>"
             # handle purely function based views
             # try to get the django-path type from the parameter annotation
-            elif callable(view):
+            else:
                 signature = inspect.signature(view)
                 for param in itertools.islice(signature.parameters.values(), 1, None):
                     viewpath += (

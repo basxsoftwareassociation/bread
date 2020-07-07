@@ -7,7 +7,7 @@
     </a>
     <ul id='action-dropdown-{{ object.pk }}' class='dropdown-content'>
             {% for action in actions %}
-                <li><a href="{{ action.url }}"><i class="material-icons" style="vertical-align:middle">{{ action.icon }}</i> {{ action.label }}</a></li>
+                <li>{% display_link action request %}</li>
             {% endfor %}
     </ul>
 {% endif %}
