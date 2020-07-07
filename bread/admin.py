@@ -231,6 +231,12 @@ class BreadAdmin:
             )
         return urls
 
+    def get_public_urls(self):
+        """Return an iterable of path-objects. The paths will be available under site.public_urls
+        in order to allow adding paths from the web-root. Examples are frontend-sites or special
+        urls for external access."""
+        return ()
+
     def menugroup(self):
         """Returns the name of the menu-group under which items for this admin class should appear"""
         return title(apps.get_app_config(self.model._meta.app_label).verbose_name)
@@ -555,9 +561,20 @@ class BreadAdminSite:
             )
         return ret
 
+    def get_public_urls(self):
+        ret = []
+        for app, admins in self.get_apps().items():
+            for admin in admins:
+                ret.extend(admin.get_public_urls())
+        return ret
+
     @property
     def urls(self):
         return include(self.get_urls())
+
+    @property
+    def public_urls(self):
+        return include(self.get_public_urls())
 
 
 def register(modeladmin):

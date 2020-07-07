@@ -55,7 +55,34 @@ CKEDITOR_CONFIGS = {
         "toolbar": "full",
         "extraPlugins": ",".join(["placeholder"]),
         "width": "100%",
-    }
+    },
+    "richtext-plugin": {
+        "toolbar": "Custom",
+        "format_tags": "h1;h2;h3;p;pre",
+        "toolbar_Custom": [
+            [
+                "Format",
+                "RemoveFormat",
+                "-",
+                "Bold",
+                "Italic",
+                "Subscript",
+                "Superscript",
+                "-",
+                "NumberedList",
+                "BulletedList",
+                "-",
+                "Anchor",
+                "Link",
+                "Unlink",
+                "-",
+                "HorizontalRule",
+                "SpecialChar",
+                "-",
+                "Source",
+            ]
+        ],
+    },
 }
 # required to compile sass theme
 COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
