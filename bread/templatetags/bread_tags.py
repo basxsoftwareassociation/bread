@@ -19,14 +19,12 @@ register.filter(format_value)
 
 
 @register.simple_tag
-def display_link(link, request, obj=None, as_button=False):
+def display_link(link, request, obj=None, atag_class="", atag_style=""):
     ret = ""
     if link.has_permission(request, obj):
-        if as_button:
-            ret += f'<a href="{link.url(request)}" class="btn">'
-        else:
-            ret += f'<a href="{link.url(request)}">'
-
+        ret += (
+            f'<a href="{link.url(request)}" class="{atag_class}" style="{atag_style}">'
+        )
         if link.icon(request):
             ret += f'<i class="material-icons" style="vertical-align:middle">{link.icon(request)}</i> '
         if link.label(request):

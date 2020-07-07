@@ -4,7 +4,7 @@
 {% if actions %}
 <div class="right">
     {% for action in actions %}
-        {% display_link action request as_button=True %}
+        {% display_link action request atag_class='btn' %}
     {% endfor %}
 </div>
 {% endif %}

@@ -1,10 +1,11 @@
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
 from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.db import models
 from django.template.loader import render_to_string
+
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from guardian.shortcuts import get_objects_for_user
 
 from ..utils import get_modelfields, parse_fieldlist
@@ -41,6 +42,55 @@ class InlineField(forms.Field):
         return self.formset.queryset
 
 
+def generate_formset_class(modelfield, request, baseformclass, model):
+    child_fields = get_modelfields(
+        modelfield.related_model,
+        parse_fieldlist(modelfield.related_model, ["__all__"], is_form=True),
+    )
+    child_fields = {
+        fieldname: field
+        for fieldname, field in child_fields.items()
+        if field != modelfield.remote_field and field.editable is not False
+    }
+    formclass = inlinemodelform_factory(
+        request, modelfield.related_model, None, child_fields.values(), baseformclass,
+    )
+    if isinstance(modelfield, GenericRelation):
+        formset = generic_inlineformset_factory(
+            modelfield.related_model,
+            ct_field=modelfield.content_type_field_name,
+            fk_field=modelfield.object_id_field_name,
+            fields=list(child_fields.keys()),
+            formfield_callback=lambda field: formfield_callback_with_request(
+                field, request
+            ),
+            form=formclass,
+            extra=1,
+            can_delete=True,
+        )
+    else:
+        formset = forms.models.inlineformset_factory(
+            model,
+            modelfield.related_model,
+            fields=list(child_fields.keys()),
+            formfield_callback=lambda field: formfield_callback_with_request(
+                field, request
+            ),
+            form=formclass,
+            extra=1,
+            can_delete=True,
+        )
+
+    def customize_delete_checkbox(formset_self, form, index):
+        print(formset, formset_self.__repr__(), type(formset_self))
+        ret = super(formset, formset_self).add_fields(form, index)
+        form.fields[forms.formsets.DELETION_FIELD_NAME].widget.attrs["class"] = "delete"
+        return ret
+
+    formset.add_fields = customize_delete_checkbox
+    return formset
+
+
 # patch modelform_factory to handl inline forms
 def inlinemodelform_factory(
     request, model, object, modelfields, baseformclass, layout=None
@@ -74,63 +124,15 @@ def inlinemodelform_factory(
         elif modelfield.one_to_many or (
             modelfield.one_to_one and not modelfield.concrete
         ):
-            child_fields = get_modelfields(
-                modelfield.related_model,
-                parse_fieldlist(modelfield.related_model, ["__all__"], is_form=True),
+            formset_class = generate_formset_class(
+                modelfield, request, baseformclass, model
             )
-            child_fields = {
-                fieldname: field
-                for fieldname, field in child_fields.items()
-                if field != modelfield.remote_field and field.editable is not False
-            }
-            formclass = inlinemodelform_factory(
-                request,
-                modelfield.related_model,
-                None,
-                child_fields.values(),
-                baseformclass,
-            )
-            if isinstance(modelfield, GenericRelation):
-                formset = generic_inlineformset_factory(
-                    modelfield.related_model,
-                    ct_field=modelfield.content_type_field_name,
-                    fk_field=modelfield.object_id_field_name,
-                    fields=list(child_fields.keys()),
-                    formfield_callback=lambda field: formfield_callback_with_request(
-                        field, request
-                    ),
-                    form=formclass,
-                    extra=1,
-                    can_delete=True,
-                )
-            else:
-                formset = forms.models.inlineformset_factory(
-                    model,
-                    modelfield.related_model,
-                    fields=list(child_fields.keys()),
-                    formfield_callback=lambda field: formfield_callback_with_request(
-                        field, request
-                    ),
-                    form=formclass,
-                    extra=1,
-                    can_delete=True,
-                )
-
-            def customize_delete_checkbox(formset_self, form, index):
-                ret = super(formset, formset_self).add_fields(form, index)
-                form.fields[forms.formsets.DELETION_FIELD_NAME].widget.attrs[
-                    "class"
-                ] = "delete"
-                return ret
-
-            formset.add_fields = customize_delete_checkbox
-
             if request.POST:
                 attribs[modelfield.name] = InlineField(
-                    formset(request.POST, request.FILES, instance=object)
+                    formset_class(request.POST, request.FILES, instance=object)
                 )
             else:
-                attribs[modelfield.name] = InlineField(formset(instance=object))
+                attribs[modelfield.name] = InlineField(formset_class(instance=object))
 
     patched_formclass = type(
         f"{model.__name__}GenericForeignKeysModelForm", (baseformclass,), attribs
