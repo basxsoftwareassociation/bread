@@ -3,6 +3,7 @@ import itertools
 from urllib.parse import urlencode
 
 from django.apps import apps
+from django.contrib import admin
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import FieldDoesNotExist
@@ -231,7 +232,7 @@ class BreadAdmin:
             )
         return urls
 
-    def get_public_urls(self):
+    def get_custom_urls(self):
         """Return an iterable of path-objects. The paths will be available under site.public_urls
         in order to allow adding paths from the web-root. Examples are frontend-sites or special
         urls for external access."""
@@ -475,14 +476,14 @@ class BreadAdminSite:
 
     def get_apps(self):
         applist = {}
-        for admin in self._registry.values():
-            if isinstance(admin, BreadGenericAdmin):
-                app = apps.get_app_config(admin.app_label)
+        for breadadmin in self._registry.values():
+            if isinstance(breadadmin, BreadGenericAdmin):
+                app = apps.get_app_config(breadadmin.app_label)
             else:
-                app = apps.get_app_config(admin.model._meta.app_label)
+                app = apps.get_app_config(breadadmin.model._meta.app_label)
             if app not in applist:
                 applist[app] = []
-            applist[app].append(admin)
+            applist[app].append(breadadmin)
         return applist
 
     def register_menus(self):
@@ -512,8 +513,8 @@ class BreadAdminSite:
             grouplabel = title(app.verbose_name)
             if not menu.main.hasgroup(grouplabel):
                 menu.registergroup(menu.Group(label=grouplabel))
-            for admin in admins:
-                for menuitem in admin.menuitems():
+            for breadadmin in admins:
+                for menuitem in breadadmin.menuitems():
                     menu.registeritem(menuitem)
 
     def get_urls(self):
@@ -556,16 +557,19 @@ class BreadAdminSite:
             ret.append(
                 path(
                     f"{app.label}/",
-                    include(([admin.urls for admin in admins], app.label), app.label),
+                    include(
+                        ([breadadmin.urls for breadadmin in admins], app.label),
+                        app.label,
+                    ),
                 )
             )
         return ret
 
-    def get_public_urls(self):
-        ret = []
+    def get_custom_urls(self):
+        ret = [path("system/", admin.site.urls)]
         for app, admins in self.get_apps().items():
-            for admin in admins:
-                ret.extend(admin.get_public_urls())
+            for breadadmin in admins:
+                ret.extend(breadadmin.get_custom_urls())
         return ret
 
     @property
@@ -573,8 +577,8 @@ class BreadAdminSite:
         return include(self.get_urls())
 
     @property
-    def public_urls(self):
-        return include(self.get_public_urls())
+    def custom_urls(self):
+        return include(self.get_custom_urls())
 
 
 def register(modeladmin):
