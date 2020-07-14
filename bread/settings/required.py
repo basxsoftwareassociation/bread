@@ -1,38 +1,40 @@
 import pkg_resources
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
 
-__breadapps = set()
+__breadapps = []
 for entrypoint in pkg_resources.iter_entry_points(group="breadapp", name="appconfig"):
-    __breadapps.update(entrypoint.load().bread_dependencies)
+    for dependency in entrypoint.load().bread_dependencies:
+        if dependency not in __breadapps:
+            __breadapps.append(dependency)
 
-__third_party_apps = set(
-    [
-        "crispy_forms",
-        "ckeditor",
-        "ckeditor_uploader",
-        "guardian",
-        "dynamic_preferences",
-        "compressor",
-        "sorl.thumbnail",
-        "djmoney",
-        "djmoney.contrib.exchange",
-        "django_celery_results",
-        "django_celery_beat",
-        "django_markdown2",
-        "django_filters",
-        "django_extensions",
-        "django.forms",
-        "django.contrib.auth",
-        "django.contrib.contenttypes",
-        "django.contrib.sessions",
-        "django.contrib.messages",
-        "django.contrib.staticfiles",
-        "django.contrib.humanize",
-        "django.contrib.sites",
-    ]
-)
+__third_party_apps = [
+    "crispy_forms",
+    "ckeditor",
+    "ckeditor_uploader",
+    "guardian",
+    "dynamic_preferences",
+    "compressor",
+    "sorl.thumbnail",
+    "djmoney",
+    "djmoney.contrib.exchange",
+    "django_celery_results",
+    "django_celery_beat",
+    "django_markdown2",
+    "django_filters",
+    "django_extensions",
+    "django.forms",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.humanize",
+    "django.contrib.sites",
+]
 
-__breadapps -= __third_party_apps
+for basedependency in __third_party_apps:
+    if basedependency in __breadapps:
+        __breadapps.remove(basedependency)
 
 # apps which are required for bread to work
 BREAD_DEPENDENCIES = (
