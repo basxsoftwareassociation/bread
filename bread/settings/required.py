@@ -124,4 +124,4 @@ MIDDLEWARE = [
 WAGTAIL_SITE_NAME = "Website Editor"
 SITE_ID = 1
 
-BREAD_PUBLIC_FILES_PREFIX = "media/public/"
+BREAD_PUBLIC_FILES_PREFIX = "public/"
