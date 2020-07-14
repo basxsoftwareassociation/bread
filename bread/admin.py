@@ -3,6 +3,7 @@ import itertools
 from urllib.parse import urlencode
 
 from django.apps import apps
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.messages.views import SuccessMessageMixin
@@ -598,7 +599,7 @@ def protectedMedia(request, path):
     """
     Protect media files when using with nginx
     """
-    if request.user.is_staff:
+    if request.user.is_staff or path.startswith(settings["BREAD_PUBLIC_FILES_PREFIX"]):
         response = HttpResponse(status=200)
         del response["Content-Type"]
         response["X-Accel-Redirect"] = f"/protected/{path}"

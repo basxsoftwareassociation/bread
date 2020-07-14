@@ -24,6 +24,7 @@ def bread_config_check(app_configs, **kwargs):
     errors = []
     # TODO: check configured fields on views
     required_settings = {
+        "BREAD_PUBLIC_FILES_PREFIX": None,
         "CKEDITOR_UPLOAD_PATH": None,
         "CKEDITOR_CONFIGS": None,
         "STATICFILES_FINDERS": [
