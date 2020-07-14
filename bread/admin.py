@@ -10,7 +10,6 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
-from django.utils.encoding import force_str
 from django.utils.text import format_lazy
 from django.views.generic import CreateView, RedirectView
 from django.views.generic.edit import SingleObjectMixin
@@ -29,7 +28,6 @@ from .utils import has_permission, title
 
 
 def try_call(var, *args, **kwargs):
-    var = force_str(var, strings_only=True)
     return var(*args, **kwargs) if callable(var) else var
 
 
