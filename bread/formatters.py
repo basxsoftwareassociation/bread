@@ -4,16 +4,17 @@ import random
 from collections.abc import Iterable
 
 from dateutil import tz
+from django.conf import settings
+from django.db import models
+from django.utils.html import format_html_join, linebreaks, mark_safe
+from sorl.thumbnail import get_thumbnail
 
 import bread.settings as app_settings
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
-from django.conf import settings
-from django.db import models
-from django.utils.html import format_html_join, linebreaks, mark_safe
 from django_countries.fields import CountryField
-from sorl.thumbnail import get_thumbnail
 
+from .models import AccessConcreteInstanceMixin
 from .utils import get_audio_thumbnail, get_video_thumbnail
 
 
@@ -189,10 +190,10 @@ def as_object_link(value, label=None):
     if hasattr(value, "get_absolute_url"):
         return mark_safe(f'<a href="{value.get_absolute_url()}">{value}</a>')
 
-    if hasattr(value, "get_child"):
-        child = value.get_child()
-        if child:
-            return as_object_link(value.get_child())
+    if (
+        isinstance(value, AccessConcreteInstanceMixin) and value != value.concrete
+    ):  # sedcond condition prevents endless recursion
+        return as_object_link(value.concrete)
     return get_link_from_admin(value) or str(value)
 
 
