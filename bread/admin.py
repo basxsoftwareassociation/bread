@@ -581,6 +581,9 @@ class BreadAdminSite:
 
 
 def register(modeladmin):
+    """BreadAdmin classes must use this function in order to active
+    their class in the frontend. The function can also be used as
+    a decorator on the class"""
     site.register(modeladmin)
     return modeladmin
 
@@ -599,7 +602,7 @@ def protectedMedia(request, path):
     """
     Protect media files when using with nginx
     """
-    if request.user.is_staff or path.startswith(settings["BREAD_PUBLIC_FILES_PREFIX"]):
+    if request.user.is_staff or path.startswith(settings.BREAD_PUBLIC_FILES_PREFIX):
         response = HttpResponse(status=200)
         del response["Content-Type"]
         response["X-Accel-Redirect"] = f"/protected/{path}"
