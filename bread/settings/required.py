@@ -1,5 +1,6 @@
 import pkg_resources
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
+from easy_thumbnails.conf import Settings as thumbnail_settings
 
 __breadapps = []
 for entrypoint in pkg_resources.iter_entry_points(group="breadapp", name="appconfig"):
@@ -14,7 +15,8 @@ __third_party_apps = [
     "guardian",
     "dynamic_preferences",
     "compressor",
-    "sorl.thumbnail",
+    "easy_thumbnails",
+    "image_cropping",
     "djmoney",
     "djmoney.contrib.exchange",
     "django_celery_results",
@@ -127,3 +129,9 @@ WAGTAIL_SITE_NAME = "Website Editor"
 SITE_ID = 1
 
 BREAD_PUBLIC_FILES_PREFIX = "public/"
+
+IMAGE_CROPPING_BACKEND = "image_cropping.backends.easy_thumbs.EasyThumbnailsBackend"
+IMAGE_CROPPING_BACKEND_PARAMS = {}
+THUMBNAIL_PROCESSORS = (
+    "image_cropping.thumbnail_processors.crop_corners",
+) + thumbnail_settings.THUMBNAIL_PROCESSORS
