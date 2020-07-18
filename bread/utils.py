@@ -15,6 +15,7 @@ from .fields import SortableVirtualField, VirtualField
 
 
 def pretty_fieldname(field):
+    """Will print a human readable name for a field"""
     if field.is_relation and field.one_to_many:
         return field.target_field.model._meta.verbose_name_plural.title()
     elif field.is_relation and field.many_to_many and field.auto_created:
@@ -56,7 +57,7 @@ def render_template(value, context):
     """
     Renders a template text with values:
     [[ XXX ]] will be replace with context["XXX"]
-    Used to work with CKEditor template tags
+    Use to work with CKEditor template tags
     """
     return Template(value.replace("[[", "{{").replace("]]", "}}")).render(
         Context(context)

@@ -7,12 +7,12 @@ from dateutil import tz
 from django.conf import settings
 from django.db import models
 from django.utils.html import format_html_join, linebreaks, mark_safe
-from sorl.thumbnail import get_thumbnail
 
 import bread.settings as app_settings
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from django_countries.fields import CountryField
+from easy_thumbnails.files import get_thumbnailer
 
 from .models import AccessConcreteInstanceMixin
 from .utils import get_audio_thumbnail, get_video_thumbnail
@@ -133,7 +133,7 @@ def as_image(value):
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
         return mark_safe("<small><emph>Image not found</emph></small>")
-    im = get_thumbnail(value, "100x100", crop="center", quality=75)
+    im = get_thumbnailer(value).get_thumbnail({"size": "100x100", "quality": 75})
     return mark_safe(
         f'<a class="center" style="display: block" href="{value.url}"><img src={im.url} width="{im.width}" height="{im.height}"/></a>'
     )
