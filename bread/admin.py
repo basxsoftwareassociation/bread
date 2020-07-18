@@ -91,8 +91,6 @@ class BreadAdmin:
     "The django model which will be managed in this class"
     browsefields = None
     """List of fields to be listed in the table of the browse-page. Defaults to ``["__all__"]``."""
-    readlink_field = None
-    """Column with this name will be rendered as link to view the object in the browse page"""
     filterfields = None
     """List of fields which should appear in the filter-form of the browse-page. Defaults to ``["__all__"]``. Can span relationships."""
     readfields = None
@@ -260,6 +258,9 @@ class BreadAdmin:
         return self.addlayout
 
     def render_field(self, object, fieldname):
+        if fieldname == "self":
+            return as_object_link(object, str(object))
+
         while models.constants.LOOKUP_SEP in fieldname:
             accessor, fieldname = fieldname.split(models.constants.LOOKUP_SEP, 1)
             object = getattr(object, accessor, None)
@@ -285,8 +286,6 @@ class BreadAdmin:
                 value = getattr(object, f"get_{fieldname}_display")()
             else:
                 value = getattr(object, fieldname, None)
-        if fieldname == self.readlink_field:
-            return as_object_link(object, format_value(value, fieldtype))
         return format_value(value, fieldtype)
 
     def render_field_aggregation(self, queryset, fieldname):
@@ -323,12 +322,6 @@ class BreadAdmin:
         """
         urls = self.get_urls()
         actions = []
-        if (
-            "read" in urls
-            and has_permission(request.user, "view", object)
-            and not self.readlink_field
-        ):
-            actions.append(Link(self.reverse("read", pk=object.pk), "View", "search",))
         if "edit" in urls and has_permission(request.user, "change", object):
             actions.append(Link(self.reverse("edit", pk=object.pk), "Edit", "edit",))
         if "delete" in urls and has_permission(request.user, "delete", object):

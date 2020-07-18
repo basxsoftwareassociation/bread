@@ -2,18 +2,19 @@ import datetime
 import inspect
 import random
 
-from ddf import G, teach
 from django.db import models
 from django.test import Client, TestCase
 from django.urls import reverse
 from django.views.generic import CreateView
 from django.views.generic.edit import SingleObjectMixin
+
+from ddf import G, teach
 from django_dynamic_fixture import DDFLibrary
 from djmoney.models.fields import CurrencyField, MoneyField
 from djmoney.money import Money
 from djmoney.settings import CURRENCY_CHOICES
 
-from . import admin
+from .. import admin
 
 
 def generate_testable_url(modeladmin, urlname):
@@ -74,8 +75,6 @@ def register_custom_generators():
         lessons = {}
         # yes, the 3-level loop is a bit ugly...
         # but necessary because we want to use isinstance and not a dict-lookup
-        # get along with! it is not performance critical, MAN! IT IS JUSTS TEEEEST! WHO CARES ABOUT TEEEESTS!?!
-        # (reminder: edit this comment when we open-source)
         for field in modeladmin.model._meta.get_fields():
             for fieldtype, generator in GENERATORS.items():
                 if isinstance(field, fieldtype):

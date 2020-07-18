@@ -13,7 +13,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
 SECRET_KEY = "test"  # nosec
-ROOT_URLCONF = "bread.urls_testing"
+ROOT_URLCONF = "bread.tests.urls_testing"
 
 INSTALLED_APPS = BREAD_DEPENDENCIES  # noqa
 

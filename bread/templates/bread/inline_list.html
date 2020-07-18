@@ -5,6 +5,7 @@
         <thead>
             <tr>
                 <th></th>
+                <th></th>
                 {% for field, prettyname in view.sortnames %}
                     <th>
                         {% if field %}
@@ -31,6 +32,7 @@
                 {{ object_list|length }} {{ view.admin.verbose_modelname_plural }}
                 {% if page_obj.paginator %}of {{page_obj.paginator.count }}{% endif %}
             </td>
+            <td></td>
             {% for field in view.fields %}
                 <td>{% render_field_aggregation view.admin object_list field %}</td>
             {% endfor %}
@@ -38,6 +40,7 @@
         {% for object in object_list %}
             <tr>
                 <td>{% include "bread/object_actions.html" %}</td>
+                <td>{% render_field view.admin object 'self' %}</td>
                 {% for field in view.fields %}
                     <td>{% render_field view.admin object field %}</td>
                 {% endfor %}

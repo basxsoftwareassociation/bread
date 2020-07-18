@@ -2,12 +2,17 @@
 
 {% object_actions view.admin request object as actions %}
 {% if actions %}
-    <a class="custom-dropdown-trigger btn-small no-autoinit" href="#" data-target="action-dropdown-{{ object.pk }}">
-        <i class="material-icons">arrow_drop_down</i>
-    </a>
-    <ul id='action-dropdown-{{ object.pk }}' class='dropdown-content'>
-            {% for action in actions %}
-                <li>{% display_link action request %}</li>
-            {% endfor %}
-    </ul>
+    <div style="white-space: nowrap;">
+        {% if actions|length > 1 %}
+            <a class="custom-dropdown-trigger btn-small no-autoinit" href="#" data-target="action-dropdown-{{ object.pk }}">
+                <i class="material-icons">arrow_drop_down</i>
+            </a>
+            <ul id='action-dropdown-{{ object.pk }}' class='dropdown-content'>
+                    {% for action in actions|slice:"1:" %}
+                        <li>{% display_link action request %}</li>
+                    {% endfor %}
+            </ul>
+        {% endif %}
+        {% display_link actions.0 request None "btn-small" %}
+    </div>
 {% endif %}
