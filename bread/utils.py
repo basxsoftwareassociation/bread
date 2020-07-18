@@ -1,13 +1,15 @@
 import io
 import os
 
-import ffmpeg
-from celery import shared_task
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
+from django.db import models
 from django.http import HttpResponse
 from django.template import Context, Template
+
+import ffmpeg
+from celery import shared_task
 
 from .fields import SortableVirtualField, VirtualField
 
@@ -193,6 +195,18 @@ def parse_fieldlist(model, fields_parameter, is_form=False):
     return list(ret)
 
 
+def parse_fieldlist_simple(model, fields_parameter):
+    if "__all__" in fields_parameter:
+        concrete_fields = [
+            f.name for f in model._meta.get_fields() if f.concrete and f.name != "id"
+        ]
+        i = fields_parameter.index("__all__")
+        fields_parameter = (
+            fields_parameter[:i] + concrete_fields + fields_parameter[i + 1 :]
+        )
+    return fields_parameter
+
+
 # similar to parse_fieldlist but will return django Field instances
 def get_modelfields(model, fieldlist, admin=None):
     fields = {}
@@ -283,3 +297,19 @@ def title(label):
     if label and label[0].islower():
         return label.title()
     return label
+
+
+def resolve_relationship(model, accessor_str):
+    """Converts django lookup expressions which span relationships into a list of (model, field) tuples.
+    The sting "author__name" will yield [(Book, ForeignKey(Author)), (Author, CharField())]
+    """
+    ret = []
+    fields = accessor_str.split(models.constants.LOOKUP_SEP)
+    for field in fields:
+        try:
+            modelfield = model._meta.get_field(field)
+        except FieldDoesNotExist:
+            break
+        ret.append((model, modelfield))
+        model = getattr(modelfield.remote_field, "model", model)
+    return ret

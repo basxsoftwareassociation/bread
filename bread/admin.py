@@ -11,6 +11,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
+from django.utils.html import mark_safe
 from django.utils.text import format_lazy
 from django.views.generic import CreateView, RedirectView
 from django.views.generic.edit import SingleObjectMixin
@@ -259,6 +260,16 @@ class BreadAdmin:
         return self.addlayout
 
     def render_field(self, object, fieldname):
+        while models.constants.LOOKUP_SEP in fieldname:
+            accessor, fieldname = fieldname.split(models.constants.LOOKUP_SEP, 1)
+            object = getattr(object, accessor, None)
+            if isinstance(object, models.Manager):
+                rendered_fields = [
+                    self.render_field(o, fieldname) for o in object.all()
+                ]
+                return mark_safe(
+                    f"<ul><li>{'</li><li>'.join(rendered_fields)}</li></ul>"
+                )
         fieldtype = None
         try:
             fieldtype = self.model._meta.get_field(fieldname)

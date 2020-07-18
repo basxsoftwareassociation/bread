@@ -5,10 +5,10 @@
     <h2>{{ view.admin.verbose_modelname }} <i>{{ object }}</i></h2>
 
     <table>
-    {% for field in view.modelfields.values %}
+    {% for field, prettyname in view.field_values %}
         <tr>
-            <td style="vertical-align: top">{% pretty_fieldname field %}</td>
-            <td style="float: left">{% render_field view.admin object field.name %}</td>
+            <td style="vertical-align: top">{{ prettyname }}</td>
+            <td style="float: left">{% render_field view.admin object field %}</td>
         </tr>
     {% endfor %}
     </table>

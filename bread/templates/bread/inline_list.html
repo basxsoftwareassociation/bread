@@ -5,20 +5,20 @@
         <thead>
             <tr>
                 <th></th>
-                {% for field in view.modelfields.values %}
+                {% for field, prettyname in view.sortnames %}
                     <th>
-                        {% if field.sortable != False and not field.one_to_many  and not field.many_to_many %}
-                            {% querystring_order view.admin request.GET.order field.name as new_order_string %}
+                        {% if field %}
+                            {% querystring_order view.admin request.GET.order field as new_order_string %}
                             <a href="{% updated_querystring "order" new_order_string %}">
-                                {% pretty_fieldname field %}
-                                {% if '-'|add:field.name in request.GET.order %}
+                                {{ prettyname }}
+                                {% if '-'|add:field in request.GET.order %}
                                     <i class="material-icons tiny">keyboard_arrow_up</i>
-                                {% elif field.name in request.GET.order %}
+                                {% elif field in request.GET.order %}
                                     <i class="material-icons tiny">keyboard_arrow_down</i>
                                 {% endif %}
                             </a>
                         {% else %}
-                            {% pretty_fieldname  field %}
+                            {{ prettyname }}
                         {% endif %}
                     </th>
                 {% endfor %}
@@ -31,14 +31,14 @@
                 {{ object_list|length }} {{ view.admin.verbose_modelname_plural }}
                 {% if page_obj.paginator %}of {{page_obj.paginator.count }}{% endif %}
             </td>
-            {% for field in view.modelfields %}
+            {% for field in view.fields %}
                 <td>{% render_field_aggregation view.admin object_list field %}</td>
             {% endfor %}
         </tr>
         {% for object in object_list %}
             <tr>
                 <td>{% include "bread/object_actions.html" %}</td>
-                {% for field in view.modelfields %}
+                {% for field in view.fields %}
                     <td>{% render_field view.admin object field %}</td>
                 {% endfor %}
             </tr>

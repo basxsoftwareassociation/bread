@@ -219,3 +219,14 @@ def formfield_callback_with_request(field, request):
             request.user, f"view_{qs.model.__name__.lower()}", qs, with_superuser=True,
         )
     return ret
+
+
+class FilterForm(forms.Form):
+    """Helper class to enable crispy-forms on the filter-forms."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.form_method = "get"
+        self.helper.add_input(Submit("submit", "Filter"))
+        self.helper.add_input(Submit("reset", "Reset"))
