@@ -1,10 +1,11 @@
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
 from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.db import models
 from django.template.loader import render_to_string
+
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from guardian.shortcuts import get_objects_for_user
 
 from ..utils import get_modelfields
@@ -12,82 +13,6 @@ from .fields import GenericForeignKeyField
 from .widgets import AutocompleteSelect, AutocompleteSelectMultiple
 
 
-class BoundInlineField(forms.BoundField):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.label = ""
-
-    def as_widget(self, widget=None, attrs=None, only_initial=False):
-        return render_to_string(
-            "materialize/table_inline_formset.html",
-            {
-                "formset": self.field.formset,
-                "form_show_errors": True,
-                "form_show_labels": True,
-            },
-        )
-
-
-class InlineField(forms.Field):
-    def __init__(self, formset, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.formset = formset
-
-    def get_bound_field(self, form, field_name):
-        return BoundInlineField(form, self, field_name)
-
-    def clean(self, value):
-        self.formset.clean()
-        return self.formset.queryset
-
-
-def generate_formset_class(modelfield, request, baseformclass, model):
-    child_fields = get_modelfields(modelfield.related_model, ["__all__"],)
-    child_fields = {
-        fieldname: field
-        for fieldname, field in child_fields.items()
-        if field != modelfield.remote_field and field.editable is not False
-    }
-    formclass = inlinemodelform_factory(
-        request, modelfield.related_model, None, child_fields.values(), baseformclass,
-    )
-    if isinstance(modelfield, GenericRelation):
-        formset = generic_inlineformset_factory(
-            modelfield.related_model,
-            ct_field=modelfield.content_type_field_name,
-            fk_field=modelfield.object_id_field_name,
-            fields=list(child_fields.keys()),
-            formfield_callback=lambda field: formfield_callback_with_request(
-                field, request
-            ),
-            form=formclass,
-            extra=1,
-            can_delete=True,
-        )
-    else:
-        formset = forms.models.inlineformset_factory(
-            model,
-            modelfield.related_model,
-            fields=list(child_fields.keys()),
-            formfield_callback=lambda field: formfield_callback_with_request(
-                field, request
-            ),
-            form=formclass,
-            extra=1,
-            can_delete=True,
-        )
-
-    def customize_delete_checkbox(formset_self, form, index):
-        print(formset, formset_self.__repr__(), type(formset_self))
-        ret = super(formset, formset_self).add_fields(form, index)
-        form.fields[forms.formsets.DELETION_FIELD_NAME].widget.attrs["class"] = "delete"
-        return ret
-
-    formset.add_fields = customize_delete_checkbox
-    return formset
-
-
-# patch modelform_factory to handl inline forms
 def inlinemodelform_factory(
     request, model, object, modelfields, baseformclass, layout=None
 ):
@@ -103,8 +28,8 @@ def inlinemodelform_factory(
 
     attribs = {
         "__init__": crispy_form_init,
-        "is_valid": is_valid_inline,
-        "save_inline": save_inline,
+        "is_valid": _is_valid_inline,
+        "save_inline": _save_inline,
     }
 
     for modelfield in modelfields:
@@ -120,7 +45,7 @@ def inlinemodelform_factory(
         elif modelfield.one_to_many or (
             modelfield.one_to_one and not modelfield.concrete
         ):
-            formset_class = generate_formset_class(
+            formset_class = _generate_formset_class(
                 modelfield, request, baseformclass, model
             )
             if request.POST:
@@ -138,14 +63,61 @@ def inlinemodelform_factory(
         model,
         form=patched_formclass,
         fields=[f.name for f in modelfields if not f.one_to_many and f.editable],
-        formfield_callback=lambda field: formfield_callback_with_request(
+        formfield_callback=lambda field: _formfield_callback_with_request(
             field, request
         ),
     )
     return ret
 
 
-def is_valid_inline(form):
+def _generate_formset_class(modelfield, request, baseformclass, model):
+    """Returns a FormSet class which handles inline forms correctly."""
+    child_fields = get_modelfields(modelfield.related_model, ["__all__"],)
+    child_fields = {
+        fieldname: field
+        for fieldname, field in child_fields.items()
+        if field != modelfield.remote_field and field.editable is not False
+    }
+    formclass = inlinemodelform_factory(
+        request, modelfield.related_model, None, child_fields.values(), baseformclass,
+    )
+    if isinstance(modelfield, GenericRelation):
+        formset = generic_inlineformset_factory(
+            modelfield.related_model,
+            ct_field=modelfield.content_type_field_name,
+            fk_field=modelfield.object_id_field_name,
+            fields=list(child_fields.keys()),
+            formfield_callback=lambda field: _formfield_callback_with_request(
+                field, request
+            ),
+            form=formclass,
+            extra=1,
+            can_delete=True,
+        )
+    else:
+        formset = forms.models.inlineformset_factory(
+            model,
+            modelfield.related_model,
+            fields=list(child_fields.keys()),
+            formfield_callback=lambda field: _formfield_callback_with_request(
+                field, request
+            ),
+            form=formclass,
+            extra=1,
+            can_delete=True,
+        )
+
+    def _customize_delete_checkbox(formset_self, form, index):
+        ret = super(formset, formset_self).add_fields(form, index)
+        form.fields[forms.formsets.DELETION_FIELD_NAME].widget.attrs["class"] = "delete"
+        return ret
+
+    formset.add_fields = _customize_delete_checkbox
+    return formset
+
+
+def _is_valid_inline(form):
+    """Run the is_valid check on all inline forms"""
     formsets = all(
         [
             f.formset.is_valid()
@@ -156,13 +128,23 @@ def is_valid_inline(form):
     return form.is_bound and not form.errors and formsets
 
 
-def save_inline(form, parent_object):
+def _save_inline(form, parent_object):
+    """Save all instances of inline forms and set the parent object"""
     for formsetfield in [f for f in form.fields.values() if isinstance(f, InlineField)]:
         formsetfield.formset.instance = parent_object
         formsetfield.formset.save()
 
 
-def formfield_callback_with_request(field, request):
+def _formfield_callback_with_request(field, request):
+    """
+    Internal function to adjust formfields and widgets to the following:
+    - Replace select widgets with autocomplete widgets
+    - Replace ClearableFileInput widgets with FileInput widgets
+    - Replace DateTimeField with SplitDateTimeField
+    - Add materializecss classes for datepicker, timepicker, textarea and validation
+    - Apply result of lazy-choice and lazy-init function if set for the modelfield
+    - Filter based base on object-level permissions if a queryset is used for the field
+    """
     ret = field.formfield()
 
     # check if autocomplete is necessary
@@ -215,6 +197,35 @@ def formfield_callback_with_request(field, request):
             request.user, f"view_{qs.model.__name__.lower()}", qs, with_superuser=True,
         )
     return ret
+
+
+class BoundInlineField(forms.BoundField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label = ""
+
+    def as_widget(self, widget=None, attrs=None, only_initial=False):
+        return render_to_string(
+            "materialize/table_inline_formset.html",
+            {
+                "formset": self.field.formset,
+                "form_show_errors": True,
+                "form_show_labels": True,
+            },
+        )
+
+
+class InlineField(forms.Field):
+    def __init__(self, formset, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.formset = formset
+
+    def get_bound_field(self, form, field_name):
+        return BoundInlineField(form, self, field_name)
+
+    def clean(self, value):
+        self.formset.clean()
+        return self.formset.queryset
 
 
 class FilterForm(forms.Form):
