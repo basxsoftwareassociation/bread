@@ -1,15 +1,14 @@
 import io
 import os
 
+import ffmpeg
+from celery import shared_task
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.http import HttpResponse
 from django.template import Context, Template
-
-import ffmpeg
-from celery import shared_task
 
 
 def pretty_fieldname(field):
@@ -141,7 +140,7 @@ def prepare_excel(workbook, filter=False):
     return workbook
 
 
-def parse_fieldlist(model, fields_parameter):
+def _parse_fieldlist(model, fields_parameter):
 
     # filter fields which cannot be processed in a form
     def form_filter(field):
@@ -205,8 +204,9 @@ def parse_fieldlist_simple(model, fields_parameter):
     return fields_parameter
 
 
-# similar to parse_fieldlist but will return django Field instances
-def get_modelfields(model, fieldlist, admin=None):
+def get_modelfields(model, fieldlist):
+    fieldlist = _parse_fieldlist(model, fieldlist)
+
     fields = {}
     modelfields = {f.name: f for f in model._meta.get_fields()}
     modelfields_rel = {

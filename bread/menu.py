@@ -23,11 +23,11 @@ class Group:
             return self.label
         return str(self._order) if self._order >= 0 else str(self._order)
 
-    def has_permission(self, user):
+    def has_permission(self, request):
         return (
-            all((user.has_perm(perm) for perm in self.permissions))
+            all((request.user.has_perm(perm) for perm in self.permissions))
             and self.items
-            and any((item.has_permission(user) for item in self.items))
+            and any((item.has_permission(request) for item in self.items))
         )
 
     def active_in_current_app(self, request):

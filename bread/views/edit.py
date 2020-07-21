@@ -14,11 +14,10 @@ from django.db import transaction
 from django.views.generic import CreateView
 from django.views.generic import DeleteView as DjangoDeleteView
 from django.views.generic import UpdateView
-
 from guardian.mixins import PermissionRequiredMixin
 
 from ..forms.forms import inlinemodelform_factory
-from ..utils import get_modelfields, parse_fieldlist
+from ..utils import get_modelfields
 
 
 class CustomFormMixin:
@@ -26,7 +25,7 @@ class CustomFormMixin:
     - Allows to pass initial values for form fields via the GET query
     - Converts n-to-many fields into inline forms
     - Set GenericForeignKey fields before saving (not supported by default in django)
-    - If "next" is in the GET query redirect to there on success
+    - If "next" is in the GET query redirect to that location on success
     """
 
     def get_initial(self, *args, **kwargs):
@@ -64,6 +63,7 @@ class CustomFormMixin:
             for name, field in self.modelfields.items():
                 if isinstance(field, GenericForeignKey):
                     setattr(self.object, name, form.cleaned_data[name])
+            # save inline-objects
             form.save_inline(self.object)
         return super().form_valid(form)
 
@@ -87,11 +87,7 @@ class EditView(
         self.admin = admin
         self.model = admin.model
         self.modelfields = get_modelfields(
-            self.model,
-            parse_fieldlist(
-                self.model, kwargs.get("fields") or self.admin.editfields, is_form=True
-            ),
-            admin=self.admin,
+            self.model, kwargs.get("fields") or self.admin.editfields
         )
         super().__init__(*args, **kwargs)
 
@@ -117,11 +113,7 @@ class AddView(
         self.admin = admin
         self.model = admin.model
         self.modelfields = get_modelfields(
-            self.model,
-            parse_fieldlist(
-                self.model, kwargs.get("fields") or self.admin.addfields, is_form=True
-            ),
-            admin=self.admin,
+            self.model, kwargs.get("fields") or self.admin.addfields
         )
         super().__init__(*args, **kwargs)
 

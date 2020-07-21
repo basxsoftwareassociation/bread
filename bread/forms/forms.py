@@ -1,14 +1,13 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.db import models
 from django.template.loader import render_to_string
-
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
 from guardian.shortcuts import get_objects_for_user
 
-from ..utils import get_modelfields, parse_fieldlist
+from ..utils import get_modelfields
 from .fields import GenericForeignKeyField
 from .widgets import AutocompleteSelect, AutocompleteSelectMultiple
 
@@ -43,10 +42,7 @@ class InlineField(forms.Field):
 
 
 def generate_formset_class(modelfield, request, baseformclass, model):
-    child_fields = get_modelfields(
-        modelfield.related_model,
-        parse_fieldlist(modelfield.related_model, ["__all__"], is_form=True),
-    )
+    child_fields = get_modelfields(modelfield.related_model, ["__all__"],)
     child_fields = {
         fieldname: field
         for fieldname, field in child_fields.items()

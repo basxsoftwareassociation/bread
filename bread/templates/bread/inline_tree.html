@@ -8,10 +8,11 @@
                 <div class="row">
                     <div class="col s12 m10">
                         <table class="highlight">
-                            {% for field in view.modelfields.values %}
+
+                            {% for field, prettyname in view.sortnames %}
                                 <tr>
-                                    <td>{% pretty_fieldname field %}</td>
-                                    <td>{% render_field view.admin object field.name %}</td>
+                                    <td>{{ prettyname }}</td>
+                                    <td>{% render_field view.admin object field %}</td>
                                 </tr>
                             {% endfor %}
                         </table>

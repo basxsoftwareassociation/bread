@@ -22,9 +22,13 @@ register.filter(format_value)
 def display_link(link, request, obj=None, atag_class="", atag_style=""):
     ret = ""
     if link.has_permission(request, obj):
-        ret += (
-            f'<a href="{link.url(request)}" class="{atag_class}" style="{atag_style}">'
+        url = link.url(request)
+        target = (
+            'target="_blank" rel="noopener noreferrer"'
+            if url.startswith("http")
+            else ""
         )
+        ret += f'<a href="{url}" class="{atag_class}" style="{atag_style}" {target}">'
         if link.icon(request):
             ret += f'<i class="material-icons" style="vertical-align:middle">{link.icon(request)}</i> '
         if link.label(request):
@@ -139,20 +143,19 @@ def menu(request):
     ]
     If no menu group is active will try to find active menu by comparing labels to current appname
     """
-    user = request.user
     menugroups = []
     has_active_menu = False
     for group in sorted(menuregister.main._registry.values()):
-        if group.has_permission(user):
+        if group.has_permission(request):
             has_active_menu = has_active_menu or group.active(request)
             menugroups.append(
                 [
                     group.label,
                     group.active(request),
                     (
-                        (item.label, item.active(request), item.get_url(request))
+                        item
                         for item in sorted(group.items)
-                        if item.has_permission(user)
+                        if item.has_permission(request)
                     ),
                 ]
             )

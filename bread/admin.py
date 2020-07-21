@@ -2,6 +2,8 @@ import inspect
 import itertools
 from urllib.parse import urlencode
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
@@ -15,9 +17,6 @@ from django.utils.html import mark_safe
 from django.utils.text import format_lazy
 from django.views.generic import CreateView, RedirectView
 from django.views.generic.edit import SingleObjectMixin
-
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
 from django_countries.fields import CountryField
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.forms import GlobalPreferenceForm
@@ -209,10 +208,12 @@ class BreadAdmin:
         """Iterable of bread.menu.Item objects which should be added to the menu for this admin class"""
         return [
             menu.Item(
-                label=self.verbose_modelname_plural,
+                menu.Link(
+                    url=self.reverse("index"),
+                    label=self.verbose_modelname_plural,
+                    permissions=[f"{self.model._meta.app_label}.view_{self.modelname}"],
+                ),
                 group=self.menugroup(),
-                url=self.reverse("index"),
-                permissions=[f"{self.model._meta.app_label}.view_{self.modelname}"],
             )
         ]
 
@@ -463,20 +464,23 @@ class BreadAdminSite:
         menu.registergroup(menu.Group(label="Admin", order=999))
         menu.registeritem(
             menu.Item(
+                menu.Link(
+                    label="Preferences",
+                    url=reverse_lazy("dynamic_preferences:global"),
+                    permissions=["dynamic_preferences:change_globalpreferencemodel"],
+                ),
                 group="Admin",
-                label="Preferences",
-                url=reverse_lazy("dynamic_preferences:global"),
-                permissions=["dynamic_preferences:change_globalpreferencemodel"],
             )
         )
         datamodel = menu.Item(
-            group="Admin", label="Datamodel", url=reverse_lazy("datamodel"),
+            menu.Link(url=reverse_lazy("datamodel"), label="Datamodel"), group="Admin",
         )
         system_settings = menu.Item(
-            group="Admin", label="System Settings", url=reverse_lazy("admin:index"),
+            menu.Link(url=reverse_lazy("admin:index"), label="System Settings"),
+            group="Admin",
         )
-        system_settings.has_permission = lambda user: user.is_superuser
-        datamodel.has_permission = lambda user: user.is_superuser
+        system_settings.has_permission = lambda request: request.user.is_superuser
+        datamodel.has_permission = lambda request: request.user.is_superuser
         menu.registeritem(datamodel)
         menu.registeritem(system_settings)
 
