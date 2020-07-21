@@ -1,5 +1,9 @@
+"""
+The Bread frameworks provides a view special util views to provide special functionality.
+"""
 import re
 
+from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.views.generic import TemplateView
@@ -45,15 +49,15 @@ class DataModel(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         if "download" in request.GET:
             response = HttpResponse(
-                self._render_svg().encode(), content_type="image/svg+xml"
+                self._render_svg(request.GET.getlist("app")).encode(),
+                content_type="image/svg+xml",
             )
             response["Content-Disposition"] = f'inline; filename="datamodel.svg"'
             return response
         return super().get(request, *args, **kwargs)
 
-    def _render_svg(self):
-        # TODO: make this display nicer and split by app
-        graph_models = ModelGraph(all_applications=True, app_labels=None)
+    def _render_svg(self, apps=None):
+        graph_models = ModelGraph(all_applications=not apps, app_labels=apps)
         graph_models.generate_graph_data()
         return (
             pygraphviz.AGraph(
@@ -70,6 +74,12 @@ class DataModel(LoginRequiredMixin, TemplateView):
         ret = super().get_context_data(**kwargs)
         # force SVG to be match page-layout instead of fixed width and height
         ret["datamodel"] = re.sub(
-            'svg width="[0-9]*pt" height="[0-9]*pt"', "svg", self._render_svg()
+            'svg width="[0-9]*pt" height="[0-9]*pt"',
+            "svg",
+            self._render_svg(self.request.GET.getlist("app")),
+        )
+        ret["apps"] = sorted(
+            filter(lambda a: not a.name.startswith("django"), apps.get_app_configs()),
+            key=lambda a: a.verbose_name.lower(),
         )
         return ret

@@ -28,41 +28,6 @@ from . import views as bread_views
 from .formatters import as_object_link, format_value
 from .utils import has_permission, title
 
-
-def try_call(var, *args, **kwargs):
-    return var(*args, **kwargs) if callable(var) else var
-
-
-class Link:
-    """Represents a user-clickable link
-    url, label, icon and permissions can be str, lazy string or a callable function.
-    The function takes the current request as the only argument.
-    """
-
-    def __init__(self, url, label="", materialicon=None, permissions=[]):
-        self._url = url
-        self._label = label
-        self._icon = materialicon
-        self._permissions = permissions
-
-    def url(self, request):
-        return try_call(self._url, request)
-
-    def label(self, request):
-        return try_call(self._label, request)
-
-    def icon(self, request):
-        return try_call(self._icon, request)
-
-    def has_permission(self, request, obj=None):
-        return all(
-            [
-                request.user.has_perm(perm, obj) or request.user.has_perm(perm)
-                for perm in try_call(self._permissions, request)
-            ]
-        )
-
-
 DEFAULT_BREAD_VIEWS = {
     "browse": bread_views.BrowseView,
     "read": bread_views.ReadView,
@@ -323,10 +288,14 @@ class BreadAdmin:
         urls = self.get_urls()
         actions = []
         if "edit" in urls and has_permission(request.user, "change", object):
-            actions.append(Link(self.reverse("edit", pk=object.pk), "Edit", "edit",))
+            actions.append(
+                menu.Link(self.reverse("edit", pk=object.pk), "Edit", "edit",)
+            )
         if "delete" in urls and has_permission(request.user, "delete", object):
             actions.append(
-                Link(self.reverse("delete", pk=object.pk), "Delete", "delete_forever",)
+                menu.Link(
+                    self.reverse("delete", pk=object.pk), "Delete", "delete_forever",
+                )
             )
         return actions
 
@@ -340,7 +309,7 @@ class BreadAdmin:
         if "browse" in urls:
             # need to preserve filter and ordering from query parameters
             actions.append(
-                Link(
+                menu.Link(
                     self.reverse("browse")
                     + "?"
                     + request.GET.urlencode()
@@ -353,7 +322,7 @@ class BreadAdmin:
 
     def add_action(self, request):
         if "add" in self.get_urls() and has_permission(request.user, "add", self.model):
-            return Link(self.reverse("add"), "Add", "add")
+            return menu.Link(self.reverse("add"), "Add", "add")
         return None
 
     def reverse(self, viewname, *args, **kwargs):

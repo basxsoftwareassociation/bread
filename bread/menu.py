@@ -1,28 +1,27 @@
 from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
-from django.urls import reverse
 
 
 class Group:
     def __init__(self, label, permissions=[], order=None):
         self.label = label
         self.permissions = permissions
-        self.order = order
+        self._order = order
         self.items = []
 
     def __lt__(self, other):
-        if self.order is None:
-            if other.order is None:
+        if self._order is None:
+            if other._order is None:
                 return False
-            return 0 < other.order
-        if other.order is None:
-            return self.order < 0
-        return self.order < other.order
+            return 0 < other._order
+        if other._order is None:
+            return self._order < 0
+        return self._order < other._order
 
     def val(self):
-        if self.order is None:
+        if self._order is None:
             return self.label
-        return str(self.order) if self.order >= 0 else str(self.order)
+        return str(self._order) if self._order >= 0 else str(self._order)
 
     def has_permission(self, user):
         return (
@@ -43,34 +42,59 @@ class Group:
         return any((item.active(request) for item in self.items))
 
 
+class Link:
+    """Represents a user-clickable link
+    url, label, icon and permissions can be str, lazy string or a callable function.
+    The function takes the current request as the only argument.
+    """
+
+    def __init__(self, url, label="", materialicon=None, permissions=[]):
+        self._url = url
+        self._label = label
+        self._icon = materialicon
+        self._permissions = permissions
+
+    def url(self, request):
+        return try_call(self._url, request)
+
+    def label(self, request):
+        return try_call(self._label, request)
+
+    def icon(self, request):
+        return try_call(self._icon, request)
+
+    def has_permission(self, request, obj=None):
+        return all(
+            [
+                request.user.has_perm(perm, obj) or request.user.has_perm(perm)
+                for perm in try_call(self._permissions, request)
+            ]
+        )
+
+
 class Item:
-    def __init__(self, label, group, url, permissions=[], order=None):
-        self.label = label
+    def __init__(self, link, group, order=None):
+        self.link = link
         self.group = group
-        self.url = url
-        self.permissions = permissions
-        self.order = order
+        self._order = order
 
     def __lt__(self, other):
-        if self.order is None:
-            if other.order is None:
+        if self._order is None:
+            if other._order is None:
                 return False
-            return 0 < other.order
-        if other.order is None:
-            return self.order < 0
-        return self.order < other.order
+            return 0 < other._order
+        if other._order is None:
+            return self._order < 0
+        return self._order < other._order
 
-    def has_permission(self, user):
-        return all([user.has_perm(perm) for perm in self.permissions])
+    def has_permission(self, request):
+        return self.link.has_permission(request)
 
     def get_url(self, request):
-        # already reversed or raw url
-        if self.url.startswith("/") or self.url.startswith("http"):
-            return self.url
-        return reverse(self.url)
+        return self.link.url(request)
 
     def active(self, request):
-        return request.path.startswith(str(self.get_url(request)))
+        return request.path.startswith(str(self.link.url(request)))
 
 
 class Menu:
@@ -107,3 +131,7 @@ def registergroup(group):
 
 # global main menu
 main = Menu()
+
+
+def try_call(var, *args, **kwargs):
+    return var(*args, **kwargs) if callable(var) else var

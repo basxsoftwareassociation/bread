@@ -16,7 +16,6 @@ from guardian.mixins import PermissionListMixin, PermissionRequiredMixin
 
 from ..forms.forms import FilterForm
 from ..utils import (
-    parse_fieldlist,
     parse_fieldlist_simple,
     pretty_fieldname,
     resolve_relationship,
@@ -40,7 +39,7 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
 
         # incrementally try to create a filter from the given field and ignore fields which cannot be used
         kwargs["filterset_fields"] = []
-        for field in parse_fieldlist(
+        for field in parse_fieldlist_simple(
             self.model, kwargs.get("filterfields") or self.admin.filterfields
         ):
             try:

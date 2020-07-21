@@ -11,8 +11,6 @@ from django.template import Context, Template
 import ffmpeg
 from celery import shared_task
 
-from .fields import SortableVirtualField, VirtualField
-
 
 def pretty_fieldname(field):
     """Will print a human readable name for a field"""
@@ -143,7 +141,7 @@ def prepare_excel(workbook, filter=False):
     return workbook
 
 
-def parse_fieldlist(model, fields_parameter, is_form=False):
+def parse_fieldlist(model, fields_parameter):
 
     # filter fields which cannot be processed in a form
     def form_filter(field):
@@ -191,8 +189,7 @@ def parse_fieldlist(model, fields_parameter, is_form=False):
             fields_parameter[:i] + concrete_fields + fields_parameter[i + 1 :]
         )
     ret = filter(unwanted_fields_filter, fields_parameter)
-    if is_form:
-        ret = filter(form_filter, ret)
+    ret = filter(form_filter, ret)
     return list(ret)
 
 
@@ -222,14 +219,6 @@ def get_modelfields(model, fieldlist, admin=None):
             fields[field] = modelfields[field]
         elif field in modelfields_rel:
             fields[field] = modelfields_rel[field]
-        elif hasattr(model, field) or hasattr(admin, field):
-            fields[field] = VirtualField(
-                name=field, verbose_name=field.replace("_", " ")
-            )
-        elif field in model.objects.none().query.annotations:
-            fields[field] = SortableVirtualField(
-                name=field, verbose_name=field.replace("_", " ")
-            )
         else:
             raise FieldDoesNotExist(field)
         if isinstance(fields[field], GenericForeignKey):
