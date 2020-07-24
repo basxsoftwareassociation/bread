@@ -1,8 +1,15 @@
 import arpeggio
-from django.core.exceptions import ValidationError
-from django.db import F, Q, models
+import arpeggio.cleanpeg
+from django import forms
+from django.core.exceptions import FieldError, ValidationError
+from django.db import models
 
+# this is a PEG to verify that a string can be passed to eval() and return a
+# valid result which can be passe to for Queryset.filter
+# the toplevel expression is, similar to django, just a shortcut in case no
+# Q-operators are necessary
 peg = r"""
+    toplevel_expression = paramlist / qexpression
     qexpression  = ( qobj / nestedqexpression / notqexpression ) (binaryqoperator qexpression)* EOF
     nestedqexpression = "(" qexpression ")"
     notqexpression = "~" qexpression
@@ -23,49 +30,84 @@ peg = r"""
     """
 
 
-parser = arpeggio.cleanpeg.ParserPEG(peg, "qexpression")
+parser = arpeggio.cleanpeg.ParserPEG(peg, "toplevel_expression")
 
 
-def parsequeryset(basequeryset, expression):
-    # verify the expression is a valid Q-expression
+def checkexpression(expression):
     try:
         parser.parse(expression)
     except arpeggio.NoMatch as e:
-        error_string = f"{e}, {e.position}\n{expression}\n{' ' * e.position + '^'}"
         raise ValidationError(
-            f"Invalid input for queryset {basequeryset}:\n{error_string}"
+            f'"{expression}" cannot be parsed as filter expression: {e}'
         )
-    return eval(
-        f"qs.filter({expression})",
-        globals={},
-        locals={"qs": basequeryset, "Q": Q, "F": F},
-    )
 
 
-class QuerySetField(models.Field):
-    description = "Queryset for %(model)s"
+def parsequeryexpression(basequeryset, expression):
+    assert isinstance(expression, str)
+    if not expression:
+        return basequeryset
+    checkexpression(expression)
+    try:
+        query = eval(
+            f"qs.filter({expression})",
+            {},
+            {"qs": basequeryset, "Q": models.Q, "F": models.F},
+        )
+    except FieldError as e:
+        raise ValidationError(str(e))
+    return Query(query, expression)
 
-    def __init__(self, queryset, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+
+class QuerySetFormWidget(forms.Textarea):
+    def format_value(self, value):
+        if value is None:
+            return ""
+        if isinstance(value, str):
+            return value
+        return value.raw
+
+
+class Query:
+    def __init__(self, queryset, raw):
         self.queryset = queryset
+        self.raw = raw
+
+
+class QuerySetField(models.TextField):
+    def __init__(self, querymodel, *args, **kwargs):
+        self.querymodel = querymodel
+        self.queryset = querymodel.objects.get_queryset()
+        super().__init__(*args, **kwargs)
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        return name, path, self.queryset, args, kwargs
+        return name, path, [self.querymodel] + args, kwargs
 
-    def get_internal_type(self):
-        return "TextField"
-
-    # def from_db_value(self, value, expression, connection):
-    # if value is None:
-    # return self.queryset.none()
-    # return parsequeryset(self.queryset, value)
+    def from_db_value(self, value, expression, connection):
+        if value is None:
+            return Query(self.queryset.none(), "")
+        return parsequeryexpression(self.queryset, value)
 
     def to_python(self, value):
-        if isinstance(value, type(self.queryset)):
+        if isinstance(value, Query):
             return value
 
         if value is None:
-            return self.queryset.none()
+            return Query(self.queryset.none(), "")
 
-        return parsequeryset(self.queryset, value)
+        return parsequeryexpression(self.queryset, value)
+
+    def get_prep_value(self, value):
+        if value is None:
+            return ""
+        return value.raw
+
+    def formfield(self, **kwargs):
+        kwargs["widget"] = QuerySetFormWidget
+        return super().formfield(**kwargs)
+
+    def validate(self, value, model_instance):
+        super().validate(value, model_instance)
+        if isinstance(value, Query):
+            return
+        parsequeryexpression(self.queryset, value)
