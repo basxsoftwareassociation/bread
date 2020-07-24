@@ -42,6 +42,7 @@ setup(
         "celery",
         "django-celery-results",
         "django-celery-beat",
+        "Arpeggio",
     ],
     extras_require={"postgresql": ["psycopg2"]},
     setup_requires=["setuptools_scm"],
