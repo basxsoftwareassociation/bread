@@ -1,8 +1,10 @@
 import arpeggio
 import arpeggio.cleanpeg
 from django import forms
+from django.apps import apps
 from django.core.exceptions import FieldError, ValidationError
 from django.db import models
+from django.utils.functional import cached_property
 
 # this is a PEG to verify that a string can be passed to eval() and return a
 # valid result which can be passe to for Queryset.filter
@@ -74,14 +76,23 @@ class Query:
 
 
 class QuerySetField(models.TextField):
-    def __init__(self, querymodel, *args, **kwargs):
-        self.querymodel = querymodel
-        self.queryset = querymodel.objects.get_queryset()
+    def __init__(self, modelname, *args, **kwargs):
+        self.modelname = modelname
+        if hasattr(self.modelname, "_meta"):
+            self.modelname = self.modelname._meta.label
         super().__init__(*args, **kwargs)
+
+    @cached_property
+    def querymodel(self):
+        return apps.get_model(self.modelname)
+
+    @cached_property
+    def queryset(self):
+        return self.querymodel.objects.get_queryset()
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        return name, path, [self.querymodel] + args, kwargs
+        return name, path, [self.modelname] + args, kwargs
 
     def from_db_value(self, value, expression, connection):
         if value is None:
