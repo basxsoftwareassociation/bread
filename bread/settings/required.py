@@ -1,5 +1,6 @@
 import pkg_resources
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
+
 from easy_thumbnails.conf import Settings as thumbnail_settings
 
 __breadapps = []
@@ -40,10 +41,9 @@ for basedependency in __third_party_apps:
 
 # apps which are required for bread to work
 BREAD_DEPENDENCIES = (
-    ["django.contrib.admin"]
-    + list(__breadapps)
-    + ["bread.apps.BreadConfig"]
-    + list(__third_party_apps)
+    __breadapps
+    + ["bread.apps.BreadConfig", "django.contrib.admin"]
+    + __third_party_apps
 )
 
 # required to make per-object-permissions work
