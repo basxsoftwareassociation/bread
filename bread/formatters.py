@@ -19,6 +19,7 @@ from .utils import get_audio_thumbnail, get_video_thumbnail
 
 
 def format_value(value, fieldtype=None):
+    """Renders a python value in a nice way in HTML"""
     if isinstance(value, bool) or value is None:
         return CONSTANTS[value]
 

@@ -111,6 +111,8 @@ class QuerySetField(models.TextField):
     def get_prep_value(self, value):
         if value is None:
             return ""
+        if isinstance(value, str):
+            return value
         return value.raw
 
     def formfield(self, **kwargs):
