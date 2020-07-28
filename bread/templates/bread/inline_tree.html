@@ -12,7 +12,7 @@
                             {% for field, prettyname in view.sortnames %}
                                 <tr>
                                     <td>{{ prettyname }}</td>
-                                    <td>{% render_field view.admin object field %}</td>
+                                    <td>{% render_field object field %}</td>
                                 </tr>
                             {% endfor %}
                         </table>

@@ -6,6 +6,8 @@ from bread import menu as menuregister
 
 from ..admin import site
 from ..formatters import format_value
+from ..formatters import render_field as render_field_func
+from ..formatters import render_field_aggregation as render_field_aggregation_func
 from ..utils import has_permission, pretty_fieldname, title
 
 register = template.Library()
@@ -55,16 +57,6 @@ def adminurl(model, urlname, *args, **kwargs):
 
 
 @register.simple_tag
-def render_field(admin, object, fieldname):
-    return admin.render_field(object, fieldname)
-
-
-@register.simple_tag
-def render_field_aggregation(admin, queryset, fieldname):
-    return admin.render_field_aggregation(queryset, fieldname)
-
-
-@register.simple_tag
 def object_actions(admin, request, object):
     return admin.object_actions(request, object)
 
@@ -87,6 +79,22 @@ def pagename(request):
             for namespace in request.resolver_match.namespaces
         ]
     )
+
+
+@register.simple_tag(takes_context=True)
+def render_field(context, object, fieldname):
+    admin = getattr(context.get("view"), "admin", None)
+    if admin is None:
+        admin = site.get_default_admin(object._meta.model)
+    return render_field_func(object, fieldname, admin)
+
+
+@register.simple_tag(takes_context=True)
+def render_field_aggregation(context, object, fieldname):
+    admin = getattr(context.get("view"), "admin", None)
+    if admin is None:
+        admin = site.get_default_admin(object._meta.model)
+    return render_field_aggregation_func(object, fieldname, admin)
 
 
 @register.simple_tag

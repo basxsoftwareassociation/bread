@@ -5,6 +5,8 @@ from collections.abc import Iterable
 
 from dateutil import tz
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.utils.html import format_html_join, linebreaks, mark_safe
 
@@ -16,6 +18,61 @@ from easy_thumbnails.files import get_thumbnailer
 
 from .models import AccessConcreteInstanceMixin
 from .utils import get_audio_thumbnail, get_video_thumbnail
+
+
+def render_field(instance, fieldname, adminobject=None):
+    if fieldname == "self":
+        return as_object_link(instance, str(instance))
+
+    while models.constants.LOOKUP_SEP in fieldname:
+        accessor, fieldname = fieldname.split(models.constants.LOOKUP_SEP, 1)
+        instance = getattr(instance, accessor, None)
+        if isinstance(instance, models.Manager):
+            rendered_fields = [
+                render_field(o, fieldname, adminobject) for o in instance.all()
+            ]
+            return mark_safe(f"<ul><li>{'</li><li>'.join(rendered_fields)}</li></ul>")
+    fieldtype = None
+    try:
+        fieldtype = instance._meta.get_field(fieldname)
+    except FieldDoesNotExist:
+        pass
+    if hasattr(adminobject, fieldname):
+        value = lambda: getattr(adminobject, fieldname)(instance)  # noqa
+    else:
+        if hasattr(instance, f"get_{fieldname}_display") and not isinstance(
+            fieldtype, CountryField
+        ):
+            value = getattr(instance, f"get_{fieldname}_display")
+        else:
+            value = getattr(instance, fieldname, None)
+    return format_value(value() if callable(value) else value, fieldtype)
+
+
+def render_field_aggregation(queryset, fieldname, adminobject):
+    DEFAULT_AGGREGATORS = {models.DurationField: models.Sum(fieldname)}
+    modelfield = None
+    try:
+        modelfield = queryset.model._meta.get_field(fieldname)
+        if isinstance(modelfield, GenericForeignKey):
+            modelfield = None
+    except FieldDoesNotExist:
+        pass
+    # check if there are aggrations defined on the breadadmin or on the model field
+    aggregation_func = getattr(adminobject, f"{fieldname}_aggregation", None)
+    if aggregation_func is None:
+        aggregation_func = getattr(queryset.model, f"{fieldname}_aggregation", None)
+    # if there is no custom aggregation defined but the field is a database fields, we just count distinct
+    if aggregation_func is None:
+        if type(modelfield) not in DEFAULT_AGGREGATORS:
+            return ""
+        aggregation = DEFAULT_AGGREGATORS[type(modelfield)]
+    else:
+        aggregation = aggregation_func(queryset)
+
+    if isinstance(aggregation, models.Aggregate):
+        return format_value(queryset.aggregate(value=aggregation)["value"], modelfield)
+    return format_value(aggregation, modelfield)
 
 
 def format_value(value, fieldtype=None):

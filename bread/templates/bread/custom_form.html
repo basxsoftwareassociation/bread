@@ -23,7 +23,7 @@
                 <div class="card-content">
                     {% for field in view.admin.sidebarfields %}
                         <div class="card-title">Notes</div>
-                        <p>{% render_field view.admin object field %}</p>
+                        <p>{% render_field object field %}</p>
                     {% endfor %}
                 </div>
             </div>

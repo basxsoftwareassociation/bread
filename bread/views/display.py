@@ -14,6 +14,7 @@ import django_filters
 from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin, PermissionRequiredMixin
 
+from ..formatters import render_field
 from ..forms.forms import FilterForm
 from ..utils import (
     parse_fieldlist_simple,
@@ -126,7 +127,7 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
             col[0].value = pretty_fieldname(field)
             col[0].font = Font(bold=True)
             for i, cell in enumerate(col[1:]):
-                html_value = self.admin.render_field(items[i], field.name)
+                html_value = render_field(items[i], field.name, self.admin)
                 cleaned = htmlparser.unescape(
                     newline_regex.sub(r"\n", strip_tags(html_value))
                 )

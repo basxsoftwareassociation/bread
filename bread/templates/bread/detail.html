@@ -8,7 +8,7 @@
     {% for field, prettyname in view.field_values %}
         <tr>
             <td style="vertical-align: top">{{ prettyname }}</td>
-            <td style="float: left">{% render_field view.admin object field %}</td>
+            <td style="float: left">{% render_field object field %}</td>
         </tr>
     {% endfor %}
     </table>
@@ -29,7 +29,7 @@
                 <div class="card-content">
                     {% for field in view.admin.sidebarfields %}
                         <div class="card-title">Notes</div>
-                        <p>{% render_field view.admin object field %}</p>
+                        <p>{% render_field object field %}</p>
                     {% endfor %}
                 </div>
             </div>

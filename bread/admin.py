@@ -2,8 +2,6 @@ import inspect
 import itertools
 from urllib.parse import urlencode
 
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
@@ -13,18 +11,19 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
-from django.utils.html import mark_safe
 from django.utils.text import format_lazy
 from django.views.generic import CreateView, RedirectView
 from django.views.generic.edit import SingleObjectMixin
-from django_countries.fields import CountryField
+
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.forms import GlobalPreferenceForm
 from dynamic_preferences.registries import global_preferences_registry
 
 from . import menu
 from . import views as bread_views
-from .formatters import as_object_link, format_value
+from .formatters import format_value
 from .utils import has_permission, title
 
 DEFAULT_BREAD_VIEWS = {
@@ -222,64 +221,6 @@ class BreadAdmin:
 
     def get_addlayout(self, request):
         return self.addlayout
-
-    def render_field(self, object, fieldname):
-        if fieldname == "self":
-            return as_object_link(object, str(object))
-
-        while models.constants.LOOKUP_SEP in fieldname:
-            accessor, fieldname = fieldname.split(models.constants.LOOKUP_SEP, 1)
-            object = getattr(object, accessor, None)
-            if isinstance(object, models.Manager):
-                rendered_fields = [
-                    self.render_field(o, fieldname) for o in object.all()
-                ]
-                return mark_safe(
-                    f"<ul><li>{'</li><li>'.join(rendered_fields)}</li></ul>"
-                )
-        fieldtype = None
-        try:
-            fieldtype = self.model._meta.get_field(fieldname)
-        except FieldDoesNotExist:
-            pass
-        if hasattr(self, fieldname):
-            value = getattr(self, fieldname)(object)
-            fieldtype = None
-        else:
-            if hasattr(object, f"get_{fieldname}_display") and not isinstance(
-                fieldtype, CountryField
-            ):
-                value = getattr(object, f"get_{fieldname}_display")()
-            else:
-                value = getattr(object, fieldname, None)
-        return format_value(value, fieldtype)
-
-    def render_field_aggregation(self, queryset, fieldname):
-        DEFAULT_AGGREGATORS = {models.DurationField: models.Sum(fieldname)}
-        modelfield = None
-        try:
-            modelfield = self.model._meta.get_field(fieldname)
-            if isinstance(modelfield, GenericForeignKey):
-                modelfield = None
-        except FieldDoesNotExist:
-            pass
-        # check if there are aggrations defined on the breadadmin or on the model field
-        aggregation_func = getattr(self, f"{fieldname}_aggregation", None)
-        if aggregation_func is None:
-            aggregation_func = getattr(self.model, f"{fieldname}_aggregation", None)
-        # if there is no custom aggregation defined but the field is a database fields, we just count distinct
-        if aggregation_func is None:
-            if type(modelfield) not in DEFAULT_AGGREGATORS:
-                return ""
-            aggregation = DEFAULT_AGGREGATORS[type(modelfield)]
-        else:
-            aggregation = aggregation_func(queryset)
-
-        if isinstance(aggregation, models.Aggregate):
-            return format_value(
-                queryset.aggregate(value=aggregation)["value"], modelfield
-            )
-        return format_value(aggregation, modelfield)
 
     def object_actions(self, request, object):
         """
