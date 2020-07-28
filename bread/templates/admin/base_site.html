@@ -3,11 +3,8 @@
 {% block title %}{{ title }} | {{ site_title|default:_('BREAD System Settings') }}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('BREAD System Settings') }}</a></h1>
+<h1 id="site-name"><a href="{% url 'admin:index' %}">BREAD System Settings</a></h1>
+(<a href="{% url "bread_overview" %}" class="link" style="">Back to database</a>)
 {% endblock %}
 
 {% block nav-global %}{% endblock %}
-{% block footer %}
-{{ block.super }}
-<span class="object-tools"><a href="{% url "bread_overview" %}" class="link" style="position: fixed; right: 2rem; bottom: 2rem; padding: 0.5rem">Go to BREAD</a></span>
-{% endblock %}
