@@ -14,6 +14,7 @@ from django.db import transaction
 from django.views.generic import CreateView
 from django.views.generic import DeleteView as DjangoDeleteView
 from django.views.generic import UpdateView
+
 from guardian.mixins import PermissionRequiredMixin
 
 from ..forms.forms import inlinemodelform_factory
