@@ -1,7 +1,6 @@
 {% load bread_tags crispy_forms_utils  %}
 
 {% specialspaceless %}
-{% with formset.prefix|to_underscore as form_prefix %}
 <div class="card-panel">
     <h5>
     {% if formset.max_num > 1 %}
@@ -12,7 +11,7 @@
     </h5>
 
     {% include "materialize/errors_formset.html" %}
-    <table id="formset_{{ form_prefix }}_table">
+    <table id="formset_{{ formset.prefix }}_table">
         {{ formset.management_form }}
 
         {% if form.non_field_errors %}
@@ -42,14 +41,14 @@
         <tfoot>
             <tr>
                 <td>
-                    <a id="add_{{ form_prefix }}_button" class="btn waves-effect" onclick="formset_{{ form_prefix }}_add();">Add {% pretty_modelname formset.model %}</a>
+                    <a id="add_{{ formset.prefix }}_button" class="btn waves-effect" onclick="formset_add('{{ formset.prefix }}');">Add {% pretty_modelname formset.model %}</a>
                 </td>
             </tr>
         </tfoot>
     </table>
 
     <!-- template form to insert new entry when clicking add-button -->
-    <div id="empty_{{ form_prefix }}_form" style="display:none;" class="template-form">
+    <div id="empty_{{ formset.prefix }}_form" style="display:none;" class="template-form">
         <table>
             <tr>
                 {% for field in formset.empty_form.hidden_fields %}
@@ -66,68 +65,6 @@
 </div>
 
 <script>
-    // TODO: refactoring: make functions generic (not formset.prefix depending)
-    // TODO: maybe move to external javascript
-    // TODO: maybe use bliss
-    // TODO: nicer "remove" functionality (disable fields and gray out, or hide column)
-    function init_{{ form_prefix }}_formset() {
-        // prevent materialize init in template form
-        var m_input_fields  = $$('#empty_{{ form_prefix }}_form .input-field')
-        for(var j = 0; j < m_input_fields.length; ++j) {
-            var field = $("input, select", m_input_fields[j]);
-            if(field)
-                field.classList.add('no-autoinit');
-        }
-        improve_delete_checkbox_behaviour();
-        // create an "Add" button if appropriate
-        update_add_{{ form_prefix }}_button();
-    }
-    function enable_materialize_newform(form) {
-        var select_choices = $$("select.autocompleteselect", form);
-        for(var i = 0; i < select_choices.length; ++i) {
-            makeChoices(select_choices[i])
-        }
-
-        var m_input_fields = form.getElementsByClassName("input-field");
-        for(var j = 0; j < m_input_fields.length; ++j) {
-            var field = $("input", m_input_fields[j]);
-            if(field)
-                field.classList.remove('no-autoinit');
-        }
-        M.Datepicker.init(form.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});
-        M.AutoInit(form);
-
-    }
-    function improve_delete_checkbox_behaviour() {
-        $$("input[type=checkbox].delete")._.unbind("click");
-        $$("input[type=checkbox].delete")._.bind({
-            "click": function(e){
-                $$("td:not(:last-child) > *", e.target.closest("tr")).map(function(elem){
-                    elem.classList.toggle("hide");
-                });
-            }
-        });
-    }
-    function update_add_{{ form_prefix }}_button() {
-        var formcount = $('#id_{{ formset.prefix }}-TOTAL_FORMS')
-        var maxforms = $('#id_{{ formset.prefix }}-MAX_NUM_FORMS')
-        var addbutton = $('#add_{{ form_prefix }}_button')
-        addbutton.style.display = "inline-block";
-        if(parseInt(formcount.value) >= parseInt(maxforms.value)) {
-            addbutton.style.display = "none";
-        }
-    }
-    function formset_{{ form_prefix }}_add() {
-        var formcount = $('#id_{{ formset.prefix }}-TOTAL_FORMS')
-        var newElementStr = $('#empty_{{ form_prefix }}_form').innerHTML.replace(/__prefix__/g, formcount.value)
-		var newElem = new DOMParser().parseFromString(newElementStr, "text/html").getElementsByTagName('tr')[0];
-        $('#formset_{{ form_prefix }}_table tbody').appendChild(newElem);
-        formcount.value = parseInt(formcount.value) + 1;
-        enable_materialize_newform(newElem);
-        update_add_{{ form_prefix }}_button();
-        improve_delete_checkbox_behaviour(newElem);
-    }
-    document.addEventListener("DOMContentLoaded", e => init_{{ form_prefix }}_formset());
+    document.addEventListener("DOMContentLoaded", e => init_formset("{{ formset.prefix }}"));
 </script>
-{% endwith %}
 {% endspecialspaceless %}

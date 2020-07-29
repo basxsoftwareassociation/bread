@@ -1,10 +1,10 @@
-{% load crispy_forms_field %}
+{% load crispy_forms_field bread_tags %}
 
 {% if field.is_hidden %}
     {{ field }}
 {% else %}
 <div class="row">
-<{% if tag %}{{ tag }}{% else %}div{% endif %} class="{%if field|is_file or field|is_clearable_file %}file-field{% endif %} {% if not field|is_checkbox %}input-field{% endif %} {% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if form_show_errors%}{% if field.errors %} error{% endif %}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %} col s12">
+<{% if tag %}{{ tag }}{% else %}div{% endif %} class="{%if field|is_file or field|is_clearable_file %}file-field{% endif %} {% if not field|is_checkbox %}input-field{% endif %} {% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if form_show_errors%}{% if field.errors and not field|is_inline_formset %} error{% endif %}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %} col s12">
 
         {% if field.label and not field|is_checkbox and not field|is_file and not field|is_clearable_file and form_show_labels %}
             <label for="{{ field.id_for_label }}" class="active">

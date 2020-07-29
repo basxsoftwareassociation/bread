@@ -39,7 +39,7 @@ class Tab(Container):
     link_template = "%s/tab.html"
 
     def render_link(self, template_pack=TEMPLATE_PACK, **kwargs):
-        return render_to_string(self.link_template % template_pack, {"link": self})
+        return render_to_string(self.link_template % template_pack, {"tab": self})
 
 
 class Tabs(ContainerHolder):
@@ -49,7 +49,10 @@ class Tabs(ContainerHolder):
         for tab in self.fields:
             tab.active = False
 
-        # Open the group that should be open.
+        error = self.first_container_with_errors(form.errors.keys())
+        for tab in self.fields:
+            if tab == error:
+                tab.errors = True
         self.open_target_group_for_form(form)
         content = self.get_rendered_fields(form, form_style, context, template_pack)
         links = "".join(tab.render_link(template_pack) for tab in self.fields)

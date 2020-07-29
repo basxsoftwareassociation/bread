@@ -42,3 +42,67 @@ function makeChoices(selectElem) {
     }
     return choices;
 }
+
+// REFACTORING:
+
+function init_formset(form_prefix) {
+    // prevent materialize init in template form
+    var m_input_fields  = $$('#empty_' + form_prefix + '_form .input-field')
+    for(var j = 0; j < m_input_fields.length; ++j) {
+        var field = $("input, select", m_input_fields[j]);
+        if(field)
+            field.classList.add('no-autoinit');
+    }
+    hide_item_on_delete_checkbox();
+    // create an "Add" button if appropriate
+    update_add_button(form_prefix);
+}
+function enable_materialize_newform(form) {
+    var select_choices = $$("select.autocompleteselect", form);
+    for(var i = 0; i < select_choices.length; ++i) {
+        makeChoices(select_choices[i])
+    }
+
+    var m_input_fields = form.getElementsByClassName("input-field");
+    for(var j = 0; j < m_input_fields.length; ++j) {
+        var field = $("input", m_input_fields[j]);
+        if(field)
+            field.classList.remove('no-autoinit');
+    }
+    M.Datepicker.init(form.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});
+    M.AutoInit(form);
+
+}
+
+function hide_item_on_delete_checkbox() {
+    $$("input[type=checkbox].delete")._.unbind("click");
+    $$("input[type=checkbox].delete")._.bind({
+        "click": function(e){
+            $$("td:not(:last-child) > *", e.target.closest("tr")).map(function(elem){
+                elem.classList.toggle("hide");
+            });
+        }
+    });
+}
+
+function update_add_button(form_prefix) {
+    var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
+    var maxforms = $('#id_' + form_prefix + '-MAX_NUM_FORMS')
+    var addbutton = $('#add_' + form_prefix + '_button')
+    addbutton.style.display = "inline-block";
+    if(parseInt(formcount.value) >= parseInt(maxforms.value)) {
+        addbutton.style.display = "none";
+    }
+}
+
+function formset_add(form_prefix) {
+    var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
+    console.log(form_prefix, formcount);
+    var newElementStr = $('#empty_' + form_prefix + '_form').innerHTML.replace(/__prefix__/g, formcount.value)
+    var newElem = new DOMParser().parseFromString(newElementStr, "text/html").getElementsByTagName('tr')[0];
+    $('#formset_' + form_prefix + '_table tbody').appendChild(newElem);
+    formcount.value = parseInt(formcount.value) + 1;
+    enable_materialize_newform(newElem);
+    update_add_button(form_prefix);
+    hide_item_on_delete_checkbox(newElem);
+}

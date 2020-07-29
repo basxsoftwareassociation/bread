@@ -8,6 +8,7 @@ from ..admin import site
 from ..formatters import format_value
 from ..formatters import render_field as render_field_func
 from ..formatters import render_field_aggregation as render_field_aggregation_func
+from ..forms import forms
 from ..utils import has_permission, pretty_fieldname, title
 
 register = template.Library()
@@ -130,9 +131,8 @@ def is_external_url(url):
 
 
 @register.filter
-def to_underscore(string):
-    """Return string with dash (-) replaced with underscore (_)"""
-    return string.replace("-", "_")
+def is_inline_formset(field):
+    return isinstance(field.field, forms.InlineField)
 
 
 @register.simple_tag

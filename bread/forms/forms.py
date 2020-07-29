@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.loader import render_to_string
 
@@ -225,7 +226,10 @@ class InlineField(forms.Field):
         return BoundInlineField(form, self, field_name)
 
     def clean(self, value):
-        self.formset.clean()
+        if not self.formset.is_valid():
+            raise ValidationError(
+                f"Error in list {self.formset.queryset.model._meta.verbose_name_plural.title()}"
+            )
         return self.formset.queryset
 
 
