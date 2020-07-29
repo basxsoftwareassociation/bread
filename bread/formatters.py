@@ -17,7 +17,6 @@ from django_countries.fields import CountryField
 from easy_thumbnails.files import get_thumbnailer
 
 from .models import AccessConcreteInstanceMixin
-from .utils import get_audio_thumbnail, get_video_thumbnail
 
 
 def render_field(instance, fieldname, adminobject=None):
@@ -38,15 +37,16 @@ def render_field(instance, fieldname, adminobject=None):
     except FieldDoesNotExist:
         pass
     if hasattr(adminobject, fieldname):
-        value = lambda: getattr(adminobject, fieldname)(instance)  # noqa
+        value = getattr(adminobject, fieldname)(instance)  # noqa
+    elif hasattr(instance, f"get_{fieldname}_display") and not isinstance(
+        fieldtype, CountryField
+    ):
+        value = getattr(instance, f"get_{fieldname}_display")()
     else:
-        if hasattr(instance, f"get_{fieldname}_display") and not isinstance(
-            fieldtype, CountryField
-        ):
-            value = getattr(instance, f"get_{fieldname}_display")
-        else:
-            value = getattr(instance, fieldname, None)
-    return format_value(value() if callable(value) else value, fieldtype)
+        value = getattr(instance, fieldname, None)
+        if fieldtype is None:
+            value = value()
+    return format_value(value, fieldtype)
 
 
 def render_field_aggregation(queryset, fieldname, adminobject):
@@ -202,15 +202,10 @@ def as_audio(value):
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
         return mark_safe("<small><emph>Audio file not found</emph></small>")
-    thumbnail = get_audio_thumbnail(value)
-    if not value.storage.exists(thumbnail.replace(settings.MEDIA_URL, "")):
-        return mark_safe(
-            '<small><emph>Preview file not generated yet (<a href="#" onclick="document.location.reload(); return false;">⟳</a>)</emph></small>'
-        )
     return mark_safe(
         f"""
         <audio controls controlsList="nodownload" preload="metadata">
-            <source src="{thumbnail}" type="audio/mp3">
+            <source src="{value.url}" type="audio/mp3">
         </audio>
     """
     )
@@ -221,15 +216,10 @@ def as_video(value):
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
         return mark_safe("<small><emph>Video file not found</emph></small>")
-    thumbnail = get_video_thumbnail(value)
-    if not value.storage.exists(thumbnail.replace(settings.MEDIA_URL, "")):
-        return mark_safe(
-            '<small><emph>Preview file not generated yet (<a href="#" onclick="document.location.reload(); return false;">⟳</a>)</emph></small>'
-        )
     return mark_safe(
         f"""
         <video controls width="320" height="240" controlsList="nodownload" preload="metadata">
-            <source src="{thumbnail}" type="video/mp4">
+            <source src="{value.url}" type="video/mp4">
         </video>
     """
     )
@@ -250,7 +240,7 @@ def as_object_link(value, label=None):
 
     if (
         isinstance(value, AccessConcreteInstanceMixin) and value != value.concrete
-    ):  # sedcond condition prevents endless recursion
+    ):  # prevent endless recursion
         return as_object_link(value.concrete)
     return get_link_from_admin(value) or str(value)
 

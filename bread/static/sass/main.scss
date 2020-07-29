@@ -67,7 +67,7 @@ main nav .brand-logo {
 // hide when printing
 @media print
 {    
-    header, footer, nav {
+    header, footer, nav, .btn {
         display: none !important;
     }
 

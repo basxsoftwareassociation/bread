@@ -1,30 +1,23 @@
-import inspect
-import itertools
 from urllib.parse import urlencode
 
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.auth.decorators import login_required as login_required_func
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
 from django.utils.text import format_lazy
-from django.views.generic import CreateView, RedirectView
-from django.views.generic.edit import SingleObjectMixin
+from django.views.generic import RedirectView
 
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
 from dynamic_preferences import views as preferences_views
-from dynamic_preferences.forms import GlobalPreferenceForm
 from dynamic_preferences.registries import global_preferences_registry
 
 from . import menu
 from . import views as bread_views
-from .formatters import format_value
-from .utils import has_permission, title
+from .forms.forms import PreferencesForm
+from .utils import generate_path_for_view, has_permission, title
 
 DEFAULT_BREAD_VIEWS = {
     "browse": bread_views.BrowseView,
@@ -52,32 +45,46 @@ class BreadAdmin:
 
     model = None
     "The django model which will be managed in this class"
+
     browsefields = None
     """List of fields to be listed in the table of the browse-page. Defaults to ``["__all__"]``."""
+
     filterfields = None
     """List of fields which should appear in the filter-form of the browse-page. Defaults to ``["__all__"]``. Can span relationships."""
+
     readfields = None
     """List of fields to be displaye on the read-page. Defaults to ``["__all__"]``."""
+
     editfields = None
     """List of fields to be displaye on the edit-page. Defaults to ``["__all__"]``."""
+
     sidebarfields = None
     """List of fields to be display on the right side of the read and edit pages. Defaults to ``[]``."""
+
     editlayout = None
     """django-crispy-form Layout object for the edit-form. See https://django-crispy-forms.readthedocs.io/en/latest/layouts.html"""
+
     addfields = None
     """List of fields to be displaye on the add-page. Defaults to ``["__all__"]``."""
+
     addlayout = None
     """django-crispy-form Layout object for the add-form. See https://django-crispy-forms.readthedocs.io/en/latest/layouts.html"""
+
     indexview = None
     """Name of the view which servers as the index for this admin class. Defaults to "browse"."""
+
     browseview = None
     """Class which will be used to create the browse-view. Defaults to ``bread.views.BrowseView``."""
+
     readview = None
     """Class which will be used to create the read-view. Defaults to ``bread.views.ReadView``."""
+
     editview = None
     """Class which will be used to create the edit-view. Defaults to ``bread.views.EditView``."""
+
     addview = None
     """Class which will be used to create the add-view. Defaults to ``bread.views.AddView``."""
+
     deleteview = None
     """Class which will be used to create the delete-view. Defaults to ``bread.views.DeleteView``."""
 
@@ -97,8 +104,7 @@ class BreadAdmin:
     """
 
     login_required = True
-    """For later use. Right now this will only be considered in automatic tests to allow
-    anonymous access to the views of this admin's views without beeing logged in"""
+    """If set to true will add the login_required decorator to all views of this admin"""
 
     def __init__(self):
         assert self.model is not None
@@ -134,57 +140,33 @@ class BreadAdmin:
         ret = {}
         for viewname in self.autoviews:
             kwargs = {}
-            viewattr = getattr(self, f"{viewname}view")
+            view = getattr(self, f"{viewname}view")
 
             # class passed, must be a class-based view
-            if isinstance(viewattr, type):
-                if hasattr(viewattr, "model"):
+            if isinstance(view, type):
+                if hasattr(view, "model"):
                     kwargs["model"] = self.model
-                if issubclass(viewattr, (tuple(DEFAULT_BREAD_VIEWS.values())),):
+                if issubclass(view, (tuple(DEFAULT_BREAD_VIEWS.values())),):
                     kwargs["admin"] = self
                 kwargs.update(self.get_views_kwargs().get(viewname, {}))
 
-                ret[viewname] = viewattr.as_view(**kwargs)
+                ret[viewname] = view.as_view(**kwargs)
             else:
-                ret[viewname] = viewattr
+                ret[viewname] = view
+
+            if self.login_required:
+                ret[viewname] = login_required_func(ret[viewname])
 
         return ret
 
     def get_urls(self):
-        """Generates a URL for each view returned by get_views.
-        The url will start with the name of the view.
-        If the view's class is a subclass of SingleObjectMixin but not a create view, the
-        according pk url-path argument is added.
-        Custom url-path arguments should be specified in the "urlparams" attribute of the
-        view. "urlparams" must be a dict with url-path argument as key and type as value.
-        If the view is purely function based, the function arguments are converted to url-path
-        arguments, using python annotations to determine the argument type if available.
+        """Generates a django path-object for each view returned by get_views.
         A url with name "index" is added as redirect view to the view with the name of
         ``self.indexview`` ("browse" by default).
         """
         urls = {}
         for viewname, view in self.get_views().items():
-            viewpath = viewname
-            # handle class-based views
-            if hasattr(view, "view_class"):
-                if issubclass(view.view_class, SingleObjectMixin) and not issubclass(
-                    view.view_class, CreateView
-                ):
-                    viewpath += f"/<int:{view.view_class.pk_url_kwarg}>"
-                if "urlparams" in view.view_initkwargs:
-                    for param, _type in view.view_initkwargs["urlparams"].items():
-                        viewpath += f"/<{_type}:{param}>"
-            # handle purely function based views
-            # try to get the django-path type from the parameter annotation
-            else:
-                signature = inspect.signature(view)
-                for param in itertools.islice(signature.parameters.values(), 1, None):
-                    viewpath += (
-                        f"/<{param.annotation}:{param.name}>"
-                        if param.annotation != inspect.Parameter.empty
-                        else f"/<{param.name}>"
-                    )
-            urls[viewname] = path(viewpath, view, name=viewname)
+            urls[viewname] = generate_path_for_view(view, viewname)
         if self.indexview:
             urls["index"] = path(
                 f"",
@@ -201,10 +183,10 @@ class BreadAdmin:
 
     def menugroup(self):
         """Returns the name of the menu-group under which items for this admin class should appear"""
-        return title(apps.get_app_config(self.model._meta.app_label).verbose_name)
+        return title(self.model._meta.app_config.verbose_name)
 
     def menuitems(self):
-        """Iterable of bread.menu.Item objects which should be added to the menu for this admin class"""
+        """Returns iterable of bread.menu.Item objects which should be added to the menu for this admin class"""
         return [
             menu.Item(
                 menu.Link(
@@ -225,7 +207,7 @@ class BreadAdmin:
     def object_actions(self, request, object):
         """
         Actions which will be available for an object.
-        returns: List of named tuples of type Link
+        Returns: List of named tuples of type Link
         """
         urls = self.get_urls()
         actions = []
@@ -250,12 +232,11 @@ class BreadAdmin:
         actions = []
         if "browse" in urls:
             # need to preserve filter and ordering from query parameters
+            query_arguments = request.GET.copy()
+            query_arguments["export"] = 1
             actions.append(
                 menu.Link(
-                    self.reverse("browse")
-                    + "?"
-                    + request.GET.urlencode()
-                    + "&export=1",
+                    self.reverse("browse", query_arguments=query_arguments),
                     "Excel",
                     "file_download",
                 )
@@ -263,6 +244,7 @@ class BreadAdmin:
         return actions
 
     def add_action(self, request):
+        """Returns a link to the "add" view of this admin"""
         if "add" in self.get_urls() and has_permission(request.user, "add", self.model):
             return menu.Link(self.reverse("add"), "Add", "add")
         return None
@@ -507,13 +489,6 @@ def register(modeladmin):
 
 
 site = BreadAdminSite()
-
-
-class PreferencesForm(GlobalPreferenceForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        self.helper.add_input(Submit("submit", "Save"))
 
 
 def protectedMedia(request, path):

@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from dynamic_preferences.forms import GlobalPreferenceForm
 from guardian.shortcuts import get_objects_for_user
 
 from ..utils import get_modelfields
@@ -237,3 +238,10 @@ class FilterForm(forms.Form):
         self.helper.form_method = "get"
         self.helper.add_input(Submit("submit", "Filter"))
         self.helper.add_input(Submit("reset", "Reset"))
+
+
+class PreferencesForm(GlobalPreferenceForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.add_input(Submit("submit", "Save"))
