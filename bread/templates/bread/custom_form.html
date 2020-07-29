@@ -5,7 +5,7 @@
 {% block content %}
 <div>
     {% if object %}
-        <h2>Update {{ view.admin.verbose_modelname }} <i>{{ object }}</i></h2>
+        <h2>Edit {{ view.admin.verbose_modelname }} <i>{{ object }}</i></h2>
     {% elif form.instance %}
         <h2>Add {{ view.admin.verbose_modelname }}</h2>
         <!-- try to prevent browser auto-fill -->
@@ -17,7 +17,7 @@
 
 
 {% block right-panel %}
-    {% if view.admin.sidebarfields %}
+    {% if view.admin.sidebarfields and object %}
         <div class="right-panel">
             <div class="card">
                 <div class="card-content">

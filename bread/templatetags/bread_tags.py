@@ -82,19 +82,19 @@ def pagename(request):
 
 
 @register.simple_tag(takes_context=True)
-def render_field(context, object, fieldname):
+def render_field(context, instance, fieldname):
     admin = getattr(context.get("view"), "admin", None)
     if admin is None:
-        admin = site.get_default_admin(object._meta.model)
-    return render_field_func(object, fieldname, admin)
+        admin = site.get_default_admin(instance._meta.model)
+    return render_field_func(instance, fieldname, admin)
 
 
 @register.simple_tag(takes_context=True)
-def render_field_aggregation(context, object, fieldname):
+def render_field_aggregation(context, instance, fieldname):
     admin = getattr(context.get("view"), "admin", None)
     if admin is None:
-        admin = site.get_default_admin(object._meta.model)
-    return render_field_aggregation_func(object, fieldname, admin)
+        admin = site.get_default_admin(instance._meta.model)
+    return render_field_aggregation_func(instance, fieldname, admin)
 
 
 @register.simple_tag
