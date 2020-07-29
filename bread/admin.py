@@ -55,20 +55,24 @@ class BreadAdmin:
     readfields = None
     """List of fields to be displaye on the read-page. Defaults to ``["__all__"]``."""
 
-    editfields = None
-    """List of fields to be displaye on the edit-page. Defaults to ``["__all__"]``."""
-
     sidebarfields = None
     """List of fields to be display on the right side of the read and edit pages. Defaults to ``[]``."""
 
-    editlayout = None
-    """django-crispy-form Layout object for the edit-form. See https://django-crispy-forms.readthedocs.io/en/latest/layouts.html"""
+    editfields = None
+    """Defines which fields to display on the edit page.
+    Can be:
+    - List of field names
+    - django-crispy-form Layout object (https://django-crispy-forms.readthedocs.io/en/latest/layouts.html)
+    Defaults to ``["__all__"]``
+    """
 
     addfields = None
-    """List of fields to be displaye on the add-page. Defaults to ``["__all__"]``."""
-
-    addlayout = None
-    """django-crispy-form Layout object for the add-form. See https://django-crispy-forms.readthedocs.io/en/latest/layouts.html"""
+    """Defines which fields to display on the add page.
+    Can be:
+    - List of field names
+    - django-crispy-form Layout object (https://django-crispy-forms.readthedocs.io/en/latest/layouts.html)
+    Defaults to whatever value ``editfields`` is set.
+    """
 
     indexview = None
     """Name of the view which servers as the index for this admin class. Defaults to "browse"."""
@@ -113,7 +117,7 @@ class BreadAdmin:
         self.filterfields = self.filterfields or self.browsefields
         self.readfields = self.readfields or ["__all__"]
         self.editfields = self.editfields or ["__all__"]
-        self.addfields = self.addfields or ["__all__"]
+        self.addfields = self.addfields or self.editfields
         self.sidebarfields = self.sidebarfields or []
         self.browseview = self.browseview or bread_views.BrowseView
         self.readview = self.readview or bread_views.ReadView
@@ -197,12 +201,6 @@ class BreadAdmin:
                 group=self.menugroup(),
             )
         ]
-
-    def get_editlayout(self, request):
-        return self.editlayout
-
-    def get_addlayout(self, request):
-        return self.addlayout
 
     def object_actions(self, request, object):
         """

@@ -15,6 +15,7 @@ from django.views.generic import CreateView
 from django.views.generic import DeleteView as DjangoDeleteView
 from django.views.generic import UpdateView
 
+from crispy_forms.layout import Layout
 from guardian.mixins import PermissionRequiredMixin
 
 from ..forms.forms import inlinemodelform_factory
@@ -87,14 +88,13 @@ class EditView(
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
-        self.modelfields = get_modelfields(
-            self.model, kwargs.get("fields") or self.admin.editfields
-        )
+        self.layout = None
+        fields = kwargs.get("fields") or self.admin.editfields
+        if isinstance(fields, Layout):
+            self.layout = fields
+            fields = [i[1] for i in fields.get_field_names()]
+        self.modelfields = get_modelfields(self.model, fields)
         super().__init__(*args, **kwargs)
-
-    @property
-    def layout(self):
-        return self.admin.get_editlayout(self.request)
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
@@ -113,17 +113,16 @@ class AddView(
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
-        self.modelfields = get_modelfields(
-            self.model, kwargs.get("fields") or self.admin.addfields
-        )
+        self.layout = None
+        fields = kwargs.get("fields") or self.admin.addfields
+        if isinstance(fields, Layout):
+            self.layout = fields
+            fields = [i[1] for i in fields.get_field_names()]
+        self.modelfields = get_modelfields(self.model, fields)
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.add_{self.model.__name__.lower()}"]
-
-    @property
-    def layout(self):
-        return self.admin.get_addlayout(self.request)
 
     def get_permission_object(self):
         return None
