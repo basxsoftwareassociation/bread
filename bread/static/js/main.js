@@ -11,10 +11,10 @@ function tableToExcel(downloadelement, tableelement, worksheetname, filename) {
     downloadelement.click();
 }
 
-function initAllChoices() {
-    var selectElements = $$("select.autocompleteselect, select.autocompleteselectmultiple");
-    for(var i = 0; i < selectElements.length; ++i) {
-        makeChoices(selectElements[i]);
+function initAllChoices(element=$("body")) {
+    var selectElements = $$("select.autocompleteselect, select.autocompleteselectmultiple", element);
+    for(let element of selectElements) {
+        makeChoices(element);
     }
 }
 
@@ -32,6 +32,7 @@ function makeChoices(selectElem) {
     });
     // TODO: wait for choices.js to fix the error when using space to separate classes
     // when fixed we can uncomment the code above and remove the line below
+    // https://github.com/jshjohnson/Choices/issues/832
     $('input.choices__input', selectElem.parentNode.parentNode).classList.add("browser-default");
 
     // check readonly
@@ -53,39 +54,29 @@ function init_formset(form_prefix) {
         if(field)
             field.classList.add('no-autoinit');
     }
-    hide_item_on_delete_checkbox();
-    // create an "Add" button if appropriate
-    update_add_button(form_prefix);
+    _update_add_button(form_prefix);
 }
-function enable_materialize_newform(form) {
-    var select_choices = $$("select.autocompleteselect", form);
-    for(var i = 0; i < select_choices.length; ++i) {
-        makeChoices(select_choices[i])
-    }
-
-    var m_input_fields = form.getElementsByClassName("input-field");
+function _init_materialize(element) {
+    var m_input_fields = element.getElementsByClassName("input-field");
     for(var j = 0; j < m_input_fields.length; ++j) {
         var field = $("input", m_input_fields[j]);
         if(field)
             field.classList.remove('no-autoinit');
     }
-    M.Datepicker.init(form.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});
-    M.AutoInit(form);
-
+    M.Datepicker.init(element.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});
+    M.AutoInit(element);
 }
 
-function hide_item_on_delete_checkbox() {
-    $$("input[type=checkbox].delete")._.unbind("click");
-    $$("input[type=checkbox].delete")._.bind({
-        "click": function(e){
-            $$("td:not(:last-child) > *", e.target.closest("tr")).map(function(elem){
-                elem.classList.toggle("hide");
-            });
-        }
-    });
+function delete_inline_element(checkbox, inlinecontainer, deletelabel) {
+    checkbox.checked = !checkbox.checked;
+    inlinecontainer.style.height = checkbox.checked ? "3rem" : "initial";
+    inlinecontainer.style.overflow = checkbox.checked ? "hidden" : "initial";
+    inlinecontainer.style.backgroundColor = checkbox.checked ? "#999" : "initial";
+    deletelabel.firstElementChild.innerText = checkbox.checked ? "undo" : "delete";
+    deletelabel.parentElement.previousElementSibling.style.display = checkbox.checked ? "block" : "none";
 }
 
-function update_add_button(form_prefix) {
+function _update_add_button(form_prefix) {
     var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
     var maxforms = $('#id_' + form_prefix + '-MAX_NUM_FORMS')
     var addbutton = $('#add_' + form_prefix + '_button')
@@ -95,14 +86,15 @@ function update_add_button(form_prefix) {
     }
 }
 
-function formset_add(form_prefix) {
+function formset_add(form_prefix, list_container) {
     var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
-    console.log(form_prefix, formcount);
     var newElementStr = $('#empty_' + form_prefix + '_form').innerHTML.replace(/__prefix__/g, formcount.value)
-    var newElem = new DOMParser().parseFromString(newElementStr, "text/html").getElementsByTagName('tr')[0];
-    $('#formset_' + form_prefix + '_table tbody').appendChild(newElem);
+    var newElements = new DOMParser().parseFromString(newElementStr, "text/html").getElementsByTagName("body")[0].children;
+    for(let element of newElements) {
+        $(list_container).appendChild(element);
+        initAllChoices(element);
+        _init_materialize(element);
+    }
     formcount.value = parseInt(formcount.value) + 1;
-    enable_materialize_newform(newElem);
-    update_add_button(form_prefix);
-    hide_item_on_delete_checkbox(newElem);
+    _update_add_button(form_prefix);
 }

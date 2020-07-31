@@ -5,7 +5,7 @@
 {% if formset_tag %}
 <form {{ flat_attrs|safe }} method="{{ form_method }}" {% if formset.is_multipart %} enctype="multipart/form-data"{% endif %} autocomplete="off">
 {% endif %}
-    {% if formset_method|lower == 'post' and not disable_csrf %}
+    {% if formset_method|lower == "post" and not disable_csrf %}
         {% csrf_token %}
     {% endif %}
 
@@ -13,15 +13,15 @@
         {{ formset.management_form|crispy }}
     </div>
 
-    {% include "materialize/errors_formset.html" %}
+    {% include "materialize_forms/errors_formset.html" %}
 
     {% for form in formset %}
-        {% include "materialize/display_form.html" %}
+        {% include "materialize_forms/display_form.html" %}
     {% endfor %}
 
     {% if inputs %}
         {% for input in inputs %}
-            {% include "materialize/layout/baseinput.html" %}
+            {% include "materialize_forms/layout/baseinput.html" %}
         {% endfor %}
     {% endif %}
 {% if formset_tag %}</form>{% endif %}

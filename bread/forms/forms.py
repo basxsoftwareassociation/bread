@@ -12,11 +12,12 @@ from guardian.shortcuts import get_objects_for_user
 
 from ..utils import get_modelfields
 from .fields import GenericForeignKeyField
+from .layout import InlineLayout
 from .widgets import AutocompleteSelect, AutocompleteSelectMultiple
 
 
 def inlinemodelform_factory(
-    request, model, object, modelfields, baseformclass, layout=None
+    request, model, object, modelfields, baseformclass, layout=None, isinline=False
 ):
     """Returns a form class which can handle inline-modelform sets.
     Also enable crispy forms.
@@ -25,7 +26,10 @@ def inlinemodelform_factory(
     def crispy_form_init(self, *args, **kwargs):
         super(baseformclass, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.helper.add_input(Submit("submit", "Save"))
+        if isinline:
+            self.helper.form_tag = False
+        else:
+            self.helper.add_input(Submit("submit", "Save"))
         self.helper.layout = layout
 
     attribs = {
@@ -47,9 +51,11 @@ def inlinemodelform_factory(
         elif modelfield.one_to_many or (
             modelfield.one_to_one and not modelfield.concrete
         ):
+
             formset_class = _generate_formset_class(
-                modelfield, request, baseformclass, model
+                modelfield, request, baseformclass, model, layout,
             )
+
             if request.POST:
                 attribs[modelfield.name] = InlineField(
                     formset_class(request.POST, request.FILES, instance=object)
@@ -72,16 +78,35 @@ def inlinemodelform_factory(
     return ret
 
 
-def _generate_formset_class(modelfield, request, baseformclass, model):
+def _generate_formset_class(modelfield, request, baseformclass, model, parent_layout):
     """Returns a FormSet class which handles inline forms correctly."""
-    child_fields = get_modelfields(modelfield.related_model, ["__all__"],)
+
+    layout = None
+    fields = ["__all__"]
+    # extract the layout object for the inline field from the parent if available
+    if parent_layout:
+        queue = [parent_layout]
+        while queue and not layout:
+            elem = queue.pop()
+            if isinstance(elem, InlineLayout) and elem.fieldname == modelfield.name:
+                layout = elem.get_inline_layout()
+                fields = [i[1] for i in layout.get_field_names()]
+            queue.extend(getattr(elem, "fields", []))
+
+    child_fields = get_modelfields(modelfield.related_model, fields)
     child_fields = {
         fieldname: field
         for fieldname, field in child_fields.items()
         if field != modelfield.remote_field and field.editable is not False
     }
     formclass = inlinemodelform_factory(
-        request, modelfield.related_model, None, child_fields.values(), baseformclass,
+        request,
+        modelfield.related_model,
+        None,
+        child_fields.values(),
+        baseformclass,
+        layout=layout,
+        isinline=True,
     )
     if isinstance(modelfield, GenericRelation):
         formset = generic_inlineformset_factory(
@@ -109,12 +134,6 @@ def _generate_formset_class(modelfield, request, baseformclass, model):
             can_delete=True,
         )
 
-    def _customize_delete_checkbox(formset_self, form, index):
-        ret = super(formset, formset_self).add_fields(form, index)
-        form.fields[forms.formsets.DELETION_FIELD_NAME].widget.attrs["class"] = "delete"
-        return ret
-
-    formset.add_fields = _customize_delete_checkbox
     return formset
 
 
@@ -127,6 +146,8 @@ def _is_valid_inline(form):
             if isinstance(f, InlineField)
         ]
     )
+    for field in [f for f in form.fields.values() if isinstance(f, InlineField)]:
+        print(type(field.formset), dir(field.formset), field.formset.errors)
     return form.is_bound and not form.errors and formsets
 
 
@@ -208,7 +229,7 @@ class BoundInlineField(forms.BoundField):
 
     def as_widget(self, widget=None, attrs=None, only_initial=False):
         return render_to_string(
-            "materialize/table_inline_formset.html",
+            "materialize_forms/table_inline_formset.html",
             {
                 "formset": self.field.formset,
                 "form_show_errors": True,

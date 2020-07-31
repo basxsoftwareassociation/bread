@@ -1,7 +1,25 @@
+from django.forms.formsets import DELETION_FIELD_NAME
 from django.template.loader import render_to_string
 
 from crispy_forms.bootstrap import Container, ContainerHolder
+from crispy_forms.layout import Layout
 from crispy_forms.utils import TEMPLATE_PACK, render_field
+
+
+class InlineLayout(Layout):
+    def __init__(self, inlinefield, *args, **kwargs):
+        super().__init__(inlinefield)
+        self.fieldname = inlinefield
+        self.args = args
+        self.kwargs = kwargs
+
+    def get_inline_layout(self):
+        if (
+            DELETION_FIELD_NAME not in self.args
+            and DELETION_FIELD_NAME not in self.kwargs
+        ):
+            self.args = self.args + (DELETION_FIELD_NAME, "id")
+        return Layout(*self.args, **self.kwargs)
 
 
 class CollapsibleGroup(Container):
@@ -48,6 +66,7 @@ class Tabs(ContainerHolder):
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
         for tab in self.fields:
             tab.active = False
+            tab.errors = False
 
         error = self.first_container_with_errors(form.errors.keys())
         for tab in self.fields:

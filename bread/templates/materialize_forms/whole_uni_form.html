@@ -2,18 +2,18 @@
 
 {% specialspaceless %}
 {% if form_tag %}<form {{ flat_attrs|safe }} method="{{ form_method }}" {% if form.is_multipart %} enctype="multipart/form-data"{% endif %} autocomplete="off">{% endif %}
-    {% if form_method|lower == 'post' and not disable_csrf %}
+    {% if form_method|lower == "post" and not disable_csrf %}
         {% csrf_token %}
     {% endif %}
 
-    {% include "materialize/display_form.html" %}
+    {% include "materialize_forms/display_form.html" %}
 
     {% if inputs %}
     <div class="row">
         <div class="col s12">
             <div style="display: flex; justify-content: space-between; flex-direction: row-reverse">
                 {% for input in inputs %}
-                    {% include "materialize/layout/baseinput.html" %}
+                    {% include "materialize_forms/layout/baseinput.html" %}
                 {% endfor %}
             </div>
         </div>

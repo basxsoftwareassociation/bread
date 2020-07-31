@@ -1,13 +1,13 @@
 {% if help_text_inline and not error_text_inline %}
-    {% include 'materialize/layout/help_text.html' %}
+    {% include "materialize_forms/layout/help_text.html" %}
 {% endif %}
 
 {% if error_text_inline %}
-    {% include 'materialize/layout/field_errors.html' %}
+    {% include "materialize_forms/layout/field_errors.html" %}
 {% else %}
-    {% include 'materialize/layout/field_errors_block.html' %}
+    {% include "materialize_forms/layout/field_errors_block.html" %}
 {% endif %}
 
 {% if not help_text_inline %}
-    {% include 'materialize/layout/help_text.html' %}
+    {% include "materialize_forms/layout/help_text.html" %}
 {% endif %}

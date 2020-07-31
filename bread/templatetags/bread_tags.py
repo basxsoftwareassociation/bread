@@ -31,7 +31,7 @@ def display_link(link, request, obj=None, atag_class="", atag_style=""):
             if url.startswith("http")
             else ""
         )
-        ret += f'<a href="{url}" class="{atag_class}" style="{atag_style}" {target}">'
+        ret += f'<a href="{url}" class="{atag_class}" style="{atag_style}" {target}>'
         if link.icon(request):
             ret += f'<i class="material-icons" style="vertical-align:middle">{link.icon(request)}</i> '
         if link.label(request):

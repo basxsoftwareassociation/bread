@@ -1,7 +1,7 @@
-{% load bread_tags crispy_forms_utils  %}
+{% load bread_tags crispy_forms_tags crispy_forms_utils crispy_forms_field %}
 
 {% specialspaceless %}
-<div class="card-panel">
+<div>
     <h5>
     {% if formset.max_num > 1 %}
         {% pretty_modelname formset.model True %}
@@ -10,57 +10,34 @@
     {% endif %}
     </h5>
 
-    {% include "materialize/errors_formset.html" %}
-    <table id="formset_{{ formset.prefix }}_table">
-        {{ formset.management_form }}
+    {% include "materialize_forms/errors_formset.html" %}
+    {{ formset.management_form }}
 
-        {% if form.non_field_errors %}
-            {% for non_field_error in form.non_field_errors %}
-                 {{ non_field_error }}
-            {% endfor %}
-        {% endif %}
-
-        <tbody>
-        {% for form in formset %}
-            {% if not form.is_extra %}
-                {% include "materialize/errors.html" %}
-            {% endif %}
-
-            <tr>
-                {% for field in form.hidden_fields %}
-                    {% include 'materialize/field.html' %}
-                {% endfor %}
-                {% for field in form.visible_fields %}
-                <td>
-                    {% include 'materialize/field.html' %}
-                </td>
-                {% endfor %}
-            </tr>
+    {% if form.non_field_errors %}
+        {% for non_field_error in form.non_field_errors %}
+             {{ non_field_error }}
         {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr>
-                <td>
-                    <a id="add_{{ formset.prefix }}_button" class="btn waves-effect" onclick="formset_add('{{ formset.prefix }}');">Add {% pretty_modelname formset.model %}</a>
-                </td>
-            </tr>
-        </tfoot>
-    </table>
+    {% endif %}
+
+    <div id="formset_{{ formset.prefix }}_container">
+        {% for form in formset %}
+            <div class="card-panel" style="position: relative">
+                {% crispy form %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div>
+        <a id="add_{{ formset.prefix }}_button" class="btn" onclick="formset_add('{{ formset.prefix }}', '#formset_{{ formset.prefix }}_container');">
+            Add {% pretty_modelname formset.model %}
+        </a>
+    </div>
 
     <!-- template form to insert new entry when clicking add-button -->
     <div id="empty_{{ formset.prefix }}_form" style="display:none;" class="template-form">
-        <table>
-            <tr>
-                {% for field in formset.empty_form.hidden_fields %}
-                    {% include 'materialize/field.html' %}
-                {% endfor %}
-                {% for field in formset.empty_form.visible_fields %}
-                <td>
-                    {% include 'materialize/field.html' %}
-                </td>
-                {% endfor %}
-            </tr>
-        </table>
+        <div class="card-panel" style="position: relative">
+            {% crispy formset.empty_form %}
+        </div>
     </div>
 </div>
 

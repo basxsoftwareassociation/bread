@@ -1,7 +1,7 @@
 {% with formset.management_form as form %}
-    {% include 'materialize/uni_form.html' %}
+    {% include "materialize_forms/uni_form.html" %}
 {% endwith %}
 
 {% for form in formset %}
-    {% include 'materialize/uni_form.html' %}
+    {% include "materialize_forms/uni_form.html" %}
 {% endfor %}
