@@ -48,73 +48,16 @@ def has_permission(user, operation, instance):
     )
 
 
-def parse_fieldlist_simple(model, fields_parameter):
-    if "__all__" in fields_parameter:
-        concrete_fields = [
-            f.name for f in model._meta.get_fields() if f.concrete and f.name != "id"
-        ]
-        i = fields_parameter.index("__all__")
-        fields_parameter = (
-            fields_parameter[:i] + concrete_fields + fields_parameter[i + 1 :]
-        )
-    return fields_parameter
+def filter_fieldlist(model, fieldlist, for_form=False):
+    return [
+        f
+        for f in _expand_ALL_constant(model, fieldlist)
+        if not _is_internal_field(model, f)
+        and (not for_form or _can_use_in_form(model, f))
+    ]
 
 
-def _parse_fieldlist(model, fields_parameter):
-
-    # filter fields which cannot be processed in a form
-    def form_filter(field):
-        modelfields = {
-            f.get_accessor_name() if hasattr(f, "get_accessor_name") else f.name: f
-            for f in model._meta.get_fields(include_hidden=True)
-        }
-        if field not in modelfields:
-            return False
-        field = modelfields[field]
-        return (
-            field.editable
-            or isinstance(field, GenericForeignKey)
-            or field.many_to_many
-            or field.one_to_many
-            or field.one_to_one,
-        )
-
-    # filter generic foreign key and id field out
-    genericfk_exclude = set()
-    for f in model._meta.get_fields():
-        if isinstance(f, GenericForeignKey):
-            genericfk_exclude.add(f.ct_field)
-            genericfk_exclude.add(f.fk_field)
-
-    def unwanted_fields_filter(field):
-        modelfield = {
-            f.get_accessor_name() if hasattr(f, "get_accessor_name") else f.name: f
-            for f in model._meta.get_fields()
-        }.get(field)
-        # do not include the one-to-one field to a parent-model table
-        if (
-            hasattr(modelfield, "remote_field")
-            and modelfield.remote_field
-            and getattr(modelfield.remote_field, "parent_link", False) is True
-        ):
-            return False
-        return field not in genericfk_exclude and field != "id"
-
-    # default configuration: display only direct defined fields on the modle (no reverse related models)
-    if "__all__" in fields_parameter:
-        concrete_fields = [f.name for f in model._meta.get_fields() if f.concrete]
-        i = fields_parameter.index("__all__")
-        fields_parameter = (
-            fields_parameter[:i] + concrete_fields + fields_parameter[i + 1 :]
-        )
-    ret = filter(unwanted_fields_filter, fields_parameter)
-    ret = filter(form_filter, ret)
-    return list(ret)
-
-
-def get_modelfields(model, fieldlist):
-    fieldlist = _parse_fieldlist(model, fieldlist)
-
+def get_modelfields(model, fieldlist, for_form=False):
     fields = {}
     modelfields = {f.name: f for f in model._meta.get_fields()}
     modelfields_rel = {
@@ -122,7 +65,7 @@ def get_modelfields(model, fieldlist):
         for f in modelfields.values()
         if hasattr(f, "get_accessor_name")
     }
-    for field in fieldlist:
+    for field in filter_fieldlist(model, fieldlist, for_form=for_form):
         if field in modelfields:
             fields[field] = modelfields[field]
         elif field in modelfields_rel:
@@ -132,6 +75,55 @@ def get_modelfields(model, fieldlist):
         if isinstance(fields[field], GenericForeignKey):
             fields[field].sortable = False
     return fields
+
+
+def _expand_ALL_constant(model, fieldnames):
+    """Replaces the constant ``__all__`` with all concrete fields of the model"""
+    if "__all__" in fieldnames:
+        concrete_fields = [f.name for f in model._meta.get_fields() if f.concrete]
+        i = fieldnames.index("__all__")
+        return fieldnames[:i] + concrete_fields + fieldnames[i + 1 :]
+    return fieldnames
+
+
+def _is_internal_field(model, field):
+    """Filter generic foreign key, parent link of multi-table inheritance and id"""
+    exclude = {"id"}
+    for f in model._meta.get_fields():
+        if isinstance(f, GenericForeignKey):
+            exclude.add(f.ct_field)
+            exclude.add(f.fk_field)
+    modelfield = {
+        f.get_accessor_name() if hasattr(f, "get_accessor_name") else f.name: f
+        for f in model._meta.get_fields()
+    }.get(field)
+    # To check the FK to the parent table we could also put "{modelname}_ptr"
+    # into the exclude list but checking for the parent_link attribute seems safer
+    if (
+        hasattr(modelfield, "remote_field")
+        and modelfield.remote_field
+        and getattr(modelfield.remote_field, "parent_link", False) is True
+    ):
+        return True
+    return field in exclude
+
+
+def _can_use_in_form(model, field):
+    """Filter fields which cannot be processed in a form"""
+    modelfields = {
+        f.get_accessor_name() if hasattr(f, "get_accessor_name") else f.name: f
+        for f in model._meta.get_fields(include_hidden=True)
+    }
+    if field not in modelfields:
+        return False
+    field = modelfields[field]
+    return (
+        field.editable
+        or isinstance(field, GenericForeignKey)
+        or field.many_to_many
+        or field.one_to_many
+        or field.one_to_one,
+    )
 
 
 def resolve_relationship(model, accessor_str):

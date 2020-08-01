@@ -93,7 +93,7 @@ class EditView(
         if isinstance(fields, Layout):
             self.layout = fields
             fields = [i[1] for i in fields.get_field_names()]
-        self.modelfields = get_modelfields(self.model, fields)
+        self.modelfields = get_modelfields(self.model, fields, for_form=True)
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
@@ -118,7 +118,7 @@ class AddView(
         if isinstance(fields, Layout):
             self.layout = fields
             fields = [i[1] for i in fields.get_field_names()]
-        self.modelfields = get_modelfields(self.model, fields)
+        self.modelfields = get_modelfields(self.model, fields, for_form=True)
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):

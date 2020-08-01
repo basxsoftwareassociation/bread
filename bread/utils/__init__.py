@@ -1,9 +1,9 @@
 from .export import html_to_pdf, prepare_excel, render_template, xlsxresponse
 from .media import get_audio_thumbnail, get_video_thumbnail
 from .model_helpers import (
+    filter_fieldlist,
     get_modelfields,
     has_permission,
-    parse_fieldlist_simple,
     pretty_fieldname,
     resolve_relationship,
     title,
@@ -16,7 +16,7 @@ __all__ = [
     "has_permission",
     "pretty_fieldname",
     "title",
-    "parse_fieldlist_simple",
+    "filter_fieldlist",
     "get_modelfields",
     "resolve_relationship",
     "html_to_pdf",

@@ -17,7 +17,7 @@ from guardian.mixins import PermissionListMixin, PermissionRequiredMixin
 from ..formatters import render_field
 from ..forms.forms import FilterForm
 from ..utils import (
-    parse_fieldlist_simple,
+    filter_fieldlist,
     pretty_fieldname,
     resolve_relationship,
     xlsxresponse,
@@ -33,14 +33,14 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
-        self.fields = parse_fieldlist_simple(
+        self.fields = filter_fieldlist(
             self.model, kwargs.get("fields") or self.admin.browsefields
         )
         self.paginate_by = getattr(self.admin, "paginate_by", 100)
 
         # incrementally try to create a filter from the given field and ignore fields which cannot be used
         kwargs["filterset_fields"] = []
-        for field in parse_fieldlist_simple(
+        for field in filter_fieldlist(
             self.model, kwargs.get("filterfields") or self.admin.filterfields
         ):
             try:
@@ -193,7 +193,7 @@ class ReadView(PermissionRequiredMixin, DetailView):
         self.admin = admin
         self.model = admin.model
         super().__init__(*args, **kwargs)
-        self.fields = parse_fieldlist_simple(
+        self.fields = filter_fieldlist(
             self.model, kwargs.get("fields") or self.admin.browsefields
         )
 
