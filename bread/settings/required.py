@@ -9,7 +9,7 @@ for entrypoint in pkg_resources.iter_entry_points(group="breadapp", name="appcon
         if dependency not in __breadapps:
             __breadapps.append(dependency)
 
-__third_party_apps = [
+_third_party_apps = [
     "crispy_forms",
     "ckeditor",
     "ckeditor_uploader",
@@ -25,6 +25,8 @@ __third_party_apps = [
     "django_markdown2",
     "django_filters",
     "django_extensions",
+]
+_django_apps = [
     "django.forms",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -35,15 +37,17 @@ __third_party_apps = [
     "django.contrib.sites",
 ]
 
-for basedependency in __third_party_apps:
+for basedependency in _third_party_apps + _django_apps:
     if basedependency in __breadapps:
         __breadapps.remove(basedependency)
 
-# apps which are required for bread to work
+# apps which are required for bread to work, order is important
 BREAD_DEPENDENCIES = (
-    __breadapps
-    + ["bread.apps.BreadConfig", "django.contrib.admin"]
-    + __third_party_apps
+    ["django.contrib.admin"]
+    + __breadapps
+    + ["bread.apps.BreadConfig"]
+    + _third_party_apps
+    + _django_apps
 )
 
 # required to make per-object-permissions work
