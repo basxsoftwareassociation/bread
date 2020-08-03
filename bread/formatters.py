@@ -44,7 +44,7 @@ def render_field(instance, fieldname, adminobject=None):
         value = getattr(instance, f"get_{fieldname}_display")()
     else:
         value = getattr(instance, fieldname, None)
-    if callable(value):
+    if callable(value) and not isinstance(value, models.Manager):
         value = value()
     return format_value(value, fieldtype)
 
