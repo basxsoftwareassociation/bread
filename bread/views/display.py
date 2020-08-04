@@ -117,17 +117,17 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
         workbook = openpyxl.Workbook()
         workbook.title = self.admin.verbose_modelname_plural
         header_cells = workbook.active.iter_cols(
-            min_row=1, max_col=len(self.modelfields), max_row=len(items) + 1
+            min_row=1, max_col=len(self.fields), max_row=len(items) + 1
         )
         htmlparser = HTMLParser()
         newline_regex = re.compile(
             r"<\s*br\s*/?\s*>"
         )  # replace HTML line breaks with newlines
-        for field, col in zip(self.modelfields.values(), header_cells):
-            col[0].value = pretty_fieldname(field)
+        for field, col in zip(self.field_values(), header_cells):
+            col[0].value = field[1]
             col[0].font = Font(bold=True)
             for i, cell in enumerate(col[1:]):
-                html_value = render_field(items[i], field.name, self.admin)
+                html_value = render_field(items[i], field[0], self.admin)
                 cleaned = htmlparser.unescape(
                     newline_regex.sub(r"\n", strip_tags(html_value))
                 )
@@ -146,6 +146,14 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
                 except FieldError:
                     accessor = ""
                 yield accessor, " ".join([pretty_fieldname(f[1]) for f in fieldchain])
+
+    def field_values(self):
+        for accessor in self.fields:
+            fieldchain = resolve_relationship(self.model, accessor)
+            if not fieldchain:
+                yield accessor, accessor.replace("_", " ").title()
+            else:
+                yield accessor, pretty_fieldname(fieldchain[-1][1])
 
 
 class TreeView(BrowseView):
