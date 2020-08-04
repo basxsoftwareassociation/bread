@@ -191,7 +191,7 @@ def as_image(value):
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
         return mark_safe("<small><emph>Image not found</emph></small>")
-    im = get_thumbnailer(value).get_thumbnail({"size": "100x100", "quality": 75})
+    im = get_thumbnailer(value).get_thumbnail({"size": (100, 100), "quality": 75})
     return mark_safe(
         f'<a class="center" style="display: block" href="{value.url}"><img src={im.url} width="{im.width}" height="{im.height}"/></a>'
     )
