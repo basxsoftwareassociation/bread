@@ -94,7 +94,8 @@ class Item:
         return self.link.url(request)
 
     def active(self, request):
-        return request.path.startswith(str(self.link.url(request)))
+        path = str(self.link.url(request))
+        return request.path.startswith(path) and path != "/"
 
 
 class Menu:
