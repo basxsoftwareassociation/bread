@@ -342,7 +342,7 @@ class BreadGenericAdmin(BreadAdmin):
         return title(self.app_label)
 
     def menugroup(self):
-        return self.app_label
+        return title(self.app_label)
 
     def menuitems(self):
         return ()
