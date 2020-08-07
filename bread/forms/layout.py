@@ -68,10 +68,9 @@ class Tabs(ContainerHolder):
             tab.active = False
             tab.errors = False
 
-        error = self.first_container_with_errors(form.errors.keys())
         for tab in self.fields:
-            if tab == error:
-                tab.errors = True
+            tab.errors = any(e in tab for e in form.errors.keys())
+
         self.open_target_group_for_form(form)
         content = self.get_rendered_fields(form, form_style, context, template_pack)
         links = "".join(tab.render_link(template_pack) for tab in self.fields)
