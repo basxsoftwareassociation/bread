@@ -90,9 +90,14 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
             elem = queue.pop()
             if isinstance(elem, InlineLayout) and elem.fieldname == modelfield.name:
                 layout = elem.get_inline_layout()
-                fields = [i[1] for i in layout.get_field_names()]
+                fields = [
+                    i[1]
+                    for i in layout.get_field_names()
+                    if i[1] != forms.formsets.DELETION_FIELD_NAME
+                ]
             queue.extend(getattr(elem, "fields", []))
 
+    print(fields)
     child_fields = get_modelfields(modelfield.related_model, fields)
     child_fields = {
         fieldname: field

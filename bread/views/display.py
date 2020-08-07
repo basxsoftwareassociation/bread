@@ -48,7 +48,7 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
                     self.model, kwargs["filterset_fields"] + [field]
                 )
                 kwargs["filterset_fields"].append(field)
-            except TypeError:
+            except (TypeError, AssertionError):
                 pass
 
         kwargs["model"] = self.model
