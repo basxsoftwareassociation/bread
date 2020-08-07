@@ -97,7 +97,6 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
                 ]
             queue.extend(getattr(elem, "fields", []))
 
-    print(fields)
     child_fields = get_modelfields(modelfield.related_model, fields)
     child_fields = {
         fieldname: field
@@ -151,8 +150,6 @@ def _is_valid_inline(form):
             if isinstance(f, InlineField)
         ]
     )
-    for field in [f for f in form.fields.values() if isinstance(f, InlineField)]:
-        print(type(field.formset), dir(field.formset), field.formset.errors)
     return form.is_bound and not form.errors and formsets
 
 
