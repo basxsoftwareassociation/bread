@@ -1,5 +1,4 @@
 from django.apps import apps
-from django.core.exceptions import ImproperlyConfigured
 
 
 class Group:
@@ -102,32 +101,18 @@ class Menu:
     def __init__(self):
         self._registry = {}
 
-    def registergroup(self, menugroup):
-        if menugroup.label in self._registry:
-            raise ImproperlyConfigured(f"Group {menugroup} has already been registered")
-        self._registry[menugroup.label] = menugroup
-
-    def hasgroup(self, groupname):
-        return groupname in self._registry
-
-    def unregistergroup(self, menugroup):
-        if menugroup.label in self._registry:
-            del self._registry[menugroup.label]
-
     def registeritem(self, menuitem):
-        if menuitem.group not in self._registry:
-            self._registry[menuitem.group] = Group(menuitem.group)
-        self._registry[menuitem.group].items.append(menuitem)
+        group = menuitem.group
+        if not isinstance(group, Group):
+            group = Group(label=group)
+        if group.label not in self._registry:
+            self._registry[group.label] = group
+        self._registry[group.label].items.append(menuitem)
 
 
 def registeritem(item):
     main.registeritem(item)
     return item
-
-
-def registergroup(group):
-    main.registergroup(group)
-    return group
 
 
 # global main menu

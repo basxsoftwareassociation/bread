@@ -185,10 +185,6 @@ class BreadAdmin:
         urls for external access."""
         return ()
 
-    def menugroup(self):
-        """Returns the name of the menu-group under which items for this admin class should appear"""
-        return title(self.model._meta.app_config.verbose_name)
-
     def menuitems(self):
         """Returns iterable of bread.menu.Item objects which should be added to the menu for this admin class"""
         return [
@@ -198,7 +194,7 @@ class BreadAdmin:
                     label=self.verbose_modelname_plural,
                     permissions=[f"{self.model._meta.app_label}.view_{self.modelname}"],
                 ),
-                group=self.menugroup(),
+                group=title(self.model._meta.app_config.verbose_name),
             )
         ]
 
@@ -341,9 +337,6 @@ class BreadGenericAdmin(BreadAdmin):
     def verbose_modelname_plural(self):
         return title(self.app_label)
 
-    def menugroup(self):
-        return title(self.app_label)
-
     def menuitems(self):
         return ()
 
@@ -382,7 +375,6 @@ class BreadAdminSite:
 
     def register_menus(self):
         # admin menu items
-        menu.registergroup(menu.Group(label="Admin", order=999))
         menu.registeritem(
             menu.Item(
                 menu.Link(
@@ -390,7 +382,7 @@ class BreadAdminSite:
                     url=reverse_lazy("dynamic_preferences:global"),
                     permissions=["dynamic_preferences:change_globalpreferencemodel"],
                 ),
-                group="Admin",
+                group=menu.Group(label="Admin", order=999),
             )
         )
         datamodel = menu.Item(
@@ -407,9 +399,6 @@ class BreadAdminSite:
 
         # app menu itmes
         for app, admins in self.get_apps().items():
-            grouplabel = title(app.verbose_name)
-            if not menu.main.hasgroup(grouplabel):
-                menu.registergroup(menu.Group(label=grouplabel))
             for breadadmin in admins:
                 for menuitem in breadadmin.menuitems():
                     menu.registeritem(menuitem)

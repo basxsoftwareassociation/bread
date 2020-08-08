@@ -164,7 +164,7 @@ def _formfield_callback_with_request(field, request):
     """
     Internal function to adjust formfields and widgets to the following:
     - Replace select widgets with autocomplete widgets
-    - Replace ClearableFileInput widgets with FileInput widgets
+    - Replace ClearableFileInput widgets with FileInput widgets (TODO: why again?)
     - Replace DateTimeField with SplitDateTimeField
     - Add materializecss classes for datepicker, timepicker, textarea and validation
     - Apply result of lazy-choice and lazy-init function if set for the modelfield
