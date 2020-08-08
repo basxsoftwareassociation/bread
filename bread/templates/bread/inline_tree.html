@@ -2,7 +2,7 @@
 
 <ul>
     {% for object, children in nodes.items %}
-        <li>{% render_field object "self" %}
+        <li>{% object_link object object.tree_label %}
             {% if children %}
                 {% include "bread/inline_tree.html" with nodes=children %}
             {% endif %}

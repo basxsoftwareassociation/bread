@@ -5,7 +5,7 @@ from django.utils.html import mark_safe
 from bread import menu as menuregister
 
 from ..admin import site
-from ..formatters import format_value
+from ..formatters import as_object_link, format_value
 from ..formatters import render_field as render_field_func
 from ..formatters import render_field_aggregation as render_field_aggregation_func
 from ..forms import forms
@@ -88,6 +88,11 @@ def render_field(context, instance, fieldname):
     if admin is None:
         admin = site.get_default_admin(instance._meta.model)
     return render_field_func(instance, fieldname, admin)
+
+
+@register.simple_tag(takes_context=True)
+def object_link(context, instance, label=None):
+    return as_object_link(instance, label)
 
 
 @register.simple_tag(takes_context=True)

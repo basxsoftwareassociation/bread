@@ -159,10 +159,12 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
 class TreeView(BrowseView):
     template_name = "bread/tree.html"
     parent_accessor = None
+    label_function = None
 
     def __init__(self, parent_accessor, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.parent_accessor = parent_accessor
+        self.label_function = kwargs.get("label_function", lambda o: str(o))
 
     def nodes(self):
         # we do this here a bit more complicated in order to hit database only once
@@ -184,6 +186,7 @@ class TreeView(BrowseView):
         def build_tree(nodes):
             ret = {}
             for node in nodes:
+                node.tree_label = self.label_function(node)
                 ret[node] = None
                 if node.pk in children:
                     ret[node] = build_tree(children[node.pk])
