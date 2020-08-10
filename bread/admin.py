@@ -1,5 +1,3 @@
-from urllib.parse import urlencode
-
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
@@ -8,6 +6,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db import models
 from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
+from django.utils.http import urlencode
 from django.utils.text import format_lazy
 from django.views.generic import RedirectView
 
@@ -201,18 +200,32 @@ class BreadAdmin:
     def object_actions(self, request, object):
         """
         Actions which will be available for an object.
-        Returns: List of named tuples of type Link
+        Returns: List of named tuples of type Link, defaults are edit and delete
         """
         urls = self.get_urls()
         actions = []
         if "edit" in urls and has_permission(request.user, "change", object):
             actions.append(
-                menu.Link(self.reverse("edit", pk=object.pk), "Edit", "edit",)
+                menu.Link(
+                    self.reverse(
+                        "edit",
+                        pk=object.pk,
+                        query_arguments={"next": request.get_full_path()},
+                    ),
+                    "Edit",
+                    "edit",
+                )
             )
         if "delete" in urls and has_permission(request.user, "delete", object):
             actions.append(
                 menu.Link(
-                    self.reverse("delete", pk=object.pk), "Delete", "delete_forever",
+                    self.reverse(
+                        "delete",
+                        pk=object.pk,
+                        query_arguments={"next": request.get_full_path()},
+                    ),
+                    "Delete",
+                    "delete_forever",
                 )
             )
         return actions
