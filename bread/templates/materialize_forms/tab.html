@@ -1,6 +1,5 @@
 <li class="tab">
-    <a href="#{{ tab.css_id }}" {% if 'active' in tab.css_class %}class="active"{% endif %}>
+    <a href="#{{ tab.css_id }}" {% if tab.active %}class="active"{% endif %}>
         {{ tab.name|capfirst }}{% if tab.errors %}<span class="error" style="font-size: 150%"> !</span>{% endif %}
     </a>
 </li>
-

@@ -1,8 +1,10 @@
 <div class="card-panel">
-<ul{% if tabs.css_id %} id="{{ tabs.css_id }}"{% endif %} class="tabs" style="margin-bottom: 2rem">
-    {{ links|safe }}
-</ul>
-<div class="tab-content">
-    {{ content|safe }}
-</div>
+    <ul{% if tabs.css_id %} id="{{ tabs.css_id }}"{% endif %} class="tabs" style="margin-bottom: 2rem">
+        {{ links|safe }}
+    </ul>
+    <div class="tab-content">
+        <div>
+        {{ content|safe }}
+        </div>
+    </div>
 </div>

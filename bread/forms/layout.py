@@ -65,15 +65,14 @@ class Tabs(ContainerHolder):
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
         for tab in self.fields:
-            tab.active = False
             tab.errors = False
 
         for tab in self.fields:
             tab.errors = any(e in tab for e in form.errors.keys())
 
         self.open_target_group_for_form(form)
-        content = self.get_rendered_fields(form, form_style, context, template_pack)
         links = "".join(tab.render_link(template_pack) for tab in self.fields)
+        content = self.get_rendered_fields(form, form_style, context, template_pack)
 
         context.update({"tabs": self, "links": links, "content": content})
         template = self.get_template_name(template_pack)
