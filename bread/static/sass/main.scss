@@ -49,6 +49,12 @@ main nav .brand-logo {
     }
 }
 
+.helper-text {
+    min-height: 18px;
+    display: block;
+    font-size: 12px;
+    color: rgba(0,0,0,.54);
+}
 // display table better on mobile
 @media #{$small-and-down} {
     tr th:first-child, tr td:first-child {
