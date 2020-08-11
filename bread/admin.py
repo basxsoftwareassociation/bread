@@ -91,7 +91,7 @@ class BreadAdmin:
     deleteview = None
     """Class which will be used to create the delete-view. Defaults to ``bread.views.DeleteView``."""
 
-    autoviews = None
+    autoviews = list(DEFAULT_BREAD_VIEWS.keys())
     """List of names for which views should automatically be generated.
     Defaults to ``["browse", "read", "edit", "add", "delete"]``.
     Can be used to remove certain actions entirely e.g. preventing to ever access the delete view.
