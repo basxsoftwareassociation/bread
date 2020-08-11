@@ -4,6 +4,7 @@ from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.loader import render_to_string
+from django.utils.html import mark_safe
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -30,7 +31,18 @@ def inlinemodelform_factory(
             if isinline:
                 self.helper.form_tag = False
             else:
-                self.helper.add_input(Submit("submit", "Save"))
+                self.helper.add_input(Submit("submit", "Save & return"))
+                self.helper.add_input(
+                    Submit(
+                        "quicksave",
+                        mark_safe(
+                            f'<i class="material-icons" style="vertical-align:middle">save</i>'
+                        ),
+                        css_class="btn-floating btn-large",
+                        style="float: right; position: sticky; bottom: 1rem; margin-right: -6rem",
+                        template="materialize_forms/layout/button.html",
+                    )
+                )
             self.helper.layout = layout
 
         def is_valid(form):

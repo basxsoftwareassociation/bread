@@ -13,11 +13,22 @@
         <div class="col s12">
             <div style="display: flex; justify-content: space-between; flex-direction: row-reverse">
                 {% for input in inputs %}
-                    {% include "materialize_forms/layout/baseinput.html" %}
+                    {% if "%s" in input.template %}
+                        {% with input.template|slice:"1:" as templatevalue %}
+                            {% include "materialize_forms"|stringformat:templatevalue %}
+                        {% endwith %}
+                    {% elif input.name != "quicksave" %}
+                        {% include input.template %}
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
     </div>
+    {% for input in inputs %}
+        {% if input.name == "quicksave" %}
+            {% include input.template %}
+        {% endif %}
+    {% endfor %}
     {% endif %}
 {% if form_tag %}</form>{% endif %}
 {% endspecialspaceless %}

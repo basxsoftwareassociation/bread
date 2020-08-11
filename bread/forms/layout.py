@@ -1,9 +1,31 @@
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.template.loader import render_to_string
+from django.utils.html import mark_safe
 
 from crispy_forms.bootstrap import Container, ContainerHolder
-from crispy_forms.layout import Layout
+from crispy_forms.layout import BaseInput, Layout
 from crispy_forms.utils import TEMPLATE_PACK, render_field
+
+
+class QuickSave(BaseInput):
+    """Displays a floating action button for submitting forms.
+    Views should handle this in a way to re-dispaly the current
+    form after successfull submission."""
+
+    template = "materialize_forms/layout/button.html"
+    input_type = "submit"
+
+    def __init__(self, name, materialicon, **kwargs):
+        self.field_classes = "btn-floating btn-large"
+        kwargs[
+            "style"
+        ] = "float: right; position: sticky; bottom: 1rem; margin-right: -6rem;"
+        value = mark_safe(
+            f'<i class="material-icons" style="vertical-align:middle">{materialicon}</i>'
+        )
+        super().__init__(name, value, **kwargs)
+        print(self.template
+
 
 
 class InlineLayout(Layout):
@@ -42,7 +64,7 @@ class Collapsible(ContainerHolder):
                     form_style,
                     context,
                     template_pack=template_pack,
-                    **kwargs
+                    **kwargs,
                 )
             )
 

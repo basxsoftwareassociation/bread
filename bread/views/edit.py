@@ -70,6 +70,8 @@ class CustomFormMixin:
         return super().form_valid(form)
 
     def get_success_url(self):
+        if "quicksave" in self.request.POST:
+            return self.request.get_full_path()
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
         return self.admin.reverse("index")
