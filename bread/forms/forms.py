@@ -23,21 +23,35 @@ def inlinemodelform_factory(
     Also enable crispy forms.
     """
 
-    def crispy_form_init(self, *args, **kwargs):
-        super(baseformclass, self).__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        if isinline:
-            self.helper.form_tag = False
-        else:
-            self.helper.add_input(Submit("submit", "Save"))
-        self.helper.layout = layout
+    class InlineFormBase(baseformclass):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.helper = FormHelper(self)
+            if isinline:
+                self.helper.form_tag = False
+            else:
+                self.helper.add_input(Submit("submit", "Save"))
+            self.helper.layout = layout
 
-    attribs = {
-        "__init__": crispy_form_init,
-        "is_valid": _is_valid_inline,
-        "save_inline": _save_inline,
-    }
+        def is_valid(form):
+            formsets = all(
+                [
+                    f.formset.is_valid()
+                    for f in form.fields.values()
+                    if isinstance(f, InlineField)
+                ]
+            )
+            return form.is_bound and not form.errors and formsets
 
+        def save_inline(form, parent_object):
+            """Save all instances of inline forms and set the parent object"""
+            for formsetfield in [
+                f for f in form.fields.values() if isinstance(f, InlineField)
+            ]:
+                formsetfield.formset.instance = parent_object
+                formsetfield.formset.save()
+
+    attribs = {}
     for modelfield in modelfields:
         if isinstance(modelfield, GenericForeignKey):
             choices = []
@@ -64,7 +78,7 @@ def inlinemodelform_factory(
                 attribs[modelfield.name] = InlineField(formset_class(instance=object))
 
     patched_formclass = type(
-        f"{model.__name__}GenericForeignKeysModelForm", (baseformclass,), attribs
+        f"{model.__name__}GenericForeignKeysModelForm", (InlineFormBase,), attribs
     )
 
     ret = forms.modelform_factory(
@@ -139,25 +153,6 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
         )
 
     return formset
-
-
-def _is_valid_inline(form):
-    """Run the is_valid check on all inline forms"""
-    formsets = all(
-        [
-            f.formset.is_valid()
-            for f in form.fields.values()
-            if isinstance(f, InlineField)
-        ]
-    )
-    return form.is_bound and not form.errors and formsets
-
-
-def _save_inline(form, parent_object):
-    """Save all instances of inline forms and set the parent object"""
-    for formsetfield in [f for f in form.fields.values() if isinstance(f, InlineField)]:
-        formsetfield.formset.instance = parent_object
-        formsetfield.formset.save()
 
 
 def _formfield_callback_with_request(field, request):
