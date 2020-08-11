@@ -1,5 +1,5 @@
 """
-The Bread frameworks provides a view special util views to provide special functionality.
+The Bread frameworks provides a view util views to provide special functionality.
 """
 import re
 
