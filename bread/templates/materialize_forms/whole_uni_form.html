@@ -11,15 +11,17 @@
     {% if inputs %}
     <div class="row" style="margin-top: 2rem">
         <div class="col s12">
-            <div style="display: flex; justify-content: space-between; flex-direction: row-reverse">
+            <div style="display: flex; justify-content: flex-end;">
                 {% for input in inputs %}
-                    {% if "%s" in input.template %}
-                        {% with input.template|slice:"1:" as templatevalue %}
-                            {% include "materialize_forms"|stringformat:templatevalue %}
-                        {% endwith %}
-                    {% elif input.name != "quicksave" %}
-                        {% include input.template %}
-                    {% endif %}
+                    <div style="margin-left: 1rem;">
+                        {% if "%s" in input.template %}
+                            {% with input.template|slice:"1:" as templatevalue %}
+                                {% include "materialize_forms"|stringformat:templatevalue %}
+                            {% endwith %}
+                        {% elif input.name != "quicksave" %}
+                            {% include input.template %}
+                        {% endif %}
+                    </div>
                 {% endfor %}
             </div>
         </div>
