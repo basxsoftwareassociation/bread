@@ -2,7 +2,7 @@ from django import forms
 
 
 class AutocompleteSelect(forms.Select):
-    template_name = "bread/forms/autocomplete.html"
+    template_name = "materialize_forms/autocomplete.html"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -10,11 +10,11 @@ class AutocompleteSelect(forms.Select):
             self.attrs["class"] = ""
         self.attrs["class"] += " no-autoinit"
 
-    # media is included in the framework assets
+    # media is included in base.html
 
 
 class AutocompleteSelectMultiple(forms.SelectMultiple):
-    template_name = "bread/forms/autocomplete.html"
+    template_name = "materialize_forms/autocomplete.html"
 
     def __init__(self, attrs=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -22,4 +22,4 @@ class AutocompleteSelectMultiple(forms.SelectMultiple):
             self.attrs["class"] = ""
         self.attrs["class"] += " no-autoinit"
 
-    # media is included in the framework assets
+    # media is included in base.html

@@ -164,7 +164,6 @@ def _formfield_callback_with_request(field, request):
     """
     Internal function to adjust formfields and widgets to the following:
     - Replace select widgets with autocomplete widgets
-    - Replace ClearableFileInput widgets with FileInput widgets (TODO: why again?)
     - Replace DateTimeField with SplitDateTimeField
     - Add materializecss classes for datepicker, timepicker, textarea and validation
     - Apply result of lazy-choice and lazy-init function if set for the modelfield
@@ -177,8 +176,6 @@ def _formfield_callback_with_request(field, request):
         ret = field.formfield(widget=AutocompleteSelectMultiple)
     elif isinstance(ret.widget, forms.Select):
         ret = field.formfield(widget=AutocompleteSelect)
-    elif isinstance(ret.widget, forms.ClearableFileInput):
-        ret = field.formfield(widget=forms.FileInput)
 
     # always use splitdatetimefield because we have no good datetime picker
     if isinstance(field, models.DateTimeField):
