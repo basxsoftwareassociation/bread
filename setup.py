@@ -19,7 +19,7 @@ setup(
         "Django",
         "python-dateutil",
         "django-crispy-forms",
-        "hg+https://hg.basx.dev/pythonpackages/django-filepreview",
+        "django-filepreview @ hg+https://hg.basx.dev/pythonpackages/django-filepreview",
         "django-ckeditor",
         "django-model-utils",
         "django-extensions",
