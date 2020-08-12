@@ -44,7 +44,6 @@ setup(
         "django-celery-beat",
         "Arpeggio",
     ],
-    extras_require={"postgresql": ["psycopg2"]},
     setup_requires=["setuptools_scm"],
     use_scm_version={"write_to": "bread/version.py"},
     packages=find_packages(),
