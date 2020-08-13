@@ -58,7 +58,9 @@ class DataModel(LoginRequiredMixin, TemplateView):
     def _render_svg(self, renderapps=None):
         if not renderapps:
             renderapps = [a.label for a in self._get_all_apps()]
-        graph_models = ModelGraph(all_applications=False, app_labels=renderapps)
+        graph_models = ModelGraph(
+            all_applications=False, app_labels=renderapps, arrow_shape="normal"
+        )
         graph_models.generate_graph_data()
         return (
             pygraphviz.AGraph(
