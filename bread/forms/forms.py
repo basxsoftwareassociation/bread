@@ -1,3 +1,5 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
@@ -5,9 +7,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.html import mark_safe
-
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
 from dynamic_preferences.forms import GlobalPreferenceForm
 from guardian.shortcuts import get_objects_for_user
 

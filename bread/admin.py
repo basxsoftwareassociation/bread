@@ -111,7 +111,9 @@ class BreadAdmin:
     def __init__(self):
         assert self.model is not None
         self.indexview = self.indexview or "browse"
-        self.browsefields = self.browsefields or ["__all__"]
+        self.browsefields = (
+            ["__all__"] if self.browsefields is None else self.browsefields
+        )
         self.filterfields = self.filterfields or self.browsefields
         self.readfields = self.readfields or ["__all__"]
         self.editfields = self.editfields or ["__all__"]

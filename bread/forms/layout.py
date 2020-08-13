@@ -1,9 +1,8 @@
-from django.forms.formsets import DELETION_FIELD_NAME
-from django.template.loader import render_to_string
-
 from crispy_forms.bootstrap import Container, ContainerHolder
 from crispy_forms.layout import Layout
 from crispy_forms.utils import TEMPLATE_PACK, render_field
+from django.forms.formsets import DELETION_FIELD_NAME
+from django.template.loader import render_to_string
 
 
 class InlineLayout(Layout):

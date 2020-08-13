@@ -6,6 +6,7 @@ an argument "admin" which is an instance of the according BreadAdmin class
 """
 import urllib
 
+from crispy_forms.layout import Layout
 from django import forms
 from django.contrib import messages
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -14,8 +15,6 @@ from django.db import transaction
 from django.views.generic import CreateView
 from django.views.generic import DeleteView as DjangoDeleteView
 from django.views.generic import UpdateView
-
-from crispy_forms.layout import Layout
 from guardian.mixins import PermissionRequiredMixin
 
 from ..forms.forms import inlinemodelform_factory
@@ -69,13 +68,6 @@ class CustomFormMixin:
             form.save_inline(self.object)
         return super().form_valid(form)
 
-    def get_success_url(self):
-        if "quicksave" in self.request.POST:
-            return self.request.get_full_path()
-        if self.request.GET.get("next"):
-            return urllib.parse.unquote(self.request.GET["next"])
-        return self.admin.reverse("index")
-
 
 class EditView(
     CustomFormMixin, SuccessMessageMixin, PermissionRequiredMixin, UpdateView
@@ -100,6 +92,13 @@ class EditView(
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
+
+    def get_success_url(self):
+        if "quicksave" in self.request.POST:
+            return self.request.get_full_path()
+        if self.request.GET.get("next"):
+            return urllib.parse.unquote(self.request.GET["next"])
+        return self.admin.reverse("index")
 
 
 class AddView(
@@ -128,6 +127,13 @@ class AddView(
 
     def get_permission_object(self):
         return None
+
+    def get_success_url(self):
+        if "quicksave" in self.request.POST:
+            return self.admin.reverse("edit", pk=self.object.id)
+        if self.request.GET.get("next"):
+            return urllib.parse.unquote(self.request.GET["next"])
+        return self.admin.reverse("index")
 
 
 class DeleteView(PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView):
