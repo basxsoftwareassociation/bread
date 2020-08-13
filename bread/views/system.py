@@ -3,13 +3,12 @@ The Bread frameworks provides a view util views to provide special functionality
 """
 import re
 
+import pygraphviz
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django_extensions.management.modelviz import ModelGraph, generate_dot
-
-import pygraphviz
 
 
 class Overview(LoginRequiredMixin, TemplateView):
@@ -56,8 +55,10 @@ class DataModel(LoginRequiredMixin, TemplateView):
             return response
         return super().get(request, *args, **kwargs)
 
-    def _render_svg(self, apps=None):
-        graph_models = ModelGraph(all_applications=not apps, app_labels=apps)
+    def _render_svg(self, renderapps=None):
+        if not renderapps:
+            renderapps = [a.label for a in self._get_all_apps()]
+        graph_models = ModelGraph(all_applications=False, app_labels=renderapps)
         graph_models.generate_graph_data()
         return (
             pygraphviz.AGraph(
@@ -70,6 +71,18 @@ class DataModel(LoginRequiredMixin, TemplateView):
             .decode()
         )
 
+    def _get_all_apps(self):
+        applist = []
+        exclude = ["easy_thumbnails", "bread", "dynamic_preferences", "exchange"]
+        for app in apps.get_app_configs():
+            if (
+                not app.name.startswith("django.")
+                and app.label not in exclude
+                and list(app.get_models())
+            ):
+                applist.append(app)
+        return applist
+
     def get_context_data(self, **kwargs):
         ret = super().get_context_data(**kwargs)
         # force SVG to be match page-layout instead of fixed width and height
@@ -78,8 +91,5 @@ class DataModel(LoginRequiredMixin, TemplateView):
             "svg",
             self._render_svg(self.request.GET.getlist("app")),
         )
-        ret["apps"] = sorted(
-            filter(lambda a: not a.name.startswith("django"), apps.get_app_configs()),
-            key=lambda a: a.verbose_name.lower(),
-        )
+        ret["apps"] = sorted(self._get_all_apps(), key=lambda a: a.verbose_name.lower())
         return ret

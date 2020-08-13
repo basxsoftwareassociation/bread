@@ -8,6 +8,7 @@
 <div style="display: flex">
     <div style="padding: 1rem">
         <ul>
+            <li><a href="{{ request.path }}" style="font-weight: 800">All</a></li>
         {% for app in apps %}
             <li><a href="{% updated_querystring "app" app.label %}">{{ app.verbose_name }}</a></li>
         {% endfor %}
@@ -15,7 +16,7 @@
     </div>
 
     <div style="flex-grow: 999; padding: 1rem">
-        <a href="{% updated_querystring "download" 1%}" target="_blank">View large</a>
+        <a href="{% updated_querystring "download" 1%}" style="display: block; text-align: center;" target="_blank">View large</a>
         {{ datamodel|safe }}
     </div>
 </div>
