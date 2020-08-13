@@ -9,7 +9,6 @@ from django.urls import include, path, reverse_lazy
 from django.utils.http import urlencode
 from django.utils.text import format_lazy
 from django.views.generic import RedirectView
-
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.registries import global_preferences_registry
 
@@ -284,7 +283,7 @@ class BreadAdmin:
         """Urls for inclusion in django urls"""
         urls = path(
             self.modelname + "/",
-            include((self.get_urls().values(), self.modelname), self.modelname),
+            include((list(self.get_urls().values()), self.modelname), self.modelname),
         )
         return urls
 
