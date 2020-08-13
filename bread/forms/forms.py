@@ -128,6 +128,7 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
         for fieldname, field in child_fields.items()
         if field != modelfield.remote_field and field.editable is not False
     }
+
     formclass = inlinemodelform_factory(
         request,
         modelfield.related_model,

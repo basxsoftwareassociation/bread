@@ -1,6 +1,7 @@
 from crispy_forms.bootstrap import Container, ContainerHolder
-from crispy_forms.layout import Layout
+from crispy_forms.layout import Div, Layout
 from crispy_forms.utils import TEMPLATE_PACK, render_field
+from django.core.exceptions import ImproperlyConfigured
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.template.loader import render_to_string
 
@@ -76,3 +77,21 @@ class Tabs(ContainerHolder):
         context.update({"tabs": self, "links": links, "content": content})
         template = self.get_template_name(template_pack)
         return render_to_string(template, context.flatten())
+
+
+class Row(Div):
+    @classmethod
+    def with_columns(cls, *args):
+        return Row(*[Col(width, field) for field, width in args])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.css_class = "row"
+
+
+class Col(Div):
+    def __init__(self, width=1, *args, **kwargs):
+        if not 1 <= width <= 12:
+            raise ImproperlyConfigured("width must be a number between 1 and 12")
+        super().__init__(*args, **kwargs)
+        self.css_class = f"col s{width}"
