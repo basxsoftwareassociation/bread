@@ -2,6 +2,9 @@
     name="{{ input.name|slugify }}"
     class="{{ input.field_classes }}"
     {{ input.flat_attrs|safe }}
+    {% if input.input_type == "submit" %}
+        onclick="validate_fields()"
+    {% endif %}
     />
     {{ input.value }}
 </button>

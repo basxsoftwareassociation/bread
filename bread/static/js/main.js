@@ -98,3 +98,18 @@ function formset_add(form_prefix, list_container) {
     formcount.value = parseInt(formcount.value) + 1;
     _update_add_button(form_prefix);
 }
+
+function validate_fields() {
+    var error = false;
+    for(input of $$("input")) {
+        if(!input.checkValidity()) {
+            var label = $("label[for=" + input.id + "]");
+            if(!label)
+                label = input;
+            M.toast({html: "Field " + label.innerText + " is not valid"})
+            error = true;
+        }
+    }
+    if(error)
+        M.toast({html: "There are errors in some fields"})
+}
