@@ -59,14 +59,14 @@ class DataModel(LoginRequiredMixin, TemplateView):
         if not renderapps:
             renderapps = [a.label for a in self._get_all_apps()]
         graph_models = ModelGraph(
-            all_applications=False, app_labels=renderapps, arrow_shape="normal"
+            all_applications=False, app_labels=renderapps, arrow_shape="diamond"
         )
         graph_models.generate_graph_data()
         return (
             pygraphviz.AGraph(
                 generate_dot(
                     graph_models.get_graph_data(),
-                    template="django_extensions/graph_models/django2018/digraph.dot",
+                    template="django_extensions/graph_models/original/digraph.dot",
                 )
             )
             .draw(format="svg", prog="dot")
