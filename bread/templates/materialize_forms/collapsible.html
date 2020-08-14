@@ -1,3 +1,4 @@
-<ul class="collapsible">
-    {{ content|safe }}
-</ul>
+<li {% if div.active %}class="active"{% endif %}>
+    <div class="collapsible-header"><i class="material-icons">{% if div.actvie %}expand_more{% else %}expand_less{% endif %}</i>{{ div.name }}</div>
+    <div class="collapsible-body">{{ fields|safe }}</div>
+</li>

@@ -5,6 +5,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.template.loader import render_to_string
 
+from .. import formatters
+
 
 class InlineLayout(Layout):
     def __init__(self, inlinefield, *args, **kwargs):
@@ -22,12 +24,12 @@ class InlineLayout(Layout):
         return Layout(*self.args, **self.kwargs)
 
 
-class CollapsibleGroup(Container):
-    template = "%s/collapsible-group.html"
-
-
-class Collapsible(ContainerHolder):
+class Collapsible(Container):
     template = "%s/collapsible.html"
+
+
+class CollapsibleGroup(ContainerHolder):
+    template = "%s/collapsible-group.html"
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
         content = []
@@ -95,3 +97,12 @@ class Col(Div):
             raise ImproperlyConfigured("width must be a number between 1 and 12")
         super().__init__(*args, **kwargs)
         self.css_class = f"col s{width}"
+
+
+class Render(Div):
+    def __init__(self, field):
+        self.field = field
+        self.fields = []
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        return formatters.render_field(context["form"].instance, self.field)
