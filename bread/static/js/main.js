@@ -12,7 +12,7 @@ function tableToExcel(downloadelement, tableelement, worksheetname, filename) {
 }
 
 function initAllChoices(element=$("body")) {
-    var selectElements = $$("select.autocompleteselect, select.autocompleteselectmultiple", element);
+    var selectElements = $$("select", element);
     for(let element of selectElements) {
         makeChoices(element);
     }

@@ -27,6 +27,7 @@ $choices-z-index: 99;
   position: relative;
   overflow: hidden;
   margin-bottom: $choices-guttering;
+  margin-top: 1rem;
   font-size: $choices-font-size-lg;
   &:focus {
     outline: none;

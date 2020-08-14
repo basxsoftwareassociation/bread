@@ -13,7 +13,6 @@ from guardian.shortcuts import get_objects_for_user
 from ..utils import get_modelfields
 from .fields import GenericForeignKeyField
 from .layout import InlineLayout
-from .widgets import AutocompleteSelect, AutocompleteSelectMultiple
 
 
 def inlinemodelform_factory(
@@ -177,12 +176,6 @@ def _formfield_callback_with_request(field, request):
     - Filter based base on object-level permissions if a queryset is used for the field
     """
     ret = field.formfield()
-
-    # check if autocomplete is necessary
-    if isinstance(ret.widget, forms.SelectMultiple):
-        ret = field.formfield(widget=AutocompleteSelectMultiple)
-    elif isinstance(ret.widget, forms.Select):
-        ret = field.formfield(widget=AutocompleteSelect)
 
     # always use splitdatetimefield because we have no good datetime picker
     if isinstance(field, models.DateTimeField):

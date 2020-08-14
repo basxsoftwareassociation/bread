@@ -1,5 +1,6 @@
-{% load crispy_forms_field bread_tags %}
+{% load crispy_forms_field bread_tags materializecss_tags %}
 
+{% with field|materialize as field %}
 {% if field.is_hidden %}
     {{ field }}
 {% elif field.name == "DELETE" %} {# only for inline forms #}
@@ -38,3 +39,4 @@
         </{% if tag %}{{ tag }}{% else %}div{% endif %}>
     </div>
 {% endif %}
+{% endwith %}
