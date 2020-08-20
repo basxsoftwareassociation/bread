@@ -1,6 +1,7 @@
 import re
 from html.parser import HTMLParser
 
+import django_filters
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldError
@@ -9,8 +10,6 @@ from django.db.models.functions import Lower
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
 from django.views.generic import DetailView
-
-import django_filters
 from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin, PermissionRequiredMixin
 
@@ -48,8 +47,8 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
                     self.model, kwargs["filterset_fields"] + [field]
                 )
                 kwargs["filterset_fields"].append(field)
-            except (TypeError, AssertionError):
-                pass
+            except (TypeError, AssertionError) as e:
+                print(f"Warning: Specified filter field {field} cannot be used: {e}")
 
         kwargs["model"] = self.model
         super().__init__(*args, **kwargs)
