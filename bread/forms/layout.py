@@ -124,11 +124,13 @@ class ObjectActions(NonFormContent):
         self.slice_end = slice_end
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
-        t = Template(
-            f"""{{% load bread_tags %}}
-{{% object_actions view.admin request object as allactions %}}
-{{% for action in allactions|slice:"{self.slice_start}:{self.slice_end}" %}}
-<a href="{{% linkurl action request %}}" class="btn-small">{{% linklabel action request %}}</a>
-{{% endfor %}}"""
-        )
-        return t.render(context)
+        if "object" in context:
+            t = Template(
+                f"""{{% load bread_tags %}}
+    {{% object_actions view.admin request object as allactions %}}
+    {{% for action in allactions|slice:"{self.slice_start}:{self.slice_end}" %}}
+    <a href="{{% linkurl action request %}}" class="btn-small">{{% linklabel action request %}}</a>
+    {{% endfor %}}"""
+            )
+            return t.render(context)
+        return ""
