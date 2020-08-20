@@ -223,7 +223,7 @@ class BreadAdmin:
                     self.reverse(
                         "delete",
                         pk=object.pk,
-                        query_arguments={"next": request.get_full_path()},
+                        query_arguments={"next": str(self.reverse("browse"))},
                     ),
                     "Delete",
                     "delete_forever",
