@@ -2,7 +2,7 @@
 
 <ul>
     {% for object, children in nodes.items %}
-    <li><a href="{% adminurl object "edit" object.id %}?next={{ request.get_full_path }}">{{ object.name }}</a>
+    <li><a href="{% adminurl object "edit" object.id %}?next={{ request.get_full_path }}">{{ object |default:"?" }}</a>
             {% if children %}
                 {% include "bread/inline_tree.html" with nodes=children %}
             {% endif %}
