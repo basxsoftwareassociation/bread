@@ -3,6 +3,7 @@ from crispy_forms.layout import Div, Layout
 from crispy_forms.utils import TEMPLATE_PACK, render_field
 from django.core.exceptions import ImproperlyConfigured
 from django.forms.formsets import DELETION_FIELD_NAME
+from django.template import Template
 from django.template.loader import render_to_string
 
 from .. import formatters
@@ -99,10 +100,35 @@ class Col(Div):
         self.css_class = f"col s{width}"
 
 
-class Render(Div):
-    def __init__(self, field):
-        self.field = field
+class NonFormContent(Div):
+    """Prevents components to contribute to the list of form fields"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.fields = []
+
+
+class ReadonlyField(NonFormContent):
+    def __init__(self, field, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.field = field
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
         return formatters.render_field(context["form"].instance, self.field)
+
+
+class ObjectActions(NonFormContent):
+    def __init__(self, slice_start=None, slice_end=None, **kwargs):
+        super().__init__(**kwargs)
+        self.slice_start = slice_start
+        self.slice_end = slice_end
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        t = Template(
+            f"""{{% load bread_tags %}}
+{{% object_actions view.admin request object as allactions %}}
+{{% for action in allactions|slice:"{self.slice_start}:{self.slice_end}" %}}
+<a href="{{% linkurl action request %}}" class="btn-small">{{% linklabel action request %}}</a>
+{{% endfor %}}"""
+        )
+        return t.render(context)

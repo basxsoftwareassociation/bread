@@ -73,6 +73,9 @@
                 // make the datepicker a bit nicer and compatible with the django format
                 M.Datepicker.init(document.querySelectorAll(".datepicker"), {format: "yyyy-mm-dd", showClearBtn: true, autoClose: true});
 
+                // initialize the full-width dropdown menus
+                M.Dropdown.init(document.querySelectorAll(".custom-dropdown-trigger"), {constrainWidth: false});
+
                 // when a select is readonly, we need to set the materialized select to disabled
                 // (but not the original/hidden select because disabled form fields will not get sent to the server
                 $$("select[readonly]:not(.browser-default):not(.choices__input)").forEach(elem => elem.M_FormSelect.dropdown.el.disabled = true);
@@ -95,6 +98,7 @@
                     }
                 }
                 M.updateTextFields();
+                console.log();
                 {% block oncontentloaded_js %}
                 {% endblock oncontentloaded_js %}
             });

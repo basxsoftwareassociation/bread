@@ -1,3 +1,5 @@
+import warnings
+
 from django import template
 from django.db import models
 from django.utils.html import mark_safe
@@ -22,7 +24,26 @@ register.filter(format_value)
 
 
 @register.simple_tag
+def linkpermission(link, request, obj=None):
+    return link.has_permission(request, obj)
+
+
+@register.simple_tag
+def linklabel(link, request):
+    return link.label(request)
+
+
+@register.simple_tag
+def linkurl(link, request):
+    return link.url(request)
+
+
+@register.simple_tag
 def display_link(link, request, obj=None, atag_class="", atag_style=""):
+    warnings.warn(
+        "the template tag display_link is deprecated, please use the tags linkpermission, linklabel and linkurl"
+    )
+
     ret = ""
     if link.has_permission(request, obj):
         url = link.url(request)

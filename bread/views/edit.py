@@ -130,7 +130,9 @@ class AddView(
 
     def get_success_url(self):
         if "quicksave" in self.request.POST:
-            return self.admin.reverse("edit", pk=self.object.id)
+            return self.admin.reverse(
+                "edit", pk=self.object.id, query_arguments=self.request.GET
+            )
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
         return self.admin.reverse("index")

@@ -42,10 +42,6 @@
     {% if action %}
         {% display_link action request atag_class='btn-floating btn-large' atag_style='float: right; position: sticky; bottom: 1rem'%}
     {% endif %}
-    <script>
-        var elems = document.querySelectorAll('.custom-dropdown-trigger');
-        M.Dropdown.init(elems, {constrainWidth: false});
-    </script>
 {% endblock %}
 
 {% block right-panel %}
