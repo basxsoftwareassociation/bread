@@ -26,10 +26,12 @@ class Overview(LoginRequiredMixin, TemplateView):
         context["app_urls"] = {}
         for admin in self.adminsite._registry.values():
             if "index" in admin.get_urls():
-                app_label = getattr(admin, "app_label", admin.model._meta.app_label)
-                if app_label not in context["app_urls"]:
-                    context["app_urls"][app_label] = []
-                context["app_urls"][app_label].append(
+                app = apps.get_app_config(
+                    getattr(admin, "app_label", admin.model._meta.app_label)
+                )
+                if app.verbose_name not in context["app_urls"]:
+                    context["app_urls"][app.verbose_name] = []
+                context["app_urls"][app.verbose_name].append(
                     (admin.reverse("index"), admin.verbose_modelname)
                 )
                 for app, admins in context["app_urls"].items():

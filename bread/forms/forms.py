@@ -70,7 +70,9 @@ def inlinemodelform_factory(
             if hasattr(modelfield, "lazy_choices"):
                 choices = modelfield.lazy_choices(modelfield, request, object)
             attribs[modelfield.name] = GenericForeignKeyField(
-                choices=choices, initial=initial, required=required
+                choices=GenericForeignKeyField.objects_to_choices(choices),
+                initial=initial,
+                required=required,
             )
         elif modelfield.one_to_many or (
             modelfield.one_to_one and not modelfield.concrete
@@ -121,11 +123,12 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
                 ]
             queue.extend(getattr(elem, "fields", []))
 
-    child_fields = get_modelfields(modelfield.related_model, fields)
+    child_fields = get_modelfields(modelfield.related_model, fields, for_form=True)
     child_fields = {
         fieldname: field
         for fieldname, field in child_fields.items()
-        if field != modelfield.remote_field and field.editable is not False
+        if (field != modelfield.remote_field and field.editable is not False)
+        or isinstance(field, GenericForeignKey)
     }
 
     formclass = inlinemodelform_factory(
