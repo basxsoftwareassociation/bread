@@ -258,7 +258,7 @@ class BreadAdmin:
         return None
 
     def reverse(self, viewname, *args, **kwargs):
-        """Will do a lazay reverse on the view with the given name. If kwargs contains
+        """Will do a lazy reverse on the view with the given name. If kwargs contains
         a key "query_arguments", it must be of instance dict and will be used to set
         query arguments.
         """
@@ -289,14 +289,10 @@ class BreadAdmin:
         )
         return urls
 
-    def get_modelname(self):
-        """Machine-readable name for the model"""
-        return self.model._meta.model_name
-
     @property
     def modelname(self):
         """Machine-readable name for the model"""
-        return self.get_modelname()
+        return self.model._meta.model_name
 
     @property
     def verbose_modelname(self):
@@ -340,7 +336,8 @@ class BreadGenericAdmin(BreadAdmin):
         self.deleteview = None
         self.autoviews = []
 
-    def get_modelname(self):
+    @property
+    def modelname(self):
         return self.app_label
 
     @property
