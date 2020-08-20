@@ -116,13 +116,16 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
         workbook = openpyxl.Workbook()
         workbook.title = self.admin.verbose_modelname_plural
         header_cells = workbook.active.iter_cols(
-            min_row=1, max_col=len(self.fields), max_row=len(items) + 1
+            min_row=1, max_col=len(self.fields) + 1, max_row=len(items) + 1
         )
         htmlparser = HTMLParser()
         newline_regex = re.compile(
             r"<\s*br\s*/?\s*>"
         )  # replace HTML line breaks with newlines
-        for field, col in zip(self.field_values(), header_cells):
+        for field, col in zip(
+            [("self", self.admin.modelname.title())] + list(self.field_values()),
+            header_cells,
+        ):
             col[0].value = field[1]
             col[0].font = Font(bold=True)
             for i, cell in enumerate(col[1:]):
