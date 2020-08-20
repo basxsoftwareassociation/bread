@@ -207,7 +207,7 @@ class ReadView(PermissionRequiredMixin, DetailView):
         self.model = admin.model
         super().__init__(*args, **kwargs)
         self.fields = filter_fieldlist(
-            self.model, kwargs.get("fields") or self.admin.browsefields
+            self.model, kwargs.get("fields") or self.admin.readfields
         )
 
     def field_values(self):
