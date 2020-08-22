@@ -65,7 +65,7 @@ def inlinemodelform_factory(
                     for name, field in form.fields.items():
                         if isinstance(field, GenericForeignKeyField):
                             setattr(childinstance, name, form.cleaned_data[name])
-                    childinstance.save()
+                formsetfield.formset.save()
 
     attribs = {}
     for modelfield in modelfields:
