@@ -75,6 +75,8 @@ def inlinemodelform_factory(
             required = not model._meta.get_field(modelfield.ct_field).blank
             if hasattr(modelfield, "lazy_choices"):
                 choices = modelfield.lazy_choices(modelfield, request, object)
+            if required and initial is None:
+                initial = (choices + [None])[0]
             attribs[modelfield.name] = GenericForeignKeyField(
                 choices=GenericForeignKeyField.objects_to_choices(choices),
                 initial=initial,
