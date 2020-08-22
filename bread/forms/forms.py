@@ -59,7 +59,13 @@ def inlinemodelform_factory(
                 f for f in form.fields.values() if isinstance(f, InlineField)
             ]:
                 formsetfield.formset.instance = parent_object
-                formsetfield.formset.save()
+                for childinstance, form in zip(
+                    formsetfield.formset.save(commit=False), formsetfield.formset
+                ):
+                    for name, field in form.fields.items():
+                        if isinstance(field, GenericForeignKeyField):
+                            setattr(childinstance, name, form.cleaned_data[name])
+                    childinstance.save()
 
     attribs = {}
     for modelfield in modelfields:
@@ -98,7 +104,7 @@ def inlinemodelform_factory(
         form=patched_formclass,
         fields=[f.name for f in modelfields if not f.one_to_many and f.editable],
         formfield_callback=lambda field: _formfield_callback_with_request(
-            field, request
+            field, request, model
         ),
     )
     return ret
@@ -147,7 +153,7 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
             fk_field=modelfield.object_id_field_name,
             fields=list(child_fields.keys()),
             formfield_callback=lambda field: _formfield_callback_with_request(
-                field, request
+                field, request, modelfield.related_model
             ),
             form=formclass,
             extra=1,
@@ -159,7 +165,7 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
             modelfield.related_model,
             fields=list(child_fields.keys()),
             formfield_callback=lambda field: _formfield_callback_with_request(
-                field, request
+                field, request, model
             ),
             form=formclass,
             extra=1,
@@ -169,7 +175,7 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
     return formset
 
 
-def _formfield_callback_with_request(field, request):
+def _formfield_callback_with_request(field, request, model):
     """
     Internal function to adjust formfields and widgets to the following:
     - Replace select widgets with autocomplete widgets
@@ -178,7 +184,17 @@ def _formfield_callback_with_request(field, request):
     - Apply result of lazy-choice and lazy-init function if set for the modelfield
     - Filter based base on object-level permissions if a queryset is used for the field
     """
-    ret = field.formfield()
+
+    modelfield = getattr(model, field.get_attname(), None)
+    kwargs = {}
+    if modelfield:
+        if hasattr(modelfield, "lazy_choices"):
+            field.choices = modelfield.lazy_choices(request, object)
+
+        if hasattr(modelfield, "lazy_initial"):
+            kwargs["initial"] = modelfield.lazy_initial(request, object)
+
+    ret = field.formfield(**kwargs)
 
     # always use splitdatetimefield because we have no good datetime picker
     if isinstance(field, models.DateTimeField):
@@ -206,14 +222,6 @@ def _formfield_callback_with_request(field, request):
     if "class" not in ret.widget.attrs:
         ret.widget.attrs["class"] = ""
     ret.widget.attrs["class"] += " validate"
-
-    # lazy choices
-    if hasattr(field, "lazy_choices"):
-        field.choices = field.lazy_choices(request, object)
-
-    # lazy initial
-    if ret and hasattr(field, "lazy_initial"):
-        ret.initial = field.lazy_initial(request, object)
 
     # apply permissions for querysets
     if hasattr(ret, "queryset"):
