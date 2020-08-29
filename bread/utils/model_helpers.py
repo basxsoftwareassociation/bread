@@ -140,3 +140,15 @@ def resolve_relationship(model, accessor_str):
         ret.append((model, modelfield))
         model = getattr(modelfield.remote_field, "model", model)
     return ret
+
+
+def get_concrete_instance(instance):
+    """Returns the the most concrete instance of the model-instance"""
+    for field in instance._meta.get_fields():
+        if isinstance(field, models.fields.reverse_related.OneToOneRel) and hasattr(
+            field, "parent_link"
+        ):
+            child_object = getattr(instance, field.get_accessor_name(), None)
+            if child_object:
+                return child_object.concrete
+    return instance

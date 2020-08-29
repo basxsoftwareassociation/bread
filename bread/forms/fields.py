@@ -14,7 +14,6 @@ class GenericForeignKeyField(TypedChoiceField):
         if not required:
             yield None, "---"
         for obj in objects:
-            # most select input implementations to not allow arbitrary html, therefore we strip the tags here
             yield (
                 f"{ContentType.objects.get_for_model(obj).pk},{obj.pk}",
                 f"{obj._meta.verbose_name.title()}: {strip_tags(str(obj))}",
