@@ -3,28 +3,58 @@ from crispy_forms.layout import Submit
 from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
-from django.core.exceptions import ValidationError
-from django.db import models
-from django.template.loader import render_to_string
+from django.db import models, transaction
 from django.utils.html import mark_safe
 from dynamic_preferences.forms import GlobalPreferenceForm
 from guardian.shortcuts import get_objects_for_user
 
 from ..utils import get_modelfields
-from .fields import GenericForeignKeyField
+from .fields import FormsetField, GenericForeignKeyField
 from .layout import InlineLayout
 
 
 def inlinemodelform_factory(
-    request, model, object, modelfields, baseformclass, layout=None, isinline=False
+    request, model, modelfields, instance, baseformclass, layout=None, isinline=False
 ):
-    """Returns a form class which can handle inline-modelform sets.
+    """Returns a form class which can handle inline-modelform sets and generic foreign keys.
     Also enable crispy forms.
     """
 
     class InlineFormBase(baseformclass):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
+        field_order = baseformclass.field_order or list(modelfields)
+
+        def _add_generic_fk_field(self, data, files):
+            for modelfield in modelfields:
+                if isinstance(modelfield, GenericForeignKey):
+                    choices = []
+                    initial = (
+                        getattr(instance, modelfield.name)
+                        if instance is not None
+                        else None
+                    )
+                    required = not model._meta.get_field(modelfield.ct_field).blank
+                    if hasattr(modelfield, "lazy_choices"):
+                        choices = modelfield.lazy_choices(modelfield, request, instance)
+                    if required and initial is None:
+                        initial = (choices + [None])[0]
+                    self.base_fields[modelfield.name].choices = (
+                        GenericForeignKeyField.objects_to_choices(choices),
+                    )
+                    self.base_fields[modelfield.name].initial = initial
+                    self.base_fields[modelfield.name].required = required
+
+        def __init__(self, data=None, files=None, initial=None, **kwargs):
+
+            formsetinitial = {}
+            for name, field in self.declared_fields.items():
+                if isinstance(field, FormsetField):
+                    formsetinitial[name] = {"instance": instance}
+            if initial:
+                formsetinitial.update(initial)
+            super().__init__(
+                data=data, files=files, initial=formsetinitial, **kwargs,
+            )
+
             self.helper = FormHelper(self)
             if isinline:
                 self.helper.form_tag = False
@@ -43,64 +73,38 @@ def inlinemodelform_factory(
                 )
             self.helper.layout = layout
 
-        def is_valid(form):
-            formsets = all(
-                [
-                    f.formset.is_valid()
-                    for f in form.fields.values()
-                    if isinstance(f, InlineField)
-                ]
-            )
-            return form.is_bound and not form.errors and formsets
+        def save(self, *args, **kwargs):
+            with transaction.atomic():
+                savedinstance = super().save(*args, **kwargs)
+                # GenericForeignKey and one-to-n fields need to be saved separatly
+                for fieldname, field in self.fields.items():
+                    if isinstance(field, GenericForeignKeyField):
+                        setattr(savedinstance, fieldname, self.cleaned_data[fieldname])
+                    elif isinstance(field, FormsetField):
+                        self.cleaned_data[fieldname].instance = savedinstance
+                        self.cleaned_data[fieldname].save()
+                savedinstance.save()
+            return savedinstance
 
-        def save_inline(form, parent_object):
-            """Save all instances of inline forms and set the parent object"""
-            for formsetfield in [
-                f for f in form.fields.values() if isinstance(f, InlineField)
-            ]:
-                formsetfield.formset.instance = parent_object
-                for childinstance, form in zip(
-                    formsetfield.formset.save(commit=False), formsetfield.formset
-                ):
-                    for name, field in form.fields.items():
-                        if isinstance(field, GenericForeignKeyField):
-                            setattr(childinstance, name, form.cleaned_data[name])
-                formsetfield.formset.save()
-
+    # GenericForeignKey and one-to-n fields need to be defined separatly
     attribs = {}
     for modelfield in modelfields:
         if isinstance(modelfield, GenericForeignKey):
-            choices = []
-            initial = getattr(object, modelfield.name) if object is not None else None
-            required = not model._meta.get_field(modelfield.ct_field).blank
-            if hasattr(modelfield, "lazy_choices"):
-                choices = modelfield.lazy_choices(modelfield, request, object)
-            if required and initial is None:
-                initial = (choices + [None])[0]
             attribs[modelfield.name] = GenericForeignKeyField(
-                choices=GenericForeignKeyField.objects_to_choices(choices),
-                initial=initial,
-                required=required,
+                required=not model._meta.get_field(modelfield.fk_field).blank
             )
         elif modelfield.one_to_many or (
             modelfield.one_to_one and not modelfield.concrete
         ):
-
-            formset_class = _generate_formset_class(
-                modelfield, request, baseformclass, model, layout,
+            attribs[modelfield.name] = FormsetField(
+                _generate_formset_class(
+                    modelfield, request, baseformclass, model, layout
+                ),
+                instance,
             )
-
-            if request.POST:
-                attribs[modelfield.name] = InlineField(
-                    formset_class(request.POST, request.FILES, instance=object)
-                )
-            else:
-                attribs[modelfield.name] = InlineField(formset_class(instance=object))
-
     patched_formclass = type(
         f"{model.__name__}GenericForeignKeysModelForm", (InlineFormBase,), attribs
     )
-
     ret = forms.modelform_factory(
         model,
         form=patched_formclass,
@@ -115,10 +119,11 @@ def inlinemodelform_factory(
 def _generate_formset_class(modelfield, request, baseformclass, model, parent_layout):
     """Returns a FormSet class which handles inline forms correctly."""
 
+    # determine the inline form fields, called child_fields
     layout = None
     fields = ["__all__"]
-    # extract the layout object for the inline field from the parent if available
     if parent_layout:
+        # extract the layout object for the inline field from the parent if available
         queue = [parent_layout]
         while queue and not layout:
             elem = queue.pop()
@@ -140,14 +145,15 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
     }
 
     formclass = inlinemodelform_factory(
-        request,
-        modelfield.related_model,
-        None,
-        child_fields.values(),
-        baseformclass,
+        request=request,
+        model=modelfield.related_model,
+        modelfields=child_fields.values(),
+        instance=None,
+        baseformclass=baseformclass,
         layout=layout,
         isinline=True,
     )
+
     if isinstance(modelfield, GenericRelation):
         formset = generic_inlineformset_factory(
             modelfield.related_model,
@@ -209,11 +215,11 @@ def _formfield_callback_with_request(field, request, model):
 
     # activate materializecss datepicker
     if isinstance(field, models.DateField):
-        ret.widget = forms.TextInput(attrs={"class": "datepicker"})
+        ret.widget.attrs["class"] = ret.widget.attrs.get("class", "") + " datepicker"
 
     # activate materializecss timepicker
     if isinstance(field, models.TimeField):
-        ret.widget = forms.TextInput(attrs={"class": "timepicker"})
+        ret.widget.attrs["class"] = ret.widget.attrs.get("class", "") + " timepicker"
 
     # activate materializecss text area. Be a bit more selective here
     # Some external widgets want to use textarea for special things (e.g. CKEditor)
@@ -221,9 +227,7 @@ def _formfield_callback_with_request(field, request, model):
         ret.widget.attrs.update({"class": "materialize-textarea"})
 
     # activate materializecss validation
-    if "class" not in ret.widget.attrs:
-        ret.widget.attrs["class"] = ""
-    ret.widget.attrs["class"] += " validate"
+    ret.widget.attrs["class"] = ret.widget.attrs.get("class", "") + " validate"
 
     # apply permissions for querysets
     if hasattr(ret, "queryset"):
@@ -232,38 +236,6 @@ def _formfield_callback_with_request(field, request, model):
             request.user, f"view_{qs.model.__name__.lower()}", qs, with_superuser=True,
         )
     return ret
-
-
-class BoundInlineField(forms.BoundField):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.label = ""
-
-    def as_widget(self, widget=None, attrs=None, only_initial=False):
-        return render_to_string(
-            "materialize_forms/inline_formset.html",
-            {
-                "formset": self.field.formset,
-                "form_show_errors": True,
-                "form_show_labels": True,
-            },
-        )
-
-
-class InlineField(forms.Field):
-    def __init__(self, formset, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.formset = formset
-
-    def get_bound_field(self, form, field_name):
-        return BoundInlineField(form, self, field_name)
-
-    def clean(self, value):
-        if not self.formset.is_valid():
-            raise ValidationError(
-                f"Error in list {self.formset.queryset.model._meta.verbose_name_plural.title()}"
-            )
-        return self.formset.queryset
 
 
 class FilterForm(forms.Form):

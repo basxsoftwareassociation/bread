@@ -9,9 +9,7 @@ import urllib
 from crispy_forms.layout import Layout
 from django import forms
 from django.contrib import messages
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db import transaction
 from django.views.generic import CreateView
 from django.views.generic import DeleteView as DjangoDeleteView
 from django.views.generic import UpdateView
@@ -35,13 +33,15 @@ class CustomFormMixin:
         return ret
 
     def get_form_class(self, form=forms.models.ModelForm):
+
         return inlinemodelform_factory(
-            self.request,
-            self.model,
-            self.object,
-            self.modelfields.values(),
-            form,
-            self.layout,
+            request=self.request,
+            model=self.model,
+            modelfields=self.modelfields.values(),
+            instance=self.object,
+            baseformclass=form,
+            layout=self.layout,
+            isinline=False,
         )
 
     def get_form(self, form_class=None):
@@ -52,21 +52,7 @@ class CustomFormMixin:
             for field in form.fields:
                 if field in self.request.GET:
                     form.fields[field].widget.attrs["readonly"] = True
-
-        # make sure fields appear in original order
-        form.order_fields(self.modelfields.keys())
         return form
-
-    def form_valid(self, form):
-        with transaction.atomic():
-            # set generic foreign key values
-            self.object = form.save()
-            for name, field in self.modelfields.items():
-                if isinstance(field, GenericForeignKey):
-                    setattr(self.object, name, form.cleaned_data[name])
-            # save inline-objects
-            form.save_inline(self.object)
-        return super().form_valid(form)
 
 
 class EditView(

@@ -1,14 +1,15 @@
 import re
 
 from ckeditor_uploader.fields import RichTextUploadingFormField
+from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.forms import TypedChoiceField
+from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from dynamic_preferences.types import StringPreference
 
 
-class GenericForeignKeyField(TypedChoiceField):
+class GenericForeignKeyField(forms.TypedChoiceField):
     @classmethod
     def objects_to_choices(cls, objects, required=True):
         if not required:
@@ -72,3 +73,58 @@ class RichTextTemplatePreference(StringPreference):
             placeholder = match.group()[2:-2]
             if placeholder.strip() not in self.placeholders:
                 raise ValidationError(f"'{placeholder}' is not a valid placeholder.")
+
+
+class FormsetField(forms.Field):
+    def __init__(self, formsetclass, parent_instance, *args, **kwargs):
+        self.widget = FormsetWidget(formsetclass, parent_instance)
+        self.formsetclass = formsetclass
+        self.parent_instance = parent_instance
+        kwargs["required"] = False
+        super().__init__(*args, **kwargs)
+
+    def to_python(self, value):
+        return self.formsetclass(**(value or {"instance": self.parent_instance}))
+
+    def validate(self, value):
+        super().validate(value)
+        if not value.is_valid():
+            for formerrors in value.errors:
+                for field, errorlist in formerrors.items():
+                    for error in errorlist:
+                        if isinstance(error, str):
+                            error = ValidationError(f"A Form has errors")
+                        raise error
+
+    def _coerce(self, value):
+        if isinstance(value, dict):
+            ret = self.formsetclass(instance=value["instance"]).queryset.all()
+        elif isinstance(value, self.formsetclass):
+            ret = value.queryset.all()
+        return list(ret)
+
+
+class FormsetWidget(forms.Widget):
+    def __init__(self, formsetclass, parent_instance, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.formsetclass = formsetclass
+        self.parent_instance = parent_instance
+        self.prefix = self.formsetclass.get_default_prefix()
+
+    def render(self, name, value, attrs=None, renderer=None):
+        return render_to_string(
+            "materialize_forms/inline_formset.html",
+            {
+                "formset": self.formsetclass(**(value or {})),
+                "form_show_errors": True,
+                "form_show_labels": True,
+            },
+        )
+
+    def value_from_datadict(self, data, files, name):
+        # return all form data in order to allow populating the formset
+        return {
+            "data": data,
+            "files": files,
+            "instance": self.parent_instance,
+        }
