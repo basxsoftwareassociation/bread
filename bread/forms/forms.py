@@ -13,42 +13,33 @@ from .fields import FormsetField, GenericForeignKeyField
 from .layout import InlineLayout
 
 
-def inlinemodelform_factory(
+def breadmodelform_factory(
     request, model, modelfields, instance, baseformclass, layout=None, isinline=False
 ):
     """Returns a form class which can handle inline-modelform sets and generic foreign keys.
     Also enable crispy forms.
     """
 
-    class InlineFormBase(baseformclass):
+    class BreadModelFormBase(baseformclass):
         field_order = baseformclass.field_order or list(modelfields)
 
-        def _add_generic_fk_field(self, data, files):
-            for modelfield in modelfields:
-                if isinstance(modelfield, GenericForeignKey):
-                    choices = []
-                    initial = (
-                        getattr(instance, modelfield.name)
-                        if instance is not None
-                        else None
-                    )
-                    required = not model._meta.get_field(modelfield.ct_field).blank
-                    if hasattr(modelfield, "lazy_choices"):
-                        choices = modelfield.lazy_choices(modelfield, request, instance)
-                    if required and initial is None:
-                        initial = (choices + [None])[0]
-                    self.base_fields[modelfield.name].choices = (
-                        GenericForeignKeyField.objects_to_choices(choices),
-                    )
-                    self.base_fields[modelfield.name].initial = initial
-                    self.base_fields[modelfield.name].required = required
-
         def __init__(self, data=None, files=None, initial=None, **kwargs):
-
+            inst = kwargs.get("instance", instance)
             formsetinitial = {}
             for name, field in self.declared_fields.items():
                 if isinstance(field, FormsetField):
-                    formsetinitial[name] = {"instance": instance}
+                    formsetinitial[name] = {"instance": inst}
+                if isinstance(field, GenericForeignKeyField):
+                    modelfield = [f for f in modelfields if f.name == name][0]
+                    if hasattr(modelfield, "lazy_choices"):
+                        field.choices = GenericForeignKeyField.objects_to_choices(
+                            modelfield.lazy_choices(modelfield, request, inst)
+                        )
+                    init = getattr(inst, modelfield.name, None)
+                    if init:
+                        formsetinitial[name] = GenericForeignKeyField.object_to_choice(
+                            init
+                        )[0]
             if initial:
                 formsetinitial.update(initial)
             super().__init__(
@@ -75,16 +66,19 @@ def inlinemodelform_factory(
 
         def save(self, *args, **kwargs):
             with transaction.atomic():
-                savedinstance = super().save(*args, **kwargs)
-                # GenericForeignKey and one-to-n fields need to be saved separatly
+                kwargs["commit"] = False
+                forminstance = super().save(*args, **kwargs)
+                # GenericForeignKey might need a resafe because we set the v
                 for fieldname, field in self.fields.items():
                     if isinstance(field, GenericForeignKeyField):
-                        setattr(savedinstance, fieldname, self.cleaned_data[fieldname])
-                    elif isinstance(field, FormsetField):
-                        self.cleaned_data[fieldname].instance = savedinstance
+                        setattr(forminstance, fieldname, self.cleaned_data[fieldname])
+                forminstance.save()
+
+                for fieldname, field in self.fields.items():
+                    if isinstance(field, FormsetField):
+                        self.cleaned_data[fieldname].instance = forminstance
                         self.cleaned_data[fieldname].save()
-                savedinstance.save()
-            return savedinstance
+            return forminstance
 
     # GenericForeignKey and one-to-n fields need to be defined separatly
     attribs = {}
@@ -103,7 +97,7 @@ def inlinemodelform_factory(
                 instance,
             )
     patched_formclass = type(
-        f"{model.__name__}GenericForeignKeysModelForm", (InlineFormBase,), attribs
+        f"{model.__name__}BreadModelForm", (BreadModelFormBase,), attribs
     )
     ret = forms.modelform_factory(
         model,
@@ -144,7 +138,7 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
         or isinstance(field, GenericForeignKey)
     }
 
-    formclass = inlinemodelform_factory(
+    formclass = breadmodelform_factory(
         request=request,
         model=modelfield.related_model,
         modelfields=child_fields.values(),

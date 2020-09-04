@@ -15,7 +15,7 @@ from django.views.generic import DeleteView as DjangoDeleteView
 from django.views.generic import UpdateView
 from guardian.mixins import PermissionRequiredMixin
 
-from ..forms.forms import inlinemodelform_factory
+from ..forms.forms import breadmodelform_factory
 from ..utils import get_modelfields
 
 
@@ -33,8 +33,7 @@ class CustomFormMixin:
         return ret
 
     def get_form_class(self, form=forms.models.ModelForm):
-
-        return inlinemodelform_factory(
+        return breadmodelform_factory(
             request=self.request,
             model=self.model,
             modelfields=self.modelfields.values(),

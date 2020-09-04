@@ -11,20 +11,19 @@ from dynamic_preferences.types import StringPreference
 
 class GenericForeignKeyField(forms.TypedChoiceField):
     @classmethod
+    def object_to_choice(cls, obj):
+        return (
+            f"{ContentType.objects.get_for_model(obj).pk},{obj.pk}",
+            f"{obj._meta.verbose_name.title()}: {strip_tags(str(obj))}",
+        )
+
+    @classmethod
     def objects_to_choices(cls, objects, required=True):
-        if not required:
-            yield None, "---"
+        yield None, "---"
         for obj in objects:
-            yield (
-                f"{ContentType.objects.get_for_model(obj).pk},{obj.pk}",
-                f"{obj._meta.verbose_name.title()}: {strip_tags(str(obj))}",
-            )
+            yield GenericForeignKeyField.object_to_choice(obj)
 
     def __init__(self, **kwargs):
-        if "initial" in kwargs and kwargs["initial"]:
-            obj = kwargs["initial"]
-            kwargs["initial"] = f"{ContentType.objects.get_for_model(obj).pk},{obj.pk}"
-
         def convert(value):
             contentype_id, object_id = map(int, value.split(","))
             return ContentType.objects.get(pk=contentype_id).get_object_for_this_type(
