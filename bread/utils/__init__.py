@@ -25,3 +25,7 @@ __all__ = [
     "render_template",
     "generate_path_for_view",
 ]
+
+
+def try_call(var, *args, **kwargs):
+    return var(*args, **kwargs) if callable(var) else var

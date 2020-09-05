@@ -1,5 +1,7 @@
 from django.apps import apps
 
+from .utils import try_call
+
 
 class Group:
     def __init__(self, label, permissions=[], order=None):
@@ -54,19 +56,19 @@ class Link:
         self._permissions = permissions
 
     def url(self, request):
-        return _try_call(self._url, request)
+        return try_call(self._url, request)
 
     def label(self, request):
-        return _try_call(self._label, request)
+        return try_call(self._label, request)
 
     def icon(self, request):
-        return _try_call(self._icon, request)
+        return try_call(self._icon, request)
 
     def has_permission(self, request, obj=None):
         return all(
             [
                 request.user.has_perm(perm, obj) or request.user.has_perm(perm)
-                for perm in _try_call(self._permissions, request)
+                for perm in try_call(self._permissions, request)
             ]
         )
 
@@ -117,7 +119,3 @@ def registeritem(item):
 
 # global main menu
 main = Menu()
-
-
-def _try_call(var, *args, **kwargs):
-    return var(*args, **kwargs) if callable(var) else var

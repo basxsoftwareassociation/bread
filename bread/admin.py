@@ -8,22 +8,14 @@ from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
 from django.utils.http import urlencode
 from django.utils.text import format_lazy
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, View
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.registries import global_preferences_registry
 
 from . import menu
 from . import views as bread_views
 from .forms.forms import PreferencesForm
-from .utils import generate_path_for_view, has_permission, title
-
-DEFAULT_BREAD_VIEWS = {
-    "browse": bread_views.BrowseView,
-    "read": bread_views.ReadView,
-    "edit": bread_views.EditView,
-    "add": bread_views.AddView,
-    "delete": bread_views.DeleteView,
-}
+from .utils import generate_path_for_view, has_permission, title, try_call
 
 
 class BreadAdmin:
@@ -75,36 +67,6 @@ class BreadAdmin:
     indexview = None
     """Name of the view which servers as the index for this admin class. Defaults to "browse"."""
 
-    browseview = None
-    """Class which will be used to create the browse-view. Defaults to ``bread.views.BrowseView``."""
-
-    readview = None
-    """Class which will be used to create the read-view. Defaults to ``bread.views.ReadView``."""
-
-    editview = None
-    """Class which will be used to create the edit-view. Defaults to ``bread.views.EditView``."""
-
-    addview = None
-    """Class which will be used to create the add-view. Defaults to ``bread.views.AddView``."""
-
-    deleteview = None
-    """Class which will be used to create the delete-view. Defaults to ``bread.views.DeleteView``."""
-
-    autoviews = list(DEFAULT_BREAD_VIEWS.keys())
-    """List of names for which views should automatically be generated.
-    Defaults to ``["browse", "read", "edit", "add", "delete"]``.
-    Can be used to remove certain actions entirely e.g. preventing to ever access the delete view.
-    When adding custom views to this list an according attribute with name <viewname>view assigned to the view
-    class should be set on the class instance.
-    ``
-    from . import models
-    from . import views
-    class InvoiceAdmin(BreadAdmin):
-        model = models.Invoice
-        autoviews = ["browse", "edit", "add", "mark_payed"]
-        mark_payedview = views.MarkPayedConfirmation
-    """
-
     login_required = True
     """If set to true will add the login_required decorator to all views of this admin"""
 
@@ -119,48 +81,44 @@ class BreadAdmin:
         self.editfields = self.editfields or ["__all__"]
         self.addfields = self.addfields or self.editfields
         self.sidebarfields = self.sidebarfields or []
-        self.browseview = self.browseview or bread_views.BrowseView
-        self.readview = self.readview or bread_views.ReadView
-        self.editview = self.editview or bread_views.EditView
-        self.addview = self.addview or bread_views.AddView
-        self.deleteview = self.deleteview or bread_views.DeleteView
-        self.autoviews = self.autoviews or list(DEFAULT_BREAD_VIEWS.keys())
 
-    def get_views_kwargs(self):
-        """Returns a dict with the name of a view as key and a dict as value
-        The dict from the value contains additional kwargs for construction the view.
-        This can be used if a custom view needs additional parameters in the as_view call
-        """
-        return {}
+        # default views
+        self.browse_view = getattr(self, "browse_view", bread_views.BrowseView)
+        self.read_view = getattr(self, "read_view", bread_views.ReadView)
+        self.edit_view = getattr(self, "edit_view", bread_views.EditView)
+        self.add_view = getattr(self, "add_view", bread_views.AddView)
+        self.delete_view = getattr(self, "delete_view", bread_views.DeleteView)
 
     def get_views(self):
         """Returns a dictionary with view names as keys and view instances as values.
-        The default views are browse, read, edit, add and delete.
-        If the view has model attribute it will be set to this admin classe's model.
-        If the viewclass is one of the default bread admin views (see DEFAULT_BREAD_VIEWS) or a subclass of one of them,
-        the attribute "admin" it will be set to this admin instance.
-        On creating the instance of the view the values from get_views_kwargs will be passed to the as_view call.
+        All attributes named <viewname>_view are taken into account. <viewname> is the name
+        of the view which is used when generating the url for it. If the assigned value is
+        a subclass of ``django.views.generic.View`` it will be instantiated. An optional dict
+        which will be passed <viewname>_view.as_view can be given through <viewname>_view.kwargs.
+        If <viewname>_view is anything else, it needs to be callable, otherwise an exception is
+        raised.
         """
-        ret = {}
-        for viewname in self.autoviews:
-            kwargs = {}
-            view = getattr(self, f"{viewname}view")
 
-            # class passed, must be a class-based view
-            if isinstance(view, type):
+        ret = {}
+        for view, viewname in [
+            (getattr(self, attr), attr[: -len("_view")])
+            for attr in dir(self)
+            if attr.endswith("_view")
+        ]:
+            if isinstance(view, type) and issubclass(view, View):
+                kwargs = try_call(getattr(view, "kwargs", {}))
                 if hasattr(view, "model"):
                     kwargs["model"] = self.model
-                if issubclass(view, (tuple(DEFAULT_BREAD_VIEWS.values())),):
+                if hasattr(view, "admin"):
                     kwargs["admin"] = self
-                kwargs.update(self.get_views_kwargs().get(viewname, {}))
-
-                ret[viewname] = view.as_view(**kwargs)
-            else:
-                ret[viewname] = view
-
-            if self.login_required:
-                ret[viewname] = login_required_func(ret[viewname])
-
+                view = view.as_view(**kwargs)
+            elif not callable(view):
+                raise RuntimeError(
+                    f"View {viewname}_view ({view}) needs to be callable"
+                )
+            ret[viewname] = view
+        if self.login_required:
+            ret[viewname] = login_required_func(ret[viewname])
         return ret
 
     def get_urls(self):
@@ -329,12 +287,11 @@ class BreadGenericAdmin(BreadAdmin):
         self.readfields = []
         self.editfields = []
         self.addfields = []
-        self.browseview = None
-        self.readview = None
-        self.editview = None
-        self.addview = None
-        self.deleteview = None
-        self.autoviews = []
+        self.browse_view = None
+        self.read_view = None
+        self.edit_view = None
+        self.add_view = None
+        self.delete_view = None
 
     @property
     def modelname(self):
