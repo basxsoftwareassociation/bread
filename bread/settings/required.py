@@ -1,6 +1,5 @@
 import pkg_resources
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
-
 from easy_thumbnails.conf import Settings as thumbnail_settings
 
 __breadapps = []
@@ -119,13 +118,13 @@ CELERY_RESULT_BACKEND = "django-db"
 CELERY_CACHE_BACKEND = "django-cache"
 
 MIDDLEWARE = [
-    "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "bread.middleware.RequireAuthenticationMiddleware",
 ]
