@@ -114,7 +114,7 @@ class BreadAdmin:
                 view = view.as_view(**kwargs)
             elif not callable(view):
                 raise RuntimeError(
-                    f"View {viewname}_view ({view}) needs to be callable"
+                    f"View {viewname}_view ({self.__class__.__name__}.{viewname}_view) needs to be callable"
                 )
             ret[viewname] = view
         if self.login_required:
@@ -277,6 +277,9 @@ class BreadGenericAdmin(BreadAdmin):
 
     app_label = None
     """app_label needs to be set because we cannot determine the app from the model"""
+
+    def get_views(self):
+        return {}
 
     def __init__(self):
         assert self.app_label
