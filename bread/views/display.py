@@ -27,9 +27,11 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
     template_name = "bread/list.html"
     admin = None
     fields = None
+    filterfields = None
     page_kwarg = "browsepage"  # need to use something different than the default "page" because we also filter through kwargs
 
     def __init__(self, admin, *args, **kwargs):
+        print(kwargs)
         self.admin = admin
         self.model = admin.model
         self.fields = filter_fieldlist(
@@ -40,7 +42,7 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
         # incrementally try to create a filter from the given field and ignore fields which cannot be used
         kwargs["filterset_fields"] = []
         for field in filter_fieldlist(
-            self.model, kwargs.get("filterfields") or self.admin.filterfields
+            self.model, kwargs.get("filterfields", self.admin.filterfields)
         ):
             try:
                 generate_filterset_class(
