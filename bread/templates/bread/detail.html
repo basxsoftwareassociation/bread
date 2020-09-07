@@ -23,11 +23,11 @@
 {% endblock content %}
 
 {% block right-panel %}
-    {% if view.admin.sidebarfields %}
+    {% if view.sidebarfields %}
         <div class="right-panel">
             <div class="card">
                 <div class="card-content">
-                    {% for field in view.admin.sidebarfields %}
+                    {% for field in view.sidebarfields %}
                         <div class="card-title">Notes</div>
                         <p>{% render_field object field %}</p>
                     {% endfor %}

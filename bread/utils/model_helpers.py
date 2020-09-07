@@ -49,6 +49,8 @@ def has_permission(user, operation, instance):
 
 
 def filter_fieldlist(model, fieldlist, for_form=False):
+    if fieldlist is None:
+        fieldlist = ["__all__"]
     return [
         f
         for f in _expand_ALL_constant(model, fieldlist)
@@ -152,3 +154,11 @@ def get_concrete_instance(instance):
             if child_object:
                 return child_object.concrete
     return instance
+
+
+class CustomizableClass:
+    """Shortcut to create a subclass with the given attributes"""
+
+    @classmethod
+    def customize(cls, **kwargs):
+        return type(f"Custom{cls.__name__}", (cls,), kwargs)

@@ -16,7 +16,7 @@ from django.views.generic import UpdateView
 from guardian.mixins import PermissionRequiredMixin
 
 from ..forms.forms import breadmodelform_factory
-from ..utils import get_modelfields
+from ..utils import CustomizableClass, get_modelfields
 
 
 class CustomFormMixin:
@@ -55,7 +55,11 @@ class CustomFormMixin:
 
 
 class EditView(
-    CustomFormMixin, SuccessMessageMixin, PermissionRequiredMixin, UpdateView
+    CustomizableClass,
+    CustomFormMixin,
+    SuccessMessageMixin,
+    PermissionRequiredMixin,
+    UpdateView,
 ):
     template_name = "bread/custom_form.html"
     admin = None
@@ -67,12 +71,13 @@ class EditView(
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
+        self.fields = kwargs.get("fields", self.fields)
         self.layout = None
-        fields = kwargs.get("fields") or self.admin.editfields
-        if isinstance(fields, Layout):
-            self.layout = fields
-            fields = [i[1] for i in fields.get_field_names()]
-        self.modelfields = get_modelfields(self.model, fields, for_form=True)
+
+        if isinstance(self.fields, Layout):
+            self.layout = self.fields
+            self.fields = [i[1] for i in self.fields.get_field_names()]
+        self.modelfields = get_modelfields(self.model, self.fields, for_form=True)
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
@@ -87,7 +92,11 @@ class EditView(
 
 
 class AddView(
-    CustomFormMixin, SuccessMessageMixin, PermissionRequiredMixin, CreateView
+    CustomizableClass,
+    CustomFormMixin,
+    SuccessMessageMixin,
+    PermissionRequiredMixin,
+    CreateView,
 ):
     template_name = "bread/custom_form.html"
     admin = None
@@ -99,12 +108,13 @@ class AddView(
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
+        self.fields = kwargs.get("fields", self.fields)
         self.layout = None
-        fields = kwargs.get("fields") or self.admin.addfields
-        if isinstance(fields, Layout):
-            self.layout = fields
-            fields = [i[1] for i in fields.get_field_names()]
-        self.modelfields = get_modelfields(self.model, fields, for_form=True)
+
+        if isinstance(self.fields, Layout):
+            self.layout = self.fields
+            self.fields = [i[1] for i in self.fields.get_field_names()]
+        self.modelfields = get_modelfields(self.model, self.fields, for_form=True)
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
@@ -123,7 +133,9 @@ class AddView(
         return self.admin.reverse("index")
 
 
-class DeleteView(PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView):
+class DeleteView(
+    CustomizableClass, PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView
+):
     template_name = "bread/confirm_delete.html"
     admin = None
     accept_global_perms = True

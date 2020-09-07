@@ -16,6 +16,7 @@ from guardian.mixins import PermissionListMixin, PermissionRequiredMixin
 from ..formatters import render_field
 from ..forms.forms import FilterForm
 from ..utils import (
+    CustomizableClass,
     filter_fieldlist,
     pretty_fieldname,
     resolve_relationship,
@@ -23,7 +24,9 @@ from ..utils import (
 )
 
 
-class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
+class BrowseView(
+    CustomizableClass, LoginRequiredMixin, PermissionListMixin, FilterView
+):
     template_name = "bread/list.html"
     admin = None
     fields = None
@@ -31,18 +34,14 @@ class BrowseView(LoginRequiredMixin, PermissionListMixin, FilterView):
     page_kwarg = "browsepage"  # need to use something different than the default "page" because we also filter through kwargs
 
     def __init__(self, admin, *args, **kwargs):
-        print(kwargs)
         self.admin = admin
         self.model = admin.model
-        self.fields = filter_fieldlist(
-            self.model, kwargs.get("fields") or self.admin.browsefields
-        )
-        self.paginate_by = getattr(self.admin, "paginate_by", 100)
+        self.fields = filter_fieldlist(self.model, kwargs.get("fields", self.fields))
 
         # incrementally try to create a filter from the given field and ignore fields which cannot be used
         kwargs["filterset_fields"] = []
         for field in filter_fieldlist(
-            self.model, kwargs.get("filterfields", self.admin.filterfields)
+            self.model, kwargs.get("filterfields", self.filterfields)
         ):
             try:
                 generate_filterset_class(
@@ -199,18 +198,21 @@ class TreeView(BrowseView):
         return build_tree(children[None])
 
 
-class ReadView(PermissionRequiredMixin, DetailView):
+class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
     template_name = "bread/detail.html"
     admin = None
+    fields = None
+    sidebarfields = None
     accept_global_perms = True
 
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
-        super().__init__(*args, **kwargs)
-        self.fields = filter_fieldlist(
-            self.model, kwargs.get("fields") or self.admin.readfields
+        self.fields = filter_fieldlist(self.model, kwargs.get("fields", self.fields))
+        self.sidebarfields = filter_fieldlist(
+            kwargs.get("sidebarfields", self.sidebarfields)
         )
+        super().__init__(*args, **kwargs)
 
     def field_values(self):
         for accessor in self.fields:

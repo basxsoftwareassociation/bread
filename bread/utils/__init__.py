@@ -1,6 +1,7 @@
 from .export import html_to_pdf, prepare_excel, render_template, xlsxresponse
 from .media import get_audio_thumbnail, get_video_thumbnail
 from .model_helpers import (
+    CustomizableClass,
     filter_fieldlist,
     get_modelfields,
     has_permission,
@@ -24,6 +25,7 @@ __all__ = [
     "xlsxresponse",
     "render_template",
     "generate_path_for_view",
+    "CustomizableClass",
 ]
 
 

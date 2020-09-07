@@ -36,34 +36,6 @@ class BreadAdmin:
     model = None
     "The django model which will be managed in this class"
 
-    browsefields = None
-    """List of fields to be listed in the table of the browse-page. Defaults to ``["__all__"]``."""
-
-    filterfields = None
-    """List of fields which should appear in the filter-form of the browse-page. Defaults to ``["__all__"]``. Can span relationships."""
-
-    readfields = None
-    """List of fields to be displaye on the read-page. Defaults to ``["__all__"]``."""
-
-    sidebarfields = None
-    """List of fields to be display on the right side of the read and edit pages. Defaults to ``[]``."""
-
-    editfields = None
-    """Defines which fields to display on the edit page.
-    Can be:
-    - List of field names
-    - django-crispy-form Layout object (https://django-crispy-forms.readthedocs.io/en/latest/layouts.html)
-    Defaults to ``["__all__"]``
-    """
-
-    addfields = None
-    """Defines which fields to display on the add page.
-    Can be:
-    - List of field names
-    - django-crispy-form Layout object (https://django-crispy-forms.readthedocs.io/en/latest/layouts.html)
-    Defaults to whatever value ``editfields`` is set.
-    """
-
     indexview = None
     """Name of the view which servers as the index for this admin class. Defaults to "browse"."""
 
@@ -73,14 +45,6 @@ class BreadAdmin:
     def __init__(self):
         assert self.model is not None
         self.indexview = self.indexview or "browse"
-        self.browsefields = (
-            ["__all__"] if self.browsefields is None else self.browsefields
-        )
-        self.filterfields = self.filterfields or self.browsefields
-        self.readfields = self.readfields or ["__all__"]
-        self.editfields = self.editfields or ["__all__"]
-        self.addfields = self.addfields or self.editfields
-        self.sidebarfields = self.sidebarfields or []
 
         # default views
         self.browse_view = getattr(self, "browse_view", bread_views.BrowseView)
@@ -285,11 +249,6 @@ class BreadGenericAdmin(BreadAdmin):
         assert self.app_label
         assert self.app_label
         self.indexview = self.indexview
-        self.browsefields = []
-        self.filterfields = []
-        self.readfields = []
-        self.editfields = []
-        self.addfields = []
         self.browse_view = None
         self.read_view = None
         self.edit_view = None
