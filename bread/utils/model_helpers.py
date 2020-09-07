@@ -160,5 +160,5 @@ class CustomizableClass:
     """Shortcut to create a subclass with the given attributes"""
 
     @classmethod
-    def customize(cls, **kwargs):
+    def _with(cls, **kwargs):
         return type(f"Custom{cls.__name__}", (cls,), kwargs)

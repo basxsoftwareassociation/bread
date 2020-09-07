@@ -164,9 +164,9 @@ class TreeView(BrowseView):
     parent_accessor = None
     label_function = None
 
-    def __init__(self, parent_accessor, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.parent_accessor = parent_accessor
+        self.parent_accessor = kwargs.get("parent_accessor", self.parent_accessor)
         self.label_function = kwargs.get("label_function", lambda o: str(o))
 
     def nodes(self):
