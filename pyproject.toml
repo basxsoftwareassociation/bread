@@ -6,4 +6,3 @@ write_to = "bread/version.py"
 
 [tool.black]
 exclude = '(migrations|\.hg|\.venv|\.eggs|\.tox|version.py)'
-
