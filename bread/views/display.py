@@ -210,7 +210,7 @@ class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
         self.model = admin.model
         self.fields = filter_fieldlist(self.model, kwargs.get("fields", self.fields))
         self.sidebarfields = filter_fieldlist(
-            kwargs.get("sidebarfields", self.sidebarfields)
+            self.model, kwargs.get("sidebarfields", self.sidebarfields)
         )
         super().__init__(*args, **kwargs)
 
