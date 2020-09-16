@@ -8,20 +8,21 @@ from django.utils.html import mark_safe
 from dynamic_preferences.forms import GlobalPreferenceForm
 from guardian.shortcuts import get_objects_for_user
 
+from ..layout import InlineLayout
 from ..utils import get_modelfields
 from .fields import FormsetField, GenericForeignKeyField
-from .layout import InlineLayout
 
 
 def breadmodelform_factory(
-    request, model, modelfields, instance, baseformclass, layout=None, isinline=False
+    request, model, fields, instance, baseformclass, layout, isinline=False
 ):
     """Returns a form class which can handle inline-modelform sets and generic foreign keys.
     Also enable crispy forms.
     """
+    modelfields = get_modelfields(model, fields, for_form=True).values()
 
     class BreadModelFormBase(baseformclass):
-        field_order = baseformclass.field_order or list(modelfields)
+        field_order = baseformclass.field_order or list(fields)
 
         def __init__(self, data=None, files=None, initial=None, **kwargs):
             inst = kwargs.get("instance", instance)
@@ -130,18 +131,19 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
                 ]
             queue.extend(getattr(elem, "fields", []))
 
-    child_fields = get_modelfields(modelfield.related_model, fields, for_form=True)
-    child_fields = {
-        fieldname: field
-        for fieldname, field in child_fields.items()
+    child_fields = [
+        field.name
+        for field in get_modelfields(
+            modelfield.related_model, fields, for_form=True
+        ).values()
         if (field != modelfield.remote_field and field.editable is not False)
         or isinstance(field, GenericForeignKey)
-    }
+    ]
 
     formclass = breadmodelform_factory(
         request=request,
         model=modelfield.related_model,
-        modelfields=child_fields.values(),
+        fields=child_fields,
         instance=None,
         baseformclass=baseformclass,
         layout=layout,
@@ -153,7 +155,7 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
             modelfield.related_model,
             ct_field=modelfield.content_type_field_name,
             fk_field=modelfield.object_id_field_name,
-            fields=list(child_fields.keys()),
+            fields=child_fields,
             formfield_callback=lambda field: _formfield_callback_with_request(
                 field, request, modelfield.related_model
             ),
@@ -165,7 +167,7 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
         formset = forms.models.inlineformset_factory(
             model,
             modelfield.related_model,
-            fields=list(child_fields.keys()),
+            fields=child_fields,
             formfield_callback=lambda field: _formfield_callback_with_request(
                 field, request, model
             ),

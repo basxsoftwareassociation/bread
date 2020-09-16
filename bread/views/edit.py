@@ -16,7 +16,7 @@ from django.views.generic import UpdateView
 from guardian.mixins import PermissionRequiredMixin
 
 from ..forms.forms import breadmodelform_factory
-from ..utils import CustomizableClass, get_modelfields
+from ..utils import CustomizableClass, filter_fieldlist
 
 
 class CustomFormMixin:
@@ -36,7 +36,7 @@ class CustomFormMixin:
         return breadmodelform_factory(
             request=self.request,
             model=self.model,
-            modelfields=self.modelfields.values(),
+            fields=self.fields,
             instance=self.object,
             baseformclass=form,
             layout=self.layout,
@@ -71,13 +71,14 @@ class EditView(
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
-        self.fields = kwargs.get("fields", self.fields)
-        self.layout = None
-
-        if isinstance(self.fields, Layout):
-            self.layout = self.fields
-            self.fields = [i[1] for i in self.fields.get_field_names()]
-        self.modelfields = get_modelfields(self.model, self.fields, for_form=True)
+        field_config = kwargs.get("fields", self.fields)
+        if not isinstance(field_config, Layout):
+            self.layout = Layout(
+                *filter_fieldlist(self.model, field_config, for_form=True)
+            )
+        else:
+            self.layout = field_config
+        self.fields = [i[1] for i in self.layout.get_field_names()]
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
@@ -108,13 +109,14 @@ class AddView(
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
-        self.fields = kwargs.get("fields", self.fields)
-        self.layout = None
-
-        if isinstance(self.fields, Layout):
-            self.layout = self.fields
-            self.fields = [i[1] for i in self.fields.get_field_names()]
-        self.modelfields = get_modelfields(self.model, self.fields, for_form=True)
+        field_config = kwargs.get("fields", self.fields)
+        if not isinstance(field_config, Layout):
+            self.layout = Layout(
+                *filter_fieldlist(self.model, field_config, for_form=True)
+            )
+        else:
+            self.layout = field_config
+        self.fields = [i[1] for i in self.layout.get_field_names()]
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):

@@ -1,5 +1,6 @@
 import warnings
 
+from crispy_forms.utils import get_template_pack
 from django import template
 from django.db import models
 from django.utils.html import mark_safe
@@ -145,6 +146,11 @@ def updated_querystring(context, key, value):
     current_query = context["request"].GET.copy()
     current_query[key] = value
     return context["request"].path + "?" + current_query.urlencode()
+
+
+@register.simple_tag(takes_context=True)
+def crispy_html(context, layout):
+    return mark_safe(layout.render({}, (), context, template_pack=get_template_pack()))
 
 
 # filters

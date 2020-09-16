@@ -3,18 +3,18 @@ import numbers
 import random
 from collections.abc import Iterable
 
+from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 from dateutil import tz
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.utils.html import format_html_join, linebreaks, mark_safe
-
-import bread.settings as app_settings
-from ckeditor.fields import RichTextField
-from ckeditor_uploader.fields import RichTextUploadingField
 from django_countries.fields import CountryField
 from easy_thumbnails.files import get_thumbnailer
+
+import bread.settings as app_settings
 
 from .models import AccessConcreteInstanceMixin
 
@@ -182,7 +182,7 @@ def as_download(value):
     if not value.storage.exists(value.name):
         return mark_safe("<small><emph>File not found</emph></small>")
     return mark_safe(
-        f'<a class="center" style="display: block" href="{value.url}"><i class="material-icons">open_in_browser</i></a>'
+        f'<a class="center" href="{value.url}"><i class="material-icons">open_in_browser</i></a>'
     )
 
 
@@ -193,7 +193,7 @@ def as_image(value):
         return mark_safe("<small><emph>Image not found</emph></small>")
     im = get_thumbnailer(value).get_thumbnail({"size": (100, 100), "quality": 75})
     return mark_safe(
-        f'<a class="center" style="display: block" href="{value.url}"><img src={im.url} width="{im.width}" height="{im.height}"/></a>'
+        f'<a class="center" href="{value.url}"><img src={im.url} width="{im.width}" height="{im.height}"/></a>'
     )
 
 

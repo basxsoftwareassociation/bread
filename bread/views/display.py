@@ -1,7 +1,9 @@
+import copy
 import re
 from html.parser import HTMLParser
 
 import django_filters
+from crispy_forms.layout import Layout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldError
@@ -15,9 +17,11 @@ from guardian.mixins import PermissionListMixin, PermissionRequiredMixin
 
 from ..formatters import render_field
 from ..forms.forms import FilterForm
+from ..layout import ReadonlyField, convert_to_formless_layout
 from ..utils import (
     CustomizableClass,
     filter_fieldlist,
+    get_modelfields,
     pretty_fieldname,
     resolve_relationship,
     xlsxresponse,
@@ -202,14 +206,31 @@ class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
     template_name = "bread/detail.html"
     admin = None
     fields = None
-    sidebarfields = None
+    sidebarfields = []
     accept_global_perms = True
 
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
-        self.fields = filter_fieldlist(self.model, kwargs.get("fields", self.fields))
-        self.sidebarfields = filter_fieldlist(
+
+        # need a deep copy because convert_to_formless_layout will modify the value
+        # which is problematic if we share the same layout-object with an edit view
+        self.layout = copy.deepcopy(kwargs.get("fields", self.fields))
+        if not isinstance(self.layout, Layout):
+            layoutfields = filter_fieldlist(self.model, self.layout)
+            self.layout = Layout(*layoutfields)
+        convert_to_formless_layout(self.layout)
+
+        def get_fields_recursive(l):
+            if isinstance(l, ReadonlyField):
+                yield l.field
+            else:
+                for field in getattr(l, "fields", ()):
+                    yield from get_fields_recursive(field)
+
+        self.fields = list(get_fields_recursive(self.layout))
+
+        self.sidebarfields = get_modelfields(
             self.model, kwargs.get("sidebarfields", self.sidebarfields)
         )
         super().__init__(*args, **kwargs)

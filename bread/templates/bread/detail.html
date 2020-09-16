@@ -4,14 +4,7 @@
 {% block content %}
     <h2>{{ view.admin.verbose_modelname }} <i>{{ object }}</i></h2>
 
-    <table>
-    {% for field, prettyname in view.field_values %}
-        <tr>
-            <td style="vertical-align: top">{{ prettyname }}</td>
-            <td style="float: left">{% render_field object field %}</td>
-        </tr>
-    {% endfor %}
-    </table>
+    {% crispy_html view.layout %}
 
     <div class="right">
         {% include "bread/object_actions.html" %}
@@ -27,9 +20,9 @@
         <div class="right-panel">
             <div class="card">
                 <div class="card-content">
-                    {% for field in view.sidebarfields %}
-                        <div class="card-title">Notes</div>
-                        <p>{% render_field object field %}</p>
+                    {% for fieldname, field in view.sidebarfields.items %}
+                        <div class="card-title">{% pretty_fieldname field %}</div>
+                        <p>{% render_field object fieldname %}</p>
                     {% endfor %}
                 </div>
             </div>
