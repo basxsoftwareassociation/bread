@@ -1,6 +1,7 @@
 import re
 
 from ckeditor_uploader.fields import RichTextUploadingFormField
+from crispy_forms.utils import TEMPLATE_PACK
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -112,7 +113,7 @@ class FormsetWidget(forms.Widget):
 
     def render(self, name, value, attrs=None, renderer=None):
         return render_to_string(
-            "materialize_forms/inline_formset.html",
+            f"{TEMPLATE_PACK}/inline_formset.html",
             {
                 "formset": self.formsetclass(**(value or {})),
                 "form_show_errors": True,

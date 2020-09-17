@@ -1,5 +1,6 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from crispy_forms.utils import TEMPLATE_PACK
 from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
@@ -60,7 +61,7 @@ def breadmodelform_factory(
                         ),
                         css_class="btn-floating btn-large",
                         style="float: right; position: sticky; bottom: 1rem; margin-right: -6rem",
-                        template="materialize_forms/layout/button.html",
+                        template=f"{TEMPLATE_PACK}/layout/button.html",
                     )
                 )
             self.helper.layout = layout

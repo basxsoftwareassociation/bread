@@ -95,8 +95,8 @@ CKEDITOR_CONFIGS = {
 COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 
 # required to make crispyforms working with our materaialize frontend
-CRISPY_TEMPLATE_PACK = "materialize_forms"
-CRISPY_ALLOWED_TEMPLATE_PACKS = [CRISPY_TEMPLATE_PACK]
+CRISPY_ALLOWED_TEMPLATE_PACKS = ["materialize_forms", "carbon_design"]
+CRISPY_TEMPLATE_PACK = CRISPY_ALLOWED_TEMPLATE_PACKS[0]
 
 # required for the materialize datetime widget
 DATETIME_INPUT_FORMATS += ["%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M"]

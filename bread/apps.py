@@ -35,7 +35,7 @@ def bread_config_check(app_configs, **kwargs):
         "DATETIME_INPUT_FORMATS": ["%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M"],
         "COMPRESS_PRECOMPILERS": None,
         "CRISPY_TEMPLATE_PACK": "materialize_forms",
-        "CRISPY_ALLOWED_TEMPLATE_PACKS": ["materialize_forms"],
+        "CRISPY_ALLOWED_TEMPLATE_PACKS": ["materialize_forms", "carbon_design"],
         "LOGIN_URL": None,
         "LOGIN_REDIRECT_URL": None,
         "LOGOUT_REDIRECT_URL": None,
