@@ -9,11 +9,11 @@ from . import FieldLabel, NonFormContent, ReadonlyField
 
 
 class Collapsible(Container):
-    template = "layout/%s/collapsible.html"
+    template = "%s/collapsible.html"
 
 
 class CollapsibleGroup(ContainerHolder):
-    template = "layout/%s/collapsible-group.html"
+    template = "%s/collapsible-group.html"
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
         content = []
@@ -40,14 +40,14 @@ class CollapsibleGroup(ContainerHolder):
 
 class Tab(Container):
     css_class = "tab"
-    link_template = "layout/%s/tab.html"
+    link_template = "%s/tab.html"
 
     def render_link(self, template_pack=TEMPLATE_PACK, **kwargs):
         return render_to_string(self.link_template % template_pack, {"tab": self})
 
 
 class Tabs(ContainerHolder):
-    template = "layout/%s/tabs.html"
+    template = "%s/tabs.html"
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
         if form:

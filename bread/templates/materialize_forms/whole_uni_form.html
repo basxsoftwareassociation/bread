@@ -6,7 +6,7 @@
         {% csrf_token %}
     {% endif %}
 
-    {% include "layout/materialize_forms/display_form.html" %}
+    {% include "materialize_forms/display_form.html" %}
 
     {% if inputs %}
     <div class="row" style="margin-top: 2rem">
@@ -16,7 +16,7 @@
                     <div style="margin-left: 1rem;">
                         {% if "%s" in input.template %}
                             {% with input.template|slice:"1:" as templatevalue %}
-                                {% include "layout/materialize_forms"|stringformat:templatevalue %}
+                                {% include "materialize_forms"|stringformat:templatevalue %}
                             {% endwith %}
                         {% elif input.name != "quicksave" %}
                             {% include input.template %}

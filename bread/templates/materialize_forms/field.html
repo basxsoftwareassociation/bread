@@ -20,11 +20,11 @@
             {% endif %}
 
             {% if field|is_checkboxselectmultiple %}
-                {% include "layout/materialize_forms/layout/checkboxselectmultiple.html" %}
+                {% include "materialize_forms/layout/checkboxselectmultiple.html" %}
             {% elif field|is_radioselect %}
-                {% include "layout/materialize_forms/layout/radioselect.html" %}
+                {% include "materialize_forms/layout/radioselect.html" %}
             {% elif field|is_file or field|is_clearable_file %}
-                {% include "layout/materialize_forms/layout/file.html" %}
+                {% include "materialize_forms/layout/file.html" %}
             {% else %}
                 {% if field|is_checkbox %}
                     <label>
@@ -35,7 +35,7 @@
                     {% crispy_field field %}
                 {% endif %}
             {% endif %}
-            {% include "layout/materialize_forms/layout/help_text_and_errors.html" %}
+            {% include "materialize_forms/layout/help_text_and_errors.html" %}
         </{% if tag %}{{ tag }}{% else %}div{% endif %}>
     </div>
 {% endif %}

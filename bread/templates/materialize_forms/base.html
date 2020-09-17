@@ -1,0 +1,97 @@
+{% extends "bread/base.html" %}
+{% load static compress bread_tags %}
+
+{% block stylesheets %}
+    {% compress css %}
+        <link rel="stylesheet" type="text/x-scss" href="{% static "design/materialize_forms/sass/main.scss" %}" />
+    {% endcompress %}
+{% endblock %}
+
+{% block javascripts %}
+    {% compress js %}
+    <script type="text/javascript" src="{% static "js/choices.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "design/materialize_forms/js/materialize.min.js" %}"></script>
+    {% endcompress js %}
+{% endblock %}
+
+{% block body %}
+    <header>
+        {% include "materialize_forms/sidenav.html" %}
+    </header>
+
+    <main>
+        {% include "materialize_forms/topbar.html" %}
+
+        {% if messages %}
+            <ul id="django-system-messages" class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+
+            <script>
+                document.getElementById("django-system-messages").style.display = "none";
+                document.addEventListener("DOMContentLoaded", function() {
+                    {% for message in messages %}
+                    M.toast({
+                        html: "<div{% if message.tags %} class='{{ message.tags }}'{% endif %}>{{ message }}</div>",
+                    });
+                    {% endfor %}
+                });
+            </script>
+        {% endif %}
+
+        <div class="row">
+            <div class="col s12 m10">
+                <div class="card-panel">
+                    {% block content %}
+                    {% endblock content %}
+                </div>
+            </div>
+            <div class="col s12 m2">
+                <!-- right panel -->
+                {% block right-panel %}
+                {% endblock right-panel %}
+            </div>
+        </div>
+    </main>
+
+    <script>
+        $.ready(e => {
+            // choices.js elements to enable autocomplete on select widgets
+            initAllChoices();
+
+            // do materialize initialization and some customizations
+            M.AutoInit();
+
+            // make the datepicker a bit nicer and compatible with the django format
+            M.Datepicker.init(document.querySelectorAll(".datepicker"), {format: "yyyy-mm-dd", showClearBtn: true, autoClose: true});
+
+            // initialize the full-width dropdown menus
+            M.Dropdown.init(document.querySelectorAll(".custom-dropdown-trigger"), {constrainWidth: false});
+
+            // when a select is readonly, we need to set the materialized select to disabled
+            // (but not the original/hidden select because disabled form fields will not get sent to the server
+            $$("select[readonly]:not(.browser-default):not(.choices__input)").forEach(elem => elem.M_FormSelect.dropdown.el.disabled = true);
+
+            // add invalid class to fields with errors
+            $$(".error input").forEach(elem => elem.classList.add("invalid"));
+
+            // hack to display "required field" message for selects which are materialized
+            $$("select[required]")._.removeAttribute("required");
+
+            // set cursor to first visible element and mark the text
+            if(document.forms.length > 0) {
+                for (var i = 0; i < document.forms[0].elements.length; i++) {
+                    var elem = document.forms[0].elements[i];
+                    if(elem.select && elem.focus && elem.type !== "hidden") {
+                        elem.focus({preventScroll: true});
+                        elem.select();
+                        break;
+                    }
+                }
+            }
+            M.updateTextFields();
+        });
+    </script>
+{% endblock body %}

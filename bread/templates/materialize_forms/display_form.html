@@ -1,7 +1,7 @@
 {% if form.form_html %}
     {% if include_media %}{{ form.media }}{% endif %}
-    {% include "layout/materialize_forms/errors.html" %}
+    {% include "materialize_forms/errors.html" %}
     {{ form.form_html }}
 {% else %}
-    {% include "layout/materialize_forms/uni_form.html" %}
+    {% include "materialize_forms/uni_form.html" %}
 {% endif %}

@@ -129,7 +129,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "bread.middleware.RequireAuthenticationMiddleware",
 ]
-WAGTAIL_SITE_NAME = "Website Editor"
 SITE_ID = 1
 
 BREAD_PUBLIC_FILES_PREFIX = "public/"
@@ -139,3 +138,47 @@ IMAGE_CROPPING_BACKEND_PARAMS = {}
 THUMBNAIL_PROCESSORS = (
     "image_cropping.thumbnail_processors.crop_corners",
 ) + thumbnail_settings.THUMBNAIL_PROCESSORS
+
+# from default django config
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "dynamic_preferences.processors.global_preferences",
+                "bread.context_processors.bread_context",
+            ]
+        },
+    }
+]
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+]
+
+LANGUAGE_CODE = "en-us"
+
+TIME_ZONE = "UTC"
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+USE_THOUSAND_SEPARATOR = True
+
+DATETIME_FORMAT = "Y-m-d h:M:s"
+DATE_FORMAT = "Y-m-d"
+
+COMPRESS_OFFLINE_CONTEXT = "bread.context_processors.compress_offline_context"

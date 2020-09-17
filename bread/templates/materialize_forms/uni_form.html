@@ -3,7 +3,7 @@
 {% specialspaceless %}
     {% if include_media %}{{ form.media }}{% endif %}
     {% if form_show_errors %}
-        {% include "layout/materialize_forms/errors.html" %}
+        {% include "materialize_forms/errors.html" %}
     {% endif %}
     {% for field in form %}
         {% include field_template %}
