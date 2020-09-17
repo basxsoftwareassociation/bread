@@ -1,0 +1,16 @@
+<!--
+  Copyright IBM Corp. 2016, 2018
+
+  This source code is licensed under the Apache-2.0 license found in the
+  LICENSE file in the root directory of this source tree.
+-->
+
+<nav class="{{ root.prefix }}--breadcrumb" aria-label="breadcrumb">
+  {% for items_i in items %}
+    <div class="{{ items_i.root,prefix }}--breadcrumb-item">
+      {% if items_i.label %}
+        <a href="#" class="{{ items_i.root,prefix }}--link">{{ items_i.label }}</a>
+      {% endif %}
+    </div>
+  {% endfor %}
+</nav>

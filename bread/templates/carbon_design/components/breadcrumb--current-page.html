@@ -1,0 +1,27 @@
+<nav class="{{ root.prefix }}--breadcrumb {{ root.prefix }}--breadcrumb--no-trailing-slash" aria-label="breadcrumb">
+  {% for items_i in items %}
+    <div class="{{ items_i.root,prefix }}--breadcrumb-item">
+      {% if items_i.label %}
+        <a
+          href="#"
+          class="{{ items_i.root,prefix }}--link"
+          {% if items_i.current %}aria-current="page"{% endif %}
+        >
+            {{ items_i.label }}
+        </a>
+      {% endif %}
+    </div>
+  {% endfor %}
+</nav>
+
+<nav class="{{ root.prefix }}--breadcrumb {{ root.prefix }}--breadcrumb--no-trailing-slash" aria-label="breadcrumb">
+  {% for items_i in items %}
+    <div class="{{ items_i.root,prefix }}--breadcrumb-item {% if items_i.current %}{{ items_i.root,prefix }}--breadcrumb-item--current{% endif %}">
+      {% if items_i.label %}
+        <a href="#" class="{{ items_i.root,prefix }}--link">
+          {{ items_i.label }}
+        </a>
+      {% endif %}
+    </div>
+  {% endfor %}
+</nav>

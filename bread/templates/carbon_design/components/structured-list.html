@@ -1,0 +1,42 @@
+<!-- 
+  Copyright IBM Corp. 2016, 2018
+
+  This source code is licensed under the Apache-2.0 license found in the
+  LICENSE file in the root directory of this source tree.
+-->
+
+<section class="{{ root.prefix }}--structured-list{% if selectable %} {{ root.prefix }}--structured-list--selection{% endif %}"{% if selectable %} data-structured-list{% endif %}>
+  <div class="{{ root.prefix }}--structured-list-thead">
+    <div class="{{ root.prefix }}--structured-list-row {{ root.prefix }}--structured-list-row--header-row">
+      {% for columns_i in columns %}
+        <div class="{{ columns_i.root,prefix }}--structured-list-th">{{ columns_i.title }}</div>
+      {% endfor %}
+      {% if selectable %}
+        <div class="{{ root.prefix }}--structured-list-th"></div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="{{ root.prefix }}--structured-list-tbody">
+    {% for row in rows %}
+      {% if selectable %}
+        <label for="{{ row.id }}" aria-label="{{ row.selectionLabel }}" class="{{ row.root,prefix }}--structured-list-row{% if row.selected %} {{ row.root,prefix }}--structured-list-row--selected{% endif %}" tabindex="0">
+      {% else %}
+        <div class="{{ row.root,prefix }}--structured-list-row">
+      {% endif %}
+        {% for column in columns %}
+          {{# with }}
+            <div class="{{ column.root,prefix }}--structured-list-td{% if column.nowrap %} {{ column.root,prefix }}--structured-list-content--nowrap{% endif %}">{{ column.data }}</div>
+          {{/with}}
+        {% endfor %}
+      {% if selectable %}
+          <input tabindex="-1" id="{{ row.id }}" class="{{ row.root,prefix }}--structured-list-input" value="{{ row.value }}" type="radio" name="{{ group }}" title="{{ row.selectionLabel }}"{% if row.selected %} checked{% endif %} />
+          <div class="{{ row.root,prefix }}--structured-list-td">
+            {{ row.carbon-icon }}
+          </div>
+        </label>
+      {% else %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>

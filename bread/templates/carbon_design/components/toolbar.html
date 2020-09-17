@@ -1,0 +1,54 @@
+<!-- 
+  Copyright IBM Corp. 2016, 2018
+
+  This source code is licensed under the Apache-2.0 license found in the
+  LICENSE file in the root directory of this source tree.
+-->
+
+<div class="{{ root.prefix }}--toolbar" data-toolbar>
+  <div class="{{ root.prefix }}--search {{ root.prefix }}--search--sm {{ root.prefix }}--toolbar-search" role="search" data-search data-toolbar-search>
+    <label for="search__input" class="{{ root.prefix }}--label">Search</label>
+    <input type="text" class="{{ root.prefix }}--search-input" id="search__input" placeholder="Search">
+    <button class="{{ root.prefix }}--toolbar-search__btn" aria-label="Toolbar search">
+      {{ carbon-icon }}
+    </button>
+    <button class="{{ root.prefix }}--search-close {{ root.prefix }}--search-close--hidden" title="Clear search
+        input" aria-label="Clear search input">
+      {{ carbon-icon }}
+    </button>
+  </div>
+  <div data-overflow-menu class="{{ root.prefix }}--overflow-menu" tabindex="0" aria-label="List of options">
+    {{ carbon-icon }}
+    <ul class="{{ root.prefix }}--overflow-menu-options">
+      <li class="{{ root.prefix }}--toolbar-menu__title">FILTER BY</li>
+      {% for filterOptions_i in filterOptions %}
+        <li class="{{ filterOptions_i.root,prefix }}--toolbar-menu__option">
+          <input id="{{ filterOptions_i.id }}" class="{{ filterOptions_i.root,prefix }}--checkbox" type="checkbox" value="{{ filterOptions_i.value }}" name="checkbox"{% if filterOptions_i.primaryFocus %} data-floating-menu-primary-focus{% endif %}>
+          <label for="{{ filterOptions_i.id }}" class="{{ filterOptions_i.root,prefix }}--checkbox-label">{{ filterOptions_i.label }}</label>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div data-overflow-menu class="{{ root.prefix }}--overflow-menu" tabindex="0" aria-label="List of options">
+    {{ carbon-icon }}
+    <ul class="{{ root.prefix }}--overflow-menu-options">
+      <li class="{{ root.prefix }}--overflow-menu-options__option">
+        <button type="button" class="{{ root.prefix }}--overflow-menu-options__btn">Refresh table</button>
+      </li>
+      <hr class="{{ root.prefix }}--toolbar-menu__divider" />
+      <li class="{{ root.prefix }}--toolbar-menu__title">ROW HEIGHT</li>
+      <fieldset data-row-height class="{{ root.prefix }}--radio-button-group">
+        <legend class="{{ root.prefix }}--visually-hidden">Select table row height</legend>
+        {% for rowHeightOptions_i in rowHeightOptions %}
+          <li class="{{ rowHeightOptions_i.root,prefix }}--toolbar-menu__option">
+            <input id="{{ rowHeightOptions_i.id }}" class="{{ rowHeightOptions_i.root,prefix }}--radio-button" type="radio" value="{{ rowHeightOptions_i.value }}" name="radio"{% if rowHeightOptions_i.selected %} checked{% endif %}{% if rowHeightOptions_i.primaryFocus %} data-floating-menu-primary-focus{% endif %}>
+            <label for="{{ rowHeightOptions_i.id }}" class="{{ rowHeightOptions_i.root,prefix }}--radio-button__label">
+              <span class="{{ rowHeightOptions_i.root,prefix }}--radio-button__appearance"></span>
+              {{ rowHeightOptions_i.label }}
+            </label>
+          </li>
+        {% endfor %}
+      </fieldset>
+    </ul>
+  </div>
+</div>

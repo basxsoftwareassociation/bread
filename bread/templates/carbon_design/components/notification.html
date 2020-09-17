@@ -1,0 +1,61 @@
+<!--
+  Copyright IBM Corp. 2016, 2018
+
+  This source code is licensed under the Apache-2.0 license found in the
+  LICENSE file in the root directory of this source tree.
+-->
+
+{% for items_i in items %}
+<div data-notification
+  class="{{ items_i.root,prefix }}--{{ variant }}-notification {{ items_i.root,prefix }}--{{ variant }}-notification--{{ items_i.type }}{% if lowContrast %} {{ items_i.root,prefix }}--{{ variant }}-notification--low-contrast{% endif %}"
+  role="alert">
+  {{# is }}
+  {{# is }}
+  {{ items_i.carbon-icon }}
+  {{/is}}
+  {{# is }}
+  {{ items_i.carbon-icon }}
+  {{/is}}
+  {{# is }}
+  {{ items_i.carbon-icon }}
+  {{/is}}
+  {{# is }}
+  {{ items_i.carbon-icon }}
+  {{/is}}
+  {{/is}}
+  <div class="{{ items_i.root,prefix }}--{{ variant }}-notification__details">
+    {{# is }}
+    {{# is }}
+    {{ items_i.carbon-icon }}
+    {{/is}}
+    {{# is }}
+    {{ items_i.carbon-icon }}
+    {{/is}}
+    {{# is }}
+    {{ items_i.carbon-icon }}
+    {{/is}}
+    {{# is }}
+    {{ items_i.carbon-icon }}
+    {{/is}}
+    <div class="{{ items_i.root,prefix }}--{{ variant }}-notification__text-wrapper">
+      <p class="{{ items_i.root,prefix }}--{{ variant }}-notification__title">{{ items_i.title }}</p>
+      <p class="{{ items_i.root,prefix }}--{{ variant }}-notification__subtitle">{{ items_i.subtitle }}</p>
+    </div>
+    {{/is}}
+    {{# is }}
+    <h3 class="{{ items_i.root,prefix }}--{{ variant }}-notification__title">{{ items_i.title }}</h3>
+    <p class="{{ items_i.root,prefix }}--{{ variant }}-notification__subtitle">{{ items_i.subtitle }}</p>
+    <p class="{{ items_i.root,prefix }}--{{ variant }}-notification__caption">{{ items_i.timestamp }}</p>
+    {{/is}}
+  </div>
+  {{# is }}
+  <button tabindex="0"
+    class="{{ items_i.root,prefix }}--inline-notification__action-button {{ items_i.root,prefix }}--btn {{ items_i.root,prefix }}--btn--sm {{ items_i.root,prefix }}--btn--ghost"
+    type="button">Action</button>
+  {{/is}}
+  <button data-notification-btn class="{{ items_i.root,prefix }}--{{ variant }}-notification__close-button" type="button"
+    aria-label="close">
+    {{ items_i.carbon-icon }}
+  </button>
+</div>
+{% endfor %}

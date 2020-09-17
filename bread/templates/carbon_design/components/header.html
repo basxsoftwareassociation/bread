@@ -1,0 +1,34 @@
+<!-- 
+  Copyright IBM Corp. 2016, 2018
+
+  This source code is licensed under the Apache-2.0 license found in the
+  LICENSE file in the root directory of this source tree.
+-->
+
+<header class="{{ root.prefix }}--header" role="banner" aria-label="IBM Platform Name" data-header>
+  <a class="{{ root.prefix }}--skip-to-content" href="#main-content" tabindex="0">Skip to main content</a>
+  <button class="{{ root.prefix }}--header__menu-trigger {{ root.prefix }}--header__action" aria-label="Open menu" title="Open menu"
+    data-navigation-menu-panel-label-expand="Open menu" data-navigation-menu-panel-label-collapse="Close menu"
+    data-navigation-menu-target="#navigation-menu-{{ navigationMenu.idSuffix }}">
+    {{ carbon-icon }}
+    {{ carbon-icon }}
+  </button>
+  <a class="{{ root.prefix }}--header__name" href="javascript:void(0)" title="{{ header.name }}">
+    <span class="bx--header__name--prefix">
+      {{ header.company }}
+      &nbsp;
+    </span>
+    {{ header.platform }}
+  </a>
+  {% include "header-nav.html" %}
+  <div class="{{ root.prefix }}--header__global">
+    {% for actions_i in header.actions %}
+    <button class="{{ actions_i.root,prefix }}--header__menu-trigger {{ actions_i.root,prefix }}--header__action" aria-label="{{ actions_i.title }}"
+      title="{{ actions_i.title }}" data-navigation-menu-panel-label-expand="{{ actions_i.title }}"
+      data-navigation-menu-panel-label-collapse="Close menu" data-product-switcher-target="#switcher-{{ actions_i.switcher,idSuffix }}">
+      {{ actions_i.carbon-icon }}
+      {{ actions_i.carbon-icon }}
+    </button>
+    {% endfor %}
+  </div>
+</header>

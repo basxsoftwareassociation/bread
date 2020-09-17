@@ -1,0 +1,267 @@
+<!--
+  Copyright IBM Corp. 2016, 2018
+
+  This source code is licensed under the Apache-2.0 license found in the
+  LICENSE file in the root directory of this source tree.
+-->
+
+<div class="{{ root.prefix }}--form-item">
+  <div class="{{ root.prefix }}--list-box__wrapper{% if inline %} {{ root.prefix }}--list-box__wrapper--inline{% endif %}">
+    <label class="{{ root.prefix }}--label">Combo box label</label>
+    <div
+      class="{{ root.prefix }}--combo-box {{ root.prefix }}--list-box{% if inline %} {{ root.prefix }}--list-box--inline{% endif %}{% if light %} {{ root.prefix }}--list-box--light{% endif %}">
+      <div role="combobox" class="{{ root.prefix }}--list-box__field" aria-label="open menu" aria-expanded="false"
+        aria-haspopup="listbox">
+        <input class="{{ root.prefix }}--text-input" aria-autocomplete="list" aria-expanded="false" autocomplete="off"
+          value="" id="downshift-input-2" placeholder="Filter..." aria-label="Filter...">
+        <div class="{{ root.prefix }}--list-box__menu-icon">
+          {{ carbon-icon }}
+        </div>
+      </div>
+    </div>
+    {{# unless }}
+    <div class="{{ root.prefix }}--form__helper-text">Optional helper text here</div>
+    {{/unless}}
+  </div>
+</div>
+
+<div class="{{ root.prefix }}--form-item">
+  <div class="{{ root.prefix }}--list-box__wrapper{% if inline %} {{ root.prefix }}--list-box__wrapper--inline{% endif %}">
+    <label class="{{ root.prefix }}--label">Combo box label</label>
+    <div
+      class="{{ root.prefix }}--combo-box {{ root.prefix }}--list-box{% if inline %} {{ root.prefix }}--list-box--inline{% endif %}{% if light %} {{ root.prefix }}--list-box--light{% endif %}">
+      <div role="combobox" class="{{ root.prefix }}--list-box__field" aria-label="open menu" aria-expanded="false"
+        aria-haspopup="listbox">
+        <input class="{{ root.prefix }}--text-input" aria-autocomplete="list" aria-expanded="false" autocomplete="off"
+          value="This is not a value." id="downshift-input-2" placeholder="Filter..." aria-label="Filter...">
+        <div class="{{ root.prefix }}--list-box__selection" role="button">
+          {{ carbon-icon }}
+        </div>
+        <div class="{{ root.prefix }}--list-box__menu-icon">
+          {{ carbon-icon }}
+        </div>
+      </div>
+    </div>
+    {{# unless }}
+    <div class="{{ root.prefix }}--form__helper-text">Optional helper text here</div>
+    {{/unless}}
+  </div>
+</div>
+
+<div class="{{ root.prefix }}--form-item">
+  <div class="{{ root.prefix }}--list-box__wrapper {% if inline %}{{ root.prefix }}--list-box__wrapper--inline{% endif %}">
+    <label class="{{ root.prefix }}--label">Combo box label</label>
+    <div
+      class="{{ root.prefix }}--combo-box {{ root.prefix }}--list-box{% if inline %} {{ root.prefix }}--list-box--inline{% endif %}{% if light %} {{ root.prefix }}--list-box--light{% endif %}"
+      data-invalid>
+      <div role="combobox" class="{{ root.prefix }}--list-box__field" aria-label="open menu" aria-expanded="false"
+        aria-haspopup="listbox">
+        <input class="{{ root.prefix }}--text-input" aria-autocomplete="list" aria-expanded="false" autocomplete="off"
+          value="" id="downshift-input-2" placeholder="Filter..." aria-label="Filter...">
+        {{ carbon-icon }}
+        <div class="{{ root.prefix }}--list-box__menu-icon">
+          {{ carbon-icon }}
+        </div>
+      </div>
+    </div>
+    <div class="{{ root.prefix }}--form-requirement">
+      Validation message here
+    </div>
+  </div>
+</div>
+
+<div class="{{ root.prefix }}--form-item">
+  <div class="{{ root.prefix }}--list-box__wrapper {% if inline %}{{ root.prefix }}--list-box__wrapper--inline{% endif %}">
+    <label class="{{ root.prefix }}--label">Combo box label</label>
+    <div
+      class="{{ root.prefix }}--combo-box {{ root.prefix }}--list-box{% if inline %} {{ root.prefix }}--list-box--inline{% endif %}{% if light %} {{ root.prefix }}--list-box--light{% endif %}"
+      data-invalid>
+      <div role="combobox" class="{{ root.prefix }}--list-box__field" aria-label="open menu" aria-expanded="false"
+        aria-haspopup="listbox">
+        <input class="{{ root.prefix }}--text-input" aria-autocomplete="list" aria-expanded="false" autocomplete="off"
+          value="This is not a value." id="downshift-input-2" placeholder="Filter..." aria-label="Filter...">
+        {{ carbon-icon }}
+        <div class="{{ root.prefix }}--list-box__selection" role="button">
+          {{ carbon-icon }}
+        </div>
+        <div class="{{ root.prefix }}--list-box__menu-icon">
+          {{ carbon-icon }}
+        </div>
+      </div>
+    </div>
+    <div class="{{ root.prefix }}--form-requirement">
+      Validation message here
+    </div>
+  </div>
+</div>
+
+<div class="{{ root.prefix }}--form-item">
+  <div class="{{ root.prefix }}--list-box__wrapper {% if inline %}{{ root.prefix }}--list-box__wrapper--inline{% endif %}">
+    <label class="{{ root.prefix }}--label {{ root.prefix }}--label--disabled">Combo box label</label>
+    <div
+      class="{{ root.prefix }}--combo-box {{ root.prefix }}--list-box {{ root.prefix }}--list-box--disabled{% if inline %} {{ root.prefix }}--list-box--inline{% endif %}{% if light %} {{ root.prefix }}--list-box--light{% endif %}"
+      data-invalid>
+      <div role="combobox" class="{{ root.prefix }}--list-box__field" aria-label="open menu" aria-expanded="false"
+        aria-haspopup="true" disabled>
+        <input class="{{ root.prefix }}--text-input" aria-autocomplete="list" aria-expanded="false" autocomplete="off"
+          value="" id="downshift-input-2" placeholder="Filter..." disabled>
+        {{ carbon-icon }}
+        <div class="{{ root.prefix }}--list-box__menu-icon">
+          {{ carbon-icon }}
+        </div>
+      </div>
+    </div>
+    <div class="{{ root.prefix }}--form-requirement">
+      Validation message here
+    </div>
+  </div>
+</div>
+
+<div class="{{ root.prefix }}--form-item">
+  <div class="{{ root.prefix }}--list-box__wrapper {% if inline %}{{ root.prefix }}--list-box__wrapper--inline{% endif %}">
+    <label class="{{ root.prefix }}--label {{ root.prefix }}--label--disabled">Combo box label</label>
+    <div
+      class="{{ root.prefix }}--combo-box {{ root.prefix }}--list-box {{ root.prefix }}--list-box--disabled{% if inline %} {{ root.prefix }}--list-box--inline{% endif %}{% if light %} {{ root.prefix }}--list-box--light{% endif %}"
+      data-invalid>
+      <div role="combobox" class="{{ root.prefix }}--list-box__field" aria-label="open menu" aria-expanded="false"
+        aria-haspopup="true" disabled>
+        <input class="{{ root.prefix }}--text-input" aria-autocomplete="list" aria-expanded="false" autocomplete="off"
+          value="This is not a value" id="downshift-input-2" placeholder="Filter..." disabled>
+        {{ carbon-icon }}
+        <div class="{{ root.prefix }}--list-box__selection" role="button">
+          {{ carbon-icon }}
+        </div>
+        <div class="{{ root.prefix }}--list-box__menu-icon">
+          {{ carbon-icon }}
+        </div>
+      </div>
+    </div>
+    <div class="{{ root.prefix }}--form-requirement">
+      Validation message here
+    </div>
+  </div>
+</div>
+
+<div class="{{ root.prefix }}--form-item">
+  <div class="{{ root.prefix }}--list-box__wrapper {% if inline %}{{ root.prefix }}--list-box__wrapper--inline{% endif %}">
+    <label class="{{ root.prefix }}--label {{ root.prefix }}--label--disabled">Combo box label</label>
+    <div
+      class="{{ root.prefix }}--combo-box {{ root.prefix }}--list-box {{ root.prefix }}--list-box--disabled{% if inline %} {{ root.prefix }}--list-box--inline{% endif %}{% if light %} {{ root.prefix }}--list-box--light{% endif %}">
+      <div role="combobox" class="{{ root.prefix }}--list-box__field" aria-label="open menu" aria-expanded="false"
+        aria-haspopup="true" disabled>
+        <input class="{{ root.prefix }}--text-input" aria-autocomplete="list" aria-expanded="false" autocomplete="off"
+          value="" id="downshift-input-2" placeholder="Filter..." disabled>
+        <div class="{{ root.prefix }}--list-box__menu-icon">
+          {{ carbon-icon }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="{{ root.prefix }}--form-item">
+  <div class="{{ root.prefix }}--list-box__wrapper {% if inline %}{{ root.prefix }}--list-box__wrapper--inline{% endif %}">
+    <label class="{{ root.prefix }}--label">Combo box label</label>
+    <div
+      class="{{ root.prefix }}--combo-box {{ root.prefix }}--list-box {{ root.prefix }}--list-box--expanded{% if inline %} {{ root.prefix }}--list-box--inline{% endif %}{% if light %} {{ root.prefix }}--list-box--light{% endif %}">
+      <div role="combobox" class="{{ root.prefix }}--list-box__field" aria-label="close menu" aria-expanded="true"
+        aria-haspopup="listbox">
+        <input class="{{ root.prefix }}--text-input" aria-autocomplete="list" aria-expanded="false" autocomplete="off"
+          value="" id="downshift-input-2" placeholder="Filter..." aria-label="Filter..." aria-owns="list-box__menu-0">
+        <div class="{{ root.prefix }}--list-box__menu-icon {{ root.prefix }}--list-box__menu-icon--open">
+          {{ carbon-icon }}
+        </div>
+      </div>
+      <ul class="{{ root.prefix }}--list-box__menu" role="listbox" id="list-box__menu-0" aria-label="Filter...">
+        {% for items_i in items %}
+        <li
+          class="{{ items_i.root,prefix }}--list-box__menu-item{% if items_i.selected %} {{ items_i.root,prefix }}--list-box__menu-item--highlighted{% endif %}"
+          id="{{ items_i.id }}">
+          <div class="{{ items_i.root,prefix }}--list-box__menu-item__option" tabindex="0">
+            {{ items_i.label }}
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {{# unless }}
+    <div class="{{ root.prefix }}--form__helper-text">Optional helper text
+      here
+    </div>
+    {{/unless}}
+  </div>
+</div>
+
+<div class="{{ root.prefix }}--form-item">
+  <div class="{{ root.prefix }}--list-box__wrapper {% if inline %}{{ root.prefix }}--list-box__wrapper--inline{% endif %}">
+    <label class="{{ root.prefix }}--label">Combo box label</label>
+    <div
+      class="{{ root.prefix }}--combo-box {{ root.prefix }}--list-box {{ root.prefix }}--list-box--expanded{% if inline %} {{ root.prefix }}--list-box--inline{% endif %}{% if light %} {{ root.prefix }}--list-box--light{% endif %}">
+      <div role="combobox" class="{{ root.prefix }}--list-box__field" aria-label="close menu" aria-expanded="true"
+        aria-haspopup="listbox">
+        <input class="{{ root.prefix }}--text-input" aria-autocomplete="list" aria-expanded="false" autocomplete="off"
+          value="Option 3" id="downshift-input-2" placeholder="Filter..." aria-label="Filter..."
+          aria-owns="list-box__menu-1">
+        <div role="button" class="{{ root.prefix }}--list-box__selection" title="Clear selected item">
+          {{ carbon-icon }}
+        </div>
+        <div class="{{ root.prefix }}--list-box__menu-icon {{ root.prefix }}--list-box__menu-icon--open">
+          {{ carbon-icon }}
+        </div>
+      </div>
+      <ul class="{{ root.prefix }}--list-box__menu" role="listbox" id="list-box__menu-1" aria-label="Filter...">
+        {% for items_i in items %}
+        <li
+          class="{{ items_i.root,prefix }}--list-box__menu-item{% if items_i.selected %} {{ items_i.root,prefix }}--list-box__menu-item--highlighted{% endif %}"
+          id="{{ items_i.id }}">
+          <div class="{{ items_i.root,prefix }}--list-box__menu-item__option" tabindex="0">
+            {{ items_i.label }}
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {{# unless }}
+    <div class="{{ root.prefix }}--form__helper-text">Optional helper text
+      here
+    </div>
+    {{/unless}}
+  </div>
+</div>
+
+<div class="{{ root.prefix }}--form-item">
+  <div class="{{ root.prefix }}--list-box__wrapper {% if inline %}{{ root.prefix }}--list-box__wrapper--inline{% endif %}">
+    <label class="{{ root.prefix }}--label">Combo box label</label>
+    <div
+      class="{{ root.prefix }}--combo-box {{ root.prefix }}--list-box{% if inline %} {{ root.prefix }}--list-box--inline{% endif %}{% if light %} {{ root.prefix }}--list-box--light{% endif %}"
+      data-invalid>
+      <div role="combobox" class="{{ root.prefix }}--list-box__field" aria-label="open menu" aria-expanded="false"
+        aria-haspopup="listbox">
+        <input class="{{ root.prefix }}--text-input" aria-autocomplete="list" aria-expanded="false" autocomplete="off"
+          value="Option 3" id="downshift-input-2" placeholder="Filter..." aria-label="Filter..."
+          aria-owns="list-box__menu-2">
+        {{ carbon-icon }}
+        <div role="button" class="{{ root.prefix }}--list-box__selection" title="Clear selected item">
+          {{ carbon-icon }}
+        </div>
+        <div class="{{ root.prefix }}--list-box__menu-icon {{ root.prefix }}--list-box__menu-icon--open">
+          {{ carbon-icon }}
+        </div>
+      </div>
+      <ul class="{{ root.prefix }}--list-box__menu" role="listbox" id="list-box__menu-2" aria-label="Filter...">
+        {% for items_i in items %}
+        <li
+          class="{{ items_i.root,prefix }}--list-box__menu-item{% if items_i.selected %} {{ items_i.root,prefix }}--list-box__menu-item--highlighted{% endif %}"
+          id="{{ items_i.id }}">
+          <div class="{{ items_i.root,prefix }}--list-box__menu-item__option" tabindex="0">
+            {{ items_i.label }}
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="{{ root.prefix }}--form-requirement">
+      Validation message here
+    </div>
+  </div>
+</div>

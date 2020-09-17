@@ -1,0 +1,92 @@
+<!--
+  Copyright IBM Corp. 2016, 2018
+
+  This source code is licensed under the Apache-2.0 license found in the
+  LICENSE file in the root directory of this source tree.
+-->
+
+<div class="{{ root.prefix }}--form-item">
+  <div
+    class="{{ root.prefix }}--select{% if inline %} {{ root.prefix }}--select--inline{% endif %}{% if light %} {{ root.prefix }}--select--light{% endif %}{% if invalid %} {{ root.prefix }}--select--invalid{% endif %}">
+    <label for="select-id" class="{{ root.prefix }}--label">Select label</label>
+    {% if inline %}
+    <div class="{{ root.prefix }}--select-input--inline__wrapper">
+      {% endif %}
+      <div class="{{ root.prefix }}--select-input__wrapper" {% if invalid %}data-invalid{% endif %}>
+        <select id="select-id" class="{{ root.prefix }}--select-input">
+          {% for items_i in items %}
+          {% if items_i.items %}
+          <optgroup class="{{ items_i.root,prefix }}--select-optgroup" label="{{ items_i.label }}">
+            {% for items_i in items_i.items %}
+            <option class="{{ items_i.root,prefix }}--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>
+              {{ items_i.label }}
+            </option>
+            {% endfor %}
+          </optgroup>
+          {% else %}
+          <option class="{{ items_i.root,prefix }}--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>
+            {{ items_i.label }}
+          </option>
+          {% endif %}
+          {% endfor %}
+        </select>
+        {{ carbon-icon }}
+        {% if invalid %}
+        {{ carbon-icon }}
+        {% endif %}
+      </div>
+      {% if invalid %}
+      <div class="{{ root.prefix }}--form-requirement">
+        Validation message here
+      </div>
+      {% endif %}
+      {{# unless }}
+      {% if helperText %}
+      <div class="{{ root.prefix }}--form__helper-text">Optional helper text.</div>
+      {% endif %}
+      {{/unless}}
+    </div>
+    {% if inline %}
+    {% if helperText %}
+    <div class="{{ root.prefix }}--form__helper-text">Optional helper text.</div>
+    {% endif %}
+    {% endif %}
+  </div>
+</div>
+
+<div class="{{ root.prefix }}--form-item">
+  <div
+    class="{{ root.prefix }}--select{% if inline %} {{ root.prefix }}--select--inline{% endif %}{% if light %} {{ root.prefix }}--select--light{% endif %}{% if invalid %} {{ root.prefix }}--select--invalid{% endif %} {{ root.prefix }}--select--disabled">
+    <label for="select-id-disabled" class="{{ root.prefix }}--label {{ root.prefix }}--label--disabled">Select
+      label</label>
+    {% if inline %}
+    <div class="{{ root.prefix }}--select-input--inline__wrapper">
+      {% endif %}
+      <div class="{{ root.prefix }}--select-input__wrapper" {% if invalid %}data-invalid{% endif %}>
+        <select id="select-id-disabled" class="{{ root.prefix }}--select-input" disabled>
+          {% for items_i in items %}
+          {% if items_i.items %}
+          <optgroup class="{{ items_i.root,prefix }}--select-optgroup" label="{{ items_i.label }}">
+            {% for items_i in items_i.items %}
+            <option class="{{ items_i.root,prefix }}--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>{{ items_i.label }} </option> {% endfor %} </optgroup> {% else %}
+          <option class="{{ items_i.root,prefix }}--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>{{ items_i.label }} </option> {% endif %} {% endfor %} </select>
+        {{ carbon-icon }}
+      </div>
+      {% if invalid %}
+      <div class="{{ root.prefix }}--form-requirement">
+        Validation message here
+      </div>
+      {% endif %}
+      {{# unless }}
+      {% if helperText %}
+      <div class="{{ root.prefix }}--form__helper-text">Optional helper text.</div>
+      {% endif %}
+      {{/unless}}
+    </div>
+    {% if inline %}
+    {% if helperText %}
+    <div class="{{ root.prefix }}--form__helper-text">Optional helper text.</div>
+    {% endif %}
+    {% endif %}
+  </div>
+</div>

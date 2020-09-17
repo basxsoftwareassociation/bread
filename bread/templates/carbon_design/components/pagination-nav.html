@@ -1,0 +1,91 @@
+<!-- 
+  Copyright IBM Corp. 2016, 2018
+
+  This source code is licensed under the Apache-2.0 license found in the
+  LICENSE file in the root directory of this source tree.
+-->
+
+<nav class="{{ root.prefix }}--pagination-nav" aria-label="pagination" data-pagination-nav>
+  <ul class="{{ root.prefix }}--pagination-nav__list">
+    {% if showPagePrevious %}
+      <li class="{{ root.prefix }}--pagination-nav__list-item">
+        {{# unless }}
+          <button
+            class="{{ root.prefix }}--pagination-nav__page {{ root.prefix }}--pagination-nav__page--direction {% if showPagePrevious.disabled %} {{ root.prefix }}--pagination-nav__page--disabled{% endif %}"
+            data-page-previous
+            {% if showPagePrevious.disabled %}
+              aria-disabled="true"
+            {% endif %}
+          >
+        {{/unless}}
+          <span class="{{ root.prefix }}--pagination-nav__accessibility-label">Previous page </span>
+          {{ carbon-icon }}
+        {{# unless }}
+          </button>
+        {{/unless}}
+      </li>
+    {% endif %}
+    {% for pages_i in pages %}
+      <li class="{{ pages_i.root,prefix }}--pagination-nav__list-item">
+        {% if pages_i.select %}
+          <div class="{{ pages_i.root,prefix }}--pagination-nav__select">
+            <select
+              class="{{ pages_i.root,prefix }}--pagination-nav__page {{ pages_i.root,prefix }}--pagination-nav__page--select"
+              data-page-select
+              aria-label="select page number"
+            >
+              {% for select_i in pages_i.select %}
+                <option
+                  value="{{ select_i.value }}"
+                  {{# unless }}
+                    hidden
+                  {{/unless}}
+                >
+                  {{ select_i.page }}
+                </option>
+              {% endfor %}
+            </select>
+            <div class="{{ pages_i.root,prefix }}--pagination-nav__select-icon-wrapper">
+              {{ pages_i.carbon-icon }}
+            </div>
+          </div>
+        {% else %}
+          {{# unless }}
+            <button
+              class="{{ pages_i.root,prefix }}--pagination-nav__page{% if pages_i.active %} {{ pages_i.root,prefix }}--pagination-nav__page--active {{ pages_i.root,prefix }}--pagination-nav__page--disabled{% endif %}"
+              data-page="{{ pages_i.page }}"
+              data-page-button
+              {% if pages_i.active %}
+                data-page-active="true"
+                aria-current="page"
+                aria-disabled="true"
+              {% endif %}
+            >
+          {{/unless}}
+            <span class="{{ pages_i.root,prefix }}--pagination-nav__accessibility-label">page </span>{{ pages_i.page }}
+          {{# unless }}
+            </button>
+          {{/unless}}
+        {% endif %}
+      </li>
+    {% endfor %}
+    {% if showPageNext %}
+      <li class="{{ root.prefix }}--pagination-nav__list-item">
+        {{# unless }}
+          <button
+            class="{{ root.prefix }}--pagination-nav__page {{ root.prefix }}--pagination-nav__page--direction{% if showPageNext.disabled %} {{ root.prefix }}--pagination-nav__page--is-disabled{% endif %}"
+            data-page-next
+            {% if showPageNext.disabled %}
+              aria-disabled="true"
+            {% endif %}
+          >
+        {{/unless}}
+          <span class="{{ root.prefix }}--pagination-nav__accessibility-label">Next page </span>
+          {{ carbon-icon }}
+        {{# unless }}
+          </button>
+        {{/unless}}
+      </li>
+    {% endif %}
+  </ul>
+</nav>

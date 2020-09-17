@@ -1,0 +1,18 @@
+<!--
+  Copyright IBM Corp. 2016, 2018
+
+  This source code is licensed under the Apache-2.0 license found in the
+  LICENSE file in the root directory of this source tree.
+-->
+
+<div data-content-switcher class="{{ root.prefix }}--content-switcher" role="tablist" aria-label="Demo switch content">
+  {% for items_i in items %}
+  <button class="{{ items_i.root,prefix }}--content-switcher-btn{% if items_i.selected %} {{ items_i.root,prefix }}--content-switcher--selected{% endif %}"
+    data-target="{{ items_i.target }}" role="tab" {% if items_i.selected %} aria-selected="true" {% endif %} {% if items_i.disabled %} disabled {% endif %}>
+    {% if hasIcon %}
+      {{ items_i.carbon-icon }}
+    {% endif %}
+    {% if items_i.label %}<span class={{ items_i.root,prefix }}--content-switcher__label>{{ items_i.label }}</span>{% endif %}
+  </button>
+  {% endfor %}
+</div>
