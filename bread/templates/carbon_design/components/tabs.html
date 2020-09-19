@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!--
   Copyright IBM Corp. 2016, 2018
 
@@ -5,25 +6,25 @@
   LICENSE file in the root directory of this source tree.
 -->
 
-<div data-tabs class="{{ root.prefix }}--tabs{% if container %} {{ root.prefix }}--tabs--container{% endif %}">
-  <div class="{{ root.prefix }}--tabs-trigger" tabindex="0">
-    <a href="javascript:void(0)" class="{{ root.prefix }}--tabs-trigger-text" tabindex="-1"></a>
-    {{ carbon-icon }}
+<div data-tabs class="bx--tabs{% if container %} bx--tabs--container{% endif %}">
+  <div class="bx--tabs-trigger" tabindex="0">
+    <a href="javascript:void(0)" class="bx--tabs-trigger-text" tabindex="-1"></a>
+    {% carbon_icon "?" %}
   </div>
-  <ul class="{{ root.prefix }}--tabs__nav {{ root.prefix }}--tabs__nav--hidden" role="tablist">
+  <ul class="bx--tabs__nav bx--tabs__nav--hidden" role="tablist">
     {% for items_i in items %}
     <li
-      class="{{ items_i.root,prefix }}--tabs__nav-item{% if items_i.selected %} {{ items_i.root,prefix }}--tabs__nav-item--selected{% endif %} {% if items_i.disabled %} {{ items_i.root,prefix }}--tabs__nav-item--disabled {% endif %}"
+      class="bx--tabs__nav-item{% if items_i.selected %} bx--tabs__nav-item--selected{% endif %} {% if items_i.disabled %} bx--tabs__nav-item--disabled {% endif %}"
       data-target=".{{ items_i.panelClass }}" role="tab" {% if items_i.selected %} aria-selected="true" {% endif %} {% if items_i.disabled %}
       aria-disabled="true" {% endif %}>
-      <a tabindex="0" id="{{ items_i.linkId }}" class="{{ items_i.root,prefix }}--tabs__nav-link" href="javascript:void(0)" role="tab"
+      <a tabindex="0" id="{{ items_i.linkId }}" class="bx--tabs__nav-link" href="javascript:void(0)" role="tab"
         aria-controls="{{ items_i.panelId }}">{{ items_i.label }}</a>
     </li>
     {% endfor %}
   </ul>
 </div>
 <!-- The markup below is for demonstration purposes only -->
-<div class="{{ root.prefix }}--tab-content">
+<div class="bx--tab-content">
   {% for items_i in items %}
   <div id="{{ items_i.panelId }}" class="{{ items_i.panelClass }}" role="tabpanel" aria-labelledby="{{ items_i.linkId }}"
     aria-hidden="{{ items_i.not }}" {% if undefined %} hidden{% endif %}>

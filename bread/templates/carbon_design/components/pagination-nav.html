@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!-- 
   Copyright IBM Corp. 2016, 2018
 
@@ -5,54 +6,54 @@
   LICENSE file in the root directory of this source tree.
 -->
 
-<nav class="{{ root.prefix }}--pagination-nav" aria-label="pagination" data-pagination-nav>
-  <ul class="{{ root.prefix }}--pagination-nav__list">
+<nav class="bx--pagination-nav" aria-label="pagination" data-pagination-nav>
+  <ul class="bx--pagination-nav__list">
     {% if showPagePrevious %}
-      <li class="{{ root.prefix }}--pagination-nav__list-item">
-        {{# unless }}
+      <li class="bx--pagination-nav__list-item">
+        {% if not elementAsAnchor %}
           <button
-            class="{{ root.prefix }}--pagination-nav__page {{ root.prefix }}--pagination-nav__page--direction {% if showPagePrevious.disabled %} {{ root.prefix }}--pagination-nav__page--disabled{% endif %}"
+            class="bx--pagination-nav__page bx--pagination-nav__page--direction {% if showPagePrevious.disabled %} bx--pagination-nav__page--disabled{% endif %}"
             data-page-previous
             {% if showPagePrevious.disabled %}
               aria-disabled="true"
             {% endif %}
           >
-        {{/unless}}
-          <span class="{{ root.prefix }}--pagination-nav__accessibility-label">Previous page </span>
-          {{ carbon-icon }}
-        {{# unless }}
+        {% endif %}
+          <span class="bx--pagination-nav__accessibility-label">Previous page </span>
+          {% carbon_icon "?" %}
+        {% if not elementAsAnchor %}
           </button>
-        {{/unless}}
+        {% endif %}
       </li>
     {% endif %}
     {% for pages_i in pages %}
-      <li class="{{ pages_i.root,prefix }}--pagination-nav__list-item">
+      <li class="bx--pagination-nav__list-item">
         {% if pages_i.select %}
-          <div class="{{ pages_i.root,prefix }}--pagination-nav__select">
+          <div class="bx--pagination-nav__select">
             <select
-              class="{{ pages_i.root,prefix }}--pagination-nav__page {{ pages_i.root,prefix }}--pagination-nav__page--select"
+              class="bx--pagination-nav__page bx--pagination-nav__page--select"
               data-page-select
               aria-label="select page number"
             >
               {% for select_i in pages_i.select %}
                 <option
                   value="{{ select_i.value }}"
-                  {{# unless }}
+                  {% if not select_i.value %}
                     hidden
-                  {{/unless}}
+                  {% endif %}
                 >
                   {{ select_i.page }}
                 </option>
               {% endfor %}
             </select>
-            <div class="{{ pages_i.root,prefix }}--pagination-nav__select-icon-wrapper">
-              {{ pages_i.carbon-icon }}
+            <div class="bx--pagination-nav__select-icon-wrapper">
+              {% carbon_icon "?" %}
             </div>
           </div>
         {% else %}
-          {{# unless }}
+          {% if not pages_i.root,elementAsAnchor %}
             <button
-              class="{{ pages_i.root,prefix }}--pagination-nav__page{% if pages_i.active %} {{ pages_i.root,prefix }}--pagination-nav__page--active {{ pages_i.root,prefix }}--pagination-nav__page--disabled{% endif %}"
+              class="bx--pagination-nav__page{% if pages_i.active %} bx--pagination-nav__page--active bx--pagination-nav__page--disabled{% endif %}"
               data-page="{{ pages_i.page }}"
               data-page-button
               {% if pages_i.active %}
@@ -61,30 +62,30 @@
                 aria-disabled="true"
               {% endif %}
             >
-          {{/unless}}
-            <span class="{{ pages_i.root,prefix }}--pagination-nav__accessibility-label">page </span>{{ pages_i.page }}
-          {{# unless }}
+          {% endif %}
+            <span class="bx--pagination-nav__accessibility-label">page </span>{{ pages_i.page }}
+          {% if not pages_i.root,elementAsAnchor %}
             </button>
-          {{/unless}}
+          {% endif %}
         {% endif %}
       </li>
     {% endfor %}
     {% if showPageNext %}
-      <li class="{{ root.prefix }}--pagination-nav__list-item">
-        {{# unless }}
+      <li class="bx--pagination-nav__list-item">
+        {% if not root.elementAsAnchor %}
           <button
-            class="{{ root.prefix }}--pagination-nav__page {{ root.prefix }}--pagination-nav__page--direction{% if showPageNext.disabled %} {{ root.prefix }}--pagination-nav__page--is-disabled{% endif %}"
+            class="bx--pagination-nav__page bx--pagination-nav__page--direction{% if showPageNext.disabled %} bx--pagination-nav__page--is-disabled{% endif %}"
             data-page-next
             {% if showPageNext.disabled %}
               aria-disabled="true"
             {% endif %}
           >
-        {{/unless}}
-          <span class="{{ root.prefix }}--pagination-nav__accessibility-label">Next page </span>
-          {{ carbon-icon }}
-        {{# unless }}
+        {% endif %}
+          <span class="bx--pagination-nav__accessibility-label">Next page </span>
+          {% carbon_icon "?" %}
+        {% if not root.elementAsAnchor %}
           </button>
-        {{/unless}}
+        {% endif %}
       </li>
     {% endif %}
   </ul>

@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!--
   Copyright IBM Corp. 2016, 2018
 
@@ -8,80 +9,80 @@
 <br>
 {# @todo Had to add a modifier to the parent to correct the animation but in the next major release it could be removed in favor of the new HTML format #}
 <button
-  class="{{ root.prefix }}--tooltip__trigger {{ root.prefix }}--tooltip--a11y {{ root.prefix }}--tooltip--left {{ root.prefix }}--tooltip--align-start"
+  class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--left bx--tooltip--align-start"
   data-tooltip-icon>
-  <span class="{{ root.prefix }}--assistive-text">Filter</span>
-  {{ carbon-icon }}
+  <span class="bx--assistive-text">Filter</span>
+  {% carbon_icon "?" %}
 </button>
 <button
-  class="{{ root.prefix }}--tooltip__trigger {{ root.prefix }}--tooltip--a11y {{ root.prefix }}--tooltip--top {{ root.prefix }}--tooltip--align-start"
+  class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--top bx--tooltip--align-start"
   data-tooltip-icon>
-  <span class="{{ root.prefix }}--assistive-text">Filter</span>
-  {{ carbon-icon }}
+  <span class="bx--assistive-text">Filter</span>
+  {% carbon_icon "?" %}
 </button>
 <button
-  class="{{ root.prefix }}--tooltip__trigger {{ root.prefix }}--tooltip--a11y {{ root.prefix }}--tooltip--bottom {{ root.prefix }}--tooltip--align-start"
+  class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-start"
   data-tooltip-icon>
-  <span class="{{ root.prefix }}--assistive-text">Filter</span>
-  {{ carbon-icon }}
+  <span class="bx--assistive-text">Filter</span>
+  {% carbon_icon "?" %}
 </button>
 <button
-  class="{{ root.prefix }}--tooltip__trigger {{ root.prefix }}--tooltip--a11y {{ root.prefix }}--tooltip--right {{ root.prefix }}--tooltip--align-start"
+  class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--right bx--tooltip--align-start"
   data-tooltip-icon>
-  <span class="{{ root.prefix }}--assistive-text">Filter</span>
-  {{ carbon-icon }}
+  <span class="bx--assistive-text">Filter</span>
+  {% carbon_icon "?" %}
 </button>
 <br>
 <br>
 <p>center</p>
 <br>
-<button class="{{ root.prefix }}--tooltip__trigger {{ root.prefix }}--tooltip--a11y {{ root.prefix }}--tooltip--left"
+<button class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--left"
   data-tooltip-icon>
-  <span class="{{ root.prefix }}--assistive-text">Filter</span>
-  {{ carbon-icon }}
+  <span class="bx--assistive-text">Filter</span>
+  {% carbon_icon "?" %}
 </button>
-<button class="{{ root.prefix }}--tooltip__trigger {{ root.prefix }}--tooltip--a11y {{ root.prefix }}--tooltip--top"
+<button class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--top"
   data-tooltip-icon>
-  <span class="{{ root.prefix }}--assistive-text">Filter</span>
-  {{ carbon-icon }}
+  <span class="bx--assistive-text">Filter</span>
+  {% carbon_icon "?" %}
 </button>
-<button class="{{ root.prefix }}--tooltip__trigger {{ root.prefix }}--tooltip--a11y {{ root.prefix }}--tooltip--bottom"
+<button class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom"
   data-tooltip-icon>
-  <span class="{{ root.prefix }}--assistive-text">Filter</span>
-  {{ carbon-icon }}
+  <span class="bx--assistive-text">Filter</span>
+  {% carbon_icon "?" %}
 </button>
-<button class="{{ root.prefix }}--tooltip__trigger {{ root.prefix }}--tooltip--a11y {{ root.prefix }}--tooltip--right"
+<button class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--right"
   data-tooltip-icon>
-  <span class="{{ root.prefix }}--assistive-text">Filter</span>
-  {{ carbon-icon }}
+  <span class="bx--assistive-text">Filter</span>
+  {% carbon_icon "?" %}
 </button>
 <br>
 <br>
 <p>end</p>
 <br>
 <button
-  class="{{ root.prefix }}--tooltip__trigger {{ root.prefix }}--tooltip--a11y {{ root.prefix }}--tooltip--left {{ root.prefix }}--tooltip--align-end"
+  class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--left bx--tooltip--align-end"
   data-tooltip-icon>
-  <span class="{{ root.prefix }}--assistive-text">Filter</span>
-  {{ carbon-icon }}
+  <span class="bx--assistive-text">Filter</span>
+  {% carbon_icon "?" %}
 </button>
 <button
-  class="{{ root.prefix }}--tooltip__trigger {{ root.prefix }}--tooltip--a11y {{ root.prefix }}--tooltip--top {{ root.prefix }}--tooltip--align-end"
+  class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--top bx--tooltip--align-end"
   data-tooltip-icon>
-  <span class="{{ root.prefix }}--assistive-text">Filter</span>
-  {{ carbon-icon }}
+  <span class="bx--assistive-text">Filter</span>
+  {% carbon_icon "?" %}
 </button>
 <button
-  class="{{ root.prefix }}--tooltip__trigger {{ root.prefix }}--tooltip--a11y {{ root.prefix }}--tooltip--bottom {{ root.prefix }}--tooltip--align-end"
+  class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-end"
   data-tooltip-icon>
-  <span class="{{ root.prefix }}--assistive-text">Filter</span>
-  {{ carbon-icon }}
+  <span class="bx--assistive-text">Filter</span>
+  {% carbon_icon "?" %}
 </button>
 <button
-  class="{{ root.prefix }}--tooltip__trigger {{ root.prefix }}--tooltip--a11y {{ root.prefix }}--tooltip--right {{ root.prefix }}--tooltip--align-end"
+  class="bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--right bx--tooltip--align-end"
   data-tooltip-icon>
-  <span class="{{ root.prefix }}--assistive-text">Filter</span>
-  {{ carbon-icon }}
+  <span class="bx--assistive-text">Filter</span>
+  {% carbon_icon "?" %}
 </button>
 
 

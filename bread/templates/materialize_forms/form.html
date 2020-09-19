@@ -1,0 +1,32 @@
+{% extends TEMPLATE_PACK_BASE %}
+{% load bread_tags crispy_forms_tags  %}
+
+
+{% block content %}
+<div>
+    {% if object %}
+        <h2>Edit {{ view.admin.verbose_modelname }} <i>{{ object }}</i></h2>
+    {% elif form.instance %}
+        <h2>Add {{ view.admin.verbose_modelname }}</h2>
+        <!-- try to prevent browser auto-fill -->
+        <script>document.addEventListener("DOMContentLoaded", e => $$("form").forEach(form => form.reset()))</script>
+    {% endif %}
+    {% crispy form %}
+</div>
+{% endblock content %}
+
+
+{% block right-panel %}
+    {% if view.sidebarfields %}
+        <div class="right-panel">
+            <div class="card">
+                <div class="card-content">
+                    {% for fieldname, field in view.sidebarfields.items %}
+                        <div class="card-title">{% pretty_fieldname field %}</div>
+                        <p>{% render_field object fieldname %}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock right-panel %}

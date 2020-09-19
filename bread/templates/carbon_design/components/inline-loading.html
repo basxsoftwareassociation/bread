@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!--
   Copyright IBM Corp. 2016, 2018
 
@@ -6,23 +7,23 @@
 -->
 
 <!-- Loading Success State -->
-<div data-inline-loading class="{{ root.prefix }}--inline-loading" role="alert" aria-live="assertive">
-  <div class="{{ root.prefix }}--inline-loading__animation">
-    <div data-inline-loading-spinner class="{{ root.prefix }}--loading {{ root.prefix }}--loading--small">
-      <svg class="{{ root.prefix }}--loading__svg" viewBox="-75 -75 150 150">
-        <circle class="{{ root.prefix }}--loading__background" cx="0" cy="0" r="26.8125" />
-        <circle class="{{ root.prefix }}--loading__stroke" cx="0" cy="0" r="26.8125"/>
+<div data-inline-loading class="bx--inline-loading" role="alert" aria-live="assertive">
+  <div class="bx--inline-loading__animation">
+    <div data-inline-loading-spinner class="bx--loading bx--loading--small">
+      <svg class="bx--loading__svg" viewBox="-75 -75 150 150">
+        <circle class="bx--loading__background" cx="0" cy="0" r="26.8125" />
+        <circle class="bx--loading__stroke" cx="0" cy="0" r="26.8125"/>
       </svg>
     </div>
-    {{ carbon-icon }}
-    {{ carbon-icon }}
+    {% carbon_icon "?" %}
+    {% carbon_icon "?" %}
   </div>
-  <p data-inline-loading-text-active class="{{ root.prefix }}--inline-loading__text">Loading data...</p>
-  <p data-inline-loading-text-finished hidden class="{{ root.prefix }}--inline-loading__text">Data loaded.</p>
-  <p data-inline-loading-text-error hidden class="{{ root.prefix }}--inline-loading__text">Loading data failed.</p>
+  <p data-inline-loading-text-active class="bx--inline-loading__text">Loading data...</p>
+  <p data-inline-loading-text-finished hidden class="bx--inline-loading__text">Data loaded.</p>
+  <p data-inline-loading-text-error hidden class="bx--inline-loading__text">Loading data failed.</p>
 </div>
 {% if showToggleButton %}
-<button data-inline-loading-demo-button class="{{ root.prefix }}--btn {{ root.prefix }}--btn--primary">Toggle
+<button data-inline-loading-demo-button class="bx--btn bx--btn--primary">Toggle
   state</button>
 {% endif %}
 

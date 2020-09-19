@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!-- 
   Copyright IBM Corp. 2016, 2018
 
@@ -5,13 +6,13 @@
   LICENSE file in the root directory of this source tree.
 -->
 
-<footer class="{{ root.prefix }}--side-nav__footer">
-  <button class="{{ root.prefix }}--side-nav__toggle" role="button" title="Close the side navigation menu">
-    <div class="{{ root.prefix }}--side-nav__icon">
-      {{ carbon-icon }}
-      {{ carbon-icon }}
+<footer class="bx--side-nav__footer">
+  <button class="bx--side-nav__toggle" role="button" title="Close the side navigation menu">
+    <div class="bx--side-nav__icon">
+      {% carbon_icon "?" %}
+      {% carbon_icon "?" %}
     </div>
-    <span class="{{ root.prefix }}--assistive-text">
+    <span class="bx--assistive-text">
       Toggle the expansion state of the navigation
     </span>
   </button>

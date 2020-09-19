@@ -39,7 +39,7 @@
         </tr>
         {% for object in object_list %}
             <tr>
-                <td>{% include "bread/object_actions.html" %}</td>
+                <td>{% include "materialize_forms/object_actions.html" %}</td>
                 <td>{% render_field object 'self' %}</td>
                 {% for field in view.fields %}
                     <td>{% render_field object field %}</td>

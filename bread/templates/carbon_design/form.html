@@ -3,7 +3,9 @@
 
 
 {% block content %}
+
 <div>
+
     {% if object %}
         <h2>Edit {{ view.admin.verbose_modelname }} <i>{{ object }}</i></h2>
     {% elif form.instance %}
@@ -11,22 +13,21 @@
         <!-- try to prevent browser auto-fill -->
         <script>document.addEventListener("DOMContentLoaded", e => $$("form").forEach(form => form.reset()))</script>
     {% endif %}
+
     {% crispy form %}
+
 </div>
+
 {% endblock content %}
 
 
 {% block right-panel %}
     {% if view.admin.sidebarfields and object %}
-        <div class="right-panel">
-            <div class="card">
-                <div class="card-content">
-                    {% for field in view.admin.sidebarfields %}
-                        <div class="card-title">Notes</div>
-                        <p>{% render_field object field %}</p>
-                    {% endfor %}
-                </div>
-            </div>
+        {% for fieldname, field in view.sidebarfields.items %}
+        <div>
+            <div>{% pretty_fieldname field %}</div>
+            <p>{% render_field object fieldname %}</p>
         </div>
+        {% endfor %}
     {% endif %}
 {% endblock right-panel %}

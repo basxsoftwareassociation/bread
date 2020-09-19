@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!--
   Copyright IBM Corp. 2016, 2018
 
@@ -6,32 +7,32 @@
 -->
 
 <!-- Basic with calendar -->
-<div class="{{ root.prefix }}--form-item">
+<div class="bx--form-item">
   <div data-date-picker data-date-picker-type="single"
-    class="{{ root.prefix }}--date-picker {{ root.prefix }}--date-picker--single">
-    <div class="{{ root.prefix }}--date-picker-container">
-      <label for="date-picker-3" class="{{ root.prefix }}--label">Date Picker label</label>
-      <div class="{{ root.prefix }}--date-picker-input__wrapper">
-        <input type="text" id="date-picker-3" class="{{ root.prefix }}--date-picker__input"
+    class="bx--date-picker bx--date-picker--single">
+    <div class="bx--date-picker-container">
+      <label for="date-picker-3" class="bx--label">Date Picker label</label>
+      <div class="bx--date-picker-input__wrapper">
+        <input type="text" id="date-picker-3" class="bx--date-picker__input"
           pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="mm/dd/yyyy" data-date-picker-input />
-        {{ carbon-icon }}
+        {% carbon_icon "?" %}
       </div>
     </div>
   </div>
 </div>
 
 <!-- Basic with calendar -->
-<div class="{{ root.prefix }}--form-item">
+<div class="bx--form-item">
   <div data-date-picker data-date-picker-type="single"
-    class="{{ root.prefix }}--date-picker {{ root.prefix }}--date-picker--single">
-    <div class="{{ root.prefix }}--date-picker-container">
-      <label for="date-picker-3" class="{{ root.prefix }}--label">Date Picker label</label>
-      <div class="{{ root.prefix }}--date-picker-input__wrapper">
-        <input data-invalid type="text" id="date-picker-3" class="{{ root.prefix }}--date-picker__input"
+    class="bx--date-picker bx--date-picker--single">
+    <div class="bx--date-picker-container">
+      <label for="date-picker-3" class="bx--label">Date Picker label</label>
+      <div class="bx--date-picker-input__wrapper">
+        <input data-invalid type="text" id="date-picker-3" class="bx--date-picker__input"
           pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="mm/dd/yyyy" data-date-picker-input />
-        {{ carbon-icon }}
+        {% carbon_icon "?" %}
       </div>
-      <div class="{{ root.prefix }}--form-requirement">
+      <div class="bx--form-requirement">
         Invalid date format.
       </div>
     </div>

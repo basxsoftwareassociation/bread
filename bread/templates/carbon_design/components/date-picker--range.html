@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!--
   Copyright IBM Corp. 2016, 2018
 
@@ -6,23 +7,23 @@
 -->
 
 <!-- Ranged -->
-<div class="{{ root.prefix }}--form-item">
+<div class="bx--form-item">
   <div data-date-picker data-date-picker-type="range"
-    class="{{ root.prefix }}--date-picker {{ root.prefix }}--date-picker--range">
-    <div class="{{ root.prefix }}--date-picker-container">
-      <label for="date-picker-1" class="{{ root.prefix }}--label">Start date label</label>
-      <div class="{{ root.prefix }}--date-picker-input__wrapper">
-        <input type="text" id="date-picker-1" class="{{ root.prefix }}--date-picker__input"
+    class="bx--date-picker bx--date-picker--range">
+    <div class="bx--date-picker-container">
+      <label for="date-picker-1" class="bx--label">Start date label</label>
+      <div class="bx--date-picker-input__wrapper">
+        <input type="text" id="date-picker-1" class="bx--date-picker__input"
           pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="mm/dd/yyyy" data-date-picker-input-from />
-        {{ carbon-icon }}
+        {% carbon_icon "?" %}
       </div>
     </div>
-    <div class="{{ root.prefix }}--date-picker-container">
-      <label for="date-picker-2" class="{{ root.prefix }}--label">End date label</label>
-      <div class="{{ root.prefix }}--date-picker-input__wrapper">
-        <input type="text" id="date-picker-2" class="{{ root.prefix }}--date-picker__input"
+    <div class="bx--date-picker-container">
+      <label for="date-picker-2" class="bx--label">End date label</label>
+      <div class="bx--date-picker-input__wrapper">
+        <input type="text" id="date-picker-2" class="bx--date-picker__input"
           pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="mm/dd/yyyy" data-date-picker-input-to />
-        {{ carbon-icon }}
+        {% carbon_icon "?" %}
       </div>
     </div>
   </div>

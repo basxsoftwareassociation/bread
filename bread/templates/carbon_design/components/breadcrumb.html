@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!--
   Copyright IBM Corp. 2016, 2018
 
@@ -5,11 +6,11 @@
   LICENSE file in the root directory of this source tree.
 -->
 
-<nav class="{{ root.prefix }}--breadcrumb" aria-label="breadcrumb">
+<nav class="bx--breadcrumb" aria-label="breadcrumb">
   {% for items_i in items %}
-    <div class="{{ items_i.root,prefix }}--breadcrumb-item">
+    <div class="bx--breadcrumb-item">
       {% if items_i.label %}
-        <a href="#" class="{{ items_i.root,prefix }}--link">{{ items_i.label }}</a>
+        <a href="#" class="bx--link">{{ items_i.label }}</a>
       {% endif %}
     </div>
   {% endfor %}

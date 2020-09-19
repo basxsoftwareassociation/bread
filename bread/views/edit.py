@@ -7,6 +7,7 @@ an argument "admin" which is an instance of the according BreadAdmin class
 import urllib
 
 from crispy_forms.layout import Layout
+from crispy_forms.utils import TEMPLATE_PACK
 from django import forms
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -61,7 +62,7 @@ class EditView(
     PermissionRequiredMixin,
     UpdateView,
 ):
-    template_name = "bread/custom_form.html"
+    template_name = f"{TEMPLATE_PACK}/form.html"
     admin = None
     accept_global_perms = True
 
@@ -99,7 +100,7 @@ class AddView(
     PermissionRequiredMixin,
     CreateView,
 ):
-    template_name = "bread/custom_form.html"
+    template_name = f"{TEMPLATE_PACK}/form.html"
     admin = None
     accept_global_perms = True
 
@@ -138,7 +139,7 @@ class AddView(
 class DeleteView(
     CustomizableClass, PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView
 ):
-    template_name = "bread/confirm_delete.html"
+    template_name = f"{TEMPLATE_PACK}/confirm_delete.html"
     admin = None
     accept_global_perms = True
 

@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!-- 
   Copyright IBM Corp. 2016, 2018
 
@@ -5,29 +6,29 @@
   LICENSE file in the root directory of this source tree.
 -->
 
-<header class="{{ root.prefix }}--header" role="banner" aria-label="IBM Platform Name" data-header>
-  <a class="{{ root.prefix }}--skip-to-content" href="#main-content" tabindex="0">Skip to main content</a>
-  <button class="{{ root.prefix }}--header__menu-trigger {{ root.prefix }}--header__action" aria-label="Open menu" title="Open menu"
+<header class="bx--header" role="banner" aria-label="IBM Platform Name" data-header>
+  <a class="bx--skip-to-content" href="#main-content" tabindex="0">Skip to main content</a>
+  <button class="bx--header__menu-trigger bx--header__action" aria-label="Open menu" title="Open menu"
     data-navigation-menu-panel-label-expand="Open menu" data-navigation-menu-panel-label-collapse="Close menu"
     data-navigation-menu-target="#navigation-menu-{{ navigationMenu.idSuffix }}">
-    {{ carbon-icon }}
-    {{ carbon-icon }}
+    {% carbon_icon "?" %}
+    {% carbon_icon "?" %}
   </button>
-  <a class="{{ root.prefix }}--header__name" href="javascript:void(0)" title="{{ header.name }}">
+  <a class="bx--header__name" href="javascript:void(0)" title="{{ header.name }}">
     <span class="bx--header__name--prefix">
       {{ header.company }}
       &nbsp;
     </span>
     {{ header.platform }}
   </a>
-  {% include "header-nav.html" %}
-  <div class="{{ root.prefix }}--header__global">
+  {% include "carbon_design/components/header-nav.html" %}
+  <div class="bx--header__global">
     {% for actions_i in header.actions %}
-    <button class="{{ actions_i.root,prefix }}--header__menu-trigger {{ actions_i.root,prefix }}--header__action" aria-label="{{ actions_i.title }}"
+    <button class="bx--header__menu-trigger bx--header__action" aria-label="{{ actions_i.title }}"
       title="{{ actions_i.title }}" data-navigation-menu-panel-label-expand="{{ actions_i.title }}"
       data-navigation-menu-panel-label-collapse="Close menu" data-product-switcher-target="#switcher-{{ actions_i.switcher,idSuffix }}">
-      {{ actions_i.carbon-icon }}
-      {{ actions_i.carbon-icon }}
+      {% carbon_icon "?" %}
+      {% carbon_icon "?" %}
     </button>
     {% endfor %}
   </div>

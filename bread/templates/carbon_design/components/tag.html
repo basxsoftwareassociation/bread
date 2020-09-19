@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!--
   Copyright IBM Corp. 2016, 2018
 
@@ -7,18 +8,18 @@
 
 <div>
   {% for tags_i in tags %}
-  <button class="{{ tags_i.root,prefix }}--tag {{ tags_i.root,prefix }}--tag--{{ tags_i.type }}">
-    <span class="{{ tags_i.root,prefix }}--tag__label">{{ tags_i.label }}</span>
+  <button class="bx--tag bx--tag--{{ tags_i.type }}">
+    <span class="bx--tag__label">{{ tags_i.label }}</span>
   </button>
   {% endfor %}
 </div>
 
 <div>
   {% if filter %}
-  <div class="{{ root.prefix }}--tag {{ root.prefix }}--tag--filter" title="Clear filter">
-    <span class="{{ root.prefix }}--tag__label">filter</span>
-    <button class="{{ root.prefix }}--tag__close-icon">
-      {{ carbon-icon }}
+  <div class="bx--tag bx--tag--filter" title="Clear filter">
+    <span class="bx--tag__label">filter</span>
+    <button class="bx--tag__close-icon">
+      {% carbon_icon "?" %}
     </button>
   </div>
   {% endif %}

@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!--
   Copyright IBM Corp. 2016, 2018
 
@@ -6,14 +7,14 @@
 -->
 
 <a href="#"
-  class="{{ root.prefix }}--link{% if inline %} {{ root.prefix }}--link--inline{% endif %}{% if visited %} {{ root.prefix }}--link--inline{% endif %}">Link</a>
+  class="bx--link{% if inline %} bx--link--inline{% endif %}{% if visited %} bx--link--inline{% endif %}">Link</a>
 <a href="http://www.google.com"
-  class="{{ root.prefix }}--link {{ root.prefix }}--link--visited {% if inline %} {{ root.prefix }}--link--inline{% endif %}">Link</a>
-<a class="{{ root.prefix }}--link{% if inline %} {{ root.prefix }}--link--inline{% endif %}" aria-disabled="true">Placeholder
+  class="bx--link bx--link--visited {% if inline %} bx--link--inline{% endif %}">Link</a>
+<a class="bx--link{% if inline %} bx--link--inline{% endif %}" aria-disabled="true">Placeholder
   link</a>
-<p class="{{ root.prefix }}--link--disabled{% if inline %} {{ root.prefix }}--link--inline{% endif %}">Disabled Link</p>
+<p class="bx--link--disabled{% if inline %} bx--link--inline{% endif %}">Disabled Link</p>
 <div style="width:200px">
-  <a href="#" class="{{ root.prefix }}--link{% if inline %} {{ root.prefix }}--link--inline{% endif %}">Text wrap example for
+  <a href="#" class="bx--link{% if inline %} bx--link--inline{% endif %}">Text wrap example for
     hover, focus, and active state testing.</a>
 </div>
 

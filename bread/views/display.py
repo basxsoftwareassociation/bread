@@ -4,6 +4,7 @@ from html.parser import HTMLParser
 
 import django_filters
 from crispy_forms.layout import Layout
+from crispy_forms.utils import TEMPLATE_PACK
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldError
@@ -31,7 +32,7 @@ from ..utils import (
 class BrowseView(
     CustomizableClass, LoginRequiredMixin, PermissionListMixin, FilterView
 ):
-    template_name = "bread/list.html"
+    template_name = f"{TEMPLATE_PACK}/list.html"
     admin = None
     fields = None
     filterfields = None
@@ -164,7 +165,7 @@ class BrowseView(
 
 
 class TreeView(BrowseView):
-    template_name = "bread/tree.html"
+    template_name = f"{TEMPLATE_PACK}/tree.html"
     parent_accessor = None
     label_function = None
 
@@ -203,7 +204,7 @@ class TreeView(BrowseView):
 
 
 class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
-    template_name = "bread/detail.html"
+    template_name = f"{TEMPLATE_PACK}/detail.html"
     admin = None
     fields = None
     sidebarfields = []

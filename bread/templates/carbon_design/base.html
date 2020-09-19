@@ -1,0 +1,52 @@
+{% extends "bread/base.html" %}
+{% load static compress bread_tags %}
+
+{% block stylesheets %}
+    {% compress css %}
+        <link rel="stylesheet" type="text/x-scss" href="{% static "design/carbon_design/scss/globals/scss/styles.scss" %}" />
+    {% endcompress %}
+{% endblock %}
+
+{% block javascripts %}
+    {% compress js %}
+    <script type="text/javascript" src="{% static "js/choices.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "design/carbon_design/js/carbon-components.min.js" %}"></script>
+    {% endcompress js %}
+{% endblock %}
+
+{% block body %}
+    <header>
+        {% menu request as menu %}
+        <ul>
+            {% for menugroup, group_active, items in menu %}
+                <li>
+                    <div><a>{{ menugroup }}</a></div>
+                    <ul>
+                        {% for item in items %}
+                            <li>{% display_link item.link request %}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        <ul>
+    </header>
+
+    <main>
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li{% if message.tags %} class="message-{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% block content %}
+        {% endblock content %}
+    </main>
+
+    <script>
+        $.ready(e => {
+            // do stuff
+        });
+    </script>
+{% endblock body %}

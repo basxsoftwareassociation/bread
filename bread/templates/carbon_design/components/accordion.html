@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!-- 
   Copyright IBM Corp. 2016, 2018
 
@@ -5,14 +6,14 @@
   LICENSE file in the root directory of this source tree.
 -->
 
-<ul data-accordion class="{{ root.prefix }}--accordion">
+<ul data-accordion class="bx--accordion">
   {% for sections_i in sections %}
-    <li data-accordion-item class="{{ sections_i.root,prefix }}--accordion__item">
-      <button class="{{ sections_i.root,prefix }}--accordion__heading" aria-expanded="false" aria-controls="{{ sections_i.paneId }}">
-        {{ sections_i.carbon-icon }}
-        <div class="{{ sections_i.root,prefix }}--accordion__title">{{ sections_i.title }}</div>
+    <li data-accordion-item class="bx--accordion__item">
+      <button class="bx--accordion__heading" aria-expanded="false" aria-controls="{{ sections_i.paneId }}">
+        {% carbon_icon "?" %}
+        <div class="bx--accordion__title">{{ sections_i.title }}</div>
       </button>
-      <div id="{{ sections_i.paneId }}" class="{{ sections_i.root,prefix }}--accordion__content">
+      <div id="{{ sections_i.paneId }}" class="bx--accordion__content">
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
           aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
       </div>

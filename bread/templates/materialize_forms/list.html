@@ -2,7 +2,7 @@
 {% load bread_tags crispy_forms_tags %}
 
 {% block content %}
-    {% include "bread/list_actions.html" %}
+    {% include "materialize_forms/list_actions.html" %}
 
     <h2>{{ view.admin.verbose_modelname_plural }}</h2>
 
@@ -36,7 +36,7 @@
     </div>
     {% endif %}
     
-    {% include "bread/inline_list.html" %}
+    {% include "materialize_forms/inline_list.html" %}
 
     {% add_action view.admin request as action %}
     {% if action %}

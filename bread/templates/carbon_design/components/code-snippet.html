@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!--
   Copyright IBM Corp. 2016, 2018
 
@@ -5,16 +6,16 @@
   LICENSE file in the root directory of this source tree.
 -->
 
-{{# is }}
+{% if variant == [object Object] %}
 <p>Here is an example of a text that a user would be reading. In this paragraph would be
   <button data-copy-btn type="button"
-    class="{{ root.prefix }}--snippet {{ root.prefix }}--snippet--inline {% if light %} {{ root.prefix }}--snippet--light{% endif %}"
+    class="bx--snippet bx--snippet--inline {% if light %} bx--snippet--light{% endif %}"
     aria-label="Copy code" tabindex="0">
     <code>inline code</code>
-    <span class="{{ root.prefix }}--assistive-text {{ root.prefix }}--copy-btn__feedback">Copied!</span>
+    <span class="bx--assistive-text bx--copy-btn__feedback">Copied!</span>
   </button>
   that the user could look at and copy in to their code editor.</p>
-{{/is}}
+{% endif %}
 
 
 {% comment %}

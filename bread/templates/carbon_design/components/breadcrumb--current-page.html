@@ -1,10 +1,11 @@
-<nav class="{{ root.prefix }}--breadcrumb {{ root.prefix }}--breadcrumb--no-trailing-slash" aria-label="breadcrumb">
+{% load carbon_design_tags %}
+<nav class="bx--breadcrumb bx--breadcrumb--no-trailing-slash" aria-label="breadcrumb">
   {% for items_i in items %}
-    <div class="{{ items_i.root,prefix }}--breadcrumb-item">
+    <div class="bx--breadcrumb-item">
       {% if items_i.label %}
         <a
           href="#"
-          class="{{ items_i.root,prefix }}--link"
+          class="bx--link"
           {% if items_i.current %}aria-current="page"{% endif %}
         >
             {{ items_i.label }}
@@ -14,11 +15,11 @@
   {% endfor %}
 </nav>
 
-<nav class="{{ root.prefix }}--breadcrumb {{ root.prefix }}--breadcrumb--no-trailing-slash" aria-label="breadcrumb">
+<nav class="bx--breadcrumb bx--breadcrumb--no-trailing-slash" aria-label="breadcrumb">
   {% for items_i in items %}
-    <div class="{{ items_i.root,prefix }}--breadcrumb-item {% if items_i.current %}{{ items_i.root,prefix }}--breadcrumb-item--current{% endif %}">
+    <div class="bx--breadcrumb-item {% if items_i.current %}bx--breadcrumb-item--current{% endif %}">
       {% if items_i.label %}
-        <a href="#" class="{{ items_i.root,prefix }}--link">
+        <a href="#" class="bx--link">
           {{ items_i.label }}
         </a>
       {% endif %}

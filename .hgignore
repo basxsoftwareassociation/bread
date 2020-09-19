@@ -3,3 +3,5 @@
 .egg
 __pycache__
 docs/build
+node_modules
+bread/templates/carbon_design/package-lock.json

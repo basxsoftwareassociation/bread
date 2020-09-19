@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!--
   Copyright IBM Corp. 2016, 2018
 
@@ -5,16 +6,16 @@
   LICENSE file in the root directory of this source tree.
 -->
 
-<fieldset class="{{ root.prefix }}--fieldset">
-  <legend class="{{ root.prefix }}--label">Radio button label</legend>
-  <div class="{{ root.prefix }}--form-item">
-    <div class="{{ root.prefix }}--radio-button-group {% if vertical %} {{ root.prefix }}--radio-button-group--vertical {% endif %}">
+<fieldset class="bx--fieldset">
+  <legend class="bx--label">Radio button label</legend>
+  <div class="bx--form-item">
+    <div class="bx--radio-button-group {% if vertical %} bx--radio-button-group--vertical {% endif %}">
       {% for items_i in items %}
-        <div class="{{ items_i.root,prefix }}--radio-button-wrapper{% if direction %} {{ items_i.root,prefix }}--radio-button-wrapper--label-{{ direction }}{% endif %}">
-          <input id="{{ items_i.id }}" class="{{ items_i.root,prefix }}--radio-button" type="radio" value="{{ items_i.value }}" name="{{ group }}" tabindex="0"{{# is }} checked{{/is}}{% if items_i.disabled %} disabled{% endif %}>
-          <label for="{{ items_i.id }}" class="{{ items_i.root,prefix }}--radio-button__label">
-            <span class="{{ items_i.root,prefix }}--radio-button__appearance"></span>
-            <span class="{{ items_i.root,prefix }}--radio-button__label-text">{{ items_i.label }}</span>
+        <div class="bx--radio-button-wrapper{% if direction %} bx--radio-button-wrapper--label-{{ direction }}{% endif %}">
+          <input id="{{ items_i.id }}" class="bx--radio-button" type="radio" value="{{ items_i.value }}" name="{{ group }}" tabindex="0"{% if items_i.value == [object Object] %} checked{% endif %}{% if items_i.disabled %} disabled{% endif %}>
+          <label for="{{ items_i.id }}" class="bx--radio-button__label">
+            <span class="bx--radio-button__appearance"></span>
+            <span class="bx--radio-button__label-text">{{ items_i.label }}</span>
           </label>
         </div>
       {% endfor %}

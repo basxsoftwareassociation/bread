@@ -2,12 +2,12 @@
 {% load bread_tags %}
 
 {% block content %}
-    {% include "bread/list_actions.html" %}
+    {% include "materialize_forms/list_actions.html" %}
     <h2>{{ view.admin.verbose_modelname_plural }}</h2>
 
     <ul class="ascii">
         <li>{{ view.admin.verbose_modelname }} tree
-        {% include "bread/inline_tree.html" with nodes=view.nodes %}
+        {% include "materialize_forms/inline_tree.html" with nodes=view.nodes %}
         </li>
     </ul>
 

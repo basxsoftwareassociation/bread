@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!-- 
   Copyright IBM Corp. 2016, 2018
 
@@ -5,33 +6,33 @@
   LICENSE file in the root directory of this source tree.
 -->
 
-<section class="{{ root.prefix }}--structured-list{% if selectable %} {{ root.prefix }}--structured-list--selection{% endif %}"{% if selectable %} data-structured-list{% endif %}>
-  <div class="{{ root.prefix }}--structured-list-thead">
-    <div class="{{ root.prefix }}--structured-list-row {{ root.prefix }}--structured-list-row--header-row">
+<section class="bx--structured-list{% if selectable %} bx--structured-list--selection{% endif %}"{% if selectable %} data-structured-list{% endif %}>
+  <div class="bx--structured-list-thead">
+    <div class="bx--structured-list-row bx--structured-list-row--header-row">
       {% for columns_i in columns %}
-        <div class="{{ columns_i.root,prefix }}--structured-list-th">{{ columns_i.title }}</div>
+        <div class="bx--structured-list-th">{{ columns_i.title }}</div>
       {% endfor %}
       {% if selectable %}
-        <div class="{{ root.prefix }}--structured-list-th"></div>
+        <div class="bx--structured-list-th"></div>
       {% endif %}
     </div>
   </div>
-  <div class="{{ root.prefix }}--structured-list-tbody">
+  <div class="bx--structured-list-tbody">
     {% for row in rows %}
       {% if selectable %}
-        <label for="{{ row.id }}" aria-label="{{ row.selectionLabel }}" class="{{ row.root,prefix }}--structured-list-row{% if row.selected %} {{ row.root,prefix }}--structured-list-row--selected{% endif %}" tabindex="0">
+        <label for="{{ row.id }}" aria-label="{{ row.selectionLabel }}" class="bx--structured-list-row{% if row.selected %} bx--structured-list-row--selected{% endif %}" tabindex="0">
       {% else %}
-        <div class="{{ row.root,prefix }}--structured-list-row">
+        <div class="bx--structured-list-row">
       {% endif %}
         {% for column in columns %}
-          {{# with }}
-            <div class="{{ column.root,prefix }}--structured-list-td{% if column.nowrap %} {{ column.root,prefix }}--structured-list-content--nowrap{% endif %}">{{ column.data }}</div>
-          {{/with}}
+          {% with data=row|lookup:column.name %}
+            <div class="bx--structured-list-td{% if column.nowrap %} bx--structured-list-content--nowrap{% endif %}">{{ data }}</div>
+          {% endwith  %}
         {% endfor %}
       {% if selectable %}
-          <input tabindex="-1" id="{{ row.id }}" class="{{ row.root,prefix }}--structured-list-input" value="{{ row.value }}" type="radio" name="{{ group }}" title="{{ row.selectionLabel }}"{% if row.selected %} checked{% endif %} />
-          <div class="{{ row.root,prefix }}--structured-list-td">
-            {{ row.carbon-icon }}
+          <input tabindex="-1" id="{{ row.id }}" class="bx--structured-list-input" value="{{ row.value }}" type="radio" name="{{ group }}" title="{{ row.selectionLabel }}"{% if row.selected %} checked{% endif %} />
+          <div class="bx--structured-list-td">
+            {% carbon_icon "?" %}
           </div>
         </label>
       {% else %}

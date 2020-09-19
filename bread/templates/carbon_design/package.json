@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "dependencies": {
+    "carbon-components": "^10.20.0",
+    "muban-convert-hbs": "^1.1.1"
+  }
+}

@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!--
   Copyright IBM Corp. 2016, 2018
 
@@ -5,9 +6,9 @@
   LICENSE file in the root directory of this source tree.
 -->
 
-<button data-copy-btn class="{{ root.prefix }}--copy-btn" type="button" tabindex="0">
-  <span class="{{ root.prefix }}--assistive-text {{ root.prefix }}--copy-btn__feedback">Copied!</span>
-  {{ carbon-icon }}
+<button data-copy-btn class="bx--copy-btn" type="button" tabindex="0">
+  <span class="bx--assistive-text bx--copy-btn__feedback">Copied!</span>
+  {% carbon_icon "?" %}
 </button>
 
 

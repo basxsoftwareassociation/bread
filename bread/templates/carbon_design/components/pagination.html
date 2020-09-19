@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!--
   Copyright IBM Corp. 2016, 2018
 
@@ -5,26 +6,26 @@
   LICENSE file in the root directory of this source tree.
 -->
 
-<div class="{{ root.prefix }}--pagination" data-pagination>
-  <div class="{{ root.prefix }}--pagination__left">
+<div class="bx--pagination" data-pagination>
+  <div class="bx--pagination__left">
     <label id="select-id-pagination-count-label{% if disabledPaginationButton %}--disabled-example{% endif %}"
-      class="{{ root.prefix }}--pagination__text"
+      class="bx--pagination__text"
       for="select-id-pagination-count{% if disabledPaginationButton %}--disabled-example{% endif %}">
       Items per page:
     </label>
-    <div class="{{ root.prefix }}--select {{ root.prefix }}--select--inline {{ root.prefix }}--select__item-count">
-      <select class="{{ root.prefix }}--select-input"
+    <div class="bx--select bx--select--inline bx--select__item-count">
+      <select class="bx--select-input"
         id="select-id-pagination-count{% if disabledPaginationButton %}--disabled-example{% endif %}"
         aria-label="Items per page" tabindex="0" data-items-per-page>
         {% for itemsPerPageChoices_i in itemsPerPageChoices %}
-        <option class="{{ itemsPerPageChoices_i.root,prefix }}--select-option" value="{{ itemsPerPageChoices_i.value }}">
+        <option class="bx--select-option" value="{{ itemsPerPageChoices_i.value }}">
           {{ itemsPerPageChoices_i.label }}
         </option>
         {% endfor %}
       </select>
-      {{ carbon-icon }}
+      {% carbon_icon "?" %}
     </div>
-    <span class="{{ root.prefix }}--pagination__text">
+    <span class="bx--pagination__text">
       <span data-displayed-item-range>1 – 10</span> of
       <span data-total-items>
         {% if disabledPaginationButton %}
@@ -35,33 +36,33 @@
       </span> items
     </span>
   </div>
-  <div class="{{ root.prefix }}--pagination__right">
-    <div class="{{ root.prefix }}--select {{ root.prefix }}--select--inline {{ root.prefix }}--select__page-number">
-      <select class="{{ root.prefix }}--select-input"
+  <div class="bx--pagination__right">
+    <div class="bx--select bx--select--inline bx--select__page-number">
+      <select class="bx--select-input"
         id="select-id-pagination-page{% if disabledPaginationButton %}--disabled-example{% endif %}"
         aria-label="page number, of {{ totalPages }} pages" tabindex="0" data-page-number-input>
         {% for pageNumberChoices_i in pageNumberChoices %}
-        <option class="{{ pageNumberChoices_i.root,prefix }}--select-option" value="{{ pageNumberChoices_i.value }}">
+        <option class="bx--select-option" value="{{ pageNumberChoices_i.value }}">
           {{ pageNumberChoices_i.label }}
         </option>
         {% endfor %}
       </select>
-      {{ carbon-icon }}
+      {% carbon_icon "?" %}
     </div>
     <label id="select-id-pagination-page-label{% if disabledPaginationButton %}--disabled-example{% endif %}"
-      class="{{ root.prefix }}--pagination__text"
+      class="bx--pagination__text"
       for="select-id-pagination-page{% if disabledPaginationButton %}--disabled-example{% endif %}">
       of {{ totalPages }} pages
     </label>
     <button
-      class="{{ root.prefix }}--pagination__button {{ root.prefix }}--pagination__button--backward {% if disabledPaginationButton %}{{ root.prefix }}--pagination__button--no-index{% endif %}"
+      class="bx--pagination__button bx--pagination__button--backward {% if disabledPaginationButton %}bx--pagination__button--no-index{% endif %}"
       tabindex="0" data-page-backward aria-label="previous page">
-      {{ carbon-icon }}
+      {% carbon_icon "?" %}
     </button>
     <button
-      class="{{ root.prefix }}--pagination__button {{ root.prefix }}--pagination__button--forward {% if disabledPaginationButton %}{{ root.prefix }}--pagination__button--no-index{% endif %}"
+      class="bx--pagination__button bx--pagination__button--forward {% if disabledPaginationButton %}bx--pagination__button--no-index{% endif %}"
       tabindex="0" data-page-forward aria-label="next page">
-      {{ carbon-icon }}
+      {% carbon_icon "?" %}
     </button>
   </div>
 </div>

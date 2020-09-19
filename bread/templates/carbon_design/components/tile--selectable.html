@@ -1,3 +1,4 @@
+{% load carbon_design_tags %}
 <!-- 
   Copyright IBM Corp. 2016, 2018
 
@@ -5,12 +6,12 @@
   LICENSE file in the root directory of this source tree.
 -->
 
-<input tabindex="-1" data-tile-input id="tile-id" class="{{ root.prefix }}--tile-input" value="tile" type="checkbox" name="tiles" title="tile" />
-<label for="tile-id" aria-label="tile" class="{{ root.prefix }}--tile {{ root.prefix }}--tile--selectable" data-tile="selectable" tabindex="0">
-  <div class="{{ root.prefix }}--tile__checkmark">
-    {{ carbon-icon }}
+<input tabindex="-1" data-tile-input id="tile-id" class="bx--tile-input" value="tile" type="checkbox" name="tiles" title="tile" />
+<label for="tile-id" aria-label="tile" class="bx--tile bx--tile--selectable" data-tile="selectable" tabindex="0">
+  <div class="bx--tile__checkmark">
+    {% carbon_icon "?" %}
   </div>
-  <div class="{{ root.prefix }}--tile-content">
+  <div class="bx--tile-content">
     <!-- Tile content here -->
   </div>
 </label>
