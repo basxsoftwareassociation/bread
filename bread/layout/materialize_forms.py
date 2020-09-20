@@ -5,7 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.template import Template
 from django.template.loader import render_to_string
 
-from . import FieldLabel, NonFormContent, ReadonlyField
+from . import FieldLabel, NonFormField, ReadonlyField
 
 
 class Collapsible(Container):
@@ -84,7 +84,7 @@ class Col(Div):
         self.css_class = f"col s{width}"
 
 
-class ObjectActions(NonFormContent):
+class ObjectActions(NonFormField):
     def __init__(self, slice_start=None, slice_end=None, **kwargs):
         super().__init__(**kwargs)
         self.slice_start = slice_start
