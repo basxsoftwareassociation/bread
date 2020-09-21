@@ -17,7 +17,7 @@ from django.views.generic import UpdateView
 from guardian.mixins import PermissionRequiredMixin
 
 from ..forms.forms import breadmodelform_factory
-from ..utils import CustomizableClass, filter_fieldlist
+from ..utils import CustomizableClass, filter_fieldlist, get_modelfields
 
 
 class CustomFormMixin:
@@ -64,6 +64,7 @@ class EditView(
 ):
     template_name = f"{TEMPLATE_PACK}/form.html"
     admin = None
+    sidebarfields = []
     accept_global_perms = True
 
     def get_success_message(self, cleaned_data):
@@ -80,6 +81,9 @@ class EditView(
         else:
             self.layout = field_config
         self.fields = [i[1] for i in self.layout.get_field_names()]
+        self.sidebarfields = get_modelfields(
+            self.model, kwargs.get("sidebarfields", self.sidebarfields)
+        )
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
