@@ -75,6 +75,7 @@ def breadmodelform_factory(
                     if isinstance(field, GenericForeignKeyField):
                         setattr(forminstance, fieldname, self.cleaned_data[fieldname])
                 forminstance.save()
+                self.save_m2m()
 
                 for fieldname, field in self.fields.items():
                     if isinstance(field, FormsetField):
