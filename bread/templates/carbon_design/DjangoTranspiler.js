@@ -73,6 +73,44 @@ function () {
           var path = statement.path;
           var escaped = statement.escaped ? '' : '|safe';
           var variable;
+          
+          if (statement.path.original === 'carbon-icon') {
+              var icon = '{% carbon_icon "' + statement.params[0].value + '"';
+              if(typeof (statement.hash) !== "undefined" && typeof (statement.hash.pairs) !== "undefined") {
+                  for(let pair of statement.hash.pairs) {
+                      var value = "?";
+                      if(pair.value.type == "StringLiteral") {
+                          value = pair.value.value;
+                      }
+                      else if(pair.value.type == 'SubExpression' && pair.value.path.original === "add") {
+                          if(pair.value.params[0].type === 'PathExpression' && pair.value.params[1].type == 'StringLiteral') {
+                              value = 'bx' + pair.value.params[1].value;
+                          } else if(pair.value.params[0].type === 'PathExpression' && pair.value.params[1].type == 'SubExpression') {
+                              value = 'bx--{{ variant }}' + pair.value.params[1].params[1].params[1].value;
+                          } else if(pair.value.params[0].type === 'SubExpression' && pair.value.params[1].type == 'SubExpression') {
+                              value = ''
+                              function find_classes(elem) {
+                                  var ret = [];
+                                  if('params' in elem) {
+                                      for(let p of elem.params) {
+                                          if(p.type === 'StringLiteral' && p.value !== ' ') {
+                                              ret.push('bx' + p.value);
+                                          } else if ('params' in p) {
+                                              ret.push(...find_classes(p))
+                                          }
+                                      }
+                                  }
+                                  return ret
+                              }
+                              value = find_classes(pair.value).join(' ');
+                          }
+                      }
+                      icon += ' ' + pair.key.replace('-', '_') + '="' + value + '"'
+                  }
+              }
+              _this.buffer.push(icon + ' %}');
+              break;
+          }
 
           if (path.original === '@index') {
             variable = 'forloop.counter0';
@@ -94,8 +132,6 @@ function () {
           break;
 
         case 'BlockStatement':
-          // console.log('\n\nBlockStatement\n');
-          // console.log(statement);
           var type = statement.path.original;
 
           switch (type) {

@@ -18,12 +18,12 @@
         id="select-id-pagination-count{% if disabledPaginationButton %}--disabled-example{% endif %}"
         aria-label="Items per page" tabindex="0" data-items-per-page>
         {% for itemsPerPageChoices_i in itemsPerPageChoices %}
-        <option class="bx--select-option" value="{{ itemsPerPageChoices_i.value }}">
+        <option class="{{ itemsPerPageChoices_i.root.prefix }}--select-option" value="{{ itemsPerPageChoices_i.value }}">
           {{ itemsPerPageChoices_i.label }}
         </option>
         {% endfor %}
       </select>
-      {% carbon_icon "?" %}
+      {% carbon_icon "ChevronDown16" class="bx--select__arrow" %}
     </div>
     <span class="bx--pagination__text">
       <span data-displayed-item-range>1 – 10</span> of
@@ -42,12 +42,12 @@
         id="select-id-pagination-page{% if disabledPaginationButton %}--disabled-example{% endif %}"
         aria-label="page number, of {{ totalPages }} pages" tabindex="0" data-page-number-input>
         {% for pageNumberChoices_i in pageNumberChoices %}
-        <option class="bx--select-option" value="{{ pageNumberChoices_i.value }}">
+        <option class="{{ pageNumberChoices_i.root.prefix }}--select-option" value="{{ pageNumberChoices_i.value }}">
           {{ pageNumberChoices_i.label }}
         </option>
         {% endfor %}
       </select>
-      {% carbon_icon "?" %}
+      {% carbon_icon "ChevronDown16" class="bx--select__arrow" %}
     </div>
     <label id="select-id-pagination-page-label{% if disabledPaginationButton %}--disabled-example{% endif %}"
       class="bx--pagination__text"
@@ -57,12 +57,12 @@
     <button
       class="bx--pagination__button bx--pagination__button--backward {% if disabledPaginationButton %}bx--pagination__button--no-index{% endif %}"
       tabindex="0" data-page-backward aria-label="previous page">
-      {% carbon_icon "?" %}
+      {% carbon_icon "CaretLeft20" class="bx--pagination__nav-arrow" %}
     </button>
     <button
       class="bx--pagination__button bx--pagination__button--forward {% if disabledPaginationButton %}bx--pagination__button--no-index{% endif %}"
       tabindex="0" data-page-forward aria-label="next page">
-      {% carbon_icon "?" %}
+      {% carbon_icon "CaretRight20" class="bx--pagination__nav-arrow" %}
     </button>
   </div>
 </div>

@@ -9,15 +9,15 @@
 <div data-tabs class="bx--tabs{% if container %} bx--tabs--container{% endif %}">
   <div class="bx--tabs-trigger" tabindex="0">
     <a href="javascript:void(0)" class="bx--tabs-trigger-text" tabindex="-1"></a>
-    {% carbon_icon "?" %}
+    {% carbon_icon "ChevronDown16" %}
   </div>
   <ul class="bx--tabs__nav bx--tabs__nav--hidden" role="tablist">
     {% for items_i in items %}
     <li
-      class="bx--tabs__nav-item{% if items_i.selected %} bx--tabs__nav-item--selected{% endif %} {% if items_i.disabled %} bx--tabs__nav-item--disabled {% endif %}"
+      class="{{ items_i.root.prefix }}--tabs__nav-item{% if items_i.selected %} {{ items_i.root.prefix }}--tabs__nav-item--selected{% endif %} {% if items_i.disabled %} {{ items_i.root.prefix }}--tabs__nav-item--disabled {% endif %}"
       data-target=".{{ items_i.panelClass }}" role="tab" {% if items_i.selected %} aria-selected="true" {% endif %} {% if items_i.disabled %}
       aria-disabled="true" {% endif %}>
-      <a tabindex="0" id="{{ items_i.linkId }}" class="bx--tabs__nav-link" href="javascript:void(0)" role="tab"
+      <a tabindex="0" id="{{ items_i.linkId }}" class="{{ items_i.root.prefix }}--tabs__nav-link" href="javascript:void(0)" role="tab"
         aria-controls="{{ items_i.panelId }}">{{ items_i.label }}</a>
     </li>
     {% endfor %}

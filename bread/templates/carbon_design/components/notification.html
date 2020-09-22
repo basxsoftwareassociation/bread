@@ -8,55 +8,55 @@
 
 {% for items_i in items %}
 <div data-notification
-  class="bx--{{ variant }}-notification bx--{{ variant }}-notification--{{ items_i.type }}{% if lowContrast %} bx--{{ variant }}-notification--low-contrast{% endif %}"
+  class="{{ items_i.root.prefix }}--{{ variant }}-notification {{ items_i.root.prefix }}--{{ variant }}-notification--{{ items_i.type }}{% if lowContrast %} {{ items_i.root.prefix }}--{{ variant }}-notification--low-contrast{% endif %}"
   role="alert">
   {% if variant == [object Object] %}
   {% if items_i.type == [object Object] %}
-  {% carbon_icon "?" %}
+  {% carbon_icon "ErrorFilled20" class="bx--{{ variant }}-notification__icon" %}
   {% endif %}
   {% if items_i.type == [object Object] %}
-  {% carbon_icon "?" %}
+  {% carbon_icon "CheckmarkFilled20" class="bx--{{ variant }}-notification__icon" %}
   {% endif %}
   {% if items_i.type == [object Object] %}
-  {% carbon_icon "?" %}
+  {% carbon_icon "WarningFilled20" class="bx--{{ variant }}-notification__icon" %}
   {% endif %}
   {% if items_i.type == [object Object] %}
-  {% carbon_icon "?" %}
+  {% carbon_icon "InformationFilled20" class="bx--{{ variant }}-notification__icon" %}
   {% endif %}
   {% endif %}
-  <div class="bx--{{ variant }}-notification__details">
+  <div class="{{ items_i.root.prefix }}--{{ variant }}-notification__details">
     {% if variant == [object Object] %}
     {% if items_i.type == [object Object] %}
-    {% carbon_icon "?" %}
+    {% carbon_icon "ErrorFilled20" class="bx--{{ variant }}-notification__icon" %}
     {% endif %}
     {% if items_i.type == [object Object] %}
-    {% carbon_icon "?" %}
+    {% carbon_icon "InformationFilled20" class="bx--{{ variant }}-notification__icon" %}
     {% endif %}
     {% if items_i.type == [object Object] %}
-    {% carbon_icon "?" %}
+    {% carbon_icon "CheckmarkFilled20" class="bx--{{ variant }}-notification__icon" %}
     {% endif %}
     {% if items_i.type == [object Object] %}
-    {% carbon_icon "?" %}
+    {% carbon_icon "WarningFilled20" class="bx--{{ variant }}-notification__icon" %}
     {% endif %}
-    <div class="bx--{{ variant }}-notification__text-wrapper">
-      <p class="bx--{{ variant }}-notification__title">{{ items_i.title }}</p>
-      <p class="bx--{{ variant }}-notification__subtitle">{{ items_i.subtitle }}</p>
+    <div class="{{ items_i.root.prefix }}--{{ variant }}-notification__text-wrapper">
+      <p class="{{ items_i.root.prefix }}--{{ variant }}-notification__title">{{ items_i.title }}</p>
+      <p class="{{ items_i.root.prefix }}--{{ variant }}-notification__subtitle">{{ items_i.subtitle }}</p>
     </div>
     {% endif %}
     {% if variant == [object Object] %}
-    <h3 class="bx--{{ variant }}-notification__title">{{ items_i.title }}</h3>
-    <p class="bx--{{ variant }}-notification__subtitle">{{ items_i.subtitle }}</p>
-    <p class="bx--{{ variant }}-notification__caption">{{ items_i.timestamp }}</p>
+    <h3 class="{{ items_i.root.prefix }}--{{ variant }}-notification__title">{{ items_i.title }}</h3>
+    <p class="{{ items_i.root.prefix }}--{{ variant }}-notification__subtitle">{{ items_i.subtitle }}</p>
+    <p class="{{ items_i.root.prefix }}--{{ variant }}-notification__caption">{{ items_i.timestamp }}</p>
     {% endif %}
   </div>
   {% if variant == [object Object] %}
   <button tabindex="0"
-    class="bx--inline-notification__action-button bx--btn bx--btn--sm bx--btn--ghost"
+    class="{{ items_i.root.prefix }}--inline-notification__action-button {{ items_i.root.prefix }}--btn {{ items_i.root.prefix }}--btn--sm {{ items_i.root.prefix }}--btn--ghost"
     type="button">Action</button>
   {% endif %}
-  <button data-notification-btn class="bx--{{ variant }}-notification__close-button" type="button"
+  <button data-notification-btn class="{{ items_i.root.prefix }}--{{ variant }}-notification__close-button" type="button"
     aria-label="close">
-    {% carbon_icon "?" %}
+    {% carbon_icon "Close20" class="bx--{{ variant }}-notification__close-icon" %}
   </button>
 </div>
 {% endfor %}

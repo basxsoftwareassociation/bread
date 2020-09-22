@@ -1,5 +1,6 @@
-from bread.layout.carbon_design import Component
 from crispy_forms.utils import TEMPLATE_PACK
+
+from .. import Component
 
 
 class Link(Component):

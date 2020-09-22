@@ -11,12 +11,12 @@
   <div data-search role="search" class="bx--search bx--search--{{ suffix }}{% if light %} bx--search--light{% endif %}">
     <label id="search-input-label-1" class="bx--label" for="search__input-1">Search</label>
     <input class="bx--search-input" type="text" id="search__input-1" placeholder="Search">
-    {% carbon_icon "?" %}
+    {% carbon_icon "Search16" class="bx--search-magnifier" %}
     <button class="bx--search-close bx--search-close--hidden" title="Clear search
         input" aria-label="Clear search input">
-      {% if suffix == [object Object] %}{% carbon_icon "?" %}{% endif %}
-      {% if suffix == [object Object] %}{% carbon_icon "?" %}{% endif %}
-      {% if suffix == [object Object] %}{% carbon_icon "?" %}{% endif %}
+      {% if suffix == [object Object] %}{% carbon_icon "Close16" class="bx--search-clear" %}{% endif %}
+      {% if suffix == [object Object] %}{% carbon_icon "Close16" class="bx--search-clear" %}{% endif %}
+      {% if suffix == [object Object] %}{% carbon_icon "Close20" class="bx--search-clear" %}{% endif %}
     </button>
   </div>
   {% if suffix == [object Object] %}</div>{% endif %}

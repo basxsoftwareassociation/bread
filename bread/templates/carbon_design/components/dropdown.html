@@ -16,14 +16,14 @@
         <span class="bx--dropdown-text__inner" id="{{ default.idSuffix }}-value">{% if not inline %} Dropdown
           option {% endif %}</span>
         <span class="bx--dropdown__arrow-container">
-          {% carbon_icon "?" %}
+          {% carbon_icon "ChevronDown16" class="bx--dropdown__arrow" %}
         </span>
       </button>
       <ul class="bx--dropdown-list" id="{{ default.idSuffix }}-menu" role="menu" tabindex="-1"
         id="{{ default.idSuffix }}-menu" aria-hidden="true" aria-labelledby="{{ default.idSuffix }}-label">
         {% for index, item in items.items %}
-        <li data-option data-value="{{ item.value }}" class="bx--dropdown-item" title="{{ item.label }}">
-          <a class="bx--dropdown-link" href="javascript:void(0)" tabindex="-1" role="menuitemradio"
+        <li data-option data-value="{{ item.value }}" class="{{ item.root.prefix }}--dropdown-item" title="{{ item.label }}">
+          <a class="{{ item.root.prefix }}--dropdown-link" href="javascript:void(0)" tabindex="-1" role="menuitemradio"
             aria-checked="{% if index %}false{% else %}true{% endif %}"
             id="{{ default.idSuffix }}-item{{ forloop.counter0 }}">{{ item.label }}</a>
         </li>
@@ -48,14 +48,14 @@
         <span class="bx--dropdown-text__inner" id="{{ helper.idSuffix }}-value">{% if not inline %} Dropdown
           option {% endif %}</span>
         <span class="bx--dropdown__arrow-container">
-          {% carbon_icon "?" %}
+          {% carbon_icon "ChevronDown16" class="bx--dropdown__arrow" %}
         </span>
       </button>
       <ul class="bx--dropdown-list" role="menu" tabindex="-1" id="{{ helper.idSuffix }}-menu"
         aria-hidden="true" aria-labelledby="{{ helper.idSuffix }}-label">
         {% for index, item in items.items %}
-        <li data-option data-value="{{ item.value }}" class="bx--dropdown-item" title="{{ item.label }}">
-          <a class="bx--dropdown-link" href="javascript:void(0)" tabindex="-1" role="menuitemradio"
+        <li data-option data-value="{{ item.value }}" class="{{ item.root.prefix }}--dropdown-item" title="{{ item.label }}">
+          <a class="{{ item.root.prefix }}--dropdown-link" href="javascript:void(0)" tabindex="-1" role="menuitemradio"
             aria-checked="{% if index %}false{% else %}true{% endif %}"
             id="{{ helper.idSuffix }}-item{{ forloop.counter0 }}">{{ item.label }}</a>
         </li>
@@ -80,15 +80,15 @@
         <span class="bx--dropdown-text__inner" id="{{ disabled.idSuffix }}-value">{% if not inline %}
           Dropdown option {% endif %}</span>
         <span class="bx--dropdown__arrow-container">
-          {% carbon_icon "?" %}
+          {% carbon_icon "ChevronDown16" class="bx--dropdown__arrow" %}
         </span>
       </button>
       <!-- Note: remove `tabindex` from disabled dropdown lists -->
       <ul class="bx--dropdown-list" id="{{ disabled.idSuffix }}-menu" role="menu"
         id="{{ disabled.idSuffix }}-menu" aria-hidden="true" aria-labelledby="{{ disabled.idSuffix }}-label">
         {% for index, item in items.items %}
-        <li data-option data-value="{{ item.value }}" class="bx--dropdown-item" title="{{ item.label }}">
-          <a class="bx--dropdown-link" href="javascript:void(0)" tabindex="-1" role="menuitemradio"
+        <li data-option data-value="{{ item.value }}" class="{{ item.root.prefix }}--dropdown-item" title="{{ item.label }}">
+          <a class="{{ item.root.prefix }}--dropdown-link" href="javascript:void(0)" tabindex="-1" role="menuitemradio"
             aria-checked="{% if index %}false{% else %}true{% endif %}"
             id="{{ disabled.idSuffix }}-item{{ forloop.counter0 }}">{{ item.label }}</a>
         </li>
@@ -114,18 +114,18 @@
       <button class="bx--dropdown-text" aria-haspopup="true" aria-expanded="false"
         aria-controls="{{ invalid.idSuffix }}-menu"
         aria-labelledby="{{ invalid.idSuffix }}-label {{ invalid.idSuffix }}-value" type="button">
-        {% carbon_icon "?" %}
+        {% carbon_icon "WarningFilled16" class="bx--dropdown__invalid-icon" %}
         <span class="bx--dropdown-text__inner" id="{{ invalid.idSuffix }}-value">{% if not inline %} Dropdown
           option {% endif %}</span>
         <span class="bx--dropdown__arrow-container">
-          {% carbon_icon "?" %}
+          {% carbon_icon "ChevronDown16" class="bx--dropdown__arrow" %}
         </span>
       </button>
       <ul class="bx--dropdown-list" id="{{ invalid.idSuffix }}-menu" role="menu" tabindex="-1"
         id="{{ invalid.idSuffix }}-menu" aria-hidden="true" aria-labelledby="{{ invalid.idSuffix }}-label">
         {% for index, item in items.items %}
-        <li data-option data-value="{{ item.value }}" class="bx--dropdown-item" title="{{ item.label }}">
-          <a class="bx--dropdown-link" href="javascript:void(0)" tabindex="-1" role="menuitemradio"
+        <li data-option data-value="{{ item.value }}" class="{{ item.root.prefix }}--dropdown-item" title="{{ item.label }}">
+          <a class="{{ item.root.prefix }}--dropdown-link" href="javascript:void(0)" tabindex="-1" role="menuitemradio"
             aria-checked="{% if index %}false{% else %}true{% endif %}"
             id="{{ invalid.idSuffix }}-item{{ forloop.counter0 }}">{{ item.label }}</a>
         </li>
@@ -156,17 +156,17 @@
         <span class="bx--dropdown-text__inner" id="{{ default.idSuffix }}-value">{% if not inline %} Dropdown
           option {% endif %}</span>
         <span class="bx--dropdown__arrow-container">
-          {% carbon_icon "?" %}
+          {% carbon_icon "ChevronDown16" class="bx--dropdown__arrow" %}
         </span>
       </button>
       <ul class="bx--dropdown-list" id="{{ default.idSuffix }}-menu" role="menu" tabindex="-1"
         id="{{ default.idSuffix }}-menu" aria-hidden="true" aria-labelledby="{{ default.idSuffix }}-label">
         {% for index, item in items.items %}
-        <li data-option data-value="{{ item.value }}" class="bx--dropdown-item" title="{{ item.label }}">
-          <a class="bx--dropdown-link" href="javascript:void(0)" tabindex="-1" role="menuitemradio"
+        <li data-option data-value="{{ item.value }}" class="{{ item.root.prefix }}--dropdown-item" title="{{ item.label }}">
+          <a class="{{ item.root.prefix }}--dropdown-link" href="javascript:void(0)" tabindex="-1" role="menuitemradio"
             aria-checked="{% if index %}false{% else %}true{% endif %}"
             id="{{ default.idSuffix }}-item{{ forloop.counter0 }}">{{ item.label }}</a>
-          {% carbon_icon "?" %}
+          {% carbon_icon "Checkmark16" class="bx--list-box__menu-item__selected-icon" aria_hidden="true" %}
         </li>
         {% endfor %}
       </ul>

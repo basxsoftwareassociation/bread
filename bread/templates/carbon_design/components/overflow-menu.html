@@ -10,7 +10,7 @@
     class="bx--overflow-menu__trigger bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--right bx--tooltip--align-start"
     aria-haspopup="true" aria-expanded="false" id="{{ idSuffix.default }}-trigger" aria-controls="{{ idSuffix.default }}">
     <span class="bx--assistive-text">Overflow</span>
-    {% carbon_icon "?" %}
+    {% carbon_icon "OverflowMenuVertical16" class="bx--overflow-menu__icon" %}
   </button>
   <div class="bx--overflow-menu-options" tabindex="-1" role="menu"
     aria-labelledby="{{ idSuffix.default }}-trigger" data-floating-menu-direction="{{ direction }}"
@@ -18,10 +18,10 @@
     <ul  class="bx--overflow-menu-options__content">
       {% for items_i in items %}
       <li
-        class="bx--overflow-menu-options__option {% if items_i.disabled %} bx--overflow-menu-options__option--disabled {% endif %} {% if items_i.danger %} bx--overflow-menu-options__option--danger {% endif %}">
-        <button class="bx--overflow-menu-options__btn" role="menuitem" {% if items_i.title %} title="{{ items_i.title }}"
+        class="{{ items_i.root.prefix }}--overflow-menu-options__option {% if items_i.disabled %} {{ items_i.root.prefix }}--overflow-menu-options__option--disabled {% endif %} {% if items_i.danger %} {{ items_i.root.prefix }}--overflow-menu-options__option--danger {% endif %}">
+        <button class="{{ items_i.root.prefix }}--overflow-menu-options__btn" role="menuitem" {% if items_i.title %} title="{{ items_i.title }}"
           {% endif %} {% if items_i.primaryFocus %} data-floating-menu-primary-focus {% endif %} {% if items_i.disabled %} disabled {% endif %}>
-          <span class="bx--overflow-menu-options__option-content">
+          <span class="{{ items_i.root.prefix }}--overflow-menu-options__option-content">
             {{ items_i.label }}
           </span>
         </button>
@@ -38,7 +38,7 @@
     class="bx--overflow-menu__trigger bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--left bx--tooltip--align-start"
     aria-haspopup="true" aria-expanded="false" id="{{ idSuffix.flip }}-trigger" aria-controls="{{ idSuffix.flip }}">
     <span class="bx--assistive-text">Overflow</span>
-    {% carbon_icon "?" %}
+    {% carbon_icon "OverflowMenuVertical16" class="bx--overflow-menu__icon" %}
   </button>
   <div class="bx--overflow-menu-options bx--overflow-menu--flip" tabindex="-1"
     data-floating-menu-direction="{{ direction }}" role="menu" aria-labelledby="{{ idSuffix.flip }}-trigger"
@@ -46,10 +46,10 @@
     <ul  class="bx--overflow-menu-options__content">
       {% for items_i in items %}
       <li
-        class="bx--overflow-menu-options__option {% if items_i.disabled %} bx--overflow-menu-options__option--disabled {% endif %} {% if items_i.danger %} bx--overflow-menu-options__option--danger {% endif %}">
-        <button class="bx--overflow-menu-options__btn" role="menuitem" {% if items_i.title %} title="{{ items_i.title }}"
+        class="{{ items_i.root.prefix }}--overflow-menu-options__option {% if items_i.disabled %} {{ items_i.root.prefix }}--overflow-menu-options__option--disabled {% endif %} {% if items_i.danger %} {{ items_i.root.prefix }}--overflow-menu-options__option--danger {% endif %}">
+        <button class="{{ items_i.root.prefix }}--overflow-menu-options__btn" role="menuitem" {% if items_i.title %} title="{{ items_i.title }}"
           {% endif %} {% if items_i.primaryFocus %} data-floating-menu-primary-focus {% endif %} {% if items_i.disabled %} disabled {% endif %}>
-          <span class="bx--overflow-menu-options__option-content">
+          <span class="{{ items_i.root.prefix }}--overflow-menu-options__option-content">
             {{ items_i.label }}
           </span>
         </button>
@@ -65,7 +65,7 @@
     class="bx--overflow-menu__trigger bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--left bx--tooltip--align-start"
     aria-haspopup="true" aria-expanded="false" id="{{ idSuffix.link }}-trigger" aria-controls="{{ idSuffix.link }}">
     <span class="bx--assistive-text">Overflow</span>
-    {% carbon_icon "?" %}
+    {% carbon_icon "OverflowMenuVertical16" class="bx--overflow-menu__icon" %}
   </button>
   <div class="bx--overflow-menu-options bx--overflow-menu--flip" tabindex="-1"
     data-floating-menu-direction="{{ direction }}" role="menu" aria-labelledby="{{ idSuffix.link }}-trigger"
@@ -73,11 +73,11 @@
     <ul  class="bx--overflow-menu-options__content">
       {% for items_i in items %}
       <li
-        class="bx--overflow-menu-options__option{% if items_i.disabled %} bx--overflow-menu-options__option--disabled{% endif %}{% if items_i.danger %} bx--overflow-menu-options__option--danger{% endif %}">
-        <a href="https://www.ibm.com" class="bx--overflow-menu-options__btn" role="menuitem" {% if items_i.title %}
+        class="{{ items_i.root.prefix }}--overflow-menu-options__option{% if items_i.disabled %} {{ items_i.root.prefix }}--overflow-menu-options__option--disabled{% endif %}{% if items_i.danger %} {{ items_i.root.prefix }}--overflow-menu-options__option--danger{% endif %}">
+        <a href="https://www.ibm.com" class="{{ items_i.root.prefix }}--overflow-menu-options__btn" role="menuitem" {% if items_i.title %}
           title="{{ items_i.title }}" {% endif %} {% if items_i.primaryFocus %} data-floating-menu-primary-focus{% endif %}{% if items_i.disabled %}
           tabindex="-1" aria-disabled="true" {% endif %}>
-          <span class="bx--overflow-menu-options__option-content">
+          <span class="{{ items_i.root.prefix }}--overflow-menu-options__option-content">
             {{ items_i.label }}
           </span>
         </a>

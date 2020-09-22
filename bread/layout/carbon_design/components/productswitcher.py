@@ -1,6 +1,6 @@
 from crispy_forms.utils import TEMPLATE_PACK
 
-from layout.carbon_design import Component
+from .. import Component
 
 
 class ProductSwitcher(Component):

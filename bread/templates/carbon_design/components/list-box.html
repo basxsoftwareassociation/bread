@@ -15,7 +15,7 @@
         aria-expanded="false" aria-haspopup="true">
         <span class="bx--list-box__label">List box options</span>
         <div class="bx--list-box__menu-icon">
-          {% carbon_icon "?" %}
+          {% carbon_icon "ChevronDown16" aria_label="Open menu" %}
         </div>
       </div>
     </div>
@@ -31,12 +31,12 @@
     <div
       class="bx--list-box{% if inline %} bx--list-box--inline{% endif %}{% if light %} bx--list-box--light{% endif %}"
       data-invalid>
-      {% carbon_icon "?" %}
+      {% carbon_icon "WarningFilled16" class="bx--list-box__invalid-icon" %}
       <div role="button" class="bx--list-box__field" tabindex="0" aria-label="open menu"
         aria-expanded="false" aria-haspopup="true">
         <span class="bx--list-box__label">List box options</span>
         <div class="bx--list-box__menu-icon">
-          {% carbon_icon "?" %}
+          {% carbon_icon "ChevronDown16" aria_label="Open menu" %}
         </div>
       </div>
     </div>
@@ -56,7 +56,7 @@
         aria-expanded="false" aria-haspopup="true">
         <span class="bx--list-box__label">List box options</span>
         <div class="bx--list-box__menu-icon">
-          {% carbon_icon "?" %}
+          {% carbon_icon "ChevronDown16" aria_label="Open menu" %}
         </div>
       </div>
     </div>
@@ -75,7 +75,7 @@
         aria-expanded="false" aria-haspopup="true">
         <span class="bx--list-box__label">List box options</span>
         <div class="bx--list-box__menu-icon">
-          {% carbon_icon "?" %}
+          {% carbon_icon "ChevronDown16" aria_label="Open menu" %}
         </div>
       </div>
     </div>
@@ -96,17 +96,17 @@
         aria-expanded="true" aria-haspopup="true">
         <span class="bx--list-box__label">List box options</span>
         <div class="bx--list-box__menu-icon bx--list-box__menu-icon--open">
-          {% carbon_icon "?" %}
+          {% carbon_icon "ChevronDown16" aria_label="Close menu" %}
         </div>
       </div>
       <ul class="bx--list-box__menu" role="combobox">
         {% for items_i in items %}
         <li
-          class="bx--list-box__menu-item{% if items_i.selected %} bx--list-box__menu-item--active bx--list-box__menu-item--highlighted{% endif %}"
+          class="{{ items_i.root.prefix }}--list-box__menu-item{% if items_i.selected %} {{ items_i.root.prefix }}--list-box__menu-item--active {{ items_i.root.prefix }}--list-box__menu-item--highlighted{% endif %}"
           id="{{ items_i.id }}">
-          <div class="bx--list-box__menu-item__option" tabindex="0">
+          <div class="{{ items_i.root.prefix }}--list-box__menu-item__option" tabindex="0">
             {{ items_i.label }}
-            {% carbon_icon "?" %}
+            {% carbon_icon "Checkmark16" class="bx--list-box__menu-item__selected-icon" aria_hidden="true" %}
           </div>
         </li>
         {% endfor %}

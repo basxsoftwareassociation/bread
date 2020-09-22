@@ -8,9 +8,9 @@
 
 <ul data-progress data-progress-current class="bx--progress {% if vertical %}bx--progress--vertical{% endif %}">
   {% for steps_i in steps %}
-    <li class="bx--progress-step bx--progress-step--{{ steps_i.state }} {% if steps_i.disabled %} bx--progress-step--disabled {% endif %}" {% if steps_i.invalid %} data-invalid {% endif %} {% if steps_i.disabled %} aria-disabled="true" {% endif %}>
+    <li class="{{ steps_i.root.prefix }}--progress-step {{ steps_i.root.prefix }}--progress-step--{{ steps_i.state }} {% if steps_i.disabled %} {{ steps_i.root.prefix }}--progress-step--disabled {% endif %}" {% if steps_i.invalid %} data-invalid {% endif %} {% if steps_i.disabled %} aria-disabled="true" {% endif %}>
       {% if steps_i.state == [object Object] %}
-        {% carbon_icon "?" %}
+        {% carbon_icon "CheckmarkOutline16" %}
       {% endif %}
       {% if steps_i.state == [object Object] %}
         <svg>
@@ -19,14 +19,14 @@
       {% endif %}
       {% if steps_i.state == [object Object] %}
         {% if steps_i.invalid %}
-          {% carbon_icon "?" %}
+          {% carbon_icon "Warning16" class="bx--progress__warning" %}
         {% else %}
           <svg>
             <path d="M8 1C4.1 1 1 4.1 1 8s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7zm0 13c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6z"></path>
           </svg>
         {% endif %}
       {% endif %}
-      <p tabindex="0" class="bx--progress-label"{% if steps_i.overflow %} aria-describedby="label-tooltip{{ steps_i.tooltipId }}"{% endif %}>
+      <p tabindex="0" class="{{ steps_i.root.prefix }}--progress-label"{% if steps_i.overflow %} aria-describedby="label-tooltip{{ steps_i.tooltipId }}"{% endif %}>
         {% if steps_i.overflow %}
           {% if vertical %}
             {{ steps_i.label }}
@@ -37,14 +37,14 @@
           {{ steps_i.label }}
         {% endif %}
       </p>
-      <div id="label-tooltip{{ steps_i.tooltipId }}" role="tooltip" data-floating-menu-direction="bottom" class="bx--tooltip" data-avoid-focus-on-open>
-        <span class="bx--tooltip__caret"></span>
-        <p class="bx--tooltip__text">{{ steps_i.overflowLabel }}</p>
+      <div id="label-tooltip{{ steps_i.tooltipId }}" role="tooltip" data-floating-menu-direction="bottom" class="{{ steps_i.root.prefix }}--tooltip" data-avoid-focus-on-open>
+        <span class="{{ steps_i.root.prefix }}--tooltip__caret"></span>
+        <p class="{{ steps_i.root.prefix }}--tooltip__text">{{ steps_i.overflowLabel }}</p>
       </div>
       {% if steps_i.optional %}
-        <p class="bx--progress-optional">{{ steps_i.optionalLabel }}</p>
+        <p class="{{ steps_i.root.prefix }}--progress-optional">{{ steps_i.optionalLabel }}</p>
       {% endif %}
-      <span class="bx--progress-line"></span>
+      <span class="{{ steps_i.root.prefix }}--progress-line"></span>
     </li>
   {% endfor %}
 </ul>

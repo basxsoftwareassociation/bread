@@ -11,7 +11,7 @@
   <input id="text-input-3" type="text"
     class="bx--text-input{% if light %} bx--text-input--light{% endif %}"
     placeholder="Optional placeholder text">
-  <div class="bx--form__helper-text">
+  <div class="{{ prefix }}--form__helper-text">
     Optional helper text here; if message is more than one line text should wrap (~100 character count maximum)
   </div>
 </div>
@@ -19,7 +19,7 @@
   <label for="text-area-2" class="bx--label">Text Area label</label>
   <textarea id="text-area-2" class="bx--text-area{% if light %} bx--text-area--light{% endif %}"
     rows="4" cols="50" placeholder="Placeholder text."></textarea>
-  <div class="bx--form__helper-text">
+  <div class="{{ prefix }}--form__helper-text">
     Optional helper text here; if message is more than one line text should wrap (~100 character count maximum)
   </div>
 </div>
@@ -37,13 +37,13 @@
         class="bx--select-input {% if invalid %} bx--select--invalid {% endif %}">
         {% for selectItems_i in selectItems %}
         {% if selectItems_i.items %}
-        <optgroup class="bx--select-optgroup" label="{{ selectItems_i.label }}">
+        <optgroup class="{{ selectItems_i.root.prefix }}--select-optgroup" label="{{ selectItems_i.label }}">
           {% for items_i in selectItems_i.items %}
-          <option class="bx--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>{{ items_i.label }} </option> {% endfor %} </optgroup> {% else %}
-        <option class="bx--select-option" value="{{ selectItems_i.value }}" {% if selectItems_i.disabled %} disabled{% endif %}{% if selectItems_i.selected %} selected{% endif %}{% if selectItems_i.hidden %} hidden{% endif %}>{{ selectItems_i.label }} </option> {% endif %} {% endfor %} </select>
-      {% carbon_icon "?" %}
+          <option class="{{ items_i.root.prefix }}--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>{{ items_i.label }} </option> {% endfor %} </optgroup> {% else %}
+        <option class="{{ selectItems_i.root.prefix }}--select-option" value="{{ selectItems_i.value }}" {% if selectItems_i.disabled %} disabled{% endif %}{% if selectItems_i.selected %} selected{% endif %}{% if selectItems_i.hidden %} hidden{% endif %}>{{ selectItems_i.label }} </option> {% endif %} {% endfor %} </select>
+      {% carbon_icon "ChevronDownGlyph" class="bx--select__arrow" %}
       {% if invalid %}
-      {% carbon_icon "?" %}
+      {% carbon_icon "WarningFilled16" class="bx--select__invalid-icon" %}
       {% endif %}
     </div>
     {% if inline %}

@@ -16,7 +16,7 @@
       <p class="bx--modal-header__label bx--type-delta" id="modal-{{ idSuffix }}-label">Optional label</p>
       <p class="bx--modal-header__heading bx--type-beta" id="modal-{{ idSuffix }}-heading">{% if hasBody %}Modal heading{% else %}Passive modal title as the message. Should be direct and 3 lines or less.{% endif %}</p>
       <button class="bx--modal-close" type="button" data-modal-close aria-label="close modal" {% if not hasFooter %} data-modal-primary-focus{% endif %}>
-        {% carbon_icon "?" %}
+        {% carbon_icon "Close16" class="bx--modal-close__icon" %}
       </button>
     </div>
 

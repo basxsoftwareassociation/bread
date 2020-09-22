@@ -20,15 +20,15 @@
           <div class="bx--action-list">
             <button class="bx--btn bx--btn--primary{% if small %} bx--btn--sm{% endif %}" type="button">
               Delete
-              {% carbon_icon "?" %}
+              {% carbon_icon "Delete16" class="bx--btn__icon" %}
             </button>
             <button class="bx--btn bx--btn--primary{% if small %} bx--btn--sm{% endif %}" type="button">
               Save
-              {% carbon_icon "?" %}
+              {% carbon_icon "Save16" class="bx--btn__icon" %}
             </button>
             <button class="bx--btn bx--btn--primary{% if small %} bx--btn--sm{% endif %}" type="button">
               Download
-              {% carbon_icon "?" %}
+              {% carbon_icon "Download16" class="bx--btn__icon" %}
             </button>
             <button data-event="action-bar-cancel" class="bx--btn bx--btn--primary bx--batch-summary__cancel{% if small %} bx--btn--sm{% endif %}">{{ cancelLabel }}</button>
           </div>
@@ -45,12 +45,12 @@
            <div class="bx--toolbar-search-container-expandable">
              <div data-search class="bx--search bx--search--sm" role="search">
                <div class="bx--search-magnifier" tabindex="0">
-                 {% carbon_icon "?" %}
+                 {% carbon_icon "Search16" class="bx--toolbar-action__icon" %}
                </div>
                <label id="{{ searchLabelId }}" class="bx--label" for="{{ searchInputId }}">{{ searchLabel }}</label>
                 <input class="bx--search-input" type="text" id="{{ searchInputId }}" role="search" placeholder="{{ searchLabel }}" aria-labelledby="{{ searchLabelId }}">
                 <button class="bx--search-close bx--search-close--hidden" title="{{ clearSearchLabel }}" aria-label="{{ clearSearchLabel }}">
-                  {% carbon_icon "?" %}
+                  {% carbon_icon "Close16" %}
                 </button>
               </div>
             </div>
@@ -61,12 +61,12 @@
             <div class="bx--toolbar-search-container-persistent">
               <div data-search class="bx--search bx--search--sm" role="search">
                 <div class="bx--search-magnifier">
-                  {% carbon_icon "?" %}
+                  {% carbon_icon "Search16" %}
                 </div>
                 <label id="{{ searchLabelId }}" class="bx--label" for="{{ searchInputId }}">{{ searchLabel }}</label>
                 <input class="bx--search-input" type="text" id="{{ searchInputId }}" role="search" placeholder="{{ searchLabel }}" aria-labelledby="{{ searchLabelId }}">
                 <button class="bx--search-close bx--search-close--hidden" title="{{ clearSearchLabel }}" aria-label="{{ clearSearchLabel }}">
-                  {% carbon_icon "?" %}
+                  {% carbon_icon "Close16" %}
                 </button>
               </div>
             </div>
@@ -74,14 +74,14 @@
 
             <!-- Toolbar Overflow Menu -->
             {% for toolbar in toolbarActionsX %}
-            <div class="bx--overflow-menu bx--toolbar-action" data-overflow-menu role="button" tabindex="0" aria-label="Overflow" aria-haspopup="true"
+            <div class="{{ toolbar.root.prefix }}--overflow-menu {{ toolbar.root.prefix }}--toolbar-action" data-overflow-menu role="button" tabindex="0" aria-label="Overflow" aria-haspopup="true"
               aria-expanded="false" {% if toolbar.disabled %} disabled {% endif %}>
-              {% carbon_icon "?" %}
-              <ul class="bx--overflow-menu-options bx--overflow-menu--flip" tabindex="-1" role="menu" aria-label="Overflow" data-floating-menu-direction="bottom">
+              {% carbon_icon "Settings16" class="bx--toolbar-action__icon" %}
+              <ul class="{{ toolbar.root.prefix }}--overflow-menu-options {{ toolbar.root.prefix }}--overflow-menu--flip" tabindex="-1" role="menu" aria-label="Overflow" data-floating-menu-direction="bottom">
                 {% for overflowItems_i in toolbar.overflowItems %}
-                <li class="bx--overflow-menu-options__option {% if undefined %} bx--overflow-menu--data-table {% endif %}" role="presentation">
-                  <button class="bx--overflow-menu-options__btn" role="menuitem" {% if overflowItems_i.primaryFocus %} data-floating-menu-primary-focus {% endif %}>
-                    <div class="bx--overflow-menu-options__option-content">
+                <li class="{{ overflowItems_i.root.prefix }}--overflow-menu-options__option {% if undefined %} {{ overflowItems_i.root.prefix }}--overflow-menu--data-table {% endif %}" role="presentation">
+                  <button class="{{ overflowItems_i.root.prefix }}--overflow-menu-options__btn" role="menuitem" {% if overflowItems_i.primaryFocus %} data-floating-menu-primary-focus {% endif %}>
+                    <div class="{{ overflowItems_i.root.prefix }}--overflow-menu-options__option-content">
                     {{ overflowItems_i.label }}
                     </div>
                   </button>
@@ -94,7 +94,7 @@
           <!--  Toolbar primary button -->
           <button class="bx--btn bx--btn--sm bx--btn--primary">
             {% if small %} Primary {% else %} Primary Button {% endif %}
-            {% carbon_icon "?" %}
+            {% carbon_icon "Add20" class="bx--btn__icon" %}
           </button>
       </div>
       {% endif %}
@@ -110,26 +110,26 @@
     <thead>
       <tr>
         {% for columns_i in columns %}
-          <th {% if columns_i.checkbox %} class="bx--table-column-checkbox"{% endif %}{% if columns_i.menu %} class="bx--table-column-menu"{% endif %}{% if columns_i.section %} class="bx--table-expand"{% endif %}{% if columns_i.numerical %} class="bx--data-table--numerical-cell"{% endif %}{% if columns_i.section %} data-event="expandAll"{% endif %}>
+          <th {% if columns_i.checkbox %} class="{{ columns_i.root.prefix }}--table-column-checkbox"{% endif %}{% if columns_i.menu %} class="{{ columns_i.root.prefix }}--table-column-menu"{% endif %}{% if columns_i.section %} class="{{ columns_i.root.prefix }}--table-expand"{% endif %}{% if columns_i.numerical %} class="{{ columns_i.root.prefix }}--data-table--numerical-cell"{% endif %}{% if columns_i.section %} data-event="expandAll"{% endif %}>
             <!-- checkbox th -->
             {% if columns_i.checkbox %}
-              <input data-event="select-all" id="{{ columns_i.checkboxId }}" class="bx--checkbox" type="checkbox" value="{{ columns_i.checkboxValue }}" name="{{ columns_i.checkboxName }}">
-              <label for="{{ columns_i.checkboxId }}" class="bx--checkbox-label" aria-label="{{ columns_i.title }}"></label>
+              <input data-event="select-all" id="{{ columns_i.checkboxId }}" class="{{ columns_i.root.prefix }}--checkbox" type="checkbox" value="{{ columns_i.checkboxValue }}" name="{{ columns_i.checkboxName }}">
+              <label for="{{ columns_i.checkboxId }}" class="{{ columns_i.root.prefix }}--checkbox-label" aria-label="{{ columns_i.title }}"></label>
             {% elif undefined %}
-              <button class="bx--table-expand__button">
-                {% carbon_icon "?" %}
+              <button class="{{ columns_i.root.prefix }}--table-expand__button">
+                {% carbon_icon "ChevronRight16" class="bx--table-expand__svg" %}
               </button>
             {% elif undefined %}
             <!-- sortable th  -->
               {% if columns_i.sortable %}
-                <button class="bx--table-sort" data-event="sort" title="{{ columns_i.title }}">
-                  <span class="bx--table-header-label">{{ columns_i.title }}</span>
-                  {% carbon_icon "?" %}
-                  {% carbon_icon "?" %}
+                <button class="{{ columns_i.root.prefix }}--table-sort" data-event="sort" title="{{ columns_i.title }}">
+                  <span class="{{ columns_i.root.prefix }}--table-header-label">{{ columns_i.title }}</span>
+                  {% carbon_icon "ArrowDown16" class="bx--table-sort__icon" %}
+                  {% carbon_icon "Arrows16" class="bx--table-sort__icon-unsorted" %}
                   {% if truncate %}
-                    <div id="label-tooltip" role="tooltip" data-floating-menu-direction="bottom" class="bx--tooltip" data-avoid-focus-on-open>
-                      <span class="bx--tooltip__caret"></span>
-                      <p class="bx--tooltip__text">{{ columns_i.title }}</p>
+                    <div id="label-tooltip" role="tooltip" data-floating-menu-direction="bottom" class="{{ columns_i.root.prefix }}--tooltip" data-avoid-focus-on-open>
+                      <span class="{{ columns_i.root.prefix }}--tooltip__caret"></span>
+                      <p class="{{ columns_i.root.prefix }}--tooltip__text">{{ columns_i.title }}</p>
                     </div>
                   {% endif %}
                 </button>
@@ -137,7 +137,7 @@
                 {% elif columns_i.small %}
                   {{ columns_i.title }}
                 {% else %}
-                  <span class="bx--table-header-label">{{ columns_i.title }}</span>
+                  <span class="{{ columns_i.root.prefix }}--table-header-label">{{ columns_i.title }}</span>
                 {% endif %}
               {% endif %}
           </th>
@@ -146,61 +146,61 @@
     </thead>
   <tbody>
     {% for row in rows %}
-      <tr{% if row.sectionContent %} class="bx--parent-row" data-parent-row {% endif %} {% if row.disabled %} class="bx--row-disabled" {% endif %}>
+      <tr{% if row.sectionContent %} class="{{ row.root.prefix }}--parent-row" data-parent-row {% endif %} {% if row.disabled %} class="{{ row.root.prefix }}--row-disabled" {% endif %}>
         {% for column in columns %}
           {% with data=row|lookup:column.name %}
           <!-- expand icon td -->
             {% if column.section %}
-              <td class="bx--table-expand" data-event="expand">
-                <button class="bx--table-expand__button">
-                  {% carbon_icon "?" %}
+              <td class="{{ data.root.prefix }}--table-expand" data-event="expand">
+                <button class="{{ data.root.prefix }}--table-expand__button">
+                  {% carbon_icon "ChevronRight16" class="bx--table-expand__svg" %}
                 </button>
               </td>
             <!-- checkbox td -->
             {% elif column.checkbox %}
-              <td class="bx--table-column-checkbox">
-                <input data-event="select" id="{{ data.id }}" class="bx--checkbox" type="checkbox" value="{{ data.value }}" name="{{ data.name }}" {% if row.disabled %} disabled {% endif %}>
-                <label for="{{ data.id }}" class="bx--checkbox-label" aria-label="{{ data.label }}"></label>
+              <td class="{{ data.root.prefix }}--table-column-checkbox">
+                <input data-event="select" id="{{ data.id }}" class="{{ data.root.prefix }}--checkbox" type="checkbox" value="{{ data.value }}" name="{{ data.name }}" {% if row.disabled %} disabled {% endif %}>
+                <label for="{{ data.id }}" class="{{ data.root.prefix }}--checkbox-label" aria-label="{{ data.label }}"></label>
               </td>
             <!-- inline action td's -->
             {% elif column.additionalIcons %}
-              <td class="bx--table-column-icon">
+              <td class="{{ data.root.prefix }}--table-column-icon">
                 <button {% if row.disabled %} disabled {% endif %}>
                   {{ data.svg|safe }}
                 </button>
               </td>
             <!-- overflow menu td -->
             {% elif column.menu %}
-              <td class="bx--table-column-menu">
-                <div data-overflow-menu role="menu" tabindex="0" aria-label="{{ data.label }}" class="bx--overflow-menu">
-                  {% carbon_icon "?" %}
-                  <ul class="bx--overflow-menu-options{% if data.flip %} bx--overflow-menu--flip{% endif %}">
+              <td class="{{ data.root.prefix }}--table-column-menu">
+                <div data-overflow-menu role="menu" tabindex="0" aria-label="{{ data.label }}" class="{{ data.root.prefix }}--overflow-menu">
+                  {% carbon_icon "OverflowMenuVertical16" class="bx--overflow-menu__icon" %}
+                  <ul class="{{ data.root.prefix }}--overflow-menu-options{% if data.flip %} {{ data.root.prefix }}--overflow-menu--flip{% endif %}">
 
-                      <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                        <button class="bx--overflow-menu-options__btn" onclick="console.log('keyboard action')">
-                          <div class="bx--overflow-menu-options__option-content">
-                           {% carbon_icon "?" %} Edit
+                      <li class="{{ data.root.prefix }}--overflow-menu-options__option {{ data.root.prefix }}--table-row--menu-option">
+                        <button class="{{ data.root.prefix }}--overflow-menu-options__btn" onclick="console.log('keyboard action')">
+                          <div class="{{ data.root.prefix }}--overflow-menu-options__option-content">
+                           {% carbon_icon "Edit16" %} Edit
                           </div>
                         </button>
                       </li>
-                      <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                        <button class="bx--overflow-menu-options__btn" onclick="console.log('keyboard action')">
-                          <div class="bx--overflow-menu-options__option-content">
-                            {% carbon_icon "?" %} Download
+                      <li class="{{ data.root.prefix }}--overflow-menu-options__option {{ data.root.prefix }}--table-row--menu-option">
+                        <button class="{{ data.root.prefix }}--overflow-menu-options__btn" onclick="console.log('keyboard action')">
+                          <div class="{{ data.root.prefix }}--overflow-menu-options__option-content">
+                            {% carbon_icon "Download16" %} Download
                           </div>
                         </button>
                       </li>
-                      <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                        <button class="bx--overflow-menu-options__btn" onclick="console.log('keyboard action')">
-                          <div class="bx--overflow-menu-options__option-content">
-                            {% carbon_icon "?" %} Save
+                      <li class="{{ data.root.prefix }}--overflow-menu-options__option {{ data.root.prefix }}--table-row--menu-option">
+                        <button class="{{ data.root.prefix }}--overflow-menu-options__btn" onclick="console.log('keyboard action')">
+                          <div class="{{ data.root.prefix }}--overflow-menu-options__option-content">
+                            {% carbon_icon "Save16" %} Save
                           </div>
                         </button>
                       </li>
-                      <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                        <button class="bx--overflow-menu-options__btn" onclick="console.log('keyboard action')">
-                          <div class="bx--overflow-menu-options__option-content">
-                            {% carbon_icon "?" %} Delete
+                      <li class="{{ data.root.prefix }}--overflow-menu-options__option {{ data.root.prefix }}--table-row--menu-option">
+                        <button class="{{ data.root.prefix }}--overflow-menu-options__btn" onclick="console.log('keyboard action')">
+                          <div class="{{ data.root.prefix }}--overflow-menu-options__option-content">
+                            {% carbon_icon "Delete16" %} Delete
                           </div>
                         </button>
                       </li>
@@ -210,42 +210,42 @@
               </td>
             <!-- inline edit tds -->
             {% elif undefined %}
-              <td class="bx--data-table-cell--editable bx--data-table-cell--editing">
-                <div class="bx--data-table__edit-field">
-                  <label class="bx--label" for="edit-cell:{{ row.id }}:{{ column.name }}">Edit Name: {{ data }}</label>
-                  <input type="text" class="bx--text-input" id="edit-cell:{{ row.id }}:{{ column.name }}" value="{{ data }}">
+              <td class="{{ data.root.prefix }}--data-table-cell--editable {{ data.root.prefix }}--data-table-cell--editing">
+                <div class="{{ data.root.prefix }}--data-table__edit-field">
+                  <label class="{{ data.root.prefix }}--label" for="edit-cell:{{ row.id }}:{{ column.name }}">Edit Name: {{ data }}</label>
+                  <input type="text" class="{{ data.root.prefix }}--text-input" id="edit-cell:{{ row.id }}:{{ column.name }}" value="{{ data }}">
                 </div>
-                <div class="bx--data-table__edit-actions">
-                  <button class="bx--btn bx--btn--secondary bx--btn--sm">{{ cancelLabel }}</button>
-                  <button class="bx--btn bx--btn--primary bx--btn--sm">{{ saveLabel }}</button>
+                <div class="{{ data.root.prefix }}--data-table__edit-actions">
+                  <button class="{{ data.root.prefix }}--btn {{ data.root.prefix }}--btn--secondary {{ data.root.prefix }}--btn--sm">{{ cancelLabel }}</button>
+                  <button class="{{ data.root.prefix }}--btn {{ data.root.prefix }}--btn--primary {{ data.root.prefix }}--btn--sm">{{ saveLabel }}</button>
                 </div>
               </td>
             {% elif column.editable %}
-              <td class="bx--data-table-cell--editable"><span class="bx--data-table-cell__content">{{ data }}</span></td>
+              <td class="{{ data.root.prefix }}--data-table-cell--editable"><span class="{{ data.root.prefix }}--data-table-cell__content">{{ data }}</span></td>
             <!-- all other td's -->
             {% else %}
-              <td {% if column.numerical %} class="bx--data-table--numerical-cell" {% endif %}>
+              <td {% if column.numerical %} class="{{ data.root.prefix }}--data-table--numerical-cell" {% endif %}>
                 <!-- truncated new markup -->
                 {% if row.truncate %}
-                  <span class="bx--table-cell-content" aria-describedby="label-tooltip">{{ data }}
+                  <span class="{{ data.root.prefix }}--table-cell-content" aria-describedby="label-tooltip">{{ data }}
                       {% if tall %}
                         {% if undefined %}
-                        <div class="bx--data-table--cell-secondary-text">
+                        <div class="{{ data.root.prefix }}--data-table--cell-secondary-text">
                           {{ row.secondaryText }}
                         </div>
                         {% endif %}
                       {% endif %}
                     </span>
-                  <div id="label-tooltip" role="tooltip" data-floating-menu-direction="bottom" class="bx--tooltip" data-avoid-focus-on-open>
-                    <span class="bx--tooltip__caret"></span>
-                    <p class="bx--tooltip__text">{{ data }}</p>
+                  <div id="label-tooltip" role="tooltip" data-floating-menu-direction="bottom" class="{{ data.root.prefix }}--tooltip" data-avoid-focus-on-open>
+                    <span class="{{ data.root.prefix }}--tooltip__caret"></span>
+                    <p class="{{ data.root.prefix }}--tooltip__text">{{ data }}</p>
                   </div>
                 <!-- default (non truncated) -->
                 {% else %}
                   {{ data }}
                   {% if tall %}
                     {% if undefined %}
-                    <div class="bx--data-table--cell-secondary-text">
+                    <div class="{{ data.root.prefix }}--data-table--cell-secondary-text">
                       {{ row.secondaryText }}
                     </div>
                     {% endif %}
@@ -258,9 +258,9 @@
       </tr>
       <!-- Expandable child row -->
       {% if row.sectionContent %}
-          <tr class="bx--expandable-row bx--expandable-row--hidden" data-child-row>
+          <tr class="{{ row.root.prefix }}--expandable-row {{ row.root.prefix }}--expandable-row--hidden" data-child-row>
             <td colspan="{{ columns.length }}">
-              <div class="bx--child-row-inner-container">
+              <div class="{{ row.root.prefix }}--child-row-inner-container">
                 {{ row.sectionContent|safe }}
               </div>
             </td>
@@ -298,7 +298,7 @@
            <option class="bx--select-option" value="40">40</option>
            <option class="bx--select-option" value="50">50</option>
          </select>
-         {% carbon_icon "?" %}
+         {% carbon_icon "ChevronDownGlyph" class="bx--select__arrow" %}
       </div>
       <span class="bx--pagination__text">
          <span data-displayed-item-range>1-10</span> of
@@ -320,7 +320,7 @@
            <option class="bx--select-option" value="4">4</option>
            <option class="bx--select-option" value="5">5</option>
          </select>
-         {% carbon_icon "?" %}
+         {% carbon_icon "ChevronDownGlyph" class="bx--select__arrow" %}
        </div>
        <label
         id="select-id-pagination-page-label"
@@ -330,10 +330,10 @@
         of 5 pages
       </label>
       <button class="bx--pagination__button bx--pagination__button--backward" tabindex="0" data-page-backward aria-label="Backward button">
-        {% carbon_icon "?" %}
+        {% carbon_icon "CaretLeft20" class="bx--pagination__nav-arrow" %}
       </button>
       <button class="bx--pagination__button bx--pagination__button--forward" tabindex="0" data-page-forward aria-label="Forward button">
-        {% carbon_icon "?" %}
+        {% carbon_icon "CaretRight20" class="bx--pagination__nav-arrow" %}
       </button>
     </div>
   </div>

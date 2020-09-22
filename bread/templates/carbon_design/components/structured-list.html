@@ -10,7 +10,7 @@
   <div class="bx--structured-list-thead">
     <div class="bx--structured-list-row bx--structured-list-row--header-row">
       {% for columns_i in columns %}
-        <div class="bx--structured-list-th">{{ columns_i.title }}</div>
+        <div class="{{ columns_i.root.prefix }}--structured-list-th">{{ columns_i.title }}</div>
       {% endfor %}
       {% if selectable %}
         <div class="bx--structured-list-th"></div>
@@ -20,19 +20,19 @@
   <div class="bx--structured-list-tbody">
     {% for row in rows %}
       {% if selectable %}
-        <label for="{{ row.id }}" aria-label="{{ row.selectionLabel }}" class="bx--structured-list-row{% if row.selected %} bx--structured-list-row--selected{% endif %}" tabindex="0">
+        <label for="{{ row.id }}" aria-label="{{ row.selectionLabel }}" class="{{ row.root.prefix }}--structured-list-row{% if row.selected %} {{ row.root.prefix }}--structured-list-row--selected{% endif %}" tabindex="0">
       {% else %}
-        <div class="bx--structured-list-row">
+        <div class="{{ row.root.prefix }}--structured-list-row">
       {% endif %}
         {% for column in columns %}
           {% with data=row|lookup:column.name %}
-            <div class="bx--structured-list-td{% if column.nowrap %} bx--structured-list-content--nowrap{% endif %}">{{ data }}</div>
+            <div class="{{ data.root.prefix }}--structured-list-td{% if column.nowrap %} {{ data.root.prefix }}--structured-list-content--nowrap{% endif %}">{{ data }}</div>
           {% endwith  %}
         {% endfor %}
       {% if selectable %}
-          <input tabindex="-1" id="{{ row.id }}" class="bx--structured-list-input" value="{{ row.value }}" type="radio" name="{{ group }}" title="{{ row.selectionLabel }}"{% if row.selected %} checked{% endif %} />
-          <div class="bx--structured-list-td">
-            {% carbon_icon "?" %}
+          <input tabindex="-1" id="{{ row.id }}" class="{{ row.root.prefix }}--structured-list-input" value="{{ row.value }}" type="radio" name="{{ group }}" title="{{ row.selectionLabel }}"{% if row.selected %} checked{% endif %} />
+          <div class="{{ row.root.prefix }}--structured-list-td">
+            {% carbon_icon "CheckmarkFilled16" class="bx--structured-list-svg" %}
           </div>
         </label>
       {% else %}

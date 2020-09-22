@@ -40,31 +40,31 @@
     </div>
     <ul class="bx--product-switcher__product-list">
       {% for allLinks_i in switcher.allLinks %}
-      <li class="bx--product-list__item">
-        <a class="bx--product-link" tabindex="0" href="javascript:void(0)">
-          <div class="bx--product-switcher__icon">
+      <li class="{{ allLinks_i.root.prefix }}--product-list__item">
+        <a class="{{ allLinks_i.root.prefix }}--product-link" tabindex="0" href="javascript:void(0)">
+          <div class="{{ allLinks_i.root.prefix }}--product-switcher__icon">
             <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
               <path d="M8.24 25.14L7 26.67a14 14 0 0 0 4.18 2.44l.68-1.88a12 12 0 0 1-3.62-2.09zm-4.05-7.07l-2 .35A13.89 13.89 0 0 0 3.86 23l1.73-1a11.9 11.9 0 0 1-1.4-3.93zm7.63-13.31l-.68-1.88A14 14 0 0 0 7 5.33l1.24 1.53a12 12 0 0 1 3.58-2.1zM5.59 10L3.86 9a13.89 13.89 0 0 0-1.64 4.54l2 .35A11.9 11.9 0 0 1 5.59 10zM16 2v2a12 12 0 0 1 0 24v2a14 14 0 0 0 0-28z" />
             </svg>
           </div>
-          <span class="bx--product-link__name">{{ allLinks_i.title }}</span>
+          <span class="{{ allLinks_i.root.prefix }}--product-link__name">{{ allLinks_i.title }}</span>
         </a>
-        <div data-overflow-menu tabindex="0" aria-label="Overflow menu description" class="bx--overflow-menu">
-          <svg class="bx--overflow-menu__icon" width="3" height="15" viewBox="0 0 3 15">
+        <div data-overflow-menu tabindex="0" aria-label="Overflow menu description" class="{{ allLinks_i.root.prefix }}--overflow-menu">
+          <svg class="{{ allLinks_i.root.prefix }}--overflow-menu__icon" width="3" height="15" viewBox="0 0 3 15">
             <g fill-rule="evenodd">
               <circle cx="1.5" cy="1.5" r="1.5" />
               <circle cx="1.5" cy="7.5" r="1.5" />
               <circle cx="1.5" cy="13.5" r="1.5" />
             </g>
           </svg>
-          <ul class="bx--overflow-menu-options bx--overflow-menu--flip" tabindex="-1"
+          <ul class="{{ allLinks_i.root.prefix }}--overflow-menu-options {{ allLinks_i.root.prefix }}--overflow-menu--flip" tabindex="-1"
             data-floating-menu-direction="bottom">
-            <li class="bx--overflow-menu-options__option bx--overflow__item">
-              <button class="bx--overflow-menu-options__btn" title="Option 1"
+            <li class="{{ allLinks_i.root.prefix }}--overflow-menu-options__option {{ allLinks_i.root.prefix }}--overflow__item">
+              <button class="{{ allLinks_i.root.prefix }}--overflow-menu-options__btn" title="Option 1"
                 data-floating-menu-primary-focus>Option 1</button>
             </li>
-            <li class="bx--overflow-menu-options__option">
-              <button class="bx--overflow-menu-options__btn">Option 2</button>
+            <li class="{{ allLinks_i.root.prefix }}--overflow-menu-options__option">
+              <button class="{{ allLinks_i.root.prefix }}--overflow-menu-options__btn">Option 2</button>
             </li>
           </ul>
         </div>
@@ -75,27 +75,27 @@
     <p class="bx--product-switcher__subheader">My Products</p>
     <ul class="bx--product-switcher__product-list">
       {% for links_i in switcher.links %}
-      <li class="bx--product-list__item">
-        <a class="bx--product-link" tabindex="0" href="javascript:void(0)">
-          <div class="bx--product-switcher__icon">
+      <li class="{{ links_i.root.prefix }}--product-list__item">
+        <a class="{{ links_i.root.prefix }}--product-link" tabindex="0" href="javascript:void(0)">
+          <div class="{{ links_i.root.prefix }}--product-switcher__icon">
             <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
               <path d="M8.24 25.14L7 26.67a14 14 0 0 0 4.18 2.44l.68-1.88a12 12 0 0 1-3.62-2.09zm-4.05-7.07l-2 .35A13.89 13.89 0 0 0 3.86 23l1.73-1a11.9 11.9 0 0 1-1.4-3.93zm7.63-13.31l-.68-1.88A14 14 0 0 0 7 5.33l1.24 1.53a12 12 0 0 1 3.58-2.1zM5.59 10L3.86 9a13.89 13.89 0 0 0-1.64 4.54l2 .35A11.9 11.9 0 0 1 5.59 10zM16 2v2a12 12 0 0 1 0 24v2a14 14 0 0 0 0-28z" />
             </svg>
           </div>
-          <span class="bx--product-link__name">{{ links_i.title }}</span>
+          <span class="{{ links_i.root.prefix }}--product-link__name">{{ links_i.title }}</span>
         </a>
-        <div data-overflow-menu tabindex="0" aria-label="Overflow menu description" class="bx--overflow-menu">
+        <div data-overflow-menu tabindex="0" aria-label="Overflow menu description" class="{{ links_i.root.prefix }}--overflow-menu">
           <svg width="3" height="15" viewBox="0 0 3 15">
             <path d="M0 1.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 1 1-3 0M0 7.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 1 1-3 0M0 13.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 1 1-3 0"></path>
           </svg>
-          <ul class="bx--overflow-menu-options bx--overflow-menu--flip" tabindex="-1"
+          <ul class="{{ links_i.root.prefix }}--overflow-menu-options {{ links_i.root.prefix }}--overflow-menu--flip" tabindex="-1"
             data-floating-menu-direction="bottom">
-            <li class="bx--overflow-menu-options__option bx--overflow__item">
-              <button class="bx--overflow-menu-options__btn" title="Option 1"
+            <li class="{{ links_i.root.prefix }}--overflow-menu-options__option {{ links_i.root.prefix }}--overflow__item">
+              <button class="{{ links_i.root.prefix }}--overflow-menu-options__btn" title="Option 1"
                 data-floating-menu-primary-focus>Option 1</button>
             </li>
-            <li class="bx--overflow-menu-options__option">
-              <button class="bx--overflow-menu-options__btn">Option 2</button>
+            <li class="{{ links_i.root.prefix }}--overflow-menu-options__option">
+              <button class="{{ links_i.root.prefix }}--overflow-menu-options__btn">Option 2</button>
             </li>
           </ul>
         </div>

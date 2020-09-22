@@ -1,5 +1,5 @@
 {% extends "bread/base.html" %}
-{% load static compress bread_tags %}
+{% load static compress bread_tags carbon_design_tags %}
 
 {% block stylesheets %}
     {% compress css %}
@@ -31,6 +31,8 @@
         <ul>
     </header>
 
+    {% base_layout as layout %}
+    {% crispy_html layout %}
     <main>
         {% if messages %}
             <ul>

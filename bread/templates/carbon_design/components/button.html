@@ -20,19 +20,19 @@
   class="bx--btn bx--btn--{{ variant }}{% if small %} bx--btn--sm{% endif %}{% if field %} bx--btn--field{% endif %}"
   {% if danger %} aria-label="danger" {% endif %} type="button">
   With icon
-  {% carbon_icon "?" %}
+  {% carbon_icon "Add16" class="bx--btn__icon" %}
 </button>
 <button
   class="bx--btn bx--btn--{{ variant }}{% if small %} bx--btn--sm{% endif %}{% if field %} bx--btn--field{% endif %}"
   {% if danger %} aria-label="danger" {% endif %} type="button" disabled>
   With icon
-  {% carbon_icon "?" %}
+  {% carbon_icon "Add16" class="bx--btn__icon" %}
 </button>
 {% if hasIconOnly %}
 <button
   class="bx--btn bx--btn--{{ variant }} bx--btn--icon-only bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-center {% if small %} bx--btn--sm{% endif %}{% if field %} bx--btn--field{% endif %}">
   <span class="bx--assistive-text">Add</span>
-  {% carbon_icon "?" %}
+  {% carbon_icon "Add16" class="bx--btn__icon" %}
 </button>
 {% endif %}
 {% if field %}
