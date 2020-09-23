@@ -4,11 +4,12 @@ from .utils import try_call
 
 
 class Group:
-    def __init__(self, label, permissions=[], order=None):
+    def __init__(self, label, permissions=[], order=None, sort_alphabetically=False):
         self.label = label
         self.permissions = permissions
         self._order = order
         self.items = []
+        self.sort_alphabetically = sort_alphabetically
 
     def __lt__(self, other):
         if self._order is None:
@@ -80,6 +81,8 @@ class Item:
         self._order = order
 
     def __lt__(self, other):
+        if self.group and self.group.sort_alphabetically:
+            return self.link.label(None).lower() < other.link.label(None).lower()
         if self._order is None:
             if other._order is None:
                 return False
@@ -107,6 +110,7 @@ class Menu:
         group = menuitem.group
         if not isinstance(group, Group):
             group = Group(label=group)
+            menuitem.group = group
         if group.label not in self._registry:
             self._registry[group.label] = group
         self._registry[group.label].items.append(menuitem)

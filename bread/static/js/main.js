@@ -29,6 +29,7 @@ function makeChoices(selectElem) {
             input: 'choices__input browser-default',
         }
         */
+        searchResultLimit: 20
     });
     // TODO: wait for choices.js to fix the error when using space to separate classes
     // when fixed we can uncomment the code above and remove the line below
