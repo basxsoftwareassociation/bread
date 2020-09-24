@@ -1,5 +1,6 @@
 import importlib
 
+from crispy_forms.layout import HTML  # noqa
 from crispy_forms.utils import TEMPLATE_PACK
 
 from .base import *  # noqa

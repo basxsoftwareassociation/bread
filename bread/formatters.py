@@ -3,6 +3,7 @@ import numbers
 import random
 from collections.abc import Iterable
 
+import bread.settings as app_settings
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from dateutil import tz
@@ -10,11 +11,9 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
-from django.utils.html import format_html_join, linebreaks, mark_safe
+from django.utils.html import format_html, format_html_join, linebreaks, mark_safe
 from django_countries.fields import CountryField
 from easy_thumbnails.files import get_thumbnailer
-
-import bread.settings as app_settings
 
 from .models import AccessConcreteInstanceMixin
 
@@ -30,7 +29,9 @@ def render_field(instance, fieldname, adminobject=None):
             rendered_fields = [
                 render_field(o, fieldname, adminobject) for o in instance.all()
             ]
-            return mark_safe(f"<ul><li>{'</li><li>'.join(rendered_fields)}</li></ul>")
+            return format_html(
+                "<ul>{}</ul>", format_html_join("\n", "<li>{}</li>", rendered_fields)
+            )
     fieldtype = None
     try:
         fieldtype = instance._meta.get_field(fieldname)
@@ -76,7 +77,10 @@ def render_field_aggregation(queryset, fieldname, adminobject):
 
 
 def format_value(value, fieldtype=None):
-    """Renders a python value in a nice way in HTML"""
+    """Renders a python value in a nice way in HTML. If a field-definition has an attribute "renderer" set, that function will be used to render the value"""
+    if hasattr(fieldtype, "renderer"):
+        return fieldtype.renderer(value)
+
     if isinstance(value, bool) or value is None:
         return CONSTANTS[value]
 
@@ -111,30 +115,39 @@ def format_value(value, fieldtype=None):
 
 
 def as_email(value):
-    return mark_safe(f'<a href="mailto:{value}">{value}</a>')
+    return format_html('<a href="mailto:{}">{}</a>', value, value)
 
 
 def as_url(value):
-    return mark_safe(
-        f'<a href="{value}" target="_blank" rel="noopener noreferrer">{value}</a>'
+    return format_html(
+        '<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', value, value
     )
 
 
 def as_text(value):
-    text = linebreaks(value[:32])
-    if len(value) > 32:
+    char_limit = getattr(
+        settings, "TEXT_FIELD_DISPLAY_LIMIT", app_settings.TEXT_FIELD_DISPLAY_LIMIT
+    )
+    preview = None
+    if len(value) > char_limit:
+        preview = value[:char_limit]
+        if len(preview.splitlines()) > 3:
+            preview = "\n".join(preview.splitlines()[:3])
+        preview = linebreaks(preview, autoescape=True)
+
+    value = linebreaks(value, autoescape=True)
+    if preview:
         modalid = int(random.random() * 100000000)
-        text = f"""{text}... <a class="modal-trigger" href="#modal_{modalid}">Show</a>
-        <div id="modal_{modalid}" class="modal modal-fixed-footer">
-            <div class="modal-content">
-                <p>{linebreaks(value)}</p>
-            </div>
-            <div class="modal-footer">
-                <a href="#!" class="modal-close btn-flat">Close</a>
-            </div>
-        </div>
-        """
-    return mark_safe(text)
+        value = f"""{preview}... <a class="modal-trigger" href="#modal_{modalid}">Show</a>
+<div id="modal_{modalid}" class="modal modal-fixed-footer">
+    <div class="modal-content">
+        <p>{value}</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close btn-flat">Close</a>
+    </div>
+</div>"""
+    return mark_safe(value)
 
 
 def as_time(value):
@@ -154,21 +167,14 @@ def as_datetime(value):
     return value.isoformat(sep=" ", timespec="seconds").rsplit("+", 1)[0]
 
 
-def as_boolean(value):
-    return mark_safe(
-        f"<div class='center'>{app_settings.HTML_TRUE if value else app_settings.HTML_FALSE}</div>"
-    )
-
-
 def as_countries(value):
     return as_list((c.name for c in value))
 
 
 def as_list(iterable):
-    return (
-        mark_safe("<ul>")
-        + format_html_join("\n", "<li>{}</li>", ((format_value(v),) for v in iterable))
-        + mark_safe("</ul>")
+    return format_html(
+        "<ul>{}</ul>",
+        format_html_join("\n", "<li>{}</li>", ((format_value(v),) for v in iterable)),
     )
 
 
@@ -181,8 +187,9 @@ def as_download(value):
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
         return mark_safe("<small><emph>File not found</emph></small>")
-    return mark_safe(
-        f'<a class="center" href="{value.url}"><i class="material-icons">open_in_browser</i></a>'
+    return format_html(
+        '<a class="center" href="{}"><i class="material-icons">open_in_browser</i></a>',
+        value.url,
     )
 
 
@@ -192,8 +199,12 @@ def as_image(value):
     if not value.storage.exists(value.name):
         return mark_safe("<small><emph>Image not found</emph></small>")
     im = get_thumbnailer(value).get_thumbnail({"size": (100, 100), "quality": 75})
-    return mark_safe(
-        f'<a class="center" href="{value.url}"><img src={im.url} width="{im.width}" height="{im.height}"/></a>'
+    return format_html(
+        '<a class="center" href="{}"><img src={} width="{}" height="{}"/></a>',
+        value.url,
+        im.url,
+        im.width,
+        im.height,
     )
 
 
@@ -202,12 +213,13 @@ def as_audio(value):
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
         return mark_safe("<small><emph>Audio file not found</emph></small>")
-    return mark_safe(
-        f"""
+    return format_html(
+        """
         <audio controls controlsList="nodownload" preload="metadata">
-            <source src="{value.url}" type="audio/mp3">
+            <source src="{}" type="audio/mp3">
         </audio>
-    """
+    """,
+        value.url,
     )
 
 
@@ -216,80 +228,34 @@ def as_video(value):
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
         return mark_safe("<small><emph>Video file not found</emph></small>")
-    return mark_safe(
-        f"""
+    return format_html(
+        """
         <video controls width="320" height="240" controlsList="nodownload" preload="metadata">
-            <source src="{value.url}" type="video/mp4">
+            <source src="{}" type="video/mp4">
         </video>
-    """
+    """,
+        value.url,
     )
 
 
-def as_object_link(value, label=None):
-    def get_link_from_admin(object):
+def as_object_link(obj, label=None):
+    def adminlink(o):
         from .admin import site
 
-        defaultadmin = site.get_default_admin(object)
+        defaultadmin = site.get_default_admin(o)
         if defaultadmin is not None:
-            return mark_safe(
-                f'<a href="{defaultadmin.reverse("read", object.pk)}">{label or object}</a>'
+            return format_html(
+                '<a href="{}">{}</a>', defaultadmin.reverse("read", o.pk), label or o,
             )
 
-    if hasattr(value, "get_absolute_url"):
-        return mark_safe(f'<a href="{value.get_absolute_url()}">{value}</a>')
+    if hasattr(obj, "get_absolute_url"):
+        return format_html('<a href="{}">{}</a>', obj.get_absolute_url(), obj)
 
     if (
-        isinstance(value, AccessConcreteInstanceMixin) and value != value.concrete
+        isinstance(obj, AccessConcreteInstanceMixin) and obj != obj.concrete
     ):  # prevent endless recursion
-        return as_object_link(value.concrete)
-    return get_link_from_admin(value) or str(value)
-
-
-# decorator wrappers to format functions outputs
-
-
-def returns_email(func):
-    return lambda *args, **kwargs: as_email(func(*args, **kwargs))
-
-
-def returns_url(func):
-    return lambda *args, **kwargs: as_url(func(*args, **kwargs))
-
-
-def returns_text(func):
-    return lambda *args, **kwargs: as_text(func(*args, **kwargs))
-
-
-def returns_time(func):
-    return lambda *args, **kwargs: as_time(func(*args, **kwargs))
-
-
-def returns_duation(func):
-    return lambda *args, **kwargs: as_duration(func(*args, **kwargs))
-
-
-def returns_countries(func):
-    return lambda *args, **kwargs: as_countries(func(*args, **kwargs))
-
-
-def returns_list(func):
-    return lambda *args, **kwargs: as_list(func(*args, **kwargs))
-
-
-def returns_richtext(func):
-    return lambda *args, **kwargs: as_richtext(func(*args, **kwargs))
-
-
-def returns_download(func):
-    return lambda *args, **kwargs: as_download(func(*args, **kwargs))
-
-
-def returns_image(func):
-    return lambda *args, **kwargs: as_image(func(*args, **kwargs))
-
-
-def returns_object(func):
-    return lambda *args, **kwargs: as_object_link(func(*args, **kwargs))
+        return as_object_link(obj.concrete)
+    return adminlink(obj) or str(obj)
 
 
 MODELFIELD_FORMATING_HELPERS = {

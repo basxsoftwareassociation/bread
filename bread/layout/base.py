@@ -34,7 +34,7 @@ class FieldLabel(NonFormField):
             return pretty_fieldname(obj._meta.get_field(self.field))
         elif hasattr(getattr(obj, self.field), "verbose_name"):
             return title(getattr(obj, self.field).verbose_name)
-        return title(self.field)
+        return title(self.field.replace("_", " "))
 
 
 class ReadonlyField(NonFormField):

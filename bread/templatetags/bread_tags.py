@@ -1,11 +1,10 @@
 import warnings
 
+from bread import menu as menuregister
 from crispy_forms.utils import get_template_pack
 from django import template
 from django.db import models
 from django.utils.html import mark_safe
-
-from bread import menu as menuregister
 
 from ..admin import site
 from ..formatters import as_object_link, format_value
@@ -164,7 +163,7 @@ def is_external_url(url):
 
 @register.filter
 def is_inline_formset(field):
-    return isinstance(field.field, forms.InlineField)
+    return isinstance(field.field, forms.FormsetField)
 
 
 @register.simple_tag

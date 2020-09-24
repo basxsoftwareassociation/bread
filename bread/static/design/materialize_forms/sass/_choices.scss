@@ -230,7 +230,7 @@ $choices-z-index: 99;
   visibility: hidden;
   z-index: $choices-z-index;
   position: absolute;
-  width: 100%;
+  // width: 100%; // commented by sam
   background-color: $choices-bg-color-dropdown;
   border: 1px solid $choices-keyline-color;
   top: 100%;
@@ -238,7 +238,8 @@ $choices-z-index: 99;
   border-bottom-left-radius: $choices-border-radius;
   border-bottom-right-radius: $choices-border-radius;
   overflow: hidden;
-  word-break: break-all;
+  // word-break: break-all; // commented by sam
+  white-space: nowrap; // added by sam
   will-change: visibility;
   &.is-active {
     visibility: visible;
