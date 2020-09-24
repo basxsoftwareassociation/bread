@@ -1,7 +1,6 @@
-from crispy_forms.layout import Div, Layout
+from crispy_forms.layout import Div
 from crispy_forms.utils import TEMPLATE_PACK
 from django.core.exceptions import FieldDoesNotExist
-from django.forms.formsets import DELETION_FIELD_NAME
 
 from .. import formatters
 from ..utils import pretty_fieldname, title
@@ -50,19 +49,3 @@ class ReadonlyField(NonFormField):
         obj = context.get("object") or context["form"].instance
         ret = str(self.renderer(obj, self.field))
         return ret
-
-
-class InlineLayout(Layout):
-    def __init__(self, inlinefield, *args, **kwargs):
-        super().__init__(inlinefield)
-        self.fieldname = inlinefield
-        self.args = args
-        self.kwargs = kwargs
-
-    def get_inline_layout(self):
-        if (
-            DELETION_FIELD_NAME not in self.args
-            and DELETION_FIELD_NAME not in self.kwargs
-        ):
-            self.args = self.args + (DELETION_FIELD_NAME, "id")
-        return Layout(*self.args, **self.kwargs)

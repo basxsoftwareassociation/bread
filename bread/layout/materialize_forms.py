@@ -1,7 +1,8 @@
 from crispy_forms.bootstrap import Container, ContainerHolder
-from crispy_forms.layout import Div
+from crispy_forms.layout import Div, Layout
 from crispy_forms.utils import TEMPLATE_PACK, render_field
 from django.core.exceptions import ImproperlyConfigured
+from django.forms.formsets import DELETION_FIELD_NAME
 from django.template import Template
 from django.template.loader import render_to_string
 
@@ -114,3 +115,30 @@ def convert_to_formless_layout(layout_object):
             )
         elif hasattr(field, "fields"):
             convert_to_formless_layout(field)
+
+
+class InlineLayout(Layout):
+    def __init__(self, inlinefield, *args, **kwargs):
+        super().__init__(inlinefield)
+        self.fieldname = inlinefield
+        self.wrapper = kwargs.pop("wrapper", Div())
+        self.args = args
+        self.kwargs = kwargs
+
+    def get_wrapper_layout(self):
+        return self.wrapper
+
+    def get_inline_layout(self):
+        if (
+            DELETION_FIELD_NAME not in self.args
+            and DELETION_FIELD_NAME not in self.kwargs
+        ):
+            self.args = self.args + (DELETION_FIELD_NAME, "id")
+        return Layout(
+            Div(
+                *self.args,
+                **self.kwargs,
+                css_class="card-panel",
+                style="position: relative",
+            )
+        )

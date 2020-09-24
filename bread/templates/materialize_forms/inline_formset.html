@@ -21,9 +21,7 @@
 
     <div id="formset_{{ formset.prefix }}_container">
         {% for form in formset %}
-            <div class="card-panel" style="position: relative">
-                {% crispy form %}
-            </div>
+            {% crispy form %}
         {% endfor %}
     </div>
 
@@ -35,9 +33,7 @@
 
     <!-- template form to insert new entry when clicking add-button -->
     <div id="empty_{{ formset.prefix }}_form" style="display:none;" class="template-form">
-        <div class="card-panel" style="position: relative">
-            {% crispy formset.empty_form %}
-        </div>
+        {% crispy formset.empty_form %}
     </div>
 </div>
 
