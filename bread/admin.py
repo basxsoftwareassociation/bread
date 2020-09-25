@@ -284,10 +284,11 @@ class BreadAdminSite:
         del self._registry[modeladmin]
 
     def get_default_admin(self, model):
+        """model can be a model class or a model instance"""
         if model is None:
             return None
         for modeladmin in self._registry.values():
-            if modeladmin.model == model._meta.model:
+            if modeladmin.model in (model._meta.model, type(model)):
                 return modeladmin
         return None
 
