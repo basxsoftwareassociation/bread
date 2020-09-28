@@ -1,16 +1,13 @@
-from crispy_forms.layout import Layout
+import logging
+import re
+
 from django import template
-from django.contrib.staticfiles.storage import staticfiles_storage
+from django.contrib.staticfiles import finders
 from django.core.cache import cache
 from django.forms.utils import flatatt
-from django.template.loader import get_template
+from django.utils.html import mark_safe
 
-from pybars import Compiler
-
-from ..layout.carbon_design import components
-
-compiler = Compiler()
-
+logger = logging.getLogger(__name__)
 register = template.Library()
 
 
@@ -25,28 +22,25 @@ def carbon_icon(name, **kwargs):
         size, name = int(name[-2:]), name[:-2]
         kwargs["width"] = size
         kwargs["height"] = size
+    name = "--".join(camel_case_split(name))
     flatattribs = flatatt(
         {k.replace("_", "-"): v for k, v in kwargs.items()}
     )  # replace is because of hbs to django template transpilation
-    key = f"icon_{name}__{size}__{flatattribs}".lower()
+    key = (
+        f"icon_{name}__{size}__{flatattribs}".lower().replace('"', "").replace(" ", "_")
+    )
     if cache.get(key) is None:
-        path = "design/carbon_design/icons/32/"
-        path += f"{name.lower()}.svg"
-        svg = "".join(
-            [
-                l.replace("<svg", f"<svg {flatattribs}")
-                for l in staticfiles_storage.open(path).readlines()
-            ]
-        )
+        path = finders.find(f"design/carbon_design/icons/32/{name.lower()}.svg")
+        if not path:
+            logger.error(f"Missing icon: {name.lower()}.svg")
+            return f"Missing icon {name.lower()}.svg"
+        with open(path) as f:
+            svg = "".join(
+                [l.replace("<svg", f"<svg {flatattribs}") for l in f.readlines()]
+            )
         cache.set(key, svg)
-        return svg
-    return cache.get(key)
-
-
-@register.simple_tag(takes_context=True)
-def handlbars(context, template_name):
-    template = compiler.compile(get_template(template_name).origin)
-    return template(context)
+        return mark_safe(svg)
+    return mark_safe(cache.get(key))
 
 
 @register.filter
@@ -55,6 +49,8 @@ def lookup(obj, attr):
     return getattr(obj, attr, None)
 
 
-@register.simple_tag(takes_context=True)
-def base_layout(context):
-    return Layout(components.UiShell())
+def camel_case_split(identifier):
+    matches = re.finditer(
+        ".+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)", identifier
+    )
+    return [m.group(0) for m in matches]

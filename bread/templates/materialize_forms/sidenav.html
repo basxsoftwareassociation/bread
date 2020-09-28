@@ -14,7 +14,7 @@
         </li>
         <li><div class="divider"></div></li>
         {% menu request as menu %}
-        {% for menugroup, group_active, items in menu %}
+        {% for menugroup, icon, group_active, items in menu %}
             <li>
                 <ul class="collapsible collapsible-accordion">
                     <li {% if group_active %}class="active"{% endif %}>

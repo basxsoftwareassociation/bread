@@ -4,8 +4,11 @@ from .utils import try_call
 
 
 class Group:
-    def __init__(self, label, permissions=[], order=None, sort_alphabetically=False):
+    def __init__(
+        self, label, icon=None, permissions=[], order=None, sort_alphabetically=False
+    ):
         self.label = label
+        self.icon = icon
         self.permissions = permissions
         self._order = order
         self.items = []
@@ -50,20 +53,14 @@ class Link:
     The function takes the current request as the only argument.
     """
 
-    def __init__(self, url, label="", materialicon=None, permissions=[]):
+    def __init__(self, url, label="", icon=None, permissions=[]):
         self._url = url
-        self._label = label
-        self._icon = materialicon
+        self.label = label
+        self.icon = icon
         self._permissions = permissions
 
     def url(self, request):
         return try_call(self._url, request)
-
-    def label(self, request):
-        return try_call(self._label, request)
-
-    def icon(self, request):
-        return try_call(self._icon, request)
 
     def has_permission(self, request, obj=None):
         return all(
@@ -93,9 +90,6 @@ class Item:
 
     def has_permission(self, request):
         return self.link.has_permission(request)
-
-    def get_url(self, request):
-        return self.link.url(request)
 
     def active(self, request):
         path = str(self.link.url(request))

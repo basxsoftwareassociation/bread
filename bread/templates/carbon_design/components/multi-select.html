@@ -53,14 +53,14 @@
       <fieldset class="bx--list-box__menu" role="listbox">
         <legend class="bx--assistive-text">Description of form elements within the fieldset</legend>
         {% for items_i in items %}
-        <div class="{{ items_i.root.prefix }}--list-box__menu-item">
-          <div class="{{ items_i.root.prefix }}--list-box__menu-item__option">
-            <div class="{{ items_i.root.prefix }}--form-item {{ items_i.root.prefix }}--checkbox-wrapper">
-              <label title="{{ items_i.label }}" class="{{ items_i.root.prefix }}--checkbox-label">
-                <input type="checkbox" name="Option 1" readonly="" class="{{ items_i.root.prefix }}--checkbox" id="{{ items_i.id }}"
+        <div class="bx--list-box__menu-item">
+          <div class="bx--list-box__menu-item__option">
+            <div class="bx--form-item bx--checkbox-wrapper">
+              <label title="{{ items_i.label }}" class="bx--checkbox-label">
+                <input type="checkbox" name="Option 1" readonly="" class="bx--checkbox" id="{{ items_i.id }}"
                   value="on" {% if items_i.selected %} checked{% endif %}>
-                <span class="{{ items_i.root.prefix }}--checkbox-appearance"></span>
-                <span class="{{ items_i.root.prefix }}--checkbox-label-text">{{ items_i.label }}</span>
+                <span class="bx--checkbox-appearance"></span>
+                <span class="bx--checkbox-label-text">{{ items_i.label }}</span>
               </label>
             </div>
           </div>

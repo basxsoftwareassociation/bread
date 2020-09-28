@@ -23,9 +23,9 @@
     <ul class="bx--overflow-menu-options">
       <li class="bx--toolbar-menu__title">FILTER BY</li>
       {% for filterOptions_i in filterOptions %}
-        <li class="{{ filterOptions_i.root.prefix }}--toolbar-menu__option">
-          <input id="{{ filterOptions_i.id }}" class="{{ filterOptions_i.root.prefix }}--checkbox" type="checkbox" value="{{ filterOptions_i.value }}" name="checkbox"{% if filterOptions_i.primaryFocus %} data-floating-menu-primary-focus{% endif %}>
-          <label for="{{ filterOptions_i.id }}" class="{{ filterOptions_i.root.prefix }}--checkbox-label">{{ filterOptions_i.label }}</label>
+        <li class="bx--toolbar-menu__option">
+          <input id="{{ filterOptions_i.id }}" class="bx--checkbox" type="checkbox" value="{{ filterOptions_i.value }}" name="checkbox"{% if filterOptions_i.primaryFocus %} data-floating-menu-primary-focus{% endif %}>
+          <label for="{{ filterOptions_i.id }}" class="bx--checkbox-label">{{ filterOptions_i.label }}</label>
         </li>
       {% endfor %}
     </ul>
@@ -41,10 +41,10 @@
       <fieldset data-row-height class="bx--radio-button-group">
         <legend class="bx--visually-hidden">Select table row height</legend>
         {% for rowHeightOptions_i in rowHeightOptions %}
-          <li class="{{ rowHeightOptions_i.root.prefix }}--toolbar-menu__option">
-            <input id="{{ rowHeightOptions_i.id }}" class="{{ rowHeightOptions_i.root.prefix }}--radio-button" type="radio" value="{{ rowHeightOptions_i.value }}" name="radio"{% if rowHeightOptions_i.selected %} checked{% endif %}{% if rowHeightOptions_i.primaryFocus %} data-floating-menu-primary-focus{% endif %}>
-            <label for="{{ rowHeightOptions_i.id }}" class="{{ rowHeightOptions_i.root.prefix }}--radio-button__label">
-              <span class="{{ rowHeightOptions_i.root.prefix }}--radio-button__appearance"></span>
+          <li class="bx--toolbar-menu__option">
+            <input id="{{ rowHeightOptions_i.id }}" class="bx--radio-button" type="radio" value="{{ rowHeightOptions_i.value }}" name="radio"{% if rowHeightOptions_i.selected %} checked{% endif %}{% if rowHeightOptions_i.primaryFocus %} data-floating-menu-primary-focus{% endif %}>
+            <label for="{{ rowHeightOptions_i.id }}" class="bx--radio-button__label">
+              <span class="bx--radio-button__appearance"></span>
               {{ rowHeightOptions_i.label }}
             </label>
           </li>

@@ -18,10 +18,10 @@
     <ul  class="bx--overflow-menu-options__content">
       {% for items_i in items %}
       <li
-        class="{{ items_i.root.prefix }}--overflow-menu-options__option {% if items_i.disabled %} {{ items_i.root.prefix }}--overflow-menu-options__option--disabled {% endif %} {% if items_i.danger %} {{ items_i.root.prefix }}--overflow-menu-options__option--danger {% endif %}">
-        <button class="{{ items_i.root.prefix }}--overflow-menu-options__btn" role="menuitem" {% if items_i.title %} title="{{ items_i.title }}"
+        class="bx--overflow-menu-options__option {% if items_i.disabled %} bx--overflow-menu-options__option--disabled {% endif %} {% if items_i.danger %} bx--overflow-menu-options__option--danger {% endif %}">
+        <button class="bx--overflow-menu-options__btn" role="menuitem" {% if items_i.title %} title="{{ items_i.title }}"
           {% endif %} {% if items_i.primaryFocus %} data-floating-menu-primary-focus {% endif %} {% if items_i.disabled %} disabled {% endif %}>
-          <span class="{{ items_i.root.prefix }}--overflow-menu-options__option-content">
+          <span class="bx--overflow-menu-options__option-content">
             {{ items_i.label }}
           </span>
         </button>
@@ -46,10 +46,10 @@
     <ul  class="bx--overflow-menu-options__content">
       {% for items_i in items %}
       <li
-        class="{{ items_i.root.prefix }}--overflow-menu-options__option {% if items_i.disabled %} {{ items_i.root.prefix }}--overflow-menu-options__option--disabled {% endif %} {% if items_i.danger %} {{ items_i.root.prefix }}--overflow-menu-options__option--danger {% endif %}">
-        <button class="{{ items_i.root.prefix }}--overflow-menu-options__btn" role="menuitem" {% if items_i.title %} title="{{ items_i.title }}"
+        class="bx--overflow-menu-options__option {% if items_i.disabled %} bx--overflow-menu-options__option--disabled {% endif %} {% if items_i.danger %} bx--overflow-menu-options__option--danger {% endif %}">
+        <button class="bx--overflow-menu-options__btn" role="menuitem" {% if items_i.title %} title="{{ items_i.title }}"
           {% endif %} {% if items_i.primaryFocus %} data-floating-menu-primary-focus {% endif %} {% if items_i.disabled %} disabled {% endif %}>
-          <span class="{{ items_i.root.prefix }}--overflow-menu-options__option-content">
+          <span class="bx--overflow-menu-options__option-content">
             {{ items_i.label }}
           </span>
         </button>
@@ -73,11 +73,11 @@
     <ul  class="bx--overflow-menu-options__content">
       {% for items_i in items %}
       <li
-        class="{{ items_i.root.prefix }}--overflow-menu-options__option{% if items_i.disabled %} {{ items_i.root.prefix }}--overflow-menu-options__option--disabled{% endif %}{% if items_i.danger %} {{ items_i.root.prefix }}--overflow-menu-options__option--danger{% endif %}">
-        <a href="https://www.ibm.com" class="{{ items_i.root.prefix }}--overflow-menu-options__btn" role="menuitem" {% if items_i.title %}
+        class="bx--overflow-menu-options__option{% if items_i.disabled %} bx--overflow-menu-options__option--disabled{% endif %}{% if items_i.danger %} bx--overflow-menu-options__option--danger{% endif %}">
+        <a href="https://www.ibm.com" class="bx--overflow-menu-options__btn" role="menuitem" {% if items_i.title %}
           title="{{ items_i.title }}" {% endif %} {% if items_i.primaryFocus %} data-floating-menu-primary-focus{% endif %}{% if items_i.disabled %}
           tabindex="-1" aria-disabled="true" {% endif %}>
-          <span class="{{ items_i.root.prefix }}--overflow-menu-options__option-content">
+          <span class="bx--overflow-menu-options__option-content">
             {{ items_i.label }}
           </span>
         </a>

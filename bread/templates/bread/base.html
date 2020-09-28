@@ -11,19 +11,20 @@
         {% block stylesheets %}
         {% endblock %}
 
-        {# always included scripts: #}
         {% compress js %}
         <script type="text/javascript" src="{% static "js/main.js" %}"></script>
         <script type="text/javascript" src="{% static "js/bliss.min.js" %}"></script>
         {% endcompress js %}
-
         {% block javascripts %}
         {% endblock %}
+
     </head>
 
     <body>
         {% block body %}
         {% endblock body %}
     </body>
+
+
 
 </html>

@@ -17,15 +17,15 @@
         <select id="select-id" class="bx--select-input">
           {% for items_i in items %}
           {% if items_i.items %}
-          <optgroup class="{{ items_i.root.prefix }}--select-optgroup" label="{{ items_i.label }}">
+          <optgroup class="bx--select-optgroup" label="{{ items_i.label }}">
             {% for items_i in items_i.items %}
-            <option class="{{ items_i.root.prefix }}--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>
+            <option class="bx--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>
               {{ items_i.label }}
             </option>
             {% endfor %}
           </optgroup>
           {% else %}
-          <option class="{{ items_i.root.prefix }}--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>
+          <option class="bx--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>
             {{ items_i.label }}
           </option>
           {% endif %}
@@ -67,10 +67,10 @@
         <select id="select-id-disabled" class="bx--select-input" disabled>
           {% for items_i in items %}
           {% if items_i.items %}
-          <optgroup class="{{ items_i.root.prefix }}--select-optgroup" label="{{ items_i.label }}">
+          <optgroup class="bx--select-optgroup" label="{{ items_i.label }}">
             {% for items_i in items_i.items %}
-            <option class="{{ items_i.root.prefix }}--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>{{ items_i.label }} </option> {% endfor %} </optgroup> {% else %}
-          <option class="{{ items_i.root.prefix }}--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>{{ items_i.label }} </option> {% endif %} {% endfor %} </select>
+            <option class="bx--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>{{ items_i.label }} </option> {% endfor %} </optgroup> {% else %}
+          <option class="bx--select-option" value="{{ items_i.value }}" {% if items_i.disabled %} disabled{% endif %}{% if items_i.selected %} selected{% endif %}{% if items_i.hidden %} hidden{% endif %}>{{ items_i.label }} </option> {% endif %} {% endfor %} </select>
         {% carbon_icon "ChevronDown16" class="bx--select__arrow" %}
       </div>
       {% if invalid %}

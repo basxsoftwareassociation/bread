@@ -22,24 +22,24 @@
     {% for navLinks_i in header.navLinks %}
     {% if navLinks_i.href %}
     <li>
-      <a class="{{ navLinks_i.root.prefix }}--header__menu-item" href="javascript:void(0)" tabindex="0">
+      <a class="bx--header__menu-item" href="javascript:void(0)" tabindex="0">
         {{ navLinks_i.title }}
       </a>
     </li>
     {% else %}
-    <li class="{{ navLinks_i.root.prefix }}--header__submenu" data-header-submenu>
-      <a class="{{ navLinks_i.root.prefix }}--header__menu-item {{ navLinks_i.root.prefix }}--header__menu-title" aria-haspopup="true"
+    <li class="bx--header__submenu" data-header-submenu>
+      <a class="bx--header__menu-item bx--header__menu-title" aria-haspopup="true"
         aria-expanded="{{ navLinks_i.state.expanded }}" href="javascript:void(0)" tabindex="0">
         {{ navLinks_i.title }}
-        <svg class="{{ navLinks_i.root.prefix }}--header__menu-arrow" width="12" height="7" aria-hidden="true">
+        <svg class="bx--header__menu-arrow" width="12" height="7" aria-hidden="true">
           <path d="M6.002 5.55L11.27 0l.726.685L6.003 7 0 .685.726 0z" />
         </svg>
       </a>
-      <ul class="{{ navLinks_i.root.prefix }}--header__menu" aria-label="{{ navLinks_i.title }}">
+      <ul class="bx--header__menu" aria-label="{{ navLinks_i.title }}">
         {% for items_i in navLinks_i.items %}
         <li role="none">
-          <a class="{{ items_i.root.prefix }}--header__menu-item" href="{{ items_i.href }}" tabindex="-1">
-            <span class="{{ items_i.root.prefix }}--text-truncate--end">
+          <a class="bx--header__menu-item" href="{{ items_i.href }}" tabindex="-1">
+            <span class="bx--text-truncate--end">
               {{ items_i.title }}
             </span>
           </a>

@@ -27,11 +27,11 @@
       </li>
     {% endif %}
     {% for pages_i in pages %}
-      <li class="{{ pages_i.root.prefix }}--pagination-nav__list-item">
+      <li class="bx--pagination-nav__list-item">
         {% if pages_i.select %}
-          <div class="{{ pages_i.root.prefix }}--pagination-nav__select">
+          <div class="bx--pagination-nav__select">
             <select
-              class="{{ pages_i.root.prefix }}--pagination-nav__page {{ pages_i.root.prefix }}--pagination-nav__page--select"
+              class="bx--pagination-nav__page bx--pagination-nav__page--select"
               data-page-select
               aria-label="select page number"
             >
@@ -46,14 +46,14 @@
                 </option>
               {% endfor %}
             </select>
-            <div class="{{ pages_i.root.prefix }}--pagination-nav__select-icon-wrapper">
+            <div class="bx--pagination-nav__select-icon-wrapper">
               {% carbon_icon "OverflowMenuHorizontal16" class="bx--pagination-nav__select-icon" %}
             </div>
           </div>
         {% else %}
-          {% if not pages_i.root.elementAsAnchor %}
+          {% if not elementAsAnchor %}
             <button
-              class="{{ pages_i.root.prefix }}--pagination-nav__page{% if pages_i.active %} {{ pages_i.root.prefix }}--pagination-nav__page--active {{ pages_i.root.prefix }}--pagination-nav__page--disabled{% endif %}"
+              class="bx--pagination-nav__page{% if pages_i.active %} bx--pagination-nav__page--active bx--pagination-nav__page--disabled{% endif %}"
               data-page="{{ pages_i.page }}"
               data-page-button
               {% if pages_i.active %}
@@ -63,8 +63,8 @@
               {% endif %}
             >
           {% endif %}
-            <span class="{{ pages_i.root.prefix }}--pagination-nav__accessibility-label">page </span>{{ pages_i.page }}
-          {% if not pages_i.root.elementAsAnchor %}
+            <span class="bx--pagination-nav__accessibility-label">page </span>{{ pages_i.page }}
+          {% if not elementAsAnchor %}
             </button>
           {% endif %}
         {% endif %}

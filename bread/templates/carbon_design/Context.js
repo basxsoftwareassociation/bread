@@ -132,6 +132,9 @@ function () {
     } // {{ @key }}
 
 
+    if(path.original.startsWith('@root')) {
+        return path.original.replace('@root.', '');
+    }
     if (path.original === '@key') {
       // when no key is provided by `|value key|`, it will be added in the output template by default
       if (!currentScope.key) {

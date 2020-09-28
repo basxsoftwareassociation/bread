@@ -8,7 +8,8 @@ cp Context.js DjangoTranspiler.js node_modules/muban-convert-hbs/lib/
 find node_modules/carbon-components/src/ -name '*.hbs' -exec node convert2html.js {} \; 2>&1 | grep -v ExperimentalWarning
 # correct some of the transpilation and apply the carbon-icon tag correctly
 find node_modules/carbon-components/src/ -name '*.html' -exec sed -i \
-    -e 's/{{ root\.prefix }}/bx/g' \
+    -e 's/{{ prefix }}/bx/g' \
+    -e 's/{{ root.prefix }}/bx/g' \
     -e 's/{% include "/{% include "carbon_design\/components\//g' \
     -e '1 i {% load carbon_design_tags %}' \
     {} \;
@@ -49,4 +50,4 @@ echo "__all__ = [$(echo $package_all | sed -e 's/"",//g' )]"  >> $pydir"__init__
 
 black $pydir
 
-rm -rf node_modules 
+# rm -rf node_modules 

@@ -182,3 +182,12 @@ DATETIME_FORMAT = "Y-m-d h:M:s"
 DATE_FORMAT = "Y-m-d"
 
 COMPRESS_OFFLINE_CONTEXT = "bread.context_processors.compress_offline_context"
+CARBON_DESIGN_CONTEXT = {
+    "prefix": "bx",
+    "header": {
+        "name": "PRODUCT_NAME",
+        "company": "COMPANY_NAME",
+        "platform": "PLATFORM_NAME",
+        "actions": [{"title": "ACTION_1", "switcher": None}],
+    },
+}

@@ -12,7 +12,7 @@
         <ul>
             {% for action in actions %}
                 <li>
-                    <a class="bx--link" href="{% linkurl action request %}">{% linklabel action request %}</a>
+                    <a class="bx--link" href="{% linkurl action request %}">{{ action.label }}</a>
                 </li>
             {% endfor %}
         </ul>

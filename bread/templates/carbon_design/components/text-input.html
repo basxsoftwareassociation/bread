@@ -7,72 +7,72 @@
 -->
 
 <div {% if password %} data-text-input {% endif %}
-  class="{{ prefix }}--form-item {{ prefix }}--text-input-wrapper{% if password %} {{ prefix }}--password-input-wrapper{% endif %}">
-  <label for="text-input-3" class="{{ prefix }}--label">Text Input label</label>
-  <div class="{{ prefix }}--text-input__field-wrapper">
+  class="bx--form-item bx--text-input-wrapper{% if password %} bx--password-input-wrapper{% endif %}">
+  <label for="text-input-3" class="bx--label">Text Input label</label>
+  <div class="bx--text-input__field-wrapper">
     {% if not password %}
     <input id="text-input-3" type="text"
-      class="{{ prefix }}--text-input{% if light %} {{ prefix }}--text-input--light{% endif %}" placeholder="Placeholder text">
+      class="bx--text-input{% if light %} bx--text-input--light{% endif %}" placeholder="Placeholder text">
     {% endif %}
   </div>
 </div>
 
 <div {% if password %} data-text-input {% endif %}
-  class="{{ prefix }}--form-item {{ prefix }}--text-input-wrapper{% if password %} {{ prefix }}--password-input-wrapper{% endif %}">
-  <label for="text-input-4" class="{{ prefix }}--label">Text Input label</label>
-  <div class="{{ prefix }}--text-input__field-wrapper" data-invalid>
+  class="bx--form-item bx--text-input-wrapper{% if password %} bx--password-input-wrapper{% endif %}">
+  <label for="text-input-4" class="bx--label">Text Input label</label>
+  <div class="bx--text-input__field-wrapper" data-invalid>
     {% carbon_icon "WarningFilled16" class="bx--text-input__invalid-icon" %}
     {% if not password %}
     <input id="text-input-4" type="text"
-      class="{{ prefix }}--text-input {{ prefix }}--text-input--invalid {% if light %} {{ prefix }}--text-input--light{% endif %}"
+      class="bx--text-input bx--text-input--invalid {% if light %} bx--text-input--light{% endif %}"
       placeholder="Placeholder text">
     {% endif %}
   </div>
-  <div class="{{ prefix }}--form-requirement">
+  <div class="bx--form-requirement">
     Validation message here
   </div>
 </div>
 
 <div {% if password %} data-text-input {% endif %}
-  class="{{ prefix }}--form-item {{ prefix }}--text-input-wrapper{% if password %} {{ prefix }}--password-input-wrapper{% endif %}">
-  <label for="text-input-5" class="{{ prefix }}--label">Text Input label</label>
-  <div class="{{ prefix }}--text-input__field-wrapper">
+  class="bx--form-item bx--text-input-wrapper{% if password %} bx--password-input-wrapper{% endif %}">
+  <label for="text-input-5" class="bx--label">Text Input label</label>
+  <div class="bx--text-input__field-wrapper">
     {% if not password %}
     <input id="text-input-5" type="text"
-      class="{{ prefix }}--text-input{% if light %} {{ prefix }}--text-input--light{% endif %}" placeholder="Placeholder text">
+      class="bx--text-input{% if light %} bx--text-input--light{% endif %}" placeholder="Placeholder text">
     {% endif %}
   </div>
-  <div class="{{ prefix }}--form__helper-text">
+  <div class="bx--form__helper-text">
     Optional helper text goes here
   </div>
 </div>
 
 <div {% if password %} data-text-input {% endif %}
-  class="{{ prefix }}--form-item {{ prefix }}--text-input-wrapper{% if password %} {{ prefix }}--password-input-wrapper{% endif %}"
+  class="bx--form-item bx--text-input-wrapper{% if password %} bx--password-input-wrapper{% endif %}"
   style="width: 320px">
-  <label for="text-input-6" class="{{ prefix }}--label">Text Input label</label>
-  <div class="{{ prefix }}--text-input__field-wrapper">
+  <label for="text-input-6" class="bx--label">Text Input label</label>
+  <div class="bx--text-input__field-wrapper">
     {% if not password %}
     <input id="text-input-6" type="text"
-      class="{{ prefix }}--text-input{% if light %} {{ prefix }}--text-input--light{% endif %}" placeholder="Placeholder text">
+      class="bx--text-input{% if light %} bx--text-input--light{% endif %}" placeholder="Placeholder text">
     {% endif %}
   </div>
-  <div class="{{ prefix }}--form__helper-text">
+  <div class="bx--form__helper-text">
     Optional helper text here; if message is more than one line text should wrap (~100 character count maximum)
   </div>
 </div>
 
 <div {% if password %} data-text-input {% endif %}
-  class="{{ prefix }}--form-item {{ prefix }}--text-input-wrapper{% if password %} {{ prefix }}--password-input-wrapper{% endif %}">
-  <label for="text-input-7" class="{{ prefix }}--label {{ prefix }}--label--disabled">Text Input label</label>
-  <div class="{{ prefix }}--text-input__field-wrapper">
+  class="bx--form-item bx--text-input-wrapper{% if password %} bx--password-input-wrapper{% endif %}">
+  <label for="text-input-7" class="bx--label bx--label--disabled">Text Input label</label>
+  <div class="bx--text-input__field-wrapper">
     {% if not password %}
     <input id="text-input-7" type="text"
-      class="{{ prefix }}--text-input{% if light %} {{ prefix }}--text-input--light{% endif %}" placeholder="Placeholder text"
+      class="bx--text-input{% if light %} bx--text-input--light{% endif %}" placeholder="Placeholder text"
       disabled>
     {% endif %}
   </div>
-  <div class="{{ prefix }}--form__helper-text {{ prefix }}--form__helper-text--disabled">
+  <div class="bx--form__helper-text bx--form__helper-text--disabled">
     Optional helper text goes here
   </div>
 </div>

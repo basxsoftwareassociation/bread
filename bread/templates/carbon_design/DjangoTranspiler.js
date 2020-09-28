@@ -216,6 +216,10 @@ function () {
               {
                 var v1 = _this.context.getScopedVariable(statement.params[0]);
                 var v2 = statement.params[1];
+                if(v2.type === "StringLiteral")
+                  v2 =  '"' + v2.value + '"';
+                else if (v2.type === "PathExpression")
+                    v2 = v2.parts[0];
 
                 _this.buffer.push("{% if " + v1 + " == " + v2 + " %}");
                 var t = new DjangoTranspiler(null, _this.context, _this.depth);

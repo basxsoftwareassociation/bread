@@ -9,14 +9,14 @@
 {% if root.featureFlags.grid %}
 <div class="bx--grid">
   {% for row in root.rows %}
-    <div class="{{ row.root.prefix }}--row">
+    <div class="bx--row">
       <div class="bx--col bx--col--auto">
         <p>{{ row.title }}</p>
       </div>
     </div>
-    <div class="{{ row.root.prefix }}--row">
+    <div class="bx--row">
       {% for columns_i in row.columns %}
-        <div class="{{ columns_i.root.prefix }}--col-{{ row.breakpoint }}-1">
+        <div class="bx--col-{{ row.breakpoint }}-1">
           <div class="outside">
             <div class="inside">1</div>
           </div>

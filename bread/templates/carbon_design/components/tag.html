@@ -8,8 +8,8 @@
 
 <div>
   {% for tags_i in tags %}
-  <button class="{{ tags_i.root.prefix }}--tag {{ tags_i.root.prefix }}--tag--{{ tags_i.type }}">
-    <span class="{{ tags_i.root.prefix }}--tag__label">{{ tags_i.label }}</span>
+  <button class="bx--tag bx--tag--{{ tags_i.type }}">
+    <span class="bx--tag__label">{{ tags_i.label }}</span>
   </button>
   {% endfor %}
 </div>

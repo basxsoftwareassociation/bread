@@ -8,12 +8,12 @@
 
 <ul data-accordion class="bx--accordion">
   {% for sections_i in sections %}
-    <li data-accordion-item class="{{ sections_i.root.prefix }}--accordion__item">
-      <button class="{{ sections_i.root.prefix }}--accordion__heading" aria-expanded="false" aria-controls="{{ sections_i.paneId }}">
+    <li data-accordion-item class="bx--accordion__item">
+      <button class="bx--accordion__heading" aria-expanded="false" aria-controls="{{ sections_i.paneId }}">
         {% carbon_icon "ChevronRight16" class="bx--accordion__arrow" %}
-        <div class="{{ sections_i.root.prefix }}--accordion__title">{{ sections_i.title }}</div>
+        <div class="bx--accordion__title">{{ sections_i.title }}</div>
       </button>
-      <div id="{{ sections_i.paneId }}" class="{{ sections_i.root.prefix }}--accordion__content">
+      <div id="{{ sections_i.paneId }}" class="bx--accordion__content">
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
           aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
       </div>

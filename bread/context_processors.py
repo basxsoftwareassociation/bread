@@ -7,10 +7,9 @@ def bread_context(request):
         "TEMPLATE_PACK": TEMPLATE_PACK,
         "TEMPLATE_PACK_BASE": f"{TEMPLATE_PACK}/base.html",
     }
-    # used for all css classes in the carbon_design templates
-    # just want to make it explicit here:
     if TEMPLATE_PACK == "carbon_design":
-        ret["prefix"] = "bx"
+        ret.update(settings.CARBON_DESIGN_CONTEXT)
+
     return ret
 
 

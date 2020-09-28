@@ -6,7 +6,7 @@
   LICENSE file in the root directory of this source tree.
 -->
 
-{% if suffix == [object Object] %}
+{% if suffix == "sm" %}
 <div class="bx--form-item">{% endif %}
   <div data-search role="search" class="bx--search bx--search--{{ suffix }}{% if light %} bx--search--light{% endif %}">
     <label id="search-input-label-1" class="bx--label" for="search__input-1">Search</label>
@@ -14,12 +14,12 @@
     {% carbon_icon "Search16" class="bx--search-magnifier" %}
     <button class="bx--search-close bx--search-close--hidden" title="Clear search
         input" aria-label="Clear search input">
-      {% if suffix == [object Object] %}{% carbon_icon "Close16" class="bx--search-clear" %}{% endif %}
-      {% if suffix == [object Object] %}{% carbon_icon "Close16" class="bx--search-clear" %}{% endif %}
-      {% if suffix == [object Object] %}{% carbon_icon "Close20" class="bx--search-clear" %}{% endif %}
+      {% if suffix == "sm" %}{% carbon_icon "Close16" class="bx--search-clear" %}{% endif %}
+      {% if suffix == "lg" %}{% carbon_icon "Close16" class="bx--search-clear" %}{% endif %}
+      {% if suffix == "xl" %}{% carbon_icon "Close20" class="bx--search-clear" %}{% endif %}
     </button>
   </div>
-  {% if suffix == [object Object] %}</div>{% endif %}
+  {% if suffix == "sm" %}</div>{% endif %}
 
 
 {% comment %}

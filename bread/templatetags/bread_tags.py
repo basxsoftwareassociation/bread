@@ -29,11 +29,6 @@ def linkpermission(link, request, obj=None):
 
 
 @register.simple_tag
-def linklabel(link, request):
-    return link.label(request)
-
-
-@register.simple_tag
 def linkurl(link, request):
     return link.url(request)
 
@@ -41,7 +36,7 @@ def linkurl(link, request):
 @register.simple_tag
 def display_link(link, request, obj=None, atag_class="", atag_style=""):
     warnings.warn(
-        "the template tag display_link is deprecated, please use the tags linkpermission, linklabel and linkurl"
+        "the template tag display_link is deprecated, please use the tags linkpermission and linkurl"
     )
 
     ret = ""
@@ -53,10 +48,10 @@ def display_link(link, request, obj=None, atag_class="", atag_style=""):
             else ""
         )
         ret += f'<a href="{url}" class="{atag_class}" style="{atag_style}" {target}>'
-        if link.icon(request):
-            ret += f'<i class="material-icons" style="vertical-align:middle">{link.icon(request)}</i> '
-        if link.label(request):
-            ret += link.label(request)
+        if link.icon is not None:
+            ret += f'<i class="material-icons" style="vertical-align:middle">{link.icon}</i> '
+        if link.label is not None:
+            ret += link.label
         ret += "</a>"
     return mark_safe(ret)
 
@@ -190,9 +185,10 @@ def menu(request):
             menugroups.append(
                 [
                     group.label,
+                    group.icon,
                     group.active(request),
                     (
-                        item
+                        (item, item.active(request), item.link.url(request))
                         for item in sorted(group.items)
                         if item.has_permission(request)
                     ),

@@ -11,26 +11,26 @@
     <thead>
       <tr>
         {% for columns_i in columns %}
-          <th {% if columns_i.checkbox %} class="{{ columns_i.root.prefix }}--table-column-checkbox" {% endif %}{% if columns_i.section %}class="{{ columns_i.root.prefix }}--table-expand"{% endif %} {% if columns_i.numerical %} class="{{ columns_i.root.prefix }}--data-table--numerical-cell"{% endif %} {% if columns_i.section %} data-event="expandAll"{% endif %}>
+          <th {% if columns_i.checkbox %} class="bx--table-column-checkbox" {% endif %}{% if columns_i.section %}class="bx--table-expand"{% endif %} {% if columns_i.numerical %} class="bx--data-table--numerical-cell"{% endif %} {% if columns_i.section %} data-event="expandAll"{% endif %}>
             <!-- checkbox th -->
             {% if columns_i.checkbox %}
-              <input data-event="select-all" id="{{ columns_i.checkboxId }}" class="{{ columns_i.root.prefix }}--checkbox" type="checkbox" value="{{ columns_i.checkboxValue }}" name="{{ columns_i.checkboxName }}">
-              <label for="{{ columns_i.checkboxId }}" class="{{ columns_i.root.prefix }}--checkbox-label" aria-label="{{ columns_i.title }}"></label>
+              <input data-event="select-all" id="{{ columns_i.checkboxId }}" class="bx--checkbox" type="checkbox" value="{{ columns_i.checkboxValue }}" name="{{ columns_i.checkboxName }}">
+              <label for="{{ columns_i.checkboxId }}" class="bx--checkbox-label" aria-label="{{ columns_i.title }}"></label>
             {% elif undefined %}
-              <button class="{{ columns_i.root.prefix }}--table-expand__button">
+              <button class="bx--table-expand__button">
                 {% carbon_icon "ChevronRight16" class="bx--table-expand__svg" %}
               </button>
             {% elif undefined %}
             <!-- sortable th  -->
               {% if columns_i.sortable %}
-                <button class="{{ columns_i.root.prefix }}--table-sort" data-event="sort" title="{{ columns_i.title }}">
-                  <span class="{{ columns_i.root.prefix }}--table-header-label">{{ columns_i.title }}</span>
+                <button class="bx--table-sort" data-event="sort" title="{{ columns_i.title }}">
+                  <span class="bx--table-header-label">{{ columns_i.title }}</span>
                   {% carbon_icon "ArrowDown16" class="bx--table-sort__icon" %}
                   {% carbon_icon "Arrows16" class="bx--table-sort__icon-unsorted" %}
                   {% if truncate %}
-                    <div id="label-tooltip" role="tooltip" data-floating-menu-direction="bottom" class="{{ columns_i.root.prefix }}--tooltip" data-avoid-focus-on-open>
-                      <span class="{{ columns_i.root.prefix }}--tooltip__caret"></span>
-                      <p class="{{ columns_i.root.prefix }}--tooltip__text">{{ columns_i.title }}</p>
+                    <div id="label-tooltip" role="tooltip" data-floating-menu-direction="bottom" class="bx--tooltip" data-avoid-focus-on-open>
+                      <span class="bx--tooltip__caret"></span>
+                      <p class="bx--tooltip__text">{{ columns_i.title }}</p>
                     </div>
                   {% endif %}
                 </button>
@@ -38,7 +38,7 @@
                 {% elif columns_i.small %}
                   {{ columns_i.title }}
                 {% else %}
-                  <span class="{{ columns_i.root.prefix }}--table-header-label">{{ columns_i.title }}</span>
+                  <span class="bx--table-header-label">{{ columns_i.title }}</span>
                 {% endif %}
               {% endif %}
           </th>
@@ -48,32 +48,32 @@
   <tbody>
     {% for row in rows %}
       <!-- the first cell of each row is a th[scope="row"], otherwise it is a td -->
-      <tr{% if row.sectionContent %} class="{{ row.root.prefix }}--parent-row" data-parent-row {% endif %} {% if row.disabled %} class="{{ row.root.prefix }}--row-disabled" {% endif %}>
+      <tr{% if row.sectionContent %} class="bx--parent-row" data-parent-row {% endif %} {% if row.disabled %} class="bx--row-disabled" {% endif %}>
         {% for index, column in columns.items %}
           {% with data=row|lookup:column.name %}
             {% if data.first %}
-              <th {% if column.numerical %} class="{{ data.root.prefix }}--data-table--numerical-cell" {% endif %} scope="row">
+              <th {% if column.numerical %} class="bx--data-table--numerical-cell" {% endif %} scope="row">
                 <!-- truncated new markup -->
                 {% if row.truncate %}
-                  <span class="{{ data.root.prefix }}--table-cell-content" aria-describedby="label-tooltip">{{ data }}
+                  <span class="bx--table-cell-content" aria-describedby="label-tooltip">{{ data }}
                       {% if tall %}
                         {% if undefined %}
-                        <div class="{{ data.root.prefix }}--data-table--cell-secondary-text">
+                        <div class="bx--data-table--cell-secondary-text">
                           {{ row.secondaryText }}
                         </div>
                         {% endif %}
                       {% endif %}
                     </span>
-                  <div id="label-tooltip" role="tooltip" data-floating-menu-direction="bottom" class="{{ data.root.prefix }}--tooltip" data-avoid-focus-on-open>
-                    <span class="{{ data.root.prefix }}--tooltip__caret"></span>
-                    <p class="{{ data.root.prefix }}--tooltip__text">{{ data }}</p>
+                  <div id="label-tooltip" role="tooltip" data-floating-menu-direction="bottom" class="bx--tooltip" data-avoid-focus-on-open>
+                    <span class="bx--tooltip__caret"></span>
+                    <p class="bx--tooltip__text">{{ data }}</p>
                   </div>
                 <!-- default (non truncated) -->
                 {% else %}
                   {{ data }}
                   {% if tall %}
                     {% if undefined %}
-                    <div class="{{ data.root.prefix }}--data-table--cell-secondary-text">
+                    <div class="bx--data-table--cell-secondary-text">
                       {{ row.secondaryText }}
                     </div>
                     {% endif %}
@@ -81,28 +81,28 @@
                 {% endif %}
               </th>
             {% else %}
-              <td {% if column.numerical %} class="{{ data.root.prefix }}--data-table--numerical-cell" {% endif %}>
+              <td {% if column.numerical %} class="bx--data-table--numerical-cell" {% endif %}>
                 <!-- truncated new markup -->
                 {% if row.truncate %}
-                  <span class="{{ data.root.prefix }}--table-cell-content" aria-describedby="label-tooltip">{{ data }}
+                  <span class="bx--table-cell-content" aria-describedby="label-tooltip">{{ data }}
                       {% if tall %}
                         {% if undefined %}
-                        <div class="{{ data.root.prefix }}--data-table--cell-secondary-text">
+                        <div class="bx--data-table--cell-secondary-text">
                           {{ row.secondaryText }}
                         </div>
                         {% endif %}
                       {% endif %}
                     </span>
-                  <div id="label-tooltip" role="tooltip" data-floating-menu-direction="bottom" class="{{ data.root.prefix }}--tooltip" data-avoid-focus-on-open>
-                    <span class="{{ data.root.prefix }}--tooltip__caret"></span>
-                    <p class="{{ data.root.prefix }}--tooltip__text">{{ data }}</p>
+                  <div id="label-tooltip" role="tooltip" data-floating-menu-direction="bottom" class="bx--tooltip" data-avoid-focus-on-open>
+                    <span class="bx--tooltip__caret"></span>
+                    <p class="bx--tooltip__text">{{ data }}</p>
                   </div>
                 <!-- default (non truncated) -->
                 {% else %}
                   {{ data }}
                   {% if tall %}
                     {% if undefined %}
-                    <div class="{{ data.root.prefix }}--data-table--cell-secondary-text">
+                    <div class="bx--data-table--cell-secondary-text">
                       {{ row.secondaryText }}
                     </div>
                     {% endif %}
@@ -115,9 +115,9 @@
       </tr>
       <!-- Expandable child row -->
       {% if row.sectionContent %}
-          <tr class="{{ row.root.prefix }}--expandable-row {{ row.root.prefix }}--expandable-row--hidden" data-child-row>
+          <tr class="bx--expandable-row bx--expandable-row--hidden" data-child-row>
             <td colspan="{{ columns.length }}">
-              <div class="{{ row.root.prefix }}--child-row-inner-container">
+              <div class="bx--child-row-inner-container">
                 {{ row.sectionContent|safe }}
               </div>
             </td>
