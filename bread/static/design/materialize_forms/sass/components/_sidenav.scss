@@ -193,9 +193,9 @@
 
 .sidenav .collapsible-body > ul:not(.collapsible) > li.active,
 .sidenav.sidenav-fixed .collapsible-body > ul:not(.collapsible) > li.active {
-  background-color: $primary-color;
+  background-color: lighten($secondary-color, 10%);
   a {
-    color: $sidenav-bg-color;
+    color: $sidenav-font-color;
   }
 }
 .sidenav .collapsible-body {

@@ -28,9 +28,9 @@ def linkpermission(link, request, obj=None):
     return link.has_permission(request, obj)
 
 
-@register.simple_tag
-def linkurl(link, request):
-    return link.url(request)
+@register.simple_tag(takes_context=True)
+def linkurl(context, link):
+    return link.url(context["request"])
 
 
 @register.simple_tag
@@ -66,6 +66,11 @@ def pretty_modelname(model, plural=False):
     if plural:
         return title(model._meta.verbose_name_plural)
     return title(model._meta.verbose_name)
+
+
+@register.simple_tag
+def modelname(model):
+    return model._meta.model_name
 
 
 @register.simple_tag

@@ -97,7 +97,7 @@ class ObjectActions(NonFormField):
                 f"""{{% load bread_tags %}}
     {{% object_actions view.admin request object as allactions %}}
     {{% for action in allactions|slice:"{self.slice_start}:{self.slice_end}" %}}
-    <a href="{{% linkurl action request %}}" class="btn-small">{{{{ action.label }}}}</a>
+    <a href="{{% linkurl action %}}" class="btn-small">{{{{ action.label }}}}</a>
     {{% endfor %}}"""
             )
             return t.render(context)

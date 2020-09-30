@@ -79,7 +79,7 @@ class Item:
 
     def __lt__(self, other):
         if self.group and self.group.sort_alphabetically:
-            return self.link.label(None).lower() < other.link.label(None).lower()
+            return self.link.label.lower() < other.link.label.lower()
         if self._order is None:
             if other._order is None:
                 return False

@@ -20,8 +20,15 @@
                     <li {% if group_active %}class="active"{% endif %}>
                         <a class="collapsible-header">{{ menugroup }}<i class="material-icons white-text">arrow_drop_down</i></a>
                         <div class="collapsible-body"><ul>
-                            {% for item in items %}
-                                <li>{% display_link item.link request %}</li>
+                            {% for item, active, itemurl in items %}
+                            <li {% if active %}class="active"{% endif %}>
+                                    <a href="{{ itemurl }}" >
+                                        {% if item.link.icon %}
+                                            <i class="material-icons" style="vertical-align:middle">{{ item.link.icon }}</i>
+                                        {% endif %}
+                                        {{ item.link.label }}
+                                    </a>
+                                </li>
                             {% endfor %}
                         </ul></div>
                     </li>
