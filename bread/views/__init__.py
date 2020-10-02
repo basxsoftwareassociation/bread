@@ -1,5 +1,8 @@
-from .display import BrowseView, ReadView, TreeView
-from .edit import AddView, DeleteView, EditView
+from .add import AddView
+from .browse import BrowseView, TreeView
+from .delete import DeleteView
+from .edit import EditView
+from .read import ReadView
 from .system import DataModel, Overview
 
 __all__ = [

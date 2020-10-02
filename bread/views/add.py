@@ -8,28 +8,29 @@ import urllib
 
 from crispy_forms.layout import Layout
 from crispy_forms.utils import TEMPLATE_PACK
+from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.views.generic import UpdateView
+from django.views.generic import CreateView
+from django.views.generic import DeleteView as DjangoDeleteView
 from guardian.mixins import PermissionRequiredMixin
 
-from ..utils import CustomizableClass, filter_fieldlist, get_modelfields
+from ..utils import CustomizableClass, filter_fieldlist
 from .util import CustomFormMixin
 
 
-class EditView(
+class AddView(
     CustomizableClass,
     CustomFormMixin,
     SuccessMessageMixin,
     PermissionRequiredMixin,
-    UpdateView,
+    CreateView,
 ):
     template_name = f"{TEMPLATE_PACK}/form.html"
     admin = None
-    sidebarfields = []
     accept_global_perms = True
 
     def get_success_message(self, cleaned_data):
-        return f"Saved {self.object}"
+        return f"Added {self.object}"
 
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
@@ -42,17 +43,40 @@ class EditView(
         else:
             self.layout = field_config
         self.fields = [i[1] for i in self.layout.get_field_names()]
-        self.sidebarfields = get_modelfields(
-            self.model, kwargs.get("sidebarfields", self.sidebarfields)
-        )
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
-        return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
+        return [f"{self.model._meta.app_label}.add_{self.model.__name__.lower()}"]
+
+    def get_permission_object(self):
+        return None
 
     def get_success_url(self):
         if "quicksave" in self.request.POST:
-            return self.request.get_full_path()
+            return self.admin.reverse(
+                "edit", pk=self.object.id, query_arguments=self.request.GET
+            )
+        if self.request.GET.get("next"):
+            return urllib.parse.unquote(self.request.GET["next"])
+        return self.admin.reverse("index")
+
+
+class DeleteView(
+    CustomizableClass, PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView
+):
+    template_name = f"{TEMPLATE_PACK}/confirm_delete.html"
+    admin = None
+    accept_global_perms = True
+
+    def __init__(self, admin, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.admin = admin
+
+    def get_required_permissions(self, request):
+        return [f"{self.model._meta.app_label}.delete_{self.model.__name__.lower()}"]
+
+    def get_success_url(self):
+        messages.info(self.request, f"Deleted {self.object}")
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
         return self.admin.reverse("index")

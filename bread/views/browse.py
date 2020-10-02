@@ -12,17 +12,15 @@ from django.db import models
 from django.db.models.functions import Lower
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
-from django.views.generic import DetailView
 from django_filters.views import FilterView
-from guardian.mixins import PermissionListMixin, PermissionRequiredMixin
+from guardian.mixins import PermissionListMixin
 
 from ..formatters import render_field
 from ..forms.forms import FilterForm
-from ..layout import ReadonlyField, convert_to_formless_layout
+from ..layout import TR, LoopLayout, ObjectActionsDropDown, convert_to_formless_layout
 from ..utils import (
     CustomizableClass,
     filter_fieldlist,
-    get_modelfields,
     pretty_fieldname,
     resolve_relationship,
     xlsxresponse,
@@ -41,7 +39,10 @@ class BrowseView(
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
-        self.fields = filter_fieldlist(self.model, kwargs.get("fields", self.fields))
+        # need a deep copy because convert_to_formless_layout will modify the value
+        # which is problematic if we share the same layout-object with an edit view
+        self.fields_argument = copy.deepcopy(kwargs.get("fields", self.fields))
+        self.wrapper_argument = copy.deepcopy(kwargs.get("wrapper", None))
 
         # incrementally try to create a filter from the given field and ignore fields which cannot be used
         kwargs["filterset_fields"] = []
@@ -56,8 +57,56 @@ class BrowseView(
             except (TypeError, AssertionError) as e:
                 print(f"Warning: Specified filter field {field} cannot be used: {e}")
 
-        kwargs["model"] = self.model
         super().__init__(*args, **kwargs)
+
+    def setup(self, request, *args, **kwargs):
+        self.layout = self.get_wrapper_layout(
+            request, self.wrapper_argument, self.fields_argument
+        )
+        self.fields = self.get_fields(
+            self.get_inline_layout(request, self.fields_argument)
+        )
+        return super().setup(request, *args, **kwargs)
+
+    def get_inline_layout(self, request, fields_argument):
+        """fields_argument is anything that has been passed as ``fields`` to the as_view function"""
+
+        fields_argument = copy.deepcopy(fields_argument)
+        if not isinstance(fields_argument, Layout):
+            layoutfields = filter_fieldlist(self.model, fields_argument)
+            fields_argument = Layout(
+                TR.with_td(ObjectActionsDropDown(), "self", *layoutfields),
+            )
+        convert_to_formless_layout(fields_argument, show_label=False)
+        return fields_argument
+
+    def get_wrapper_layout(self, request, wrapper_argument, fields_argument):
+        """wrapper_argument is anything that has been passed as ``wrapper`` to the as_view function"""
+
+        wrapper_argument = copy.deepcopy(wrapper_argument)
+        if not isinstance(wrapper_argument, Layout):
+            wrapper_argument = Layout(
+                LoopLayout(
+                    "object_list",
+                    "object",
+                    self.get_inline_layout(request, fields_argument),
+                )
+            )
+        convert_to_formless_layout(wrapper_argument, show_label=False)
+        return wrapper_argument
+
+    def get_fields(self, layout):
+        def _get_fields_recursive(l):
+            if hasattr(l, "field"):
+                if l.field == "self":
+                    yield self.admin.verbose_modelname
+                else:
+                    yield l.field
+            else:
+                for field in getattr(l, "fields", ()):
+                    yield from _get_fields_recursive(field)
+
+        return list(_get_fields_recursive(layout))
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
@@ -201,51 +250,6 @@ class TreeView(BrowseView):
             return ret
 
         return build_tree(children[None])
-
-
-class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
-    template_name = f"{TEMPLATE_PACK}/detail.html"
-    admin = None
-    fields = None
-    sidebarfields = []
-    accept_global_perms = True
-
-    def __init__(self, admin, *args, **kwargs):
-        self.admin = admin
-        self.model = admin.model
-
-        # need a deep copy because convert_to_formless_layout will modify the value
-        # which is problematic if we share the same layout-object with an edit view
-        self.layout = copy.deepcopy(kwargs.get("fields", self.fields))
-        if not isinstance(self.layout, Layout):
-            layoutfields = filter_fieldlist(self.model, self.layout)
-            self.layout = Layout(*layoutfields)
-        convert_to_formless_layout(self.layout)
-
-        def get_fields_recursive(l):
-            if isinstance(l, ReadonlyField):
-                yield l.field
-            else:
-                for field in getattr(l, "fields", ()):
-                    yield from get_fields_recursive(field)
-
-        self.fields = list(get_fields_recursive(self.layout))
-
-        self.sidebarfields = get_modelfields(
-            self.model, kwargs.get("sidebarfields", self.sidebarfields)
-        )
-        super().__init__(*args, **kwargs)
-
-    def field_values(self):
-        for accessor in self.fields:
-            fieldchain = resolve_relationship(self.model, accessor)
-            if not fieldchain:
-                yield accessor, accessor.replace("_", " ").title()
-            else:
-                yield accessor, pretty_fieldname(fieldchain[-1][1])
-
-    def get_required_permissions(self, request):
-        return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
 
 
 def generate_filterset_class(model, fields):
