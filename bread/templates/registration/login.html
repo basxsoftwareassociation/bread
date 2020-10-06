@@ -1,13 +1,6 @@
 {% extends TEMPLATE_PACK_BASE %}
-{% load bread_tags crispy_forms_tags %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <input type="submit" value="login" class="btn">
-        <input type="hidden" name="next" value="{{ next }}">
-    </form>
-
+    {% crispy form %}
 {% endblock content %}

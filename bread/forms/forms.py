@@ -2,11 +2,13 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from crispy_forms.utils import TEMPLATE_PACK
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.db import models, transaction
 from django.utils.html import mark_safe
 from dynamic_preferences.forms import GlobalPreferenceForm
+from dynamic_preferences.users.forms import UserPreferenceForm
 from guardian.shortcuts import get_objects_for_user
 
 from ..layout import InlineLayout
@@ -252,3 +254,17 @@ class PreferencesForm(GlobalPreferenceForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit("submit", "Save"))
+
+
+class UserPreferencesForm(UserPreferenceForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.add_input(Submit("submit", "Save"))
+
+
+class BreadAuthenticationForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.add_input(Submit("submit", "Login"))

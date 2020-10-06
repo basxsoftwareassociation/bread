@@ -1,6 +1,7 @@
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required as login_required_func
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import models
@@ -11,10 +12,11 @@ from django.utils.text import format_lazy
 from django.views.generic import RedirectView, View
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.registries import global_preferences_registry
+from dynamic_preferences.users.registries import user_preferences_registry
 
 from . import menu
 from . import views as bread_views
-from .forms.forms import PreferencesForm
+from .forms.forms import BreadAuthenticationForm, PreferencesForm, UserPreferencesForm
 from .utils import generate_path_for_view, has_permission, title, try_call
 
 
@@ -176,7 +178,9 @@ class BreadAdmin:
     def add_action(self, request):
         """Returns a link to the "add" view of this admin"""
         if "add" in self.get_urls() and has_permission(request.user, "add", self.model):
-            return menu.Link(self.reverse("add"), "Add", "add")
+            return menu.Link(
+                self.reverse("add"), f"Add {self.verbose_modelname}", "add"
+            )
         return None
 
     def reverse(self, viewname, *args, **kwargs):
@@ -356,11 +360,32 @@ class BreadAdminSite:
                 ),
                 name="global.section",
             ),
+            path(
+                "user/",
+                PreferencesView.as_view(
+                    registry=user_preferences_registry, form_class=UserPreferencesForm,
+                ),
+                name="user",
+            ),
+            path(
+                "user/<slug:section>",
+                PreferencesView.as_view(
+                    registry=user_preferences_registry, form_class=UserPreferencesForm,
+                ),
+                name="user.section",
+            ),
         ]
         ret = [
             path(
                 "preferences/",
                 include((preferences, "dynamic_preferences"), namespace="preferences"),
+            ),
+            path(
+                "accounts/login/",
+                auth_views.LoginView.as_view(
+                    authentication_form=BreadAuthenticationForm
+                ),
+                name="login",
             ),
             path("accounts/", include("django.contrib.auth.urls")),
             path("ckeditor/", include("ckeditor_uploader.urls")),
