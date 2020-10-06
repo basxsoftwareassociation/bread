@@ -29,7 +29,6 @@
 
     {% if inputs %}
         {% for input in inputs %}
-        {{ input.template }}
             {% if "%s" in input.template %}
                 {% with input.template|slice:"1:" as templatevalue %}
                     {% include TEMPLATE_PACK|stringformat:templatevalue %}

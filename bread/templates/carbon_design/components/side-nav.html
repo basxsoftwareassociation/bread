@@ -1,6 +1,6 @@
 {% load carbon_design_tags bread_tags %}
 
-<aside class="bx--side-nav bx--side-nav--rail" data-side-nav>
+<aside class="bx--side-nav bx--side-nav--rail{% if request.user.preferences.user_interface__navigation_menu_extended %} bx--side-nav--expanded{% endif %}" data-side-nav>
     <nav class="bx--side-nav__navigation" role="navigation" aria-label="Side navigation">
 
         {# {% include "carbon_design/components/side-nav-header.html" %} #} {# currently not used #}
@@ -29,6 +29,6 @@
             {% endfor %}
         </ul>
 
-        {% include "carbon_design/components/side-nav-footer.html" with expanded=request.user.preferences.user_interface__navigation_menu_extended %}
+        {% include "carbon_design/components/side-nav-footer.html" %}
     </nav>
 </aside>

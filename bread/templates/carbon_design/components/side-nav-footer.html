@@ -1,54 +1,30 @@
 {% load carbon_design_tags %}
-<!-- 
-  Copyright IBM Corp. 2016, 2018
-
-  This source code is licensed under the Apache-2.0 license found in the
-  LICENSE file in the root directory of this source tree.
--->
 
 <footer class="bx--side-nav__footer">
-  <button class="bx--side-nav__toggle" role="button" title="Close the side navigation menu">
-    <div class="bx--side-nav__icon">
-      {% carbon_icon "Close" 20 class="bx--side-nav__icon--collapse bx--side-nav-collapse-icon" aria_hidden="true" %}
-      {% carbon_icon "ChevronRight" 20 class="bx--side-nav__icon--expand bx--side-nav-expand-icon" aria_hidden="true" %}
-    </div>
-    <span class="bx--assistive-text">
-      Toggle the expansion state of the navigation
-    </span>
-  </button>
+        <button
+            class="bx--side-nav__toggle"
+            role="button"
+            title="Close the side navigation menu"
+            hx-post="{% url "preferences:user" %}"
+            hx-include="#navigation-settings-form input"
+            hx-select="body body" {# do not select anything #}
+            hx-swap="afterbegin"
+        >
+            <div class="bx--side-nav__icon">
+              {% carbon_icon "Close" 20 class="bx--side-nav__icon--collapse bx--side-nav-collapse-icon" aria_hidden="true" %}
+              {% carbon_icon "ChevronRight" 20 class="bx--side-nav__icon--expand bx--side-nav-expand-icon" aria_hidden="true" %}
+            </div>
+            <span class="bx--assistive-text">
+              Toggle the expansion state of the navigation
+            </span>
+        </button>
+        <div id="navigation-settings-form" style="display: none">
+            {% csrf_token %}
+            <input
+                type="checkbox"
+                name="user_interface__navigation_menu_extended"
+                id="id_user_interface__navigation_menu_extended"
+                {% if not request.user.preferences.user_interface__navigation_menu_extended %}checked{% endif %}
+            >
+        </div>
 </footer>
-
-
-{% comment %}
-Original handlebar template:
-
-<!-- 
-  Copyright IBM Corp. 2016, 2018
-
-  This source code is licensed under the Apache-2.0 license found in the
-  LICENSE file in the root directory of this source tree.
--->
-
-<footer class="{{@root.prefix}}--side-nav__footer">
-  <button class="{{@root.prefix}}--side-nav__toggle" role="button" title="Close the side navigation menu">
-    <div class="{{@root.prefix}}--side-nav__icon">
-      {{carbon-icon 'Close20'
-      class=(add
-      (add @root.prefix '--side-nav__icon--collapse')
-      (add ' ' (add @root.prefix '--side-nav-collapse-icon'))
-      )
-      aria-hidden="true"}}
-      {{carbon-icon 'ChevronRight20'
-      class=(add
-      (add @root.prefix '--side-nav__icon--expand')
-      (add ' ' (add @root.prefix '--side-nav-expand-icon'))
-      )
-      aria-hidden="true"}}
-    </div>
-    <span class="{{@root.prefix}}--assistive-text">
-      Toggle the expansion state of the navigation
-    </span>
-  </button>
-</footer>
-
-{% endcomment %}

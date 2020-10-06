@@ -14,6 +14,7 @@ _third_party_apps = [
     "ckeditor_uploader",
     "guardian",
     "dynamic_preferences",
+    "dynamic_preferences.users.apps.UserPreferencesConfig",
     "compressor",
     "easy_thumbnails",
     "image_cropping",

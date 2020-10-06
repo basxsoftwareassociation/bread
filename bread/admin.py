@@ -12,6 +12,7 @@ from django.utils.text import format_lazy
 from django.views.generic import RedirectView, View
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.registries import global_preferences_registry
+from dynamic_preferences.users import views as user_preferences_views
 from dynamic_preferences.users.registries import user_preferences_registry
 
 from . import menu
@@ -345,6 +346,11 @@ class BreadAdminSite:
             (SuccessMessageMixin, preferences_views.PreferenceFormView),
             {"success_message": "Preferences updated"},
         )
+        UserPreferencesView = type(
+            "UserPreferencesView",
+            (SuccessMessageMixin, user_preferences_views.UserPreferenceFormView),
+            {"success_message": "Preferences updated"},
+        )
         preferences = [
             path(
                 "global/",
@@ -362,14 +368,14 @@ class BreadAdminSite:
             ),
             path(
                 "user/",
-                PreferencesView.as_view(
+                UserPreferencesView.as_view(
                     registry=user_preferences_registry, form_class=UserPreferencesForm,
                 ),
                 name="user",
             ),
             path(
                 "user/<slug:section>",
-                PreferencesView.as_view(
+                UserPreferencesView.as_view(
                     registry=user_preferences_registry, form_class=UserPreferencesForm,
                 ),
                 name="user.section",
