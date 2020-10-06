@@ -1,0 +1,33 @@
+{% comment %}
+Template variables:
+- level: string, one of [info, warning, error, success]
+- low_contrast: For low-contrast colors
+- title: Message title
+- subtitle: optional, explanation text
+- icon: optional, name of icon to add, defaults to icon matching level type
+{% endcomment %}
+{% load carbon_design_tags bread_tags %}
+<div data-notification class="bx--inline-notification bx--inline-notification--{{ level|default:"info" }}{% if low_contrast %} bx--inline-notification--low-contrast{% endif %}" role="alert">
+    <div class="bx--inline-notification__details">
+
+        {% if icon %}
+            {% carbon_icon icon 20 class="bx--inline-notification__icon" aria_hidden="true" %}
+        {% elif level == "error" %}
+            {% carbon_icon "ErrorFilled" 20 class="bx--inline-notification__icon" aria_hidden="true" %}
+        {% elif level == "warning" %}
+            {% carbon_icon "WarningFilled" 20 class="bx--inline-notification__icon" aria_hidden="true" %}
+        {% elif level == "success" %}
+            {% carbon_icon "CheckmarkFilled" 20 class="bx--inline-notification__icon" aria_hidden="true" %}
+        {% else %}
+            {% carbon_icon "InformationFilled" 20 class="bx--inline-notification__icon" aria_hidden="true" %}
+        {% endif %}
+
+        <div class="bx--inline-notification__text-wrapper">
+            <div class="bx--inline-notification__title">{{ title|default:"" }}</div>
+            <div class="bx--inline-notification__subtitle">{{ subtitle|default:"" }}</div>
+        </div>
+    </div>
+    <button data-notification-btn class="bx--inline-notification__close-button" type="button" aria-label="close">
+        {% carbon_icon "Close" 20 class="bx--inline-notification__close-icon" aria_hidden="true" %}
+    </button>
+</div>

@@ -2,14 +2,34 @@
 
 {% specialspaceless %}
 {% if form_tag %}<form {{ flat_attrs|safe }} method="{{ form_method }}" {% if form.is_multipart %} enctype="multipart/form-data"{% endif %} autocomplete="off">{% endif %}
+
     {% if form_method|lower == "post" and not disable_csrf %}
         {% csrf_token %}
     {% endif %}
 
-    {% include "materialize_forms/display_form.html" %}
+    {% if include_media %}{{ form.media }}{% endif %}
+
+    {% if form_show_errors %}
+        {% if form.non_field_errors %}
+            {% with form.non_field_errors|unordered_list|safe as error_message %}
+                {% with "<ul>"|add:error_message|add:"</ul>" as error_list %}
+                    {% include "carbon_design/layout/notification.html" with title=form_error_title|default:"Form errors" subtitle=error_list level="error" %}
+                {% endwith %}
+            {% endwith %}
+        {% endif %}
+    {% endif %}
+
+    {% if form.form_html %}
+        {{ form.form_html }}
+    {% else %}
+        {% for field in form %}
+            {% include "carbon_design/field.html" %}
+        {% endfor %}
+    {% endif %}
 
     {% if inputs %}
         {% for input in inputs %}
+        {{ input.template }}
             {% if "%s" in input.template %}
                 {% with input.template|slice:"1:" as templatevalue %}
                     {% include TEMPLATE_PACK|stringformat:templatevalue %}
@@ -19,5 +39,6 @@
             {% endif %}
         {% endfor %}
     {% endif %}
+
 {% if form_tag %}</form>{% endif %}
 {% endspecialspaceless %}

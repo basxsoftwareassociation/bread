@@ -1,103 +1,208 @@
-{% extends TEMPLATE_PACK_BASE %}
-{% load bread_tags crispy_forms_tags %}
+{% extends "carbon_design/base.html" %}
+{% load bread_tags crispy_forms_tags carbon_design_tags l10n %}
 
 {% block content %}
-    {% include "materialize_forms/list_actions.html" %}
 
-    <h2>{{ view.admin.verbose_modelname_plural }}</h2>
 
-    {% if page_obj.paginator.num_pages > 1 %}
-    <div style="display: flex; justify-content: space-between; font-size: 150%">
-        <span>
-            {% if page_obj.has_previous %}
-                <a href="?{{ view.page_kwarg }}={{ page_obj.previous_page_number }}">❮❮</a>
-            {% else %}
-                <span style="visibility: hidden">❮❮</span>
-            {% endif %}
-        </span>
-
-        <span>
-            {% for i in page_obj.paginator.page_range %}
-                {% if i == page_obj.number %}
-                    <span style="padding: 0 1rem; font-size: 120%">{{ i }}</span>
-                {% else %}
-                    <a href="?{{ view.page_kwarg }}={{ i }}" style="padding: 0 1rem">{{ i }}</a>
-                {% endif %}
+    {% list_actions view.admin request as actions %}
+    {% if actions %}
+        <div>
+            {% for action in actions %}
+                {% display_link action request atag_class='btn' %}
             {% endfor %}
-        </span>
-
-        <span>
-            {% if page_obj.has_next %}
-                <a href="?{{ view.page_kwarg }}={{ page_obj.next_page_number }}">❯❯</a>
-            {% else %}
-                <span style="visibility: hidden">❯❯</span>
-            {% endif %}
-        </span>
-    </div>
+        </div>
     {% endif %}
-    
-    <table>
-        {% if not hide_heading %}
+
+    <div class="bx--data-table-container " data-table>
+        <div class="bx--data-table-header">
+            <h4 class="bx--data-table-header__title">{% pretty_modelname view.model True %}</h4>
+            <p class="bx--data-table-header__description">Optional Helper Text</p>
+        </div>
+
+        <section class="bx--table-toolbar ">
+            <!-- Info from sam: batch actions are not implemented yet, this is placeholder code -->
+            <!-- Batch actions -->
+                <div class="bx--batch-actions" aria-label="Table Action Bar">
+                <div class="bx--action-list">
+                    <button class="bx--btn bx--btn--primary" type="button">
+                        Delete
+                        <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 6H7V12H6zM9 6H10V12H9z"></path><path d="M2 3v1h1v10c0 .6.4 1 1 1h8c.6 0 1-.4 1-1V4h1V3H2zM4 14V4h8v10H4zM6 1H10V2H6z"></path></svg>
+                    </button>
+                    <button class="bx--btn bx--btn--primary" type="button">
+                        Save
+                        <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.9,4.6l-2.5-2.5C11.3,2.1,11.1,2,11,2H3C2.4,2,2,2.4,2,3v10c0,0.6,0.4,1,1,1h10c0.6,0,1-0.4,1-1V5	C14,4.9,13.9,4.7,13.9,4.6z M6,3h4v2H6V3z M10,13H6V9h4V13z M11,13V9c0-0.6-0.4-1-1-1H6C5.4,8,5,8.4,5,9v4H3V3h2v2c0,0.6,0.4,1,1,1	h4c0.6,0,1-0.4,1-1V3.2l2,2V13H11z"></path></svg>
+                    </button>
+                    <button class="bx--btn bx--btn--primary" type="button">
+                        Download
+                        <svg focusable="false" preserveAspectRatio="xMidYMid meet" style="will-change: transform;" xmlns="http://www.w3.org/2000/svg" class="bx--btn__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M13 7L12.3 6.3 8.5 10.1 8.5 1 7.5 1 7.5 10.1 3.7 6.3 3 7 8 12zM13 12v2H3v-2H2v2l0 0c0 .6.4 1 1 1h10c.6 0 1-.4 1-1l0 0v-2H13z"></path></svg>
+                    </button>
+                    <button data-event="action-bar-cancel" class="bx--btn bx--btn--primary bx--batch-summary__cancel">Cancel</button>
+                </div>
+                <div class="bx--batch-summary">
+                    <p class="bx--batch-summary__para">
+                        <span data-items-selected>3</span> items selected
+                    </p>
+                </div>
+            </div>
+
+            {% add_action view.admin request as action %}
+            {% if action %}
+                <div class="bx--toolbar-content">
+                    <!--  Toolbar primary button -->
+                    <button class="bx--btn bx--btn--sm bx--btn--primary" onclick="location.href = '{% linkurl action %}'">
+                        {{ action.label }} 
+                        {% carbon_icon action.icon 20 class="bx--btn__icon" %}
+                    </button>
+                </div>
+            {% endif %}
+        </section>
+        
+        <!-- Data table -->
+        <table class="bx--data-table">
             <thead>
                 <tr>
-                    <th></th>
-                    <th></th>
+                    <th  class="bx--table-column-checkbox">
+                        <input data-event="select-all" id="bx--checkbox-{% modelname view.model %}" class="bx--checkbox" type="checkbox" value="green" name="checkbox-20">
+                        <label for="bx--checkbox-{% modelname view.model %}" class="bx--checkbox-label" aria-label="Label name"></label>
+                    </th>
+                    
                     {% for field, prettyname in view.sortnames %}
-                        <th>
+                        <th class="bx--table-header-label">
                             {% if field %}
                                 {% querystring_order view.admin request.GET.order field as new_order_string %}
-                                <a href="{% updated_querystring "order" new_order_string %}">
-                                    {{ prettyname }}
+                                <button class="bx--table-sort" data-event="sort" title="{{ prettyname }}">
+                                    <span class="bx--table-header-label">{{ prettyname }}</span>
                                     {% if '-'|add:field in request.GET.order %}
-                                        <i class="material-icons tiny">keyboard_arrow_up</i>
+                                        {% carbon_icon "ArrowUp" 16 %}
                                     {% elif field in request.GET.order %}
-                                        <i class="material-icons tiny">keyboard_arrow_down</i>
+                                        {% carbon_icon "ArrowDown" 16 %}
+                                    {% else %}
+                                        {% carbon_icon "ArrowsVertical" 16 %}
                                     {% endif %}
+                                </button>
+
+                                <a href="{% updated_querystring "order" new_order_string %}">
                                 </a>
                             {% else %}
-                                {{ prettyname }}
+                                <span class="bx--table-header-label">{{ prettyname }}</span>
                             {% endif %}
                         </th>
                     {% endfor %}
+                    <th></th>
                 </tr>
             </thead>
-        {% endif %}
-        <tbody>
-            <tr style="font-style: italic">
-                <td>
-                    {{ object_list|length }} {{ view.admin.verbose_modelname_plural }}
-                    {% if page_obj.paginator %}of {{page_obj.paginator.count }}{% endif %}
-                </td>
-                <td></td>
-                {% for field in view.fields %}
-                    <td>{% render_field_aggregation object_list field %}</td>
+            <tbody>
+                {% for object in object_list %}
+                    <tr>
+                        <td class="bx--table-column-checkbox">
+                            <input data-event="select" id="bx--checkbox-{% modelname view.model %}-{{ object.pk }}" class="bx--checkbox" type="checkbox" value="green" name="checkbox-{{ object.pk }}" >
+                            <label for="bx--checkbox-{% modelname view.model %}-{{ object.pk }}" class="bx--checkbox-label" aria-label="Label name"></label>
+                        </td>
+                        {% for field in view.fields %}
+                            <td>{% render_field object field %}</td>
+                        {% endfor %}
+                        <td class="bx--table-column-menu">
+                            {% object_actions view.admin request object as actions %}
+                            {% if actions %}
+                                <div data-overflow-menu role="menu" tabindex="0" aria-label="Actions" aria-expanded="false"class="bx--overflow-menu">
+                                    {% carbon_icon "overflow-menu--vertical" 16 %}
+                                    <ul class="bx--overflow-menu-options bx--overflow-menu--flip">
+                                        {% for action in actions %}
+                                            <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
+                                                <button class="bx--overflow-menu-options__btn" onclick="window.location.href='{% linkurl action %}'">
+                                                    <div class="bx--overflow-menu-options__option-content">
+                                                        {% if action.icon %}
+                                                            {% carbon_icon action.icon 16 %}
+                                                        {% endif %}{{ action.label }}
+                                                    </div>
+                                                </button>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
                 {% endfor %}
-            </tr>
-            {% for object in object_list %}
-                <tr>
-                    <td>
-                        {% object_actions view.admin request object as actions %}
-                        {% if actions %}
-                            <ul>
-                                {% for action in actions %}
-                                    <li>{% display_link action request %}</li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    </td>
-                    <td>{% render_field object 'self' %}</td>
-                    {% for field in view.fields %}
-                        <td>{% render_field object field %}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    {% add_action view.admin request as action %}
-    {% if action %}
-        {% display_link action request %}
-    {% endif %}
+        <!-- Pagination -->
+        <div class="bx--pagination" data-pagination>
+            <div class="bx--pagination__left">
+                <label id="select-id-pagination-count-label" class="bx--pagination__text" for="select-id-pagination-count">
+                    Items per page:
+                </label>
+                <div class="bx--select bx--select--inline bx--select__item-count">
+                    <select
+                        class="bx--select-input"
+                        id="select-id-pagination-count"
+                        aria-label="select number of items per page"
+                        tabindex="0"
+                        data-items-per-page 
+                        onchange="location.href=this.options[this.selectedIndex].value"
+                    >
+                        {% for pagination_count in view.get_pagination_choices %}
+                            <option
+                                class="bx--select-option"
+                                value="?paginate_by={{ pagination_count|unlocalize }}"
+                                {% if pagination_count == view.get_paginate_by %}selected{% endif %}
+                            >
+                                {{ pagination_count }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% carbon_icon "ChevronDown" 16 class="bx--select__arrow" %}
+                </div>
+                <span class="bx--pagination__text">
+                    <span data-displayed-item-range>{{ page_obj.start_index }}-{{ page_obj.end_index }}</span> of <span data-total-items>{{ page_obj.paginator.count }}</span> items
+                </span>
+            </div>
+            <div class="bx--pagination__right">
+                <div class="bx--select bx--select--inline bx--select__page-number">
+                    <select
+                        class="bx--select-input"
+                        id="select-id-pagination-page"
+                        aria-label="select page number to view"
+                        tabindex="0"
+                        data-page-number-input
+                        onchange="location.href=this.options[this.selectedIndex].value"
+                    >
+                        {% for page in page_obj.paginator.page_range %}
+                            <option
+                                class="bx--select-option"
+                                value="{% updated_querystring view.page_kwarg page %}"
+                                {% if page == page_obj.number %}selected{% endif %}
+                            >
+                                {{ page }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% carbon_icon "ChevronDown" 16 class="bx--select__arrow" %}
+                </div>
+                <label id="select-id-pagination-page-label" class="bx--pagination__text" for="select-id-pagination-page" > of {{ page_obj.paginator.num_pages }} pages </label>
+                <button
+                    class="bx--pagination__button bx--pagination__button--backward {% if not page_obj.has_previous %}bx--pagination__button--no-index{% endif %}"
+                    tabindex="0"
+                    data-page-backward
+                    aria-label="Backward button"
+                    {% if page_obj.has_previous %}onclick="location.href='{% updated_querystring view.page_kwarg page_obj.previous_page_number %}'"{% endif %}
+                >
+                    {% carbon_icon "CaretLeft" 20 class="bx--pagination__nav-arrow" %}
+                </button>
+                <button
+                    class="bx--pagination__button bx--pagination__button--forward {% if not page_obj.has_next %}bx--pagination__button--no-index{% endif %}"
+                    tabindex="0"
+                    data-page-forward
+                    aria-label="Forward button"
+                    {% if page_obj.has_next %}onclick="location.href='{% updated_querystring view.page_kwarg page_obj.next_page_number %}'"{% endif %}
+                >
+                    {% carbon_icon "CaretRight" 20 class="bx--pagination__nav-arrow" %}
+                </button>
+            </div>
+        </div>
+    <div>
+
 {% endblock %}
 
 {% block right-panel %}

@@ -10,10 +10,10 @@
             {% for menugroup, icon, group_active, items in menu %}
             <li class="bx--side-nav__item{% if group_active %} bx--side-nav__item--active{% else %}{% endif %}">
                 <button class="bx--side-nav__submenu" type="button" aria-haspopup="true" aria-expanded="{{ group_active|yesno:"true,false" }}">
-                    {% if icon %}<div class="bx--side-nav__icon">{% carbon_icon icon %}</div>{% endif %}
+                    {% if icon %}<div class="bx--side-nav__icon">{% carbon_icon icon 32 %}</div>{% endif %}
                         <span class="bx--side-nav__submenu-title">{{ menugroup }}</span>
                         <div class="bx--side-nav__icon bx--side-nav__submenu-chevron">
-                            {% carbon_icon "chevronDown32" %}
+                            {% carbon_icon "chevronDown" 32 %}
                         </div>
                     </button>
                     <ul class="bx--side-nav__menu">
@@ -29,6 +29,6 @@
             {% endfor %}
         </ul>
 
-        {% include "carbon_design/components/side-nav-footer.html" with expanded=sidenav.state.expanded %}
+        {% include "carbon_design/components/side-nav-footer.html" with expanded=request.user.preferences.user_interface__navigation_menu_extended %}
     </nav>
 </aside>
