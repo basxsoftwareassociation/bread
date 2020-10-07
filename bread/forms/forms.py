@@ -1,12 +1,10 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from crispy_forms.utils import TEMPLATE_PACK
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.db import models, transaction
-from django.utils.html import mark_safe
 from dynamic_preferences.forms import GlobalPreferenceForm
 from dynamic_preferences.users.forms import UserPreferenceForm
 from guardian.shortcuts import get_objects_for_user
@@ -17,7 +15,14 @@ from .fields import FormsetField, GenericForeignKeyField
 
 
 def breadmodelform_factory(
-    request, model, fields, instance, baseformclass, layout, isinline=False
+    request,
+    model,
+    fields,
+    instance,
+    baseformclass,
+    layout,
+    submit_buttons,
+    isinline=False,
 ):
     """Returns a form class which can handle inline-modelform sets and generic foreign keys.
     Also enable crispy forms.
@@ -54,25 +59,14 @@ def breadmodelform_factory(
             if isinline:
                 self.helper.form_tag = False
             else:
-                self.helper.add_input(Submit("submit", "Save & return"))
-                self.helper.add_input(
-                    Submit(
-                        "quicksave",
-                        mark_safe(
-                            f'<i class="material-icons" style="vertical-align:middle">save</i>'
-                        ),
-                        css_class="btn-floating btn-large",
-                        style="float: right; position: sticky; bottom: 1rem; margin-right: -6rem",
-                        template=f"{TEMPLATE_PACK}/layout/button.html",
-                    )
-                )
+                self.helper.inputs.extend(submit_buttons)
             self.helper.layout = layout
 
         def save(self, *args, **kwargs):
             with transaction.atomic():
                 kwargs["commit"] = False
                 forminstance = super().save(*args, **kwargs)
-                # GenericForeignKey might need a resafe because we set the v
+                # GenericForeignKey might need a resafe because we set the value
                 for fieldname, field in self.fields.items():
                     if isinstance(field, GenericForeignKeyField):
                         setattr(forminstance, fieldname, self.cleaned_data[fieldname])
@@ -151,6 +145,7 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
         instance=None,
         baseformclass=baseformclass,
         layout=layout,
+        submit_buttons=[],
         isinline=True,
     )
 
