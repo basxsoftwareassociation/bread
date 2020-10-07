@@ -36,7 +36,7 @@
     </div>
     {% endif %}
     
-    {% include "materialize_forms/inline_list.html" %}
+    {% crispy_html view.get_layout %}
 
     {% add_action view.admin request as action %}
     {% if action %}
