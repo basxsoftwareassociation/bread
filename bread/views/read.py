@@ -5,7 +5,7 @@ from crispy_forms.utils import TEMPLATE_PACK
 from django.views.generic import DetailView
 from guardian.mixins import PermissionRequiredMixin
 
-from ..layout import ReadonlyField, convert_to_formless_layout
+from ..layout import FieldValue, convert_to_formless_layout
 from ..utils import (
     CustomizableClass,
     filter_fieldlist,
@@ -51,7 +51,7 @@ class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
 
     def get_fields(self, layout):
         def _get_fields_recursive(l):
-            if isinstance(l, ReadonlyField):
+            if isinstance(l, FieldValue):
                 yield l.field
             else:
                 for field in getattr(l, "fields", ()):

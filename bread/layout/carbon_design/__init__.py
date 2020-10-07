@@ -1,9 +1,10 @@
 from crispy_forms.layout import Div, Layout
 from crispy_forms.utils import TEMPLATE_PACK
 from django.forms.formsets import DELETION_FIELD_NAME
+from django.template import Template
 from django.template.loader import render_to_string
 
-from .. import FieldLabel, ReadonlyField
+from .. import HTMLTag
 
 
 class Component(Div):
@@ -20,18 +21,9 @@ class Component(Div):
         )
 
 
-def convert_to_formless_layout(layout_object):
-    """Recursively convert fields of type string to ReadonlyField.
-    Usefull if a layout has been defined for native crispy-form layouts
-    and should be reused on a read-only view."""
-    for i, field in enumerate(layout_object.fields):
-        if isinstance(field, str):
-            layout_object.fields[i] = Div(FieldLabel(field), ReadonlyField(field))
-        elif hasattr(field, "fields"):
-            convert_to_formless_layout(field)
-
-
 class InlineLayout(Layout):
+    """Used to render inline forms"""
+
     def __init__(self, inlinefield, *args, **kwargs):
         super().__init__(inlinefield)
         self.fieldname = inlinefield
@@ -49,3 +41,14 @@ class InlineLayout(Layout):
         ):
             self.args = self.args + (DELETION_FIELD_NAME, "id")
         return Layout(*self.args, **self.kwargs)
+
+
+class ObjectActionsDropDown(HTMLTag):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.field = ""
+        self.fields = []
+        self.template = Template("""Hi""")
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        return self.template.render(context)

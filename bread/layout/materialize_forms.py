@@ -1,12 +1,27 @@
 from crispy_forms.bootstrap import Container, ContainerHolder
-from crispy_forms.layout import Div, Layout
+from crispy_forms.layout import HTML, Layout
 from crispy_forms.utils import TEMPLATE_PACK, render_field
 from django.core.exceptions import ImproperlyConfigured
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.template import Template
 from django.template.loader import render_to_string
 
-from . import FieldLabel, NonFormField, ReadonlyField
+from ..templatetags.bread_tags import querystring_order, updated_querystring
+from .base import (
+    TABLE,
+    TBODY,
+    THEAD,
+    TR,
+    A,
+    Div,
+    FieldLabel,
+    FieldValue,
+    HTMLTag,
+    ItemContainer,
+    NonFormField,
+    get_fieldnames,
+    with_str_fields_replaced,
+)
 
 
 class Collapsible(Container):
@@ -67,22 +82,22 @@ class Tabs(ContainerHolder):
         return render_to_string(template, context.flatten())
 
 
-class Row(Div):
+class Row(HTMLTag):
     @classmethod
     def with_columns(cls, *args):
         return Row(*[Col(width, field) for field, width in args])
 
     def __init__(self, *args, **kwargs):
+        kwargs["css_class"] = kwargs.get("css_class", "") + " row"
         super().__init__(*args, **kwargs)
-        self.css_class = "row"
 
 
-class Col(Div):
+class Col(HTMLTag):
     def __init__(self, width=1, *args, **kwargs):
+        kwargs["css_class"] = kwargs.get("css_class", "") + f" col s{width}"
         if not 1 <= width <= 12:
             raise ImproperlyConfigured("width must be a number between 1 and 12")
         super().__init__(*args, **kwargs)
-        self.css_class = f"col s{width}"
 
 
 class ObjectActions(NonFormField):
@@ -90,6 +105,7 @@ class ObjectActions(NonFormField):
         super().__init__(**kwargs)
         self.slice_start = slice_start
         self.slice_end = slice_end
+        self.field = ""
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
         if "object" in context:
@@ -104,20 +120,21 @@ class ObjectActions(NonFormField):
         return ""
 
 
-def convert_to_formless_layout(layout_object):
-    """Recursively convert fields of type string to ReadonlyField.
-    Usefull if a layout has been defined for native crispy-form layouts
-    and should be reused on a read-only view."""
-    for i, field in enumerate(layout_object.fields):
-        if isinstance(field, str):
-            layout_object.fields[i] = Row.with_columns(
-                (FieldLabel(field), 2), (ReadonlyField(field), 10)
-            )
-        elif hasattr(field, "fields"):
-            convert_to_formless_layout(field)
+class ObjectActionsDropDown(HTMLTag):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.field = ""
+        self.fields = []
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        return render_to_string(
+            "materialize_forms/object_actions.html", context.flatten()
+        )
 
 
 class InlineLayout(Layout):
+    """Used to render inline forms"""
+
     def __init__(self, inlinefield, *args, **kwargs):
         super().__init__(inlinefield)
         self.fieldname = inlinefield
@@ -142,3 +159,77 @@ class InlineLayout(Layout):
                 style="position: relative",
             )
         )
+
+
+class SortableHeader(NonFormField):
+    def __init__(self, field, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.field = field
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+
+        """
+        <a href="{% updated_querystring "order" new_order_string %}">
+            {{ prettyname }}
+            {% if '-'|add:field in request.GET.order %}
+                <i class="material-icons tiny">keyboard_arrow_up</i>
+            {% elif field in request.GET.order %}
+                <i class="material-icons tiny">keyboard_arrow_down</i>
+            {% endif %}
+        </a>
+        """
+        order = context.get("request").GET.get("order", "")
+        href = updated_querystring(
+            context, "order", querystring_order(order, self.field),
+        )
+        if "-" + self.field in order:
+            return render_field(
+                A(
+                    FieldLabel(self.field),
+                    MaterialIcon("keyboard_arrow_up", css_class="tiny"),
+                    href=href,
+                ),
+                {},
+                None,
+                context,
+            )
+        elif self.field in order:
+            return render_field(
+                A(
+                    FieldLabel(self.field),
+                    MaterialIcon("keyboard_arrow_down", css_class="tiny"),
+                    href=href,
+                ),
+                {},
+                None,
+                context,
+            )
+        return render_field(A(FieldLabel(self.field), href=href), {}, None, context)
+
+
+class MaterialIcon(HTMLTag):
+    tag = "i"
+
+    def __init__(self, icon, css_class=""):
+        super().__init__(HTML(icon), css_class="material-icons " + css_class)
+
+
+def default_list_layout(fields, sortable_by):
+    fields = with_str_fields_replaced(
+        Layout(TR.with_td(ObjectActionsDropDown(), *fields)),
+        layout_generator=lambda f: FieldValue(f),
+    )
+    headers = []
+    for fieldname in get_fieldnames(fields):
+        if fieldname in sortable_by:
+            headers.append(SortableHeader(fieldname))
+        else:
+            headers.append(FieldLabel(fieldname))
+
+    return Layout(
+        TABLE(
+            THEAD(TR.with_th(*headers)),
+            TBODY(ItemContainer("object_list", "object", fields)),
+            css_class="responsive-table striped highlight",
+        )
+    )

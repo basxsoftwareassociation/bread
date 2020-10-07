@@ -1,3 +1,4 @@
+from crispy_forms.layout import Submit
 from django import forms
 
 from ..forms.forms import breadmodelform_factory
@@ -25,7 +26,11 @@ class CustomFormMixin:
             baseformclass=form,
             layout=self.layout,
             isinline=False,
+            submit_buttons=self.get_submit_buttons(),
         )
+
+    def get_submit_buttons(self):
+        return [Submit("submit", "Save")]
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)

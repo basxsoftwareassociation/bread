@@ -192,3 +192,6 @@ CARBON_DESIGN_CONTEXT = {
         "actions": [{"title": "ACTION_1", "switcher": None}],
     },
 }
+
+DEFAULT_PAGINATION = 1000
+DEFAULT_PAGINATION_CHOICES = [10, 100, 1000]

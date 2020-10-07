@@ -1,10 +1,9 @@
-import copy
 import re
 from html.parser import HTMLParser
 
 import django_filters
-from crispy_forms.layout import Layout
 from crispy_forms.utils import TEMPLATE_PACK
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldError
@@ -15,9 +14,9 @@ from django.utils.html import strip_tags
 from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin
 
+from .. import layout as layoutsystem
 from ..formatters import render_field
 from ..forms.forms import FilterForm
-from ..layout import TR, LoopLayout, ObjectActionsDropDown, convert_to_formless_layout
 from ..utils import (
     CustomizableClass,
     filter_fieldlist,
@@ -25,6 +24,16 @@ from ..utils import (
     resolve_relationship,
     xlsxresponse,
 )
+
+
+def sortable_fields(model, fieldnames):
+    for field in fieldnames:
+        if resolve_relationship(model, field):
+            try:
+                model.objects.none().order_by(field)
+                yield field
+            except FieldError:
+                pass
 
 
 class BrowseView(
@@ -35,14 +44,18 @@ class BrowseView(
     fields = None
     filterfields = None
     page_kwarg = "browsepage"  # need to use something different than the default "page" because we also filter through kwargs
+    layout = None
 
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
-        # need a deep copy because convert_to_formless_layout will modify the value
-        # which is problematic if we share the same layout-object with an edit view
-        self.fields_argument = copy.deepcopy(kwargs.get("fields", self.fields))
-        self.wrapper_argument = copy.deepcopy(kwargs.get("wrapper", None))
+
+        if not self.layout:
+            fieldnames = filter_fieldlist(self.model, kwargs.get("fields", self.fields))
+            self.layout = layoutsystem.default_list_layout(
+                fieldnames, list(sortable_fields(self.model, fieldnames)),
+            )
+        self.fields = layoutsystem.get_fieldnames(self.layout)
 
         # incrementally try to create a filter from the given field and ignore fields which cannot be used
         kwargs["filterset_fields"] = []
@@ -59,60 +72,30 @@ class BrowseView(
 
         super().__init__(*args, **kwargs)
 
-    def setup(self, request, *args, **kwargs):
-        self.layout = self.get_wrapper_layout(
-            request, self.wrapper_argument, self.fields_argument
-        )
-        self.fields = self.get_fields(
-            self.get_inline_layout(request, self.fields_argument)
-        )
-        return super().setup(request, *args, **kwargs)
-
-    def get_inline_layout(self, request, fields_argument):
-        """fields_argument is anything that has been passed as ``fields`` to the as_view function"""
-
-        fields_argument = copy.deepcopy(fields_argument)
-        if not isinstance(fields_argument, Layout):
-            layoutfields = filter_fieldlist(self.model, fields_argument)
-            fields_argument = Layout(
-                TR.with_td(ObjectActionsDropDown(), "self", *layoutfields),
-            )
-        convert_to_formless_layout(fields_argument, show_label=False)
-        return fields_argument
-
-    def get_wrapper_layout(self, request, wrapper_argument, fields_argument):
-        """wrapper_argument is anything that has been passed as ``wrapper`` to the as_view function"""
-
-        wrapper_argument = copy.deepcopy(wrapper_argument)
-        if not isinstance(wrapper_argument, Layout):
-            wrapper_argument = Layout(
-                LoopLayout(
-                    "object_list",
-                    "object",
-                    self.get_inline_layout(request, fields_argument),
-                )
-            )
-        convert_to_formless_layout(wrapper_argument, show_label=False)
-        return wrapper_argument
-
-    def get_fields(self, layout):
-        def _get_fields_recursive(l):
-            if hasattr(l, "field"):
-                if l.field == "self":
-                    yield self.admin.verbose_modelname
-                else:
-                    yield l.field
-            else:
-                for field in getattr(l, "fields", ()):
-                    yield from _get_fields_recursive(field)
-
-        return list(_get_fields_recursive(layout))
+    def get_layout(self):
+        return self.layout
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
 
     def get_filterset_class(self):
         return generate_filterset_class(self.model, self.filterset_fields)
+
+    def get_paginate_by(self, queryset=None):
+        return int(
+            self.request.GET.get(
+                "paginate_by",
+                getattr(self, "paginate_by") or settings.DEFAULT_PAGINATION,
+            )
+        )
+
+    def get_pagination_choices(self):
+        return sorted(
+            set(
+                getattr(self, "pagination_choices", settings.DEFAULT_PAGINATION_CHOICES)
+            )
+            | set((self.get_paginate_by(),))
+        )
 
     def get(self, *args, **kwargs):
         if "reset" in self.request.GET:
@@ -191,18 +174,6 @@ class BrowseView(
                 cell.value = cleaned
 
         return xlsxresponse(workbook, workbook.title)
-
-    def sortnames(self):
-        for accessor in self.fields:
-            fieldchain = resolve_relationship(self.model, accessor)
-            if not fieldchain:
-                yield "", accessor.replace("_", " ").title()
-            else:
-                try:
-                    self.model.objects.none().order_by(accessor)
-                except FieldError:
-                    accessor = ""
-                yield accessor, " ".join([pretty_fieldname(f[1]) for f in fieldchain])
 
     def field_values(self):
         for accessor in self.fields:
