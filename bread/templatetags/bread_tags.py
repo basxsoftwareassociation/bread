@@ -4,9 +4,9 @@ from bread import menu as menuregister
 from crispy_forms.utils import get_template_pack
 from django import template
 from django.db import models
+from django.forms import TextInput
 from django.utils.html import mark_safe
 
-from ..admin import site
 from ..formatters import as_object_link, format_value
 from ..formatters import render_field as render_field_func
 from ..formatters import render_field_aggregation as render_field_aggregation_func
@@ -75,6 +75,8 @@ def modelname(model):
 
 @register.simple_tag
 def adminurl(model, urlname, *args, **kwargs):
+    from ..admin import site
+
     return site.get_default_admin(model).reverse(urlname, *args, **kwargs)
 
 
@@ -107,6 +109,8 @@ def pagename(request):
 def render_field(context, instance, fieldname):
     admin = getattr(context.get("view"), "admin", None)
     if admin is None:
+        from ..admin import site
+
         admin = site.get_default_admin(instance._meta.model)
     return render_field_func(instance, fieldname, admin)
 
@@ -120,12 +124,14 @@ def object_link(context, instance, label=None):
 def render_field_aggregation(context, instance, fieldname):
     admin = getattr(context.get("view"), "admin", None)
     if admin is None:
+        from ..admin import site
+
         admin = site.get_default_admin(instance._meta.model)
     return render_field_aggregation_func(instance, fieldname, admin)
 
 
 @register.simple_tag
-def querystring_order(admin, current_order, fieldname):
+def querystring_order(current_order, fieldname):
     """Return order fields according to the current GET-parameters but change the order-parameter of the given field"""
     fieldname_rev = "-" + fieldname
     ordering = current_order.split(",")
@@ -141,7 +147,7 @@ def querystring_order(admin, current_order, fieldname):
 
 @register.simple_tag(takes_context=True)
 def updated_querystring(context, key, value):
-    """Take the current GET query and update/add an item"""
+    """Take the current GET query and update/add an entry"""
     current_query = context["request"].GET.copy()
     current_query[key] = value
     return context["request"].path + "?" + current_query.urlencode()
@@ -164,6 +170,11 @@ def is_external_url(url):
 @register.filter
 def is_inline_formset(field):
     return isinstance(field.field, forms.FormsetField)
+
+
+@register.filter
+def is_textinput(field):
+    return isinstance(field.field.widget, TextInput)
 
 
 @register.simple_tag
