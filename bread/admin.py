@@ -18,6 +18,7 @@ from dynamic_preferences.users.registries import user_preferences_registry
 from . import menu
 from . import views as bread_views
 from .forms.forms import BreadAuthenticationForm, PreferencesForm, UserPreferencesForm
+from .layout import ICONS
 from .utils import generate_path_for_view, has_permission, title, try_call
 
 
@@ -139,7 +140,7 @@ class BreadAdmin:
                         query_arguments={"next": request.get_full_path()},
                     ),
                     "Edit",
-                    "edit",
+                    ICONS["edit"],
                 )
             )
         if "delete" in urls and has_permission(request.user, "delete", object):
@@ -151,7 +152,7 @@ class BreadAdmin:
                         query_arguments={"next": str(self.reverse("browse"))},
                     ),
                     "Delete",
-                    "delete_forever",
+                    ICONS["delete"],
                 )
             )
         return actions

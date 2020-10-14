@@ -5,6 +5,8 @@
 {% else %}
     {% if field|is_textinput or field|is_password %}
         {% include "carbon_design/fields/text-input.html" %}
+    {% elif field|is_textarea or field|is_password %}
+        {% include "carbon_design/fields/text-area.html" %}
     {% else %}
         {{ field }}
     {% endif %}

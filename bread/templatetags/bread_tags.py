@@ -1,11 +1,12 @@
 import warnings
 
-from bread import menu as menuregister
 from crispy_forms.utils import get_template_pack
 from django import template
 from django.db import models
-from django.forms import TextInput
+from django.forms import Textarea, TextInput
 from django.utils.html import mark_safe
+
+from bread import menu as menuregister
 
 from ..formatters import as_object_link, format_value
 from ..formatters import render_field as render_field_func
@@ -175,6 +176,11 @@ def is_inline_formset(field):
 @register.filter
 def is_textinput(field):
     return isinstance(field.field.widget, TextInput)
+
+
+@register.filter
+def is_textarea(field):
+    return isinstance(field.field.widget, Textarea)
 
 
 @register.simple_tag

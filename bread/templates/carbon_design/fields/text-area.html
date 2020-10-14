@@ -1,0 +1,21 @@
+{% load carbon_design_tags %}
+
+<div class="bx--form-item">
+    <label for="{{ field.id_for_label }}" class="bx--label{% if field.field.disabled %} bx--label--disabled{% endif %}">{{ field.field.label }}</label>
+    <div class="bx--text-area__wrapper" {% if field.errors %}data-invalid{% endif %}>
+        {% if field.errors %}
+            {% carbon_icon "WarningFilled" 16 class="bx--text-area__invalid-icon" %}
+        {% endif %}
+        <textarea
+            id="{{ field.auto_id }}"
+            name="{{ field.html_name }}"
+            {% if field.field.disabled %}disabled {% endif %}
+            class="bx--text-area bx--text-area--v2{% if field.errors %} bx--text-area--invalid{% endif %}{% if light %} bx--text-area--light{% endif %}"
+            {% include "django/forms/widgets/attrs.html" with widget=field.field.widget %}
+        >{% if widget.value %}{{ widget.value }}{% endif %}</textarea>
+    </div>
+    <div class="bx--form-requirement">{{ field.errors }}</div>
+    {% if field.field.help_text %}
+        <div class="bx--form__helper-text {% if field.field.disabled %} bx--form__helper-text--disabled{% endif %}">{{ field.field.help_text }}</div>
+    {% endif %}
+</div>

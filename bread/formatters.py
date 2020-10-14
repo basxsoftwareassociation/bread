@@ -238,15 +238,20 @@ def as_video(value):
     )
 
 
+def object_url(o):
+    from .admin import site
+
+    defaultadmin = site.get_default_admin(o)
+    print(defaultadmin)
+    if defaultadmin is not None:
+        return defaultadmin.reverse("read", o.pk)
+
+
 def as_object_link(obj, label=None):
     def adminlink(o):
-        from .admin import site
-
-        defaultadmin = site.get_default_admin(o)
-        if defaultadmin is not None:
-            return format_html(
-                '<a href="{}">{}</a>', defaultadmin.reverse("read", o.pk), label or o,
-            )
+        url = object_url(o)
+        if url:
+            return format_html('<a href="{}">{}</a>', url, label or o.__str__(),)
 
     if hasattr(obj, "get_absolute_url"):
         return format_html('<a href="{}">{}</a>', obj.get_absolute_url(), obj)
@@ -255,7 +260,7 @@ def as_object_link(obj, label=None):
         isinstance(obj, AccessConcreteInstanceMixin) and obj != obj.concrete
     ):  # prevent endless recursion
         return as_object_link(obj.concrete)
-    return adminlink(obj) or str(obj)
+    return adminlink(obj) or obj.__str__()
 
 
 MODELFIELD_FORMATING_HELPERS = {

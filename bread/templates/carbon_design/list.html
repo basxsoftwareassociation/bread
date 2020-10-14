@@ -58,74 +58,7 @@
         </section>
         
         <!-- Data table -->
-        <table class="bx--data-table">
-            <thead>
-                <tr>
-                    <th  class="bx--table-column-checkbox">
-                        <input data-event="select-all" id="bx--checkbox-{% modelname view.model %}" class="bx--checkbox" type="checkbox" value="green" name="checkbox-20">
-                        <label for="bx--checkbox-{% modelname view.model %}" class="bx--checkbox-label" aria-label="Label name"></label>
-                    </th>
-                    
-                    {% for field, prettyname in view.sortnames %}
-                        <th class="bx--table-header-label">
-                            {% if field %}
-                                {% querystring_order view.admin request.GET.order field as new_order_string %}
-                                <button class="bx--table-sort" data-event="sort" title="{{ prettyname }}">
-                                    <span class="bx--table-header-label">{{ prettyname }}</span>
-                                    {% if '-'|add:field in request.GET.order %}
-                                        {% carbon_icon "ArrowUp" 16 %}
-                                    {% elif field in request.GET.order %}
-                                        {% carbon_icon "ArrowDown" 16 %}
-                                    {% else %}
-                                        {% carbon_icon "ArrowsVertical" 16 %}
-                                    {% endif %}
-                                </button>
-
-                                <a href="{% updated_querystring "order" new_order_string %}">
-                                </a>
-                            {% else %}
-                                <span class="bx--table-header-label">{{ prettyname }}</span>
-                            {% endif %}
-                        </th>
-                    {% endfor %}
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for object in object_list %}
-                    <tr>
-                        <td class="bx--table-column-checkbox">
-                            <input data-event="select" id="bx--checkbox-{% modelname view.model %}-{{ object.pk }}" class="bx--checkbox" type="checkbox" value="green" name="checkbox-{{ object.pk }}" >
-                            <label for="bx--checkbox-{% modelname view.model %}-{{ object.pk }}" class="bx--checkbox-label" aria-label="Label name"></label>
-                        </td>
-                        {% for field in view.fields %}
-                            <td>{% render_field object field %}</td>
-                        {% endfor %}
-                        <td class="bx--table-column-menu">
-                            {% object_actions view.admin request object as actions %}
-                            {% if actions %}
-                                <div data-overflow-menu role="menu" tabindex="0" aria-label="Actions" aria-expanded="false"class="bx--overflow-menu">
-                                    {% carbon_icon "overflow-menu--vertical" 16 %}
-                                    <ul class="bx--overflow-menu-options bx--overflow-menu--flip">
-                                        {% for action in actions %}
-                                            <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
-                                                <button class="bx--overflow-menu-options__btn" onclick="window.location.href='{% linkurl action %}'">
-                                                    <div class="bx--overflow-menu-options__option-content">
-                                                        {% if action.icon %}
-                                                            {% carbon_icon action.icon 16 %}
-                                                        {% endif %}{{ action.label }}
-                                                    </div>
-                                                </button>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% crispy_html view.layout %}
 
         <!-- Pagination -->
         <div class="bx--pagination" data-pagination>

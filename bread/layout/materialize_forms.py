@@ -8,12 +8,12 @@ from django.template.loader import render_to_string
 
 from ..templatetags.bread_tags import querystring_order, updated_querystring
 from .base import (
+    DIV,
     TABLE,
     TBODY,
     THEAD,
     TR,
     A,
-    Div,
     FieldLabel,
     FieldValue,
     HTMLTag,
@@ -22,6 +22,10 @@ from .base import (
     get_fieldnames,
     with_str_fields_replaced,
 )
+
+# key: the common name, used in places where we need an icon independent from the design system
+# value: identifier of the icon inside the materialize design system (see carbon_design design for equivalent definition)
+ICONS = {"edit": "edit", "delete": "delete_forever"}
 
 
 class Collapsible(Container):
@@ -138,7 +142,7 @@ class InlineLayout(Layout):
     def __init__(self, inlinefield, *args, **kwargs):
         super().__init__(inlinefield)
         self.fieldname = inlinefield
-        self.wrapper = kwargs.pop("wrapper", Div())
+        self.wrapper = kwargs.pop("wrapper", DIV())
         self.args = args
         self.kwargs = kwargs
 
@@ -152,7 +156,7 @@ class InlineLayout(Layout):
         ):
             self.args = self.args + (DELETION_FIELD_NAME, "id")
         return Layout(
-            Div(
+            DIV(
                 *self.args,
                 **self.kwargs,
                 css_class="card-panel",
@@ -167,17 +171,6 @@ class SortableHeader(NonFormField):
         self.field = field
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
-
-        """
-        <a href="{% updated_querystring "order" new_order_string %}">
-            {{ prettyname }}
-            {% if '-'|add:field in request.GET.order %}
-                <i class="material-icons tiny">keyboard_arrow_up</i>
-            {% elif field in request.GET.order %}
-                <i class="material-icons tiny">keyboard_arrow_down</i>
-            {% endif %}
-        </a>
-        """
         order = context.get("request").GET.get("order", "")
         href = updated_querystring(
             context, "order", querystring_order(order, self.field),

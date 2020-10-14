@@ -1,6 +1,7 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
+from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
@@ -199,30 +200,38 @@ def _formfield_callback_with_request(field, request, model):
 
     ret = field.formfield(**kwargs)
 
-    # always use splitdatetimefield because we have no good datetime picker
-    if isinstance(field, models.DateTimeField):
-        ret = forms.SplitDateTimeField()
-        for f, _class in zip(ret.fields, ["datepicker", "timepicker"]):
-            if "class" not in f.widget.attrs:
-                f.widget.attrs["class"] = ""
-            f.widget.attrs["type"] = "text"
-            f.widget.attrs["class"] += " " + _class
+    # the following materialize_forms block is a bit legacy: in the future
+    # (e.g. with the carbon design implementation) such code should live
+    # either in the layout module or be handled in the html templates
+    if settings.CRISPY_TEMPLATE_PACK == "materialize_forms":
+        # always use splitdatetimefield because we have no good datetime picker
+        if isinstance(field, models.DateTimeField):
+            ret = forms.SplitDateTimeField()
+            for f, _class in zip(ret.fields, ["datepicker", "timepicker"]):
+                if "class" not in f.widget.attrs:
+                    f.widget.attrs["class"] = ""
+                f.widget.attrs["type"] = "text"
+                f.widget.attrs["class"] += " " + _class
 
-    # activate materializecss datepicker
-    if isinstance(field, models.DateField):
-        ret.widget.attrs["class"] = ret.widget.attrs.get("class", "") + " datepicker"
+        # activate materializecss datepicker
+        if isinstance(field, models.DateField):
+            ret.widget.attrs["class"] = (
+                ret.widget.attrs.get("class", "") + " datepicker"
+            )
 
-    # activate materializecss timepicker
-    if isinstance(field, models.TimeField):
-        ret.widget.attrs["class"] = ret.widget.attrs.get("class", "") + " timepicker"
+        # activate materializecss timepicker
+        if isinstance(field, models.TimeField):
+            ret.widget.attrs["class"] = (
+                ret.widget.attrs.get("class", "") + " timepicker"
+            )
 
-    # activate materializecss text area. Be a bit more selective here
-    # Some external widgets want to use textarea for special things (e.g. CKEditor)
-    if type(ret) == forms.CharField and type(ret.widget) == forms.Textarea:
-        ret.widget.attrs.update({"class": "materialize-textarea"})
+        # activate materializecss text area. Be a bit more selective here
+        # Some external widgets want to use textarea for special things (e.g. CKEditor)
+        if type(ret) == forms.CharField and type(ret.widget) == forms.Textarea:
+            ret.widget.attrs.update({"class": "materialize-textarea"})
 
-    # activate materializecss validation
-    ret.widget.attrs["class"] = ret.widget.attrs.get("class", "") + " validate"
+        # activate materializecss validation
+        ret.widget.attrs["class"] = ret.widget.attrs.get("class", "") + " validate"
 
     # apply permissions for querysets
     if hasattr(ret, "queryset"):

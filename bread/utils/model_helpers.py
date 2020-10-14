@@ -5,6 +5,9 @@ from django.db import models
 
 def pretty_fieldname(field):
     """Will print a human readable name for a field"""
+    if isinstance(field, str):
+        return field.replace("_", " ").title()
+
     if field.is_relation and field.one_to_many:
         return field.target_field.model._meta.verbose_name_plural.title()
     elif field.is_relation and field.many_to_many and field.auto_created:
