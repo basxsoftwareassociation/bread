@@ -1,21 +1,23 @@
 {% load carbon_design_tags %}
+{# considered context variables: inline, light #}
 
 <div class="bx--form-item">
-    <label for="{{ field.id_for_label }}" class="bx--label{% if field.field.disabled %} bx--label--disabled{% endif %}">{{ field.field.label }}</label>
-    <div class="bx--text-area__wrapper" {% if field.errors %}data-invalid{% endif %}>
-        {% if field.errors %}
-            {% carbon_icon "WarningFilled" 16 class="bx--text-area__invalid-icon" %}
+    <div class="bx--select{% if field.field.disabled %} bx--select--disabled{% endif %}{% if inline %} bx--select--inline{% endif %}{% if light %} bx--select--light{% endif %}{% if field.errors %} bx--select--invalid{% endif %}">
+        <label for="{{ field.id_for_label }}" class="bx--label{% if field.field.disabled %} bx--label--disabled{% endif %}">{{ field.field.label }}</label>
+        {% if inline %}<div class="bx--select-input--inline__wrapper" >{% endif %}
+            <div class="bx--select-input__wrapper" {% if field.errors %}data-invalid{% endif %}>
+                {{ field|make_select }}
+                {% if field.errors %}
+                    {% carbon_icon "WarningFilled" 16 class="bx--select__invalid-icon" %}
+                {% endif %}
+                {% carbon_icon "ChevronDown" 16 class="bx--select__arrow" %}
+            </div>
+            {% if field.errors %}
+                <div class="bx--form-requirement">{{ field.errors }}</div>
+            {% endif %}
+        {% if inline %}</div>{% endif %}
+        {% if field.field.help_text %}
+            <div class="bx--form__helper-text {% if field.field.disabled %} bx--form__helper-text--disabled{% endif %}">{{ field.field.help_text }}</div>
         {% endif %}
-        <textarea
-            id="{{ field.auto_id }}"
-            name="{{ field.html_name }}"
-            {% if field.field.disabled %}disabled {% endif %}
-            class="bx--text-area bx--text-area--v2{% if field.errors %} bx--text-area--invalid{% endif %}{% if light %} bx--text-area--light{% endif %}"
-            {% include "django/forms/widgets/attrs.html" with widget=field.field.widget %}
-        >{% if widget.value %}{{ widget.value }}{% endif %}</textarea>
     </div>
-    <div class="bx--form-requirement">{{ field.errors }}</div>
-    {% if field.field.help_text %}
-        <div class="bx--form__helper-text {% if field.field.disabled %} bx--form__helper-text--disabled{% endif %}">{{ field.field.help_text }}</div>
-    {% endif %}
 </div>

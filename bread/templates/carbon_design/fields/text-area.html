@@ -14,7 +14,7 @@
             {% include "django/forms/widgets/attrs.html" with widget=field.field.widget %}
         >{% if widget.value %}{{ widget.value }}{% endif %}</textarea>
     </div>
-    <div class="bx--form-requirement">{{ field.errors }}</div>
+    {% if field.errors %}<div class="bx--form-requirement">{{ field.errors }}</div>{% endif %}
     {% if field.field.help_text %}
         <div class="bx--form__helper-text {% if field.field.disabled %} bx--form__helper-text--disabled{% endif %}">{{ field.field.help_text }}</div>
     {% endif %}

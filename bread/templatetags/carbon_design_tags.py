@@ -51,3 +51,20 @@ def camel_case_split(identifier):
         ".+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)", identifier
     )
     return [m.group(0) for m in matches]
+
+
+@register.filter
+def make_select(field):
+    """Used to add carbon classes to a select input"""
+    field.field.widget.attrs["class"] = (
+        field.field.widget.attrs.get("class", "") + " bx--select-input"
+    )
+    field.field.widget.template_name = "carbon_design/widgets/select.html"
+    return field
+
+
+@register.filter
+def make_option(widget):
+    """Used to add carbon classes to a select input"""
+    widget["attrs"]["class"] = widget["attrs"].get("class", "") + " bx--select-option"
+    return widget

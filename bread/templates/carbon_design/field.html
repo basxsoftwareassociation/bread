@@ -7,7 +7,7 @@
         {% include "carbon_design/fields/text-input.html" %}
     {% elif field|is_textarea or field|is_password %}
         {% include "carbon_design/fields/text-area.html" %}
-    {% elif field|is_textarea or field|is_select %}
+    {% elif field|is_select %}
         {% include "carbon_design/fields/select.html" %}
     {% else %}
         {{ field }}
