@@ -2,11 +2,9 @@ from crispy_forms.layout import HTML, Layout
 from crispy_forms.utils import TEMPLATE_PACK, render_field
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.template import Template
-from django.template.loader import render_to_string
 
 from ...templatetags.bread_tags import querystring_order, updated_querystring
 from ...templatetags.carbon_design_tags import carbon_icon
-from ...utils import pretty_fieldname
 from ..base import (
     BUTTON,
     DIV,
@@ -19,13 +17,11 @@ from ..base import (
     TH,
     THEAD,
     TR,
-    A,
     FieldLabel,
     FieldValue,
     HTMLTag,
     ItemContainer,
     NonFormField,
-    get_fieldnames,
     with_str_fields_replaced,
 )
 
@@ -90,22 +86,33 @@ class ObjectActionsDropDown(HTMLTag):
         return self.template.render(context)
 
 
+class ListCheckbox(TD):
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        _id = f"list-checkbox-{context['object'].id}"
+        return render_field(
+            TD(
+                INPUT(
+                    data_event="select",
+                    css_class="bx--checkbox",
+                    type="checkbox",
+                    value="select",
+                    name="select",
+                    id=_id,
+                ),
+                LABEL(css_class="bx--checkbox-label", _for=_id),
+                css_class="bx--table-column-checkbox",
+            ),
+            {},
+            None,
+            context,
+        )
+
+
 def default_list_layout(fieldnames, sortable_by):
-    checkbox = TD(
-        INPUT(
-            data_event="select",
-            css_class="bx--checkbox",
-            type="checkbox",
-            value="select",
-            name="select",
-        ),
-        LABEL(css_class="bx--checkbox-label"),
-        css_class="bx--table-column-checkbox",
-    )
     fields = with_str_fields_replaced(
         Layout(
             TR(
-                checkbox,
+                ListCheckbox(),
                 *[TD(f) for f in fieldnames],
                 TD(ObjectActionsDropDown(), css_class="bx--table-column-menu"),
             )
