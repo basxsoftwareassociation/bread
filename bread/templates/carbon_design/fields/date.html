@@ -1,0 +1,47 @@
+{% load carbon_design_tags %}
+
+<div class="bx--form-item">
+{% if simple %}
+    <div class="bx--date-picker bx--date-picker--simple{% if light %} bx--date-picker--light{% endif %}">
+        <div class="bx--date-picker-container">
+            {% include "carbon_design/fields/label.html" %}
+            <input
+                type="text"
+                id="{{ field.auto_id }}"
+                name="{{ field.html_name }}"
+                class="bx--date-picker__input{% if light %} bx--text-area--light{% endif %} {{ field.field.widget.attrs.class }}"
+                {% if field.errors %}data-invalid{% endif %}
+                {% if field.value %}value="{{ field.value|stringformat:'s' }}"{% endif %}
+                {% include "django/forms/widgets/attrs.html" with widget=field.field.widget %}
+                {% if field.field.widget.format %}pattern="{{ field.field.widget.format|dateformatstr2regex }}"{% endif %}
+                {% with field|getplaceholder as placeholder %}{% if placeholder %}placeholder="{{ placeholder }}"{% endif %}{% endwith %}
+                data-date-picker-input
+            />
+            {% include "carbon_design/fields/help-errors.html" %}
+        </div>
+    </div>
+{% else %}
+    <div data-date-picker data-date-picker-type="single" class="bx--date-picker bx--date-picker--single{% if light %} bx--date-picker--light{% endif %}">
+        <div class="bx--date-picker-container">
+            {% include "carbon_design/fields/label.html" %}
+            <div class="bx--date-picker-input__wrapper">
+                <input
+                    type="text"
+                    id="date-picker-3"
+                    name="{{ field.html_name }}"
+                    class="bx--date-picker__input"
+                    {% if field.errors %}data-invalid{% endif %}
+                    {% if field.value %}value="{{ field.value|stringformat:'s' }}"{% endif %}
+                    {% include "django/forms/widgets/attrs.html" with widget=field.field.widget %}
+                    {% if field.field.widget.format %}pattern="{{ field.field.widget.format|dateformatstr2regex }}"{% endif %}
+                    {% with field|getplaceholder as placeholder %}{% if placeholder %}placeholder="{{ placeholder }}"{% endif %}{% endwith %}
+                    data-date-picker-input
+                />
+                {% carbon_icon "Calendar" 16 data_date_picker_icon="true" class="bx--date-picker__icon" %}
+            </div>
+            {% include "carbon_design/fields/help-errors.html" %}
+        </div>
+    </div>
+{% endif %}
+</div>
+

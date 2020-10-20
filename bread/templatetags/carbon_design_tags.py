@@ -1,9 +1,11 @@
 import logging
 import re
+from _strptime import TimeRE
 
 from django import template
 from django.contrib.staticfiles import finders
 from django.core.cache import cache
+from django.core.exceptions import FieldDoesNotExist
 from django.forms.utils import flatatt
 from django.utils.html import mark_safe
 
@@ -19,7 +21,7 @@ def carbon_icon(name, size, **kwargs):
     icon and use the filename without the attribte, e.g. "thunderstorm--severe"."""
     kwargs["width"] = size
     kwargs["height"] = size
-    name = "--".join(camel_case_split(name))
+    name = "--".join(_camel_case_split(name))
     flatattribs = flatatt(
         {k.replace("_", "-"): v for k, v in kwargs.items()}
     )  # replace is because of hbs to django template transpilation
@@ -40,19 +42,17 @@ def carbon_icon(name, size, **kwargs):
     return mark_safe(cache.get(key))
 
 
-@register.filter
-def lookup(obj, attr):
-    """Is used in order to make transpiling the hbs templates easier"""
-    return getattr(obj, attr, None)
-
-
-def camel_case_split(identifier):
+def _camel_case_split(identifier):
     matches = re.finditer(
         ".+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)", identifier
     )
     return [m.group(0) for m in matches]
 
 
+# The select element is a bit tricky to implement in a custom way because the options are
+# only attached in the widgets context and are not easily available in the template.
+# That means we leverage the default django rendering mechanism for the select but modify
+# the widget to have all necessary classes
 @register.filter
 def make_select(field):
     """Used to add carbon classes to a select input"""
@@ -68,3 +68,27 @@ def make_option(widget):
     """Used to add carbon classes to a select input"""
     widget["attrs"]["class"] = widget["attrs"].get("class", "") + " bx--select-option"
     return widget
+
+
+@register.filter
+def dateformatstr2regex(formatstr):
+    if not formatstr:
+        return ".*"
+    # check: are local formats handled correctly?
+    return TimeRE().compile(formatstr)
+
+
+@register.filter
+def getplaceholder(field):
+    if hasattr(field.field.widget, "placeholder"):
+        return field.field.widget.placeholder
+    if hasattr(field.field, "placeholder"):
+        return field.field.placeholder
+    if hasattr(field.form, "_meta"):
+        try:
+            return getattr(
+                field.form._meta.model._meta.get_field(field.name), "placeholder", ""
+            )
+        except FieldDoesNotExists:
+            return ""
+    return ""

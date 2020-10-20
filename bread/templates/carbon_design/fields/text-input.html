@@ -1,14 +1,14 @@
 {% load carbon_design_tags %}
 
 <div class="bx--form-item bx--text-input-wrapper{% if field.widget_type == "password" %} bx--password-input-wrapper{% endif %}" {% if field.widget_type == "password" %}data-text-input{% endif %}>
-    <label for="{{ field.id_for_label }}" class="bx--label {% if field.field.disabled %} bx--label--disabled{% endif %}">{{ field.field.label }}</label>
+    {% include "carbon_design/fields/label.html" %}
     <div class="bx--text-input__field-wrapper" {% if field.errors %}data-invalid{% endif %}>
         {% if field.errors %}
             {% carbon_icon "WarningFilled" 16 class="bx--text-input__invalid-icon" %}
         {% endif %}
         <input
             id="{{ field.auto_id }}"
-            class="bx--text-input{% if light %} bx--text-input--light{% endif %}{% if field.errors %} bx--text-input--invalid{% endif %}{% if field.widget_type == "password" %} bx--password-input{% endif %}"
+            class="bx--text-input{% if light %} bx--text-input--light{% endif %}{% if field.errors %} bx--text-input--invalid{% endif %}{% if field.widget_type == "password" %} bx--password-input{% endif %} {{ field.field.widget.attrs.class }}"
             {% if field.widget_type == "password" %}data-toggle-password-visibility{% endif %}
             {% if field.field.disabled %}disabled {% endif %}
             type="{{ field.widget_type }}"
@@ -25,10 +25,5 @@
             </button>
         {% endif %}
     </div>
-    {% if field.errors %}
-        <div class="bx--form-requirement">{{ field.errors }}</div>
-    {% endif %}
-    {% if field.field.help_text %}
-        <div class="bx--form__helper-text {% if field.field.disabled %} bx--form__helper-text--disabled{% endif %}">{{ field.field.help_text }}</div>
-    {% endif %}
+    {% include "carbon_design/fields/help-errors.html" %}
 </div>

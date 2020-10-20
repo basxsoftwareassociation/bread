@@ -1,12 +1,11 @@
 import warnings
 
+from bread import menu as menuregister
 from crispy_forms.utils import get_template_pack
 from django import template
 from django.db import models
-from django.forms import Textarea, TextInput
+from django.forms import DateInput, Textarea, TextInput
 from django.utils.html import mark_safe
-
-from bread import menu as menuregister
 
 from ..formatters import as_object_link, format_value
 from ..formatters import render_field as render_field_func
@@ -181,6 +180,11 @@ def is_textinput(field):
 @register.filter
 def is_textarea(field):
     return isinstance(field.field.widget, Textarea)
+
+
+@register.filter
+def is_dateinput(field):
+    return isinstance(field.field.widget, DateInput)
 
 
 @register.simple_tag

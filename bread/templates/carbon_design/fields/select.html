@@ -3,7 +3,7 @@
 
 <div class="bx--form-item">
     <div class="bx--select{% if field.field.disabled %} bx--select--disabled{% endif %}{% if inline %} bx--select--inline{% endif %}{% if light %} bx--select--light{% endif %}{% if field.errors %} bx--select--invalid{% endif %}">
-        <label for="{{ field.id_for_label }}" class="bx--label{% if field.field.disabled %} bx--label--disabled{% endif %}">{{ field.field.label }}</label>
+        {% include "carbon_design/fields/label.html" %}
         {% if inline %}<div class="bx--select-input--inline__wrapper" >{% endif %}
             <div class="bx--select-input__wrapper" {% if field.errors %}data-invalid{% endif %}>
                 {{ field|make_select }}
@@ -12,6 +12,7 @@
                 {% endif %}
                 {% carbon_icon "ChevronDown" 16 class="bx--select__arrow" %}
             </div>
+            {# cannot use the help-errors.html template here because errors and help text are displayed at a different place when using inline-format #}
             {% if field.errors %}
                 <div class="bx--form-requirement">{{ field.errors }}</div>
             {% endif %}
