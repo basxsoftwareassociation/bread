@@ -39,7 +39,7 @@ setup(
         "openpyxl",
         "WeasyPrint",
         "ffmpeg-python",
-        "celery",
+        "celery <5.0,>=4.4",
         "django-celery-results",
         "django-celery-beat",
         "Arpeggio",
