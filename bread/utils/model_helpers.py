@@ -155,7 +155,7 @@ def get_concrete_instance(instance):
         ):
             child_object = getattr(instance, field.get_accessor_name(), None)
             if child_object:
-                return child_object.concrete
+                return get_concrete_instance(child_object)
     return instance
 
 

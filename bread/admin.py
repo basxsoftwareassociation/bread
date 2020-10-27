@@ -21,7 +21,7 @@ from . import views as bread_views
 from .forms.forms import BreadAuthenticationForm, PreferencesForm, UserPreferencesForm
 from .layout import ICONS
 from .utils import generate_path_for_view, has_permission, title, try_call
-from .utils.modelhelpers import get_concrete_instance
+from .utils.model_helpers import get_concrete_instance
 
 
 class BreadAdmin:
