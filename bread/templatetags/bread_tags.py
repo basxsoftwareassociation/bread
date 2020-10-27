@@ -1,10 +1,13 @@
 import warnings
+from _strptime import TimeRE
 
 from bread import menu as menuregister
 from crispy_forms.utils import get_template_pack
+
 from django import template
 from django.db import models
 from django.forms import DateInput, Textarea, TextInput
+from django.utils import formats
 from django.utils.html import mark_safe
 
 from ..formatters import as_object_link, format_value
@@ -12,15 +15,24 @@ from ..formatters import render_field as render_field_func
 from ..formatters import render_field_aggregation as render_field_aggregation_func
 from ..forms import forms
 from ..utils import has_permission, pretty_fieldname, title
+from ..utils.datetimeformatstring import to_php_formatstr
 
 register = template.Library()
 
 register.simple_tag(pretty_fieldname)
 register.simple_tag(has_permission)
+register.simple_tag(to_php_formatstr)
 register.filter(format_value)
 
 
 # tags
+
+
+@register.simple_tag
+def dateformatstr2regex(formatstr, format_key):
+    formatstr = formatstr or formats.get_format(format_key)[0]
+    # check: are local formats handled correctly?
+    return TimeRE().compile(formatstr).pattern
 
 
 @register.simple_tag

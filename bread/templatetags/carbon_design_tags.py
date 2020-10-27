@@ -1,6 +1,5 @@
 import logging
 import re
-from _strptime import TimeRE
 
 from django import template
 from django.contrib.staticfiles import finders
@@ -68,14 +67,6 @@ def make_option(widget):
     """Used to add carbon classes to a select input"""
     widget["attrs"]["class"] = widget["attrs"].get("class", "") + " bx--select-option"
     return widget
-
-
-@register.filter
-def dateformatstr2regex(formatstr):
-    if not formatstr:
-        return ".*"
-    # check: are local formats handled correctly?
-    return TimeRE().compile(formatstr)
 
 
 @register.filter

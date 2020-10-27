@@ -1,4 +1,4 @@
-{% load carbon_design_tags %}
+{% load carbon_design_tags bread_tags %}
 
 <div class="bx--form-item">
 {% if simple %}
@@ -13,7 +13,7 @@
                 {% if field.errors %}data-invalid{% endif %}
                 {% if field.value %}value="{{ field.value|stringformat:'s' }}"{% endif %}
                 {% include "django/forms/widgets/attrs.html" with widget=field.field.widget %}
-                {% if field.field.widget.format %}pattern="{{ field.field.widget.format|dateformatstr2regex }}"{% endif %}
+                pattern="{% dateformatstr2regex field.field.widget.format field.field.widget.format_key %}"
                 {% with field|getplaceholder as placeholder %}{% if placeholder %}placeholder="{{ placeholder }}"{% endif %}{% endwith %}
                 data-date-picker-input
             />
@@ -25,16 +25,17 @@
         <div class="bx--date-picker-container">
             {% include "carbon_design/fields/label.html" %}
             <div class="bx--date-picker-input__wrapper">
+                {% to_php_formatstr field.field.widget.format field.field.widget.format_key  as formatstr %}
                 <input
                     type="text"
-                    id="date-picker-3"
+                    id="{{ field.auto_id }}"
                     name="{{ field.html_name }}"
-                    class="bx--date-picker__input"
+                    class="bx--date-picker__input{% if light %} bx--text-area--light{% endif %} {{ field.field.widget.attrs.class }}"
                     {% if field.errors %}data-invalid{% endif %}
-                    {% if field.value %}value="{{ field.value|stringformat:'s' }}"{% endif %}
+                    {% if field.value %}value="{{ field.value|date:formatstr }}"{% endif %}
                     {% include "django/forms/widgets/attrs.html" with widget=field.field.widget %}
-                    {% if field.field.widget.format %}pattern="{{ field.field.widget.format|dateformatstr2regex }}"{% endif %}
                     {% with field|getplaceholder as placeholder %}{% if placeholder %}placeholder="{{ placeholder }}"{% endif %}{% endwith %}
+                    data-date-format="{{ formatstr }}"
                     data-date-picker-input
                 />
                 {% carbon_icon "Calendar" 16 data_date_picker_icon="true" class="bx--date-picker__icon" %}
