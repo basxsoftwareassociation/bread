@@ -1,3 +1,8 @@
+from dynamic_preferences import views as preferences_views
+from dynamic_preferences.registries import global_preferences_registry
+from dynamic_preferences.users import views as user_preferences_views
+from dynamic_preferences.users.registries import user_preferences_registry
+
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
@@ -10,16 +15,13 @@ from django.urls import include, path, reverse_lazy
 from django.utils.http import urlencode
 from django.utils.text import format_lazy
 from django.views.generic import RedirectView, View
-from dynamic_preferences import views as preferences_views
-from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.users import views as user_preferences_views
-from dynamic_preferences.users.registries import user_preferences_registry
 
 from . import menu
 from . import views as bread_views
 from .forms.forms import BreadAuthenticationForm, PreferencesForm, UserPreferencesForm
 from .layout import ICONS
 from .utils import generate_path_for_view, has_permission, title, try_call
+from .utils.modelhelpers import get_concrete_instance
 
 
 class BreadAdmin:
@@ -132,17 +134,24 @@ class BreadAdmin:
         urls = self.get_urls()
         actions = []
         if "edit" in urls and has_permission(request.user, "change", object):
-            actions.append(
-                menu.Link(
-                    self.reverse(
-                        "edit",
-                        pk=object.pk,
-                        query_arguments={"next": request.get_full_path()},
-                    ),
-                    "Edit",
-                    ICONS["edit"],
-                )
+            # normally we will want to get the edit link to the most concrete instance of an object
+            # therefore we check here if we need to get another link to the edit instance
+            concrete = get_concrete_instance(object)
+            concreteadmin = site.get_default_admin(concrete)
+            url = (
+                self.reverse(
+                    "edit",
+                    pk=object.pk,
+                    query_arguments={"next": request.get_full_path()},
+                ),
             )
+            if concrete is not self and concreteadmin is not None:
+                url = concreteadmin.reverse(
+                    "edit",
+                    pk=concrete.pk,
+                    query_arguments={"next": request.get_full_path()},
+                )
+            actions.append(menu.Link(url, "Edit", ICONS["edit"],))
         if "delete" in urls and has_permission(request.user, "delete", object):
             actions.append(
                 menu.Link(
@@ -190,6 +199,7 @@ class BreadAdmin:
         a key "query_arguments", it must be of instance dict and will be used to set
         query arguments.
         """
+
         if isinstance(self, BreadGenericAdmin):
             namespace = f"{self.app_label}:{self.modelname}"
         else:
