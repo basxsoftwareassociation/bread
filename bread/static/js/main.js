@@ -45,7 +45,6 @@ function makeChoices(selectElem) {
     return choices;
 }
 
-// REFACTORING:
 
 function init_formset(form_prefix) {
     // prevent materialize init in template form
@@ -64,8 +63,10 @@ function _init_materialize(element) {
         if(field)
             field.classList.remove('no-autoinit');
     }
-    M.Datepicker.init(element.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});
-    M.AutoInit(element);
+    if (typeof M !== 'undefined') {
+        M.Datepicker.init(element.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});
+        M.AutoInit(element);
+    }
 }
 
 function delete_inline_element(checkbox, inlinecontainer, deletelabel) {
@@ -82,6 +83,8 @@ function _update_add_button(form_prefix) {
     var maxforms = $('#id_' + form_prefix + '-MAX_NUM_FORMS')
     var addbutton = $('#add_' + form_prefix + '_button')
     addbutton.style.display = "inline-block";
+    console.log(maxforms);
+    console.log(parseInt(maxforms.value));
     if(parseInt(formcount.value) >= parseInt(maxforms.value)) {
         addbutton.style.display = "none";
     }
@@ -107,10 +110,10 @@ function validate_fields() {
             var label = $("label[for=" + input.id + "]");
             if(!label)
                 label = input;
-            M.toast({html: "Field " + label.innerText + " is not valid"})
+            console.log("Field " + label.innerText + " is not valid")
             error = true;
         }
     }
     if(error)
-        M.toast({html: "There are errors in some fields"})
+        console.log("There are errors in some fields")
 }
