@@ -1,14 +1,15 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from dynamic_preferences.forms import GlobalPreferenceForm
+from dynamic_preferences.users.forms import UserPreferenceForm
+from guardian.shortcuts import get_objects_for_user
+
 from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.db import models, transaction
-from dynamic_preferences.forms import GlobalPreferenceForm
-from dynamic_preferences.users.forms import UserPreferenceForm
-from guardian.shortcuts import get_objects_for_user
 
 from ..layout import InlineLayout
 from ..utils import get_modelfields
@@ -115,6 +116,7 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
 
     # determine the inline form fields, called child_fields
     layout = None
+    additional_formset_kwargs = {}
     fields = ["__all__"]
     if parent_layout:
         # extract the layout object for the inline field from the parent if available
@@ -128,6 +130,7 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
                     for i in layout.get_field_names()
                     if i[1] != forms.formsets.DELETION_FIELD_NAME
                 ]
+                additional_formset_kwargs = elem.formset_kwargs
             queue.extend(getattr(elem, "fields", []))
 
     child_fields = [
@@ -150,30 +153,31 @@ def _generate_formset_class(modelfield, request, baseformclass, model, parent_la
         isinline=True,
     )
 
+    formset_kwargs = {
+        "fields": child_fields,
+        "form": formclass,
+        "extra": 1,
+        "can_delete": True,
+    }
+    formset_kwargs.update(additional_formset_kwargs)
     if isinstance(modelfield, GenericRelation):
         formset = generic_inlineformset_factory(
             modelfield.related_model,
             ct_field=modelfield.content_type_field_name,
             fk_field=modelfield.object_id_field_name,
-            fields=child_fields,
             formfield_callback=lambda field: _formfield_callback_with_request(
                 field, request, modelfield.related_model
             ),
-            form=formclass,
-            extra=1,
-            can_delete=True,
+            **formset_kwargs,
         )
     else:
         formset = forms.models.inlineformset_factory(
             model,
             modelfield.related_model,
-            fields=child_fields,
             formfield_callback=lambda field: _formfield_callback_with_request(
                 field, request, model
             ),
-            form=formclass,
-            extra=1,
-            can_delete=True,
+            **formset_kwargs,
         )
 
     return formset

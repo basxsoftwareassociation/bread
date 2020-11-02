@@ -1,5 +1,6 @@
 from crispy_forms.layout import HTML, Layout
 from crispy_forms.utils import TEMPLATE_PACK, render_field
+
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.template import Template
 
@@ -33,9 +34,10 @@ ICONS = {"edit": "edit", "delete": "trash-can"}
 class InlineLayout(Layout):
     """Used to render inline forms"""
 
-    def __init__(self, inlinefield, *args, **kwargs):
+    def __init__(self, inlinefield, *args, formset_kwargs={}, **kwargs):
         super().__init__(inlinefield)
         self.fieldname = inlinefield
+        self.formset_kwargs = formset_kwargs
         self.wrapper = kwargs.pop("wrapper", DIV())
         self.args = args
         self.kwargs = kwargs

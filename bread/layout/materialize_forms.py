@@ -140,9 +140,14 @@ class ObjectActionsDropDown(HTMLTag):
 class InlineLayout(Layout):
     """Used to render inline forms"""
 
-    def __init__(self, inlinefield, *args, **kwargs):
+    def __init__(self, inlinefield, *args, formset_kwargs={}, **kwargs):
+        """
+        inlinefield: name of the field which should be displayed, normaly the value of a ``related_name`` attribute on a ForeignKey field
+        formset_kwargs: arguments which will be unpacked and passed to the formset generation function (normally https://docs.djangoproject.com/en/3.0/ref/forms/models/#django.forms.models.inlineformset_factory or https://docs.djangoproject.com/en/3.0/ref/contrib/contenttypes/#django.contrib.contenttypes.forms.generic_inlineformset_factory) as arguments
+        """
         super().__init__(inlinefield)
         self.fieldname = inlinefield
+        self.formset_kwargs = formset_kwargs
         self.wrapper = kwargs.pop("wrapper", DIV())
         self.args = args
         self.kwargs = kwargs
