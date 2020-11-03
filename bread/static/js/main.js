@@ -47,26 +47,7 @@ function makeChoices(selectElem) {
 
 
 function init_formset(form_prefix) {
-    // prevent materialize init in template form
-    var m_input_fields  = $$('#empty_' + form_prefix + '_form .input-field')
-    for(var j = 0; j < m_input_fields.length; ++j) {
-        var field = $("input, select", m_input_fields[j]);
-        if(field)
-            field.classList.add('no-autoinit');
-    }
     _update_add_button(form_prefix);
-}
-function _init_materialize(element) {
-    var m_input_fields = element.getElementsByClassName("input-field");
-    for(var j = 0; j < m_input_fields.length; ++j) {
-        var field = $("input", m_input_fields[j]);
-        if(field)
-            field.classList.remove('no-autoinit');
-    }
-    if (typeof M !== 'undefined') {
-        M.Datepicker.init(element.querySelectorAll('.datepicker'), {format: 'yyyy-mm-dd', showClearBtn: true, autoClose: true});
-        M.AutoInit(element);
-    }
 }
 
 function delete_inline_element(checkbox, inlinecontainer, deletelabel) {
@@ -83,8 +64,6 @@ function _update_add_button(form_prefix) {
     var maxforms = $('#id_' + form_prefix + '-MAX_NUM_FORMS')
     var addbutton = $('#add_' + form_prefix + '_button')
     addbutton.style.display = "inline-block";
-    console.log(maxforms);
-    console.log(parseInt(maxforms.value));
     if(parseInt(formcount.value) >= parseInt(maxforms.value)) {
         addbutton.style.display = "none";
     }
@@ -97,7 +76,7 @@ function formset_add(form_prefix, list_container) {
     for(let element of newElements) {
         $(list_container).appendChild(element);
         initAllChoices(element);
-        _init_materialize(element);
+        // TODO: init carbon elements
     }
     formcount.value = parseInt(formcount.value) + 1;
     _update_add_button(form_prefix);

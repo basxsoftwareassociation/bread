@@ -1,8 +1,8 @@
 import copy
 
+from crispy_forms.layout import HTML  # noqa
 from crispy_forms.layout import LayoutObject as CrispyLayoutObject
 from crispy_forms.utils import TEMPLATE_PACK, flatatt
-
 from django.core.exceptions import FieldDoesNotExist
 from django.template import Template
 

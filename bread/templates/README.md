@@ -5,5 +5,4 @@ Organization of templates
 - bread: Contains basic skeleton templates, no styling
 - carbon_design: Templates for Carbon Design System
 - dynamic_preferences: Make sure current UI-framework is applied correctly to the dynamic preferences template
-- materialize_forms: Templates for Material Design System
 - registration: Make sure current UI-framework is applied correctly to the login templates

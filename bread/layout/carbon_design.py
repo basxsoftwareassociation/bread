@@ -1,12 +1,11 @@
 from crispy_forms.layout import HTML, Layout
 from crispy_forms.utils import TEMPLATE_PACK, render_field
-
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.template import Template
 
-from ...templatetags.bread_tags import querystring_order, updated_querystring
-from ...templatetags.carbon_design_tags import carbon_icon
-from ..base import (
+from ..templatetags.bread_tags import querystring_order, updated_querystring
+from ..templatetags.carbon_design_tags import carbon_icon
+from . import (
     BUTTON,
     DIV,
     INPUT,

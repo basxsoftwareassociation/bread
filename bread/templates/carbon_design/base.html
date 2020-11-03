@@ -13,9 +13,6 @@
 
     {% include "carbon_design/components/side-nav.html" %}
 
-    {# {% include "carbon_design/components/product-switcher.html" %} #}
-    {# {% include "carbon_design/components/navigation-menu.html" %} #}
-
     {% if messages %}
         <ul>
             {% for message in messages %}
@@ -33,7 +30,8 @@
         <script type="text/javascript" src="{% static "js/choices.min.js" %}"></script>
         <script type="text/javascript" src="{% static "design/carbon_design/js/carbon-components.min.js" %}"></script>
         <script>
-            CarbonComponents.settings.disableAutoInit = false;
+            // TODO: this will very likely be rather slow. We should instead add watch only to dynamic parts of pages. However, please profile before starting to optimize.
+            CarbonComponents.watch(document);
         </script>
     {% endcompress js %}
 {% endblock body %}

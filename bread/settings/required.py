@@ -1,5 +1,4 @@
 import pkg_resources
-from django.conf.global_settings import DATETIME_INPUT_FORMATS
 from easy_thumbnails.conf import Settings as thumbnail_settings
 
 __breadapps = []
@@ -96,11 +95,8 @@ CKEDITOR_CONFIGS = {
 COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 
 # required to make crispyforms working with our materaialize frontend
-CRISPY_ALLOWED_TEMPLATE_PACKS = ["materialize_forms", "carbon_design"]
+CRISPY_ALLOWED_TEMPLATE_PACKS = ["carbon_design"]
 CRISPY_TEMPLATE_PACK = CRISPY_ALLOWED_TEMPLATE_PACKS[0]
-
-# required for the materialize datetime widget
-DATETIME_INPUT_FORMATS += ["%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M"]
 
 # not sure why we need this
 LOGIN_REDIRECT_URL = "/"
@@ -178,9 +174,6 @@ USE_L10N = True
 USE_TZ = True
 
 USE_THOUSAND_SEPARATOR = True
-
-DATETIME_FORMAT = "Y-m-d h:M:s"
-DATE_FORMAT = "Y-m-d"
 
 COMPRESS_OFFLINE_CONTEXT = "bread.context_processors.compress_offline_context"
 CARBON_DESIGN_CONTEXT = {
