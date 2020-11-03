@@ -3,17 +3,18 @@ import numbers
 import random
 from collections.abc import Iterable
 
-import bread.settings as app_settings
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from dateutil import tz
+from django_countries.fields import CountryField
+from easy_thumbnails.files import get_thumbnailer
+
+import bread.settings as app_settings
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.utils.html import format_html, format_html_join, linebreaks, mark_safe
-from django_countries.fields import CountryField
-from easy_thumbnails.files import get_thumbnailer
 
 from .models import AccessConcreteInstanceMixin
 
@@ -242,7 +243,6 @@ def object_url(o):
     from .admin import site
 
     defaultadmin = site.get_default_admin(o)
-    print(defaultadmin)
     if defaultadmin is not None:
         return defaultadmin.reverse("read", o.pk)
 
