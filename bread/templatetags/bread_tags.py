@@ -1,12 +1,17 @@
+import logging
+import re
 import warnings
 from _strptime import TimeRE
 
 from bread import menu as menuregister
 from crispy_forms.utils import get_template_pack
-
 from django import template
+from django.contrib.staticfiles import finders
+from django.core.cache import cache
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.forms import DateInput, Textarea, TextInput
+from django.forms.utils import flatatt
 from django.utils import formats
 from django.utils.html import mark_safe
 
@@ -17,6 +22,7 @@ from ..forms import forms
 from ..utils import has_permission, pretty_fieldname, title
 from ..utils.datetimeformatstring import to_php_formatstr
 
+logger = logging.getLogger(__name__)
 register = template.Library()
 
 register.simple_tag(pretty_fieldname)
@@ -280,3 +286,76 @@ def list_delete_protection(object):
             elif related_objects.exists():
                 ret.append(related_objects.all())
     return ret
+
+
+@register.simple_tag
+def carbon_icon(name, size, **kwargs):
+    """Insert the SVG for a carvon icon.
+    See https://www.carbondesignsystem.com/guidelines/icons/library for a list of all icons.
+    In order to see the name which should be passed to this template tag, click on "Download SVG" for an
+    icon and use the filename without the attribte, e.g. "thunderstorm--severe"."""
+    kwargs["width"] = size
+    kwargs["height"] = size
+    name = "--".join(_camel_case_split(name))
+    flatattribs = flatatt(
+        {k.replace("_", "-"): v for k, v in kwargs.items()}
+    )  # replace is because of hbs to django template transpilation
+    key = (
+        f"icon_{name}__{size}__{flatattribs}".lower().replace('"', "").replace(" ", "_")
+    )
+    if cache.get(key) is None:
+        path = finders.find(f"design/carbon_design/icons/32/{name.lower()}.svg")
+        if not path:
+            logger.error(f"Missing icon: {name.lower()}.svg")
+            return f"Missing icon {name.lower()}.svg"
+        with open(path) as f:
+            svg = "".join(
+                [line.replace("<svg", f"<svg {flatattribs}") for line in f.readlines()]
+            )
+        cache.set(key, svg)
+        return mark_safe(svg)
+    return mark_safe(cache.get(key))
+
+
+def _camel_case_split(identifier):
+    matches = re.finditer(
+        ".+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)", identifier
+    )
+    return [m.group(0) for m in matches]
+
+
+# The select element is a bit tricky to implement in a custom way because the options are
+# only attached in the widgets context and are not easily available in the template.
+# That means we leverage the default django rendering mechanism for the select but modify
+# the widget to have all necessary classes
+@register.filter
+def make_select(field):
+    """Used to add carbon classes to a select input"""
+    field.field.widget.attrs["class"] = (
+        field.field.widget.attrs.get("class", "") + " bx--select-input"
+    )
+    field.field.widget.template_name = "carbon_design/widgets/select.html"
+    return field
+
+
+@register.filter
+def make_option(widget):
+    """Used to add carbon classes to a select input"""
+    widget["attrs"]["class"] = widget["attrs"].get("class", "") + " bx--select-option"
+    return widget
+
+
+@register.filter
+def getplaceholder(field):
+    if hasattr(field.field.widget, "placeholder"):
+        return field.field.widget.placeholder
+    if hasattr(field.field, "placeholder"):
+        return field.field.placeholder
+    if hasattr(field.form, "_meta"):
+        try:
+            return getattr(
+                field.form._meta.model._meta.get_field(field.name), "placeholder", ""
+            )
+        except FieldDoesNotExist:
+            return ""
+    return ""

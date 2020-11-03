@@ -3,8 +3,11 @@ from crispy_forms.utils import TEMPLATE_PACK, render_field
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.template import Template
 
-from ..templatetags.bread_tags import querystring_order, updated_querystring
-from ..templatetags.carbon_design_tags import carbon_icon
+from ..templatetags.bread_tags import (
+    carbon_icon,
+    querystring_order,
+    updated_querystring,
+)
 from . import (
     BUTTON,
     DIV,
@@ -60,7 +63,7 @@ class ObjectActionsDropDown(HTMLTag):
         self.fields = []
         self.template = Template(
             """
-{% load bread_tags carbon_design_tags %}
+{% load bread_tags %}
 {% object_actions view.admin request object as actions %}
 {% if actions %}
 <div data-overflow-menu role="menu" tabindex="0" aria-label="Actions" aria-expanded="false"class="bx--overflow-menu">

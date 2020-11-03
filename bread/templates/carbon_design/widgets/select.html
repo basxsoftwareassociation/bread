@@ -1,4 +1,4 @@
-{% load carbon_design_tags %}
+{% load bread_tags %}
 
 <select name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %} class="">
     {% for group_name, group_choices, group_index in widget.optgroups %}

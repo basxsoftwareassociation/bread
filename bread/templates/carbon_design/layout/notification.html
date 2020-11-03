@@ -6,7 +6,7 @@ Template variables:
 - subtitle: optional, explanation text
 - icon: optional, name of icon to add, defaults to icon matching level type
 {% endcomment %}
-{% load carbon_design_tags bread_tags %}
+{% load bread_tags %}
 <div data-notification class="bx--inline-notification bx--inline-notification--{{ level|default:"info" }}{% if low_contrast %} bx--inline-notification--low-contrast{% endif %}" role="alert">
     <div class="bx--inline-notification__details">
 
