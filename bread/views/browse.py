@@ -3,6 +3,9 @@ from html.parser import HTMLParser
 
 import django_filters
 from crispy_forms.utils import TEMPLATE_PACK
+from django_filters.views import FilterView
+from guardian.mixins import PermissionListMixin
+
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -11,8 +14,6 @@ from django.db import models
 from django.db.models.functions import Lower
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
-from django_filters.views import FilterView
-from guardian.mixins import PermissionListMixin
 
 from .. import layout as layoutsystem
 from ..formatters import render_field
@@ -55,7 +56,7 @@ class BrowseView(
             self.layout = layoutsystem.default_list_layout(
                 fieldnames, list(sortable_fields(self.model, fieldnames)),
             )
-        self.fields = layoutsystem.get_fieldnames(self.layout)
+        self.fields = list(layoutsystem.get_fieldnames(self.layout))
 
         # incrementally try to create a filter from the given field and ignore fields which cannot be used
         kwargs["filterset_fields"] = []
