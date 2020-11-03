@@ -44,8 +44,8 @@ def generate_path_for_functionview(view, viewname):
     signature = inspect.signature(view)
     for param in itertools.islice(signature.parameters.values(), 1, None):
         pathcomponents.append(
-            f"/<{param.annotation}:{param.name}>"
+            f"<{param.annotation}:{param.name}>"
             if param.annotation != inspect.Parameter.empty
-            else f"/<{param.name}>"
+            else f"<{param.name}>"
         )
     return pathcomponents

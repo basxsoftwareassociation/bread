@@ -101,7 +101,7 @@ class BreadAdmin:
             urls[viewname] = generate_path_for_view(view, viewname)
         if self.indexview:
             urls["index"] = path(
-                f"",
+                "",
                 RedirectView.as_view(url=self.reverse(self.indexview)),
                 name="index",
             )
