@@ -31,7 +31,7 @@
         {% for input in inputs %}
             {% if "%s" in input.template %}
                 {% with input.template|slice:"1:" as templatevalue %}
-                    {% include TEMPLATE_PACK|stringformat:templatevalue %}
+                    {% include "carbon_design"|stringformat:templatevalue %}
                 {% endwith %}
             {% else %}
                 {% include input.template %}

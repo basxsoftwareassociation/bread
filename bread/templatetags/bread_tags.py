@@ -15,6 +15,8 @@ from django.forms.utils import flatatt
 from django.utils import formats
 from django.utils.html import mark_safe
 
+import plisplate
+
 from ..formatters import as_object_link, format_value
 from ..formatters import render_field as render_field_func
 from ..formatters import render_field_aggregation as render_field_aggregation_func
@@ -49,6 +51,11 @@ def linkpermission(link, request, obj=None):
 @register.simple_tag(takes_context=True)
 def linkurl(context, link):
     return link.url(context["request"])
+
+
+@register.simple_tag(takes_context=True)
+def render_plisplate(context, element):
+    return plisplate.render(element, context)
 
 
 @register.simple_tag

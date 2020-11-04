@@ -1,8 +1,3 @@
-from dynamic_preferences import views as preferences_views
-from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.users import views as user_preferences_views
-from dynamic_preferences.users.registries import user_preferences_registry
-
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
@@ -15,6 +10,11 @@ from django.urls import include, path, reverse_lazy
 from django.utils.http import urlencode
 from django.utils.text import format_lazy
 from django.views.generic import RedirectView, View
+from django.views.static import serve
+from dynamic_preferences import views as preferences_views
+from dynamic_preferences.registries import global_preferences_registry
+from dynamic_preferences.users import views as user_preferences_views
+from dynamic_preferences.users.registries import user_preferences_registry
 
 from . import menu
 from . import views as bread_views
@@ -451,14 +451,21 @@ def register(modeladmin):
 site = BreadAdminSite()
 
 
+def can_access_media(request, path):
+    return request.user.is_staff or path.startswith(settings.BREAD_PUBLIC_FILES_PREFIX)
+
+
 def protectedMedia(request, path):
     """
-    Protect media files when using with nginx
+    Protect media files
     """
-    if request.user.is_staff or path.startswith(settings.BREAD_PUBLIC_FILES_PREFIX):
-        response = HttpResponse(status=200)
-        del response["Content-Type"]
-        response["X-Accel-Redirect"] = f"/protected/{path}"
-        return response
+    if can_access_media(request, path):
+        if settings.DEBUG:
+            return serve(request, path, document_root=settings.MEDIA_ROOT)
+        else:
+            response = HttpResponse(status=200)
+            del response["Content-Type"]
+            response["X-Accel-Redirect"] = f"/protected/{path}"
+            return response
     else:
         return HttpResponse(status=404)
