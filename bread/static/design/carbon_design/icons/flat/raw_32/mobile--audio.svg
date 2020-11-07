@@ -1,0 +1,7 @@
+<rect x="28" y="12" width="2" height="3" />
+<rect x="24" y="7" width="2" height="13" />
+<rect x="20" y="11" width="2" height="5" />
+<rect x="16" y="9" width="2" height="9" />
+<rect x="12" y="12" width="2" height="3" />
+<circle cx="13.5" cy="24.5" r="1.5" />
+<path d="M20,30H7a2.0023,2.0023,0,0,1-2-2V4A2.0023,2.0023,0,0,1,7,2H20V4H7V28H20V24h2v4A2.0023,2.0023,0,0,1,20,30Z" />
