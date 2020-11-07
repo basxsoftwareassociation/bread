@@ -13,9 +13,11 @@ FORM_NAME_SCOPED = "__plispate_form__"
 class Form(plisplate.FORM):
     @classmethod
     def from_django_form(cls, form):
+        submit = Button(_("Submit"))
+        submit.attributes["type"] = "submit"
         return Form(
             *[_mapfield(field) for field in form],
-            plisplate.DIV(Button(_("Submit")), _class="bx--form-item"),
+            plisplate.DIV(submit, _class="bx--form-item"),
         )
 
     def __init__(self, *children, formname="form", use_csrf=True, **attributes):

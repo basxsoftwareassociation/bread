@@ -18,6 +18,7 @@ class Button(plisplate.htmltags.BUTTON):
     ):
         self.disabled_func = disabled_func
         attributes["type"] = "button"
+        attributes["tabindex"] = attributes.get("tabindex", "0")
         attributes["_class"] = (
             attributes.get("_class", "") + f" bx--btn bx--btn--{type}"
         )
