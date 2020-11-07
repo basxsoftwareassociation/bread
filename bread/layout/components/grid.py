@@ -1,4 +1,6 @@
-from ..base import DIV, INPUT
+from ..base import DIV
+
+# Usage: Grid(Row(Col(elem1, elem2), Col(elem3, elem5)))
 
 
 class Grid(DIV):

@@ -10,6 +10,7 @@ from dynamic_preferences.users.forms import UserPreferenceForm
 from guardian.shortcuts import get_objects_for_user
 
 from ..layout import InlineLayout
+from ..layout.components.plisplate.form import Form
 from ..utils import get_modelfields
 from .fields import FormsetField, GenericForeignKeyField
 
@@ -240,3 +241,4 @@ class BreadAuthenticationForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit("submit", "Login"))
+        self.plisplate = Form.from_django_form(self)

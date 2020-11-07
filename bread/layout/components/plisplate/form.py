@@ -11,11 +11,19 @@ FORM_NAME_SCOPED = "__plispate_form__"
 
 
 class Form(plisplate.FORM):
-    def __init__(self, *children, formname="form", **attributes):
+    @classmethod
+    def from_django_form(cls, form):
+        return Form(
+            *[_mapfield(field) for field in form],
+            plisplate.DIV(Button(_("Submit")), _class="bx--form-item"),
+        )
+
+    def __init__(self, *children, formname="form", use_csrf=True, **attributes):
         self.formname = formname
         defaults = {"method": "POST", "autocomplete": "off"}
         defaults.update(attributes)
-        children.insert(0, CsrfToken())
+        if defaults["method"].upper() == "POST" and use_csrf is not False:
+            children = (CsrfToken(),) + children
         super().__init__(*children, **defaults)
 
     def render(self, context):
@@ -38,30 +46,30 @@ class Form(plisplate.FORM):
         return super().render(c)
 
 
-def mapwidget(widget):
+def _mapfield(field):
     WIDGET_MAPPING = {
-        forms.TextInput: lambda w: TextInput(**w.attrs),
-        forms.NumberInput: lambda w: TextInput(**w.attrs),
-        forms.EmailInput: lambda w: TextInput(**w.attrs),
-        forms.URLInput: lambda w: TextInput(**w.attrs),
-        forms.PasswordInput: lambda w: PasswordInput(**w.attrs),
-        forms.HiddenInput: lambda w: HiddenInput(**w.attrs),
-        forms.DateInput: lambda w: TextInput(**w.attrs),
-        forms.DateTimeInput: lambda w: TextInput(**w.attrs),
-        forms.TimeInput: lambda w: TextInput(**w.attrs),
-        forms.Textarea: lambda w: TextInput(**w.attrs),
-        forms.CheckboxInput: lambda w: TextInput(**w.attrs),
-        forms.Select: lambda w: TextInput(**w.attrs),
-        forms.NullBooleanSelect: lambda w: TextInput(**w.attrs),
-        forms.SelectMultiple: lambda w: TextInput(**w.attrs),
-        forms.RadioSelect: lambda w: TextInput(**w.attrs),
-        forms.CheckboxSelectMultiple: lambda w: TextInput(**w.attrs),
-        forms.FileInput: lambda w: TextInput(**w.attrs),
-        forms.ClearableFileInput: lambda w: TextInput(**w.attrs),
+        forms.TextInput: TextInput,
+        forms.NumberInput: TextInput,
+        forms.EmailInput: TextInput,
+        forms.URLInput: TextInput,
+        forms.PasswordInput: PasswordInput,
+        forms.HiddenInput: HiddenInput,
+        forms.DateInput: TextInput,
+        forms.DateTimeInput: TextInput,
+        forms.TimeInput: TextInput,
+        forms.Textarea: TextInput,
+        forms.CheckboxInput: TextInput,
+        forms.Select: TextInput,
+        forms.NullBooleanSelect: TextInput,
+        forms.SelectMultiple: TextInput,
+        forms.RadioSelect: TextInput,
+        forms.CheckboxSelectMultiple: TextInput,
+        forms.FileInput: TextInput,
+        forms.ClearableFileInput: TextInput,
     }
-    if isinstance(widget, type):
-        widget = widget()
-    return WIDGET_MAPPING[type(widget)](widget)
+    return WIDGET_MAPPING[type(field.field.widget)](
+        fieldname=field.name, **field.field.widget.attrs
+    )
 
 
 class HiddenInput(plisplate.INPUT):

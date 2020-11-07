@@ -1,6 +1,6 @@
 {% extends "carbon_design/base.html" %}
-{% load crispy_forms_tags %}
+{% load bread_tags %}
 
 {% block content %}
-    {% crispy form %}
+    {% render_plisplate form.plisplate %}
 {% endblock content %}
