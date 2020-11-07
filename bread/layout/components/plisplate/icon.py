@@ -1,0 +1,42 @@
+import logging
+import os
+
+from django.contrib.staticfiles import finders
+from django.core.cache import cache
+
+import plisplate
+
+logger = logging.getLogger(__name__)
+
+
+class Icon(plisplate.htmltags.SVG):
+
+    """Insert the SVG for a carbon icon.
+    See https://www.carbondesignsystem.com/guidelines/icons/library for a list of all icons.
+    In order to see the name which should be passed to this template tag, click on "Download SVG" for an
+    icon and use the filename without the attribte, e.g. "thunderstorm--severe"."""
+
+    def __init__(
+        self, name, size=None, **attributes,
+    ):
+        attributes["viewBox"] = "0 0 32 32"
+        attributes["preserveAspectRatio"] = "xMidYMid meet"
+        attributes["focusable"] = "false"
+        attributes["style"] = attributes.get("style", "") + " will-change: transform;"
+        if size is None:
+            attributes["width"] = "32"
+            attributes["height"] = "32"
+        else:
+            attributes["width"] = size
+            attributes["height"] = size
+
+        if cache.get(name) is None:
+            path = finders.find(
+                os.path.join("design/carbon_design/icons/flat/raw_32/", f"{name}.svg")
+            )
+            if not path:
+                logger.error(f"Missing icon: {name}.svg")
+                return f"Missing icon {name}.svg"
+            with open(path) as f:
+                cache.set(name, f.read())
+        super().__init__(plisplate.Raw(cache.get(name)), **attributes)
