@@ -55,7 +55,7 @@ def linkurl(context, link):
 
 @register.simple_tag(takes_context=True)
 def render_plisplate(context, element):
-    return plisplate.render(element, context)
+    return mark_safe(plisplate.render(element, context.flatten()))
 
 
 @register.simple_tag
