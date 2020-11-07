@@ -225,20 +225,16 @@ class FilterForm(forms.Form):
 class PreferencesForm(GlobalPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        self.helper.add_input(Submit("submit", "Save"))
+        self.plisplate = Form.from_django_form(self)
 
 
 class UserPreferencesForm(UserPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        self.helper.add_input(Submit("submit", "Save"))
+        self.plisplate = Form.from_django_form(self)
 
 
 class BreadAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        self.helper.add_input(Submit("submit", "Login"))
         self.plisplate = Form.from_django_form(self)

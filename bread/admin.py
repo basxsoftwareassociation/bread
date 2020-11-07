@@ -12,6 +12,7 @@ from django.utils.text import format_lazy
 from django.views.generic import RedirectView, View
 from django.views.static import serve
 from dynamic_preferences import views as preferences_views
+from dynamic_preferences.forms import preference_form_builder
 from dynamic_preferences.registries import global_preferences_registry
 from dynamic_preferences.users import views as user_preferences_views
 from dynamic_preferences.users.registries import user_preferences_registry
@@ -351,6 +352,15 @@ class BreadAdminSite:
                     menu.registeritem(menuitem)
 
     def get_urls(self):
+        def user_get_form_class(self, *args, **kwargs):
+            section = self.kwargs.get("section", None)
+            return preference_form_builder(
+                UserPreferencesForm,
+                instance=self.request.user,
+                section=section,
+                **kwargs,
+            )
+
         # add success message to preferences view
         PreferencesView = type(
             "PreferencesView",
@@ -360,8 +370,12 @@ class BreadAdminSite:
         UserPreferencesView = type(
             "UserPreferencesView",
             (SuccessMessageMixin, user_preferences_views.UserPreferenceFormView),
-            {"success_message": "Preferences updated"},
+            {
+                "success_message": "Preferences updated",
+                "get_form_class": user_get_form_class,
+            },
         )
+
         preferences = [
             path(
                 "global/",
@@ -379,16 +393,12 @@ class BreadAdminSite:
             ),
             path(
                 "user/",
-                UserPreferencesView.as_view(
-                    registry=user_preferences_registry, form_class=UserPreferencesForm,
-                ),
+                UserPreferencesView.as_view(registry=user_preferences_registry),
                 name="user",
             ),
             path(
                 "user/<slug:section>",
-                UserPreferencesView.as_view(
-                    registry=user_preferences_registry, form_class=UserPreferencesForm,
-                ),
+                UserPreferencesView.as_view(registry=user_preferences_registry),
                 name="user.section",
             ),
         ]
