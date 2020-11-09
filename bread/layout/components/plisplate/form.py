@@ -5,8 +5,9 @@ from django.utils.translation import gettext as _
 import plisplate
 
 from .button import Button
-from .icon import Icon
 from .notification import InlineNotification
+from .select import Select
+from .text_input import PasswordInput, TextInput
 
 FORM_NAME_SCOPED = "__plispate_form__"
 
@@ -54,13 +55,16 @@ class Form(plisplate.FORM):
 
 class FormField(plisplate.BaseElement):
     """Dynamic element which will resolve the field with the given name
-and return the correct HTML, based on the widget of the form field"""
+and return the correct HTML, based on the widget of the form field or on the passed argument 'fieldtype'"""
 
-    def __init__(self, fieldname):
+    def __init__(self, fieldname, fieldtype=None):
         self.fieldname = fieldname
+        self.fieldtype = fieldtype
 
     def render(self, context):
-        return _mapfield(context[FORM_NAME_SCOPED][self.fieldname]).render(context)
+        return _mapfield(
+            context[FORM_NAME_SCOPED][self.fieldname], self.fieldtype
+        ).render(context)
 
     def __repr__(self):
         return f"FormField({self.fieldname})"
@@ -82,6 +86,7 @@ class HiddenInput(plisplate.INPUT):
 
     def render(self, context):
         boundfield = context[FORM_NAME_SCOPED][self.fieldname]
+        self.attributes["required"] = False
         if boundfield is not None:
             self.attributes["name"] = boundfield.html_name
             if boundfield.value() is not None:
@@ -99,96 +104,7 @@ class CsrfToken(plisplate.INPUT):
         return super().render(context)
 
 
-class TextInput(plisplate.DIV):
-    LABEL = 0
-    INPUT = 1
-
-    def __init__(
-        self,
-        fieldname,
-        placeholder="",
-        light=False,
-        disabled_func=lambda c: False,
-        **attributes,
-    ):
-        self.fieldname = fieldname
-        self.disabled_func = disabled_func
-        attributes["_class"] = (
-            attributes.get("_class", "") + " bx--form-item  bx--text-input-wrapper"
-        )
-        super().__init__(
-            plisplate.LABEL(_class="bx--label"),
-            plisplate.DIV(
-                plisplate.INPUT(
-                    placeholder=placeholder,
-                    _class=f"bx--text-input {'bx--text-input--light' if light else ''}",
-                ),
-                _class="bx--text-input__field-wrapper",
-            ),
-            **attributes,
-        )
-
-    def render(self, context):
-        boundfield = context[FORM_NAME_SCOPED][self.fieldname]
-        disabled = self.disabled_func(context)
-
-        if disabled:
-            self[TextInput.LABEL].attributes["_class"] += " bx--label--disabled"
-            self[TextInput.INPUT][0].attributes["disabled"] = True
-        if boundfield is not None:
-            self[TextInput.LABEL].attributes["_for"] = boundfield.id_for_label
-            self[TextInput.LABEL].append(boundfield.label)
-            if not boundfield.field.required:
-                self[TextInput.LABEL].append(_(" (optional)"))
-            if boundfield.auto_id:
-                self[TextInput.INPUT][0].attributes["id"] = boundfield.auto_id
-            self[TextInput.INPUT][0].attributes["name"] = boundfield.html_name
-            if boundfield.value() is not None:
-                self[TextInput.INPUT][0].attributes["value"] = boundfield.value()
-            if boundfield.help_text:
-                self.append(
-                    plisplate.DIV(boundfield.help_text, _class="bx--form__helper-text")
-                )
-            if boundfield.errors:
-                self[TextInput.INPUT].append(
-                    Icon("warning--filled", _class="bx--text-input__invalid-icon")
-                )
-                self.append(
-                    plisplate.DIV(
-                        plisplate.UL(*[plisplate.LI(e) for e in boundfield.errors]),
-                        _class="bx--form-requirement",
-                    )
-                )
-        return super().render(context)
-
-
-class PasswordInput(TextInput):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.attributes["data-text-input"] = True
-        self.attributes["_class"] += " bx--password-input-wrapper"
-        self[TextInput.INPUT][0].attributes["type"] = "password"
-        self[TextInput.INPUT][0].attributes["data-toggle-password-visibility"] = True
-        self[TextInput.INPUT][0].attributes["_class"] += " bx--password-input"
-        showhidebtn = Button(_("Show password"), notext=True)
-        showhidebtn.attributes[
-            "_class"
-        ] = "bx--text-input--password__visibility__toggle bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-center"
-        showhidebtn.append(
-            Icon(
-                "view--off",
-                _class="bx--icon--visibility-off",
-                hidden="true",
-                aria_hidden="true",
-            )
-        )
-        showhidebtn.append(
-            Icon("view", _class="bx--icon--visibility-on", aria_hidden="true")
-        )
-        self[TextInput.INPUT].append(showhidebtn)
-
-
-def _mapfield(field):
+def _mapfield(field, fieldtype):
     WIDGET_MAPPING = {
         forms.TextInput: TextInput,
         forms.NumberInput: TextInput,  # TODO
@@ -201,7 +117,7 @@ def _mapfield(field):
         forms.TimeInput: TextInput,  # TODO
         forms.Textarea: TextInput,  # TODO
         forms.CheckboxInput: TextInput,  # TODO
-        forms.Select: TextInput,  # TODO
+        forms.Select: Select,
         forms.NullBooleanSelect: TextInput,  # TODO
         forms.SelectMultiple: TextInput,  # TODO
         forms.RadioSelect: TextInput,  # TODO
@@ -214,6 +130,8 @@ def _mapfield(field):
         forms.SelectDateWidget: TextInput,  # TODO
         django_filters.widgets.DateRangeWidget: TextInput,  # TODO
     }
+    if fieldtype:
+        return fieldtype(fieldname=field.name, **field.field.widget.attrs)
     return WIDGET_MAPPING[type(field.field.widget)](
         fieldname=field.name, **field.field.widget.attrs
     )
