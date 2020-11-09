@@ -6,12 +6,11 @@ an argument "admin" which is an instance of the according BreadAdmin class
 """
 import urllib
 
-from crispy_forms.layout import Layout
-from crispy_forms.utils import TEMPLATE_PACK
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import UpdateView
 from guardian.mixins import PermissionRequiredMixin
 
+from ..layout.components import plisplate
 from ..utils import CustomizableClass, filter_fieldlist, get_modelfields
 from .util import CustomFormMixin
 
@@ -23,7 +22,7 @@ class EditView(
     PermissionRequiredMixin,
     UpdateView,
 ):
-    template_name = f"{TEMPLATE_PACK}/form.html"
+    template_name = "carbon_design/form.html"
     admin = None
     sidebarfields = []
     accept_global_perms = True
@@ -34,14 +33,13 @@ class EditView(
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
-        field_config = kwargs.get("fields", self.fields)
-        if not isinstance(field_config, Layout):
-            self.layout = Layout(
-                *filter_fieldlist(self.model, field_config, for_form=True)
-            )
-        else:
-            self.layout = field_config
-        self.fields = [i[1] for i in self.layout.get_field_names()]
+        layout = kwargs.get("layout", self.layout)
+        if not isinstance(layout, plisplate.BaseElement):
+            layout = [
+                plisplate.form.FormField(field)
+                for field in filter_fieldlist(self.model, layout, for_form=True)
+            ]
+        self.layout = plisplate.form.Form.wrap_with_form(layout)
         self.sidebarfields = get_modelfields(
             self.model, kwargs.get("sidebarfields", self.sidebarfields)
         )

@@ -1,3 +1,4 @@
+import django_filters
 from django import forms
 from django.utils.translation import gettext as _
 
@@ -12,13 +13,16 @@ FORM_NAME_SCOPED = "__plispate_form__"
 
 class Form(plisplate.FORM):
     @classmethod
-    def from_django_form(cls, form):
+    def from_fieldnames(cls, fieldnames, **kwargs):
+        return Form.wrap_with_form(
+            *[FormField(fieldname) for fieldname in fieldnames], **kwargs
+        )
+
+    @classmethod
+    def wrap_with_form(cls, *elements, **kwargs):
         submit = Button(_("Submit"))
         submit.attributes["type"] = "submit"
-        return Form(
-            *[_mapfield(field) for field in form],
-            plisplate.DIV(submit, _class="bx--form-item"),
-        )
+        return Form(*elements, plisplate.DIV(submit, _class="bx--form-item"), **kwargs)
 
     def __init__(self, *children, formname="form", use_csrf=True, **attributes):
         self.formname = formname
@@ -48,30 +52,27 @@ class Form(plisplate.FORM):
         return super().render(c)
 
 
-def _mapfield(field):
-    WIDGET_MAPPING = {
-        forms.TextInput: TextInput,
-        forms.NumberInput: TextInput,
-        forms.EmailInput: TextInput,
-        forms.URLInput: TextInput,
-        forms.PasswordInput: PasswordInput,
-        forms.HiddenInput: HiddenInput,
-        forms.DateInput: TextInput,
-        forms.DateTimeInput: TextInput,
-        forms.TimeInput: TextInput,
-        forms.Textarea: TextInput,
-        forms.CheckboxInput: TextInput,
-        forms.Select: TextInput,
-        forms.NullBooleanSelect: TextInput,
-        forms.SelectMultiple: TextInput,
-        forms.RadioSelect: TextInput,
-        forms.CheckboxSelectMultiple: TextInput,
-        forms.FileInput: TextInput,
-        forms.ClearableFileInput: TextInput,
-    }
-    return WIDGET_MAPPING[type(field.field.widget)](
-        fieldname=field.name, **field.field.widget.attrs
-    )
+class FormField(plisplate.BaseElement):
+    """Dynamic element which will resolve the field with the given name
+and return the correct HTML, based on the widget of the form field"""
+
+    def __init__(self, fieldname):
+        self.fieldname = fieldname
+
+    def render(self, context):
+        return _mapfield(context[FORM_NAME_SCOPED][self.fieldname]).render(context)
+
+    def __repr__(self):
+        return f"FormField({self.fieldname})"
+
+
+class FormSetField(plisplate.Iterator):
+    def __init__(self, fieldname, variablename, *children, **formset_kwargs):
+        super().__init__(fieldname, FORM_NAME_SCOPED, *children)
+        self.formset_kwargs = formset_kwargs
+
+    def __repr__(self):
+        return f"FormField({self.fieldname}, {self.formset_kwargs})"
 
 
 class HiddenInput(plisplate.INPUT):
@@ -185,3 +186,34 @@ class PasswordInput(TextInput):
             Icon("view", _class="bx--icon--visibility-on", aria_hidden="true")
         )
         self[TextInput.INPUT].append(showhidebtn)
+
+
+def _mapfield(field):
+    WIDGET_MAPPING = {
+        forms.TextInput: TextInput,
+        forms.NumberInput: TextInput,  # TODO
+        forms.EmailInput: TextInput,  # TODO
+        forms.URLInput: TextInput,  # TODO
+        forms.PasswordInput: PasswordInput,
+        forms.HiddenInput: HiddenInput,
+        forms.DateInput: TextInput,  # TODO
+        forms.DateTimeInput: TextInput,  # TODO
+        forms.TimeInput: TextInput,  # TODO
+        forms.Textarea: TextInput,  # TODO
+        forms.CheckboxInput: TextInput,  # TODO
+        forms.Select: TextInput,  # TODO
+        forms.NullBooleanSelect: TextInput,  # TODO
+        forms.SelectMultiple: TextInput,  # TODO
+        forms.RadioSelect: TextInput,  # TODO
+        forms.CheckboxSelectMultiple: TextInput,  # TODO
+        forms.FileInput: TextInput,  # TODO
+        forms.ClearableFileInput: TextInput,  # TODO
+        forms.MultipleHiddenInput: TextInput,  # TODO
+        forms.SplitDateTimeWidget: TextInput,  # TODO
+        forms.SplitHiddenDateTimeWidget: TextInput,  # TODO
+        forms.SelectDateWidget: TextInput,  # TODO
+        django_filters.widgets.DateRangeWidget: TextInput,  # TODO
+    }
+    return WIDGET_MAPPING[type(field.field.widget)](
+        fieldname=field.name, **field.field.widget.attrs
+    )

@@ -141,7 +141,9 @@
 {% block right-panel %}
     {% if view.filterset_fields %}
         <form>
-            {% crispy filter.form %}
+            {% with filter.form as form %}
+                {% render_plisplate filter.form.plisplate %}
+            {% endwith %}
         </form>
     {% endif %}
 {% endblock right-panel %}

@@ -9,11 +9,9 @@
         <h2>Edit {{ view.admin.verbose_modelname }} <i>{{ object }}</i></h2>
     {% elif form.instance %}
         <h2>Add {{ view.admin.verbose_modelname }}</h2>
-        <!-- try to prevent browser auto-fill -->
-        <script>document.addEventListener("DOMContentLoaded", e => $$("form").forEach(form => form.reset()))</script>
     {% endif %}
 
-    {% crispy form %}
+    {% render_plisplate view.layout %}
 
 </div>
 

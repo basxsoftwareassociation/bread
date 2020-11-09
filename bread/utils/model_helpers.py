@@ -127,7 +127,7 @@ def _can_use_in_form(model, field):
         or isinstance(field, GenericForeignKey)
         or field.many_to_many
         or field.one_to_many
-        or field.one_to_one,
+        or field.one_to_one
     )
 
 

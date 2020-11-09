@@ -1,5 +1,3 @@
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -9,29 +7,36 @@ from dynamic_preferences.forms import GlobalPreferenceForm
 from dynamic_preferences.users.forms import UserPreferenceForm
 from guardian.shortcuts import get_objects_for_user
 
-from ..layout import InlineLayout
-from ..layout.components.plisplate.form import Form
-from ..utils import get_modelfields
+from ..layout.components import plisplate
 from .fields import FormsetField, GenericForeignKeyField
 
 
-def breadmodelform_factory(
-    request,
-    model,
-    fields,
-    instance,
-    baseformclass,
-    layout,
-    submit_buttons,
-    isinline=False,
-):
+def _get_form_fields_from_layout(layout):
+    def walk(element):
+        if isinstance(
+            element, plisplate.form.FormSetField
+        ):  # do not descend into formsets
+            yield element
+            return
+        if isinstance(element, plisplate.form.FormField):
+            yield element
+        for e in element:
+            if isinstance(e, plisplate.BaseElement):
+                yield from walk(e)
+
+    return list(walk(layout))
+
+
+def breadmodelform_factory(request, model, layout, instance, baseformclass):
     """Returns a form class which can handle inline-modelform sets and generic foreign keys.
     Also enable crispy forms.
     """
-    modelfields = get_modelfields(model, fields, for_form=True).values()
+    formfieldelements = _get_form_fields_from_layout(layout)
 
     class BreadModelFormBase(baseformclass):
-        field_order = baseformclass.field_order or list(fields)
+        field_order = baseformclass.field_order or [
+            f.fieldname for f in formfieldelements
+        ]
 
         def __init__(self, data=None, files=None, initial=None, **kwargs):
             inst = kwargs.get("instance", instance)
@@ -40,7 +45,7 @@ def breadmodelform_factory(
                 if isinstance(field, FormsetField):
                     formsetinitial[name] = {"instance": inst}
                 if isinstance(field, GenericForeignKeyField):
-                    modelfield = [f for f in modelfields if f.name == name][0]
+                    modelfield = model._meta.get_field(name)
                     if hasattr(modelfield, "lazy_choices"):
                         field.choices = GenericForeignKeyField.objects_to_choices(
                             modelfield.lazy_choices(modelfield, request, inst)
@@ -55,13 +60,6 @@ def breadmodelform_factory(
             super().__init__(
                 data=data, files=files, initial=formsetinitial, **kwargs,
             )
-
-            self.helper = FormHelper(self)
-            if isinline:
-                self.helper.form_tag = False
-            else:
-                self.helper.inputs.extend(submit_buttons)
-            self.helper.layout = layout
 
         def save(self, *args, **kwargs):
             with transaction.atomic():
@@ -80,9 +78,10 @@ def breadmodelform_factory(
                         self.cleaned_data[fieldname].save()
             return forminstance
 
-    # GenericForeignKey and one-to-n fields need to be defined separatly
+    # GenericForeignKey and one-to-n fields need to be added separatly to the form class
     attribs = {}
-    for modelfield in modelfields:
+    for formfieldelement in formfieldelements:
+        modelfield = model._meta.get_field(formfieldelement.fieldname)
         if isinstance(modelfield, GenericForeignKey):
             attribs[modelfield.name] = GenericForeignKeyField(
                 required=not model._meta.get_field(modelfield.fk_field).blank
@@ -92,7 +91,7 @@ def breadmodelform_factory(
         ):
             attribs[modelfield.name] = FormsetField(
                 _generate_formset_class(
-                    modelfield, request, baseformclass, model, layout
+                    request, model, modelfield, baseformclass, formfieldelement
                 ),
                 instance,
             )
@@ -102,7 +101,11 @@ def breadmodelform_factory(
     ret = forms.modelform_factory(
         model,
         form=patched_formclass,
-        fields=[f.name for f in modelfields if not f.one_to_many and f.editable],
+        fields=[
+            f.fieldname
+            for f in formfieldelements
+            if isinstance(f, plisplate.form.FormField)
+        ],
         formfield_callback=lambda field: _formfield_callback_with_request(
             field, request, model
         ),
@@ -110,87 +113,54 @@ def breadmodelform_factory(
     return ret
 
 
-def _generate_formset_class(modelfield, request, baseformclass, model, parent_layout):
+def _generate_formset_class(
+    request, model, modelfield, baseformclass, formsetfieldelement
+):
     """Returns a FormSet class which handles inline forms correctly."""
 
-    # determine the inline form fields, called child_fields
-    layout = None
-    additional_formset_kwargs = {}
-    fields = ["__all__"]
-    if parent_layout:
-        # extract the layout object for the inline field from the parent if available
-        queue = [parent_layout]
-        while queue and not layout:
-            elem = queue.pop()
-            if isinstance(elem, InlineLayout) and elem.fieldname == modelfield.name:
-                layout = elem.get_inline_layout()
-                fields = [
-                    i[1]
-                    for i in layout.get_field_names()
-                    if i[1] != forms.formsets.DELETION_FIELD_NAME
-                ]
-                additional_formset_kwargs = elem.formset_kwargs
-            queue.extend(getattr(elem, "fields", []))
-
-    child_fields = [
-        field.name
-        for field in get_modelfields(
-            modelfield.related_model, fields, for_form=True
-        ).values()
-        if (field != modelfield.remote_field and field.editable is not False)
-        or isinstance(field, GenericForeignKey)
-    ]
+    formfieldelements = _get_form_fields_from_layout(
+        plisplate.form.BaseElement(*formsetfieldelement)
+    )  # make sure the plisplate.form.FormSetField does not be considered recursively
 
     formclass = breadmodelform_factory(
         request=request,
         model=modelfield.related_model,
-        fields=child_fields,
+        layout=formfieldelements,
         instance=None,
         baseformclass=baseformclass,
-        layout=layout,
-        submit_buttons=[],
-        isinline=True,
     )
 
-    formset_kwargs = {
-        "fields": child_fields,
+    base_formset_kwargs = {
+        "fields": [
+            formfieldelement.fieldname for formfieldelement in formfieldelements
+        ],
         "form": formclass,
         "extra": 1,
         "can_delete": True,
     }
-    formset_kwargs.update(additional_formset_kwargs)
+    base_formset_kwargs.update(formsetfieldelement.formset_kwargs)
     if isinstance(modelfield, GenericRelation):
-        formset = generic_inlineformset_factory(
+        return generic_inlineformset_factory(
             modelfield.related_model,
             ct_field=modelfield.content_type_field_name,
             fk_field=modelfield.object_id_field_name,
             formfield_callback=lambda field: _formfield_callback_with_request(
                 field, request, modelfield.related_model
             ),
-            **formset_kwargs,
+            **base_formset_kwargs,
         )
     else:
-        formset = forms.models.inlineformset_factory(
+        return forms.models.inlineformset_factory(
             model,
             modelfield.related_model,
             formfield_callback=lambda field: _formfield_callback_with_request(
                 field, request, model
             ),
-            **formset_kwargs,
+            **base_formset_kwargs,
         )
-
-    return formset
 
 
 def _formfield_callback_with_request(field, request, model):
-    """
-    Internal function to adjust formfields and widgets to the following:
-    - Replace select widgets with autocomplete widgets
-    - Replace DateTimeField with SplitDateTimeField
-    - Apply result of lazy-choice and lazy-init function if set for the modelfield
-    - Filter based base on object-level permissions if a queryset is used for the field
-    """
-
     modelfield = getattr(model, field.get_attname(), None)
     kwargs = {}
     if modelfield:
@@ -211,30 +181,28 @@ def _formfield_callback_with_request(field, request, model):
     return ret
 
 
+# TODO: the following custom forms could and probably shoudl be replace with template filters or tags
 class FilterForm(forms.Form):
     """Helper class to enable crispy-forms on the filter-forms."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        self.helper.form_method = "get"
-        self.helper.add_input(Submit("submit", "Filter"))
-        self.helper.add_input(Submit("reset", "Reset"))
+        self.plisplate = plisplate.form.Form.from_django_form(self, method="GET")
 
 
 class PreferencesForm(GlobalPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = Form.from_django_form(self)
+        self.plisplate = plisplate.form.Form.from_fieldnames(self.fields)
 
 
 class UserPreferencesForm(UserPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = Form.from_django_form(self)
+        self.plisplate = plisplate.form.Form.from_fieldnames(self.fields)
 
 
 class BreadAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = Form.from_django_form(self)
+        self.plisplate = plisplate.form.Form.from_fieldnames(self.fields)
