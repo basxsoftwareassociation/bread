@@ -28,6 +28,12 @@ from . import (
     with_str_fields_replaced,
 )
 
+from .components.grid import (
+    Grid,
+    Row,
+    Col
+)
+
 # key: the common name, used in places where we need an icon independent from the design system
 # value: identifier of the icon inside the carbon design system (see materalize_forms design for equivalent definition)
 ICONS = {"edit": "edit", "delete": "trash-can"}
