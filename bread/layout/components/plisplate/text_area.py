@@ -2,29 +2,38 @@ from django.utils.translation import gettext as _
 
 import plisplate
 
-from .button import Button
 from .form import FORM_NAME_SCOPED
 from .icon import Icon
 
 
-class TextInput(plisplate.DIV):
+class TextArea(plisplate.DIV):
     def __init__(
-        self, fieldname, placeholder="", light=False, widgetattributes={}, **attributes,
+        self,
+        fieldname,
+        placeholder="",
+        rows=None,
+        cols=None,
+        light=False,
+        widgetattributes={},
+        **attributes,
     ):
         self.fieldname = fieldname
-        attributes["_class"] = (
-            attributes.get("_class", "") + " bx--form-item bx--text-input-wrapper"
-        )
+        attributes["_class"] = attributes.get("_class", "") + " bx--form-item"
+
         widgetattributes["_class"] = (
             widgetattributes.get("_class", "")
-            + f" bx--text-input {'bx--text-input--light' if light else ''}"
+            + f" bx--text-area bx--text-area--v2 {'bx--text-area--light' if light else ''}",
         )
+        if rows:
+            widgetattributes["rows"] = rows
+        if cols:
+            widgetattributes["cols"] = cols
 
         super().__init__(
             plisplate.LABEL(_class="bx--label"),
             plisplate.DIV(
-                plisplate.INPUT(placeholder=placeholder, **widgetattributes),
-                _class="bx--text-input__field-wrapper",
+                plisplate.TEXTAREA(placeholder=placeholder, **widgetattributes),
+                _class="bx--text-area__wrapper",
             ),
             **attributes,
         )
@@ -49,11 +58,12 @@ class TextInput(plisplate.DIV):
                 )
             if boundfield.errors:
                 self[1].attributes["data-invalid"] = True
+                self.input.attributes["_class"] += " bx--text-area--invalid"
                 self[1].append(
                     Icon(
                         "warning--filled",
                         size=16,
-                        _class="bx--text-input__invalid-icon",
+                        _class="bx--text-area__invalid-icon",
                     )
                 )
                 self.append(
@@ -63,29 +73,3 @@ class TextInput(plisplate.DIV):
                     )
                 )
         return super().render(context)
-
-
-class PasswordInput(TextInput):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.attributes["data-text-input"] = True
-        self.attributes["_class"] += " bx--password-input-wrapper"
-        self.input.attributes["type"] = "password"
-        self.input.attributes["data-toggle-password-visibility"] = True
-        self.input.attributes["_class"] += " bx--password-input"
-        showhidebtn = Button(_("Show password"), notext=True)
-        showhidebtn.attributes[
-            "_class"
-        ] = "bx--text-input--password__visibility__toggle bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-center"
-        showhidebtn.append(
-            Icon(
-                "view--off",
-                _class="bx--icon--visibility-off",
-                hidden="true",
-                aria_hidden="true",
-            )
-        )
-        showhidebtn.append(
-            Icon("view", _class="bx--icon--visibility-on", aria_hidden="true")
-        )
-        self[1].append(showhidebtn)

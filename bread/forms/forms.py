@@ -2,7 +2,9 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
+from django.core.exceptions import FieldDoesNotExist
 from django.db import transaction
+from django.forms.formsets import DELETION_FIELD_NAME
 from dynamic_preferences.forms import GlobalPreferenceForm
 from dynamic_preferences.users.forms import UserPreferenceForm
 from guardian.shortcuts import get_objects_for_user
@@ -12,13 +14,18 @@ from .fields import FormsetField, GenericForeignKeyField
 
 
 def _get_form_fields_from_layout(layout):
+    INTERNAL_FIELDS = [DELETION_FIELD_NAME]
+
     def walk(element):
         if isinstance(
             element, plisplate.form.FormSetField
         ):  # do not descend into formsets
             yield element
             return
-        if isinstance(element, plisplate.form.FormField):
+        if (
+            isinstance(element, plisplate.form.FormField)
+            and element.fieldname not in INTERNAL_FIELDS
+        ):
             yield element
         for e in element:
             if isinstance(e, plisplate.BaseElement):
@@ -81,7 +88,10 @@ def breadmodelform_factory(request, model, layout, instance, baseformclass):
     # GenericForeignKey and one-to-n fields need to be added separatly to the form class
     attribs = {}
     for formfieldelement in formfieldelements:
-        modelfield = model._meta.get_field(formfieldelement.fieldname)
+        try:
+            modelfield = model._meta.get_field(formfieldelement.fieldname)
+        except FieldDoesNotExist:
+            continue
         if isinstance(modelfield, GenericForeignKey):
             attribs[modelfield.name] = GenericForeignKeyField(
                 required=not model._meta.get_field(modelfield.fk_field).blank
@@ -119,7 +129,7 @@ def _generate_formset_class(
     """Returns a FormSet class which handles inline forms correctly."""
 
     formfieldelements = _get_form_fields_from_layout(
-        plisplate.form.BaseElement(*formsetfieldelement)
+        plisplate.BaseElement(*formsetfieldelement)
     )  # make sure the plisplate.form.FormSetField does not be considered recursively
 
     formclass = breadmodelform_factory(

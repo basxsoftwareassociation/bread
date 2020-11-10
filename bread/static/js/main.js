@@ -63,7 +63,7 @@ function _update_add_button(form_prefix) {
     var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
     var maxforms = $('#id_' + form_prefix + '-MAX_NUM_FORMS')
     var addbutton = $('#add_' + form_prefix + '_button')
-    addbutton.style.display = "inline-block";
+    addbutton.style.display = "inline-flex";
     if(parseInt(formcount.value) >= parseInt(maxforms.value)) {
         addbutton.style.display = "none";
     }
@@ -75,6 +75,7 @@ function formset_add(form_prefix, list_container) {
     var newElements = new DOMParser().parseFromString(newElementStr, "text/html").getElementsByTagName("body")[0].children;
     for(let element of newElements) {
         $(list_container).appendChild(element);
+        // $$("[disabled]", element)._.toggleAttribute("disabled", null);
         initAllChoices(element);
         // TODO: init carbon elements
     }

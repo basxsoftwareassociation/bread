@@ -1,13 +1,12 @@
 import django_filters
 from django import forms
 from django.utils.translation import gettext as _
+from django_countries.widgets import LazySelect
 
 import plisplate
 
 from .button import Button
 from .notification import InlineNotification
-from .select import Select
-from .text_input import PasswordInput, TextInput
 
 FORM_NAME_SCOPED = "__plispate_form__"
 
@@ -57,13 +56,20 @@ class FormField(plisplate.BaseElement):
     """Dynamic element which will resolve the field with the given name
 and return the correct HTML, based on the widget of the form field or on the passed argument 'fieldtype'"""
 
-    def __init__(self, fieldname, fieldtype=None):
+    def __init__(
+        self, fieldname, fieldtype=None, elementattributes={}, widgetattributes={}
+    ):
         self.fieldname = fieldname
         self.fieldtype = fieldtype
+        self.widgetattributes = widgetattributes
+        self.elementattributes = elementattributes
 
     def render(self, context):
         return _mapfield(
-            context[FORM_NAME_SCOPED][self.fieldname], self.fieldtype
+            context[FORM_NAME_SCOPED][self.fieldname],
+            self.fieldtype,
+            self.elementattributes,
+            self.widgetattributes,
         ).render(context)
 
     def __repr__(self):
@@ -71,22 +77,80 @@ and return the correct HTML, based on the widget of the form field or on the pas
 
 
 class FormSetField(plisplate.Iterator):
-    def __init__(self, fieldname, variablename, *children, **formset_kwargs):
-        super().__init__(fieldname, FORM_NAME_SCOPED, *children)
+    def __init__(self, fieldname, *children, **formset_kwargs):
+        super().__init__(
+            lambda context: self.get_formset(context), FORM_NAME_SCOPED, *children,
+        )
+        self.fieldname = fieldname
         self.formset_kwargs = formset_kwargs
 
+    def get_formset(self, context):
+        value = context[FORM_NAME_SCOPED][self.fieldname].value() or {}
+        value.update(self.formset_kwargs)
+        return context[FORM_NAME_SCOPED][self.fieldname].field.formsetclass(**value)
+
+    def render(self, context):
+        formset = self.get_formset(context)
+        localcontext = dict(context)
+
+        # management form
+        localcontext[FORM_NAME_SCOPED] = formset.management_form
+        for field in formset.management_form:
+            yield from FormField(field.name).render(localcontext)
+
+        # forms, correct form-value for each form item will be set by super().render
+        # wrapping things is a bit unfortunate but the quickest way to do it now
+        declared_fields = [
+            f.fieldname
+            for f in plisplate.filter(lambda e: isinstance(e, FormField), self)
+        ]
+        internal_fields = [
+            field for field in formset.empty_form.fields if field not in declared_fields
+        ]
+        for field in internal_fields:
+            self.append(FormField(field))
+
+        yield f'<div id="formset_{formset.prefix}_container">'
+        yield from super().render(context)
+        yield "</div>"
+
+        # empty/template form
+        localcontext[FORM_NAME_SCOPED] = formset.empty_form
+        yield from plisplate.DIV(
+            plisplate.DIV(*[FormField(f.name) for f in formset.empty_form]),
+            id=f"empty_{ formset.prefix }_form",
+            _class="template-form",
+            style="display:none;",
+        ).render(localcontext)
+
+        # add-new-form button
+        yield from plisplate.DIV(
+            Button(
+                _("Add"),
+                id=f"add_{formset.prefix}_button",
+                onclick=f"formset_add('{ formset.prefix }', '#formset_{ formset.prefix }_container');",
+                icon="add",
+                notext=True,
+                small=True,
+            ),
+            _class="bx--form-item",
+        ).render(localcontext)
+        yield from plisplate.SCRIPT(
+            f"""document.addEventListener("DOMContentLoaded", e => init_formset("{ formset.prefix }"));"""
+        ).render(localcontext)
+
     def __repr__(self):
-        return f"FormField({self.fieldname}, {self.formset_kwargs})"
+        return f"FormSet({self.fieldname}, {self.formset_kwargs})"
 
 
 class HiddenInput(plisplate.INPUT):
-    def __init__(self, fieldname):
+    def __init__(self, fieldname, widgetattributes, **attributes):
         self.fieldname = fieldname
-        super().__init__(type="hidden")
+        super().__init__(type="hidden", **{**widgetattributes, **attributes})
 
     def render(self, context):
         boundfield = context[FORM_NAME_SCOPED][self.fieldname]
-        self.attributes["required"] = False
+        self.attributes["id"] = boundfield.auto_id
         if boundfield is not None:
             self.attributes["name"] = boundfield.html_name
             if boundfield.value() is not None:
@@ -104,7 +168,14 @@ class CsrfToken(plisplate.INPUT):
         return super().render(context)
 
 
-def _mapfield(field, fieldtype):
+def _mapfield(
+    field, fieldtype, elementattributes={}, widgetattributes={}, only_initial=False
+):
+    from .select import Select
+    from .text_input import PasswordInput, TextInput
+    from .date_picker import DatePicker
+    from .text_area import TextArea
+
     WIDGET_MAPPING = {
         forms.TextInput: TextInput,
         forms.NumberInput: TextInput,  # TODO
@@ -112,10 +183,10 @@ def _mapfield(field, fieldtype):
         forms.URLInput: TextInput,  # TODO
         forms.PasswordInput: PasswordInput,
         forms.HiddenInput: HiddenInput,
-        forms.DateInput: TextInput,  # TODO
+        forms.DateInput: DatePicker,
         forms.DateTimeInput: TextInput,  # TODO
         forms.TimeInput: TextInput,  # TODO
-        forms.Textarea: TextInput,  # TODO
+        forms.Textarea: TextArea,
         forms.CheckboxInput: TextInput,  # TODO
         forms.Select: Select,
         forms.NullBooleanSelect: TextInput,  # TODO
@@ -128,10 +199,39 @@ def _mapfield(field, fieldtype):
         forms.SplitDateTimeWidget: TextInput,  # TODO
         forms.SplitHiddenDateTimeWidget: TextInput,  # TODO
         forms.SelectDateWidget: TextInput,  # TODO
+        # 3rd party widgets
         django_filters.widgets.DateRangeWidget: TextInput,  # TODO
+        LazySelect: Select,
     }
-    if fieldtype:
-        return fieldtype(fieldname=field.name, **field.field.widget.attrs)
-    return WIDGET_MAPPING[type(field.field.widget)](
-        fieldname=field.name, **field.field.widget.attrs
+
+    if field.field.localize:
+        field.field.widget.is_localized = True
+    widgetattributes = field.build_widget_attrs(widgetattributes, field.field.widget)
+    if field.auto_id and "id" not in field.field.widget.attrs:
+        widgetattributes.setdefault(
+            "id", field.html_initial_id if only_initial else field.auto_id
+        )
+    widgetattributes["name"] = (
+        field.html_initial_name if only_initial else field.html_name
+    )
+    value = field.field.widget.format_value(field.value())
+    if value is not None:
+        widgetattributes["value"] = value
+
+    if fieldtype is None:
+        fieldtype = WIDGET_MAPPING[type(field.field.widget)]
+    if (
+        field.field.show_hidden_initial and fieldtype != HiddenInput
+    ):  # prevent infinte recursion
+        return plisplate.BaseElement(
+            fieldtype(
+                fieldname=field.name,
+                widgetattributes=widgetattributes,
+                **elementattributes,
+            ),
+            _mapfield(field, HiddenInput, only_initial=True),
+        )
+
+    return fieldtype(
+        fieldname=field.name, widgetattributes=widgetattributes, **elementattributes
     )

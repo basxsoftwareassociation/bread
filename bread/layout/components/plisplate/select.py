@@ -2,9 +2,8 @@ from django.utils.translation import gettext as _
 
 import plisplate
 
+from .form import FORM_NAME_SCOPED
 from .icon import Icon
-
-FORM_NAME_SCOPED = "__plispate_form__"
 
 
 class Select(plisplate.DIV):
@@ -12,13 +11,16 @@ class Select(plisplate.DIV):
     SELECT = 1
 
     def __init__(
-        self, fieldname, light=False, inline=False, **attributes,
+        self, fieldname, light=False, inline=False, widgetattributes={}, **attributes,
     ):
         self.fieldname = fieldname
         attributes["_class"] = attributes.get("_class", "") + " bx--form-item"
+        widgetattributes["_class"] = (
+            widgetattributes.get("_class", "") + " bx--select-input"
+        )
 
         select_wrapper = plisplate.DIV(
-            plisplate.SELECT(_class="bx--select-input"),
+            plisplate.SELECT(**widgetattributes),
             Icon(
                 "chevron--down", size=16, _class="bx--select__arrow", aria_hidden="true"
             ),
@@ -48,17 +50,11 @@ class Select(plisplate.DIV):
 
         if boundfield.field.disabled:
             self.label.attributes["_class"] += " bx--label--disabled"
-            self.select.attributes["disabled"] = True
         if boundfield is not None:
             self.label.attributes["_for"] = boundfield.id_for_label
             self.label.append(boundfield.label)
             if not boundfield.field.required:
                 self.label.append(_(" (optional)"))
-            else:
-                self.select.attributes["required"] = True
-            if boundfield.auto_id:
-                self.select.attributes["id"] = boundfield.auto_id
-            self.select.attributes["name"] = boundfield.html_name
 
             for group_name, subgroup, index in boundfield.field.widget.optgroups(
                 boundfield.name,

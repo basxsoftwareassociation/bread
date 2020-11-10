@@ -93,7 +93,7 @@ class FormsetField(forms.Field):
                 for field, errorlist in formerrors.items():
                     for error in errorlist:
                         if isinstance(error, str):
-                            error = ValidationError(f"A Form has errors")
+                            error = ValidationError("A Form has errors")
                         raise error
 
     def _coerce(self, value):
