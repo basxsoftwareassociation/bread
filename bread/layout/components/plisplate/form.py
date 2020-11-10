@@ -65,7 +65,7 @@ and return the correct HTML, based on the widget of the form field or on the pas
         self.elementattributes = elementattributes
 
     def render(self, context):
-        return _mapfield(
+        return _mapwidget(
             context[FORM_NAME_SCOPED][self.fieldname],
             self.fieldtype,
             self.elementattributes,
@@ -101,8 +101,7 @@ class FormSetField(plisplate.Iterator):
         # forms, correct form-value for each form item will be set by super().render
         # wrapping things is a bit unfortunate but the quickest way to do it now
         declared_fields = [
-            f.fieldname
-            for f in plisplate.filter(lambda e: isinstance(e, FormField), self)
+            f.fieldname for f in self.filter(lambda e: isinstance(e, FormField))
         ]
         internal_fields = [
             field for field in formset.empty_form.fields if field not in declared_fields
@@ -111,13 +110,15 @@ class FormSetField(plisplate.Iterator):
             self.append(FormField(field))
 
         yield f'<div id="formset_{formset.prefix}_container">'
-        yield from super().render(context)
+        for form in formset:
+            localcontext[FORM_NAME_SCOPED] = form
+            yield from super().render_children(localcontext)
         yield "</div>"
 
         # empty/template form
         localcontext[FORM_NAME_SCOPED] = formset.empty_form
         yield from plisplate.DIV(
-            plisplate.DIV(*[FormField(f.name) for f in formset.empty_form]),
+            plisplate.DIV(*[e for e in self]),
             id=f"empty_{ formset.prefix }_form",
             _class="template-form",
             style="display:none;",
@@ -168,33 +169,34 @@ class CsrfToken(plisplate.INPUT):
         return super().render(context)
 
 
-def _mapfield(
+def _mapwidget(
     field, fieldtype, elementattributes={}, widgetattributes={}, only_initial=False
 ):
     from .select import Select
     from .text_input import PasswordInput, TextInput
     from .date_picker import DatePicker
     from .text_area import TextArea
+    from .checkbox import Checkbox
 
     WIDGET_MAPPING = {
         forms.TextInput: TextInput,
-        forms.NumberInput: TextInput,  # TODO
+        forms.NumberInput: TextInput,  # TODO HIGH
         forms.EmailInput: TextInput,  # TODO
         forms.URLInput: TextInput,  # TODO
         forms.PasswordInput: PasswordInput,
         forms.HiddenInput: HiddenInput,
         forms.DateInput: DatePicker,
         forms.DateTimeInput: TextInput,  # TODO
-        forms.TimeInput: TextInput,  # TODO
+        forms.TimeInput: TextInput,  # TODO HIGH
         forms.Textarea: TextArea,
-        forms.CheckboxInput: TextInput,  # TODO
+        forms.CheckboxInput: Checkbox,
         forms.Select: Select,
-        forms.NullBooleanSelect: TextInput,  # TODO
-        forms.SelectMultiple: TextInput,  # TODO
-        forms.RadioSelect: TextInput,  # TODO
-        forms.CheckboxSelectMultiple: TextInput,  # TODO
-        forms.FileInput: TextInput,  # TODO
-        forms.ClearableFileInput: TextInput,  # TODO
+        forms.NullBooleanSelect: Select,
+        forms.SelectMultiple: TextInput,  # TODO HIGH
+        forms.RadioSelect: TextInput,  # TODO HIGH
+        forms.CheckboxSelectMultiple: TextInput,  # TODO HIGH
+        forms.FileInput: TextInput,  # TODO HIGH
+        forms.ClearableFileInput: TextInput,  # TODO HIGH
         forms.MultipleHiddenInput: TextInput,  # TODO
         forms.SplitDateTimeWidget: TextInput,  # TODO
         forms.SplitHiddenDateTimeWidget: TextInput,  # TODO
@@ -229,9 +231,22 @@ def _mapfield(
                 widgetattributes=widgetattributes,
                 **elementattributes,
             ),
-            _mapfield(field, HiddenInput, only_initial=True),
+            _mapwidget(field, HiddenInput, only_initial=True),
         )
 
     return fieldtype(
         fieldname=field.name, widgetattributes=widgetattributes, **elementattributes
     )
+
+
+class ErrorList(plisplate.DIV):
+    def __init__(self, errors):
+        super().__init__(
+            plisplate.UL(*[plisplate.LI(e) for e in errors]),
+            _class="bx--form-requirement",
+        )
+
+
+class HelperText(plisplate.DIV):
+    def __init__(self, helpertext):
+        super().__init__(helpertext, _class="bx--form__helper-text")

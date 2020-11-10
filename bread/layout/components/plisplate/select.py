@@ -2,7 +2,7 @@ from django.utils.translation import gettext as _
 
 import plisplate
 
-from .form import FORM_NAME_SCOPED
+from .form import FORM_NAME_SCOPED, ErrorList, HelperText
 from .icon import Icon
 
 
@@ -81,21 +81,15 @@ class Select(plisplate.DIV):
                     self.select.append(group)
 
             if boundfield.help_text:
-                self[0].append(
-                    plisplate.DIV(boundfield.help_text, _class="bx--form__helper-text")
-                )
+                self[0].append(HelperText(boundfield.help_text))
             if boundfield.errors:
                 self[0].attributes["_class"] += " bx--select--invalid"
                 self[0][1].attributes["data-invalid"] = True
                 self[0][1].append(
                     Icon("warning--filled", size=16, _class="bx--select__invalid-icon",)
                 )
-                errormsg = plisplate.DIV(
-                    plisplate.UL(*[plisplate.LI(e) for e in boundfield.errors]),
-                    _class="bx--form-requirement",
-                )
                 if self.inline:
-                    self[0][1][0].append(errormsg)
+                    self[0][1][0].append(ErrorList(boundfield.errors))
                 else:
-                    self[0][1].append(errormsg)
+                    self[0][1].append(ErrorList(boundfield.errors))
         return super().render(context)

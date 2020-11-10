@@ -72,12 +72,9 @@ function _update_add_button(form_prefix) {
 function formset_add(form_prefix, list_container) {
     var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
     var newElementStr = $('#empty_' + form_prefix + '_form').innerHTML.replace(/__prefix__/g, formcount.value)
-    var newElements = new DOMParser().parseFromString(newElementStr, "text/html").getElementsByTagName("body")[0].children;
+    var newElements = new DOMParser().parseFromString(newElementStr, "text/html").getElementsByTagName("body")[0].children[0].children;
     for(let element of newElements) {
         $(list_container).appendChild(element);
-        // $$("[disabled]", element)._.toggleAttribute("disabled", null);
-        initAllChoices(element);
-        // TODO: init carbon elements
     }
     formcount.value = parseInt(formcount.value) + 1;
     _update_add_button(form_prefix);

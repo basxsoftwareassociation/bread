@@ -3,7 +3,7 @@ from django.utils.translation import gettext as _
 import plisplate
 
 from .button import Button
-from .form import FORM_NAME_SCOPED
+from .form import FORM_NAME_SCOPED, ErrorList, HelperText
 from .icon import Icon
 
 
@@ -44,9 +44,7 @@ class TextInput(plisplate.DIV):
             if not boundfield.field.required:
                 self.label.append(_(" (optional)"))
             if boundfield.help_text:
-                self.append(
-                    plisplate.DIV(boundfield.help_text, _class="bx--form__helper-text")
-                )
+                self.append(HelperText(boundfield.help_text))
             if boundfield.errors:
                 self[1].attributes["data-invalid"] = True
                 self[1].append(
@@ -56,12 +54,7 @@ class TextInput(plisplate.DIV):
                         _class="bx--text-input__invalid-icon",
                     )
                 )
-                self.append(
-                    plisplate.DIV(
-                        plisplate.UL(*[plisplate.LI(e) for e in boundfield.errors]),
-                        _class="bx--form-requirement",
-                    )
-                )
+                self.append(ErrorList(boundfield.errors))
         return super().render(context)
 
 

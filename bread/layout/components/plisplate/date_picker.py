@@ -6,7 +6,7 @@ from django.utils.translation import gettext as _
 
 import plisplate
 
-from .form import FORM_NAME_SCOPED
+from .form import FORM_NAME_SCOPED, ErrorList, HelperText
 from .icon import Icon
 
 
@@ -71,16 +71,13 @@ class DatePicker(plisplate.DIV):
     def render(self, context):
         boundfield = context[FORM_NAME_SCOPED][self.fieldname]
 
-        if boundfield.field.disabled:
-            self.label.attributes["_class"] += " bx--label--disabled"
-            self.input.attributes["disabled"] = True
         if boundfield is not None:
+            if boundfield.field.disabled:
+                self.label.attributes["_class"] += " bx--label--disabled"
             self.label.attributes["_for"] = boundfield.id_for_label
             self.label.append(boundfield.label)
             if not boundfield.field.required:
                 self.label.append(_(" (optional)"))
-            else:
-                self.input.attributes["required"] = True
 
             dateformat = (
                 boundfield.field.widget.format
@@ -94,24 +91,10 @@ class DatePicker(plisplate.DIV):
             else:
                 self.input.attributes["data_date_format"] = dateformat_widget
 
-            if boundfield.auto_id:
-                self.input.attributes["id"] = boundfield.auto_id
-            self.input.attributes["name"] = boundfield.html_name
-            value = boundfield.field.widget.format_value(boundfield.value())
-            if value is not None:
-                self.input.attributes["value"] = value
             if boundfield.help_text:
-                self[0][0].append(
-                    plisplate.DIV(boundfield.help_text, _class="bx--form__helper-text")
-                )
+                self[0][0].append(HelperText(boundfield.help_text))
             if boundfield.errors:
                 self.input.attributes["data-invalid"] = True
-                self[0][0].append(
-                    plisplate.DIV(
-                        plisplate.UL(*[plisplate.LI(e) for e in boundfield.errors]),
-                        _class="bx--form-requirement",
-                    )
-                )
                 self[1].append(
                     Icon(
                         "warning--filled",
@@ -119,4 +102,5 @@ class DatePicker(plisplate.DIV):
                         _class="bx--text-input__invalid-icon",
                     )
                 )
+                self[0][0].append(ErrorList(boundfield.errors))
         return super().render(context)
