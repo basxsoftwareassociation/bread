@@ -6,7 +6,6 @@ an argument "admin" which is an instance of the according BreadAdmin class
 """
 import urllib
 
-from crispy_forms.utils import TEMPLATE_PACK
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import DeleteView as DjangoDeleteView
@@ -18,7 +17,7 @@ from ..utils import CustomizableClass
 class DeleteView(
     CustomizableClass, PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView
 ):
-    template_name = f"{TEMPLATE_PACK}/confirm_delete.html"
+    template_name = "carbon_design/confirm_delete.html"
     admin = None
     accept_global_perms = True
 

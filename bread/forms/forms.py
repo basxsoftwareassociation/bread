@@ -36,7 +36,6 @@ def _get_form_fields_from_layout(layout):
 
 def breadmodelform_factory(request, model, layout, instance, baseformclass):
     """Returns a form class which can handle inline-modelform sets and generic foreign keys.
-    Also enable crispy forms.
     """
     formfieldelements = _get_form_fields_from_layout(layout)
 
@@ -193,8 +192,6 @@ def _formfield_callback_with_request(field, request, model):
 
 # TODO: the following custom forms could and probably shoudl be replace with template filters or tags
 class FilterForm(forms.Form):
-    """Helper class to enable crispy-forms on the filter-forms."""
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.plisplate = plisplate.form.Form.from_django_form(self, method="GET")

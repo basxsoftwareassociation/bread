@@ -1,7 +1,6 @@
 import copy
 
 from crispy_forms.layout import Layout
-from crispy_forms.utils import TEMPLATE_PACK
 from django.views.generic import DetailView
 from guardian.mixins import PermissionRequiredMixin
 
@@ -16,7 +15,7 @@ from ..utils import (
 
 
 class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
-    template_name = f"{TEMPLATE_PACK}/detail.html"
+    template_name = "carbon_desgin/detail.html"
     admin = None
     fields = None
     sidebarfields = []
