@@ -94,7 +94,6 @@ class FormSetField(plisplate.Iterator):
 
     def get_formset(self, context):
         value = context[FORM_NAME_SCOPED][self.fieldname].value() or {}
-        value.update(self.formset_kwargs)
         return context[FORM_NAME_SCOPED][self.fieldname].field.formsetclass(**value)
 
     def render(self, context):
