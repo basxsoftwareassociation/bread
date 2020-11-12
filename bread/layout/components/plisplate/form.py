@@ -1,30 +1,37 @@
 import django_filters
-from django import forms
-from django.utils.translation import gettext as _
 from django_countries.widgets import LazySelect
 
 import plisplate
+from django import forms
+from django.utils.translation import gettext as _
 
 from .button import Button
 from .notification import InlineNotification
 
+# FORM_NAME_SCOPED is a key which will be added to the context and have the value of the current django form
+# We use this in order to let FormField objects directly access the form without needing to pass the formname down to the field
+# Another alternative would be to introduce a parent-link into the whole plisplate object-tree which would allow the FormField to query
+# the its ancestors for a Form-element and get the form-name from there
+# The third, most flexible but also most verbose way would be to pass the form-name to the FormField __init__ method
 FORM_NAME_SCOPED = "__plispate_form__"
 
 
 class Form(plisplate.FORM):
     @classmethod
-    def from_fieldnames(cls, fieldnames, **kwargs):
+    def from_fieldnames(cls, formname, fieldnames, **kwargs):
         return Form.wrap_with_form(
-            *[FormField(fieldname) for fieldname in fieldnames], **kwargs
+            formname, *[FormField(fieldname) for fieldname in fieldnames], **kwargs
         )
 
     @classmethod
-    def wrap_with_form(cls, *elements, **kwargs):
+    def wrap_with_form(cls, formname, *elements, **kwargs):
         submit = Button(_("Submit"))
         submit.attributes["type"] = "submit"
-        return Form(*elements, plisplate.DIV(submit, _class="bx--form-item"), **kwargs)
+        return Form(
+            formname, *elements, plisplate.DIV(submit, _class="bx--form-item"), **kwargs
+        )
 
-    def __init__(self, *children, formname="form", use_csrf=True, **attributes):
+    def __init__(self, formname, *children, use_csrf=True, **attributes):
         self.formname = formname
         defaults = {"method": "POST", "autocomplete": "off"}
         defaults.update(attributes)
@@ -33,9 +40,10 @@ class Form(plisplate.FORM):
         super().__init__(*children, **defaults)
 
     def render(self, context):
-        c = dict(context)
-        form = c[self.formname]
-        c[FORM_NAME_SCOPED] = form
+        # make a copy in order prevent overriding existing form variables in context
+        localcontext = dict(context)
+        form = localcontext[self.formname]
+        localcontext[FORM_NAME_SCOPED] = form
         if form.non_field_errors():
             for error in form.non_field_errors():
                 self.insert(0, InlineNotification(_("Form error"), error, kind="error"))
@@ -49,7 +57,7 @@ class Form(plisplate.FORM):
                 )
         if form.is_multipart() and "enctype" not in self.attributes:
             self.attributes["enctype"] = "multipart/form-data"
-        return super().render(c)
+        return super().render(localcontext)
 
 
 class FormField(plisplate.BaseElement):
@@ -91,6 +99,8 @@ class FormSetField(plisplate.Iterator):
 
     def render(self, context):
         formset = self.get_formset(context)
+
+        # make a copy in order prevent overriding existing form variables in context
         localcontext = dict(context)
 
         # management form
@@ -98,8 +108,7 @@ class FormSetField(plisplate.Iterator):
         for field in formset.management_form:
             yield from FormField(field.name).render(localcontext)
 
-        # forms, correct form-value for each form item will be set by super().render
-        # wrapping things is a bit unfortunate but the quickest way to do it now
+        # detect internal fields like the delete-checkbox or the order-widget etc.
         declared_fields = [
             f.fieldname for f in self.filter(lambda e: isinstance(e, FormField))
         ]
@@ -109,6 +118,8 @@ class FormSetField(plisplate.Iterator):
         for field in internal_fields:
             self.append(FormField(field))
 
+        # forms, correct form-value for each form item will be set by super().render
+        # wrapping things is a bit unfortunate but the quickest way to do it now
         yield f'<div id="formset_{formset.prefix}_container">'
         for form in formset:
             localcontext[FORM_NAME_SCOPED] = form

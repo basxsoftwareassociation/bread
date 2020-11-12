@@ -2,7 +2,6 @@ import re
 from html.parser import HTMLParser
 
 import django_filters
-from crispy_forms.utils import TEMPLATE_PACK
 from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin
 
@@ -40,7 +39,7 @@ def sortable_fields(model, fieldnames):
 class BrowseView(
     CustomizableClass, LoginRequiredMixin, PermissionListMixin, FilterView
 ):
-    template_name = f"{TEMPLATE_PACK}/list.html"
+    template_name = "carbon_design/list.html"
     admin = None
     fields = None
     filterfields = None
@@ -186,7 +185,7 @@ class BrowseView(
 
 
 class TreeView(BrowseView):
-    template_name = f"{TEMPLATE_PACK}/tree.html"
+    template_name = "carbon_design/tree.html"
     parent_accessor = None
     label_function = None
 

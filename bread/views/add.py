@@ -6,9 +6,10 @@ an argument "admin" which is an instance of the according BreadAdmin class
 """
 import urllib
 
+from guardian.mixins import PermissionRequiredMixin
+
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import CreateView
-from guardian.mixins import PermissionRequiredMixin
 
 from ..layout.components import plisplate
 from ..utils import CustomizableClass, filter_fieldlist
@@ -32,13 +33,13 @@ class AddView(
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
-        field_config = kwargs.get("layout", self.layout)
-        if not isinstance(field_config, plisplate.BaseElement):
-            self.layout = plisplate.form.Form.from_fieldnames(
-                filter_fieldlist(self.model, field_config, for_form=True)
-            )
-        else:
-            self.layout = field_config
+        layout = kwargs.get("layout", self.layout)
+        if not isinstance(layout, plisplate.BaseElement):
+            layout = [
+                plisplate.form.FormField(field)
+                for field in filter_fieldlist(self.model, layout, for_form=True)
+            ]
+        self.layout = plisplate.form.Form.wrap_with_form("form", layout)
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):

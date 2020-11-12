@@ -6,12 +6,13 @@ an argument "admin" which is an instance of the according BreadAdmin class
 """
 import urllib
 
-from django.contrib.messages.views import SuccessMessageMixin
-from django.views.generic import UpdateView
 from guardian.mixins import PermissionRequiredMixin
 
+from django.contrib.messages.views import SuccessMessageMixin
+from django.views.generic import UpdateView
+
 from ..layout.components import plisplate
-from ..utils import CustomizableClass, filter_fieldlist, get_modelfields
+from ..utils import CustomizableClass, filter_fieldlist
 from .util import CustomFormMixin
 
 
@@ -24,7 +25,6 @@ class EditView(
 ):
     template_name = "carbon_design/form.html"
     admin = None
-    sidebarfields = []
     accept_global_perms = True
 
     def get_success_message(self, cleaned_data):
@@ -39,10 +39,7 @@ class EditView(
                 plisplate.form.FormField(field)
                 for field in filter_fieldlist(self.model, layout, for_form=True)
             ]
-        self.layout = plisplate.form.Form.wrap_with_form(layout)
-        self.sidebarfields = get_modelfields(
-            self.model, kwargs.get("sidebarfields", self.sidebarfields)
-        )
+        self.layout = plisplate.form.Form.wrap_with_form("form", layout)
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
