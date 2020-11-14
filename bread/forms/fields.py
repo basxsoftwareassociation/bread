@@ -1,13 +1,11 @@
 import re
 
 from ckeditor_uploader.fields import RichTextUploadingFormField
-from crispy_forms.utils import TEMPLATE_PACK
 from dynamic_preferences.types import StringPreference
 
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 
@@ -112,16 +110,6 @@ class FormsetWidget(forms.Widget):
         self.parent_instance = parent_instance
         self.prefix = self.formsetclass.get_default_prefix()
         self.needs_multipart_form = self.formsetclass().is_multipart()
-
-    def render(self, name, value, attrs=None, renderer=None):
-        return render_to_string(
-            f"{TEMPLATE_PACK}/inline_formset.html",
-            {
-                "formset": self.formsetclass(**(value or {})),
-                "form_show_errors": True,
-                "form_show_labels": True,
-            },
-        )
 
     def value_from_datadict(self, data, files, name):
         # return all form data in order to allow populating the formset
