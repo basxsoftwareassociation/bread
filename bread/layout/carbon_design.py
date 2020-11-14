@@ -1,13 +1,10 @@
 from crispy_forms.layout import HTML, Layout
 from crispy_forms.utils import TEMPLATE_PACK, render_field
+
 from django.forms.formsets import DELETION_FIELD_NAME
 from django.template import Template
 
-from ..templatetags.bread_tags import (
-    carbon_icon,
-    querystring_order,
-    updated_querystring,
-)
+from ..templatetags.bread_tags import querystring_order, updated_querystring
 from . import (
     BUTTON,
     DIV,
@@ -26,12 +23,6 @@ from . import (
     ItemContainer,
     NonFormField,
     with_str_fields_replaced,
-)
-
-from .components.grid import (
-    Grid,
-    Row,
-    Col
 )
 
 # key: the common name, used in places where we need an icon independent from the design system
@@ -73,14 +64,14 @@ class ObjectActionsDropDown(HTMLTag):
 {% object_actions view.admin request object as actions %}
 {% if actions %}
 <div data-overflow-menu role="menu" tabindex="0" aria-label="Actions" aria-expanded="false"class="bx--overflow-menu">
-    {% carbon_icon "overflow-menu--vertical" 16 class="bx--overflow-menu__icon" %}
+    "overflow-menu--vertical" 16 class="bx--overflow-menu__icon"
     <ul class="bx--overflow-menu-options bx--overflow-menu--flip">
         {% for action in actions %}
             <li class="bx--overflow-menu-options__option bx--table-row--menu-option">
                 <button class="bx--overflow-menu-options__btn" onclick="window.location.href='{% linkurl action %}'">
                     <div class="bx--overflow-menu-options__option-content">
                         {% if action.icon %}
-                            {% carbon_icon action.icon 16 %}
+                            " action.icon 16 "
                         {% endif %}{{ action.label }}
                     </div>
                 </button>
@@ -171,17 +162,13 @@ class SortableHeader(NonFormField):
         href = updated_querystring(
             context, "order", querystring_order(order, self.field),
         )
-        icon_asc = carbon_icon("ArrowUp", 16, **{"class": "bx--table-sort__icon"})
-        icon_unsorted = carbon_icon(
-            "ArrowsVertical", 16, **{"class": "bx--table-sort__icon-unsorted"}
-        )
         sortascending = "-" + self.field in order
         sortactive = sortascending or self.field in order
         return render_field(
             BUTTON(
                 SPAN(FieldLabel(self.field), css_class="bx--table-header-label",),
-                HTML(icon_asc),
-                HTML(icon_unsorted),
+                HTML("ArrowUp"),
+                HTML("ArrowsVertical"),
                 css_class="bx--table-sort"
                 + (" bx--table-sort--active" if sortactive else "")
                 + (" bx--table-sort--ascending" if sortascending else ""),

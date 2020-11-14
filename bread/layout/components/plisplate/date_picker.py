@@ -1,12 +1,12 @@
 from _strptime import TimeRE
 
 from bread.utils.datetimeformatstring import to_php_formatstr
+
+import plisplate
 from django.utils import formats
 from django.utils.translation import gettext as _
 
-import plisplate
-
-from .form import FORM_NAME_SCOPED, ErrorList, HelperText
+from .form import ErrorList, HelperText
 from .icon import Icon
 
 
@@ -69,31 +69,30 @@ class DatePicker(plisplate.DIV):
         self.simple = simple
 
     def render(self, context):
-        boundfield = context[FORM_NAME_SCOPED][self.fieldname]
-
-        if boundfield is not None:
-            if boundfield.field.disabled:
+        if self.boundfield is not None:
+            if self.boundfield.field.disabled:
                 self.label.attributes["_class"] += " bx--label--disabled"
-            self.label.attributes["_for"] = boundfield.id_for_label
-            self.label.append(boundfield.label)
-            if not boundfield.field.required:
+            self.label.attributes["_for"] = self.boundfield.id_for_label
+            self.label.append(self.boundfield.label)
+            if not self.boundfield.field.required:
                 self.label.append(_(" (optional)"))
 
             dateformat = (
-                boundfield.field.widget.format
-                or formats.get_format(boundfield.field.widget.format_key)[0]
+                self.boundfield.field.widget.format
+                or formats.get_format(self.boundfield.field.widget.format_key)[0]
             )
             dateformat_widget = to_php_formatstr(
-                boundfield.field.widget.format, boundfield.field.widget.format_key
+                self.boundfield.field.widget.format,
+                self.boundfield.field.widget.format_key,
             )
             if self.simple:
                 self.input.attributes["pattern"] = TimeRE().compile(dateformat).pattern
             else:
                 self.input.attributes["data_date_format"] = dateformat_widget
 
-            if boundfield.help_text:
-                self[0][0].append(HelperText(boundfield.help_text))
-            if boundfield.errors:
+            if self.boundfield.help_text:
+                self[0][0].append(HelperText(self.boundfield.help_text))
+            if self.boundfield.errors:
                 self.input.attributes["data-invalid"] = True
                 self[1].append(
                     Icon(
@@ -102,5 +101,5 @@ class DatePicker(plisplate.DIV):
                         _class="bx--text-input__invalid-icon",
                     )
                 )
-                self[0][0].append(ErrorList(boundfield.errors))
+                self[0][0].append(ErrorList(self.boundfield.errors))
         return super().render(context)

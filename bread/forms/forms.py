@@ -1,3 +1,7 @@
+from dynamic_preferences.forms import GlobalPreferenceForm
+from dynamic_preferences.users.forms import UserPreferenceForm
+from guardian.shortcuts import get_objects_for_user
+
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -5,9 +9,6 @@ from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.core.exceptions import FieldDoesNotExist
 from django.db import transaction
 from django.forms.formsets import DELETION_FIELD_NAME
-from dynamic_preferences.forms import GlobalPreferenceForm
-from dynamic_preferences.users.forms import UserPreferenceForm
-from guardian.shortcuts import get_objects_for_user
 
 from ..layout.components import plisplate
 from .fields import FormsetField, GenericForeignKeyField
@@ -200,16 +201,16 @@ class FilterForm(forms.Form):
 class PreferencesForm(GlobalPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = plisplate.form.Form.from_fieldnames(self.fields)
+        self.plisplate = plisplate.form.Form.from_fieldnames("form", self.fields)
 
 
 class UserPreferencesForm(UserPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = plisplate.form.Form.from_fieldnames(self.fields)
+        self.plisplate = plisplate.form.Form.from_fieldnames("form", self.fields)
 
 
 class BreadAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = plisplate.form.Form.from_fieldnames(self.fields)
+        self.plisplate = plisplate.form.Form.from_fieldnames("form", self.fields)

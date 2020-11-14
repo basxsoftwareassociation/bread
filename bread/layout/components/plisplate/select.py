@@ -1,8 +1,7 @@
+import plisplate
 from django.utils.translation import gettext as _
 
-import plisplate
-
-from .form import FORM_NAME_SCOPED, ErrorList, HelperText
+from .form import ErrorList, HelperText
 from .icon import Icon
 
 
@@ -46,20 +45,18 @@ class Select(plisplate.DIV):
         self.inline = inline
 
     def render(self, context):
-        boundfield = context[FORM_NAME_SCOPED][self.fieldname]
-
-        if boundfield.field.disabled:
+        if self.boundfield.field.disabled:
             self.label.attributes["_class"] += " bx--label--disabled"
-        if boundfield is not None:
-            self.label.attributes["_for"] = boundfield.id_for_label
-            self.label.append(boundfield.label)
-            if not boundfield.field.required:
+        if self.boundfield is not None:
+            self.label.attributes["_for"] = self.boundfield.id_for_label
+            self.label.append(self.boundfield.label)
+            if not self.boundfield.field.required:
                 self.label.append(_(" (optional)"))
 
-            for group_name, subgroup, index in boundfield.field.widget.optgroups(
-                boundfield.name,
-                boundfield.field.widget.get_context(
-                    boundfield.name, boundfield.value(), {}
+            for group_name, subgroup, index in self.boundfield.field.widget.optgroups(
+                self.boundfield.name,
+                self.boundfield.field.widget.get_context(
+                    self.boundfield.name, self.boundfield.value(), {}
                 )["widget"]["value"],
             ):
                 group = self.select
@@ -80,16 +77,16 @@ class Select(plisplate.DIV):
                 if group_name:
                     self.select.append(group)
 
-            if boundfield.help_text:
-                self[0].append(HelperText(boundfield.help_text))
-            if boundfield.errors:
+            if self.boundfield.help_text:
+                self[0].append(HelperText(self.boundfield.help_text))
+            if self.boundfield.errors:
                 self[0].attributes["_class"] += " bx--select--invalid"
                 self[0][1].attributes["data-invalid"] = True
                 self[0][1].append(
                     Icon("warning--filled", size=16, _class="bx--select__invalid-icon",)
                 )
                 if self.inline:
-                    self[0][1][0].append(ErrorList(boundfield.errors))
+                    self[0][1][0].append(ErrorList(self.boundfield.errors))
                 else:
-                    self[0][1].append(ErrorList(boundfield.errors))
+                    self[0][1].append(ErrorList(self.boundfield.errors))
         return super().render(context)

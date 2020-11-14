@@ -14,9 +14,9 @@ from django.db.models.functions import Lower
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
 
-from .. import layout as layoutsystem
 from ..formatters import render_field
 from ..forms.forms import FilterForm
+from ..layout.components import plisplate
 from ..utils import (
     CustomizableClass,
     filter_fieldlist,
@@ -39,7 +39,7 @@ def sortable_fields(model, fieldnames):
 class BrowseView(
     CustomizableClass, LoginRequiredMixin, PermissionListMixin, FilterView
 ):
-    template_name = "carbon_design/list.html"
+    template_name = "carbon_design/browse.html"
     admin = None
     fields = None
     filterfields = None
@@ -50,26 +50,20 @@ class BrowseView(
         self.admin = admin
         self.model = admin.model
 
-        if not self.layout:
-            fieldnames = filter_fieldlist(self.model, kwargs.get("fields", self.fields))
-            self.layout = layoutsystem.default_list_layout(
-                fieldnames, list(sortable_fields(self.model, fieldnames)),
+        self.admin = admin
+        self.model = admin.model
+        layout = kwargs.get("layout", self.layout)
+
+        if not isinstance(layout, plisplate.BaseElement):
+            layout = plisplate.datatable.DataTable(
+                [
+                    (field, lambda c, f=field: getattr(c["row"], f))
+                    for field in list(filter_fieldlist(self.model, layout))
+                ],
+                "object_list",
+                "row",
             )
-        self.fields = list(layoutsystem.get_fieldnames(self.layout))
-
-        # incrementally try to create a filter from the given field and ignore fields which cannot be used
-        kwargs["filterset_fields"] = []
-        for field in filter_fieldlist(
-            self.model, kwargs.get("filterfields", self.filterfields)
-        ):
-            try:
-                generate_filterset_class(
-                    self.model, kwargs["filterset_fields"] + [field]
-                )
-                kwargs["filterset_fields"].append(field)
-            except (TypeError, AssertionError) as e:
-                print(f"Warning: Specified filter field {field} cannot be used: {e}")
-
+        self.layout = layout
         super().__init__(*args, **kwargs)
 
     def get_layout(self):
@@ -108,22 +102,6 @@ class BrowseView(
     def get_queryset(self):
         """Prefetch related tables to speed up queries. Also order result by get-parameters."""
         ret = super().get_queryset()
-        # quite a few try-catches because we want to leverage djangos internal checks on the
-        # prefetchs instead of implementing it again in our own code
-        for accessor in self.fields:
-            try:
-                list(self.model.objects.none().select_related(accessor))
-                ret = ret.select_related(accessor)
-            except FieldError:
-                # make sure all elements of the accessor path are modelfields
-                prefetch_accessors = []
-                for model, field in resolve_relationship(self.model, accessor):
-                    if not field.is_relation:
-                        break
-                    prefetch_accessors.append(field.name)
-                    ret = ret.prefetch_related(
-                        models.constants.LOOKUP_SEP.join(prefetch_accessors)
-                    )
 
         # order fields
         order = self.request.GET.get("order")

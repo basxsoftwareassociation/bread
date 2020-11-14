@@ -4,11 +4,12 @@ The Bread frameworks provides a view util views to provide special functionality
 import re
 
 import pygraphviz
+from django_extensions.management.modelviz import ModelGraph, generate_dot
+
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.views.generic import TemplateView
-from django_extensions.management.modelviz import ModelGraph, generate_dot
 
 
 class Overview(LoginRequiredMixin, TemplateView):
@@ -53,7 +54,7 @@ class DataModel(LoginRequiredMixin, TemplateView):
                 self._render_svg(request.GET.getlist("app")).encode(),
                 content_type="image/svg+xml",
             )
-            response["Content-Disposition"] = f'inline; filename="datamodel.svg"'
+            response["Content-Disposition"] = 'inline; filename="datamodel.svg"'
             return response
         return super().get(request, *args, **kwargs)
 

@@ -1,9 +1,8 @@
+import plisplate
 from django.utils.translation import gettext as _
 
-import plisplate
-
 from .button import Button
-from .form import FORM_NAME_SCOPED, ErrorList, HelperText
+from .form import ErrorList, HelperText
 from .icon import Icon
 
 
@@ -33,19 +32,17 @@ class TextInput(plisplate.DIV):
         self.input = self[1][0]
 
     def render(self, context):
-        boundfield = context[FORM_NAME_SCOPED][self.fieldname]
-
-        if boundfield.field.disabled:
+        if self.boundfield.field.disabled:
             self.label.attributes["_class"] += " bx--label--disabled"
             self.input.attributes["disabled"] = True
-        if boundfield is not None:
-            self.label.attributes["_for"] = boundfield.id_for_label
-            self.label.append(boundfield.label)
-            if not boundfield.field.required:
+        if self.boundfield is not None:
+            self.label.attributes["_for"] = self.boundfield.id_for_label
+            self.label.append(self.boundfield.label)
+            if not self.boundfield.field.required:
                 self.label.append(_(" (optional)"))
-            if boundfield.help_text:
-                self.append(HelperText(boundfield.help_text))
-            if boundfield.errors:
+            if self.boundfield.help_text:
+                self.append(HelperText(self.boundfield.help_text))
+            if self.boundfield.errors:
                 self[1].attributes["data-invalid"] = True
                 self[1].append(
                     Icon(
@@ -54,7 +51,7 @@ class TextInput(plisplate.DIV):
                         _class="bx--text-input__invalid-icon",
                     )
                 )
-                self.append(ErrorList(boundfield.errors))
+                self.append(ErrorList(self.boundfield.errors))
         return super().render(context)
 
 

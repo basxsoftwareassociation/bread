@@ -11,8 +11,8 @@
         data-navigation-menu-panel-label-collapse="Close menu"
         data-navigation-menu-target="#navigation-menu-{{ navigationMenu.idSuffix }}"
     >
-        {% carbon_icon "Close" 20 class="bx--navigation-menu-panel-collapse-icon" aria_hidden="true" %}
-        {% carbon_icon "Menu" 20 class="bx--navigation-menu-panel-expand-icon" aria_hidden="true" %}
+        {% carbon_icon "close" 20 class="bx--navigation-menu-panel-collapse-icon" aria_hidden="true" %}
+        {% carbon_icon "menu" 20 class="bx--navigation-menu-panel-expand-icon" aria_hidden="true" %}
     </button>
     -->
     <a class="bx--header__name" href="{% url "bread_overview" %}" title="{{ header.name }}">
@@ -31,8 +31,8 @@
                 data-navigation-menu-panel-label-collapse="Close menu"
                 data-product-switcher-target="#switcher-{{ actions_i.switcher.idSuffix }}"
             >
-                {% carbon_icon "Fade" 20 class="bx--navigation-menu-panel-expand-icon" aria_hidden="true" %}
-                {% carbon_icon "Close" 20 class="bx--navigation-menu-panel-collapse-icon" aria_hidden="true" %}
+                {% carbon_icon "fade" 20 class="bx--navigation-menu-panel-expand-icon" aria_hidden="true" %}
+                {% carbon_icon "close" 20 class="bx--navigation-menu-panel-collapse-icon" aria_hidden="true" %}
             </button>
         {% endfor %}
     </div>

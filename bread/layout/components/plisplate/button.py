@@ -4,12 +4,12 @@ from .icon import Icon
 
 
 class Button(plisplate.htmltags.BUTTON):
-    """ type: "primary", "secondary", "tertiary", "danger", "ghost" """
+    """ buttontype: "primary", "secondary", "tertiary", "danger", "ghost" """
 
     def __init__(
         self,
         *children,
-        type="primary",
+        buttontype="primary",
         disabled_func=lambda context: False,
         icon=None,
         notext=False,
@@ -17,10 +17,10 @@ class Button(plisplate.htmltags.BUTTON):
         **attributes,
     ):
         self.disabled_func = disabled_func
-        attributes["type"] = "button"
+        attributes["type"] = attributes.get("type", "button")
         attributes["tabindex"] = attributes.get("tabindex", "0")
         attributes["_class"] = (
-            attributes.get("_class", "") + f" bx--btn bx--btn--{type}"
+            attributes.get("_class", "") + f" bx--btn bx--btn--{buttontype}"
         )
         if small:
             attributes["_class"] += " bx--btn--sm "

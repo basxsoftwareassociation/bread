@@ -1,40 +1,44 @@
 import copy
 
 from crispy_forms.layout import Layout
-from django.views.generic import DetailView
 from guardian.mixins import PermissionRequiredMixin
 
-from ..layout import FieldValue, convert_to_formless_layout
+from django.views.generic import DetailView
+
+from ..layout import convert_to_formless_layout
+from ..layout.components import plisplate
 from ..utils import (
     CustomizableClass,
     filter_fieldlist,
-    get_modelfields,
     pretty_fieldname,
     resolve_relationship,
 )
 
 
 class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
-    template_name = "carbon_desgin/detail.html"
     admin = None
     fields = None
-    sidebarfields = []
     accept_global_perms = True
+    layout = None
+    template_name = "carbon_design/dynamic_layout.html"
 
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
-        self.fields_argument = copy.deepcopy(kwargs.get("fields", self.fields))
-
-        self.sidebarfields = get_modelfields(
-            self.model, kwargs.get("sidebarfields", self.sidebarfields)
+        layout = kwargs.get("layout", self.layout)
+        if not isinstance(layout, plisplate.BaseElement):
+            layout = [
+                plisplate.form.FormField(field, widgetattributes={"readonly": True})
+                for field in filter_fieldlist(self.model, layout, for_form=True)
+            ]
+        self.layout = plisplate.BaseElement(
+            plisplate.H2(
+                self.admin.verbose_modelname, " ", plisplate.I(lambda c: c["object"]),
+            ),
+            layout,
         )
-        super().__init__(*args, **kwargs)
 
-    def setup(self, request, *args, **kwargs):
-        self.layout = self.get_layout(request, self.fields_argument)
-        self.fields = self.get_fields(self.layout)
-        return super().setup(request, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def get_layout(self, request, fields_argument):
         """fields_argument is anything that has been passed as ``fields`` to the as_view function"""
@@ -47,16 +51,6 @@ class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
             fields_argument = Layout(*layoutfields)
         convert_to_formless_layout(fields_argument)
         return fields_argument
-
-    def get_fields(self, layout):
-        def _get_fields_recursive(l):
-            if isinstance(l, FieldValue):
-                yield l.field
-            else:
-                for field in getattr(l, "fields", ()):
-                    yield from _get_fields_recursive(field)
-
-        return list(_get_fields_recursive(layout))
 
     def field_values(self):
         for accessor in self.fields:

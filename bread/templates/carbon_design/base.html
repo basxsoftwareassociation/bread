@@ -2,9 +2,13 @@
 {% load static compress bread_tags %}
 
 {% block stylesheets %}
-    {% compress css %}
-        <link rel="stylesheet" type="text/x-scss" href="{% static "design/carbon_design/scss/globals/scss/styles.scss" %}" />
-    {% endcompress %}
+    {% if OVERRIDE_STYLESHEET %}
+        <link rel="stylesheet" type="text/css" href="{{ OVERRIDE_STYLESHEET }}" />
+    {% else %}
+        {% compress css %}
+            <link rel="stylesheet" type="text/x-scss" href="{% static "design/carbon_design/scss/globals/scss/styles.scss" %}" />
+        {% endcompress %}
+    {% endif %}
 {% endblock %}
 
 {% block body %}

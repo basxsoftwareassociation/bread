@@ -3,7 +3,6 @@
 
 {% block content %}
 
-
     {% list_actions view.admin request as actions %}
     {% if actions %}
         <div>
@@ -58,7 +57,7 @@
         </section>
         
         <!-- Data table -->
-        {% crispy_html view.layout %}
+        {% render_plisplate view.layout %}
 
         <!-- Pagination -->
         <div class="bx--pagination" data-pagination>
@@ -137,13 +136,3 @@
     <div>
 
 {% endblock %}
-
-{% block right-panel %}
-    {% if view.filterset_fields %}
-        <form>
-            {% with filter.form as form %}
-                {% render_plisplate filter.form.plisplate %}
-            {% endwith %}
-        </form>
-    {% endif %}
-{% endblock right-panel %}

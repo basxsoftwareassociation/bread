@@ -3,47 +3,63 @@ from django_countries.widgets import LazySelect
 
 import plisplate
 from django import forms
+from django.utils.html import mark_safe
 from django.utils.translation import gettext as _
 
 from .button import Button
 from .notification import InlineNotification
 
-# FORM_NAME_SCOPED is a key which will be added to the context and have the value of the current django form
-# We use this in order to let FormField objects directly access the form without needing to pass the formname down to the field
-# Another alternative would be to introduce a parent-link into the whole plisplate object-tree which would allow the FormField to query
-# the its ancestors for a Form-element and get the form-name from there
-# The third, most flexible but also most verbose way would be to pass the form-name to the FormField __init__ method
-FORM_NAME_SCOPED = "__plispate_form__"
-
 
 class Form(plisplate.FORM):
     @classmethod
-    def from_fieldnames(cls, formname, fieldnames, **kwargs):
+    def from_django_form(cls, form, **kwargs):
+        return Form.from_fieldnames(form, form.fields, **kwargs)
+
+    @classmethod
+    def from_fieldnames(cls, form, fieldnames, **kwargs):
         return Form.wrap_with_form(
-            formname, *[FormField(fieldname) for fieldname in fieldnames], **kwargs
+            form, *[FormField(fieldname) for fieldname in fieldnames], **kwargs
         )
 
     @classmethod
-    def wrap_with_form(cls, formname, *elements, **kwargs):
-        submit = Button(_("Submit"))
-        submit.attributes["type"] = "submit"
-        return Form(
-            formname, *elements, plisplate.DIV(submit, _class="bx--form-item"), **kwargs
-        )
+    def wrap_with_form(cls, form, *elements, **kwargs):
+        if kwargs.get("standalone", True) is True:
+            elements += (
+                plisplate.DIV(
+                    Button(_("Submit"), type="submit"), _class="bx--form-item"
+                ),
+            )
+        return Form(form, *elements, **kwargs)
 
-    def __init__(self, formname, *children, use_csrf=True, **attributes):
-        self.formname = formname
+    def __init__(self, form, *children, use_csrf=True, standalone=True, **attributes):
+        """
+        form: lazy evaluated value which should resolve to the form object
+        children: any child elements, can be formfields or other
+        use_csrf: add a CSRF input, but only for POST submission and standalone forms
+        standalone: if false, will not add CSRF token and will not render enclosing form-tag
+        """
+        self.form = plisplate.resolve_lazy(form)
+        self.standalone = standalone
         defaults = {"method": "POST", "autocomplete": "off"}
         defaults.update(attributes)
-        if defaults["method"].upper() == "POST" and use_csrf is not False:
+        if (
+            defaults["method"].upper() == "POST"
+            and use_csrf is not False
+            and standalone is True
+        ):
             children = (CsrfToken(),) + children
         super().__init__(*children, **defaults)
 
+    def formfieldelements(self):
+        return self.filter(
+            lambda elem, parents: isinstance(elem, FormChild)
+            and not any((isinstance(p, Form) for p in parents[1:]))
+        )
+
     def render(self, context):
-        # make a copy in order prevent overriding existing form variables in context
-        localcontext = dict(context)
-        form = localcontext[self.formname]
-        localcontext[FORM_NAME_SCOPED] = form
+        form = self.form(context)
+        for formfield in self.formfieldelements():
+            formfield.form = form
         if form.non_field_errors():
             for error in form.non_field_errors():
                 self.insert(0, InlineNotification(_("Form error"), error, kind="error"))
@@ -55,12 +71,18 @@ class Form(plisplate.FORM):
                         _("Form error: "), hidden.name, error, kind="error"
                     ),
                 )
-        if form.is_multipart() and "enctype" not in self.attributes:
-            self.attributes["enctype"] = "multipart/form-data"
-        return super().render(localcontext)
+        if self.standalone:
+            if form.is_multipart() and "enctype" not in self.attributes:
+                self.attributes["enctype"] = "multipart/form-data"
+            return super().render(context)
+        return super().render_children(context)
 
 
-class FormField(plisplate.BaseElement):
+class FormChild:
+    """Used to mark elements which need the "form" attribute set by the parent form before rendering"""
+
+
+class FormField(FormChild, plisplate.BaseElement):
     """Dynamic element which will resolve the field with the given name
 and return the correct HTML, based on the widget of the form field or on the passed argument 'fieldtype'"""
 
@@ -71,10 +93,11 @@ and return the correct HTML, based on the widget of the form field or on the pas
         self.fieldtype = fieldtype
         self.widgetattributes = widgetattributes
         self.elementattributes = elementattributes
+        self.form = None  # will be set by the render method of the parent method
 
     def render(self, context):
         return _mapwidget(
-            context[FORM_NAME_SCOPED][self.fieldname],
+            self.form[self.fieldname],
             self.fieldtype,
             self.elementattributes,
             self.widgetattributes,
@@ -84,32 +107,26 @@ and return the correct HTML, based on the widget of the form field or on the pas
         return f"FormField({self.fieldname})"
 
 
-class FormSetField(plisplate.Iterator):
+class FormSetField(FormChild, plisplate.BaseElement):
     def __init__(self, fieldname, *children, **formset_kwargs):
-        super().__init__(
-            lambda context: self.get_formset(context), FORM_NAME_SCOPED, *children,
-        )
+        super().__init__(*children)
         self.fieldname = fieldname
         self.formset_kwargs = formset_kwargs
 
-    def get_formset(self, context):
-        value = context[FORM_NAME_SCOPED][self.fieldname].value() or {}
-        return context[FORM_NAME_SCOPED][self.fieldname].field.formsetclass(**value)
-
     def render(self, context):
-        formset = self.get_formset(context)
-
-        # make a copy in order prevent overriding existing form variables in context
-        localcontext = dict(context)
+        formset = self.form[self.fieldname].field.formsetclass(
+            **(self.form[self.fieldname].value() or {})
+        )
 
         # management form
-        localcontext[FORM_NAME_SCOPED] = formset.management_form
-        for field in formset.management_form:
-            yield from FormField(field.name).render(localcontext)
+        yield from Form.from_django_form(
+            formset.management_form, standalone=False
+        ).render(context)
 
-        # detect internal fields like the delete-checkbox or the order-widget etc.
+        # detect internal fields like the delete-checkbox or the order-widget etc. and add them
         declared_fields = [
-            f.fieldname for f in self.filter(lambda e: isinstance(e, FormField))
+            f.fieldname
+            for f in self.filter(lambda e, ancestors: isinstance(e, FormField))
         ]
         internal_fields = [
             field for field in formset.empty_form.fields if field not in declared_fields
@@ -117,22 +134,23 @@ class FormSetField(plisplate.Iterator):
         for field in internal_fields:
             self.append(FormField(field))
 
-        # forms, correct form-value for each form item will be set by super().render
-        # wrapping things is a bit unfortunate but the quickest way to do it now
+        # wrapping things with the div is a bit ugly but the quickest way to do it now
         yield f'<div id="formset_{formset.prefix}_container">'
         for form in formset:
-            localcontext[FORM_NAME_SCOPED] = form
-            yield from super().render_children(localcontext)
+            yield from Form.wrap_with_form(form, *self, standalone=False).render(
+                context
+            )
         yield "</div>"
 
         # empty/template form
-        localcontext[FORM_NAME_SCOPED] = formset.empty_form
         yield from plisplate.DIV(
-            plisplate.DIV(*[e for e in self]),
+            plisplate.DIV(
+                Form.wrap_with_form(formset.empty_form, *self, standalone=False)
+            ),
             id=f"empty_{ formset.prefix }_form",
             _class="template-form",
             style="display:none;",
-        ).render(localcontext)
+        ).render(context)
 
         # add-new-form button
         yield from plisplate.DIV(
@@ -145,31 +163,32 @@ class FormSetField(plisplate.Iterator):
                 small=True,
             ),
             _class="bx--form-item",
-        ).render(localcontext)
+        ).render(context)
         yield from plisplate.SCRIPT(
-            f"""document.addEventListener("DOMContentLoaded", e => init_formset("{ formset.prefix }"));"""
-        ).render(localcontext)
+            mark_safe(
+                f"""document.addEventListener("DOMContentLoaded", e => init_formset("{ formset.prefix }"));"""
+            )
+        ).render(context)
 
     def __repr__(self):
         return f"FormSet({self.fieldname}, {self.formset_kwargs})"
 
 
-class HiddenInput(plisplate.INPUT):
+class HiddenInput(FormChild, plisplate.INPUT):
     def __init__(self, fieldname, widgetattributes, **attributes):
         self.fieldname = fieldname
         super().__init__(type="hidden", **{**widgetattributes, **attributes})
 
     def render(self, context):
-        boundfield = context[FORM_NAME_SCOPED][self.fieldname]
-        self.attributes["id"] = boundfield.auto_id
-        if boundfield is not None:
-            self.attributes["name"] = boundfield.html_name
-            if boundfield.value() is not None:
-                self.attributes["value"] = boundfield.value()
+        self.attributes["id"] = self.boundfield.auto_id
+        if self.boundfield is not None:
+            self.attributes["name"] = self.boundfield.html_name
+            if self.boundfield.value() is not None:
+                self.attributes["value"] = self.boundfield.value()
         return super().render(context)
 
 
-class CsrfToken(plisplate.INPUT):
+class CsrfToken(FormChild, plisplate.INPUT):
     def __init__(self):
         super().__init__(type="hidden")
 
@@ -232,21 +251,20 @@ def _mapwidget(
 
     if fieldtype is None:
         fieldtype = WIDGET_MAPPING[type(field.field.widget)]
-    if (
-        field.field.show_hidden_initial and fieldtype != HiddenInput
-    ):  # prevent infinte recursion
-        return plisplate.BaseElement(
-            fieldtype(
-                fieldname=field.name,
-                widgetattributes=widgetattributes,
-                **elementattributes,
-            ),
-            _mapwidget(field, HiddenInput, only_initial=True),
-        )
 
-    return fieldtype(
+    ret = fieldtype(
         fieldname=field.name, widgetattributes=widgetattributes, **elementattributes
     )
+    ret.boundfield = field
+
+    if (
+        field.field.show_hidden_initial and fieldtype != HiddenInput
+    ):  # special case, prevent infinte recursion
+        return plisplate.BaseElement(
+            ret, _mapwidget(field, HiddenInput, only_initial=True),
+        )
+
+    return ret
 
 
 class ErrorList(plisplate.DIV):

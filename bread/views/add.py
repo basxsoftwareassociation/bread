@@ -9,6 +9,7 @@ import urllib
 from guardian.mixins import PermissionRequiredMixin
 
 from django.contrib.messages.views import SuccessMessageMixin
+from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 
 from ..layout.components import plisplate
@@ -23,9 +24,10 @@ class AddView(
     PermissionRequiredMixin,
     CreateView,
 ):
-    template_name = "carbon_design/form.html"
+    template_name = "carbon_design/dynamic_layout.html"
     admin = None
     accept_global_perms = True
+    layout = None
 
     def get_success_message(self, cleaned_data):
         return f"Added {self.object}"
@@ -39,7 +41,10 @@ class AddView(
                 plisplate.form.FormField(field)
                 for field in filter_fieldlist(self.model, layout, for_form=True)
             ]
-        self.layout = plisplate.form.Form.wrap_with_form("form", layout)
+        self.layout = plisplate.BaseElement(
+            plisplate.H2(_("Add"), " ", self.admin.verbose_modelname,),
+            plisplate.form.Form.wrap_with_form("form", layout),
+        )
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):

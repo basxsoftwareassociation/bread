@@ -2,7 +2,7 @@ from django.conf import settings
 
 
 def bread_context(request):
-    ret = {}
+    ret = {"OVERRIDE_STYLESHEET": getattr(settings, "OVERRIDE_STYLESHEET", None)}
     return ret
 
 

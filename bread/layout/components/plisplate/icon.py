@@ -1,10 +1,10 @@
 import logging
 import os
 
+import plisplate
 from django.contrib.staticfiles import finders
 from django.core.cache import cache
-
-import plisplate
+from django.utils.html import mark_safe
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +36,8 @@ class Icon(plisplate.htmltags.SVG):
             )
             if not path:
                 logger.error(f"Missing icon: {name}.svg")
-                return f"Missing icon {name}.svg"
+                super().__init__(name, **attributes)
+                return
             with open(path) as f:
                 cache.set(name, f.read())
-        super().__init__(plisplate.Raw(cache.get(name)), **attributes)
+        super().__init__(mark_safe(cache.get(name)), **attributes)

@@ -2,12 +2,13 @@ import re
 
 from ckeditor_uploader.fields import RichTextUploadingFormField
 from crispy_forms.utils import TEMPLATE_PACK
+from dynamic_preferences.types import StringPreference
+
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from dynamic_preferences.types import StringPreference
 
 
 class GenericForeignKeyField(forms.TypedChoiceField):
@@ -110,6 +111,7 @@ class FormsetWidget(forms.Widget):
         self.formsetclass = formsetclass
         self.parent_instance = parent_instance
         self.prefix = self.formsetclass.get_default_prefix()
+        self.needs_multipart_form = self.formsetclass().is_multipart()
 
     def render(self, name, value, attrs=None, renderer=None):
         return render_to_string(
