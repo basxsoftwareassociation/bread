@@ -61,9 +61,9 @@ class BrowseView(
                     for field in list(filter_fieldlist(self.model, layout))
                 ],
                 plisplate.C("object_list"),
-                plisplate.Object,
+                plisplate.ObjectContext,
             )
-        self.layout = plisplate.Model(self.model, layout)
+        self.layout = plisplate.ModelContext(self.model, layout)
         super().__init__(*args, **kwargs)
 
     def get_layout(self):

@@ -3,6 +3,12 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 
 
+def pretty_modelname(model, plural=False):
+    if plural:
+        return title(model._meta.verbose_name_plural)
+    return title(model._meta.verbose_name)
+
+
 def pretty_fieldname(field):
     """Will print a human readable name for a field"""
     if isinstance(field, str):

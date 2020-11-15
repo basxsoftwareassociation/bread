@@ -1,12 +1,13 @@
 import plisplate
 
 
-class DataTable(plisplate.DIV):
+class DataTable(plisplate.BaseElement):
     def __init__(
         self, columns, row_iterator, valueproviderclass, spacing="default", zebra=False,
     ):
         """columns: tuple(header_expression, row_expression)
         spacing: one of "default", "compact", "short", "tall"
+        valueproviderclass: A class which implements ValueProvider which will be passed to the Iterator
         """
         assert spacing in ["default", "compact", "short", "tall"]
         classes = ["bx--data-table"]

@@ -1,4 +1,4 @@
-from bread.utils import pretty_fieldname
+from bread.utils import pretty_fieldname, pretty_modelname
 
 import plisplate
 from plisplate import *  # noqa
@@ -6,16 +6,16 @@ from plisplate import *  # noqa
 from . import button, datatable, form, grid, icon, notification  # noqa
 
 
-class Model(plisplate.ValueProvider):
+class ModelContext(plisplate.ValueProvider):
     """Provides a model to marked child elements"""
 
     attributename = "model"
 
     def __init__(self, model, *children):
-        super().__init__(model, "model", *children)
+        super().__init__(model, *children)
 
 
-class Object(plisplate.ValueProvider):
+class ObjectContext(plisplate.ValueProvider):
     """Provides a model instance to marked child elements """
 
     attributename = "object"
@@ -24,24 +24,38 @@ class Object(plisplate.ValueProvider):
         super().__init__(object, *children)
 
 
-class ModelFieldLabel(Model.ConsumerMixin(), Object.ConsumerMixin()):
+class ModelFieldLabel(ModelContext.ConsumerMixin(), ObjectContext.ConsumerMixin()):
     def __init__(self, fieldname):
         self.fieldname = fieldname
 
     def render(self, context):
-        yield pretty_fieldname(
-            getattr(self, "model", getattr(self, "object", None))._meta.get_field(
-                self.fieldname
-            )
-        )
+        if not hasattr(self, "model") and hasattr(self, "object"):
+            self.model = self.object
+        yield pretty_fieldname(self.model._meta.get_field(self.fieldname))
 
     def __repr__(self):
-        return f"FieldLabel({self.fieldname})"
+        return f"ModelFieldLabel({self.fieldname})"
 
 
-class ModelFieldValue(Object.ConsumerMixin()):
+class ModelName(ModelContext.ConsumerMixin(), ObjectContext.ConsumerMixin()):
+    def __init__(self, plural=False):
+        self.plural = plural
+
+    def render(self, context):
+        if not hasattr(self, "model") and hasattr(self, "object"):
+            self.model = self.object
+        yield pretty_modelname(self.model._meta.get_field(self.fieldname), self.plural)
+
+    def __repr__(self):
+        return f"ModelName({self.fieldname})"
+
+
+class ModelFieldValue(ObjectContext.ConsumerMixin()):
     def __init__(self, fieldname):
         self.fieldname = fieldname
 
     def render(self, context):
         yield from self._try_render(getattr(self.object, self.fieldname, None), context)
+
+    def __repr__(self):
+        return f"ModelFieldValue({self.fieldname})"
