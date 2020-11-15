@@ -43,7 +43,7 @@ class AddView(
             ]
         self.layout = plisplate.BaseElement(
             plisplate.H2(_("Add"), " ", self.admin.verbose_modelname,),
-            plisplate.form.Form.wrap_with_form("form", layout),
+            plisplate.form.Form.wrap_with_form(plisplate.C("form"), layout),
         )
         super().__init__(*args, **kwargs)
 

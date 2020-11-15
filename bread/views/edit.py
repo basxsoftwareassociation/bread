@@ -49,7 +49,7 @@ class EditView(
                 " ",
                 plisplate.I(lambda c: c["object"]),
             ),
-            plisplate.form.Form.wrap_with_form("form", layout),
+            plisplate.form.Form.wrap_with_form(plisplate.C("form"), layout),
         )
         super().__init__(*args, **kwargs)
 

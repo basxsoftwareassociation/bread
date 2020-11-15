@@ -38,7 +38,7 @@ class Form(plisplate.FORM):
         use_csrf: add a CSRF input, but only for POST submission and standalone forms
         standalone: if false, will not add CSRF token and will not render enclosing form-tag
         """
-        self.form = plisplate.resolve_lazy(form)
+        self.form = form
         self.standalone = standalone
         defaults = {"method": "POST", "autocomplete": "off"}
         defaults.update(attributes)
@@ -57,7 +57,11 @@ class Form(plisplate.FORM):
         )
 
     def render(self, context):
-        form = self.form(context)
+        form = (
+            self.form.resolve(context)
+            if isinstance(self.form, plisplate.Lazy)
+            else self.form
+        )
         for formfield in self.formfieldelements():
             formfield.form = form
         if form.non_field_errors():

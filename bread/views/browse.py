@@ -57,13 +57,13 @@ class BrowseView(
         if not isinstance(layout, plisplate.BaseElement):
             layout = plisplate.datatable.DataTable(
                 [
-                    (field, lambda c, f=field: getattr(c["row"], f))
+                    (plisplate.ModelFieldLabel(field), plisplate.ModelFieldValue(field))
                     for field in list(filter_fieldlist(self.model, layout))
                 ],
-                "object_list",
-                "row",
+                plisplate.C("object_list"),
+                plisplate.Object,
             )
-        self.layout = layout
+        self.layout = plisplate.Model(self.model, layout)
         super().__init__(*args, **kwargs)
 
     def get_layout(self):

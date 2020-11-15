@@ -3,7 +3,7 @@ import plisplate
 
 class DataTable(plisplate.DIV):
     def __init__(
-        self, columns, row_iterator, row_variable, spacing="default", zebra=False
+        self, columns, row_iterator, valueproviderclass, spacing="default", zebra=False,
     ):
         """columns: tuple(header_expression, row_expression)
         spacing: one of "default", "compact", "short", "tall"
@@ -21,8 +21,7 @@ class DataTable(plisplate.DIV):
                         *[
                             plisplate.TH(
                                 plisplate.SPAN(
-                                    plisplate.resolve_lazy(column[0]),
-                                    _class="bx--table-header-label",
+                                    column[0], _class="bx--table-header-label",
                                 )
                             )
                             for column in columns
@@ -32,13 +31,8 @@ class DataTable(plisplate.DIV):
                 plisplate.TBODY(
                     plisplate.Iterator(
                         row_iterator,
-                        row_variable,
-                        plisplate.TR(
-                            *[
-                                plisplate.TD(plisplate.resolve_lazy(column[1]))
-                                for column in columns
-                            ]
-                        ),
+                        valueproviderclass,
+                        plisplate.TR(*[plisplate.TD(column[1]) for column in columns]),
                     )
                 ),
                 _class=" ".join(classes),
