@@ -201,16 +201,22 @@ class FilterForm(forms.Form):
 class PreferencesForm(GlobalPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = plisplate.form.Form.from_fieldnames("form", self.fields)
+        self.plisplate = plisplate.form.Form.from_fieldnames(
+            plisplate.C("form"), self.fields
+        )
 
 
 class UserPreferencesForm(UserPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = plisplate.form.Form.from_fieldnames("form", self.fields)
+        self.plisplate = plisplate.form.Form.from_fieldnames(
+            plisplate.C("form"), self.fields
+        )
 
 
 class BreadAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = plisplate.form.Form.from_fieldnames("form", self.fields)
+        self.plisplate = plisplate.form.Form.from_fieldnames(
+            plisplate.C("form"), self.fields
+        )
