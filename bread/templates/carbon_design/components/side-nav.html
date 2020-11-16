@@ -1,4 +1,4 @@
-{% load bread_tags %}
+{% load static compress bread_tags %}
 
 <aside class="bx--side-nav bx--side-nav--rail{% if request.user.preferences.user_interface__navigation_menu_extended %} bx--side-nav--expanded{% endif %}" data-side-nav>
     <nav class="bx--side-nav__navigation" role="navigation" aria-label="Side navigation">
@@ -9,22 +9,28 @@
         <ul class="bx--side-nav__items">
             {% for menugroup, icon, group_active, items in menu %}
             <li class="bx--side-nav__item{% if group_active %} bx--side-nav__item--active{% else %}{% endif %}">
-                <button class="bx--side-nav__submenu" type="button" aria-haspopup="true" aria-expanded="{{ group_active|yesno:"true,false" }}">
-                    {% if icon %}<div class="bx--side-nav__icon">{% carbon_icon icon 32 %}</div>{% endif %}
-                        <span class="bx--side-nav__submenu-title">{{ menugroup }}</span>
-                        <div class="bx--side-nav__icon bx--side-nav__submenu-chevron">
-                            {% carbon_icon "chevron--down" 32 %}
-                        </div>
-                    </button>
-                    <ul class="bx--side-nav__menu">
-                        {% for item, active, itemurl in items %}
-                            <li class="bx--side-nav__menu-item{% if active %} bx--side-nav__menu-item--current{% endif %}" role="none">
-                                <a class="bx--side-nav__link{% if active %} bx--side-nav__link--current{% endif %}" href="{{ itemurl }}">
-                                    <span class="bx--side-nav__link-text">{{ item.link.label }}</span>
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                {% if items|length == 1 %}
+                    <a class="bx--side-nav__link{% if items.0.1 %} bx--side-nav__link--current{% endif %}" href="{{ items.0.2 }}">
+                        <span class="bx--side-nav__link-text">{{ items.0.0.link.label }}</span>
+                    </a>
+                {% else %}
+                    <button class="bx--side-nav__submenu" type="button" aria-haspopup="true" aria-expanded="{{ group_active|yesno:"true,false" }}">
+                        {% if icon %}<div class="bx--side-nav__icon">{% carbon_icon icon 32 %}</div>{% endif %}
+                            <span class="bx--side-nav__submenu-title">{{ menugroup }}</span>
+                            <div class="bx--side-nav__icon bx--side-nav__submenu-chevron">
+                                {% carbon_icon "chevron--down" 32 %}
+                            </div>
+                        </button>
+                        <ul class="bx--side-nav__menu">
+                            {% for item, active, itemurl in items %}
+                                <li class="bx--side-nav__menu-item{% if active %} bx--side-nav__menu-item--current{% endif %}" role="none">
+                                    <a class="bx--side-nav__link{% if active %} bx--side-nav__link--current{% endif %}" href="{{ itemurl }}">
+                                        <span class="bx--side-nav__link-text">{{ item.link.label }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>

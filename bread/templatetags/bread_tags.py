@@ -234,11 +234,11 @@ def menu(request):
                     group.label,
                     group.icon,
                     group.active(request),
-                    (
+                    [
                         (item, item.active(request), item.link.url(request))
                         for item in sorted(group.items)
                         if item.has_permission(request)
-                    ),
+                    ],
                 ]
             )
     if not has_active_menu:
