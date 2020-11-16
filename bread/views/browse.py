@@ -14,9 +14,9 @@ from django.db.models.functions import Lower
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
 
+from .. import layout as _layout  # prevent name clashing
 from ..formatters import render_field
 from ..forms.forms import FilterForm
-from ..layout.components import plisplate
 from ..utils import (
     CustomizableClass,
     filter_fieldlist,
@@ -49,21 +49,22 @@ class BrowseView(
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
+        self.filterset_fields = admin.filterset_fields
 
         self.admin = admin
         self.model = admin.model
         layout = kwargs.get("layout", self.layout)
 
-        if not isinstance(layout, plisplate.BaseElement):
-            layout = plisplate.datatable.DataTable(
+        if not isinstance(layout, _layout.BaseElement):
+            layout = _layout.datatable.DataTable(
                 [
-                    (plisplate.ModelFieldLabel(field), plisplate.ModelFieldValue(field))
+                    (_layout.ModelFieldLabel(field), _layout.ModelFieldValue(field))
                     for field in list(filter_fieldlist(self.model, layout))
                 ],
-                plisplate.C("object_list"),
-                plisplate.ObjectContext,
+                _layout.C("object_list"),
+                _layout.ObjectContext,
             )
-        self.layout = plisplate.ModelContext(self.model, layout)
+        self.layout = _layout.ModelContext(self.model, layout)
         super().__init__(*args, **kwargs)
 
     def get_layout(self):

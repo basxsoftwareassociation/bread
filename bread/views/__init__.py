@@ -1,17 +1,6 @@
-from .add import AddView
-from .browse import BrowseView, TreeView
-from .delete import DeleteView
-from .edit import EditView
-from .read import ReadView
-from .system import DataModel, Overview
-
-__all__ = [
-    "BrowseView",
-    "ReadView",
-    "TreeView",
-    "EditView",
-    "AddView",
-    "DeleteView",
-    "DataModel",
-    "Overview",
-]
+from .add import AddView  # noqa
+from .browse import BrowseView, TreeView  # noqa
+from .delete import DeleteView  # noqa
+from .edit import EditView  # noqa
+from .read import ReadView  # noqa
+from .system import DataModel, Overview  # noqa

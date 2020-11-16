@@ -1,27 +1,25 @@
-from ..base import DIV
-
-# Usage: Grid(Row(Col(elem1, elem2), Col(elem3, elem5)))
+import plisplate
 
 
-class Grid(DIV):
-    def __init__(self, *args, grid_mode=None, **kwargs):
+class Grid(plisplate.DIV):
+    def __init__(self, *children, grid_mode=None, **attributes):
         """
-        grid_mode can be one of None, "narrow", "condensed"
+        grid_mode can be one of None, "narrow", "condensed", "full-width"
         """
-        kwargs["css_class"] = kwargs.get("css_class", "") + " bx--grid"
+        attributes["_class"] = attributes.get("_class", "") + " bx--grid"
         if grid_mode is not None:
-            kwargs["css_class"] += f" bx--grid-{grid_mode}"
-        super().__init__(*args, **kwargs)
+            attributes["_class"] += f" bx--grid-{grid_mode}"
+        super().__init__(*children, **attributes)
 
 
-class Row(DIV):
-    def __init__(self, *args, **kwargs):
-        kwargs["css_class"] = kwargs.get("css_class", "") + " bx--row"
-        super().__init__(*args, **kwargs)
+class Row(plisplate.DIV):
+    def __init__(self, *children, **attributes):
+        attributes["_class"] = attributes.get("_class", "") + " bx--row"
+        super().__init__(*children, **attributes)
 
 
-class Col(DIV):
-    def __init__(self, *args, breakpoint=None, width=None, **kwargs):
+class Col(plisplate.DIV):
+    def __init__(self, *children, breakpoint=None, width=None, **attributes):
         """
         breakpoint: Can be one of "sm", "md", "lg", "xlg", "max"
         """
@@ -29,5 +27,5 @@ class Col(DIV):
         if breakpoint is not None:
             assert width is not None, "When breakpoint is given, width is also required"
             colclass += f"-{breakpoint}-{width}"
-        kwargs["css_class"] = kwargs.get("css_class", "") + f" {colclass}"
-        super().__init__(*args, **kwargs)
+        attributes["_class"] = attributes.get("_class", "") + f" {colclass}"
+        super().__init__(*children, **attributes)

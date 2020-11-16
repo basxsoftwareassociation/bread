@@ -1,3 +1,9 @@
+from dynamic_preferences import views as preferences_views
+from dynamic_preferences.forms import preference_form_builder
+from dynamic_preferences.registries import global_preferences_registry
+from dynamic_preferences.users import views as user_preferences_views
+from dynamic_preferences.users.registries import user_preferences_registry
+
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
@@ -11,16 +17,10 @@ from django.utils.http import urlencode
 from django.utils.text import format_lazy
 from django.views.generic import RedirectView, View
 from django.views.static import serve
-from dynamic_preferences import views as preferences_views
-from dynamic_preferences.forms import preference_form_builder
-from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.users import views as user_preferences_views
-from dynamic_preferences.users.registries import user_preferences_registry
 
 from . import menu
 from . import views as bread_views
 from .forms.forms import BreadAuthenticationForm, PreferencesForm, UserPreferencesForm
-from .layout import ICONS
 from .utils import generate_path_for_view, has_permission, title, try_call
 from .utils.model_helpers import get_concrete_instance
 
@@ -45,6 +45,8 @@ class BreadAdmin:
 
     indexview = None
     """Name of the view which servers as the index for this admin class. Defaults to "browse"."""
+
+    filterset_fields = None
 
     login_required = True
     """If set to true will add the login_required decorator to all views of this admin"""
@@ -152,7 +154,13 @@ class BreadAdmin:
                     pk=concrete.pk,
                     query_arguments={"next": request.get_full_path()},
                 )
-            actions.append(menu.Link(url, "Edit", ICONS["edit"],))
+            actions.append(
+                menu.Link(
+                    url,
+                    "Edit",
+                    "edit",
+                )
+            )
         if "delete" in urls and has_permission(request.user, "delete", object):
             actions.append(
                 menu.Link(
@@ -162,7 +170,7 @@ class BreadAdmin:
                         query_arguments={"next": str(self.reverse("browse"))},
                     ),
                     "Delete",
-                    ICONS["delete"],
+                    "trash-can",
                 )
             )
         return actions
@@ -334,7 +342,8 @@ class BreadAdminSite:
             )
         )
         datamodel = menu.Item(
-            menu.Link(url=reverse_lazy("datamodel"), label="Datamodel"), group="Admin",
+            menu.Link(url=reverse_lazy("datamodel"), label="Datamodel"),
+            group="Admin",
         )
         system_settings = menu.Item(
             menu.Link(url=reverse_lazy("admin:index"), label="System Settings"),
@@ -380,14 +389,16 @@ class BreadAdminSite:
             path(
                 "global/",
                 PreferencesView.as_view(
-                    registry=global_preferences_registry, form_class=PreferencesForm,
+                    registry=global_preferences_registry,
+                    form_class=PreferencesForm,
                 ),
                 name="global",
             ),
             path(
                 "global/<slug:section>",
                 PreferencesView.as_view(
-                    registry=global_preferences_registry, form_class=PreferencesForm,
+                    registry=global_preferences_registry,
+                    form_class=PreferencesForm,
                 ),
                 name="global.section",
             ),
@@ -417,9 +428,15 @@ class BreadAdminSite:
             path("accounts/", include("django.contrib.auth.urls")),
             path("ckeditor/", include("ckeditor_uploader.urls")),
             path(
-                "", bread_views.Overview.as_view(adminsite=self), name="bread_overview",
+                "",
+                bread_views.Overview.as_view(adminsite=self),
+                name="bread_overview",
             ),
-            path("datamodel", bread_views.DataModel.as_view(), name="datamodel",),
+            path(
+                "datamodel",
+                bread_views.DataModel.as_view(),
+                name="datamodel",
+            ),
         ]
 
         for app, admins in self.get_apps().items():

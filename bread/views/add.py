@@ -12,7 +12,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 
-from ..layout.components import plisplate
+from .. import layout as _layout  # prevent name clashing
 from ..utils import CustomizableClass, filter_fieldlist
 from .util import CustomFormMixin
 
@@ -36,14 +36,18 @@ class AddView(
         self.admin = admin
         self.model = admin.model
         layout = kwargs.get("layout", self.layout)
-        if not isinstance(layout, plisplate.BaseElement):
+        if not isinstance(layout, _layout.BaseElement):
             layout = [
-                plisplate.form.FormField(field)
+                _layout.form.FormField(field)
                 for field in filter_fieldlist(self.model, layout, for_form=True)
             ]
-        self.layout = plisplate.BaseElement(
-            plisplate.H2(_("Add"), " ", self.admin.verbose_modelname,),
-            plisplate.form.Form.wrap_with_form(plisplate.C("form"), layout),
+        self.layout = _layout.BaseElement(
+            _layout.H2(
+                _("Add"),
+                " ",
+                self.admin.verbose_modelname,
+            ),
+            _layout.form.Form.wrap_with_form(_layout.C("form"), layout),
         )
         super().__init__(*args, **kwargs)
 

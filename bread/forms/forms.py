@@ -10,7 +10,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import transaction
 from django.forms.formsets import DELETION_FIELD_NAME
 
-from ..layout.components import plisplate
+from .. import layout as _layout  # prevent name clashing
 from .fields import FormsetField, GenericForeignKeyField
 
 
@@ -19,25 +19,24 @@ def _get_form_fields_from_layout(layout):
 
     def walk(element):
         if isinstance(
-            element, plisplate.form.FormSetField
+            element, _layout.form.FormSetField
         ):  # do not descend into formsets
             yield element
             return
         if (
-            isinstance(element, plisplate.form.FormField)
+            isinstance(element, _layout.form.FormField)
             and element.fieldname not in INTERNAL_FIELDS
         ):
             yield element
         for e in element:
-            if isinstance(e, plisplate.BaseElement):
+            if isinstance(e, _layout.BaseElement):
                 yield from walk(e)
 
     return list(walk(layout))
 
 
 def breadmodelform_factory(request, model, layout, instance, baseformclass):
-    """Returns a form class which can handle inline-modelform sets and generic foreign keys.
-    """
+    """Returns a form class which can handle inline-modelform sets and generic foreign keys."""
     formfieldelements = _get_form_fields_from_layout(layout)
 
     class BreadModelFormBase(baseformclass):
@@ -65,7 +64,10 @@ def breadmodelform_factory(request, model, layout, instance, baseformclass):
             if initial:
                 formsetinitial.update(initial)
             super().__init__(
-                data=data, files=files, initial=formsetinitial, **kwargs,
+                data=data,
+                files=files,
+                initial=formsetinitial,
+                **kwargs,
             )
 
         def save(self, *args, **kwargs):
@@ -114,7 +116,7 @@ def breadmodelform_factory(request, model, layout, instance, baseformclass):
         fields=[
             f.fieldname
             for f in formfieldelements
-            if isinstance(f, plisplate.form.FormField)
+            if isinstance(f, _layout.form.FormField)
         ],
         formfield_callback=lambda field: _formfield_callback_with_request(
             field, request, model
@@ -129,8 +131,8 @@ def _generate_formset_class(
     """Returns a FormSet class which handles inline forms correctly."""
 
     formfieldelements = _get_form_fields_from_layout(
-        plisplate.BaseElement(*formsetfieldelement)
-    )  # make sure the plisplate.form.FormSetField does not be considered recursively
+        _layout.BaseElement(*formsetfieldelement)
+    )  # make sure the _layout.form.FormSetField does not be considered recursively
 
     formclass = breadmodelform_factory(
         request=request,
@@ -186,7 +188,10 @@ def _formfield_callback_with_request(field, request, model):
     if hasattr(ret, "queryset"):
         qs = ret.queryset
         ret.queryset = get_objects_for_user(
-            request.user, f"view_{qs.model.__name__.lower()}", qs, with_superuser=True,
+            request.user,
+            f"view_{qs.model.__name__.lower()}",
+            qs,
+            with_superuser=True,
         )
     return ret
 
@@ -195,28 +200,28 @@ def _formfield_callback_with_request(field, request, model):
 class FilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = plisplate.form.Form.from_django_form(self, method="GET")
+        self.plisplate = _layout.form.Form.from_django_form(self, method="GET")
 
 
 class PreferencesForm(GlobalPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = plisplate.form.Form.from_fieldnames(
-            plisplate.C("form"), self.fields
+        self.plisplate = _layout.form.Form.from_fieldnames(
+            _layout.C("form"), self.fields
         )
 
 
 class UserPreferencesForm(UserPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = plisplate.form.Form.from_fieldnames(
-            plisplate.C("form"), self.fields
+        self.plisplate = _layout.form.Form.from_fieldnames(
+            _layout.C("form"), self.fields
         )
 
 
 class BreadAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = plisplate.form.Form.from_fieldnames(
-            plisplate.C("form"), self.fields
+        self.plisplate = _layout.form.Form.from_fieldnames(
+            _layout.C("form"), self.fields
         )

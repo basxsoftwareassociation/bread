@@ -2,9 +2,9 @@ import logging
 import warnings
 from _strptime import TimeRE
 
-from bread import menu as menuregister
 from crispy_forms.utils import get_template_pack
 
+from bread import menu as menuregister
 from django import template
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
@@ -12,11 +12,11 @@ from django.forms import DateInput, Textarea, TextInput
 from django.utils import formats
 from django.utils.html import mark_safe
 
+from .. import layout
 from ..formatters import as_object_link, format_value
 from ..formatters import render_field as render_field_func
 from ..formatters import render_field_aggregation as render_field_aggregation_func
 from ..forms import forms
-from ..layout.components import plisplate
 from ..utils import has_permission, pretty_fieldname, title
 from ..utils.datetimeformatstring import to_php_formatstr
 
@@ -51,7 +51,7 @@ def linkurl(context, link):
 
 @register.simple_tag(takes_context=True)
 def render_plisplate(context, element):
-    return mark_safe(plisplate.render(element, context.flatten()))
+    return mark_safe(layout.render(element, context.flatten()))
 
 
 @register.simple_tag
@@ -294,7 +294,7 @@ def list_delete_protection(object):
 # TODO: this should be removed in the future when we will only use plisplate layouts
 @register.simple_tag
 def carbon_icon(name, size, **attributes):
-    return plisplate.render(plisplate.icon.Icon(name, size, **attributes), {})
+    return layout.render(layout.icon.Icon(name, size, **attributes), {})
 
 
 @register.filter
