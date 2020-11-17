@@ -30,7 +30,7 @@ class AddView(
     layout = None
 
     def get_success_message(self, cleaned_data):
-        return f"Added {self.object}"
+        return _("Added %s" % self.object)
 
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-17 16:50+0700\n"
+"POT-Creation-Date: 2020-11-17 16:54+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,8 +53,8 @@ msgid "BREAD System Settings"
 msgstr ""
 
 #: views/add.py:33
-#, python-brace-format
-msgid "Added {self.object}"
+#, python-format
+msgid "Added %s"
 msgstr ""
 
 #: views/edit.py:46
