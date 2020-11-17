@@ -64,7 +64,7 @@ class BrowseView(
 
         object_actions_menu = _layout.overflow_menu.OverflowMenu(
             _layout.F(get_object_actions),
-            iteratorclass=_layout.ObjectContext.ConsumerElement(_layout.Iterator),
+            iteratorclass=_layout.ObjectContext.Binding(_layout.Iterator),
             flip=True,
             item_attributes={"_class": "bx--table-row--menu-option"},
         )
