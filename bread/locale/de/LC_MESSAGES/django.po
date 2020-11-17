@@ -1,0 +1,62 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-11-17 16:50+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: layout/components/checkbox.py:31 layout/components/date_picker.py:78
+#: layout/components/select.py:54 layout/components/text_area.py:51
+#: layout/components/text_input.py:42
+msgid " (optional)"
+msgstr ""
+
+#: layout/components/form.py:29
+msgid "Submit"
+msgstr ""
+
+#: layout/components/form.py:65
+msgid "Form error"
+msgstr ""
+
+#: layout/components/form.py:71
+msgid "Form error: "
+msgstr ""
+
+#: layout/components/form.py:158 views/add.py:46
+msgid "Add"
+msgstr ""
+
+#: layout/components/notification.py:119
+msgid "Time stamp "
+msgstr ""
+
+#: layout/components/text_input.py:66
+msgid "Show password"
+msgstr ""
+
+#: templates/admin/base_site.html:3
+msgid "BREAD System Settings"
+msgstr ""
+
+#: views/add.py:33
+#, python-brace-format
+msgid "Added {self.object}"
+msgstr ""
+
+#: views/edit.py:46
+msgid "Edit"
+msgstr ""
