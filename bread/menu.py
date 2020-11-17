@@ -47,20 +47,17 @@ class Group:
         return any((item.active(request) for item in self.items))
 
 
-class Link:
-    """Represents a user-clickable link
-    url, label, icon and permissions can be str, lazy string or a callable function.
+class Action:
+    """Represents a user-clickable action
+    js, label, icon and permissions can be str, lazy string or a callable function.
     The function takes the current request as the only argument.
     """
 
-    def __init__(self, url, label="", icon=None, permissions=[]):
-        self._url = url
+    def __init__(self, js, label="", icon=None, permissions=[]):
+        self.js = js
         self.label = label
         self.icon = icon
         self._permissions = permissions
-
-    def url(self, request):
-        return try_call(self._url, request)
 
     def has_permission(self, request, obj=None):
         return all(
@@ -69,6 +66,12 @@ class Link:
                 for perm in try_call(self._permissions, request)
             ]
         )
+
+
+class Link(Action):
+    def __init__(self, url, label="", icon=None, permissions=[]):
+        super().__init__(f"document.location = '{url}'", label, icon, permissions)
+        self.url = url
 
 
 class Item:
@@ -92,7 +95,7 @@ class Item:
         return self.link.has_permission(request)
 
     def active(self, request):
-        path = str(self.link.url(request))
+        path = str(self.link.url)
         return request.path.startswith(path) and path != "/"
 
 

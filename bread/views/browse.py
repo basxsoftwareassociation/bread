@@ -55,12 +55,29 @@ class BrowseView(
         self.model = admin.model
         layout = kwargs.get("layout", self.layout)
 
+        def get_object_actions(element, context):
+            from ..admin import site
+
+            return site.get_default_admin(element.object).object_actions(
+                context["request"], element.object
+            )
+
+        object_actions_menu = _layout.overflow_menu.OverflowMenu(
+            _layout.F(get_object_actions),
+            iteratorclass=_layout.ObjectContext.ConsumerElement(_layout.Iterator),
+            flip=True,
+            item_attributes={"_class": "bx--table-row--menu-option"},
+        )
+        object_actions_menu.td_attributes = {"_class": "bx--table-column-menu"}
+        action_menu_header = _layout.BaseElement()
+        action_menu_header.td_attributes = {"_class": "bx--table-column-menu"}
         if not isinstance(layout, _layout.BaseElement):
             layout = _layout.datatable.DataTable(
                 [
                     (_layout.ModelFieldLabel(field), _layout.ModelFieldValue(field))
                     for field in list(filter_fieldlist(self.model, layout))
-                ],
+                ]
+                + [("menu", object_actions_menu)],
                 _layout.C("object_list"),
                 _layout.ObjectContext,
             )

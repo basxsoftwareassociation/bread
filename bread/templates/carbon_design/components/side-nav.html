@@ -11,6 +11,7 @@
             <li class="bx--side-nav__item{% if group_active %} bx--side-nav__item--active{% else %}{% endif %}">
                 {% if items|length == 1 %}
                     <a class="bx--side-nav__link{% if items.0.1 %} bx--side-nav__link--current{% endif %}" href="{{ items.0.2 }}">
+                        {% if icon %}<div class="bx--side-nav__icon">{% carbon_icon icon 32 %}</div>{% endif %}
                         <span class="bx--side-nav__link-text">{{ items.0.0.link.label }}</span>
                     </a>
                 {% else %}

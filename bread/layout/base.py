@@ -20,7 +20,7 @@ class ObjectContext(plisplate.ValueProvider):
         super().__init__(object, *children)
 
 
-class ModelFieldLabel(ModelContext.ConsumerMixin(), ObjectContext.ConsumerMixin()):
+class ModelFieldLabel(ModelContext.ConsumerElement(), ObjectContext.ConsumerElement()):
     def __init__(self, fieldname):
         self.fieldname = fieldname
 
@@ -33,7 +33,7 @@ class ModelFieldLabel(ModelContext.ConsumerMixin(), ObjectContext.ConsumerMixin(
         return f"ModelFieldLabel({self.fieldname})"
 
 
-class ModelName(ModelContext.ConsumerMixin(), ObjectContext.ConsumerMixin()):
+class ModelName(ModelContext.ConsumerElement(), ObjectContext.ConsumerElement()):
     def __init__(self, plural=False):
         self.plural = plural
 
@@ -46,7 +46,7 @@ class ModelName(ModelContext.ConsumerMixin(), ObjectContext.ConsumerMixin()):
         return f"ModelName({self.fieldname})"
 
 
-class ModelFieldValue(ObjectContext.ConsumerMixin()):
+class ModelFieldValue(ObjectContext.ConsumerElement()):
     def __init__(self, fieldname):
         self.fieldname = fieldname
 

@@ -57,11 +57,7 @@ class Form(plisplate.FORM):
         )
 
     def render(self, context):
-        form = (
-            self.form.resolve(context)
-            if isinstance(self.form, plisplate.Lazy)
-            else self.form
-        )
+        form = plisplate.resolve_lazy(self.form, self, context)
         for formfield in self.formfieldelements():
             formfield.form = form
         if form.non_field_errors():
@@ -88,7 +84,7 @@ class FormChild:
 
 class FormField(FormChild, plisplate.BaseElement):
     """Dynamic element which will resolve the field with the given name
-and return the correct HTML, based on the widget of the form field or on the passed argument 'fieldtype'"""
+    and return the correct HTML, based on the widget of the form field or on the passed argument 'fieldtype'"""
 
     def __init__(
         self, fieldname, fieldtype=None, elementattributes={}, widgetattributes={}
@@ -265,7 +261,8 @@ def _mapwidget(
         field.field.show_hidden_initial and fieldtype != HiddenInput
     ):  # special case, prevent infinte recursion
         return plisplate.BaseElement(
-            ret, _mapwidget(field, HiddenInput, only_initial=True),
+            ret,
+            _mapwidget(field, HiddenInput, only_initial=True),
         )
 
     return ret

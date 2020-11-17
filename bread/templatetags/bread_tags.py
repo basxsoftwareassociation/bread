@@ -46,7 +46,7 @@ def linkpermission(link, request, obj=None):
 
 @register.simple_tag(takes_context=True)
 def linkurl(context, link):
-    return link.url(context["request"])
+    return link.url
 
 
 @register.simple_tag(takes_context=True)
@@ -62,7 +62,7 @@ def display_link(link, request, obj=None, atag_class="", atag_style=""):
 
     ret = ""
     if link.has_permission(request, obj):
-        url = link.url(request)
+        url = link.url
         target = (
             'target="_blank" rel="noopener noreferrer"'
             if url.startswith("http")
@@ -235,7 +235,7 @@ def menu(request):
                     group.icon,
                     group.active(request),
                     [
-                        (item, item.active(request), item.link.url(request))
+                        (item, item.active(request), item.link.url)
                         for item in sorted(group.items)
                         if item.has_permission(request)
                     ],

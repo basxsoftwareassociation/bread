@@ -3,9 +3,15 @@ import plisplate
 
 class DataTable(plisplate.BaseElement):
     def __init__(
-        self, columns, row_iterator, valueproviderclass, spacing="default", zebra=False,
+        self,
+        columns,
+        row_iterator,
+        valueproviderclass,
+        spacing="default",
+        zebra=False,
     ):
         """columns: tuple(header_expression, row_expression)
+        if the header_expression/row_expression has an attribute td_attributes it will be used as attributes for the TH/TD elements (necessary because sometimes the content requires additional classes on the parent element)
         spacing: one of "default", "compact", "short", "tall"
         valueproviderclass: A class which implements ValueProvider which will be passed to the Iterator
         """
@@ -22,8 +28,10 @@ class DataTable(plisplate.BaseElement):
                         *[
                             plisplate.TH(
                                 plisplate.SPAN(
-                                    column[0], _class="bx--table-header-label",
-                                )
+                                    column[0],
+                                    _class="bx--table-header-label",
+                                ),
+                                **getattr(column[1], "td_attributes", {}),
                             )
                             for column in columns
                         ]
@@ -33,7 +41,14 @@ class DataTable(plisplate.BaseElement):
                     plisplate.Iterator(
                         row_iterator,
                         valueproviderclass,
-                        plisplate.TR(*[plisplate.TD(column[1]) for column in columns]),
+                        plisplate.TR(
+                            *[
+                                plisplate.TD(
+                                    column[1], **getattr(column[1], "td_attributes", {})
+                                )
+                                for column in columns
+                            ]
+                        ),
                     )
                 ),
                 _class=" ".join(classes),
