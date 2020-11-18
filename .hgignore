@@ -6,3 +6,4 @@ docs/build
 node_modules
 bread/templates/carbon_design/package-lock.json
 bread/version.py
+.mo
