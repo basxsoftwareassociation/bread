@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-17 16:54+0700\n"
+"POT-Creation-Date: 2020-11-17 18:21+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,15 +30,15 @@ msgstr ""
 
 #: layout/components/form.py:65
 msgid "Form error"
-msgstr ""
+msgstr "Formfehler"
 
 #: layout/components/form.py:71
 msgid "Form error: "
-msgstr ""
+msgstr "Formfehler: "
 
-#: layout/components/form.py:158 views/add.py:46
+#: layout/components/form.py:158
 msgid "Add"
-msgstr ""
+msgstr "Erstellen"
 
 #: layout/components/notification.py:119
 msgid "Time stamp "
@@ -46,17 +46,22 @@ msgstr ""
 
 #: layout/components/text_input.py:66
 msgid "Show password"
-msgstr ""
+msgstr "Zeige Passwort"
 
 #: templates/admin/base_site.html:3
 msgid "BREAD System Settings"
-msgstr ""
+msgstr "BREAD Systemeinstellungen"
 
 #: views/add.py:33
 #, python-format
 msgid "Added %s"
-msgstr ""
+msgstr "%s erstellt"
+
+#: views/add.py:46
+#, python-format
+msgid "Add %s"
+msgstr "%s erstellen"
 
 #: views/edit.py:46
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"

@@ -3,14 +3,14 @@ import warnings
 from _strptime import TimeRE
 
 from crispy_forms.utils import get_template_pack
-
-from bread import menu as menuregister
 from django import template
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.forms import DateInput, Textarea, TextInput
 from django.utils import formats
 from django.utils.html import mark_safe
+
+from bread import menu as menuregister
 
 from .. import layout
 from ..formatters import as_object_link, format_value

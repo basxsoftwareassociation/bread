@@ -37,10 +37,13 @@ class EditView(
         self.model = admin.model
         layout = kwargs.get("layout", self.layout)
         if not isinstance(layout, _layout.BaseElement):
-            layout = [
-                _layout.form.FormField(field)
-                for field in filter_fieldlist(self.model, layout, for_form=True)
-            ]
+            layout = _layout.BaseElement(
+                *[
+                    _layout.form.FormField(field)
+                    for field in filter_fieldlist(self.model, layout, for_form=True)
+                ]
+            )
+        print(layout)
         self.layout = _layout.BaseElement(
             _layout.H2(
                 _("Edit"),

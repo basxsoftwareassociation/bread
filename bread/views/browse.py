@@ -68,19 +68,26 @@ class BrowseView(
             flip=True,
             item_attributes={"_class": "bx--table-row--menu-option"},
         )
+        # the data-table object will check child elements for td_attributes to fill in attributes for TD-elements
         object_actions_menu.td_attributes = {"_class": "bx--table-column-menu"}
         action_menu_header = _layout.BaseElement()
         action_menu_header.td_attributes = {"_class": "bx--table-column-menu"}
         if not isinstance(layout, _layout.BaseElement):
+            if not isinstance(layout, list) and layout is not None:
+                raise RuntimeError(
+                    "layout needs to be a BaseElement instance or a list of fieldnames"
+                )
+
             layout = _layout.datatable.DataTable(
                 [
                     (_layout.ModelFieldLabel(field), _layout.ModelFieldValue(field))
                     for field in list(filter_fieldlist(self.model, layout))
                 ]
-                + [("menu", object_actions_menu)],
+                + [(None, object_actions_menu)],
                 _layout.C("object_list"),
                 _layout.ObjectContext,
             )
+        # makes the model available to bound elements like ModelFieldValue and ModelFieldLabel
         self.layout = _layout.ModelContext(self.model, layout)
         super().__init__(*args, **kwargs)
 

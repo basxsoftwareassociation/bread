@@ -35,7 +35,9 @@ def _get_form_fields_from_layout(layout):
     return list(walk(layout))
 
 
-def breadmodelform_factory(request, model, layout, instance, baseformclass):
+def breadmodelform_factory(
+    request, model, layout, instance=None, baseformclass=forms.models.ModelForm
+):
     """Returns a form class which can handle inline-modelform sets and generic foreign keys."""
     formfieldelements = _get_form_fields_from_layout(layout)
 

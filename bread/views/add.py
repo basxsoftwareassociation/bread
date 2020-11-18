@@ -30,22 +30,22 @@ class AddView(
     layout = None
 
     def get_success_message(self, cleaned_data):
-        return _("Added %s" % self.object)
+        return _("Added %s") % self.object
 
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin
         self.model = admin.model
         layout = kwargs.get("layout", self.layout)
         if not isinstance(layout, _layout.BaseElement):
-            layout = [
-                _layout.form.FormField(field)
-                for field in filter_fieldlist(self.model, layout, for_form=True)
-            ]
+            layout = _layout.BaseElement(
+                *[
+                    _layout.form.FormField(field)
+                    for field in filter_fieldlist(self.model, layout, for_form=True)
+                ]
+            )
         self.layout = _layout.BaseElement(
             _layout.H2(
-                _("Add"),
-                " ",
-                self.admin.verbose_modelname,
+                _("Add %s") % self.admin.verbose_modelname,
             ),
             _layout.form.Form.wrap_with_form(_layout.C("form"), layout),
         )
