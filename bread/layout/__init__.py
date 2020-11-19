@@ -1,4 +1,4 @@
-from plisplate import *  # noqa
+from htmlgenerator import *  # noqa
 
 from . import components  # noqa
 from .base import *  # noqa

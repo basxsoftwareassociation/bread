@@ -1,9 +1,9 @@
-import plisplate
+import htmlgenerator
 
 from .icon import Icon
 
 
-class Button(plisplate.htmltags.BUTTON):
+class Button(htmlgenerator.BUTTON):
     """ buttontype: "primary", "secondary", "tertiary", "danger", "ghost" """
 
     def __init__(
@@ -28,7 +28,7 @@ class Button(plisplate.htmltags.BUTTON):
             attributes[
                 "_class"
             ] += " bx--btn--icon-only bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-center"
-            children = (plisplate.SPAN(*children, _class="bx--assistive-text"),)
+            children = (htmlgenerator.SPAN(*children, _class="bx--assistive-text"),)
 
         if icon:
             children += (Icon(icon, _class="bx--btn__icon"),)
@@ -36,12 +36,12 @@ class Button(plisplate.htmltags.BUTTON):
 
     def render(self, context):
         attribs = {**self.attributes, **{"disabled": self.disabled_func(context)}}
-        yield f"<{self.tag} {plisplate.flatattrs(attribs)}>"
+        yield f"<{self.tag} {htmlgenerator.flatattrs(attribs)}>"
         yield from super().render_children(context)
         yield f"</{self.tag}>"
 
 
-class ButtonSet(plisplate.htmltags.DIV):
+class ButtonSet(htmlgenerator.htmltags.DIV):
     def __init__(self, *buttons, **attributes):
         attributes["_class"] = attributes.get("_class", "") + " bx--btn-set"
         super().__init__(*buttons, **attributes)

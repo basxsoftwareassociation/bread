@@ -1,12 +1,15 @@
-import plisplate
+import htmlgenerator
 from django.utils.translation import gettext as _
 
 from .form import ErrorList, HelperText
 
 
-class Checkbox(plisplate.DIV):
+class Checkbox(htmlgenerator.DIV):
     def __init__(
-        self, fieldname, widgetattributes={}, **attributes,
+        self,
+        fieldname,
+        widgetattributes={},
+        **attributes,
     ):
         self.fieldname = fieldname
         attributes["_class"] = (
@@ -16,8 +19,8 @@ class Checkbox(plisplate.DIV):
             widgetattributes.get("_class", "") + " bx--checkbox"
         )
         widgetattributes["type"] = "checkbox"
-        self.input = plisplate.INPUT(**widgetattributes)
-        self.label = plisplate.LABEL(self.input, _class="bx--checkbox-label")
+        self.input = htmlgenerator.INPUT(**widgetattributes)
+        self.label = htmlgenerator.LABEL(self.input, _class="bx--checkbox-label")
         super().__init__(self.label, **attributes)
 
     def render(self, context):

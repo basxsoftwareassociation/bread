@@ -1,8 +1,7 @@
 from _strptime import TimeRE
 
+import htmlgenerator
 from bread.utils.datetimeformatstring import to_php_formatstr
-
-import plisplate
 from django.utils import formats
 from django.utils.translation import gettext as _
 
@@ -10,7 +9,7 @@ from .form import ErrorList, HelperText
 from .icon import Icon
 
 
-class DatePicker(plisplate.DIV):
+class DatePicker(htmlgenerator.DIV):
     def __init__(
         self,
         fieldname,
@@ -32,13 +31,15 @@ class DatePicker(plisplate.DIV):
             widgetattributes.get("_class", "") + " bx--date-picker__input"
         )
 
-        input = plisplate.INPUT(
-            placeholder=placeholder, type="text", **widgetattributes,
+        input = htmlgenerator.INPUT(
+            placeholder=placeholder,
+            type="text",
+            **widgetattributes,
         )
         self.input = input
         if not simple:
             input.attributes["data-date-picker-input"] = True
-            input = plisplate.DIV(
+            input = htmlgenerator.DIV(
                 input,
                 Icon(
                     "calendar",
@@ -50,9 +51,9 @@ class DatePicker(plisplate.DIV):
             )
 
         super().__init__(
-            plisplate.DIV(
-                plisplate.DIV(
-                    plisplate.LABEL(_class="bx--label"),
+            htmlgenerator.DIV(
+                htmlgenerator.DIV(
+                    htmlgenerator.LABEL(_class="bx--label"),
                     input,
                     _class="bx--date-picker-container",
                 ),

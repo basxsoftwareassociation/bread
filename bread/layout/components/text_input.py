@@ -1,4 +1,4 @@
-import plisplate
+import htmlgenerator
 from django.utils.translation import gettext as _
 
 from .button import Button
@@ -6,9 +6,14 @@ from .form import ErrorList, HelperText
 from .icon import Icon
 
 
-class TextInput(plisplate.DIV):
+class TextInput(htmlgenerator.DIV):
     def __init__(
-        self, fieldname, placeholder="", light=False, widgetattributes={}, **attributes,
+        self,
+        fieldname,
+        placeholder="",
+        light=False,
+        widgetattributes={},
+        **attributes,
     ):
         self.fieldname = fieldname
         attributes["_class"] = (
@@ -20,9 +25,9 @@ class TextInput(plisplate.DIV):
         )
 
         super().__init__(
-            plisplate.LABEL(_class="bx--label"),
-            plisplate.DIV(
-                plisplate.INPUT(placeholder=placeholder, **widgetattributes),
+            htmlgenerator.LABEL(_class="bx--label"),
+            htmlgenerator.DIV(
+                htmlgenerator.INPUT(placeholder=placeholder, **widgetattributes),
                 _class="bx--text-input__field-wrapper",
             ),
             **attributes,

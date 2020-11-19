@@ -1,11 +1,11 @@
-import plisplate
+import htmlgenerator
 from django.utils.translation import gettext as _
 
 from .form import ErrorList, HelperText
 from .icon import Icon
 
 
-class TextArea(plisplate.DIV):
+class TextArea(htmlgenerator.DIV):
     def __init__(
         self,
         fieldname,
@@ -29,9 +29,9 @@ class TextArea(plisplate.DIV):
             widgetattributes["cols"] = cols
 
         super().__init__(
-            plisplate.LABEL(_class="bx--label"),
-            plisplate.DIV(
-                plisplate.TEXTAREA(placeholder=placeholder, **widgetattributes),
+            htmlgenerator.LABEL(_class="bx--label"),
+            htmlgenerator.DIV(
+                htmlgenerator.TEXTAREA(placeholder=placeholder, **widgetattributes),
                 _class="bx--text-area__wrapper",
             ),
             **attributes,

@@ -1,8 +1,8 @@
-import plisplate
+import htmlgenerator
 from bread.utils import pretty_fieldname, pretty_modelname
 
 
-class ModelContext(plisplate.ValueProvider):
+class ModelContext(htmlgenerator.ValueProvider):
     """Provides a model to marked child elements"""
 
     attributename = "model"
@@ -11,7 +11,7 @@ class ModelContext(plisplate.ValueProvider):
         super().__init__(model, *children)
 
 
-class ObjectContext(plisplate.ValueProvider):
+class ObjectContext(htmlgenerator.ValueProvider):
     """Provides a model instance to marked child elements """
 
     attributename = "object"

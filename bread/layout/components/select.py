@@ -1,16 +1,21 @@
-import plisplate
+import htmlgenerator
 from django.utils.translation import gettext as _
 
 from .form import ErrorList, HelperText
 from .icon import Icon
 
 
-class Select(plisplate.DIV):
+class Select(htmlgenerator.DIV):
     LABEL = 0
     SELECT = 1
 
     def __init__(
-        self, fieldname, light=False, inline=False, widgetattributes={}, **attributes,
+        self,
+        fieldname,
+        light=False,
+        inline=False,
+        widgetattributes={},
+        **attributes,
     ):
         self.fieldname = fieldname
         attributes["_class"] = attributes.get("_class", "") + " bx--form-item"
@@ -18,20 +23,20 @@ class Select(plisplate.DIV):
             widgetattributes.get("_class", "") + " bx--select-input"
         )
 
-        select_wrapper = plisplate.DIV(
-            plisplate.SELECT(**widgetattributes),
+        select_wrapper = htmlgenerator.DIV(
+            htmlgenerator.SELECT(**widgetattributes),
             Icon(
                 "chevron--down", size=16, _class="bx--select__arrow", aria_hidden="true"
             ),
             _class="bx--select-input__wrapper",
         )
         if inline:
-            select_wrapper = plisplate.DIV(
+            select_wrapper = htmlgenerator.DIV(
                 select_wrapper, _class="bx--select-input--inline__wrapper"
             )
         super().__init__(
-            plisplate.DIV(
-                plisplate.LABEL(_class="bx--label"),
+            htmlgenerator.DIV(
+                htmlgenerator.LABEL(_class="bx--label"),
                 select_wrapper,
                 _class="bx--select"
                 + (" bx--select--inline" if inline else "")
@@ -61,12 +66,12 @@ class Select(plisplate.DIV):
             ):
                 group = self.select
                 if group_name:
-                    group = plisplate.OPTGROUP(
+                    group = htmlgenerator.OPTGROUP(
                         _class="bx--select-optgroup", label=group_name
                     )
                 for option in subgroup:
                     group.append(
-                        plisplate.OPTION(
+                        htmlgenerator.OPTION(
                             option["label"],
                             _class="bx--select-option",
                             value=option["value"],
@@ -83,7 +88,11 @@ class Select(plisplate.DIV):
                 self[0].attributes["_class"] += " bx--select--invalid"
                 self[0][1].attributes["data-invalid"] = True
                 self[0][1].append(
-                    Icon("warning--filled", size=16, _class="bx--select__invalid-icon",)
+                    Icon(
+                        "warning--filled",
+                        size=16,
+                        _class="bx--select__invalid-icon",
+                    )
                 )
                 if self.inline:
                     self[0][1][0].append(ErrorList(self.boundfield.errors))

@@ -1,7 +1,7 @@
 import django_filters
 from django_countries.widgets import LazySelect
 
-import plisplate
+import htmlgenerator
 from django import forms
 from django.utils.html import mark_safe
 from django.utils.translation import gettext as _
@@ -10,7 +10,7 @@ from .button import Button
 from .notification import InlineNotification
 
 
-class Form(plisplate.FORM):
+class Form(htmlgenerator.FORM):
     @classmethod
     def from_django_form(cls, form, **kwargs):
         return Form.from_fieldnames(form, form.fields, **kwargs)
@@ -25,7 +25,7 @@ class Form(plisplate.FORM):
     def wrap_with_form(cls, form, *elements, **kwargs):
         if kwargs.get("standalone", True) is True:
             elements += (
-                plisplate.DIV(
+                htmlgenerator.DIV(
                     Button(_("Submit"), type="submit"), _class="bx--form-item"
                 ),
             )
@@ -57,7 +57,7 @@ class Form(plisplate.FORM):
         )
 
     def render(self, context):
-        form = plisplate.resolve_lazy(self.form, self, context)
+        form = htmlgenerator.resolve_lazy(self.form, self, context)
         for formfield in self.formfieldelements():
             formfield.form = form
         if form.non_field_errors():
@@ -82,7 +82,7 @@ class FormChild:
     """Used to mark elements which need the "form" attribute set by the parent form before rendering"""
 
 
-class FormField(FormChild, plisplate.BaseElement):
+class FormField(FormChild, htmlgenerator.BaseElement):
     """Dynamic element which will resolve the field with the given name
     and return the correct HTML, based on the widget of the form field or on the passed argument 'fieldtype'"""
 
@@ -107,7 +107,7 @@ class FormField(FormChild, plisplate.BaseElement):
         return f"FormField({self.fieldname})"
 
 
-class FormSetField(FormChild, plisplate.BaseElement):
+class FormSetField(FormChild, htmlgenerator.BaseElement):
     def __init__(self, fieldname, *children, **formset_kwargs):
         super().__init__(*children)
         self.fieldname = fieldname
@@ -143,8 +143,8 @@ class FormSetField(FormChild, plisplate.BaseElement):
         yield "</div>"
 
         # empty/template form
-        yield from plisplate.DIV(
-            plisplate.DIV(
+        yield from htmlgenerator.DIV(
+            htmlgenerator.DIV(
                 Form.wrap_with_form(formset.empty_form, *self, standalone=False)
             ),
             id=f"empty_{ formset.prefix }_form",
@@ -153,7 +153,7 @@ class FormSetField(FormChild, plisplate.BaseElement):
         ).render(context)
 
         # add-new-form button
-        yield from plisplate.DIV(
+        yield from htmlgenerator.DIV(
             Button(
                 _("Add"),
                 id=f"add_{formset.prefix}_button",
@@ -164,7 +164,7 @@ class FormSetField(FormChild, plisplate.BaseElement):
             ),
             _class="bx--form-item",
         ).render(context)
-        yield from plisplate.SCRIPT(
+        yield from htmlgenerator.SCRIPT(
             mark_safe(
                 f"""document.addEventListener("DOMContentLoaded", e => init_formset("{ formset.prefix }"));"""
             )
@@ -174,7 +174,7 @@ class FormSetField(FormChild, plisplate.BaseElement):
         return f"FormSet({self.fieldname}, {self.formset_kwargs})"
 
 
-class HiddenInput(FormChild, plisplate.INPUT):
+class HiddenInput(FormChild, htmlgenerator.INPUT):
     def __init__(self, fieldname, widgetattributes, **attributes):
         self.fieldname = fieldname
         super().__init__(type="hidden", **{**widgetattributes, **attributes})
@@ -188,7 +188,7 @@ class HiddenInput(FormChild, plisplate.INPUT):
         return super().render(context)
 
 
-class CsrfToken(FormChild, plisplate.INPUT):
+class CsrfToken(FormChild, htmlgenerator.INPUT):
     def __init__(self):
         super().__init__(type="hidden")
 
@@ -260,7 +260,7 @@ def _mapwidget(
     if (
         field.field.show_hidden_initial and fieldtype != HiddenInput
     ):  # special case, prevent infinte recursion
-        return plisplate.BaseElement(
+        return htmlgenerator.BaseElement(
             ret,
             _mapwidget(field, HiddenInput, only_initial=True),
         )
@@ -268,14 +268,14 @@ def _mapwidget(
     return ret
 
 
-class ErrorList(plisplate.DIV):
+class ErrorList(htmlgenerator.DIV):
     def __init__(self, errors):
         super().__init__(
-            plisplate.UL(*[plisplate.LI(e) for e in errors]),
+            htmlgenerator.UL(*[htmlgenerator.LI(e) for e in errors]),
             _class="bx--form-requirement",
         )
 
 
-class HelperText(plisplate.DIV):
+class HelperText(htmlgenerator.DIV):
     def __init__(self, helpertext):
         super().__init__(helpertext, _class="bx--form__helper-text")

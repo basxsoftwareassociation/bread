@@ -43,6 +43,7 @@ setup(
         "django-celery-results",
         "django-celery-beat",
         "Arpeggio",
+        "htmlgenerator",
     ],
     setup_requires=["setuptools_scm"],
     packages=find_packages(),

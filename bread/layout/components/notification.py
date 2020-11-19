@@ -1,8 +1,7 @@
 import datetime
 
+import htmlgenerator
 from django.utils.translation import gettext as _
-
-import plisplate
 
 from .button import Button
 from .icon import Icon
@@ -17,7 +16,7 @@ KIND_ICON_MAPPING = {
 }
 
 
-class InlineNotification(plisplate.DIV):
+class InlineNotification(htmlgenerator.DIV):
     def __init__(
         self,
         title,
@@ -49,15 +48,17 @@ class InlineNotification(plisplate.DIV):
         attributes["role"] = "alert"
 
         children = [
-            plisplate.DIV(
+            htmlgenerator.DIV(
                 Icon(
                     KIND_ICON_MAPPING[kind],
                     size=20,
                     _class="bx--inline-notification__icon",
                 ),
-                plisplate.DIV(
-                    plisplate.P(title, _class="bx--inline-notification__title"),
-                    plisplate.P(subtitle, _class="bx--inline-notification__subtitle"),
+                htmlgenerator.DIV(
+                    htmlgenerator.P(title, _class="bx--inline-notification__title"),
+                    htmlgenerator.P(
+                        subtitle, _class="bx--inline-notification__subtitle"
+                    ),
                     _class="bx--inline-notification__text-wrapper",
                 ),
                 _class="bx--inline-notification__details",
@@ -75,7 +76,7 @@ class InlineNotification(plisplate.DIV):
             )
         if not hideclosebutton:
             children.append(
-                plisplate.BUTTON(
+                htmlgenerator.BUTTON(
                     Icon(
                         "close", size=20, _class="bx--inline-notification__close-icon"
                     ),
@@ -87,7 +88,7 @@ class InlineNotification(plisplate.DIV):
         super().__init__(*children, **attributes)
 
 
-class ToastNotification(plisplate.DIV):
+class ToastNotification(htmlgenerator.DIV):
     def __init__(
         self,
         title,
@@ -116,24 +117,30 @@ class ToastNotification(plisplate.DIV):
         attributes["role"] = "alert"
 
         timestampelem = (
-            [plisplate.P(_("Time stamp "), _class="bx--toast-notification__caption")]
+            [
+                htmlgenerator.P(
+                    _("Time stamp "), _class="bx--toast-notification__caption"
+                )
+            ]
             if not hidetimestamp
             else []
         )
         children = [
             Icon(
-                KIND_ICON_MAPPING[kind], size=20, _class="bx--toast-notification__icon",
+                KIND_ICON_MAPPING[kind],
+                size=20,
+                _class="bx--toast-notification__icon",
             ),
-            plisplate.DIV(
-                plisplate.H3(title, _class="bx--toast-notification__title"),
-                plisplate.P(subtitle, _class="bx--toast-notification__subtitle"),
+            htmlgenerator.DIV(
+                htmlgenerator.H3(title, _class="bx--toast-notification__title"),
+                htmlgenerator.P(subtitle, _class="bx--toast-notification__subtitle"),
                 *timestampelem,
                 _class="bx--toast-notification__details",
             ),
         ]
         if not hideclosebutton:
             children.append(
-                plisplate.BUTTON(
+                htmlgenerator.BUTTON(
                     Icon("close", size=20, _class="bx--toast-notification__close-icon"),
                     data_notification_btn=True,
                     _class="bx--toast-notification__close-button",

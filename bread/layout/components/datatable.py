@@ -1,7 +1,7 @@
-import plisplate
+import htmlgenerator
 
 
-class DataTable(plisplate.BaseElement):
+class DataTable(htmlgenerator.BaseElement):
     def __init__(
         self,
         columns,
@@ -22,12 +22,12 @@ class DataTable(plisplate.BaseElement):
         if zebra:
             classes.append("bx--data-table--zebra")
         super().__init__(
-            plisplate.TABLE(
-                plisplate.THEAD(
-                    plisplate.TR(
+            htmlgenerator.TABLE(
+                htmlgenerator.THEAD(
+                    htmlgenerator.TR(
                         *[
-                            plisplate.TH(
-                                plisplate.SPAN(
+                            htmlgenerator.TH(
+                                htmlgenerator.SPAN(
                                     column[0],
                                     _class="bx--table-header-label",
                                 ),
@@ -37,13 +37,13 @@ class DataTable(plisplate.BaseElement):
                         ]
                     )
                 ),
-                plisplate.TBODY(
-                    plisplate.Iterator(
+                htmlgenerator.TBODY(
+                    htmlgenerator.Iterator(
                         row_iterator,
                         valueproviderclass,
-                        plisplate.TR(
+                        htmlgenerator.TR(
                             *[
-                                plisplate.TD(
+                                htmlgenerator.TD(
                                     column[1], **getattr(column[1], "td_attributes", {})
                                 )
                                 for column in columns

@@ -202,28 +202,22 @@ def _formfield_callback_with_request(field, request, model):
 class FilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = _layout.form.Form.from_django_form(self, method="GET")
+        self.layout = _layout.form.Form.from_django_form(self, method="GET")
 
 
 class PreferencesForm(GlobalPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = _layout.form.Form.from_fieldnames(
-            _layout.C("form"), self.fields
-        )
+        self.layout = _layout.form.Form.from_fieldnames(_layout.C("form"), self.fields)
 
 
 class UserPreferencesForm(UserPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = _layout.form.Form.from_fieldnames(
-            _layout.C("form"), self.fields
-        )
+        self.layout = _layout.form.Form.from_fieldnames(_layout.C("form"), self.fields)
 
 
 class BreadAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.plisplate = _layout.form.Form.from_fieldnames(
-            _layout.C("form"), self.fields
-        )
+        self.layout = _layout.form.Form.from_fieldnames(_layout.C("form"), self.fields)

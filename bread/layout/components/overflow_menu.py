@@ -1,18 +1,18 @@
-import plisplate
+import htmlgenerator
 
 from .icon import Icon
 
 
-class OverflowMenuItem(plisplate.LI):
+class OverflowMenuItem(htmlgenerator.LI):
     def __init__(self, itemvalueproviderclass, **attributes):
         attributes["_class"] = (
             attributes.get("_class", "") + " bx--overflow-menu-options__option"
         )
         super().__init__(
-            plisplate.BUTTON(
-                itemvalueproviderclass.Binding(plisplate.DIV)(
-                    plisplate.F(
-                        lambda e, c: plisplate.BaseElement(
+            htmlgenerator.BUTTON(
+                itemvalueproviderclass.Binding(htmlgenerator.DIV)(
+                    htmlgenerator.F(
+                        lambda e, c: htmlgenerator.BaseElement(
                             Icon(e.item.icon, size=16), e.item.label
                         )
                         if e.item.icon
@@ -35,13 +35,13 @@ class OverflowMenuItem(plisplate.LI):
         return super().render(context)
 
 
-class OverflowMenu(plisplate.DIV):
+class OverflowMenu(htmlgenerator.DIV):
     """Implements https://www.carbondesignsystem.com/components/overflow-menu/usage"""
 
     def __init__(
         self,
         item_iterator,
-        iteratorclass=plisplate.Iterator,
+        iteratorclass=htmlgenerator.Iterator,
         menuname=None,
         direction="bottom",
         flip=False,
@@ -49,7 +49,7 @@ class OverflowMenu(plisplate.DIV):
         **attributes,
     ):
         # making the class inline seems better, I think we can enforce scoping the type to this instance of OverflowMenu
-        class MenuItemValueProvider(plisplate.ValueProvider):
+        class MenuItemValueProvider(htmlgenerator.ValueProvider):
             attributename = "item"
 
         """item_iterator: an iterable which contains bread.menu.Action objects where the onclick value is what will be passed to the onclick attribute of the menu-item (and therefore should be javascript, e.g. "window.location.href='/home'"). All three item_iterator in the tuple can be lazy objects
@@ -58,7 +58,7 @@ class OverflowMenu(plisplate.DIV):
         attributes["_class"] = attributes.get("_class", "") + " bx--overflow-menu"
         menuid = f"overflow-menu-{hash(id(self))}"
         super().__init__(
-            plisplate.BUTTON(
+            htmlgenerator.BUTTON(
                 Icon("overflow-menu--vertical", size=16),
                 _class="bx--overflow-menu__trigger"
                 + (
@@ -71,8 +71,8 @@ class OverflowMenu(plisplate.DIV):
                 aria_controls=menuid,
                 _id=f"{menuid}-trigger",
             ),
-            plisplate.DIV(
-                plisplate.UL(
+            htmlgenerator.DIV(
+                htmlgenerator.UL(
                     iteratorclass(
                         item_iterator,
                         MenuItemValueProvider,
@@ -93,4 +93,4 @@ class OverflowMenu(plisplate.DIV):
             **attributes,
         )
         if menuname is not None:
-            self[0].insert(0, plisplate.SPAN(menuname, _class="bx--assistive-text"))
+            self[0].insert(0, htmlgenerator.SPAN(menuname, _class="bx--assistive-text"))

@@ -1,7 +1,7 @@
-import plisplate
+import htmlgenerator
 
 
-class Grid(plisplate.DIV):
+class Grid(htmlgenerator.DIV):
     def __init__(self, *children, grid_mode=None, **attributes):
         """
         grid_mode can be one of None, "narrow", "condensed", "full-width"
@@ -12,13 +12,13 @@ class Grid(plisplate.DIV):
         super().__init__(*children, **attributes)
 
 
-class Row(plisplate.DIV):
+class Row(htmlgenerator.DIV):
     def __init__(self, *children, **attributes):
         attributes["_class"] = attributes.get("_class", "") + " bx--row"
         super().__init__(*children, **attributes)
 
 
-class Col(plisplate.DIV):
+class Col(htmlgenerator.DIV):
     def __init__(self, *children, breakpoint=None, width=None, **attributes):
         """
         breakpoint: Can be one of "sm", "md", "lg", "xlg", "max"

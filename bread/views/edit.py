@@ -50,7 +50,7 @@ class EditView(
                 " ",
                 self.admin.verbose_modelname,
                 " ",
-                _layout.I(lambda c: c["object"]),
+                _layout.I(_layout.F(lambda e, c: c["object"])),
             ),
             _layout.form.Form.wrap_with_form(_layout.C("form"), layout),
         )

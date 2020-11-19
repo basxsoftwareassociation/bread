@@ -1,7 +1,7 @@
 import logging
 import os
 
-import plisplate
+import htmlgenerator
 from django.contrib.staticfiles import finders
 from django.core.cache import cache
 from django.utils.html import mark_safe
@@ -9,7 +9,7 @@ from django.utils.html import mark_safe
 logger = logging.getLogger(__name__)
 
 
-class Icon(plisplate.htmltags.SVG):
+class Icon(htmlgenerator.SVG):
 
     """Insert the SVG for a carbon icon.
     See https://www.carbondesignsystem.com/guidelines/icons/library for a list of all icons.
@@ -17,7 +17,10 @@ class Icon(plisplate.htmltags.SVG):
     icon and use the filename without the attribte, e.g. "thunderstorm--severe"."""
 
     def __init__(
-        self, name, size=None, **attributes,
+        self,
+        name,
+        size=None,
+        **attributes,
     ):
         attributes["viewBox"] = "0 0 32 32"
         attributes["preserveAspectRatio"] = "xMidYMid meet"
