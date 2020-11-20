@@ -241,11 +241,12 @@ def menu(request):
                     ],
                 ]
             )
-    if not has_active_menu:
-        for group in menugroups:
-            if menuregister.main._registry[group[0]].active_in_current_app(request):
-                group[1] = True
-                break
+    # Does not work with translation
+    # if not has_active_menu:
+    # for group in menugroups:
+    # if menuregister.main._registry[group[0]].active_in_current_app(request):
+    # group[1] = True
+    # break
     return menugroups
 
 

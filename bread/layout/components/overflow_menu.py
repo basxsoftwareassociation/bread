@@ -75,10 +75,10 @@ class OverflowMenu(htmlgenerator.DIV):
                 htmlgenerator.UL(
                     iteratorclass(
                         item_iterator,
-                        MenuItemValueProvider,
                         MenuItemValueProvider.Binding(OverflowMenuItem)(
                             MenuItemValueProvider, **item_attributes
                         ),
+                        MenuItemValueProvider,
                     ),
                     _class="bx--overflow-menu-options__content",
                 ),

@@ -6,7 +6,7 @@ class DataTable(htmlgenerator.BaseElement):
         self,
         columns,
         row_iterator,
-        valueproviderclass,
+        valueproviderclass=htmlgenerator.ValueProvider,
         spacing="default",
         zebra=False,
     ):
@@ -40,7 +40,6 @@ class DataTable(htmlgenerator.BaseElement):
                 htmlgenerator.TBODY(
                     htmlgenerator.Iterator(
                         row_iterator,
-                        valueproviderclass,
                         htmlgenerator.TR(
                             *[
                                 htmlgenerator.TD(
@@ -49,6 +48,7 @@ class DataTable(htmlgenerator.BaseElement):
                                 for column in columns
                             ]
                         ),
+                        valueproviderclass,
                     )
                 ),
                 _class=" ".join(classes),
