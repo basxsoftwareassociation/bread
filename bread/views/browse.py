@@ -39,7 +39,7 @@ def sortable_fields(model, fieldnames):
 class BrowseView(
     CustomizableClass, LoginRequiredMixin, PermissionListMixin, FilterView
 ):
-    template_name = "carbon_design/browse.html"
+    template_name = "bread/browse.html"
     admin = None
     fields = None
     filterfields = None
@@ -188,7 +188,7 @@ class BrowseView(
 
 
 class TreeView(BrowseView):
-    template_name = "carbon_design/tree.html"
+    template_name = "bread/tree.html"
     parent_accessor = None
     label_function = None
 

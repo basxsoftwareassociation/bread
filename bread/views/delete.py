@@ -6,10 +6,11 @@ an argument "admin" which is an instance of the according BreadAdmin class
 """
 import urllib
 
+from guardian.mixins import PermissionRequiredMixin
+
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import DeleteView as DjangoDeleteView
-from guardian.mixins import PermissionRequiredMixin
 
 from ..utils import CustomizableClass
 
@@ -17,7 +18,7 @@ from ..utils import CustomizableClass
 class DeleteView(
     CustomizableClass, PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView
 ):
-    template_name = "carbon_design/confirm_delete.html"
+    template_name = "bread/confirm_delete.html"
     admin = None
     accept_global_perms = True
 

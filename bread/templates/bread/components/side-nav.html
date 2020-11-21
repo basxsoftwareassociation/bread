@@ -3,7 +3,7 @@
 <aside class="bx--side-nav bx--side-nav--rail{% if request.user.preferences.user_interface__navigation_menu_extended %} bx--side-nav--expanded{% endif %}" data-side-nav>
     <nav class="bx--side-nav__navigation" role="navigation" aria-label="Side navigation">
 
-        {# {% include "carbon_design/components/side-nav-header.html" %} #} {# currently not used #}
+        {# {% include "bread/components/side-nav-header.html" %} #} {# currently not used #}
 
         {% menu request as menu %}
         <ul class="bx--side-nav__items">
@@ -36,7 +36,7 @@
             {% endfor %}
         </ul>
 
-        {% include "carbon_design/components/side-nav-footer.html" %}
+        {% include "bread/components/side-nav-footer.html" %}
     </nav>
 +
 −</aside>

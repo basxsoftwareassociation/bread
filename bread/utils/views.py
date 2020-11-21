@@ -1,9 +1,11 @@
 import inspect
 import itertools
 
+from django.http import HttpResponse
 from django.urls import path
 from django.views.generic import CreateView
 from django.views.generic.edit import SingleObjectMixin
+from htmlgenerator import ValueProvider
 
 
 def generate_path_for_view(view, viewname=None):
@@ -49,3 +51,13 @@ def generate_path_for_functionview(view, viewname):
             else f"<{param.name}>"
         )
     return pathcomponents
+
+
+class RequestContext(ValueProvider):
+    attributename = "request"
+
+
+def render_layout_to_response(request, layout, context=None):
+    return HttpResponse(
+        RequestContext(request, layout).render({} if context is None else context)
+    )
