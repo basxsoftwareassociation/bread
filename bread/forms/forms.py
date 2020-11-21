@@ -35,6 +35,19 @@ def _get_form_fields_from_layout(layout):
     return list(walk(layout))
 
 
+# shortcut, actually this should always be used but class based views wanted the class separately
+def generate_form(request, model, layout, instance):
+    return breadmodelform_factory(
+        request,
+        model=model,
+        layout=layout,
+        instance=instance,
+    )(
+        *([request.POST, request.FILES] if request.method == "POST" else []),
+        instance=instance,
+    )
+
+
 def breadmodelform_factory(
     request, model, layout, instance=None, baseformclass=forms.models.ModelForm
 ):

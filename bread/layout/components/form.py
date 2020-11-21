@@ -11,18 +11,18 @@ from .notification import InlineNotification
 
 
 class Form(htmlgenerator.FORM):
-    @classmethod
-    def from_django_form(cls, form, **kwargs):
+    @staticmethod
+    def from_django_form(form, **kwargs):
         return Form.from_fieldnames(form, form.fields, **kwargs)
 
-    @classmethod
-    def from_fieldnames(cls, form, fieldnames, **kwargs):
+    @staticmethod
+    def from_fieldnames(form, fieldnames, **kwargs):
         return Form.wrap_with_form(
             form, *[FormField(fieldname) for fieldname in fieldnames], **kwargs
         )
 
-    @classmethod
-    def wrap_with_form(cls, form, *elements, **kwargs):
+    @staticmethod
+    def wrap_with_form(form, *elements, **kwargs):
         if kwargs.get("standalone", True) is True:
             elements += (
                 htmlgenerator.DIV(
@@ -266,6 +266,12 @@ def _mapwidget(
         )
 
     return ret
+
+
+class SubmitButton(htmlgenerator.DIV):
+    def __init__(self, *args, **kwargs):
+        kwargs["type"] = "submit"
+        super().__init__(Button(*args, **kwargs), _class="bx--form-item")
 
 
 class ErrorList(htmlgenerator.DIV):
