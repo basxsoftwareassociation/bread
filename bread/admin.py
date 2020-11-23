@@ -1,9 +1,3 @@
-from dynamic_preferences import views as preferences_views
-from dynamic_preferences.forms import preference_form_builder
-from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.users import views as user_preferences_views
-from dynamic_preferences.users.registries import user_preferences_registry
-
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
@@ -15,8 +9,14 @@ from django.http import HttpResponse
 from django.urls import include, path, reverse_lazy
 from django.utils.http import urlencode
 from django.utils.text import format_lazy
+from django.utils.translation import gettext as _
 from django.views.generic import RedirectView, View
 from django.views.static import serve
+from dynamic_preferences import views as preferences_views
+from dynamic_preferences.forms import preference_form_builder
+from dynamic_preferences.registries import global_preferences_registry
+from dynamic_preferences.users import views as user_preferences_views
+from dynamic_preferences.users.registries import user_preferences_registry
 
 from . import menu
 from . import views as bread_views
@@ -155,7 +155,7 @@ class BreadAdmin:
             actions.append(
                 menu.Link(
                     url,
-                    "Edit",
+                    _("Edit"),
                     "edit",
                 )
             )
@@ -167,7 +167,7 @@ class BreadAdmin:
                         pk=object.pk,
                         query_arguments={"next": str(self.reverse("browse"))},
                     ),
-                    "Delete",
+                    _("Delete"),
                     "trash-can",
                 )
             )
