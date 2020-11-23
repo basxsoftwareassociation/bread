@@ -141,12 +141,10 @@ class BreadAdmin:
             # therefore we check here if we need to get another link to the edit instance
             concrete = get_concrete_instance(object)
             concreteadmin = site.get_default_admin(concrete)
-            url = (
-                self.reverse(
-                    "edit",
-                    pk=object.pk,
-                    query_arguments={"next": request.get_full_path()},
-                ),
+            url = self.reverse(
+                "edit",
+                pk=object.pk,
+                query_arguments={"next": request.get_full_path()},
             )
             if concrete is not self and concreteadmin is not None:
                 url = concreteadmin.reverse(
