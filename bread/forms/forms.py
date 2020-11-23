@@ -14,29 +14,8 @@ from .. import layout as _layout  # prevent name clashing
 from .fields import FormsetField, GenericForeignKeyField
 
 
-def _get_form_fields_from_layout(layout):
-    INTERNAL_FIELDS = [DELETION_FIELD_NAME]
-
-    def walk(element):
-        if isinstance(
-            element, _layout.form.FormSetField
-        ):  # do not descend into formsets
-            yield element
-            return
-        if (
-            isinstance(element, _layout.form.FormField)
-            and element.fieldname not in INTERNAL_FIELDS
-        ):
-            yield element
-        for e in element:
-            if isinstance(e, _layout.BaseElement):
-                yield from walk(e)
-
-    return list(walk(layout))
-
-
 # shortcut, actually this should always be used but class based views wanted the class separately
-def generate_form(request, model, layout, instance):
+def generate_form(request, model, layout, instance, **kwargs):
     return breadmodelform_factory(
         request,
         model=model,
@@ -45,6 +24,7 @@ def generate_form(request, model, layout, instance):
     )(
         *([request.POST, request.FILES] if request.method == "POST" else []),
         instance=instance,
+        **kwargs,
     )
 
 
@@ -64,7 +44,9 @@ def breadmodelform_factory(
             formsetinitial = {}
             for name, field in self.declared_fields.items():
                 if isinstance(field, FormsetField):
-                    formsetinitial[name] = {"instance": inst}
+                    formsetinitial[name] = {
+                        "instance": inst,
+                    }
                 if isinstance(field, GenericForeignKeyField):
                     modelfield = model._meta.get_field(name)
                     if hasattr(modelfield, "lazy_choices"):
@@ -162,7 +144,7 @@ def _generate_formset_class(
             formfieldelement.fieldname for formfieldelement in formfieldelements
         ],
         "form": formclass,
-        "extra": 1,
+        "extra": 0,
         "can_delete": True,
     }
     base_formset_kwargs.update(formsetfieldelement.formset_kwargs)
@@ -234,3 +216,24 @@ class BreadAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.layout = _layout.form.Form.from_fieldnames(_layout.C("form"), self.fields)
+
+
+def _get_form_fields_from_layout(layout):
+    INTERNAL_FIELDS = [DELETION_FIELD_NAME]
+
+    def walk(element):
+        if isinstance(
+            element, _layout.form.FormSetField
+        ):  # do not descend into formsets
+            yield element
+            return
+        if (
+            isinstance(element, _layout.form.FormField)
+            and element.fieldname not in INTERNAL_FIELDS
+        ):
+            yield element
+        for e in element:
+            if isinstance(e, _layout.BaseElement):
+                yield from walk(e)
+
+    return list(walk(layout))

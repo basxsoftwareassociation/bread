@@ -114,9 +114,7 @@ class FormSetField(FormChild, htmlgenerator.BaseElement):
         self.formset_kwargs = formset_kwargs
 
     def render(self, context):
-        formset = self.form[self.fieldname].field.formsetclass(
-            **(self.form[self.fieldname].value() or {})
-        )
+        formset = self.form[self.fieldname].formset
 
         # management form
         yield from Form.from_django_form(

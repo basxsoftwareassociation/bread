@@ -74,6 +74,24 @@ class RichTextTemplatePreference(StringPreference):
                 raise ValidationError(f"'{placeholder}' is not a valid placeholder.")
 
 
+class BoundFormsetField(forms.BoundField):
+    @property
+    def formset(self):
+        prefix = self.field.formsetclass.get_default_prefix()
+        if self.form.prefix:
+            prefix = f"{self.form.prefix}-{prefix}"
+        return self.field.formsetclass(
+            self.form.data if self.form.is_bound else None,
+            self.form.files if self.form.is_bound else None,
+            instance=self.field.parent_instance,
+            prefix=prefix,
+        )
+
+    @property
+    def data(self):
+        return self.formset
+
+
 class FormsetField(forms.Field):
     def __init__(self, formsetclass, parent_instance, *args, **kwargs):
         self.widget = FormsetWidget(formsetclass, parent_instance)
@@ -81,9 +99,6 @@ class FormsetField(forms.Field):
         self.parent_instance = parent_instance
         kwargs["required"] = False
         super().__init__(*args, **kwargs)
-
-    def to_python(self, value):
-        return self.formsetclass(**(value or {"instance": self.parent_instance}))
 
     def validate(self, value):
         super().validate(value)
@@ -95,12 +110,8 @@ class FormsetField(forms.Field):
                             error = ValidationError("A Form has errors")
                         raise error
 
-    def _coerce(self, value):
-        if isinstance(value, dict):
-            ret = self.formsetclass(instance=value["instance"]).queryset.all()
-        elif isinstance(value, self.formsetclass):
-            ret = value.queryset.all()
-        return list(ret)
+    def get_bound_field(self, form, field_name):
+        return BoundFormsetField(form, self, field_name)
 
 
 class FormsetWidget(forms.Widget):
@@ -108,13 +119,12 @@ class FormsetWidget(forms.Widget):
         super().__init__(*args, **kwargs)
         self.formsetclass = formsetclass
         self.parent_instance = parent_instance
-        self.prefix = self.formsetclass.get_default_prefix()
         self.needs_multipart_form = self.formsetclass().is_multipart()
 
     def value_from_datadict(self, data, files, name):
-        # return all form data in order to allow populating the formset
-        return {
-            "data": data,
-            "files": files,
-            "instance": self.parent_instance,
-        }
+        return self.formsetclass(
+            data,
+            files,
+            instance=self.parent_instance,
+            prefix=name,
+        )
