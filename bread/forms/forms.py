@@ -123,6 +123,15 @@ def breadmodelform_factory(
     return ret
 
 
+class InlineFormSetWithLimits(forms.BaseInlineFormSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        self._queryset = super().get_queryset()[: self.max_num]
+        return self._queryset
+
+
 def _generate_formset_class(
     request, model, modelfield, baseformclass, formsetfieldelement
 ):
@@ -154,6 +163,7 @@ def _generate_formset_class(
             modelfield.related_model,
             ct_field=modelfield.content_type_field_name,
             fk_field=modelfield.object_id_field_name,
+            formset=InlineFormSetWithLimits,
             formfield_callback=lambda field: _formfield_callback_with_request(
                 field, request, modelfield.related_model
             ),
@@ -163,6 +173,7 @@ def _generate_formset_class(
         return forms.models.inlineformset_factory(
             model,
             modelfield.related_model,
+            formset=InlineFormSetWithLimits,
             formfield_callback=lambda field: _formfield_callback_with_request(
                 field, request, model
             ),
