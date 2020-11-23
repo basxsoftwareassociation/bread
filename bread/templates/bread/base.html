@@ -27,7 +27,9 @@
     <body>
         {% include "bread/components/header.html" %}
 
-        {% include "bread/components/side-nav.html" %}
+        {% if user.is_authenticated %}
+            {% include "bread/components/side-nav.html" %}
+        {% endif %}
 
         {% if messages %}
             <ul>

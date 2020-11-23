@@ -3,6 +3,7 @@ import itertools
 import logging
 import uuid
 
+from django.contrib.auth.decorators import login_required
 from django.urls import path as djangopath
 
 registry = []
@@ -51,7 +52,9 @@ def generate_urlpatterns():
             else:
                 pathcomponents.append(f"<{param.name}>")
 
-        yield djangopath("/".join(pathcomponents), view, name=viewname(view))
+        yield djangopath(
+            "/".join(pathcomponents), login_required(view), name=viewname(view)
+        )
 
 
 def viewbasepath(view):
