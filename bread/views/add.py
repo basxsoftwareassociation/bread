@@ -24,7 +24,7 @@ class AddView(
     PermissionRequiredMixin,
     CreateView,
 ):
-    template_name = "bread/dynamic_layout.html"
+    template_name = "bread/layout.html"
     admin = None
     accept_global_perms = True
     layout = None

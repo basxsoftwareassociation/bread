@@ -16,7 +16,7 @@ class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
     fields = None
     accept_global_perms = True
     layout = None
-    template_name = "bread/dynamic_layout.html"
+    template_name = "bread/layout.html"
 
     def __init__(self, admin, *args, **kwargs):
         self.admin = admin

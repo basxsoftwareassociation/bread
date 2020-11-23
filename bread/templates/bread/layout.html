@@ -1,0 +1,4 @@
+{% extends "bread/base.html" %}
+{% load bread_tags %}
+
+{% block content %}{% if view.layout %}{% render_layout view.layout %}{% else %}{% render_layout layout %}{% endif %}{% endblock content %}
