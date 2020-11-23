@@ -51,6 +51,7 @@ class Select(htmlgenerator.DIV):
 
     def render(self, context):
         if self.boundfield.field.disabled:
+            self[0].attributes["_class"] += " bx--select--disabled"
             self.label.attributes["_class"] += " bx--label--disabled"
         if self.boundfield is not None:
             self.label.attributes["_for"] = self.boundfield.id_for_label

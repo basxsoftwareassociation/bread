@@ -8,11 +8,11 @@ from guardian.mixins import PermissionListMixin
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.core.exceptions import FieldError
 from django.db import models
 from django.db.models.functions import Lower
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
+from django.utils.translation import gettext_lazy as _
 
 from .. import layout as _layout  # prevent name clashing
 from ..formatters import render_field
@@ -22,24 +22,15 @@ from ..utils import (
     filter_fieldlist,
     pretty_fieldname,
     resolve_relationship,
+    title,
     xlsxresponse,
 )
-
-
-def sortable_fields(model, fieldnames):
-    for field in fieldnames:
-        if resolve_relationship(model, field):
-            try:
-                model.objects.none().order_by(field)
-                yield field
-            except FieldError:
-                pass
 
 
 class BrowseView(
     CustomizableClass, LoginRequiredMixin, PermissionListMixin, FilterView
 ):
-    template_name = "bread/browse.html"
+    template_name = "bread/layout.html"
     admin = None
     fields = None
     filterfields = None
@@ -78,14 +69,22 @@ class BrowseView(
                     "layout needs to be a BaseElement instance or a list of fieldnames"
                 )
 
-            layout = _layout.datatable.DataTable(
-                [
-                    (_layout.ModelFieldLabel(field), _layout.ModelFieldValue(field))
-                    for field in list(filter_fieldlist(self.model, layout))
-                ]
-                + [(None, object_actions_menu)],
-                _layout.C("object_list"),
-                _layout.ObjectContext,
+            layout = _layout.datatable.DataTable.full(
+                _layout.ModelName(plural=True),
+                _layout.datatable.DataTable(
+                    [
+                        (_layout.ModelFieldLabel(field), _layout.ModelFieldValue(field))
+                        for field in list(filter_fieldlist(self.model, layout))
+                    ]
+                    + [(None, object_actions_menu)],
+                    _layout.C("object_list"),
+                    _layout.ObjectContext,
+                ),
+                _layout.button.Button(
+                    _("Add %s") % title(self.model._meta.verbose_name),
+                    icon=_layout.icon.Icon("add", size=20),
+                    onclick=f"document.location = '{self.admin.reverse('add')}'",
+                ),
             )
         # makes the model available to bound elements like ModelFieldValue and ModelFieldLabel
         self.layout = _layout.ModelContext(self.model, layout)

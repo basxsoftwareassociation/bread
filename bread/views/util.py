@@ -1,6 +1,7 @@
 from django import forms
 
 from ..forms.forms import breadmodelform_factory
+from ..layout.components.form import FormField
 
 
 class CustomFormMixin:
@@ -30,7 +31,11 @@ class CustomFormMixin:
 
         # hide or disable predefined fields passed in GET parameters
         if self.request.method != "POST":
-            for field in form.fields:
-                if field in self.request.GET:
-                    form.fields[field].widget.attrs["readonly"] = True
+            for fieldelement in self.layout.filter(
+                lambda element, ancestors: isinstance(element, FormField)
+            ):
+                if fieldelement.fieldname in self.request.GET:
+                    form.fields[fieldelement.fieldname].widget = forms.HiddenInput(
+                        attrs=form.fields[fieldelement.fieldname].widget.attrs
+                    )
         return form

@@ -42,8 +42,8 @@ def title(label):
 
 def has_permission(user, operation, instance):
     """
-        instance: can be model instance or a model
-        operation is one of ["view", "add", "change", "delete"] (django defaults)
+    instance: can be model instance or a model
+    operation is one of ["view", "add", "change", "delete"] (django defaults)
     """
     operations = ["view", "add", "change", "delete"]
     if operation not in operations:

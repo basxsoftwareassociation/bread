@@ -7,6 +7,7 @@ from django.utils.html import mark_safe
 from django.utils.translation import gettext as _
 
 from .button import Button
+from .icon import Icon
 from .notification import InlineNotification
 
 
@@ -159,7 +160,7 @@ class FormSetField(FormChild, htmlgenerator.BaseElement):
                 _("Add"),
                 id=f"add_{formset.prefix}_button",
                 onclick=f"formset_add('{ formset.prefix }', '#formset_{ formset.prefix }_container');",
-                icon="add",
+                icon=Icon("add"),
                 notext=True,
                 small=True,
             ),
@@ -238,24 +239,20 @@ def _mapwidget(
 
     if field.field.localize:
         field.field.widget.is_localized = True
-    widgetattributes = field.build_widget_attrs(widgetattributes, field.field.widget)
+    attrs = dict(field.field.widget.attrs)
+    attrs.update(widgetattributes)
+    attrs = field.build_widget_attrs(attrs)
     if field.auto_id and "id" not in field.field.widget.attrs:
-        widgetattributes.setdefault(
-            "id", field.html_initial_id if only_initial else field.auto_id
-        )
-    widgetattributes["name"] = (
-        field.html_initial_name if only_initial else field.html_name
-    )
+        attrs.setdefault("id", field.html_initial_id if only_initial else field.auto_id)
+    attrs["name"] = field.html_initial_name if only_initial else field.html_name
     value = field.field.widget.format_value(field.value())
     if value is not None:
-        widgetattributes["value"] = value
+        attrs["value"] = value
 
     if fieldtype is None:
         fieldtype = WIDGET_MAPPING[type(field.field.widget)]
 
-    ret = fieldtype(
-        fieldname=field.name, widgetattributes=widgetattributes, **elementattributes
-    )
+    ret = fieldtype(fieldname=field.name, widgetattributes=attrs, **elementattributes)
     ret.boundfield = field
 
     if (

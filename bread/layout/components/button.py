@@ -1,7 +1,5 @@
 import htmlgenerator
 
-from .icon import Icon
-
 
 class Button(htmlgenerator.BUTTON):
     """ buttontype: "primary", "secondary", "tertiary", "danger", "ghost" """
@@ -31,7 +29,10 @@ class Button(htmlgenerator.BUTTON):
             children = (htmlgenerator.SPAN(*children, _class="bx--assistive-text"),)
 
         if icon:
-            children += (Icon(icon, _class="bx--btn__icon"),)
+            icon.attributes["_class"] = (
+                icon.attributes.get("_class", "") + " bx--btn__icon"
+            )
+            children += (icon,)
         super().__init__(*children, **attributes)
 
     def render(self, context):
