@@ -85,6 +85,7 @@ class BoundFormsetField(forms.BoundField):
             self.form.files if self.form.is_bound else None,
             instance=self.field.parent_instance,
             prefix=prefix,
+            **(self.field.formsetargs or {}),
         )
 
     @property
@@ -93,10 +94,13 @@ class BoundFormsetField(forms.BoundField):
 
 
 class FormsetField(forms.Field):
-    def __init__(self, formsetclass, parent_instance, *args, **kwargs):
-        self.widget = FormsetWidget(formsetclass, parent_instance)
+    def __init__(
+        self, formsetclass, parent_instance, formsetargs=None, *args, **kwargs
+    ):
+        self.widget = FormsetWidget(formsetclass, parent_instance, formsetargs)
         self.formsetclass = formsetclass
         self.parent_instance = parent_instance
+        self.formsetargs = formsetargs
         kwargs["required"] = False
         super().__init__(*args, **kwargs)
 
@@ -115,9 +119,12 @@ class FormsetField(forms.Field):
 
 
 class FormsetWidget(forms.Widget):
-    def __init__(self, formsetclass, parent_instance, *args, **kwargs):
+    def __init__(
+        self, formsetclass, parent_instance, *args, formsetargs=None, **kwargs
+    ):
         super().__init__(*args, **kwargs)
         self.formsetclass = formsetclass
+        self.formsetargs = formsetargs
         self.parent_instance = parent_instance
         self.needs_multipart_form = self.formsetclass().is_multipart()
 
@@ -127,4 +134,5 @@ class FormsetWidget(forms.Widget):
             files,
             instance=self.parent_instance,
             prefix=name,
+            **(self.formsetargs or {}),
         )

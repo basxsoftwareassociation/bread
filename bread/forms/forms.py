@@ -103,6 +103,7 @@ def breadmodelform_factory(
                     request, model, modelfield, baseformclass, formfieldelement
                 ),
                 instance,
+                formfieldelement.formsetinitial,
             )
     patched_formclass = type(
         f"{model.__name__}BreadModelForm", (BreadModelFormBase,), attribs
@@ -147,7 +148,7 @@ def _generate_formset_class(
         "extra": 0,
         "can_delete": True,
     }
-    base_formset_kwargs.update(formsetfieldelement.formset_kwargs)
+    base_formset_kwargs.update(formsetfieldelement.formsetfactory_kwargs)
     if isinstance(modelfield, GenericRelation):
         return generic_inlineformset_factory(
             modelfield.related_model,

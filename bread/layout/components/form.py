@@ -108,10 +108,13 @@ class FormField(FormChild, htmlgenerator.BaseElement):
 
 
 class FormSetField(FormChild, htmlgenerator.BaseElement):
-    def __init__(self, fieldname, *children, **formset_kwargs):
+    def __init__(
+        self, fieldname, *children, formsetinitial=None, **formsetfactory_kwargs
+    ):
         super().__init__(*children)
         self.fieldname = fieldname
-        self.formset_kwargs = formset_kwargs
+        self.formsetfactory_kwargs = formsetfactory_kwargs
+        self.formsetinitial = formsetinitial
 
     def render(self, context):
         formset = self.form[self.fieldname].formset
@@ -169,7 +172,7 @@ class FormSetField(FormChild, htmlgenerator.BaseElement):
         ).render(context)
 
     def __repr__(self):
-        return f"FormSet({self.fieldname}, {self.formset_kwargs})"
+        return f"FormSet({self.fieldname}, {self.formsetfactory_kwargs})"
 
 
 class HiddenInput(FormChild, htmlgenerator.INPUT):
