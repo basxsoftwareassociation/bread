@@ -62,4 +62,4 @@ def viewbasepath(view):
 
 
 def viewname(view):
-    view.__module__.lower() + "." + view.__name__.lower()
+    return view.__module__.lower() + "." + view.__name__.lower()
