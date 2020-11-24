@@ -1,14 +1,17 @@
-TODO
-=========================
+Important
+=========
+
+This repo is in alpha-stage and highly experimental. We will not keep any backwards-compatability during the next few months. We work on improving stability as well as adding documentation and tests.
+
+TODO before going to beta
+-------------------------
 
 - Finish this readme
 - Documentation, partly prepared under docs, using the sphinx documentation system
-- Quite some of the carbon-components still need to be implemented
-- Add license (BSD 3 clause)
+- Some of the carbon-components still need to be implemented
 - Add index here: https://djangopackages.org/grids/
 - Create pip-distribution
-- Maybe: Add a workflow-subsystem, should maybe be in another repo as a separate app since it would contains models
-
+- Review test-system, make test-runner
 
 
 BREAD Engine
