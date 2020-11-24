@@ -6,10 +6,19 @@ def readme():
         return f.read()
 
 
+with open("bread/__init__.py") as f:
+    # magic n stuff
+    version = (
+        [i for i in f.readlines() if "__version__" in i][-1]
+        .split("=", 1)[1]
+        .strip()
+        .strip('"')
+    )
+
 setup(
     name="bread",
-    version="0.1",
-    description="basx Browse-Read-Edit-Add-Delete engine for django",
+    version=version,
+    description="Engine to create database applications based on Django and the IBM Carbon Design System",
     long_description=readme(),
     long_description_content_type="text/markdown",
     url="https://github.com/basxsoftwareassociation/bread",
@@ -46,7 +55,6 @@ setup(
         "Arpeggio",
         "htmlgenerator",
     ],
-    setup_requires=["setuptools_scm"],
     packages=find_packages(),
     zip_safe=False,
     include_package_data=True,
@@ -56,9 +64,7 @@ setup(
         "Environment :: Web Environment",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
-        "Operating System :: MacOS :: MacOS X",
-        "Operating System :: Microsoft :: Windows",
-        "Operating System :: POSIX",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 3 :: Only",
     ],
 )
