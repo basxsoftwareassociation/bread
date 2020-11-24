@@ -14,6 +14,7 @@ TODO before going to beta
 - Create pip-distribution
 - Review test-system, make test-runner
 - Enforce python standards: black, isort, flake8, bandit (https://github.com/psf/black/blob/master/docs/compatible_configs.md, for black-flake8)
+- Review and complete tox
 
 
 BREAD Engine
