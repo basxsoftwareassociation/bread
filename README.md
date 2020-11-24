@@ -13,6 +13,7 @@ TODO before going to beta
 - Add index here: https://djangopackages.org/grids/
 - Create pip-distribution
 - Review test-system, make test-runner
+- Enforce python standards: black, isort, flake8, bandit (https://github.com/psf/black/blob/master/docs/compatible_configs.md, for black-flake8)
 
 
 BREAD Engine
