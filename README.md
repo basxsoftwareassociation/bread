@@ -8,6 +8,7 @@ TODO before going to beta
 
 - Finish this readme
 - Documentation, partly prepared under docs, using the sphinx documentation system
+- Create readthedocs deployment
 - Some of the carbon-components still need to be implemented
 - Add index here: https://djangopackages.org/grids/
 - Create pip-distribution
