@@ -1,0 +1,6 @@
+**/.eggs/
+**/.hg/
+**/.tox/
+**/.venv/
+bread.egg-info/
+bread/locale/de/LC_MESSAGES/django.mo
