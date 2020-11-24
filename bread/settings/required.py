@@ -96,10 +96,6 @@ COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 COMPRESS_OFFLINE_CONTEXT = "bread.context_processors.compress_offline_context"
 LIBSASS_OUTPUT_STYLE = "compressed"
 
-# required to make crispyforms working with our materaialize frontend
-CRISPY_ALLOWED_TEMPLATE_PACKS = ["carbon_design"]
-CRISPY_TEMPLATE_PACK = CRISPY_ALLOWED_TEMPLATE_PACKS[0]
-
 # not sure why we need this
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
@@ -178,7 +174,6 @@ USE_TZ = True
 USE_THOUSAND_SEPARATOR = True
 
 CARBON_DESIGN_CONTEXT = {
-    "prefix": "bx",
     "header": {
         "name": "PRODUCT_NAME",
         "company": "COMPANY_NAME",
