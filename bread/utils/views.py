@@ -37,7 +37,7 @@ def generate_path_for_classview(view, viewname):
         viewpath.append(f"<int:{view.view_class.pk_url_kwarg}>")
     if "urlparams" in view.view_initkwargs:
         for param, _type in view.view_initkwargs["urlparams"].items():
-            viewpath.append(f"/<{_type}:{param}>")
+            viewpath.append(f"<{_type}:{param}>")
     return viewpath
 
 
