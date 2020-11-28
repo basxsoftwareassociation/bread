@@ -98,5 +98,5 @@ class Select(htmlgenerator.DIV):
                 if self.inline:
                     self[0][1][0].append(ErrorList(self.boundfield.errors))
                 else:
-                    self[0][1].append(ErrorList(self.boundfield.errors))
+                    self[0].append(ErrorList(self.boundfield.errors))
         return super().render(context)
