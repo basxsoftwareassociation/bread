@@ -37,7 +37,7 @@ class Button(htmlgenerator.BUTTON):
 
     def render(self, context):
         attribs = {**self.attributes, **{"disabled": self.disabled_func(context)}}
-        yield f"<{self.tag} {htmlgenerator.flatattrs(attribs)}>"
+        yield f"<{self.tag} {htmlgenerator.flatattrs(attribs, self, context)}>"
         yield from super().render_children(context)
         yield f"</{self.tag}>"
 
