@@ -10,5 +10,6 @@ from .components import (  # noqa
     icon,
     notification,
     overflow_menu,
+    progress_indicator,
     search,
 )
