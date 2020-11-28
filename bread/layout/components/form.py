@@ -61,9 +61,8 @@ class Form(htmlgenerator.FORM):
         form = htmlgenerator.resolve_lazy(self.form, self, context)
         for formfield in self.formfieldelements():
             formfield.form = form
-        if form.non_field_errors():
-            for error in form.non_field_errors():
-                self.insert(0, InlineNotification(_("Form error"), error, kind="error"))
+        for error in form.non_field_errors():
+            self.insert(0, InlineNotification(_("Form error"), error, kind="error"))
         for hidden in form.hidden_fields():
             for error in hidden.errors:
                 self.insert(
