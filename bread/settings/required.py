@@ -24,6 +24,9 @@ _third_party_apps = [
     "django_markdown2",
     "django_filters",
     "django_extensions",
+    "haystack",
+    "whoosh",
+    "celery_haystack",
 ]
 _django_apps = [
     "django.forms",
@@ -184,3 +187,5 @@ CARBON_DESIGN_CONTEXT = {
 
 DEFAULT_PAGINATION = 1000
 DEFAULT_PAGINATION_CHOICES = [10, 100, 1000]
+
+HAYSTACK_SIGNAL_PROCESSOR = "celery_haystack.signals.CelerySignalProcessor"

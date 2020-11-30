@@ -42,18 +42,24 @@ setup(
         "django-markdown2",
         "django-countries",
         "django-money[exchange]",
-        "pygraphviz",
-        "Pillow",
-        "easy_thumbnails",
-        "django-image-cropping",
-        "openpyxl",
-        "WeasyPrint",
-        "ffmpeg-python",
+        "Arpeggio",
+        "htmlgenerator",
+        # Required for multimedia
+        "pygraphviz",  # graphviz/dot graphs
+        "Pillow",  # image processing
+        "easy_thumbnails",  # thumbnails
+        "django-image-cropping",  # cropping
+        "openpyxl",  # working with excel files
+        "WeasyPrint",  # creating PDFs
+        "ffmpeg-python",  # working with ffmpeg for video and audio
+        # required for task scheduling
         "celery <5.0,>=4.4",
         "django-celery-results",
         "django-celery-beat",
-        "Arpeggio",
-        "htmlgenerator",
+        # required for search engine
+        "django-haystack",
+        "whoosh",
+        "celery-haystack",
     ],
     packages=find_packages(),
     zip_safe=False,
