@@ -236,6 +236,7 @@ def _mapwidget(
         LazySelect: Select,
     }
 
+    # TODO: This can be simplified, and improved
     if field.field.localize:
         field.field.widget.is_localized = True
     attrs = dict(field.field.widget.attrs)
@@ -243,9 +244,10 @@ def _mapwidget(
     attrs = field.build_widget_attrs(attrs)
     if field.auto_id and "id" not in field.field.widget.attrs:
         attrs.setdefault("id", field.html_initial_id if only_initial else field.auto_id)
-    attrs["name"] = field.html_initial_name if only_initial else field.html_name
+    if "name" not in attrs:
+        attrs["name"] = field.html_initial_name if only_initial else field.html_name
     value = field.field.widget.format_value(field.value())
-    if value is not None:
+    if value is not None and "value" not in attrs:
         attrs["value"] = value
 
     if fieldtype is None:
