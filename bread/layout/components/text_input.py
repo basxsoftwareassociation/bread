@@ -10,7 +10,6 @@ class TextInput(htmlgenerator.DIV):
     def __init__(
         self,
         fieldname,
-        placeholder="",
         light=False,
         widgetattributes={},
         **attributes,
@@ -27,7 +26,7 @@ class TextInput(htmlgenerator.DIV):
         super().__init__(
             htmlgenerator.LABEL(_class="bx--label"),
             htmlgenerator.DIV(
-                htmlgenerator.INPUT(placeholder=placeholder, **widgetattributes),
+                htmlgenerator.INPUT(**widgetattributes),
                 _class="bx--text-input__field-wrapper",
             ),
             **attributes,
