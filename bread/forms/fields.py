@@ -104,6 +104,9 @@ class FormsetField(forms.Field):
         kwargs["required"] = False
         super().__init__(*args, **kwargs)
 
+    def to_python(self, value):
+        return self.formsetclass(**value)
+
     def validate(self, value):
         super().validate(value)
         if not value.is_valid():
@@ -129,10 +132,10 @@ class FormsetWidget(forms.Widget):
         self.needs_multipart_form = self.formsetclass().is_multipart()
 
     def value_from_datadict(self, data, files, name):
-        return self.formsetclass(
-            data,
-            files,
-            instance=self.parent_instance,
-            prefix=name,
+        return {
+            "data": data,
+            "files": files,
+            "instance": self.parent_instance,
+            "prefix": name,
             **(self.formsetargs or {}),
-        )
+        }
