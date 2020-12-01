@@ -4,9 +4,8 @@ from django.urls import reverse
 
 def RequireAuthenticationMiddleware(get_response):
     def middleware(request):
-        """All urls in the bread namespace require authentication"""
 
-        if not request.user.is_authenticated:
+        if not request.user.is_authenticated and request.path != reverse("login"):
             return HttpResponseRedirect(reverse("login") + "?next=" + request.path)
         return get_response(request)
 
