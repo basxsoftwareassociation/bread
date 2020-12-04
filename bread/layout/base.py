@@ -1,5 +1,6 @@
 import htmlgenerator
 from bread.utils import pretty_fieldname, pretty_modelname
+from django.core.exceptions import FieldDoesNotExist
 
 
 class ModelContext(htmlgenerator.ValueProvider):
@@ -27,7 +28,13 @@ class ModelFieldLabel(ModelContext.Binding(), ObjectContext.Binding()):
     def render(self, context):
         if not hasattr(self, "model") and hasattr(self, "object"):
             self.model = self.object
-        yield pretty_fieldname(self.model._meta.get_field(self.fieldname))
+        try:
+            yield pretty_fieldname(self.model._meta.get_field(self.fieldname))
+        except FieldDoesNotExist:
+            yield from self._try_render(
+                getattr(getattr(self.model, self.fieldname, None), "verbose_name", ""),
+                context,
+            )
 
     def __repr__(self):
         return f"ModelFieldLabel({self.fieldname})"
@@ -51,7 +58,9 @@ class ModelFieldValue(ObjectContext.Binding()):
         self.fieldname = fieldname
 
     def render(self, context):
-        yield from self._try_render(getattr(self.object, self.fieldname, None), context)
+        ret = getattr(self.object, self.fieldname, None)
+        ret = ret() if callable(ret) else ret
+        yield from self._try_render(ret, context)
 
     def __repr__(self):
         return f"ModelFieldValue({self.fieldname})"
