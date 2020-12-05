@@ -31,7 +31,7 @@ def pretty_fieldname(field):
     elif isinstance(field, GenericForeignKey):
         return field.name.replace("_", " ").title()
     else:
-        return field.verbose_name.title()
+        return field.verbose_name.capitalize()
 
 
 def title(label):
