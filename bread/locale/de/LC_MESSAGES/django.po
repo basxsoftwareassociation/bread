@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-23 21:06+0700\n"
+"POT-Creation-Date: 2020-12-05 16:46+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,70 +18,98 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:159 views/edit.py:48
+#: bread/admin.py:159 bread/views/edit.py:48
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: admin.py:171
+#: bread/admin.py:171
 msgid "Delete"
-msgstr ""
+msgstr "Löschen"
 
-#: layout/components/checkbox.py:34 layout/components/date_picker.py:79
-#: layout/components/select.py:60 layout/components/text_area.py:51
-#: layout/components/text_input.py:47
-msgid " (optional)"
-msgstr ""
+#: bread/admin.py:336
+msgid "Preferences"
+msgstr "Einstellungen"
 
-#: layout/components/datatable.py:88
+#: bread/admin.py:340
+msgid "Admin"
+msgstr "Administration"
+
+#: bread/admin.py:344
+msgid "Datamodel"
+msgstr "Datenmodel"
+
+#: bread/admin.py:348
+msgid "System Settings"
+msgstr "BREAD Systemeinstellungen"
+
+#: bread/layout/components/checkbox.py:34
+msgid " (required)"
+msgstr " (erforderlich)"
+
+#: bread/layout/components/datatable.py:88
 msgid " items selected"
 msgstr " Einträge ausgewählt"
 
-#: layout/components/datatable.py:94
+#: bread/layout/components/datatable.py:94
 msgid "Table Action Bar"
 msgstr "Tabellen Aktionsbar"
 
-#: layout/components/datatable.py:147 views/add.py:48 views/browse.py:84
+#: bread/layout/components/datatable.py:147 bread/views/add.py:48
+#: bread/views/browse.py:84
 #, python-format
 msgid "Add %s"
 msgstr "%s erstellen"
 
-#: layout/components/form.py:30
-msgid "Submit"
+#: bread/layout/components/date_picker.py:79
+#: bread/layout/components/select.py:60 bread/layout/components/text_area.py:51
+#: bread/layout/components/text_input.py:46
+msgid " (optional)"
+msgstr " (optional)"
+
+#: bread/layout/components/form.py:26
+msgid "Save"
 msgstr "Speichern"
 
-#: layout/components/form.py:66
+#: bread/layout/components/form.py:66
 msgid "Form error"
 msgstr "Formfehler"
 
-#: layout/components/form.py:72
+#: bread/layout/components/form.py:72
 msgid "Form error: "
 msgstr "Formfehler: "
 
-#: layout/components/form.py:160
+#: bread/layout/components/form.py:160
 msgid "Add"
 msgstr "Erstellen"
 
-#: layout/components/notification.py:122
+#: bread/layout/components/notification.py:122
 msgid "Time stamp "
 msgstr "Zeitstempfel"
 
-#: layout/components/search.py:16 layout/components/search.py:21
+#: bread/layout/components/progress_indicator.py:34
+msgid "Optional"
+msgstr "Optional"
+
+#: bread/layout/components/search.py:17 bread/layout/components/search.py:22
 msgid "Search"
 msgstr "Suchen"
 
-#: layout/components/search.py:27 layout/components/search.py:28
+#: bread/layout/components/search.py:28 bread/layout/components/search.py:29
 msgid "Clear search input"
 msgstr "Suchtext löschen"
 
-#: layout/components/text_input.py:71
+#: bread/layout/components/text_input.py:70
 msgid "Show password"
 msgstr "Zeige Passwort"
 
-#: templates/admin/base_site.html:3
+#: bread/templates/admin/base_site.html:3
 msgid "BREAD System Settings"
 msgstr "BREAD Systemeinstellungen"
 
-#: views/add.py:33
+#: bread/views/add.py:33
 #, python-format
 msgid "Added %s"
 msgstr "%s erstellt"
+
+#~ msgid "Submit"
+#~ msgstr "Speichern"
