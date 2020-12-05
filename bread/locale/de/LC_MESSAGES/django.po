@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-05 16:46+0700\n"
+"POT-Creation-Date: 2020-12-05 16:59+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,9 +38,9 @@ msgstr "Administration"
 msgid "Datamodel"
 msgstr "Datenmodel"
 
-#: bread/admin.py:348
+#: bread/admin.py:348 bread/templates/admin/base_site.html:3
 msgid "System Settings"
-msgstr "BREAD Systemeinstellungen"
+msgstr "Systemeinstellungen"
 
 #: bread/layout/components/checkbox.py:34
 msgid " (required)"
@@ -102,14 +102,7 @@ msgstr "Suchtext löschen"
 msgid "Show password"
 msgstr "Zeige Passwort"
 
-#: bread/templates/admin/base_site.html:3
-msgid "BREAD System Settings"
-msgstr "BREAD Systemeinstellungen"
-
 #: bread/views/add.py:33
 #, python-format
 msgid "Added %s"
 msgstr "%s erstellt"
-
-#~ msgid "Submit"
-#~ msgstr "Speichern"
