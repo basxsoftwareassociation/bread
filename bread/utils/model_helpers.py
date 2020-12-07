@@ -12,26 +12,25 @@ def pretty_modelname(model, plural=False):
 def pretty_fieldname(field):
     """Will print a human readable name for a field"""
     if isinstance(field, str):
-        return field.replace("_", " ").title()
-
-    if field.is_relation and field.one_to_many:
-        return field.target_field.model._meta.verbose_name_plural.title()
+        ret = field.replace("_", " ")
+    elif field.is_relation and field.one_to_many:
+        ret = field.target_field.model._meta.verbose_name_plural
     elif field.is_relation and field.many_to_many and field.auto_created:
-        return (
-            getattr(
-                field.target_field,
-                "related_name",
-                field.related_model._meta.verbose_name_plural.title(),
-            )
-            .replace("_", " ")
-            .title()
-        )
+        ret = getattr(
+            field.target_field,
+            "related_name",
+            field.related_model._meta.verbose_name_plural,
+        ).replace("_", " ")
     elif field.is_relation and field.one_to_one:
-        return field.target_field.model._meta.verbose_name.title()
+        ret = field.target_field.model._meta.verbose_name
     elif isinstance(field, GenericForeignKey):
-        return field.name.replace("_", " ").title()
+        ret = field.name.replace("_", " ")
     else:
-        return field.verbose_name.capitalize()
+        ret = field.verbose_name
+
+    if ret and ret[0].islower():
+        return ret.capitalize()
+    return str(ret)
 
 
 def title(label):
