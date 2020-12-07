@@ -2,5 +2,8 @@
 **/.hg/
 **/.tox/
 **/.venv/
-bread.egg-info/
 bread/locale/de/LC_MESSAGES/django.mo
+basx_bread.egg-info/
+build/
+dist/
+
