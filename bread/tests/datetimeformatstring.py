@@ -1,11 +1,11 @@
 import datetime
 import random
 
-from bread.utils.datetimeformatstring import to_php_formatstr
-
 from django.conf import settings
-from django.test import Client, TestCase
+from django.test import TestCase
 from django.utils.dateformat import format
+
+from bread.utils.datetimeformatstring import to_php_formatstr
 
 
 class ToPHPFormatstrTest(TestCase):
