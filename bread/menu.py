@@ -1,4 +1,5 @@
 from django.apps import apps
+from django.utils.text import format_lazy
 
 from .utils import try_call
 
@@ -70,7 +71,9 @@ class Action:
 
 class Link(Action):
     def __init__(self, url, label="", icon=None, permissions=[]):
-        super().__init__(f"document.location = '{url}'", label, icon, permissions)
+        super().__init__(
+            format_lazy("document.location = '{}'", url), label, icon, permissions
+        )
         self.url = url
 
 
