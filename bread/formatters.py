@@ -251,7 +251,11 @@ def as_object_link(obj, label=None):
     def adminlink(o):
         url = object_url(o)
         if url:
-            return format_html('<a href="{}">{}</a>', url, label or o.__str__(),)
+            return format_html(
+                '<a href="{}">{}</a>',
+                url,
+                label or o.__str__(),
+            )
 
     if hasattr(obj, "get_absolute_url"):
         return format_html('<a href="{}">{}</a>', obj.get_absolute_url(), obj)

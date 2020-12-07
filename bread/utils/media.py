@@ -8,8 +8,7 @@ from celery import shared_task
 
 def get_audio_thumbnail(file_):
     # TODO: make this working with any storage (not only local disk)
-    """Generate audio mp3 which can be played in all browsers.
-    """
+    """Generate audio mp3 which can be played in all browsers."""
     thumbnail_name = file_.name + "_thumbnail.mp3"
     inputname = os.path.join(settings.MEDIA_ROOT, file_.name)
     outputname = os.path.join(settings.MEDIA_ROOT, thumbnail_name)
@@ -23,8 +22,7 @@ def get_audio_thumbnail(file_):
 
 def get_video_thumbnail(file_):
     # TODO: make this working with any storage (not only local disk)
-    """Generate video mp3 which can be played in all browsers.
-    """
+    """Generate video mp3 which can be played in all browsers."""
     thumbnail_name = file_.name + "_thumbnail.mp4"
     inputname = os.path.join(settings.MEDIA_ROOT, file_.name)
     outputname = os.path.join(settings.MEDIA_ROOT, thumbnail_name)

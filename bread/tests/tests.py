@@ -56,7 +56,8 @@ def generate_testable_url(modeladmin, urlname):
 def register_custom_generators():
     GENERATORS = {
         MoneyField: lambda field: Money(
-            (random.random() * 2 - 1) * 999_999_999, random.choice(CURRENCY_CHOICES)[0],
+            (random.random() * 2 - 1) * 999_999_999,
+            random.choice(CURRENCY_CHOICES)[0],
         ),
         CurrencyField: lambda field: random.choice(CURRENCY_CHOICES)[0],
         models.DurationField: lambda field: datetime.timedelta(
