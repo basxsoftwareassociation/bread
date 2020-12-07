@@ -26,29 +26,32 @@ setup(
     author_email="sam@basx.dev",
     license="New BSD License",
     install_requires=[
+        # custom code in other packages
+        "django-filepreview",
+        "htmlgenerator",  # replacement for django templates
+        # core dependencies
         "Django",
         "python-dateutil",
-        "django-crispy-forms",
-        "django-filepreview @ hg+https://hg.basx.dev/pythonpackages/django-filepreview",
+        "django-compressor",  # compress html assets
+        "django-libsass",  # serve *.scss files with compressor
+        "django-crispy-forms",  # TODO: remove this dependency
+        "django-extensions",  # bunch of usefull management commands and functions
+        "django-filter",  # url-based filtering, filter-forms
+        "django-guardian",  # object level permissions
+        # other dependencies, TODO: remove unnecessary ones
         "django-ckeditor",
         "django-model-utils",
-        "django-extensions",
-        "django-filter",
-        "django-guardian",
-        "django-dynamic-preferences",
+        "django-dynamic-preferences",  # easy handling of preferences
         "django-dynamic-fixture",
-        "django-compressor",
-        "django-libsass",
         "django-markdown2",
         "django-countries",
         "django-money[exchange]",
-        "Arpeggio",
-        "htmlgenerator",
+        "Arpeggio",  # used to create strong parsers
         # Required for multimedia
         "pygraphviz",  # graphviz/dot graphs
         "Pillow",  # image processing
         "easy_thumbnails",  # thumbnails
-        "django-image-cropping",  # cropping
+        "django-image-cropping",  # cropping images, only usefull in admin backend
         "openpyxl",  # working with excel files
         "WeasyPrint",  # creating PDFs
         "ffmpeg-python",  # working with ffmpeg for video and audio
