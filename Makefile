@@ -5,3 +5,7 @@ pip:
 
 locale:
 	cd bread && ../manage.py makemessages -l de
+
+checks:
+	black --check bread
+	flake8 bread
