@@ -22,6 +22,13 @@ BREAD Engine
 
 This package provides functionality to create django database applications in a quick and customizable way.
 
+Installation
+------------
+
+```bash
+pip install basx-bread
+```
+
 
 Example
 -------
