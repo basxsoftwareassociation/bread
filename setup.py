@@ -16,7 +16,7 @@ with open("bread/__init__.py") as f:
     )
 
 setup(
-    name="bread",
+    name="basx-bread",
     version=version,
     description="Engine to create database applications based on Django and the IBM Carbon Design System",
     long_description=readme(),
