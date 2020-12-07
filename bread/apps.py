@@ -10,5 +10,6 @@ class BreadConfig(AppConfig):
         from . import admin
         from django.utils.module_loading import autodiscover_modules
 
+        autodiscover_modules("views")
         autodiscover_modules("bread")
         admin.site.register_menus()
