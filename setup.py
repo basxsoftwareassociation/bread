@@ -65,6 +65,7 @@ setup(
         "celery-haystack",
     ],
     packages=find_packages(),
+    setup_requires=["setuptools_scm"],
     zip_safe=False,
     include_package_data=True,
     classifiers=[
