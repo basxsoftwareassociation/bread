@@ -1,9 +1,3 @@
-from dynamic_preferences import views as preferences_views
-from dynamic_preferences.forms import preference_form_builder
-from dynamic_preferences.registries import global_preferences_registry
-from dynamic_preferences.users import views as user_preferences_views
-from dynamic_preferences.users.registries import user_preferences_registry
-
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
@@ -18,6 +12,11 @@ from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import RedirectView, View
 from django.views.static import serve
+from dynamic_preferences import views as preferences_views
+from dynamic_preferences.forms import preference_form_builder
+from dynamic_preferences.registries import global_preferences_registry
+from dynamic_preferences.users import views as user_preferences_views
+from dynamic_preferences.users.registries import user_preferences_registry
 
 from . import menu
 from . import views as bread_views
@@ -342,11 +341,11 @@ class BreadAdminSite:
         )
         datamodel = menu.Item(
             menu.Link(url=reverse_lazy("datamodel"), label=_("Datamodel")),
-            group="Admin",
+            group=_("Admin"),
         )
         system_settings = menu.Item(
             menu.Link(url=reverse_lazy("admin:index"), label=_("System Settings")),
-            group="Admin",
+            group=_("Admin"),
         )
         system_settings.has_permission = lambda request: request.user.is_superuser
         datamodel.has_permission = lambda request: request.user.is_superuser
