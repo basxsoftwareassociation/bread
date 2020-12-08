@@ -2,7 +2,7 @@
 **/.hg/
 **/.tox/
 **/.venv/
-bread/locale/de/LC_MESSAGES/django.mo
+**/*.mo
 basx_bread.egg-info/
 build/
 dist/
