@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-08 15:09+0700\n"
+"POT-Creation-Date: 2020-12-12 19:23+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,44 +18,28 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: bread/admin.py:159 bread/views/edit.py:48
-msgid "Edit"
-msgstr "Bearbeiten"
-
-#: bread/admin.py:171
-msgid "Delete"
-msgstr "Löschen"
-
-#: bread/admin.py:336
-msgid "Preferences"
-msgstr "Einstellungen"
-
-#: bread/admin.py:340
-msgid "Admin"
-msgstr "Administration"
-
-#: bread/admin.py:344
-msgid "Datamodel"
-msgstr "Datenmodel"
-
-#: bread/admin.py:348 bread/templates/admin/base_site.html:3
-msgid "System Settings"
-msgstr "Systemeinstellungen"
-
 #: bread/layout/components/checkbox.py:34
 msgid " (required)"
 msgstr " (erforderlich)"
 
-#: bread/layout/components/datatable.py:88
+#: bread/layout/components/datatable.py:90
 msgid " items selected"
 msgstr " Einträge ausgewählt"
 
-#: bread/layout/components/datatable.py:94
+#: bread/layout/components/datatable.py:96
 msgid "Table Action Bar"
 msgstr "Tabellen Aktionsbar"
 
-#: bread/layout/components/datatable.py:147 bread/views/add.py:48
-#: bread/views/browse.py:84
+#: bread/layout/components/datatable.py:128 bread/views/__init__.py:30
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: bread/layout/components/datatable.py:130 bread/views/__init__.py:31
+msgid "Delete"
+msgstr "Löschen"
+
+#: bread/layout/components/datatable.py:160 bread/views/add.py:48
+#: bread/views/browse.py:75
 #, python-format
 msgid "Add %s"
 msgstr "%s erstellen"
@@ -102,7 +86,42 @@ msgstr "Suchtext löschen"
 msgid "Show password"
 msgstr "Zeige Passwort"
 
-#: bread/views/add.py:33
+#: bread/templates/admin/base_site.html:3
+msgid "System Settings"
+msgstr "Systemeinstellungen"
+
+#: bread/templates/bread/confirm_delete.html:8
+msgid "cannot be deleted because of the following related objects:"
+msgstr " kann nicht gelöscht werden weil folgende Objekte nicht automatisch gelöscht werden können"
+
+#: bread/templates/bread/confirm_delete.html:24
+msgid "The following objects will be deleted too:"
+msgstr "Die folgenden Objekte werden ebenfalls gelöscht:"
+
+#: bread/templates/bread/confirm_delete.html:36
+msgid "Are you sure you want to delete"
+msgstr "Sind sie sicher, dass Sie dises Objekt löschen wollen:"
+
+#: bread/templates/bread/confirm_delete.html:38
+msgid "Yes, delete"
+msgstr "Ja, löschen"
+
+#: bread/views/add.py:34
 #, python-format
 msgid "Added %s"
 msgstr "%s erstellt"
+
+#: bread/views/edit.py:49
+#, fuzzy, python-format
+#| msgid "Edit"
+msgid "Edit %s "
+msgstr "Bearbeiten"
+
+#~ msgid "Preferences"
+#~ msgstr "Einstellungen"
+
+#~ msgid "Admin"
+#~ msgstr "Administration"
+
+#~ msgid "Datamodel"
+#~ msgstr "Datenmodel"
