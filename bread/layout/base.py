@@ -1,24 +1,21 @@
-import htmlgenerator
+import htmlgenerator as hg
 from bread.utils import pretty_fieldname, pretty_modelname
 from django.core.exceptions import FieldDoesNotExist
 
 
-class ModelContext(htmlgenerator.ValueProvider):
+class ModelContext(hg.ValueProvider):
     """Provides a model to marked child elements"""
 
     attributename = "model"
 
-    def __init__(self, model, *children):
-        super().__init__(model, *children)
 
-
-class ObjectContext(htmlgenerator.ValueProvider):
+class ObjectContext(hg.ValueProvider):
     """Provides a model instance to marked child elements """
 
     attributename = "object"
 
-    def __init__(self, object, *children):
-        super().__init__(object, *children)
+    def render(self, context):
+        return super().render(context)
 
 
 class ModelFieldLabel(ModelContext.Binding(), ObjectContext.Binding()):

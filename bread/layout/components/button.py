@@ -28,7 +28,7 @@ class Button(htmlgenerator.BUTTON):
             ] += " bx--btn--icon-only bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-center"
             children = (htmlgenerator.SPAN(*children, _class="bx--assistive-text"),)
 
-        if icon:
+        if icon is not None:
             icon.attributes["_class"] = (
                 icon.attributes.get("_class", "") + " bx--btn__icon"
             )
@@ -37,7 +37,7 @@ class Button(htmlgenerator.BUTTON):
 
     def render(self, context):
         attribs = {**self.attributes, **{"disabled": self.disabled_func(context)}}
-        yield f"<{self.tag} {htmlgenerator.flatattrs(attribs, self, context)}>"
+        yield f"<{self.tag} {htmlgenerator.flatattrs(attribs, context, self)}>"
         yield from super().render_children(context)
         yield f"</{self.tag}>"
 

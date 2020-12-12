@@ -13,6 +13,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import DeleteView as DjangoDeleteView
 
 from ..utils import CustomizableClass
+from ..utils.urls import reverse_model
 
 
 class DeleteView(
@@ -21,10 +22,10 @@ class DeleteView(
     template_name = "bread/confirm_delete.html"
     admin = None
     accept_global_perms = True
+    urlparams = (("pk", int),)
 
-    def __init__(self, admin, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.admin = admin
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.delete_{self.model.__name__.lower()}"]
@@ -33,4 +34,4 @@ class DeleteView(
         messages.info(self.request, f"Deleted {self.object}")
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
-        return self.admin.reverse("index")
+        return reverse_model(self.model, "browse")

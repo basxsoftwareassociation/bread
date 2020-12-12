@@ -25,37 +25,28 @@ from ..utils import (
     title,
     xlsxresponse,
 )
+from ..utils.urls import reverse_model
 
 
 class BrowseView(
     CustomizableClass, LoginRequiredMixin, PermissionListMixin, FilterView
 ):
     template_name = "bread/layout.html"
-    admin = None
     fields = None
     filterfields = None
     page_kwarg = "browsepage"  # need to use something different than the default "page" because we also filter through kwargs
     layout = None
+    object_actions = ()  # list of links
 
-    def __init__(self, admin, *args, **kwargs):
-        self.admin = admin
-        self.model = admin.model
-        self.filterset_fields = admin.filterset_fields
-
-        self.admin = admin
-        self.model = admin.model
+    def __init__(self, *args, **kwargs):
+        model = kwargs["model"]
+        self.filterset_fields = kwargs.get("filterset_fields", self.filterset_fields)
         layout = kwargs.get("layout", self.layout)
-
-        def get_object_actions(element, context):
-            from ..admin import site
-
-            return site.get_default_admin(element.object).object_actions(
-                context["request"], element.object
-            )
+        self.object_actions = kwargs.get("object_actions", self.object_actions)
 
         object_actions_menu = _layout.overflow_menu.OverflowMenu(
-            _layout.F(get_object_actions),
-            iteratorclass=_layout.ObjectContext.Binding(_layout.Iterator),
+            _layout.F(self.get_object_actions),
+            menucontext=_layout.ObjectContext,
             flip=True,
             item_attributes={"_class": "bx--table-row--menu-option"},
         )
@@ -68,26 +59,26 @@ class BrowseView(
                 raise RuntimeError(
                     "layout needs to be a BaseElement instance or a list of fieldnames"
                 )
-
+            fields = layout
             layout = _layout.datatable.DataTable.full(
                 _layout.ModelName(plural=True),
                 _layout.datatable.DataTable(
                     [
                         (_layout.ModelFieldLabel(field), _layout.ModelFieldValue(field))
-                        for field in list(filter_fieldlist(self.model, layout))
+                        for field in list(filter_fieldlist(model, fields))
                     ]
                     + [(None, object_actions_menu)],
                     _layout.C("object_list"),
                     _layout.ObjectContext,
                 ),
                 _layout.button.Button(
-                    _("Add %s") % title(self.model._meta.verbose_name),
+                    _("Add %s") % title(model._meta.verbose_name),
                     icon=_layout.icon.Icon("add", size=20),
-                    onclick=f"document.location = '{self.admin.reverse('add')}'",
+                    onclick=f"document.location = '{reverse_model(model, 'add')}'",
                 ),
             )
         # makes the model available to bound elements like ModelFieldValue and ModelFieldLabel
-        self.layout = _layout.ModelContext(self.model, layout)
+        self.layout = _layout.ModelContext(model, layout)
         super().__init__(*args, **kwargs)
 
     def get_layout(self):
@@ -176,6 +167,9 @@ class BrowseView(
                 cell.value = cleaned
 
         return xlsxresponse(workbook, workbook.title)
+
+    def get_object_actions(self, context, element):
+        return self.object_actions
 
     def field_values(self):
         for accessor in self.fields:

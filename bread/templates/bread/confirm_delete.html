@@ -1,11 +1,11 @@
 {% extends "bread/base.html" %}
-{% load bread_tags %}
+{% load bread_tags i18n %}
 
 {% block content %}
 
     {% list_delete_protection object as delete_protection %}
     {% if delete_protection %}
-        <h4><em>{{ object }}</em> cannot be deleted because of the following related objects:</h4>
+    <h4><em>{{ object }}</em> {% translate "cannot be deleted because of the following related objects:" %}</h4>
         <ul>
             {% for objectlist in delete_protection %}
                 {% if objectlist %}
@@ -21,7 +21,7 @@
             {% csrf_token %}
             {% list_delete_cascade object as delete_cascade %}
             {% if delete_cascade %}
-                <h4>The following objects will be deleted too:</h4>
+            <h4>{% translate "The following objects will be deleted too:" %}</h4>
                 <ul>
                     {% for objectlist in delete_cascade %}
                         {% if objectlist %}
@@ -33,8 +33,10 @@
                     {% endfor %}
                 </ul>
             {% endif %}
-            <p>Are you sure you want to delete <em>{{ object }}</em>?</p>
-            <input type="submit" value="Yes, delete">
+            <p class="bx--form-item">{% translate "Are you sure you want to delete" %} <em>{{ object }}</em>?</p>
+            <div class="bx--form-item">
+                <button type="submit" class="bx--btn bx--btn--danger">{% translate "Yes, delete" %}</button>
+            </div>
         </form>
     {% endif %}
 

@@ -1,7 +1,7 @@
 from django.apps import apps
 from django.utils.text import format_lazy
 
-from .utils import try_call
+from .utils.model_helpers import get_concrete_instance
 
 
 class Group:
@@ -48,6 +48,10 @@ class Group:
         return any((item.active(request) for item in self.items))
 
 
+def try_call(var, *args, **kwargs):
+    return var(*args, **kwargs) if callable(var) else var
+
+
 class Action:
     """Represents a user-clickable action
     js, label, icon and permissions can be str, lazy string or a callable function.
@@ -75,6 +79,28 @@ class Link(Action):
             format_lazy("document.location = '{}'", url), label, icon, permissions
         )
         self.url = url
+
+    @staticmethod
+    def from_objectaction(actionname, label, icon=None, *args, **kwargs):
+        from . import layout
+        from .utils.urls import reverse_model
+
+        return Action(
+            layout.F(
+                lambda c, e: format_lazy(
+                    "document.location = '{}'",
+                    reverse_model(
+                        get_concrete_instance(e.object)._meta.model,
+                        actionname,
+                        *args,
+                        args=(get_concrete_instance(e.object).id,),
+                        **kwargs
+                    ),
+                )
+            ),
+            label=label,
+            icon=icon,
+        )
 
 
 class Item:

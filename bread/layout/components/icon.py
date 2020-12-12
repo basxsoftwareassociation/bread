@@ -1,7 +1,7 @@
 import logging
 import os
 
-import htmlgenerator
+import htmlgenerator as hg
 from django.contrib.staticfiles import finders
 from django.core.cache import cache
 from django.utils.html import mark_safe
@@ -9,7 +9,7 @@ from django.utils.html import mark_safe
 logger = logging.getLogger(__name__)
 
 
-class Icon(htmlgenerator.SVG):
+class Icon(hg.SVG):
 
     """Insert the SVG for a carbon icon.
     See https://www.carbondesignsystem.com/guidelines/icons/library for a list of all icons.
@@ -32,15 +32,21 @@ class Icon(htmlgenerator.SVG):
         else:
             attributes["width"] = size
             attributes["height"] = size
+        self.name = name
+        super().__init__(**attributes)
 
+    def render(self, context):
+        name = hg.resolve_lazy(self.name, context, self)
         if cache.get(name) is None:
             path = finders.find(
                 os.path.join("design/carbon_design/icons/flat/raw_32/", f"{name}.svg")
             )
             if not path:
                 logger.error(f"Missing icon: {name}.svg")
-                super().__init__(name, **attributes)
-                return
+                self.append(f"Missing icon: {name}.svg")
+                return super().render(context)
             with open(path) as f:
                 cache.set(name, f.read())
-        super().__init__(mark_safe(cache.get(name)), **attributes)
+        self.clear()
+        self.append(mark_safe(cache.get(name)))
+        return super().render(context)

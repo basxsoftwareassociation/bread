@@ -1,7 +1,9 @@
 import htmlgenerator as hg
+from bread.menu import Link
+from bread.utils import filter_fieldlist, pretty_modelname
+from bread.utils.urls import reverse_model
 from django.utils.translation import gettext_lazy as _
 
-from ...utils import filter_fieldlist, pretty_modelname
 from ..base import (
     ModelContext,
     ModelFieldLabel,
@@ -106,22 +108,32 @@ class DataTable(hg.BaseElement):
         )
 
     @staticmethod
-    def from_queryset(queryset, fields=["__all__"], title=None, addurl=None):
-        from ...admin import site
-
+    def from_queryset(
+        queryset,
+        fields=["__all__"],
+        object_actions=None,
+        title=None,
+        addurl=None,
+        backurl=None,
+    ):
         if title is None:
             title = ModelName(plural=True)
+
+        backquery = {"next": backurl} if backurl else {}
         if addurl is None:
-            addurl = site.get_default_admin(queryset.model).reverse("add")
+            addurl = reverse_model(queryset.model, "add", query=backquery)
 
-        def get_object_actions(element, context):
-
-            return site.get_default_admin(element.object).object_actions(
-                context["request"], element.object
-            )
+        if object_actions is None:
+            object_actions = [
+                Link.from_objectaction("edit", _("Edit"), "edit", query=backquery),
+                Link.from_objectaction(
+                    "delete", _("Delete"), "trash-can", query=backquery
+                ),
+            ]
 
         object_actions_menu = OverflowMenu(
-            hg.F(get_object_actions),
+            object_actions,
+            menucontext=ObjectContext,
             iteratorclass=ObjectContext.Binding(hg.Iterator),
             flip=True,
             item_attributes={"_class": "bx--table-row--menu-option"},
@@ -140,7 +152,8 @@ class DataTable(hg.BaseElement):
                         for field in list(filter_fieldlist(queryset.model, fields))
                     ]
                     + [(None, object_actions_menu)],
-                    queryset,
+                    # querysets are cache, the call to all will make a new query is used in every request
+                    hg.F(lambda c, e: queryset.all()),
                     ObjectContext,
                 ),
                 Button(

@@ -4,13 +4,14 @@ from django.db import models
 
 
 def pretty_modelname(model, plural=False):
+    """Canonical way to pretty print a model name"""
     if plural:
         return title(model._meta.verbose_name_plural)
     return title(model._meta.verbose_name)
 
 
 def pretty_fieldname(field):
-    """Will print a human readable name for a field"""
+    """Canonical way to pretty print a field name"""
     if isinstance(field, str):
         ret = field.replace("_", " ")
     elif field.is_relation and field.one_to_many:

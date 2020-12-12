@@ -3,7 +3,6 @@ from dynamic_preferences.users.forms import UserPreferenceForm
 from guardian.shortcuts import get_objects_for_user
 
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.core.exceptions import FieldDoesNotExist
@@ -219,12 +218,6 @@ class PreferencesForm(GlobalPreferenceForm):
 
 
 class UserPreferencesForm(UserPreferenceForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.layout = _layout.form.Form.from_fieldnames(_layout.C("form"), self.fields)
-
-
-class BreadAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.layout = _layout.form.Form.from_fieldnames(_layout.C("form"), self.fields)

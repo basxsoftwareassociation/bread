@@ -59,7 +59,7 @@ class Form(htmlgenerator.FORM):
         )
 
     def render(self, context):
-        form = htmlgenerator.resolve_lazy(self.form, self, context)
+        form = htmlgenerator.resolve_lazy(self.form, context, self)
         for formfield in self.formfieldelements():
             formfield.form = form
         for error in form.non_field_errors():
