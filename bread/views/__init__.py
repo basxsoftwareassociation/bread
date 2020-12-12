@@ -26,7 +26,8 @@ def register_default_modelviews(
             model,
             "browse",
             browseview,
-            object_actions=[
+            object_actions=browseview.object_actions
+            or [
                 Link.from_objectaction("edit", _("Edit"), "edit"),
                 Link.from_objectaction("delete", _("Delete"), "trash-can"),
             ],

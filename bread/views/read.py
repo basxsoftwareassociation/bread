@@ -1,6 +1,5 @@
-from guardian.mixins import PermissionRequiredMixin
-
 from django.views.generic import DetailView
+from guardian.mixins import PermissionRequiredMixin
 
 from .. import layout as _layout  # prevent name clashing
 from ..utils import (
@@ -22,6 +21,7 @@ class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
         self.admin = admin
         self.model = admin.model
         layout = kwargs.get("layout", self.layout)
+        layout = layout() if callable(layout) else layout
         if not isinstance(layout, _layout.BaseElement):
             layout = [
                 _layout.form.FormField(field, widgetattributes={"readonly": True})
@@ -37,10 +37,6 @@ class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
         )
 
         super().__init__(*args, **kwargs)
-
-    def get_layout(self):
-        """fields_argument is anything that has been passed as ``fields`` to the as_view function"""
-        return self.layout
 
     def field_values(self):
         for accessor in self.fields:

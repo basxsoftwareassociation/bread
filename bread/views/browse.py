@@ -2,9 +2,6 @@ import re
 from html.parser import HTMLParser
 
 import django_filters
-from django_filters.views import FilterView
-from guardian.mixins import PermissionListMixin
-
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -13,6 +10,8 @@ from django.db.models.functions import Lower
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
+from django_filters.views import FilterView
+from guardian.mixins import PermissionListMixin
 
 from .. import layout as _layout  # prevent name clashing
 from ..formatters import render_field
@@ -42,6 +41,7 @@ class BrowseView(
         model = kwargs["model"]
         self.filterset_fields = kwargs.get("filterset_fields", self.filterset_fields)
         layout = kwargs.get("layout", self.layout)
+        layout = layout() if callable(layout) else layout
         self.object_actions = kwargs.get("object_actions", self.object_actions)
 
         object_actions_menu = _layout.overflow_menu.OverflowMenu(
@@ -59,6 +59,7 @@ class BrowseView(
                 raise RuntimeError(
                     "layout needs to be a BaseElement instance or a list of fieldnames"
                 )
+            print(layout)
             fields = layout
             layout = _layout.datatable.DataTable.full(
                 _layout.ModelName(plural=True),
@@ -80,9 +81,6 @@ class BrowseView(
         # makes the model available to bound elements like ModelFieldValue and ModelFieldLabel
         self.layout = _layout.ModelContext(model, layout)
         super().__init__(*args, **kwargs)
-
-    def get_layout(self):
-        return self.layout
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]

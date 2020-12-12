@@ -6,12 +6,11 @@ an argument "admin" which is an instance of the according BreadAdmin class
 """
 import urllib
 
-from guardian.mixins import PermissionRequiredMixin
-
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView
+from guardian.mixins import PermissionRequiredMixin
 
 from .. import layout as _layout  # prevent name clashing
 from ..utils import CustomizableClass, filter_fieldlist, pretty_modelname
@@ -36,6 +35,7 @@ class AddView(
     def __init__(self, *args, **kwargs):
         model = kwargs["model"]
         layout = kwargs.get("layout", self.layout)
+        layout = layout() if callable(layout) else layout
         if not isinstance(layout, _layout.BaseElement):
             layout = _layout.BaseElement(
                 *[
