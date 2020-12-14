@@ -20,7 +20,6 @@ class DeleteView(
     CustomizableClass, PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView
 ):
     template_name = "bread/confirm_delete.html"
-    admin = None
     accept_global_perms = True
     urlparams = (("pk", int),)
 

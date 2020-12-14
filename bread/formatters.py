@@ -240,8 +240,8 @@ def as_video(value):
 
 
 def object_url(o):
-    from .admin import site
-
+    # TODO
+    return ""
     defaultadmin = site.get_default_admin(o)
     if defaultadmin is not None:
         return defaultadmin.reverse("read", o.pk)
