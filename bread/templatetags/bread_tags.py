@@ -2,8 +2,7 @@ import logging
 import warnings
 from _strptime import TimeRE
 
-from crispy_forms.utils import get_template_pack
-
+import htmlgenerator
 from bread import menu as menuregister
 from django import template
 from django.core.exceptions import FieldDoesNotExist
@@ -12,10 +11,7 @@ from django.forms import DateInput, Textarea, TextInput
 from django.utils import formats
 from django.utils.html import mark_safe
 
-from .. import layout
 from ..formatters import as_object_link, format_value
-from ..formatters import render_field as render_field_func
-from ..formatters import render_field_aggregation as render_field_aggregation_func
 from ..forms import forms
 from ..utils import has_permission, pretty_fieldname, title
 from ..utils.datetimeformatstring import to_php_formatstr
@@ -35,7 +31,6 @@ register.filter(format_value)
 @register.simple_tag
 def dateformatstr2regex(formatstr, format_key):
     formatstr = formatstr or formats.get_format(format_key)[0]
-    # check: are local formats handled correctly?
     return TimeRE().compile(formatstr).pattern
 
 
@@ -50,8 +45,12 @@ def linkurl(context, link):
 
 
 @register.simple_tag(takes_context=True)
-def render_layout(context, element):
-    return mark_safe(layout.render(element, context.flatten()))
+def render_layout(context):
+    # try first to get "raw" layout object from context, otherwise use layout method of view
+    layout = context.get("layout", context.get("view").layout)
+    return mark_safe(
+        htmlgenerator.render(layout(context["request"]), context.flatten())
+    )
 
 
 @register.simple_tag
@@ -95,28 +94,6 @@ def modelname(model):
 
 
 @register.simple_tag
-def adminurl(model, urlname, *args, **kwargs):
-    from ..admin import site
-
-    return site.get_default_admin(model).reverse(urlname, *args, **kwargs)
-
-
-@register.simple_tag
-def object_actions(admin, request, object):
-    return admin.object_actions(request, object)
-
-
-@register.simple_tag
-def list_actions(admin, request):
-    return admin.list_actions(request)
-
-
-@register.simple_tag
-def add_action(admin, request):
-    return admin.add_action(request)
-
-
-@register.simple_tag
 def pagename(request):
     return " / ".join(
         [
@@ -127,28 +104,8 @@ def pagename(request):
 
 
 @register.simple_tag(takes_context=True)
-def render_field(context, instance, fieldname):
-    admin = getattr(context.get("view"), "admin", None)
-    if admin is None:
-        from ..admin import site
-
-        admin = site.get_default_admin(instance._meta.model)
-    return render_field_func(instance, fieldname, admin)
-
-
-@register.simple_tag(takes_context=True)
 def object_link(context, instance, label=None):
     return as_object_link(instance, label)
-
-
-@register.simple_tag(takes_context=True)
-def render_field_aggregation(context, instance, fieldname):
-    admin = getattr(context.get("view"), "admin", None)
-    if admin is None:
-        from ..admin import site
-
-        admin = site.get_default_admin(instance._meta.model)
-    return render_field_aggregation_func(instance, fieldname, admin)
 
 
 @register.simple_tag
@@ -172,11 +129,6 @@ def updated_querystring(context, key, value):
     current_query = context["request"].GET.copy()
     current_query[key] = value
     return context["request"].path + "?" + current_query.urlencode()
-
-
-@register.simple_tag(takes_context=True)
-def crispy_html(context, layout):
-    return mark_safe(layout.render({}, (), context, template_pack=get_template_pack()))
 
 
 # filters
@@ -295,7 +247,9 @@ def list_delete_protection(object):
 # TODO: this should be removed in the future when we will only use htmlgenerator layouts
 @register.simple_tag
 def carbon_icon(name, size, **attributes):
-    return mark_safe(layout.render(layout.icon.Icon(name, size, **attributes), {}))
+    from ..layout.components.icon import Icon
+
+    return mark_safe(htmlgenerator.render(Icon(name, size, **attributes), {}))
 
 
 @register.filter

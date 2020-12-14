@@ -6,14 +6,15 @@ an argument "admin" which is an instance of the according BreadAdmin class
 """
 import urllib
 
+from guardian.mixins import PermissionRequiredMixin
+
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import UpdateView
-from guardian.mixins import PermissionRequiredMixin
 
 from .. import layout as _layout  # prevent name clashing
-from ..utils import CustomizableClass, filter_fieldlist, pretty_modelname
+from ..utils import CustomizableClass, pretty_modelname
 from ..utils.urls import model_urlname
 from .util import CustomFormMixin
 
@@ -27,31 +28,26 @@ class EditView(
 ):
     template_name = "bread/layout.html"
     accept_global_perms = True
-    layout = None
+    fields = None
     urlparams = (("pk", int),)
 
     def get_success_message(self, cleaned_data):
         return f"Saved {self.object}"
 
     def __init__(self, *args, **kwargs):
-        model = kwargs["model"]
-        layout = kwargs.get("layout", self.layout)
-        layout = layout() if callable(layout) else layout
-        if not isinstance(layout, _layout.BaseElement):
-            layout = _layout.BaseElement(
-                *[
-                    _layout.form.FormField(field)
-                    for field in filter_fieldlist(model, layout, for_form=True)
-                ]
-            )
-        self.layout = _layout.BaseElement(
+        self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"]))
+        super().__init__(*args, **kwargs)
+
+    def layout(self, request):
+        return _layout.BaseElement(
             _layout.H2(
-                _("Edit %s ") % pretty_modelname(model),
+                _("Edit %s ") % pretty_modelname(self.model),
                 _layout.I(_layout.F(lambda c, e: c["object"])),
             ),
-            _layout.form.Form.wrap_with_form(_layout.C("form"), layout),
+            _layout.form.Form.wrap_with_form(
+                _layout.C("form"), self.formlayout(request)
+            ),
         )
-        super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]

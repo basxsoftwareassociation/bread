@@ -1,42 +1,38 @@
-from django.views.generic import DetailView
 from guardian.mixins import PermissionRequiredMixin
+
+from django.views.generic import DetailView
 
 from .. import layout as _layout  # prevent name clashing
 from ..utils import (
     CustomizableClass,
     filter_fieldlist,
     pretty_fieldname,
+    pretty_modelname,
     resolve_relationship,
 )
 
 
 class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
-    admin = None
     fields = None
     accept_global_perms = True
-    layout = None
     template_name = "bread/layout.html"
 
-    def __init__(self, admin, *args, **kwargs):
-        self.admin = admin
-        self.model = admin.model
-        layout = kwargs.get("layout", self.layout)
-        layout = layout() if callable(layout) else layout
-        if not isinstance(layout, _layout.BaseElement):
-            layout = [
-                _layout.form.FormField(field, widgetattributes={"readonly": True})
-                for field in filter_fieldlist(self.model, layout, for_form=True)
-            ]
-        self.layout = _layout.BaseElement(
+    def __init__(self, *args, **kwargs):
+        self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"]))
+        super().__init__(*args, **kwargs)
+
+    def layout(self, request):
+        return _layout.BaseElement(
             _layout.H2(
-                self.admin.verbose_modelname,
+                pretty_modelname(self.model),
                 " ",
                 _layout.I(lambda c: c["object"]),
             ),
-            layout,
+            [
+                _layout.form.FormField(field, widgetattributes={"readonly": True})
+                for field in filter_fieldlist(self.model, self.fields, for_form=True)
+            ],
         )
-
-        super().__init__(*args, **kwargs)
 
     def field_values(self):
         for accessor in self.fields:

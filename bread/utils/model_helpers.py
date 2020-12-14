@@ -156,8 +156,10 @@ def resolve_relationship(model, accessor_str):
 def get_concrete_instance(instance):
     """Returns the the most concrete instance of the model-instance"""
     for field in instance._meta.get_fields():
-        if isinstance(field, models.fields.reverse_related.OneToOneRel) and hasattr(
-            field, "parent_link"
+        if (
+            isinstance(field, models.fields.reverse_related.OneToOneRel)
+            and hasattr(field, "parent_link")
+            and field.parent_link is True
         ):
             child_object = getattr(instance, field.get_accessor_name(), None)
             if child_object:

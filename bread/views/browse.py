@@ -2,6 +2,9 @@ import re
 from html.parser import HTMLParser
 
 import django_filters
+from django_filters.views import FilterView
+from guardian.mixins import PermissionListMixin
+
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -10,8 +13,6 @@ from django.db.models.functions import Lower
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
-from django_filters.views import FilterView
-from guardian.mixins import PermissionListMixin
 
 from .. import layout as _layout  # prevent name clashing
 from ..formatters import render_field
@@ -20,8 +21,8 @@ from ..utils import (
     CustomizableClass,
     filter_fieldlist,
     pretty_fieldname,
+    pretty_modelname,
     resolve_relationship,
-    title,
     xlsxresponse,
 )
 from ..utils.urls import reverse_model
@@ -34,16 +35,14 @@ class BrowseView(
     fields = None
     filterfields = None
     page_kwarg = "browsepage"  # need to use something different than the default "page" because we also filter through kwargs
-    layout = None
     object_actions = ()  # list of links
 
     def __init__(self, *args, **kwargs):
-        model = kwargs["model"]
+        self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"]))
         self.filterset_fields = kwargs.get("filterset_fields", self.filterset_fields)
-        layout = kwargs.get("layout", self.layout)
-        layout = layout() if callable(layout) else layout
-        self.object_actions = kwargs.get("object_actions", self.object_actions)
+        super().__init__(*args, **kwargs)
 
+    def layout(self, request):
         object_actions_menu = _layout.overflow_menu.OverflowMenu(
             _layout.F(self.get_object_actions),
             menucontext=_layout.ObjectContext,
@@ -54,33 +53,28 @@ class BrowseView(
         object_actions_menu.td_attributes = {"_class": "bx--table-column-menu"}
         action_menu_header = _layout.BaseElement()
         action_menu_header.td_attributes = {"_class": "bx--table-column-menu"}
-        if not isinstance(layout, _layout.BaseElement):
-            if not isinstance(layout, list) and layout is not None:
-                raise RuntimeError(
-                    "layout needs to be a BaseElement instance or a list of fieldnames"
-                )
-            print(layout)
-            fields = layout
-            layout = _layout.datatable.DataTable.full(
+
+        return _layout.ModelContext(
+            self.model,
+            _layout.datatable.DataTable.full(
                 _layout.ModelName(plural=True),
                 _layout.datatable.DataTable(
                     [
                         (_layout.ModelFieldLabel(field), _layout.ModelFieldValue(field))
-                        for field in list(filter_fieldlist(model, fields))
+                        for field in list(filter_fieldlist(self.model, self.fields))
                     ]
                     + [(None, object_actions_menu)],
                     _layout.C("object_list"),
                     _layout.ObjectContext,
                 ),
                 _layout.button.Button(
-                    _("Add %s") % title(model._meta.verbose_name),
+                    _("Add %s") % pretty_modelname(self.model),
                     icon=_layout.icon.Icon("add", size=20),
-                    onclick=f"document.location = '{reverse_model(model, 'add')}'",
+                    onclick=f"document.location = '{reverse_model(self.model, 'add')}'",
                 ),
-            )
+            ),
+        )
         # makes the model available to bound elements like ModelFieldValue and ModelFieldLabel
-        self.layout = _layout.ModelContext(model, layout)
-        super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
