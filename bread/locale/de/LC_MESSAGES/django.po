@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-12 19:23+0700\n"
+"POT-Creation-Date: 2020-12-14 17:52+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,16 +30,16 @@ msgstr " Einträge ausgewählt"
 msgid "Table Action Bar"
 msgstr "Tabellen Aktionsbar"
 
-#: bread/layout/components/datatable.py:128 bread/views/__init__.py:30
+#: bread/layout/components/datatable.py:128 bread/views/__init__.py:31
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: bread/layout/components/datatable.py:130 bread/views/__init__.py:31
+#: bread/layout/components/datatable.py:130 bread/views/__init__.py:32
 msgid "Delete"
 msgstr "Löschen"
 
-#: bread/layout/components/datatable.py:160 bread/views/add.py:48
-#: bread/views/browse.py:75
+#: bread/layout/components/datatable.py:160 bread/views/add.py:37
+#: bread/views/browse.py:71
 #, python-format
 msgid "Add %s"
 msgstr "%s erstellen"
@@ -92,7 +92,9 @@ msgstr "Systemeinstellungen"
 
 #: bread/templates/bread/confirm_delete.html:8
 msgid "cannot be deleted because of the following related objects:"
-msgstr " kann nicht gelöscht werden weil folgende Objekte nicht automatisch gelöscht werden können"
+msgstr ""
+" kann nicht gelöscht werden weil folgende Objekte nicht automatisch gelöscht "
+"werden können"
 
 #: bread/templates/bread/confirm_delete.html:24
 msgid "The following objects will be deleted too:"
@@ -106,22 +108,11 @@ msgstr "Sind sie sicher, dass Sie dises Objekt löschen wollen:"
 msgid "Yes, delete"
 msgstr "Ja, löschen"
 
-#: bread/views/add.py:34
+#: bread/views/add.py:28
 #, python-format
 msgid "Added %s"
 msgstr "%s erstellt"
 
-#: bread/views/edit.py:49
-#, fuzzy, python-format
-#| msgid "Edit"
-msgid "Edit %s "
-msgstr "Bearbeiten"
-
-#~ msgid "Preferences"
-#~ msgstr "Einstellungen"
-
-#~ msgid "Admin"
-#~ msgstr "Administration"
-
-#~ msgid "Datamodel"
-#~ msgstr "Datenmodel"
+#: bread/views/edit.py:44
+msgid "Edit "
+msgstr "Bearbeite "

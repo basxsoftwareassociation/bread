@@ -14,7 +14,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import UpdateView
 
 from .. import layout as _layout  # prevent name clashing
-from ..utils import CustomizableClass, pretty_modelname
+from ..utils import CustomizableClass
 from ..utils.urls import model_urlname
 from .util import CustomFormMixin
 
@@ -41,7 +41,7 @@ class EditView(
     def layout(self, request):
         return _layout.BaseElement(
             _layout.H2(
-                _("Edit %s ") % pretty_modelname(self.model),
+                _("Edit "),
                 _layout.I(_layout.F(lambda c, e: c["object"])),
             ),
             _layout.form.Form.wrap_with_form(
