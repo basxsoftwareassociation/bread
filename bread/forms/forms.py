@@ -1,13 +1,12 @@
-from dynamic_preferences.forms import GlobalPreferenceForm
-from dynamic_preferences.users.forms import UserPreferenceForm
-from guardian.shortcuts import get_objects_for_user
-
 from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.core.exceptions import FieldDoesNotExist
 from django.db import transaction
 from django.forms.formsets import DELETION_FIELD_NAME
+from dynamic_preferences.forms import GlobalPreferenceForm
+from dynamic_preferences.users.forms import UserPreferenceForm
+from guardian.shortcuts import get_objects_for_user
 
 from .. import layout as _layout  # prevent name clashing
 from .fields import FormsetField, GenericForeignKeyField
@@ -208,19 +207,25 @@ def _formfield_callback_with_request(field, request, model):
 class FilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.layout = _layout.form.Form.from_django_form(self, method="GET")
+        self.layout = lambda request: _layout.form.Form.from_django_form(
+            self, method="GET"
+        )
 
 
 class PreferencesForm(GlobalPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.layout = _layout.form.Form.from_fieldnames(_layout.C("form"), self.fields)
+        self.layout = lambda request: _layout.form.Form.from_fieldnames(
+            _layout.C("form"), self.fields
+        )
 
 
 class UserPreferencesForm(UserPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.layout = _layout.form.Form.from_fieldnames(_layout.C("form"), self.fields)
+        self.layout = lambda request: _layout.form.Form.from_fieldnames(
+            _layout.C("form"), self.fields
+        )
 
 
 def _get_form_fields_from_layout(layout):
