@@ -18,6 +18,7 @@ _third_party_apps = [
     "easy_thumbnails",
     "image_cropping",
     "djmoney",
+    "django_countries",
     "djmoney.contrib.exchange",
     "django_celery_results",
     "django_celery_beat",
