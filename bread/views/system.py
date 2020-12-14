@@ -75,5 +75,7 @@ class DataModel(LoginRequiredMixin, TemplateView):
 class BreadLoginView(LoginView):
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
-        form.layout = layout.form.Form.from_fieldnames(form, ["username", "password"])
+        self.layout = lambda request: layout.form.Form.from_fieldnames(
+            form, ["username", "password"]
+        )
         return form

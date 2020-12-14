@@ -93,7 +93,7 @@ def unregisterurl(name):
         del registry[i]
 
 
-def htmlgeneratorview(view):
+def aslayout(view):
     """Helper function to let views return an element tree from htmlgenerator"""
 
     @wraps(view)

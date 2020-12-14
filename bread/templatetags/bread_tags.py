@@ -47,7 +47,7 @@ def linkurl(context, link):
 @register.simple_tag(takes_context=True)
 def render_layout(context):
     # try first to get "raw" layout object from context, otherwise use layout method of view
-    layout = context.get("layout", context.get("view").layout)
+    layout = context.get("layout") or context.get("view").layout
     return mark_safe(
         htmlgenerator.render(layout(context["request"]), context.flatten())
     )

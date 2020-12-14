@@ -3,5 +3,8 @@
 
 {% block content %}
     {% include "dynamic_preferences/sections.html" with registry=registry sections=registry.sections %}
-    {% render_layout form.layout %}
+    {# small hack because we cannot bass layouts directly through a template tag because layouts are callables and will be evaluated by the django template engine #}
+    {% with form as view %}
+        {% render_layout %}
+    {% endwith
 {% endblock %}
