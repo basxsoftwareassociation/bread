@@ -2,6 +2,8 @@
 {% load bread_tags l10n %}
 
 {% block content %}
+{% comment %}
+this only serves as reference
 
     {% list_actions view.admin request as actions %}
     {% if actions %}
@@ -134,5 +136,7 @@
             </div>
         </div>
     <div>
+
+{% endcomment %}
 
 {% endblock %}
