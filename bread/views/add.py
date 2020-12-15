@@ -33,7 +33,7 @@ class AddView(
 
     def layout(self, request):
         return _layout.BaseElement(
-            _layout.H2(
+            _layout.H3(
                 _("Add %s") % pretty_modelname(self.model),
             ),
             _layout.form.Form.wrap_with_form(

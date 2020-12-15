@@ -39,8 +39,14 @@ class EditView(
 
     def layout(self, request):
         return _layout.BaseElement(
-            _layout.H2(
-                _layout.I(_layout.F(lambda c, e: c["object"])),
+            _layout.grid.Grid(
+                _layout.grid.Row(
+                    _layout.grid.Col(
+                        _layout.H3(
+                            _layout.I(_layout.F(lambda c, e: c["object"])),
+                        )
+                    )
+                ),
             ),
             _layout.form.Form.wrap_with_form(
                 _layout.C("form"), self.formlayout(request)

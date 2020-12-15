@@ -190,3 +190,9 @@ DEFAULT_PAGINATION = 1000
 DEFAULT_PAGINATION_CHOICES = [10, 100, 1000]
 
 HAYSTACK_SIGNAL_PROCESSOR = "celery_haystack.signals.CelerySignalProcessor"
+
+LIBSASS_ADDITIONAL_INCLUDE_PATHS = (
+    [  # necessary because of some sass imports in the vendor packages
+        "static/design/carbon_design/scss/globals/scss/vendor"
+    ]
+)

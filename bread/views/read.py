@@ -23,7 +23,7 @@ class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
 
     def layout(self, request):
         return _layout.BaseElement(
-            _layout.H2(
+            _layout.H3(
                 pretty_modelname(self.model),
                 " ",
                 _layout.I(lambda c: c["object"]),

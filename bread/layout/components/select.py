@@ -14,9 +14,10 @@ class Select(htmlgenerator.DIV):
         fieldname,
         light=False,
         inline=False,
-        widgetattributes={},
+        widgetattributes=None,
         **attributes,
     ):
+        widgetattributes = widgetattributes or {}
         self.fieldname = fieldname
         attributes["_class"] = attributes.get("_class", "") + " bx--form-item"
         widgetattributes["_class"] = (

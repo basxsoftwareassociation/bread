@@ -2,13 +2,13 @@ import htmlgenerator
 
 
 class Grid(htmlgenerator.DIV):
-    def __init__(self, *children, grid_mode=None, **attributes):
+    def __init__(self, *children, gridmode=None, **attributes):
         """
-        grid_mode can be one of None, "narrow", "condensed", "full-width"
+        gridmode can be one of None, "narrow", "condensed", "full-width"
         """
         attributes["_class"] = attributes.get("_class", "") + " bx--grid"
-        if grid_mode is not None:
-            attributes["_class"] += f" bx--grid-{grid_mode}"
+        if gridmode is not None:
+            attributes["_class"] += f" bx--grid--{gridmode}"
         super().__init__(*children, **attributes)
 
 

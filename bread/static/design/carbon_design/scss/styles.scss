@@ -1,0 +1,55 @@
+$feature-flags: (
+  grid-columns-16: true,
+);
+
+@import 'globals/scss/styles';
+
+@import 'globals/scss/vendor/@carbon/type/scss/styles';
+
+// map styles from https://www.carbondesignsystem.com/guidelines/typography/productive
+// according to our designer to html semantic elements, might change in the future
+h3 {
+    margin-bottom: $spacing-09;
+}
+h4 {
+    margin-bottom: $spacing-06;
+}
+
+// add some spacing to some elements
+.bx--form-item {
+    margin-bottom: $spacing-07;
+}
+
+// specific padding/width for overflow menu columns
+// taken from https://the-carbon-components.netlify.app/, might be included in future releases of carbon
+.bx--data-table .bx--table-column-menu,
+.bx--data-table .bx--table-column-menu:last-of-type {
+    width: rem(52px);
+    min-width: rem(52px);
+    padding-top: $spacing-03;
+    padding-right: $spacing-03;
+}
+
+// make selects inside grid columns fill width
+.bx--col .bx--form-item {
+    .bx--select {
+        width: 100%;
+        max-width: 100%;
+        .bx--select-input__wrapper {
+            width: 100%;
+            max-width: 100%;
+            select {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+    }
+    [data-date-picker] {
+        width: 100%;
+        max-width: 100%;
+        input {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+}
