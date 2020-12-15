@@ -177,13 +177,10 @@ USE_TZ = True
 
 USE_THOUSAND_SEPARATOR = True
 
-CARBON_DESIGN_CONTEXT = {
-    "header": {
-        "name": "PRODUCT_NAME",
-        "company": "COMPANY_NAME",
-        "platform": "PLATFORM_NAME",
-        "actions": [{"title": "ACTION_1", "switcher": None}],
-    },
+BRANDING = {
+    "name": "PRODUCT_NAME",
+    "company": "COMPANY_NAME",
+    "platform": "PLATFORM_NAME",
 }
 
 DEFAULT_PAGINATION = 1000

@@ -1,6 +1,6 @@
 {% load bread_tags %}
 
-<header class="bx--header" role="banner" aria-label="{{ header.platform }}" data-header>
+<header class="bx--header" role="banner" aria-label="{{ branding.platform }}" data-header>
     <a class="bx--skip-to-content" href="#main-content" tabindex="0">Skip to main content</a>
     <!-- <button
         class="bx--header__menu-trigger bx--header__action"
@@ -15,8 +15,8 @@
         {% carbon_icon "menu" 20 class="bx--navigation-menu-panel-expand-icon" aria_hidden="true" %}
     </button>
     -->
-    <a class="bx--header__name" href="/" title="{{ header.name }}">
-        <span class="bx--header__name--prefix">{{ header.company }}&nbsp;</span>{{ header.platform }}
+    <a class="bx--header__name" href="/" title="{{ branding.name }}">
+        <span class="bx--header__name--prefix">{{ branding.company }}&nbsp;</span>{{ branding.platform }}
     </a>
 
     {# {% include "bread/components/header-nav.html" %} #}
