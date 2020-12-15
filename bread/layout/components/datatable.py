@@ -73,7 +73,7 @@ class DataTable(hg.BaseElement):
 
     @staticmethod
     def full(title, datatable, primary_button, helper_text=None):
-        header = [hg.H4(title)]
+        header = [hg.H4(title, _class="bx--data-table-header__title")]
         if helper_text:
             header.append(
                 hg.P(helper_text, _class="bx--data-table-header__description")
