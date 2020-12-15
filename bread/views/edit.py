@@ -10,7 +10,6 @@ from guardian.mixins import PermissionRequiredMixin
 
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
-from django.utils.translation import gettext as _
 from django.views.generic import UpdateView
 
 from .. import layout as _layout  # prevent name clashing
@@ -41,7 +40,6 @@ class EditView(
     def layout(self, request):
         return _layout.BaseElement(
             _layout.H2(
-                _("Edit "),
                 _layout.I(_layout.F(lambda c, e: c["object"])),
             ),
             _layout.form.Form.wrap_with_form(
