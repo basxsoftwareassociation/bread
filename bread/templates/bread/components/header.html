@@ -1,4 +1,4 @@
-{% load bread_tags %}
+{% load bread_tags i18n %}
 
 <header class="bx--header" role="banner" aria-label="{{ branding.platform }}" data-header>
     <a class="bx--skip-to-content" href="#main-content" tabindex="0">Skip to main content</a>
@@ -35,5 +35,17 @@
                 {% carbon_icon "close" 20 class="bx--navigation-menu-panel-collapse-icon" aria_hidden="true" %}
             </button>
         {% endfor %}
+        <button
+            class="bx--header__menu-trigger bx--header__action"
+            aria-label="logout"
+            title="{% translate "Logout" %}"
+            data-navigation-menu-panel-label-expand="{% translate "Logout" %}"
+            data-navigation-menu-panel-label-collapse="Close menu"
+            data-product-switcher-target="#switcher-logout"
+            onclick="document.location = '{% url "logout"%}'"
+        >
+            {% carbon_icon "logout" 20 class="bx--navigation-menu-panel-expand-icon" aria_hidden="true" %}
+            {% carbon_icon "close" 20 class="bx--navigation-menu-panel-collapse-icon" aria_hidden="true" %}
+        </button>
     </div>
 </header>
