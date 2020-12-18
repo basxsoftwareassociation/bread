@@ -1,0 +1,111 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-12-18 13:42+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+#: bread/layout/components/checkbox.py:34
+msgid " (required)"
+msgstr ""
+
+#: bread/layout/components/datatable.py:90
+msgid " items selected"
+msgstr ""
+
+#: bread/layout/components/datatable.py:96
+msgid "Table Action Bar"
+msgstr ""
+
+#: bread/layout/components/datatable.py:128 bread/views/__init__.py:31
+msgid "Edit"
+msgstr ""
+
+#: bread/layout/components/datatable.py:130 bread/views/__init__.py:32
+msgid "Delete"
+msgstr ""
+
+#: bread/layout/components/datatable.py:160 bread/views/add.py:37
+#: bread/views/browse.py:71
+#, python-format
+msgid "Add %s"
+msgstr ""
+
+#: bread/layout/components/date_picker.py:79
+#: bread/layout/components/select.py:61 bread/layout/components/text_area.py:51
+#: bread/layout/components/text_input.py:46
+msgid " (optional)"
+msgstr ""
+
+#: bread/layout/components/form.py:26
+msgid "Save"
+msgstr ""
+
+#: bread/layout/components/form.py:66
+msgid "Form error"
+msgstr ""
+
+#: bread/layout/components/form.py:72
+msgid "Form error: "
+msgstr ""
+
+#: bread/layout/components/form.py:160
+msgid "Add"
+msgstr ""
+
+#: bread/layout/components/notification.py:122
+msgid "Time stamp "
+msgstr ""
+
+#: bread/layout/components/progress_indicator.py:34
+msgid "Optional"
+msgstr ""
+
+#: bread/layout/components/search.py:17 bread/layout/components/search.py:22
+msgid "Search"
+msgstr ""
+
+#: bread/layout/components/search.py:28 bread/layout/components/search.py:29
+msgid "Clear search input"
+msgstr ""
+
+#: bread/layout/components/text_input.py:70
+msgid "Show password"
+msgstr ""
+
+#: bread/templates/admin/base_site.html:3
+msgid "System Settings"
+msgstr ""
+
+#: bread/templates/bread/confirm_delete.html:8
+msgid "cannot be deleted because of the following related objects:"
+msgstr ""
+
+#: bread/templates/bread/confirm_delete.html:24
+msgid "The following objects will be deleted too:"
+msgstr ""
+
+#: bread/templates/bread/confirm_delete.html:36
+msgid "Are you sure you want to delete"
+msgstr ""
+
+#: bread/templates/bread/confirm_delete.html:38
+msgid "Yes, delete"
+msgstr ""
+
+#: bread/views/add.py:28
+#, python-format
+msgid "Added %s"
+msgstr ""
