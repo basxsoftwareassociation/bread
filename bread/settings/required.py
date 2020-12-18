@@ -1,3 +1,5 @@
+import os
+
 import pkg_resources
 from easy_thumbnails.conf import Settings as thumbnail_settings
 
@@ -188,8 +190,11 @@ DEFAULT_PAGINATION_CHOICES = [10, 100, 1000]
 
 HAYSTACK_SIGNAL_PROCESSOR = "celery_haystack.signals.CelerySignalProcessor"
 
-LIBSASS_ADDITIONAL_INCLUDE_PATHS = (
-    [  # necessary because of some sass imports in the vendor packages
-        "static/design/carbon_design/scss/globals/scss/vendor"
-    ]
-)
+# necessary because of some sass imports in the carbon vendor packages
+ADDITIONAL_CARBON = "static/design/carbon_design/scss/globals/scss/vendor"
+LIBSASS_ADDITIONAL_INCLUDE_PATHS = [
+    ADDITIONAL_CARBON,  # search path when collectstatic has been called, used in production
+    os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ADDITIONAL_CARBON
+    ),  # search path in bread-package
+]
