@@ -7,9 +7,12 @@ from .browse import BrowseView, TreeView  # noqa
 from .delete import DeleteView  # noqa
 from .edit import EditView  # noqa
 from .read import ReadView  # noqa
-from .system import BreadLoginView, DataModel  # noqa
+from .system import BreadLoginView, BreadLogoutView, DataModel  # noqa
 
 registerurl("login", check_function=lambda u: True)(BreadLoginView.as_view())
+registerurl("logout", check_function=lambda u: u.is_authenticated)(
+    BreadLogoutView.as_view()
+)
 registerurl("datamodel")(DataModel.as_view())
 
 

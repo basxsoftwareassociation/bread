@@ -8,7 +8,7 @@ from django_extensions.management.modelviz import ModelGraph, generate_dot
 
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 
@@ -79,3 +79,7 @@ class BreadLoginView(LoginView):
             form, ["username", "password"]
         )
         return form
+
+
+class BreadLogoutView(LogoutView):
+    pass
