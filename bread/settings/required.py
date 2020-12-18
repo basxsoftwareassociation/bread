@@ -1,13 +1,6 @@
 import os
 
-import pkg_resources
 from easy_thumbnails.conf import Settings as thumbnail_settings
-
-__breadapps = []
-for entrypoint in pkg_resources.iter_entry_points(group="breadapp", name="appconfig"):
-    for dependency in entrypoint.load().bread_dependencies:
-        if dependency not in __breadapps:
-            __breadapps.append(dependency)
 
 _third_party_apps = [
     "crispy_forms",
@@ -42,18 +35,8 @@ _django_apps = [
     "django.contrib.sites",
 ]
 
-for basedependency in _third_party_apps + _django_apps:
-    if basedependency in __breadapps:
-        __breadapps.remove(basedependency)
-
 # apps which are required for bread to work, order is important
-BREAD_DEPENDENCIES = (
-    ["django.contrib.admin"]
-    + __breadapps
-    + ["bread.apps.BreadConfig"]
-    + _third_party_apps
-    + _django_apps
-)
+BREAD_DEPENDENCIES = ["bread.apps.BreadConfig"] + _third_party_apps + _django_apps
 
 # required to make per-object-permissions work
 AUTHENTICATION_BACKENDS = (
