@@ -5,23 +5,16 @@
         <meta charset="utf-8" />
         <title>{% block page_title %}{% pagename request %}{% endblock %}</title>
         <meta name="description" content="{% block page_description %}{% endblock%}" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         {% block favicon %}<link rel="shortcut icon" href="{% static "favicon.png" %}"/>{% endblock %}
 
         {% if OVERRIDE_STYLESHEET %}
-            <link rel="stylesheet" type="text/css" href="{{ OVERRIDE_STYLESHEET }}" />
+            <link rel="stylesheet" type="text/css" href="{{ OVERRIDE_STYLESHEET }}" media="all"/>
         {% else %}
             {% compress css %}
-                <link rel="stylesheet" type="text/x-scss" href="{% static "design/carbon_design/scss/styles.scss" %}" />
+                <link rel="stylesheet" type="text/x-scss" href="{% static "design/carbon_design/scss/styles.scss" %}"  media="all"/>
             {% endcompress %}
         {% endif %}
-
-        {% compress js %}
-        <script type="text/javascript" src="{% static "js/main.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/bliss.min.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/htmx.min.js" %}"></script>
-        {% endcompress js %}
-
     </head>
 
     <body>
@@ -45,6 +38,12 @@
         </div>
 
         {% compress js %}
+        <script type="text/javascript" src="{% static "js/main.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/bliss.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/htmx.min.js" %}"></script>
+        {% endcompress js %}
+
+        {% compress js %}
             <script type="text/javascript" src="{% static "js/choices.min.js" %}"></script>
             <script type="text/javascript" src="{% static "design/carbon_design/js/carbon-components.min.js" %}"></script>
             <script>
@@ -52,6 +51,7 @@
                 CarbonComponents.watch(document);
             </script>
         {% endcompress js %}
+
     </body>
 
 </html>
