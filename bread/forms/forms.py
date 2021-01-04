@@ -1,5 +1,6 @@
 from django import forms
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.fields import (GenericForeignKey,
+                                                GenericRelation)
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.core.exceptions import FieldDoesNotExist
 from django.db import transaction
@@ -180,14 +181,12 @@ def _generate_formset_class(
 
 
 def _formfield_callback_with_request(field, request, model):
-    modelfield = getattr(model, field.get_attname(), None)
     kwargs = {}
-    if modelfield:
-        if hasattr(modelfield, "lazy_choices"):
-            field.choices = modelfield.lazy_choices(request, object)
+    if hasattr(field, "lazy_choices"):
+        field.choices = field.lazy_choices(field, request, object)
 
-        if hasattr(modelfield, "lazy_initial"):
-            kwargs["initial"] = modelfield.lazy_initial(request, object)
+    if hasattr(field, "lazy_initial"):
+        kwargs["initial"] = field.lazy_initial(field, request, object)
 
     ret = field.formfield(**kwargs)
 
