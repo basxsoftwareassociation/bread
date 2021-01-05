@@ -10,5 +10,5 @@ class Command(BaseCommand):
         from bread.layout.registry import _registry
 
         for layoutname, layoutfunc in _registry.items():
-            print(f"{layoutname}: {layoutfunc}")
+            print(f"{layoutname}: {layoutfunc} => {layoutfunc()}")
         post_deployment.send(sender=self.__class__)

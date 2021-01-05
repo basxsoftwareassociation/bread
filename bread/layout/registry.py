@@ -1,10 +1,10 @@
-from functools import wraps
-
 _registry = {}
 
 
 # taken from https://stackoverflow.com/questions/2020014/get-fully-qualified-class-name-of-an-object-in-python
 def _objectname(o):
+    if callable(o):
+        return f"{o.__module__}.{o.__name__}"
     module = o.__class__.__module__
     if module is None or module == str.__class__.__module__:
         return o.__class__.__name__
@@ -19,12 +19,16 @@ def register(layoutname=None):
     """
 
     def decorator(func):
-        @wraps(func)
-        def wrapper(request):
-            _registry[layoutname or _objectname(func)] = func
+        _registry[layoutname or _objectname(func)] = func
+        return func
 
     return decorator
 
 
 def get_layout(layoutname):
+    if layoutname not in _registry:
+        layoutlist = "\n  - " + "\n  - ".join(_registry.keys())
+        raise RuntimeError(
+            f"{layoutname} is not a registered layout name. Registered names are:{layoutlist}"
+        )
     return _registry[layoutname]
