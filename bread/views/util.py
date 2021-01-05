@@ -49,3 +49,21 @@ class CustomFormMixin:
                         attrs=form.fields[fieldelement.fieldname].widget.attrs
                     )
         return form
+
+
+class BreadView:
+    """
+    Enforces the definition of a layout method which is used to render the view
+    Shortcut to create a subclass with the given attributes
+    """
+
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        assert hasattr(cls, "layout") and callable(
+            cls.layout
+        ), f"{cls} needs to implement a method 'layout(request)'"
+
+    @classmethod
+    def _with(cls, **kwargs):
+        return type(f"Custom{cls.__name__}", (cls,), kwargs)

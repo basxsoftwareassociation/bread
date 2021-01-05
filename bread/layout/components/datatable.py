@@ -1,16 +1,12 @@
 import htmlgenerator as hg
+from django.utils.translation import gettext_lazy as _
+
 from bread.menu import Link
 from bread.utils import filter_fieldlist, pretty_modelname
 from bread.utils.urls import reverse_model
-from django.utils.translation import gettext_lazy as _
 
-from ..base import (
-    ModelContext,
-    ModelFieldLabel,
-    ModelFieldValue,
-    ModelName,
-    ObjectContext,
-)
+from ..base import (ModelContext, ModelFieldLabel, ModelFieldValue, ModelName,
+                    ObjectContext)
 from .button import Button
 from .icon import Icon
 from .overflow_menu import OverflowMenu
@@ -44,12 +40,12 @@ class DataTable(hg.BaseElement):
                         *[
                             hg.TH(
                                 hg.SPAN(
-                                    column[0],
+                                    header,
                                     _class="bx--table-header-label",
                                 ),
-                                **getattr(column[1], "td_attributes", {}),
+                                **getattr(header, "td_attributes", {}),
                             )
-                            for column in columns
+                            for header, cell in columns
                         ]
                     )
                 ),
@@ -58,10 +54,8 @@ class DataTable(hg.BaseElement):
                         row_iterator,
                         hg.TR(
                             *[
-                                hg.TD(
-                                    column[1], **getattr(column[1], "td_attributes", {})
-                                )
-                                for column in columns
+                                hg.TD(cell, **getattr(cell, "td_attributes", {}))
+                                for header, cell in columns
                             ]
                         ),
                         valueproviderclass,

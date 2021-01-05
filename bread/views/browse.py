@@ -2,9 +2,6 @@ import re
 from html.parser import HTMLParser
 
 import django_filters
-from django_filters.views import FilterView
-from guardian.mixins import PermissionListMixin
-
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -13,24 +10,24 @@ from django.db.models.functions import Lower
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
+from django_filters.views import FilterView
+from guardian.mixins import PermissionListMixin
 
 from .. import layout as _layout  # prevent name clashing
 from ..formatters import render_field
 from ..forms.forms import FilterForm
 from ..utils import (
-    CustomizableClass,
     filter_fieldlist,
     pretty_fieldname,
     pretty_modelname,
     resolve_relationship,
+    reverse_model,
     xlsxresponse,
 )
-from ..utils.urls import reverse_model
+from .util import BreadView
 
 
-class BrowseView(
-    CustomizableClass, LoginRequiredMixin, PermissionListMixin, FilterView
-):
+class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView):
     template_name = "bread/layout.html"
     fields = None
     filterfields = None
@@ -42,28 +39,32 @@ class BrowseView(
         self.filterset_fields = kwargs.get("filterset_fields", self.filterset_fields)
         super().__init__(*args, **kwargs)
 
-    def layout(self, request):
-        object_actions_menu = _layout.overflow_menu.OverflowMenu(
-            _layout.F(self.get_object_actions),
-            menucontext=_layout.ObjectContext,
-            flip=True,
-            item_attributes={"_class": "bx--table-row--menu-option"},
-        )
-        # the data-table object will check child elements for td_attributes to fill in attributes for TD-elements
-        object_actions_menu.td_attributes = {"_class": "bx--table-column-menu"}
-        action_menu_header = _layout.BaseElement()
-        action_menu_header.td_attributes = {"_class": "bx--table-column-menu"}
+    def labellayout(self, fieldname, request):
+        return _layout.ModelFieldLabel(fieldname)
 
+    def valuelayout(self, fieldname, request):
+        ret = _layout.ModelFieldValue(fieldname)
+        ret.td_attributes = {
+            "onclick": _layout.BaseElement(
+                "document.location = '", _layout.ModelAction("edit"), "'"
+            ),
+            "style": "cursor: pointer",
+        }
+        return ret
+
+    def layout(self, request):
         return _layout.ModelContext(
             self.model,
             _layout.datatable.DataTable.full(
                 _layout.ModelName(plural=True),
                 _layout.datatable.DataTable(
                     [
-                        (_layout.ModelFieldLabel(field), _layout.ModelFieldValue(field))
+                        (
+                            self.labellayout(field, request),
+                            self.valuelayout(field, request),
+                        )
                         for field in list(filter_fieldlist(self.model, self.fields))
-                    ]
-                    + [(None, object_actions_menu)],
+                    ],
                     _layout.C("object_list"),
                     _layout.ObjectContext,
                 ),
@@ -74,7 +75,6 @@ class BrowseView(
                 ),
             ),
         )
-        # makes the model available to bound elements like ModelFieldValue and ModelFieldLabel
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
@@ -160,7 +160,7 @@ class BrowseView(
 
         return xlsxresponse(workbook, workbook.title)
 
-    def get_object_actions(self, context, element):
+    def get_object_actions(self):
         return self.object_actions
 
     def field_values(self):

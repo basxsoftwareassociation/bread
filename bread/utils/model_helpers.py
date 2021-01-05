@@ -165,11 +165,3 @@ def get_concrete_instance(instance):
             if child_object:
                 return get_concrete_instance(child_object)
     return instance
-
-
-class CustomizableClass:
-    """Shortcut to create a subclass with the given attributes"""
-
-    @classmethod
-    def _with(cls, **kwargs):
-        return type(f"Custom{cls.__name__}", (cls,), kwargs)

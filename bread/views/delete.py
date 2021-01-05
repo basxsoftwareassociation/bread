@@ -5,23 +5,26 @@ extendable and composable by subclassing them. Most of the views require
 an argument "admin" which is an instance of the according BreadAdmin class
 """
 import urllib
-
-from guardian.mixins import PermissionRequiredMixin
+import warnings
 
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import DeleteView as DjangoDeleteView
+from guardian.mixins import PermissionRequiredMixin
 
-from ..utils import CustomizableClass
-from ..utils.urls import reverse_model
+from ..utils import reverse_model
+from .util import BreadView
 
 
 class DeleteView(
-    CustomizableClass, PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView
+    BreadView, PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView
 ):
     template_name = "bread/confirm_delete.html"
     accept_global_perms = True
     urlparams = (("pk", int),)
+
+    def layout(self, request):
+        return None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -34,3 +37,8 @@ class DeleteView(
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
         return reverse_model(self.model, "browse")
+
+
+warnings.warn(
+    f"{DeleteView} needs to implement the layout method propertly in the future, see https://github.com/basxsoftwareassociation/bread/issues/7"
+)

@@ -6,20 +6,18 @@ an argument "admin" which is an instance of the according BreadAdmin class
 """
 import urllib
 
-from guardian.mixins import PermissionRequiredMixin
-
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.views.generic import UpdateView
+from guardian.mixins import PermissionRequiredMixin
 
 from .. import layout as _layout  # prevent name clashing
-from ..utils import CustomizableClass
-from ..utils.urls import model_urlname
-from .util import CustomFormMixin
+from ..utils import model_urlname
+from .util import BreadView, CustomFormMixin
 
 
 class EditView(
-    CustomizableClass,
+    BreadView,
     CustomFormMixin,
     SuccessMessageMixin,
     PermissionRequiredMixin,

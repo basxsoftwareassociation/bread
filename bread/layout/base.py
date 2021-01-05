@@ -1,6 +1,15 @@
 import htmlgenerator as hg
-from bread.utils import pretty_fieldname, pretty_modelname
 from django.core.exceptions import FieldDoesNotExist
+
+from bread.utils import (get_concrete_instance, pretty_fieldname,
+                         pretty_modelname)
+from bread.utils.urls import reverse_model
+
+
+class RequestContext(hg.ValueProvider):
+    """Provides the request to marked child elements"""
+
+    attributename = "request"
 
 
 class ModelContext(hg.ValueProvider):
@@ -15,6 +24,7 @@ class ObjectContext(hg.ValueProvider):
     attributename = "object"
 
     def render(self, context):
+        self.value = get_concrete_instance(hg.resolve_lazy(self.value, context, self))
         return super().render(context)
 
 
@@ -61,3 +71,26 @@ class ModelFieldValue(ObjectContext.Binding()):
 
     def __repr__(self):
         return f"ModelFieldValue({self.fieldname})"
+
+
+class ModelAction(ObjectContext.Binding()):
+    def __init__(self, action, *args, **kwargs):
+        self.action = action
+        self.args = args
+        self.kwargs = kwargs
+
+    def render(self, context):
+        yield str(
+            reverse_model(
+                self.object,
+                self.action,
+                args=self.args,
+                kwargs={
+                    **self.kwargs,
+                    "pk": self.object.pk,
+                },
+            )
+        )
+
+    def __repr__(self):
+        return f"ModelAction({self.action}, {self.args}, {self.kwargs})"

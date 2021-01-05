@@ -1,18 +1,17 @@
-from guardian.mixins import PermissionRequiredMixin
-
 from django.views.generic import DetailView
+from guardian.mixins import PermissionRequiredMixin
 
 from .. import layout as _layout  # prevent name clashing
 from ..utils import (
-    CustomizableClass,
     filter_fieldlist,
     pretty_fieldname,
     pretty_modelname,
     resolve_relationship,
 )
+from .util import BreadView
 
 
-class ReadView(CustomizableClass, PermissionRequiredMixin, DetailView):
+class ReadView(BreadView, PermissionRequiredMixin, DetailView):
     fields = None
     accept_global_perms = True
     template_name = "bread/layout.html"
