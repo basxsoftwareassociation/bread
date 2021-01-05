@@ -1,8 +1,7 @@
 import htmlgenerator as hg
 from django.core.exceptions import FieldDoesNotExist
 
-from bread.utils import (get_concrete_instance, pretty_fieldname,
-                         pretty_modelname)
+from bread.utils import get_concrete_instance, pretty_fieldname, pretty_modelname
 from bread.utils.urls import reverse_model
 
 
@@ -94,3 +93,25 @@ class ModelAction(ObjectContext.Binding()):
 
     def __repr__(self):
         return f"ModelAction({self.action}, {self.args}, {self.kwargs})"
+
+
+class Include(hg.BaseElement):
+    """Element which will render a layout registered in the layout registry"""
+
+    def __init__(self, templatename):
+        super().__init__(self)
+        self.templatename = templatename
+
+    def render(self, request, context):
+        from .registry import (
+            get_layout,
+        )  # late import necessary to make sure all layouts are registered
+
+        return get_layout(self.templatename)().render(request, context)
+
+    def __repr__(self):
+        from .registry import (
+            get_layout,
+        )  # late import necessary to make sure all layouts are registered
+
+        return get_layout(self.templatename).__repr__()
