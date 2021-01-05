@@ -46,7 +46,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
         ret = _layout.ModelFieldValue(fieldname)
         ret.td_attributes = {
             "onclick": _layout.BaseElement(
-                "document.location = '", _layout.ModelAction("edit"), "'"
+                "document.location = '", _layout.ObjectAction("edit"), "'"
             ),
             "style": "cursor: pointer",
         }

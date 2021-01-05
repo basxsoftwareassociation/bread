@@ -72,7 +72,7 @@ class ModelFieldValue(ObjectContext.Binding()):
         return f"ModelFieldValue({self.fieldname})"
 
 
-class ModelAction(ObjectContext.Binding()):
+class ObjectAction(ObjectContext.Binding()):
     def __init__(self, action, *args, **kwargs):
         self.action = action
         self.args = args
@@ -93,6 +93,11 @@ class ModelAction(ObjectContext.Binding()):
 
     def __repr__(self):
         return f"ModelAction({self.action}, {self.args}, {self.kwargs})"
+
+
+class ObjectLabel(ObjectContext.Binding()):
+    def render(self, context):
+        yield str(self.object)
 
 
 class Include(hg.BaseElement):
