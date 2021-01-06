@@ -25,11 +25,6 @@ class OverflowMenuItem(hg.LI):
                 role="menuitem",
                 title=label,
                 onclick=js,
-                # disabled=hg.F(
-                # lambda c, e: not hg.getattr_lazy(
-                # hg.ATTR("action", self), "has_permission"
-                # ).resolve(c, e)(c["request"])
-                # ),
             ),
             **attributes,
         )

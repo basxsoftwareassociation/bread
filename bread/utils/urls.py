@@ -12,6 +12,7 @@ from django.urls import path as djangopath
 from django.urls import reverse_lazy as django_reverse
 from django.utils.http import urlencode
 from django.utils.text import format_lazy
+from django.views import View
 
 registry = []
 
@@ -60,9 +61,9 @@ def registermodelurl(model, name, view, check_function=None, **view_kwargs):
         )
     )
 
-    registerurl(model_urlname(model, name), check_function)(
-        view.as_view(model=model, **view_kwargs)
-    )
+    if isinstance(view, type) and issubclass(view, View):
+        view = view.as_view(model=model, **view_kwargs)
+    registerurl(model_urlname(model, name), check_function)(view)
 
 
 # decorators
@@ -137,9 +138,9 @@ def get_view_params(view):
             inspect.signature(view).parameters.values(), 1, None
         ):
             if param.annotation != inspect.Parameter.empty:
-                yield param, param.annotation
+                yield param.name, param.annotation
             else:
-                yield param, None
+                yield param.name, None
 
 
 def viewbasepath(view, name=None):

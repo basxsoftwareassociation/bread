@@ -13,8 +13,10 @@ class Grid(htmlgenerator.DIV):
 
 
 class Row(htmlgenerator.DIV):
-    def __init__(self, *children, **attributes):
+    def __init__(self, *children, gridmode=None, **attributes):
         attributes["_class"] = attributes.get("_class", "") + " bx--row"
+        if gridmode is not None:
+            attributes["_class"] += f" bx--row--{gridmode}"
         super().__init__(*children, **attributes)
 
 

@@ -1,10 +1,9 @@
 import django_filters
-from django_countries.widgets import LazySelect
-
 import htmlgenerator
 from django import forms
 from django.utils.html import mark_safe
 from django.utils.translation import gettext as _
+from django_countries.widgets import LazySelect
 
 from .button import Button
 from .icon import Icon
@@ -203,11 +202,11 @@ class CsrfToken(FormChild, htmlgenerator.INPUT):
 def _mapwidget(
     field, fieldtype, elementattributes={}, widgetattributes={}, only_initial=False
 ):
-    from .select import Select
-    from .text_input import PasswordInput, TextInput
-    from .date_picker import DatePicker
-    from .text_area import TextArea
     from .checkbox import Checkbox
+    from .date_picker import DatePicker
+    from .select import Select
+    from .text_area import TextArea
+    from .text_input import PasswordInput, TextInput
 
     WIDGET_MAPPING = {
         forms.TextInput: TextInput,

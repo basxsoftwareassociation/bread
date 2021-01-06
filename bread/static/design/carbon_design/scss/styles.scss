@@ -2,9 +2,34 @@ $feature-flags: (
   grid-columns-16: true,
 );
 
+// for changing the theme uncomment the following two lines
+// @import 'globals/scss/vendor/@carbon/themes/scss/generated/themes';
+// $carbon--theme: $carbon--theme--g10;
 @import 'globals/scss/styles';
 
 @import 'globals/scss/vendor/@carbon/type/scss/styles';
+
+.bx--content {
+    background-color: $ui-01;
+    padding: $spacing-05;
+    > div:nth-child(1) {
+        padding: $spacing-05;
+        background-color: $ui-background;
+    }
+}
+
+.section-separator-top {
+    border-top: $ui-01 solid;
+}
+.section-separator-right {
+    border-right: $ui-01 solid;
+}
+.section-separator-left {
+    border-left: $ui-01 solid;
+}
+.section-separator-bottom {
+    border-bottom: $ui-01 solid;
+}
 
 // map styles from https://www.carbondesignsystem.com/guidelines/typography/productive
 // according to our designer to html semantic elements, might change in the future

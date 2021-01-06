@@ -100,6 +100,8 @@ class ObjectLabel(ObjectContext.Binding()):
         yield str(self.object)
 
 
+# TODO: this element might be totaly unusable since valueproviders will not propagate values down
+# either remove this or move it to htmlgenerator and load and walk the layout inside the valueproviders, somehow...
 class Include(hg.BaseElement):
     """Element which will render a layout registered in the layout registry"""
 
@@ -120,3 +122,15 @@ class Include(hg.BaseElement):
         )  # late import necessary to make sure all layouts are registered
 
         return get_layout(self.templatename).__repr__()
+
+
+def aslink_attributes(href):
+    """
+    Shortcut to generate HTMLElement attributes to make any element behave like a link.
+    This should normally be used like this: hg.DIV("hello", **aslink_attributes('google.com'))
+    """
+    return {
+        "onclick": hg.BaseElement("document.location = '", href, "'"),
+        "onauxclick": hg.BaseElement("window.open('", href, "', '_blank')"),
+        "style": "cursor: pointer",
+    }

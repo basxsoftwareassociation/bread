@@ -44,12 +44,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
 
     def valuelayout(self, fieldname, request):
         ret = _layout.ModelFieldValue(fieldname)
-        ret.td_attributes = {
-            "onclick": _layout.BaseElement(
-                "document.location = '", _layout.ObjectAction("edit"), "'"
-            ),
-            "style": "cursor: pointer",
-        }
+        ret.td_attributes = _layout.aslink_attributes(_layout.ObjectAction("edit"))
         return ret
 
     def layout(self, request):

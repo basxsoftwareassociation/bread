@@ -33,8 +33,10 @@
         {% endif %}
 
         <div class="bx--content">
-        {% block content %}
-        {% endblock content %}
+            <div>
+                {% block content %}
+                {% endblock content %}
+            </div>
         </div>
 
         {% compress js %}
