@@ -5,8 +5,13 @@ from bread.menu import Link
 from bread.utils import filter_fieldlist, pretty_modelname
 from bread.utils.urls import reverse_model
 
-from ..base import (ModelContext, ModelFieldLabel, ModelFieldValue, ModelName,
-                    ObjectContext)
+from ..base import (
+    ModelContext,
+    ModelFieldLabel,
+    ModelFieldValue,
+    ModelName,
+    ObjectContext,
+)
 from .button import Button
 from .icon import Icon
 from .overflow_menu import OverflowMenu
@@ -128,7 +133,6 @@ class DataTable(hg.BaseElement):
         object_actions_menu = OverflowMenu(
             object_actions,
             menucontext=ObjectContext,
-            iteratorclass=ObjectContext.Binding(hg.Iterator),
             flip=True,
             item_attributes={"_class": "bx--table-row--menu-option"},
         )

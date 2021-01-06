@@ -38,6 +38,9 @@ class OverflowMenuItem(hg.LI):
 class OverflowMenu(hg.DIV):
     """Implements https://www.carbondesignsystem.com/components/overflow-menu/usage"""
 
+    MENUID_TEMPLATE = "overflow-menu-%s"
+    TRIGGERID_TEMPLATE = "%s-trigger"
+
     def __init__(
         self,
         actions,
@@ -58,7 +61,10 @@ class OverflowMenu(hg.DIV):
        """
         attributes["data-overflow-menu"] = True
         attributes["_class"] = attributes.get("_class", "") + " bx--overflow-menu"
-        menuid = f"overflow-menu-{hash(id(self))}"
+
+        self.menucounter = 0
+        menuid, triggerid = self.nextmenuid()
+
         super().__init__(
             hg.BUTTON(
                 Icon("overflow-menu--vertical", size=16),
@@ -71,7 +77,7 @@ class OverflowMenu(hg.DIV):
                 aria_haspopup="true",
                 aria_expanded="false",
                 aria_controls=menuid,
-                _id=f"{menuid}-trigger",
+                id=triggerid,
             ),
             hg.DIV(
                 hg.UL(
@@ -88,7 +94,7 @@ class OverflowMenu(hg.DIV):
                 + (" bx--overflow-menu--flip" if flip else ""),
                 tabindex="-1",
                 role="menu",
-                aria_labelledby=f"{menuid}-trigger",
+                aria_labelledby=triggerid,
                 data_floating_menu_direction=direction,
                 id=menuid,
             ),
@@ -96,3 +102,17 @@ class OverflowMenu(hg.DIV):
         )
         if menuname is not None:
             self[0].insert(0, hg.SPAN(menuname, _class="bx--assistive-text"))
+
+    def nextmenuid(self):
+        # because we need unique menu-ids, need to update this in render in case were are inside an loop and render this element multiple times
+        self.menucounter += 1
+        menuid = OverflowMenu.MENUID_TEMPLATE % self.menucounter
+        return menuid, OverflowMenu.TRIGGERID_TEMPLATE % menuid
+
+    def render(self, context):
+        menuid, triggerid = self.nextmenuid()
+        self[0].attributes["id"] = triggerid
+        self[0].attributes["aria_controls"] = menuid
+        self[1].attributes["id"] = menuid
+        self[1].attributes["aria_labelledby"] = triggerid
+        return super().render(context)
