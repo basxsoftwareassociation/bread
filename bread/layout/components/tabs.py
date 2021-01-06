@@ -2,11 +2,13 @@ import htmlgenerator as hg
 
 
 class Tabs(hg.DIV):
-    def __init__(self, *tabs, **attributes):
-        attributes["data_tabs"] = True
-        attributes["_class"] = attributes.get("_class", "") + " bx--tabs"
-        tablabels = hg.UL(_class="bx--tabs__nav bx--tabs__nav--hidden")
-        tabcontent = hg.DIV(_class="bx--tab-content")
+    def __init__(self, *tabs, container=False, **attributes):
+        tablabels = hg.DIV(
+            hg.UL(_class="bx--tabs__nav bx--tabs__nav--hidden"),
+            data_tabs=True,
+            _class="bx--tabs" + (" bx--tabs--container" if container else ""),
+        )
+        tabcontents = hg.DIV(_class="bx--tab-content")
 
         tabid_template = f"tab-{hg.html_id(self)}-label-%s"
         panelid_template = f"tab-{hg.html_id(self)}-panel-%s"
@@ -29,8 +31,12 @@ class Tabs(hg.DIV):
                     data_target=panelid,
                 )
             )
-            tabcontent.append(hg.DIV(content, id=panelid, aria_labelledby=tabid))
-        super().__init__(hg.BaseElement(tablabels, tabcontent), **attributes)
+            tabcontents.append(hg.DIV(content, id=panelid, aria_labelledby=tabid))
+        super().__init__(
+            tablabels,
+            tabcontents,
+            **attributes,
+        )
 
 
 """
