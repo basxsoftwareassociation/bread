@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-14 17:52+0700\n"
+"POT-Creation-Date: 2021-01-06 20:43+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,51 +18,51 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: bread/layout/components/checkbox.py:34
+#: bread/layout/components/checkbox.py:34 bread/layout/components/toggle.py:42
 msgid " (required)"
 msgstr " (erforderlich)"
 
-#: bread/layout/components/datatable.py:90
+#: bread/layout/components/datatable.py:89
 msgid " items selected"
 msgstr " Einträge ausgewählt"
 
-#: bread/layout/components/datatable.py:96
+#: bread/layout/components/datatable.py:95
 msgid "Table Action Bar"
 msgstr "Tabellen Aktionsbar"
 
-#: bread/layout/components/datatable.py:128 bread/views/__init__.py:31
+#: bread/layout/components/datatable.py:127 bread/views/__init__.py:34
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: bread/layout/components/datatable.py:130 bread/views/__init__.py:32
+#: bread/layout/components/datatable.py:129 bread/views/__init__.py:35
 msgid "Delete"
 msgstr "Löschen"
 
-#: bread/layout/components/datatable.py:160 bread/views/add.py:37
-#: bread/views/browse.py:71
+#: bread/layout/components/datatable.py:158 bread/views/add.py:35
+#: bread/views/browse.py:67
 #, python-format
 msgid "Add %s"
 msgstr "%s erstellen"
 
 #: bread/layout/components/date_picker.py:79
-#: bread/layout/components/select.py:60 bread/layout/components/text_area.py:51
+#: bread/layout/components/select.py:61 bread/layout/components/text_area.py:51
 #: bread/layout/components/text_input.py:46
 msgid " (optional)"
 msgstr " (optional)"
 
-#: bread/layout/components/form.py:26
+#: bread/layout/components/form.py:25
 msgid "Save"
 msgstr "Speichern"
 
-#: bread/layout/components/form.py:66
+#: bread/layout/components/form.py:65
 msgid "Form error"
 msgstr "Formfehler"
 
-#: bread/layout/components/form.py:72
+#: bread/layout/components/form.py:71
 msgid "Form error: "
 msgstr "Formfehler: "
 
-#: bread/layout/components/form.py:160
+#: bread/layout/components/form.py:159
 msgid "Add"
 msgstr "Erstellen"
 
@@ -86,9 +86,22 @@ msgstr "Suchtext löschen"
 msgid "Show password"
 msgstr "Zeige Passwort"
 
+#: bread/layout/components/toggle.py:11
+msgid "On"
+msgstr "An"
+
+#: bread/layout/components/toggle.py:12
+msgid "Off"
+msgstr "Aus"
+
 #: bread/templates/admin/base_site.html:3
 msgid "System Settings"
 msgstr "Systemeinstellungen"
+
+#: bread/templates/bread/components/header.html:41
+#: bread/templates/bread/components/header.html:42
+msgid "Logout"
+msgstr "Ausloggen"
 
 #: bread/templates/bread/confirm_delete.html:8
 msgid "cannot be deleted because of the following related objects:"
@@ -108,11 +121,10 @@ msgstr "Sind sie sicher, dass Sie dises Objekt löschen wollen:"
 msgid "Yes, delete"
 msgstr "Ja, löschen"
 
-#: bread/views/add.py:28
+#: bread/views/add.py:26
 #, python-format
 msgid "Added %s"
 msgstr "%s erstellt"
 
-#: bread/views/edit.py:44
-msgid "Edit "
-msgstr "Bearbeite "
+#~ msgid "Edit "
+#~ msgstr "Bearbeite "
