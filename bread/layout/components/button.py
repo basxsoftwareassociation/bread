@@ -46,3 +46,10 @@ class ButtonSet(htmlgenerator.htmltags.DIV):
     def __init__(self, *buttons, **attributes):
         attributes["_class"] = attributes.get("_class", "") + " bx--btn-set"
         super().__init__(*buttons, **attributes)
+
+
+class PrintPageButton(Button):
+    def __init__(**attributes):
+        if "onclick" not in attributes:
+            attributes["onclick"] = "window.print()"
+        super().__init__(icon="printer", notext=True, **attributes)
