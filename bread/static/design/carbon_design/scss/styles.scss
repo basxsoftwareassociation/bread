@@ -9,6 +9,11 @@ $feature-flags: (
 
 @import 'globals/scss/vendor/@carbon/type/scss/styles';
 
+html, body {
+    background-color: $ui-01;
+    height: 100%
+}
+
 .bx--content {
     background-color: $ui-01;
     padding: $spacing-05;
@@ -16,8 +21,10 @@ $feature-flags: (
         padding: $spacing-05;
         background-color: $ui-background;
     }
+    height: 100%
 }
 
+// for creating some section borders
 .section-separator-top {
     border-top: $ui-01 solid;
 }
@@ -29,6 +36,21 @@ $feature-flags: (
 }
 .section-separator-bottom {
     border-bottom: $ui-01 solid;
+}
+
+// get nicer prints
+@media print
+{    
+    html, body {
+        background-color: white !important;
+    }
+    aside, header, button {
+        display: none !important;
+    }
+    .bx--content {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 }
 
 // map styles from https://www.carbondesignsystem.com/guidelines/typography/productive
