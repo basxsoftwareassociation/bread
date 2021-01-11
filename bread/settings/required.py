@@ -3,6 +3,7 @@ import os
 from easy_thumbnails.conf import Settings as thumbnail_settings
 
 _third_party_apps = [
+    "simple_history",
     "crispy_forms",
     "ckeditor",
     "ckeditor_uploader",
@@ -112,6 +113,7 @@ MIDDLEWARE = [
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "bread.middleware.RequireAuthenticationMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
 ]
 SITE_ID = 1
 
@@ -181,3 +183,5 @@ LIBSASS_ADDITIONAL_INCLUDE_PATHS = [
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ADDITIONAL_CARBON
     ),  # search path in bread-package
 ]
+
+SIMPLE_HISTORY_FILEFIELD_TO_CHARFIELD = True
