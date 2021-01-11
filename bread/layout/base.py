@@ -1,5 +1,6 @@
 import htmlgenerator as hg
 from django.core.exceptions import FieldDoesNotExist
+from django.utils import formats
 
 from bread.utils import get_concrete_instance, pretty_fieldname, pretty_modelname
 from bread.utils.urls import reverse_model
@@ -64,9 +65,11 @@ class ModelFieldValue(ObjectContext.Binding()):
         self.fieldname = fieldname
 
     def render(self, context):
-        ret = getattr(self.object, self.fieldname, None)
-        ret = ret() if callable(ret) else ret
-        yield from self._try_render(ret, context)
+        object = self.object
+        for accessor in self.fieldname.split("."):
+            object = getattr(object, accessor, None)
+            object = object() if callable(object) else object
+        yield from self._try_render(formats.localize(object), context)
 
     def __repr__(self):
         return f"ModelFieldValue({self.fieldname})"
