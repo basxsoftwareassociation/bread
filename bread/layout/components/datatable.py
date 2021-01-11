@@ -107,8 +107,9 @@ class DataTable(hg.BaseElement):
         )
 
     @staticmethod
-    def from_queryset(
-        queryset,
+    def from_model(
+        model,
+        queryset=None,
         fields=["__all__"],
         object_actions=None,
         title=None,
@@ -120,7 +121,7 @@ class DataTable(hg.BaseElement):
 
         backquery = {"next": backurl} if backurl else {}
         if addurl is None:
-            addurl = reverse_model(queryset.model, "add", query=backquery)
+            addurl = reverse_model(model, "add", query=backquery)
 
         if object_actions is None:
             object_actions = [
@@ -140,24 +141,44 @@ class DataTable(hg.BaseElement):
         object_actions_menu.td_attributes = {"_class": "bx--table-column-menu"}
         action_menu_header = hg.BaseElement()
         action_menu_header.td_attributes = {"_class": "bx--table-column-menu"}
+        queryset = model.objects.all() if queryset is None else queryset
         return ModelContext(
-            queryset.model,
+            model,
             DataTable.full(
                 title,
                 DataTable(
                     [
                         (ModelFieldLabel(field), ModelFieldValue(field))
-                        for field in list(filter_fieldlist(queryset.model, fields))
+                        for field in list(filter_fieldlist(model, fields))
                     ]
                     + [(None, object_actions_menu)],
                     # querysets are cache, the call to all will make a new query is used in every request
-                    hg.F(lambda c, e: queryset.all()),
+                    hg.F(lambda c, e: queryset),
                     ObjectContext,
                 ),
                 Button(
-                    _("Add %s") % pretty_modelname(queryset.model),
+                    _("Add %s") % pretty_modelname(model),
                     icon=Icon("add", size=20),
                     onclick=f"document.location = '{addurl}'",
                 ),
             ),
+        )
+
+    @staticmethod
+    def from_queryset(
+        queryset,
+        fields=["__all__"],
+        object_actions=None,
+        title=None,
+        addurl=None,
+        backurl=None,
+    ):
+        return DataTable.from_model(
+            queryset.model,
+            queryset=queryset,
+            fields=fields,
+            object_actions=object_actions,
+            title=title,
+            addurl=addurl,
+            backurl=backurl,
         )

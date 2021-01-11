@@ -4,6 +4,17 @@ import htmlgenerator as hg
 class Tabs(hg.DIV):
     def __init__(self, *tabs, container=False, **attributes):
         tablabels = hg.DIV(
+            hg.DIV(
+                hg.A(
+                    href="javascript:void(0)",
+                    _class="bx--tabs-trigger-text",
+                    tabindex=-1,
+                ),
+                hg.SVG(),
+                _class="bx--tabs-trigger",
+                style="display: none",
+                tabindex=0,
+            ),
             hg.UL(_class="bx--tabs__nav bx--tabs__nav--hidden"),
             data_tabs=True,
             _class="bx--tabs" + (" bx--tabs--container" if container else ""),
@@ -16,7 +27,7 @@ class Tabs(hg.DIV):
         for i, (label, content) in enumerate(tabs):
             tabid = tabid_template % i
             panelid = panelid_template % i
-            tablabels.append(
+            tablabels[1].append(
                 hg.LI(
                     hg.A(
                         label,
@@ -25,66 +36,27 @@ class Tabs(hg.DIV):
                         _class="bx--tabs__nav-link",
                         href="javascript:void(0)",
                         aria_controls=panelid,
+                        aria_selected="true" if i == 0 else "false",
+                        role="tab",
                     ),
-                    _class="bx--tabs__nav-item bx--tabs__nav-item--selected",
-                    aria_selected="true",
-                    data_target=panelid,
+                    _class="bx--tabs__nav-item"
+                    + (" bx--tabs__nav-item--selected" if i == 0 else ""),
+                    data_target="#" + panelid,
+                    aria_selected="true" if i == 0 else "false",
+                    role="tab",
                 )
             )
-            tabcontents.append(hg.DIV(content, id=panelid, aria_labelledby=tabid))
+            tabcontents.append(
+                hg.DIV(
+                    content,
+                    id=panelid,
+                    aria_labelledby=tabid,
+                    role="tabpanel",
+                    aria_hidden="false" if i == 0 else "true",
+                )
+            )
         super().__init__(
             tablabels,
             tabcontents,
             **attributes,
         )
-
-
-"""
-<div data-tabs class="bx--tabs">
-  <ul class="bx--tabs__nav bx--tabs__nav--hidden" role="tablist">
-    <li
-      class="bx--tabs__nav-item bx--tabs__nav-item--selected "
-      data-target=".tab-1-default" role="tab"  aria-selected="true"  >
-      <a tabindex="0" id="tab-link-1-default" class="bx--tabs__nav-link" href="javascript:void(0)" role="tab" aria-controls="tab-panel-1-default">Tab label 1</a>
-    </li>
-    <li
-      class="bx--tabs__nav-item "
-      data-target=".tab-2-default" role="tab"  >
-      <a tabindex="0" id="tab-link-2-default" class="bx--tabs__nav-link" href="javascript:void(0)" role="tab"
-        aria-controls="tab-panel-2-default">Tab label 2</a>
-    </li>
-    <li
-      class="bx--tabs__nav-item "
-      data-target=".tab-3-default" role="tab"  >
-      <a tabindex="0" id="tab-link-3-default" class="bx--tabs__nav-link" href="javascript:void(0)" role="tab"
-        aria-controls="tab-panel-3-default">Tab label 3</a>
-    </li>
-    <li
-      class="bx--tabs__nav-item  bx--tabs__nav-item--disabled "
-      data-target=".tab-4-default" role="tab"
-      aria-disabled="true" >
-      <a tabindex="0" id="tab-link-4-default" class="bx--tabs__nav-link" href="javascript:void(0)" role="tab"
-        aria-controls="tab-panel-4-default">Tab label 4</a>
-    </li>
-  </ul>
-</div>
-
-<div class="bx--tab-content">
-  <div id="tab-panel-1-default" class="tab-1-default" role="tabpanel" aria-labelledby="tab-link-1-default"
-    aria-hidden="false" >
-    <div>Content for first tab goes here.</div>
-  </div>
-  <div id="tab-panel-2-default" class="tab-2-default" role="tabpanel" aria-labelledby="tab-link-2-default"
-    aria-hidden="true"  hidden>
-    <div>Content for second tab goes here.</div>
-  </div>
-  <div id="tab-panel-3-default" class="tab-3-default" role="tabpanel" aria-labelledby="tab-link-3-default"
-    aria-hidden="true"  hidden>
-    <div>Content for third tab goes here.</div>
-  </div>
-  <div id="tab-panel-4-default" class="tab-4-default" role="tabpanel" aria-labelledby="tab-link-4-default"
-    aria-hidden="true"  hidden>
-    <div>Content for fourth tab goes here.</div>
-  </div>
-</div>
-"""
