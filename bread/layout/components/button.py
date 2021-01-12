@@ -1,4 +1,7 @@
 import htmlgenerator
+from django.utils.translation import gettext_lazy as _
+
+from .icon import Icon
 
 
 class Button(htmlgenerator.BUTTON):
@@ -29,6 +32,8 @@ class Button(htmlgenerator.BUTTON):
             children = (htmlgenerator.SPAN(*children, _class="bx--assistive-text"),)
 
         if icon is not None:
+            if isinstance(icon, str):
+                icon = Icon(icon)
             icon.attributes["_class"] = (
                 icon.attributes.get("_class", "") + " bx--btn__icon"
             )
@@ -49,7 +54,7 @@ class ButtonSet(htmlgenerator.htmltags.DIV):
 
 
 class PrintPageButton(Button):
-    def __init__(**attributes):
+    def __init__(self, **attributes):
         if "onclick" not in attributes:
             attributes["onclick"] = "window.print()"
-        super().__init__(icon="printer", notext=True, **attributes)
+        super().__init__(_("Print"), icon="printer", notext=True, **attributes)
