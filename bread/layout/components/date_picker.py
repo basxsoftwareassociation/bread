@@ -1,9 +1,9 @@
-from _strptime import TimeRE
-
 import htmlgenerator
-from bread.utils.datetimeformatstring import to_php_formatstr
+from _strptime import TimeRE
 from django.utils import formats
 from django.utils.translation import gettext as _
+
+from bread.utils.datetimeformatstring import to_php_formatstr
 
 from .form import ErrorList, HelperText
 from .icon import Icon
@@ -75,8 +75,8 @@ class DatePicker(htmlgenerator.DIV):
                 self.label.attributes["_class"] += " bx--label--disabled"
             self.label.attributes["_for"] = self.boundfield.id_for_label
             self.label.append(self.boundfield.label)
-            if not self.boundfield.field.required:
-                self.label.append(_(" (optional)"))
+            if self.boundfield.field.required:
+                self.label.append(_(" (required)"))
 
             dateformat = (
                 self.boundfield.field.widget.format

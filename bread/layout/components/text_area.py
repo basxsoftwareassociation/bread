@@ -47,8 +47,8 @@ class TextArea(htmlgenerator.DIV):
         if self.boundfield is not None:
             self.label.attributes["_for"] = self.boundfield.id_for_label
             self.label.append(self.boundfield.label)
-            if not self.boundfield.field.required:
-                self.label.append(_(" (optional)"))
+            if self.boundfield.field.required:
+                self.label.append(_(" (required)"))
 
             self.input.append(self.input.attributes.pop("value", ""))
 
