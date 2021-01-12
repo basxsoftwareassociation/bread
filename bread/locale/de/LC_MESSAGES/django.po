@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-12 11:33+0700\n"
+"POT-Creation-Date: 2021-01-12 11:52+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,7 +43,7 @@ msgid "Delete"
 msgstr "Löschen"
 
 #: bread/layout/components/datatable.py:160 bread/views/add.py:35
-#: bread/views/browse.py:67
+#: bread/views/add.py:58 bread/views/browse.py:67
 #, python-format
 msgid "Add %s"
 msgstr "%s erstellen"
@@ -124,8 +124,6 @@ msgstr "Ja, löschen"
 msgid "Added %s"
 msgstr "%s erstellt"
 
-#~ msgid " (optional)"
-#~ msgstr " (optional)"
-
-#~ msgid "Edit "
-#~ msgstr "Bearbeite "
+#: bread/views/delete.py:38
+msgid "Delete %s"
+msgstr "Lösche %s"

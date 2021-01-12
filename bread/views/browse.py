@@ -115,6 +115,11 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
             ret = ret.order_by(*ordering)
         return ret
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["pagetitle"] = pretty_modelname(self.model, plural=True)
+        return context
+
     def as_excel(self):
         # openpyxl is an extra dependency
         import openpyxl

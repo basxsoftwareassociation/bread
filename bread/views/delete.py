@@ -9,6 +9,7 @@ import warnings
 
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import DeleteView as DjangoDeleteView
 from guardian.mixins import PermissionRequiredMixin
 
@@ -31,6 +32,11 @@ class DeleteView(
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.delete_{self.model.__name__.lower()}"]
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["pagetitle"] = _("Delete %s") % self.object
+        return context
 
     def get_success_url(self):
         messages.info(self.request, f"Deleted {self.object}")

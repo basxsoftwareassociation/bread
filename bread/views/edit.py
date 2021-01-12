@@ -57,6 +57,11 @@ class EditView(
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["pagetitle"] = str(self.object)
+        return context
+
     def get_success_url(self):
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])

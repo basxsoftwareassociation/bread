@@ -53,6 +53,11 @@ class AddView(
     def get_permission_object(self):
         return None
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["pagetitle"] = (_("Add %s") % pretty_modelname(self.model),)
+        return context
+
     def get_success_url(self):
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
