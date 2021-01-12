@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-06 20:43+0700\n"
+"POT-Creation-Date: 2021-01-12 11:17+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: bread/layout/components/checkbox.py:34 bread/layout/components/toggle.py:42
+#: bread/layout/components/checkbox.py:34
+#: bread/layout/components/date_picker.py:79
+#: bread/layout/components/select.py:61 bread/layout/components/text_area.py:51
+#: bread/layout/components/text_input.py:46
+#: bread/layout/components/toggle.py:42
 msgid " (required)"
 msgstr " (erforderlich)"
 
@@ -30,25 +34,19 @@ msgstr " Einträge ausgewählt"
 msgid "Table Action Bar"
 msgstr "Tabellen Aktionsbar"
 
-#: bread/layout/components/datatable.py:127 bread/views/__init__.py:34
+#: bread/layout/components/datatable.py:128 bread/views/__init__.py:34
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: bread/layout/components/datatable.py:129 bread/views/__init__.py:35
+#: bread/layout/components/datatable.py:130 bread/views/__init__.py:35
 msgid "Delete"
 msgstr "Löschen"
 
-#: bread/layout/components/datatable.py:158 bread/views/add.py:35
+#: bread/layout/components/datatable.py:160 bread/views/add.py:35
 #: bread/views/browse.py:67
 #, python-format
 msgid "Add %s"
 msgstr "%s erstellen"
-
-#: bread/layout/components/date_picker.py:79
-#: bread/layout/components/select.py:61 bread/layout/components/text_area.py:51
-#: bread/layout/components/text_input.py:46
-msgid " (optional)"
-msgstr " (optional)"
 
 #: bread/layout/components/form.py:25
 msgid "Save"
@@ -125,6 +123,9 @@ msgstr "Ja, löschen"
 #, python-format
 msgid "Added %s"
 msgstr "%s erstellt"
+
+#~ msgid " (optional)"
+#~ msgstr " (optional)"
 
 #~ msgid "Edit "
 #~ msgstr "Bearbeite "
