@@ -48,6 +48,7 @@ setup(
         "django-money[exchange]",
         "Arpeggio",  # used to create strong parsers
         "django-simple-history",
+        "django-clone",
         # Required for multimedia
         "pygraphviz",  # graphviz/dot graphs
         "Pillow",  # image processing

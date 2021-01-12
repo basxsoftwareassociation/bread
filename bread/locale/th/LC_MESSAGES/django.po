@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-12 11:52+0700\n"
+"POT-Creation-Date: 2021-01-12 13:29+0700\n"
 "PO-Revision-Date: 2020-12-18 14:54+0700\n"
 "Last-Translator: Tida <tida@basx.dev>\n"
 "Language-Team: \n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 2.2.4\n"
+
+#: bread/layout/components/button.py:60
+msgid "Print"
+msgstr ""
 
 #: bread/layout/components/checkbox.py:34
 #: bread/layout/components/date_picker.py:79
@@ -34,11 +38,11 @@ msgstr "เลือกรายการ"
 msgid "Table Action Bar"
 msgstr "แถบงาน"
 
-#: bread/layout/components/datatable.py:128 bread/views/__init__.py:34
+#: bread/layout/components/datatable.py:128 bread/views/__init__.py:35
 msgid "Edit"
 msgstr "แก้ไข"
 
-#: bread/layout/components/datatable.py:130 bread/views/__init__.py:35
+#: bread/layout/components/datatable.py:130 bread/views/__init__.py:36
 msgid "Delete"
 msgstr "ลบ"
 
@@ -96,8 +100,8 @@ msgstr ""
 msgid "System Settings"
 msgstr "ตั้งค่าระบบ"
 
-#: bread/templates/bread/components/header.html:41
 #: bread/templates/bread/components/header.html:42
+#: bread/templates/bread/components/header.html:43
 msgid "Logout"
 msgstr ""
 
@@ -123,5 +127,10 @@ msgid "Added %s"
 msgstr "เพิ่ม %s"
 
 #: bread/views/delete.py:38
+#, python-format
 msgid "Delete %s"
 msgstr "ลบ %s"
+
+#: bread/views/edit.py:86
+msgid "Copy"
+msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-12 11:52+0700\n"
+"POT-Creation-Date: 2021-01-12 13:29+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: bread/layout/components/button.py:60
+msgid "Print"
+msgstr "Drucken"
 
 #: bread/layout/components/checkbox.py:34
 #: bread/layout/components/date_picker.py:79
@@ -34,11 +38,11 @@ msgstr " Einträge ausgewählt"
 msgid "Table Action Bar"
 msgstr "Tabellen Aktionsbar"
 
-#: bread/layout/components/datatable.py:128 bread/views/__init__.py:34
+#: bread/layout/components/datatable.py:128 bread/views/__init__.py:35
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: bread/layout/components/datatable.py:130 bread/views/__init__.py:35
+#: bread/layout/components/datatable.py:130 bread/views/__init__.py:36
 msgid "Delete"
 msgstr "Löschen"
 
@@ -96,8 +100,8 @@ msgstr "Aus"
 msgid "System Settings"
 msgstr "Systemeinstellungen"
 
-#: bread/templates/bread/components/header.html:41
 #: bread/templates/bread/components/header.html:42
+#: bread/templates/bread/components/header.html:43
 msgid "Logout"
 msgstr "Ausloggen"
 
@@ -125,5 +129,10 @@ msgid "Added %s"
 msgstr "%s erstellt"
 
 #: bread/views/delete.py:38
+#, python-format
 msgid "Delete %s"
 msgstr "Lösche %s"
+
+#: bread/views/edit.py:86
+msgid "Copy"
+msgstr "Kopieren"
