@@ -53,6 +53,7 @@ class Tabs(hg.DIV):
                     aria_labelledby=tabid,
                     role="tabpanel",
                     aria_hidden="false" if i == 0 else "true",
+                    hidden=i != 0,
                 )
             )
         super().__init__(
