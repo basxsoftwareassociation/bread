@@ -22,11 +22,11 @@ class Form(htmlgenerator.FORM):
         )
 
     @staticmethod
-    def wrap_with_form(form, *elements, submit_label=_("Save"), **kwargs):
+    def wrap_with_form(form, *elements, submit_label=None, **kwargs):
         if kwargs.get("standalone", True) is True:
             elements += (
                 htmlgenerator.DIV(
-                    Button(submit_label, type="submit"),
+                    Button(submit_label or _("Save"), type="submit"),
                     _class="bx--form-item",
                 ),
             )
