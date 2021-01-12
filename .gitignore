@@ -6,4 +6,4 @@
 basx_bread.egg-info/
 build/
 dist/
-
+__pycache__/
