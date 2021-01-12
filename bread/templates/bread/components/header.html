@@ -35,6 +35,7 @@
                 {% carbon_icon "close" 20 class="bx--navigation-menu-panel-collapse-icon" aria_hidden="true" %}
             </button>
         {% endfor %}
+        {% if request.user.is_authenticated %}
         <button
             class="bx--header__menu-trigger bx--header__action"
             aria-label="logout"
@@ -47,5 +48,6 @@
             {% carbon_icon "logout" 20 class="bx--navigation-menu-panel-expand-icon" aria_hidden="true" %}
             {% carbon_icon "close" 20 class="bx--navigation-menu-panel-collapse-icon" aria_hidden="true" %}
         </button>
+        {% endif %}
     </div>
 </header>
