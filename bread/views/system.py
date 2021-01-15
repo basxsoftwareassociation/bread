@@ -4,13 +4,12 @@ The Bread frameworks provides a view util views to provide special functionality
 import re
 
 import pygraphviz
-from django_extensions.management.modelviz import ModelGraph, generate_dot
-
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponse
 from django.views.generic import TemplateView
+from django_extensions.management.modelviz import ModelGraph, generate_dot
 
 from .. import layout as layout
 
@@ -75,6 +74,7 @@ class DataModel(LoginRequiredMixin, TemplateView):
 class BreadLoginView(LoginView):
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
+        form.fields["username"].widget.attrs["autofocus"] = True
         self.layout = lambda request: layout.form.Form.from_fieldnames(
             form, ["username", "password"]
         )
