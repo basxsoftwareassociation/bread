@@ -55,7 +55,7 @@ class AddView(
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context["pagetitle"] = (_("Add %s") % pretty_modelname(self.model),)
+        context["pagetitle"] = _("Add %s") % pretty_modelname(self.model)
         return context
 
     def get_success_url(self):
