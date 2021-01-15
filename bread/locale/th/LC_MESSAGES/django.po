@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-12 13:29+0700\n"
-"PO-Revision-Date: 2020-12-18 14:54+0700\n"
+"PO-Revision-Date: 2021-01-15 10:31+0700\n"
 "Last-Translator: Tida <tida@basx.dev>\n"
 "Language-Team: \n"
 "Language: th\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: bread/layout/components/button.py:60
 msgid "Print"
-msgstr ""
+msgstr "พิมพ์"
 
 #: bread/layout/components/checkbox.py:34
 #: bread/layout/components/date_picker.py:79
@@ -90,11 +90,11 @@ msgstr "เห็นรหัสผ่าน"
 
 #: bread/layout/components/toggle.py:11
 msgid "On"
-msgstr ""
+msgstr "เปิด"
 
 #: bread/layout/components/toggle.py:12
 msgid "Off"
-msgstr ""
+msgstr "ปิด"
 
 #: bread/templates/admin/base_site.html:3
 msgid "System Settings"
@@ -103,11 +103,11 @@ msgstr "ตั้งค่าระบบ"
 #: bread/templates/bread/components/header.html:42
 #: bread/templates/bread/components/header.html:43
 msgid "Logout"
-msgstr ""
+msgstr "ลงชื่อออก"
 
 #: bread/templates/bread/confirm_delete.html:8
 msgid "cannot be deleted because of the following related objects:"
-msgstr "ไมาสามารถลบได้เนื่องจากสิ่งต่อไปนี้"
+msgstr "ไม่สามารถลบได้เนื่องจากสิ่งต่อไปนี้"
 
 #: bread/templates/bread/confirm_delete.html:24
 msgid "The following objects will be deleted too:"
@@ -133,4 +133,4 @@ msgstr "ลบ %s"
 
 #: bread/views/edit.py:86
 msgid "Copy"
-msgstr ""
+msgstr "คัดลอก"
