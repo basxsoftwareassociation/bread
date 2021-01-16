@@ -175,6 +175,7 @@ def _generate_formset_class(
             formfield_callback=lambda field: _formfield_callback_with_request(
                 field, request, model
             ),
+            fk_name=modelfield.field.name,
             **base_formset_kwargs,
         )
 
