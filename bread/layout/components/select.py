@@ -1,11 +1,11 @@
-import htmlgenerator
+import htmlgenerator as hg
 from django.utils.translation import gettext as _
 
 from .form import ErrorList, HelperText
 from .icon import Icon
 
 
-class Select(htmlgenerator.DIV):
+class Select(hg.DIV):
     LABEL = 0
     SELECT = 1
 
@@ -24,20 +24,20 @@ class Select(htmlgenerator.DIV):
             widgetattributes.get("_class", "") + " bx--select-input"
         )
 
-        select_wrapper = htmlgenerator.DIV(
-            htmlgenerator.SELECT(**widgetattributes),
+        select_wrapper = hg.DIV(
+            hg.SELECT(**widgetattributes),
             Icon(
                 "chevron--down", size=16, _class="bx--select__arrow", aria_hidden="true"
             ),
             _class="bx--select-input__wrapper",
         )
         if inline:
-            select_wrapper = htmlgenerator.DIV(
+            select_wrapper = hg.DIV(
                 select_wrapper, _class="bx--select-input--inline__wrapper"
             )
         super().__init__(
-            htmlgenerator.DIV(
-                htmlgenerator.LABEL(_class="bx--label"),
+            hg.DIV(
+                hg.LABEL(_class="bx--label"),
                 select_wrapper,
                 _class="bx--select"
                 + (" bx--select--inline" if inline else "")
@@ -68,12 +68,10 @@ class Select(htmlgenerator.DIV):
             ):
                 group = self.select
                 if group_name:
-                    group = htmlgenerator.OPTGROUP(
-                        _class="bx--select-optgroup", label=group_name
-                    )
+                    group = hg.OPTGROUP(_class="bx--select-optgroup", label=group_name)
                 for option in subgroup:
                     group.append(
-                        htmlgenerator.OPTION(
+                        hg.OPTION(
                             option["label"],
                             _class="bx--select-option",
                             value=option["value"],
