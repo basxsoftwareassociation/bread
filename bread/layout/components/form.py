@@ -1,5 +1,5 @@
 import django_filters
-import htmlgenerator
+import htmlgenerator as hg
 from django import forms
 from django.utils.html import mark_safe
 from django.utils.translation import gettext as _
@@ -10,7 +10,7 @@ from .icon import Icon
 from .notification import InlineNotification
 
 
-class Form(htmlgenerator.FORM):
+class Form(hg.FORM):
     @staticmethod
     def from_django_form(form, **kwargs):
         return Form.from_fieldnames(form, form.fields, **kwargs)
@@ -25,7 +25,7 @@ class Form(htmlgenerator.FORM):
     def wrap_with_form(form, *elements, submit_label=None, **kwargs):
         if kwargs.get("standalone", True) is True:
             elements += (
-                htmlgenerator.DIV(
+                hg.DIV(
                     Button(submit_label or _("Save"), type="submit"),
                     _class="bx--form-item",
                 ),
@@ -58,7 +58,7 @@ class Form(htmlgenerator.FORM):
         )
 
     def render(self, context):
-        form = htmlgenerator.resolve_lazy(self.form, context, self)
+        form = hg.resolve_lazy(self.form, context, self)
         for formfield in self.formfieldelements():
             formfield.form = form
         for error in form.non_field_errors():
@@ -82,32 +82,43 @@ class FormChild:
     """Used to mark elements which need the "form" attribute set by the parent form before rendering"""
 
 
-class FormField(FormChild, htmlgenerator.BaseElement):
+class FormField(FormChild, hg.BaseElement):
     """Dynamic element which will resolve the field with the given name
     and return the correct HTML, based on the widget of the form field or on the passed argument 'fieldtype'"""
 
     def __init__(
-        self, fieldname, fieldtype=None, elementattributes={}, widgetattributes={}
+        self,
+        fieldname,
+        fieldtype=None,
+        hidelabel=False,
+        elementattributes={},
+        widgetattributes={},
     ):
         self.fieldname = fieldname
         self.fieldtype = fieldtype
         self.widgetattributes = widgetattributes
         self.elementattributes = elementattributes
         self.form = None  # will be set by the render method of the parent method
+        self.hidelabel = hidelabel
 
     def render(self, context):
-        return _mapwidget(
+        element = _mapwidget(
             self.form[self.fieldname],
             self.fieldtype,
             self.elementattributes,
             self.widgetattributes,
-        ).render(context)
+        )
+        if self.hidelabel:
+            element._replace(
+                lambda e, ancestors: isinstance(e, hg.LABEL), None, all=True
+            )
+        return element.render(context)
 
     def __repr__(self):
         return f"FormField({self.fieldname})"
 
 
-class FormSetField(FormChild, htmlgenerator.BaseElement):
+class FormSetField(FormChild, hg.BaseElement):
     def __init__(
         self, fieldname, *children, formsetinitial=None, **formsetfactory_kwargs
     ):
@@ -144,17 +155,15 @@ class FormSetField(FormChild, htmlgenerator.BaseElement):
         yield "</div>"
 
         # empty/template form
-        yield from htmlgenerator.DIV(
-            htmlgenerator.DIV(
-                Form.wrap_with_form(formset.empty_form, *self, standalone=False)
-            ),
+        yield from hg.DIV(
+            hg.DIV(Form.wrap_with_form(formset.empty_form, *self, standalone=False)),
             id=f"empty_{ formset.prefix }_form",
             _class="template-form",
             style="display:none;",
         ).render(context)
 
         # add-new-form button
-        yield from htmlgenerator.DIV(
+        yield from hg.DIV(
             Button(
                 _("Add"),
                 id=f"add_{formset.prefix}_button",
@@ -165,7 +174,7 @@ class FormSetField(FormChild, htmlgenerator.BaseElement):
             ),
             _class="bx--form-item",
         ).render(context)
-        yield from htmlgenerator.SCRIPT(
+        yield from hg.SCRIPT(
             mark_safe(
                 f"""document.addEventListener("DOMContentLoaded", e => init_formset("{ formset.prefix }"));"""
             )
@@ -175,7 +184,7 @@ class FormSetField(FormChild, htmlgenerator.BaseElement):
         return f"FormSet({self.fieldname}, {self.formsetfactory_kwargs})"
 
 
-class HiddenInput(FormChild, htmlgenerator.INPUT):
+class HiddenInput(FormChild, hg.INPUT):
     def __init__(self, fieldname, widgetattributes, **attributes):
         self.fieldname = fieldname
         super().__init__(type="hidden", **{**widgetattributes, **attributes})
@@ -189,7 +198,7 @@ class HiddenInput(FormChild, htmlgenerator.INPUT):
         return super().render(context)
 
 
-class CsrfToken(FormChild, htmlgenerator.INPUT):
+class CsrfToken(FormChild, hg.INPUT):
     def __init__(self):
         super().__init__(type="hidden")
 
@@ -259,7 +268,7 @@ def _mapwidget(
     if (
         field.field.show_hidden_initial and fieldtype != HiddenInput
     ):  # special case, prevent infinte recursion
-        return htmlgenerator.BaseElement(
+        return hg.BaseElement(
             ret,
             _mapwidget(field, HiddenInput, only_initial=True),
         )
@@ -267,20 +276,20 @@ def _mapwidget(
     return ret
 
 
-class SubmitButton(htmlgenerator.DIV):
+class SubmitButton(hg.DIV):
     def __init__(self, *args, **kwargs):
         kwargs["type"] = "submit"
         super().__init__(Button(*args, **kwargs), _class="bx--form-item")
 
 
-class ErrorList(htmlgenerator.DIV):
+class ErrorList(hg.DIV):
     def __init__(self, errors):
         super().__init__(
-            htmlgenerator.UL(*[htmlgenerator.LI(e) for e in errors]),
+            hg.UL(*[hg.LI(e) for e in errors]),
             _class="bx--form-requirement",
         )
 
 
-class HelperText(htmlgenerator.DIV):
+class HelperText(hg.DIV):
     def __init__(self, helpertext):
         super().__init__(helpertext, _class="bx--form__helper-text")
