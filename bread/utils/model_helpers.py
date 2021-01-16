@@ -1,4 +1,3 @@
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 
@@ -11,6 +10,8 @@ def pretty_modelname(model, plural=False):
 
 
 def pretty_fieldname(field):
+    from django.contrib.contenttypes.fields import GenericForeignKey
+
     """Canonical way to pretty print a field name"""
     if isinstance(field, str):
         ret = field.replace("_", " ")
@@ -69,6 +70,8 @@ def filter_fieldlist(model, fieldlist, for_form=False):
 
 
 def get_modelfields(model, fieldlist, for_form=False):
+    from django.contrib.contenttypes.fields import GenericForeignKey
+
     fields = {}
     modelfields = {f.name: f for f in model._meta.get_fields()}
     modelfields_rel = {
@@ -99,6 +102,8 @@ def _expand_ALL_constant(model, fieldnames):
 
 def _is_internal_field(model, field):
     """Filter generic foreign key, parent link of multi-table inheritance and id"""
+    from django.contrib.contenttypes.fields import GenericForeignKey
+
     exclude = {"id"}
     for f in model._meta.get_fields():
         if isinstance(f, GenericForeignKey):
@@ -120,6 +125,8 @@ def _is_internal_field(model, field):
 
 
 def _can_use_in_form(model, field):
+    from django.contrib.contenttypes.fields import GenericForeignKey
+
     """Filter fields which cannot be processed in a form"""
     modelfields = {
         f.get_accessor_name() if hasattr(f, "get_accessor_name") else f.name: f
