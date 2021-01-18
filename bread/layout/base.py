@@ -127,4 +127,4 @@ def fieldvalue(object, field):
     for accessor in field.split("."):
         object = getattr(object, accessor, None)
         object = object() if callable(object) else object
-    yield from self._try_render(formats.localize(object), context)
+    # yield from self._try_render(formats.localize(object), context)

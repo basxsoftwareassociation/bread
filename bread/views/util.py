@@ -44,7 +44,10 @@ class CustomFormMixin:
             for fieldelement in self.layout(self.request).filter(
                 lambda element, ancestors: isinstance(element, FormField)
             ):
-                if fieldelement.fieldname in self.request.GET:
+                if (
+                    fieldelement.fieldname in self.request.GET
+                    and fieldelement.fieldname + "_nohide" not in self.request.GET
+                ):
                     form.fields[fieldelement.fieldname].widget = forms.HiddenInput(
                         attrs=form.fields[fieldelement.fieldname].widget.attrs
                     )

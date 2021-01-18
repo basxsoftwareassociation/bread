@@ -23,6 +23,7 @@ class OverflowMenuItem(hg.LI):
                 ),
                 _class="bx--overflow-menu-options__btn",
                 role="menuitem",
+                type="button",
                 title=label,
                 onclick=js,
             ),
@@ -72,6 +73,7 @@ class OverflowMenu(hg.DIV):
                 aria_haspopup="true",
                 aria_expanded="false",
                 aria_controls=menuid,
+                type="button",
                 id=triggerid,
             ),
             hg.DIV(

@@ -152,7 +152,7 @@ class DataTable(hg.BaseElement):
                         for field in list(filter_fieldlist(model, fields))
                     ]
                     + [(None, object_actions_menu)],
-                    # querysets are cache, the call to all will make a new query is used in every request
+                    # querysets are cache, the call to all will make sure a new query is used in every request
                     hg.F(lambda c, e: queryset),
                     ObjectContext,
                 ),
