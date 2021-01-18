@@ -103,30 +103,6 @@ class ObjectLabel(ObjectContext.Binding()):
         yield str(self.object)
 
 
-# TODO: this element might be totaly unusable since valueproviders will not propagate values down
-# either remove this or move it to htmlgenerator and load and walk the layout inside the valueproviders, somehow...
-class Include(hg.BaseElement):
-    """Element which will render a layout registered in the layout registry"""
-
-    def __init__(self, templatename):
-        super().__init__(self)
-        self.templatename = templatename
-
-    def render(self, request, context):
-        from .registry import (
-            get_layout,
-        )  # late import necessary to make sure all layouts are registered
-
-        return get_layout(self.templatename)().render(request, context)
-
-    def __repr__(self):
-        from .registry import (
-            get_layout,
-        )  # late import necessary to make sure all layouts are registered
-
-        return get_layout(self.templatename).__repr__()
-
-
 def aslink_attributes(href):
     """
     Shortcut to generate HTMLElement attributes to make any element behave like a link.
@@ -137,3 +113,18 @@ def aslink_attributes(href):
         "onauxclick": hg.BaseElement("window.open('", href, "', '_blank')"),
         "style": "cursor: pointer",
     }
+
+
+# todo:
+def fieldlabel(model, field):
+    try:
+        return pretty_fieldname(model._meta.get_field(field))
+    except FieldDoesNotExist:
+        return (getattr(getattr(model, field, None), "verbose_name", ""),)
+
+
+def fieldvalue(object, field):
+    for accessor in field.split("."):
+        object = getattr(object, accessor, None)
+        object = object() if callable(object) else object
+    yield from self._try_render(formats.localize(object), context)

@@ -1,15 +1,14 @@
+from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import include, path
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.forms import preference_form_builder
 from dynamic_preferences.registries import global_preferences_registry
 from dynamic_preferences.users import views as user_preferences_views
 from dynamic_preferences.users.registries import user_preferences_registry
 
-from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import include, path
-from django.utils.module_loading import autodiscover_modules
-
 from .forms.forms import PreferencesForm, UserPreferencesForm
 from .utils import urls
+from .views import system
 
 
 # preferences views need a bit of weird treatment, I think we coudl make this code much shorter
@@ -79,5 +78,12 @@ external_urlpatterns = [
 ]
 
 
-autodiscover_modules("views")
-urlpatterns = list(urls.generate_urlpatterns()) + external_urlpatterns
+urlpatterns = (
+    [
+        path("login", system.BreadLoginView.as_view(), name="login"),
+        path("logout", system.BreadLogoutView.as_view(), name="logout"),
+        path("datamodel", system.DataModel.as_view(), name="datamodel"),
+    ]
+    + list(urls.generate_urlpatterns())
+    + external_urlpatterns
+)

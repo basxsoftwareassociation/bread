@@ -13,4 +13,3 @@ from .components import progress_indicator  # noqa
 from .components import search  # noqa
 from .components import tabs  # noqa
 from .components import toggle  # noqa
-from .registry import get_layout, register  # noqa

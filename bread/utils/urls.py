@@ -12,7 +12,9 @@ from django.urls import path as djangopath
 from django.urls import reverse_lazy as django_reverse
 from django.utils.http import urlencode
 from django.utils.text import format_lazy
-from django.views import View
+from django.utils.translation import gettext_lazy as _
+
+from ..menu import Link
 
 registry = []
 
@@ -54,46 +56,6 @@ def reverse_model(model, action, *args, **kwargs):
     return reverse(model_urlname(model, action), *args, **kwargs)
 
 
-def registermodelurl(model, name, view, check_function=None, **view_kwargs):
-    check_function = check_function or (
-        lambda user: user.has_perm(
-            f"{model._meta.app_label}.view_{model._meta.model_name}"
-        )
-    )
-
-    if isinstance(view, type) and issubclass(view, View):
-        view = view.as_view(model=model, **view_kwargs)
-    registerurl(model_urlname(model, name), check_function)(view)
-
-
-# decorators
-def registerurl(
-    urlname=None, check_function=lambda user: user.is_authenticated and user.is_active
-):
-    if callable(urlname):
-        registry.append((urlname, None, check_function))
-        return urlname
-
-    """register a view in order to generate URLs automatically
-    check is a function which takes a user object as single parameter and returns true if the user is allowed to access the view"""
-
-    def registerurl_wrapper(view):
-        registry.append((view, urlname, check_function))
-        return view
-
-    return registerurl_wrapper
-
-
-# TODO: test this function
-def unregisterurl(name):
-    remove = []
-    for i, view_config in enumerate(registry):
-        if name in (view_config[0], view_config[1], viewname(view_config[0])):
-            remove += i
-    for i in remove:
-        del registry[i]
-
-
 def aslayout(view):
     """Helper function to let views return an element tree from htmlgenerator"""
 
@@ -108,26 +70,33 @@ def aslayout(view):
 
 def generate_urlpatterns():
     for view, urlname, check_function in registry:
-        pathcomponents = [viewbasepath(view, urlname)]
-        for param, paramtype in get_view_params(view):
-            if paramtype is not None:
-                if paramtype in PATH_CONVERTERS_MAP:
-                    pathcomponents.append(
-                        f"<{PATH_CONVERTERS_MAP.get(paramtype)}:{param}>"
-                    )
-                else:
-                    logging.warning(
-                        f"view {view}, parameter {param}: {paramtype} is not available as path converter"
-                    )
-                    pathcomponents.append(f"<{param}>")
-            else:
-                pathcomponents.append(f"<{param}>")
+        print(urlname)
+        yield generate_path(view, urlname, check_function)
 
-        yield djangopath(
-            "/".join(pathcomponents),
-            user_passes_test(check_function)(view),
-            name=urlname or viewname(view),
-        )
+
+def generate_path(view, urlname=None, check_function=None):
+    def default_check(user):
+        return user.is_authenticated and user.is_active
+
+    check_function = check_function or default_check
+    pathcomponents = [viewbasepath(view, urlname)]
+    for param, paramtype in get_view_params(view):
+        if paramtype is not None:
+            if paramtype in PATH_CONVERTERS_MAP:
+                pathcomponents.append(f"<{PATH_CONVERTERS_MAP.get(paramtype)}:{param}>")
+            else:
+                logging.warning(
+                    f"view {view}, parameter {param}: {paramtype} is not available as path converter"
+                )
+                pathcomponents.append(f"<{param}>")
+        else:
+            pathcomponents.append(f"<{param}>")
+
+    return djangopath(
+        "/".join(pathcomponents),
+        user_passes_test(check_function)(view),
+        name=urlname or viewname(view),
+    )
 
 
 def get_view_params(view):
@@ -179,3 +148,76 @@ def protectedMedia(request, path):
             return response
     else:
         return HttpResponse(status=404)
+
+
+def default_model_paths(
+    model,
+    browseview=True,
+    readview=True,
+    editview=True,
+    addview=True,
+    deleteview=True,
+    copyview=True,
+):
+    from ..views.add import AddView
+    from ..views.browse import BrowseView
+    from ..views.delete import DeleteView
+    from ..views.edit import EditView, generate_copyview
+    from ..views.read import ReadView
+
+    defaultview = {
+        "browse": BrowseView,
+        "read": ReadView,
+        "edit": EditView,
+        "add": AddView,
+        "delete": DeleteView,
+    }
+    ret = []
+    if browseview is not None:
+        if browseview is True:
+            browseview = defaultview["browse"]
+        ret.append(
+            generate_path(
+                browseview.as_view(
+                    model=model,
+                    object_actions=browseview.object_actions
+                    or [
+                        Link.from_objectaction("edit", _("Edit"), "edit"),
+                        Link.from_objectaction("delete", _("Delete"), "trash-can"),
+                    ],
+                ),
+                model_urlname(model, "browse"),
+            )
+        )
+    if readview is not None:
+        if readview is True:
+            readview = defaultview["read"]
+        ret.append(
+            generate_path(readview.as_view(model=model), model_urlname(model, "read"))
+        )
+    if editview is not None:
+        if editview is True:
+            editview = defaultview["edit"]
+        ret.append(
+            generate_path(editview.as_view(model=model), model_urlname(model, "edit"))
+        )
+    if addview is not None:
+        if addview is True:
+            addview = defaultview["add"]
+        ret.append(
+            generate_path(addview.as_view(model=model), model_urlname(model, "add"))
+        )
+    if deleteview is not None:
+        if deleteview is True:
+            deleteview = defaultview["delete"]
+        ret.append(
+            generate_path(
+                deleteview.as_view(model=model), model_urlname(model, "delete")
+            )
+        )
+    if copyview is not None:
+        if copyview is True:
+            copyview = generate_copyview(model)
+        ret.append(generate_path(copyview, model_urlname(model, "copy")))
+
+    return ret

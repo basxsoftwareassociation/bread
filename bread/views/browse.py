@@ -35,6 +35,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
     object_actions = ()  # list of links
 
     def __init__(self, *args, **kwargs):
+        self.object_actions = kwargs.get(
+            "object_actions", getattr(self, "object_actions", ())
+        )
         self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"]))
         self.filterset_fields = kwargs.get("filterset_fields", self.filterset_fields)
         super().__init__(*args, **kwargs)
