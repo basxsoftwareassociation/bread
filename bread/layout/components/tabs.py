@@ -1,9 +1,43 @@
 import htmlgenerator as hg
 
 
+class TabLabel(hg.LI):
+    def __init__(self, label, tabid, panelid, selected):
+        super().__init__(
+            hg.A(
+                label,
+                tabindex="0",
+                id=tabid,
+                _class="bx--tabs__nav-link",
+                href="javascript:void(0)",
+                aria_controls=panelid,
+                aria_selected="true" if selected else "false",
+                role="tab",
+            ),
+            _class="bx--tabs__nav-item"
+            + (" bx--tabs__nav-item--selected" if selected else ""),
+            data_target="#" + panelid,
+            aria_selected="true" if selected else "false",
+            role="tab",
+        )
+
+
+class TabPanel(hg.DIV):
+    def __init__(self, content, panelid, tabid, selected):
+        super().__init__(
+            content,
+            id=panelid,
+            aria_labelledby=tabid,
+            role="tabpanel",
+            aria_hidden="false" if selected else "true",
+            hidden=not selected,
+        )
+
+
 class Tabs(hg.DIV):
     def __init__(self, *tabs, container=False, **attributes):
-        tablabels = hg.DIV(
+        self.tablabels = hg.UL(_class="bx--tabs__nav bx--tabs__nav--hidden")
+        labelcontainer = hg.DIV(
             hg.DIV(
                 hg.A(
                     href="javascript:void(0)",
@@ -15,11 +49,11 @@ class Tabs(hg.DIV):
                 style="display: none",
                 tabindex=0,
             ),
-            hg.UL(_class="bx--tabs__nav bx--tabs__nav--hidden"),
+            self.tablabels,
             data_tabs=True,
             _class="bx--tabs" + (" bx--tabs--container" if container else ""),
         )
-        tabcontents = hg.DIV(_class="bx--tab-content")
+        self.tabpanels = hg.DIV(_class="bx--tab-content")
 
         tabid_template = f"tab-{hg.html_id(self)}-label-%s"
         panelid_template = f"tab-{hg.html_id(self)}-panel-%s"
@@ -27,37 +61,10 @@ class Tabs(hg.DIV):
         for i, (label, content) in enumerate(tabs):
             tabid = tabid_template % i
             panelid = panelid_template % i
-            tablabels[1].append(
-                hg.LI(
-                    hg.A(
-                        label,
-                        tabindex="0",
-                        id=tabid,
-                        _class="bx--tabs__nav-link",
-                        href="javascript:void(0)",
-                        aria_controls=panelid,
-                        aria_selected="true" if i == 0 else "false",
-                        role="tab",
-                    ),
-                    _class="bx--tabs__nav-item"
-                    + (" bx--tabs__nav-item--selected" if i == 0 else ""),
-                    data_target="#" + panelid,
-                    aria_selected="true" if i == 0 else "false",
-                    role="tab",
-                )
-            )
-            tabcontents.append(
-                hg.DIV(
-                    content,
-                    id=panelid,
-                    aria_labelledby=tabid,
-                    role="tabpanel",
-                    aria_hidden="false" if i == 0 else "true",
-                    hidden=i != 0,
-                )
-            )
+            self.tablabels.append(TabLabel(label, tabid, panelid, i == 0))
+            self.tabpanels.append(TabPanel(content, panelid, tabid, i == 0))
         super().__init__(
-            tablabels,
-            tabcontents,
+            labelcontainer,
+            self.tabpanels,
             **attributes,
         )
