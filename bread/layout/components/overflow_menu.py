@@ -68,7 +68,7 @@ class OverflowMenu(hg.DIV):
             ),
             hg.DIV(
                 hg.UL(
-                    hg.SimpleIterator(
+                    hg.Iterator(
                         actions,
                         "action",
                         OverflowMenuItem(

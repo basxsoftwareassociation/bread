@@ -1,11 +1,9 @@
 import inspect
 import itertools
 
-from django.http import HttpResponse
 from django.urls import path
 from django.views.generic import CreateView
 from django.views.generic.edit import SingleObjectMixin
-from htmlgenerator import ValueProvider
 
 
 def generate_path_for_view(view, viewname=None):

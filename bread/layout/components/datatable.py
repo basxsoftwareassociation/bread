@@ -49,7 +49,7 @@ class DataTable(hg.BaseElement):
                     )
                 ),
                 hg.TBODY(
-                    hg.SimpleIterator(
+                    hg.Iterator(
                         row_iterator,
                         row_variable,
                         hg.TR(

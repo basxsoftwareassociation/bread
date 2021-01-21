@@ -105,37 +105,36 @@ class TextInputElement(hg.DIV):
             hg.If(errors, " bx--text-input--invalid"),
         )
 
+        id = (id or hg.html_id(self),)
+
         super().__init__(
-            hg.ValueProvider(
-                id or hg.html_id(self),
-                hg.DIV(
-                    LabelElement(
-                        label,
-                        hg.ValueProvider.Binding()(hg.ATTR("value")),
-                        required,
-                        disabled=widgetattributes.get("disabled", False),
-                    ),
-                    hg.If(
-                        errors,
-                        Icon(
-                            "warning--filled",
-                            size=16,
-                            _class="bx--text-input__invalid-icon",
-                        ),
-                    ),
-                    hg.INPUT(
-                        id=hg.ValueProvider.Binding()(hg.ATTR("value")),
-                        type="text",
-                        **widgetattributes,
-                    ),
-                    _class="bx--text-input__field-wrapper",
-                    data_invalid=hg.If(errors, True),
+            hg.DIV(
+                LabelElement(
+                    label,
+                    id,
+                    required,
+                    disabled=widgetattributes.get("disabled", False),
                 ),
-                HelpTextElement(
-                    help_text, disabled=widgetattributes.get("disabled", False)
+                hg.If(
+                    errors,
+                    Icon(
+                        "warning--filled",
+                        size=16,
+                        _class="bx--text-input__invalid-icon",
+                    ),
                 ),
-                ErrorListElement(errors),
+                hg.INPUT(
+                    id=id,
+                    type="text",
+                    **widgetattributes,
+                ),
+                _class="bx--text-input__field-wrapper",
+                data_invalid=hg.If(errors, True),
             ),
+            HelpTextElement(
+                help_text, disabled=widgetattributes.get("disabled", False)
+            ),
+            ErrorListElement(errors),
             _class="bx--text-input-wrapper",
         )
 
@@ -191,11 +190,7 @@ class ErrorListElement(hg.If):
         super().__init__(
             errors,
             hg.DIV(
-                hg.UL(
-                    hg.Iterator(
-                        errors or (), hg.ValueProvider.Binding(hg.LI)(hg.ATTR("value"))
-                    )
-                ),
+                hg.UL(hg.Iterator(errors or (), "error", hg.C("error"))),
                 _class="bx--form-requirement",
             ),
         )
