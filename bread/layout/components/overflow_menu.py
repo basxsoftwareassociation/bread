@@ -4,20 +4,14 @@ from .icon import Icon
 
 
 class OverflowMenuItem(hg.LI):
-    def __init__(self, menucontext, **attributes):
-        icon = hg.ATTR("action.icon", self)
-        label = hg.ATTR("action.label", self)
-        js = hg.ATTR("action.js", self)
+    def __init__(self, iconname, label, js=False, **attributes):
         attributes["_class"] = (
             attributes.get("_class", "") + " bx--overflow-menu-options__option"
         )
-        buttonclass = hg.BUTTON
-        if menucontext:
-            buttonclass = menucontext.Binding(buttonclass)
         super().__init__(
-            buttonclass(
+            hg.BUTTON(
                 hg.DIV(
-                    Icon(icon, size=16),
+                    Icon(iconname, size=16),
                     label,
                     _class="bx--overflow-menu-options__option-content",
                 ),
@@ -35,31 +29,27 @@ class OverflowMenu(hg.DIV):
     """Implements https://www.carbondesignsystem.com/components/overflow-menu/usage"""
 
     MENUID_TEMPLATE = "overflow-menu-%s"
-    TRIGGERID_TEMPLATE = "%s-trigger"
 
     def __init__(
         self,
         actions,
         menuname=None,
-        menucontext=None,
         direction="bottom",
         flip=False,
         item_attributes={},
         **attributes,
     ):
-        parents = (hg.ValueProvider,)
-        if menucontext:
-            parents = (menucontext.Binding(), hg.ValueProvider)
-
-        ActionProvider = type("ActionProvider", parents, {"attributename": "action"})
-
-        """actions: an iterable which contains bread.menu.Action objects where the onclick value is what will be passed to the onclick attribute of the menu-item (and therefore should be javascript, e.g. "window.location.href='/home'").
-       """
+        """actions: an iterable which contains bread.menu.Action objects where the onclick value is what will be passed to the onclick attribute of the menu-item (and therefore should be javascript, e.g. "window.location.href='/home'")."""
         attributes["data-overflow-menu"] = True
         attributes["_class"] = attributes.get("_class", "") + " bx--overflow-menu"
 
-        self.menucounter = 0
-        menuid, triggerid = self.nextmenuid()
+        menuid = hg.F(
+            lambda c, e: OverflowMenu.MENUID_TEMPLATE % hg.html_id(c.get("row", self))
+        )
+        triggerid = hg.F(
+            lambda c, e: (OverflowMenu.MENUID_TEMPLATE % hg.html_id(c.get("row", self)))
+            + "-trigger"
+        )
 
         super().__init__(
             hg.BUTTON(
@@ -78,12 +68,15 @@ class OverflowMenu(hg.DIV):
             ),
             hg.DIV(
                 hg.UL(
-                    hg.Iterator(
+                    hg.SimpleIterator(
                         actions,
-                        ActionProvider.Binding(OverflowMenuItem)(
-                            menucontext, **item_attributes
+                        "action",
+                        OverflowMenuItem(
+                            iconname=hg.C("action.icon"),
+                            label=hg.C("action.label"),
+                            js=hg.C("action.js"),
+                            **item_attributes,
                         ),
-                        ActionProvider,
                     ),
                     _class="bx--overflow-menu-options__content",
                 ),
@@ -99,17 +92,3 @@ class OverflowMenu(hg.DIV):
         )
         if menuname is not None:
             self[0].insert(0, hg.SPAN(menuname, _class="bx--assistive-text"))
-
-    def nextmenuid(self):
-        # because we need unique menu-ids, need to update this in render in case were are inside an loop and render this element multiple times
-        self.menucounter += 1
-        menuid = OverflowMenu.MENUID_TEMPLATE % self.menucounter
-        return menuid, OverflowMenu.TRIGGERID_TEMPLATE % menuid
-
-    def render(self, context):
-        menuid, triggerid = self.nextmenuid()
-        self[0].attributes["id"] = triggerid
-        self[0].attributes["aria_controls"] = menuid
-        self[1].attributes["id"] = menuid
-        self[1].attributes["aria_labelledby"] = triggerid
-        return super().render(context)

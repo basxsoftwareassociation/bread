@@ -6,19 +6,19 @@ from bread.utils import get_concrete_instance, pretty_fieldname, pretty_modelnam
 from bread.utils.urls import reverse_model
 
 
-class RequestContext(hg.ValueProvider):
+class _RequestContext(hg.ValueProvider):
     """Provides the request to marked child elements"""
 
     attributename = "request"
 
 
-class ModelContext(hg.ValueProvider):
+class _ModelContext(hg.ValueProvider):
     """Provides a model to marked child elements"""
 
     attributename = "model"
 
 
-class ObjectContext(hg.ValueProvider):
+class _ObjectContext(hg.ValueProvider):
     """Provides a model instance to marked child elements """
 
     attributename = "object"
@@ -28,7 +28,7 @@ class ObjectContext(hg.ValueProvider):
         return super().render(context)
 
 
-class ModelFieldLabel(ModelContext.Binding(), ObjectContext.Binding()):
+class _ModelFieldLabel(_ModelContext.Binding(), _ObjectContext.Binding()):
     def __init__(self, fieldname):
         self.fieldname = fieldname
 
@@ -47,7 +47,7 @@ class ModelFieldLabel(ModelContext.Binding(), ObjectContext.Binding()):
         return f"ModelFieldLabel({self.fieldname})"
 
 
-class ModelName(ModelContext.Binding(), ObjectContext.Binding()):
+class _ModelName(_ModelContext.Binding(), _ObjectContext.Binding()):
     def __init__(self, plural=False):
         self.plural = plural
 
@@ -60,7 +60,7 @@ class ModelName(ModelContext.Binding(), ObjectContext.Binding()):
         return "ModelName()"
 
 
-class ModelFieldValue(ObjectContext.Binding()):
+class _ModelFieldValue(_ObjectContext.Binding()):
     def __init__(self, fieldname):
         self.fieldname = fieldname
 
@@ -75,30 +75,44 @@ class ModelFieldValue(ObjectContext.Binding()):
         return f"ModelFieldValue({self.fieldname})"
 
 
-class ObjectAction(ObjectContext.Binding()):
-    def __init__(self, action, *args, **kwargs):
-        self.action = action
-        self.args = args
-        self.kwargs = kwargs
+# class ObjectAction(ObjectContext.Binding()):
+# def __init__(self, action, *args, **kwargs):
+# self.action = action
+# self.args = args
+# self.kwargs = kwargs
+#
+# def render(self, context):
+# yield str(
+# reverse_model(
+# self.object,
+# self.action,
+# args=self.args,
+# kwargs={
+# **self.kwargs,
+# "pk": self.object.pk,
+# },
+# )
+# )
+#
+# def __repr__(self):
+# return f"ModelAction({self.action}, {self.args}, {self.kwargs})"
 
-    def render(self, context):
-        yield str(
-            reverse_model(
-                self.object,
-                self.action,
-                args=self.args,
-                kwargs={
-                    **self.kwargs,
-                    "pk": self.object.pk,
-                },
-            )
+
+def objectaction(object, action, *args, **kwargs):
+    return str(
+        reverse_model(
+            object,
+            action,
+            args=args,
+            kwargs={
+                **kwargs,
+                "pk": object.pk,
+            },
         )
-
-    def __repr__(self):
-        return f"ModelAction({self.action}, {self.args}, {self.kwargs})"
+    )
 
 
-class ObjectLabel(ObjectContext.Binding()):
+class _ObjectLabel(_ObjectContext.Binding()):
     def render(self, context):
         yield str(self.object)
 
@@ -115,16 +129,16 @@ def aslink_attributes(href):
     }
 
 
-# todo:
 def fieldlabel(model, field):
     try:
         return pretty_fieldname(model._meta.get_field(field))
     except FieldDoesNotExist:
-        return (getattr(getattr(model, field, None), "verbose_name", ""),)
+        return getattr(getattr(model, field), "verbose_name", "")
 
 
-def fieldvalue(object, field):
-    for accessor in field.split("."):
-        object = getattr(object, accessor, None)
-        object = object() if callable(object) else object
-    # yield from self._try_render(formats.localize(object), context)
+class FormattedContextValue(hg.ContextValue):
+    def resolve(self, context, element):
+        return formats.localize(super().resolve(context, element))
+
+
+FC = FormattedContextValue

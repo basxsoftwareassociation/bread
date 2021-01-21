@@ -6,15 +6,15 @@ from functools import wraps
 
 from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
+from django.db import models
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import path as djangopath
 from django.urls import reverse_lazy as django_reverse
 from django.utils.http import urlencode
 from django.utils.text import format_lazy
-from django.utils.translation import gettext_lazy as _
 
-from ..menu import Link
+from .model_helpers import get_concrete_instance
 
 
 class slug:
@@ -51,6 +51,9 @@ def reverse(*args, **kwargs):
 
 
 def reverse_model(model, action, *args, **kwargs):
+    # make sure we get the most concrete instance in case the model parameter is an object
+    if isinstance(model, models.Model):
+        model = get_concrete_instance(model)
     return reverse(model_urlname(model, action), *args, **kwargs)
 
 
@@ -171,12 +174,7 @@ def default_model_paths(
         ret.append(
             generate_path(
                 browseview.as_view(
-                    model=model,
-                    object_actions=browseview.object_actions
-                    or [
-                        Link.from_objectaction("edit", _("Edit"), "edit"),
-                        Link.from_objectaction("delete", _("Delete"), "trash-can"),
-                    ],
+                    model=model, object_actions=browseview.object_actions
                 ),
                 model_urlname(model, "browse"),
             )

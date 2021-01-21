@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin
 
-from .. import layout as _layout  # prevent name clashing
+from .. import layout as lyt  # prevent name clashing
 from ..fields.queryfield import parsequeryexpression
 from ..formatters import render_field
 from ..forms.forms import FilterForm
@@ -44,34 +44,32 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
         super().__init__(*args, **kwargs)
 
     def labellayout(self, fieldname, request):
-        return _layout.ModelFieldLabel(fieldname)
+        return lyt.fieldlabel(self.model, fieldname)
 
     def valuelayout(self, fieldname, request):
-        ret = _layout.ModelFieldValue(fieldname)
-        ret.td_attributes = _layout.aslink_attributes(_layout.ObjectAction("edit"))
+        ret = lyt.FC(f"row.{fieldname}")
+        ret.td_attributes = lyt.aslink_attributes(
+            lyt.F(lambda c, e: lyt.objectaction(c["row"], "edit"))
+        )
         return ret
 
     def layout(self, request):
-        return _layout.ModelContext(
-            self.model,
-            _layout.datatable.DataTable.full(
-                _layout.ModelName(plural=True),
-                _layout.datatable.DataTable(
-                    [
-                        (
-                            self.labellayout(field, request),
-                            self.valuelayout(field, request),
-                        )
-                        for field in list(filter_fieldlist(self.model, self.fields))
-                    ],
-                    _layout.C("object_list"),
-                    _layout.ObjectContext,
-                ),
-                _layout.button.Button(
-                    _("Add %s") % pretty_modelname(self.model),
-                    icon=_layout.icon.Icon("add", size=20),
-                    onclick=f"document.location = '{reverse_model(self.model, 'add')}'",
-                ),
+        return lyt.datatable.DataTable.full(
+            pretty_modelname(self.model, plural=True),
+            lyt.datatable.DataTable(
+                [
+                    (
+                        self.labellayout(field, request),
+                        self.valuelayout(field, request),
+                    )
+                    for field in list(filter_fieldlist(self.model, self.fields))
+                ],
+                lyt.C("object_list"),
+            ),
+            lyt.button.Button(
+                _("Add %s") % pretty_modelname(self.model),
+                icon=lyt.icon.Icon("add", size=20),
+                onclick=f"document.location = '{reverse_model(self.model, 'add')}'",
             ),
         )
 

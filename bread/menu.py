@@ -1,8 +1,6 @@
 from django.apps import apps
 from django.utils.text import format_lazy
 
-from .utils.model_helpers import get_concrete_instance
-
 
 class Group:
     def __init__(
@@ -81,7 +79,7 @@ class Link(Action):
         self.url = url
 
     @staticmethod
-    def from_objectaction(actionname, label, icon=None, *args, **kwargs):
+    def from_objectaction(object, actionname, label, icon=None, *args, **kwargs):
         from . import layout
         from .utils.urls import reverse_model
 
@@ -90,11 +88,10 @@ class Link(Action):
                 lambda c, e: format_lazy(
                     "document.location = '{}'",
                     reverse_model(
-                        get_concrete_instance(e.object)._meta.model,
+                        layout.resolve_lazy(object, c, e),
                         actionname,
                         *args,
-                        args=(get_concrete_instance(e.object).id,),
-                        **kwargs
+                        **{**kwargs, "pk": layout.resolve_lazy(object, c, e).pk}
                     ),
                 )
             ),
