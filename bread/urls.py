@@ -7,7 +7,6 @@ from dynamic_preferences.users import views as user_preferences_views
 from dynamic_preferences.users.registries import user_preferences_registry
 
 from .forms.forms import PreferencesForm, UserPreferencesForm
-from .utils import urls
 from .views import system
 
 
@@ -78,12 +77,8 @@ external_urlpatterns = [
 ]
 
 
-urlpatterns = (
-    [
-        path("login", system.BreadLoginView.as_view(), name="login"),
-        path("logout", system.BreadLogoutView.as_view(), name="logout"),
-        path("datamodel", system.DataModel.as_view(), name="datamodel"),
-    ]
-    + list(urls.generate_urlpatterns())
-    + external_urlpatterns
-)
+urlpatterns = [
+    path("login", system.BreadLoginView.as_view(), name="login"),
+    path("logout", system.BreadLogoutView.as_view(), name="logout"),
+    path("datamodel", system.DataModel.as_view(), name="datamodel"),
+] + external_urlpatterns

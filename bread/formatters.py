@@ -6,20 +6,22 @@ from collections.abc import Iterable
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from dateutil import tz
-from django_countries.fields import CountryField
-from easy_thumbnails.files import get_thumbnailer
-
-import bread.settings as app_settings
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
+from django.utils.functional import Promise
 from django.utils.html import format_html, format_html_join, linebreaks, mark_safe
+from django_countries.fields import CountryField
+from easy_thumbnails.files import get_thumbnailer
+
+import bread.settings as app_settings
 
 from .models import AccessConcreteInstanceMixin
+from .utils.urls import reverse_model
 
 
-def render_field(instance, fieldname, adminobject=None):
+def render_field(instance, fieldname):
     if fieldname == "self":
         return as_object_link(instance, str(instance))
 
@@ -27,9 +29,7 @@ def render_field(instance, fieldname, adminobject=None):
         accessor, fieldname = fieldname.split(models.constants.LOOKUP_SEP, 1)
         instance = getattr(instance, accessor, None)
         if isinstance(instance, models.Manager):
-            rendered_fields = [
-                render_field(o, fieldname, adminobject) for o in instance.all()
-            ]
+            rendered_fields = [render_field(o, fieldname) for o in instance.all()]
             return format_html(
                 "<ul>{}</ul>", format_html_join("\n", "<li>{}</li>", rendered_fields)
             )
@@ -38,9 +38,7 @@ def render_field(instance, fieldname, adminobject=None):
         fieldtype = instance._meta.get_field(fieldname)
     except FieldDoesNotExist:
         pass
-    if hasattr(adminobject, fieldname):
-        value = getattr(adminobject, fieldname)(instance)  # noqa
-    elif hasattr(instance, f"get_{fieldname}_display") and not isinstance(
+    if hasattr(instance, f"get_{fieldname}_display") and not isinstance(
         fieldtype, CountryField
     ):
         value = getattr(instance, f"get_{fieldname}_display")()
@@ -51,7 +49,7 @@ def render_field(instance, fieldname, adminobject=None):
     return format_value(value, fieldtype)
 
 
-def render_field_aggregation(queryset, fieldname, adminobject):
+def render_field_aggregation(queryset, fieldname):
     DEFAULT_AGGREGATORS = {models.DurationField: models.Sum(fieldname)}
     modelfield = None
     try:
@@ -60,10 +58,7 @@ def render_field_aggregation(queryset, fieldname, adminobject):
             modelfield = None
     except FieldDoesNotExist:
         pass
-    # check if there are aggrations defined on the breadadmin or on the model field
-    aggregation_func = getattr(adminobject, f"{fieldname}_aggregation", None)
-    if aggregation_func is None:
-        aggregation_func = getattr(queryset.model, f"{fieldname}_aggregation", None)
+    aggregation_func = getattr(queryset.model, f"{fieldname}_aggregation", None)
     # if there is no custom aggregation defined but the field is a database fields, we just count distinct
     if aggregation_func is None:
         if type(modelfield) not in DEFAULT_AGGREGATORS:
@@ -105,7 +100,7 @@ def format_value(value, fieldtype=None):
         return as_image(value)
     if isinstance(value, models.fields.files.FieldFile):
         return as_download(value)
-    if isinstance(value, Iterable) and not isinstance(value, (str, bytes)):
+    if isinstance(value, Iterable) and not isinstance(value, (str, bytes, Promise)):
         return as_list(value)
     if isinstance(value, models.Model):
         return as_object_link(value)
@@ -239,24 +234,7 @@ def as_video(value):
     )
 
 
-def object_url(o):
-    # TODO
-    return ""
-    defaultadmin = site.get_default_admin(o)
-    if defaultadmin is not None:
-        return defaultadmin.reverse("read", o.pk)
-
-
 def as_object_link(obj, label=None):
-    def adminlink(o):
-        url = object_url(o)
-        if url:
-            return format_html(
-                '<a href="{}">{}</a>',
-                url,
-                label or o.__str__(),
-            )
-
     if hasattr(obj, "get_absolute_url"):
         return format_html('<a href="{}">{}</a>', obj.get_absolute_url(), obj)
 
@@ -264,7 +242,11 @@ def as_object_link(obj, label=None):
         isinstance(obj, AccessConcreteInstanceMixin) and obj != obj.concrete
     ):  # prevent endless recursion
         return as_object_link(obj.concrete)
-    return adminlink(obj) or obj.__str__()
+    return format_html(
+        '<a href="{}">{}</a>',
+        reverse_model(obj, "read"),
+        label or obj.__str__(),
+    )
 
 
 MODELFIELD_FORMATING_HELPERS = {

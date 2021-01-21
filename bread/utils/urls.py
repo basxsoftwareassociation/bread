@@ -16,8 +16,6 @@ from django.utils.translation import gettext_lazy as _
 
 from ..menu import Link
 
-registry = []
-
 
 class slug:
     pass
@@ -66,12 +64,6 @@ def aslayout(view):
         )
 
     return wrapper
-
-
-def generate_urlpatterns():
-    for view, urlname, check_function in registry:
-        print(urlname)
-        yield generate_path(view, urlname, check_function)
 
 
 def generate_path(view, urlname=None, check_function=None):

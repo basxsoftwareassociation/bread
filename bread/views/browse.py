@@ -1,5 +1,5 @@
+import html
 import re
-from html.parser import HTMLParser
 
 import django_filters
 from django.conf import settings
@@ -14,6 +14,7 @@ from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin
 
 from .. import layout as _layout  # prevent name clashing
+from ..fields.queryfield import parsequeryexpression
 from ..formatters import render_field
 from ..forms.forms import FilterForm
 from ..utils import (
@@ -99,8 +100,6 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
     def get(self, *args, **kwargs):
         if "reset" in self.request.GET:
             return redirect(self.request.path)
-        if "export" in self.request.GET:
-            return self.as_excel()
 
         return super().get(*args, **kwargs)
 
@@ -122,46 +121,6 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
         context = super().get_context_data(*args, **kwargs)
         context["pagetitle"] = pretty_modelname(self.model, plural=True)
         return context
-
-    def as_excel(self):
-        # openpyxl is an extra dependency
-        import openpyxl
-        from openpyxl.styles import Font
-
-        items = []
-        # from django_filters.views.BaseFilterView.get in order to apply filter to excel export
-        self.filterset = self.get_filterset(self.get_filterset_class())
-        if (
-            not self.filterset.is_bound
-            or self.filterset.is_valid()
-            or not self.get_strict()
-        ):
-            items = list(self.filterset.qs)
-        items = list(self.filterset.qs)
-
-        workbook = openpyxl.Workbook()
-        workbook.title = self.admin.verbose_modelname_plural
-        header_cells = workbook.active.iter_cols(
-            min_row=1, max_col=len(self.fields) + 1, max_row=len(items) + 1
-        )
-        htmlparser = HTMLParser()
-        newline_regex = re.compile(
-            r"<\s*br\s*/?\s*>"
-        )  # replace HTML line breaks with newlines
-        for field, col in zip(
-            [("self", self.admin.modelname.title())] + list(self.field_values()),
-            header_cells,
-        ):
-            col[0].value = field[1]
-            col[0].font = Font(bold=True)
-            for i, cell in enumerate(col[1:]):
-                html_value = render_field(items[i], field[0], self.admin)
-                cleaned = htmlparser.unescape(
-                    newline_regex.sub(r"\n", strip_tags(html_value))
-                )
-                cell.value = cleaned
-
-        return xlsxresponse(workbook, workbook.title)
 
     def get_object_actions(self):
         return self.object_actions
@@ -266,3 +225,48 @@ def generate_filterset_class(model, fields):
         {"Meta": type("Meta", (object,), config)},
     )
     return filterset
+
+
+def generate_excel_view(queryset, fields, filterstr=None):
+    """
+    Generates an excel file from the given queryset with the specifieds.
+    fields: list [<fieldname1>, <fieldname2>, ...] or dict with {<fieldname>: formatting_function(object, fieldname)}
+    filterstr: a django-style filter str which will lazy evaluated, see bread.fields.queryfield.parsequeryexpression
+    """
+    import openpyxl
+    from openpyxl.styles import Font
+
+    model = queryset.model
+
+    if not isinstance(fields, dict):
+        fields = {field: render_field for field in fields}
+
+    def excelview(request):
+        if isinstance(filter, str):
+            items = parsequeryexpression(model.objects.all(), filter).queryset
+        items = list(queryset)
+
+        workbook = openpyxl.Workbook()
+        workbook.title = pretty_modelname(model)
+        header_cells = workbook.active.iter_cols(
+            min_row=1, max_col=len(fields) + 1, max_row=len(items) + 1
+        )
+        newline_regex = re.compile(
+            r"<\s*br\s*/?\s*>"
+        )  # replace HTML line breaks with newlines
+        for field, col in zip(
+            [(field, pretty_fieldname(field)) for field in fields],
+            header_cells,
+        ):
+            col[0].value = field[1]
+            col[0].font = Font(bold=True)
+            for i, cell in enumerate(col[1:]):
+                html_value = str(fields[field[0]](items[i], field[0]))
+                cleaned = html.unescape(
+                    newline_regex.sub(r"\n", strip_tags(html_value))
+                )
+                cell.value = cleaned
+
+        return xlsxresponse(workbook, workbook.title)
+
+    return excelview
