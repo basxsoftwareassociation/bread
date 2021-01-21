@@ -40,7 +40,7 @@ def html_to_pdf(html, as_http_response=False, name=None):
     return ret
 
 
-def xlsxresponse(workbook, title):
+def xlsxresponse(workbook, title, filters=True):
     """
     Returns workbook as a downloadable file
 
@@ -48,7 +48,7 @@ def xlsxresponse(workbook, title):
         title: filename without extension
         returns: HttpResponse with attachment
     """
-    workbook = prepare_excel(workbook)
+    workbook = prepare_excel(workbook, filters)
     buf = io.BytesIO()
     workbook.save(buf)
     buf.seek(0)
@@ -57,12 +57,12 @@ def xlsxresponse(workbook, title):
     return response
 
 
-def prepare_excel(workbook, filter=False):
+def prepare_excel(workbook, filters=True):
     """
     Formats the excel a bit in order to be displayed nicely
 
         workbook: openpyxl workbook
-        filter: If True enable excel filtering headers
+        filters: If True enable excel filtering headers
         returns: formated workbook
     """
     # openpyxl is an extra requirement
@@ -80,7 +80,7 @@ def prepare_excel(workbook, filter=False):
             worksheet.column_dimensions[column].width = min([adjusted_width, 50])
 
         # enable excel filters
-        if filter is True:
+        if filters is True:
             worksheet.auto_filter.ref = f"A1:{column}1"
 
         # enable word wrap
