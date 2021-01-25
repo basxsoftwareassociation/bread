@@ -11,13 +11,11 @@ class Button(htmlgenerator.BUTTON):
         self,
         *children,
         buttontype="primary",
-        disabled_func=lambda context: False,
         icon=None,
         notext=False,
         small=False,
         **attributes,
     ):
-        self.disabled_func = disabled_func
         attributes["type"] = attributes.get("type", "button")
         attributes["tabindex"] = attributes.get("tabindex", "0")
         attributes["_class"] = (
@@ -25,7 +23,7 @@ class Button(htmlgenerator.BUTTON):
         )
         if small:
             attributes["_class"] += " bx--btn--sm "
-        if notext:
+        if notext or not children:
             attributes[
                 "_class"
             ] += " bx--btn--icon-only bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-center"
@@ -40,11 +38,14 @@ class Button(htmlgenerator.BUTTON):
             children += (icon,)
         super().__init__(*children, **attributes)
 
-    def render(self, context):
-        attribs = {**self.attributes, **{"disabled": self.disabled_func(context)}}
-        yield f"<{self.tag} {htmlgenerator.flatattrs(attribs, context, self)}>"
-        yield from super().render_children(context)
-        yield f"</{self.tag}>"
+    @staticmethod
+    def fromaction(action, **kwargs):
+        return Button(
+            action.label,
+            icon=action.icon,
+            notext=not action.label,
+            onclick=action.js,
+        )
 
 
 class ButtonSet(htmlgenerator.htmltags.DIV):

@@ -54,7 +54,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
         return ret
 
     def layout(self, request):
-        return lyt.datatable.DataTable.full(
+        return lyt.datatable.DataTable.wrap(
             pretty_modelname(self.model, plural=True),
             lyt.datatable.DataTable(
                 [
