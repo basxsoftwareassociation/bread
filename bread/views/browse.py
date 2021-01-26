@@ -21,7 +21,6 @@ from ..utils import (
     filter_fieldlist,
     pretty_fieldname,
     pretty_modelname,
-    resolve_relationship,
     reverse_model,
     xlsxresponse,
 )
@@ -33,14 +32,16 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
     fields = None
     filterfields = None
     page_kwarg = "browsepage"  # need to use something different than the default "page" because we also filter through kwargs
-    object_actions = ()  # list of links
+    bulkactions = ()  # list of links
 
     def __init__(self, *args, **kwargs):
-        self.object_actions = kwargs.get(
-            "object_actions", getattr(self, "object_actions", ())
-        )
+        self.bulkactions = kwargs.get("bulkactions", getattr(self, "bulkactions", ()))
         self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"]))
         self.filterset_fields = kwargs.get("filterset_fields", self.filterset_fields)
+        self.searchurl = kwargs.get("searchurl", getattr(self, "searchurl", ()))
+        self.queryfieldname = kwargs.get(
+            "queryfieldname", getattr(self, "queryfieldname", ())
+        )
         super().__init__(*args, **kwargs)
 
     def labellayout(self, fieldname, request):
@@ -54,23 +55,25 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
         return ret
 
     def layout(self, request):
-        return lyt.datatable.DataTable.wrap(
-            pretty_modelname(self.model, plural=True),
-            lyt.datatable.DataTable(
-                [
-                    (
-                        self.labellayout(field, request),
-                        self.valuelayout(field, request),
-                    )
-                    for field in list(filter_fieldlist(self.model, self.fields))
-                ],
-                lyt.C("object_list"),
-            ),
-            lyt.button.Button(
+        return lyt.datatable.DataTable(
+            [
+                (
+                    self.labellayout(field, request),
+                    self.valuelayout(field, request),
+                )
+                for field in list(filter_fieldlist(self.model, self.fields))
+            ],
+            lyt.C("object_list"),
+        ).wrap(
+            title=pretty_modelname(self.model, plural=True),
+            primary_button=lyt.button.Button(
                 _("Add %s") % pretty_modelname(self.model),
                 icon=lyt.icon.Icon("add", size=20),
                 onclick=f"document.location = '{reverse_model(self.model, 'add')}'",
             ),
+            bulkactions=self.bulkactions,
+            searchurl=self.searchurl,
+            queryfieldname=self.queryfieldname,
         )
 
     def get_required_permissions(self, request):
@@ -119,17 +122,6 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
         context = super().get_context_data(*args, **kwargs)
         context["pagetitle"] = pretty_modelname(self.model, plural=True)
         return context
-
-    def get_object_actions(self):
-        return self.object_actions
-
-    def field_values(self):
-        for accessor in self.fields:
-            fieldchain = resolve_relationship(self.model, accessor)
-            if not fieldchain:
-                yield accessor, accessor.replace("_", " ").title()
-            else:
-                yield accessor, pretty_fieldname(fieldchain[-1][1])
 
 
 class TreeView(BrowseView):
@@ -227,7 +219,7 @@ def generate_filterset_class(model, fields):
 
 def generate_excel_view(queryset, fields, filterstr=None):
     """
-    Generates an excel file from the given queryset with the specifieds.
+    Generates an excel file from the given queryset with the specified fields.
     fields: list [<fieldname1>, <fieldname2>, ...] or dict with {<fieldname>: formatting_function(object, fieldname)}
     filterstr: a django-style filter str which will lazy evaluated, see bread.fields.queryfield.parsequeryexpression
     """
@@ -240,9 +232,14 @@ def generate_excel_view(queryset, fields, filterstr=None):
         fields = {field: render_field for field in fields}
 
     def excelview(request):
-        if isinstance(filter, str):
-            items = parsequeryexpression(model.objects.all(), filter).queryset
-        items = list(queryset)
+        items = queryset
+        if isinstance(filterstr, str):
+            items = parsequeryexpression(model.objects.all(), filterstr).queryset
+        if "selected" in request.GET:
+            items = items.filter(
+                pk__in=[int(i) for i in request.GET.getlist("selected")]
+            )
+        items = list(items.all())
 
         workbook = openpyxl.Workbook()
         workbook.title = pretty_modelname(model)

@@ -173,9 +173,7 @@ def default_model_paths(
             browseview = defaultview["browse"]
         ret.append(
             generate_path(
-                browseview.as_view(
-                    model=model, object_actions=browseview.object_actions
-                ),
+                browseview.as_view(model=model, bulkactions=browseview.bulkactions),
                 model_urlname(model, "browse"),
             )
         )

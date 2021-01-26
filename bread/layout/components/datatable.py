@@ -20,7 +20,6 @@ class DataTable(hg.BaseElement):
         rowvariable="row",
         spacing="default",
         zebra=False,
-        canselect=False,
     ):
         """columns: tuple(header_expression, row_expression)
         row_iterator: python iterator of htmlgenerator.Lazy object which returns an iterator
@@ -28,7 +27,6 @@ class DataTable(hg.BaseElement):
         if the header_expression/row_expression has an attribute td_attributes it will be used as attributes for the TH/TD elements (necessary because sometimes the content requires additional classes on the parent element)
         spacing: one of "default", "compact", "short", "tall"
         zebra: alternate row colors
-        canselect: show checkboxes on leftmost column to select items
         """
         assert spacing in ["default", "compact", "short", "tall"]
         classes = ["bx--data-table"]
@@ -36,92 +34,33 @@ class DataTable(hg.BaseElement):
             classes.append(f"bx--data-table--{spacing}")
         if zebra:
             classes.append("bx--data-table--zebra")
-        selecthead = []
-        selectcol = []
-        checkboxallid = f"datatable-check-{hg.html_id(self)}"
-        if canselect:
-            selecthead.append(
-                hg.TH(
-                    hg.INPUT(
-                        data_event="select-all",
-                        id=checkboxallid,
-                        _class="bx--checkbox",
-                        type="checkbox",
-                        name="checkbox",
-                        value="all",
-                    ),
-                    hg.LABEL(
-                        _for=checkboxallid,
-                        _class="bx--checkbox-label",
-                    ),
-                    _class="bx--table-column-checkbox",
-                )
-            )
-            selectcol.append(
-                hg.TD(
-                    hg.INPUT(
-                        data_event="select",
-                        id=hg.BaseElement(
-                            checkboxallid,
-                            "-",
-                            hg.F(lambda c, e: hg.html_id(c[rowvariable])),
-                        ),
-                        _class="bx--checkbox",
-                        type="checkbox",
-                        name="checkbox",
-                        value=hg.If(
-                            hg.F(lambda c, e: hasattr(c[rowvariable], "pk")),
-                            hg.C(f"{rowvariable}.pk"),
-                            hg.C(f"{rowvariable}_index"),
-                        ),
-                    ),
-                    hg.LABEL(
-                        _for=hg.BaseElement(
-                            checkboxallid,
-                            "-",
-                            hg.F(lambda c, e: hg.html_id(c[rowvariable])),
-                        ),
-                        _class="bx--checkbox-label",
-                        aria_label="Label name",
-                    ),
-                    _class="bx--table-column-checkbox",
-                )
-            )
 
+        self.head = hg.TR(
+            *[
+                hg.TH(
+                    hg.SPAN(
+                        header,
+                        _class="bx--table-header-label",
+                    ),
+                    **getattr(header, "td_attributes", {}),
+                )
+                for header, cell in columns
+            ]
+        )
+        self.iterator = hg.Iterator(
+            row_iterator,
+            rowvariable,
+            hg.TR(
+                *[
+                    hg.TD(cell, **getattr(cell, "td_attributes", {}))
+                    for header, cell in columns
+                ]
+            ),
+        )
         super().__init__(
             hg.TABLE(
-                hg.THEAD(
-                    hg.TR(
-                        *(
-                            selecthead
-                            + [
-                                hg.TH(
-                                    hg.SPAN(
-                                        header,
-                                        _class="bx--table-header-label",
-                                    ),
-                                    **getattr(header, "td_attributes", {}),
-                                )
-                                for header, cell in columns
-                            ]
-                        )
-                    )
-                ),
-                hg.TBODY(
-                    hg.Iterator(
-                        row_iterator,
-                        rowvariable,
-                        hg.TR(
-                            *(
-                                selectcol
-                                + [
-                                    hg.TD(cell, **getattr(cell, "td_attributes", {}))
-                                    for header, cell in columns
-                                ]
-                            )
-                        ),
-                    )
-                ),
+                hg.THEAD(self.head),
+                hg.TBODY(self.iterator),
                 _class=" ".join(classes),
             )
         )
@@ -147,6 +86,7 @@ class DataTable(hg.BaseElement):
                      the sent data will be a form with the selected checkboxes as fields
                      if the head-checkbox has been selected only that field will be selected
         """
+        checkboxallid = f"datatable-check-{hg.html_id(self)}"
         header = [hg.H4(title, _class="bx--data-table-header__title")]
         if helper_text:
             header.append(
@@ -171,6 +111,65 @@ class DataTable(hg.BaseElement):
                 bulkactionlist.append(Button.fromaction(action))
             else:
                 RuntimeError(f"bulkaction needs to be {Action} or {Link}")
+
+        if bulkactions:
+            self.head.insert(
+                0,
+                hg.TH(
+                    hg.INPUT(
+                        data_event="select-all",
+                        id=checkboxallid,
+                        _class="bx--checkbox",
+                        type="checkbox",
+                        name="selected",
+                        value="all",
+                    ),
+                    hg.LABEL(
+                        _for=checkboxallid,
+                        _class="bx--checkbox-label",
+                    ),
+                    _class="bx--table-column-checkbox",
+                ),
+            )
+            self.iterator[0].insert(
+                0,
+                hg.TD(
+                    hg.INPUT(
+                        data_event="select",
+                        id=hg.BaseElement(
+                            checkboxallid,
+                            "-",
+                            hg.F(
+                                lambda c, e: hg.html_id(c[self.iterator.loopvariable])
+                            ),
+                        ),
+                        _class="bx--checkbox",
+                        type="checkbox",
+                        name="selected",
+                        value=hg.If(
+                            hg.F(
+                                lambda c, e: hasattr(
+                                    c[self.iterator.loopvariable], "pk"
+                                )
+                            ),
+                            hg.C(f"{self.iterator.loopvariable}.pk"),
+                            hg.C(f"{self.iterator.loopvariable}_index"),
+                        ),
+                    ),
+                    hg.LABEL(
+                        _for=hg.BaseElement(
+                            checkboxallid,
+                            "-",
+                            hg.F(
+                                lambda c, e: hg.html_id(c[self.iterator.loopvariable])
+                            ),
+                        ),
+                        _class="bx--checkbox-label",
+                        aria_label="Label name",
+                    ),
+                    _class="bx--table-column-checkbox",
+                ),
+            )
 
         return hg.DIV(
             hg.DIV(*header, _class="bx--data-table-header"),
@@ -234,7 +233,7 @@ class DataTable(hg.BaseElement):
         model,
         queryset=None,
         fields=["__all__"],
-        object_actions=None,
+        bulkactions=None,
         title=None,
         addurl=None,
         backurl=None,
@@ -246,13 +245,13 @@ class DataTable(hg.BaseElement):
         if addurl is None:
             addurl = reverse_model(model, "add", query=backquery)
 
-        object_actions_menu = OverflowMenu(
-            object_actions,
+        objectactions_menu = OverflowMenu(
+            bulkactions,
             flip=True,
             item_attributes={"_class": "bx--table-row--menu-option"},
         )
         # the data-table object will check child elements for td_attributes to fill in attributes for TD-elements
-        object_actions_menu.td_attributes = {"_class": "bx--table-column-menu"}
+        objectactions_menu.td_attributes = {"_class": "bx--table-column-menu"}
         action_menu_header = hg.BaseElement()
         action_menu_header.td_attributes = {"_class": "bx--table-column-menu"}
         queryset = model.objects.all() if queryset is None else queryset
@@ -262,12 +261,12 @@ class DataTable(hg.BaseElement):
                 (fieldlabel(model, field), FC(f"row.{field}"))
                 for field in list(filter_fieldlist(model, fields))
             ]
-            + ([(None, object_actions_menu)] if object_actions else []),
+            + ([(None, objectactions_menu)] if bulkactions else []),
             # querysets are cached, the call to all will make sure a new query is used in every request
             hg.F(lambda c, e: queryset),
         ).wrap(
             title,
-            Button(
+            primary_button=Button(
                 _("Add %s") % pretty_modelname(model),
                 icon=Icon("add", size=20),
                 onclick=f"document.location = '{addurl}'",
@@ -278,7 +277,7 @@ class DataTable(hg.BaseElement):
     def from_queryset(
         queryset,
         fields=["__all__"],
-        object_actions=None,
+        bulkactions=None,
         title=None,
         addurl=None,
         backurl=None,
@@ -287,7 +286,7 @@ class DataTable(hg.BaseElement):
             queryset.model,
             queryset=queryset,
             fields=fields,
-            object_actions=object_actions,
+            bulkactions=bulkactions,
             title=title,
             addurl=addurl,
             backurl=backurl,
