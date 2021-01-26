@@ -50,13 +50,11 @@ setup(
         "django-simple-history",
         "django-clone",
         # Required for multimedia
-        "pygraphviz",  # graphviz/dot graphs
         "Pillow",  # image processing
         "easy_thumbnails",  # thumbnails
         "django-image-cropping",  # cropping images, only usefull in admin backend
         "openpyxl",  # working with excel files
         "WeasyPrint",  # creating PDFs
-        "ffmpeg-python",  # working with ffmpeg for video and audio
         # required for task scheduling
         "celery <5.0,>=4.4",
         "django-celery-results",

@@ -3,7 +3,6 @@ The Bread frameworks provides a view util views to provide special functionality
 """
 import re
 
-import pygraphviz
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
@@ -30,6 +29,11 @@ class DataModel(LoginRequiredMixin, TemplateView):
         return super().get(request, *args, **kwargs)
 
     def _render_svg(self, renderapps=None):
+        try:
+            import pygraphviz
+        except ImportError:
+            "pygraphviz not installed"
+
         if not renderapps:
             renderapps = [a.label for a in self._get_all_apps()]
         graph_models = ModelGraph(
