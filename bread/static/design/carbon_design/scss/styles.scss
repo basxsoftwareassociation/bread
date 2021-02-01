@@ -9,19 +9,24 @@ $feature-flags: (
 
 @import 'globals/scss/vendor/@carbon/type/scss/styles';
 
+// do some custom coloring and spacing for our ui-shell
 html, body {
     background-color: $ui-01;
     height: 100%
 }
 
 .bx--content {
+    // do some custom coloring and spacing for our ui-shell
     background-color: $ui-01;
     padding: $spacing-05;
     > div:nth-child(1) {
         padding: $spacing-05;
         background-color: $ui-background;
     }
-    height: 100%
+    height: 100%;
+    // carbon-design system sets an insignificant transform for bx--content which breaks modals
+    // removing the insignificang transform does not break anything
+    transform: none;
 }
 
 // for creating some section borders
