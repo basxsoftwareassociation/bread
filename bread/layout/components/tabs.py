@@ -44,7 +44,6 @@ class Tabs(hg.DIV):
                     _class="bx--tabs-trigger-text",
                     tabindex=-1,
                 ),
-                hg.SVG(),
                 _class="bx--tabs-trigger",
                 style="display: none",
                 tabindex=0,
