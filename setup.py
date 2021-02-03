@@ -27,7 +27,6 @@ setup(
     license="New BSD License",
     install_requires=[
         # custom code in other packages
-        "django-filepreview",
         "htmlgenerator",  # replacement for django templates
         # core dependencies
         "Django",
