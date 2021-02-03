@@ -173,7 +173,8 @@ BRANDING = {
 DEFAULT_PAGINATION = 1000
 DEFAULT_PAGINATION_CHOICES = [10, 100, 1000]
 
-HAYSTACK_SIGNAL_PROCESSOR = "celery_haystack.signals.CelerySignalProcessor"
+# This one should only be activated in production or in dev environments with celery ready to run
+# HAYSTACK_SIGNAL_PROCESSOR = "celery_haystack.signals.CelerySignalProcessor"
 
 # necessary because of some sass imports in the carbon vendor packages
 ADDITIONAL_CARBON = "static/design/carbon_design/scss/globals/scss/vendor"
