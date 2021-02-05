@@ -24,10 +24,12 @@ class Button(htmlgenerator.BUTTON):
         if small:
             attributes["_class"] += " bx--btn--sm "
         if notext or not children:
-            attributes[
-                "_class"
-            ] += " bx--btn--icon-only bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-center"
-            children = (htmlgenerator.SPAN(*children, _class="bx--assistive-text"),)
+            attributes["_class"] += " bx--btn--icon-only"
+            if children:
+                attributes[
+                    "_class"
+                ] += " bx--btn--icon-only bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-center"
+                children = (htmlgenerator.SPAN(*children, _class="bx--assistive-text"),)
 
         if icon is not None:
             if isinstance(icon, str):

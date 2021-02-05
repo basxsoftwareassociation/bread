@@ -37,29 +37,27 @@ function init_formset(form_prefix) {
     _update_add_button(form_prefix);
 }
 
-function delete_inline_element(checkbox, inlinecontainer, deletelabel) {
-    checkbox.checked = !checkbox.checked;
-    inlinecontainer.style.height = checkbox.checked ? "3rem" : "initial";
-    inlinecontainer.style.overflow = checkbox.checked ? "hidden" : "initial";
-    inlinecontainer.style.backgroundColor = checkbox.checked ? "#999" : "initial";
-    deletelabel.firstElementChild.innerText = checkbox.checked ? "undo" : "delete";
-    deletelabel.parentElement.previousElementSibling.style.display = checkbox.checked ? "block" : "none";
+function delete_inline_element(checkbox, element) {
+    checkbox.checked = true;
+    element.style.display = "none";
 }
 
 function _update_add_button(form_prefix) {
     var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
     var maxforms = $('#id_' + form_prefix + '-MAX_NUM_FORMS')
     var addbutton = $('#add_' + form_prefix + '_button')
-    addbutton.style.display = "inline-flex";
-    if(parseInt(formcount.value) >= parseInt(maxforms.value)) {
-        addbutton.style.display = "none";
+    if(addbutton) {
+        addbutton.style.display = "inline-flex";
+        if(parseInt(formcount.value) >= parseInt(maxforms.value)) {
+            addbutton.style.display = "none";
+        }
     }
 }
 
 function formset_add(form_prefix, list_container) {
     var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
     var newElementStr = $('#empty_' + form_prefix + '_form').innerHTML.replace(/__prefix__/g, formcount.value)
-    var newElements = new DOMParser().parseFromString(newElementStr, "text/html").getElementsByTagName("body")[0].children[0].children;
+    var newElements = new DOMParser().parseFromString(newElementStr, "text/html").getElementsByTagName("body")[0].children;
     for(let element of newElements) {
         $(list_container).appendChild(element);
     }

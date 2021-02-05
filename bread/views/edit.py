@@ -11,6 +11,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
+from django.views.decorators.cache import never_cache
 from django.views.generic import UpdateView
 from guardian.mixins import PermissionRequiredMixin
 from model_clone.utils import create_copy_of_instance
@@ -67,6 +68,11 @@ class EditView(
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
         return reverse(model_urlname(self.model, "browse"))
+
+    # prevent browser caching edit views
+    @never_cache
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
 
 def generate_copyview(model, attrs=None, labelfield=None):

@@ -6,7 +6,6 @@ from django.utils.translation import gettext as _
 from django_countries.widgets import LazySelect
 
 from .button import Button
-from .icon import Icon
 from .notification import InlineNotification
 
 
@@ -118,70 +117,109 @@ class FormField(FormChild, hg.BaseElement):
         return f"FormField({self.fieldname})"
 
 
-class FormSetField(FormChild, hg.BaseElement):
+class FormsetField(FormChild, hg.BaseElement):
     def __init__(
-        self, fieldname, *children, formsetinitial=None, **formsetfactory_kwargs
+        self,
+        fieldname,
+        *children,
+        containertag=hg.DIV,
+        formsetinitial=None,
+        **formsetfactory_kwargs,
     ):
         super().__init__(*children)
         self.fieldname = fieldname
         self.formsetfactory_kwargs = formsetfactory_kwargs
         self.formsetinitial = formsetinitial
+        self.containertag = containertag
 
     def render(self, context):
         formset = self.form[self.fieldname].formset
-
-        # management form
-        yield from Form.from_django_form(
-            formset.management_form, standalone=False
-        ).render(context)
-
-        # detect internal fields like the delete-checkbox or the order-widget etc. and add them
+        # Detect internal fields like the delete-checkbox, the order-widget, id fields, etc and add their
+        # HTML representations. But we never show the "delete" checkbox, it should be manually added via InlineDeleteButton
         declared_fields = [
             f.fieldname
             for f in self.filter(lambda e, ancestors: isinstance(e, FormField))
         ]
         internal_fields = [
-            field for field in formset.empty_form.fields if field not in declared_fields
+            field
+            for field in formset.empty_form.fields
+            if field not in declared_fields
+            and field != forms.formsets.DELETION_FIELD_NAME
         ]
+
         for field in internal_fields:
             self.append(FormField(field))
 
-        # wrapping things with the div is a bit ugly but the quickest way to do it now
-        yield f'<div id="formset_{formset.prefix}_container">'
-        for form in formset:
-            yield from Form.wrap_with_form(form, *self, standalone=False).render(
-                context
-            )
-        yield "</div>"
-
-        # empty/template form
-        yield from hg.DIV(
-            hg.DIV(Form.wrap_with_form(formset.empty_form, *self, standalone=False)),
-            id=f"empty_{ formset.prefix }_form",
-            _class="template-form",
-            style="display:none;",
-        ).render(context)
-
-        # add-new-form button
-        yield from hg.DIV(
-            Button(
-                _("Add"),
-                id=f"add_{formset.prefix}_button",
-                onclick=f"formset_add('{ formset.prefix }', '#formset_{ formset.prefix }_container');",
-                icon=Icon("add"),
-                notext=True,
-                small=True,
+        skeleton = hg.DIV(
+            Form.from_django_form(formset.management_form, standalone=False),
+            self.containertag(
+                hg.Iterator(
+                    formset,
+                    loopvariable="formset_form",
+                    content=Form(hg.C("formset_form"), *self, standalone=False),
+                ),
+                id=f"formset_{formset.prefix}_container",
             ),
-            _class="bx--form-item",
-        ).render(context)
-        yield from hg.SCRIPT(
-            mark_safe(
-                f"""document.addEventListener("DOMContentLoaded", e => init_formset("{ formset.prefix }"));"""
-            )
-        ).render(context)
+            hg.DIV(
+                Form(formset.empty_form, *self, standalone=False),
+                id=f"empty_{ formset.prefix }_form",
+                _class="template-form",
+                style="display:none;",
+            ),
+            hg.SCRIPT(
+                mark_safe(
+                    f"""document.addEventListener("DOMContentLoaded", e => init_formset("{ formset.prefix }"));"""
+                )
+            ),
+        )
+        yield from skeleton.render(context)
 
     def __repr__(self):
-        return f"FormSet({self.fieldname}, {self.formsetfactory_kwargs})"
+        return f"Formset({self.fieldname}, {self.formsetfactory_kwargs})"
+
+
+class FormsetAddButton(FormChild, Button):
+    def __init__(self, fieldname, label=_("Add"), **kwargs):
+        defaults = {
+            "icon": "add",
+            "notext": True,
+            "buttontype": "tertiary",
+        }
+        defaults.update(kwargs)
+        self.fieldname = fieldname
+        super().__init__(label, **defaults)
+
+    def render(self, context):
+        formset = self.form[self.fieldname].formset
+        self.attributes["id"] = f"add_{formset.prefix}_button"
+        self.attributes[
+            "onclick"
+        ] = f"formset_add('{ formset.prefix }', '#formset_{ formset.prefix }_container');"
+        return super().render(context)
+
+
+class InlineDeleteButton(FormChild, Button):
+    def __init__(self, parentcontainerselector, label=_("Delete"), **kwargs):
+        """
+        Show a delete button for the current inline form. This element needs to be inside a FormsetField
+        parentcontainerselector: CSS-selector which will be passed to element.closest in order to select the parent container which should be hidden on delete
+        """
+        defaults = {
+            "notext": True,
+            "small": True,
+            "icon": "trash-can",
+            "buttontype": "ghost",
+            "onclick": f"delete_inline_element(this.querySelector('input[type=checkbox]'), this.closest('{parentcontainerselector}'))",
+        }
+        defaults.update(kwargs)
+        super().__init__(
+            label,
+            FormField(
+                forms.formsets.DELETION_FIELD_NAME,
+                elementattributes={"style": "display: none"},
+            ),
+            **defaults,
+        )
 
 
 class HiddenInput(FormChild, hg.INPUT):
@@ -213,6 +251,7 @@ def _mapwidget(
 ):
     from .checkbox import Checkbox
     from .date_picker import DatePicker
+    from .file_uploader import FileUploader
     from .select import Select
     from .text_area import TextArea
     from .text_input import PasswordInput, TextInput
@@ -234,8 +273,8 @@ def _mapwidget(
         forms.SelectMultiple: TextInput,  # TODO HIGH
         forms.RadioSelect: TextInput,  # TODO HIGH
         forms.CheckboxSelectMultiple: TextInput,  # TODO HIGH
-        forms.FileInput: TextInput,  # TODO HIGH
-        forms.ClearableFileInput: TextInput,  # TODO HIGH
+        forms.FileInput: FileUploader,  # TODO HIGH
+        forms.ClearableFileInput: FileUploader,  # TODO HIGH
         forms.MultipleHiddenInput: TextInput,  # TODO
         forms.SplitDateTimeWidget: TextInput,  # TODO
         forms.SplitHiddenDateTimeWidget: TextInput,  # TODO
@@ -245,6 +284,7 @@ def _mapwidget(
         LazySelect: Select,
     }
 
+    # The following is a bit of magic to play nicely with the django form processing
     # TODO: This can be simplified, and improved
     if field.field.localize:
         field.field.widget.is_localized = True

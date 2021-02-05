@@ -137,7 +137,7 @@ def _generate_formset_class(
 
     formfieldelements = _get_form_fields_from_layout(
         _layout.BaseElement(*formsetfieldelement)
-    )  # make sure the _layout.form.FormSetField does not be considered recursively
+    )  # make sure the _layout.form.FormsetField does not be considered recursively
 
     formclass = breadmodelform_factory(
         request=request,
@@ -232,7 +232,7 @@ def _get_form_fields_from_layout(layout):
 
     def walk(element):
         if isinstance(
-            element, _layout.form.FormSetField
+            element, _layout.form.FormsetField
         ):  # do not descend into formsets
             yield element
             return
