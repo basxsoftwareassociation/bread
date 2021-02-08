@@ -1,8 +1,5 @@
-"""
-The Bread frameworks provides a view util views to provide special functionality.
-"""
-
 from django.contrib.auth.views import LoginView, LogoutView
+from django.utils.translation import gettext_lazy as _
 
 from .. import layout as layout
 
@@ -12,7 +9,7 @@ class BreadLoginView(LoginView):
         form = super().get_form(*args, **kwargs)
         form.fields["username"].widget.attrs["autofocus"] = True
         self.layout = lambda request: layout.form.Form.from_fieldnames(
-            form, ["username", "password"]
+            form, ["username", "password"], submit_label=_("Login")
         )
         return form
 
