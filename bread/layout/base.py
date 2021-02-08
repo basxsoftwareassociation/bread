@@ -2,7 +2,7 @@ import htmlgenerator as hg
 from django.core.exceptions import FieldDoesNotExist
 from django.utils import formats
 
-from bread.utils import pretty_fieldname
+from bread.utils import pretty_fieldname, pretty_modelname
 from bread.utils.urls import reverse_model
 
 
@@ -37,6 +37,11 @@ def fieldlabel(model, field):
         return pretty_fieldname(model._meta.get_field(field))
     except FieldDoesNotExist:
         return getattr(getattr(model, field), "verbose_name", "")
+
+
+class ModelName(hg.ContextValue):
+    def resolve(self, context, element):
+        return pretty_modelname(super().resolve(context, element))
 
 
 class FormattedContextValue(hg.ContextValue):
