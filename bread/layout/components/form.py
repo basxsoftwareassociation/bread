@@ -302,6 +302,9 @@ def _mapwidget(
     if fieldtype is None:
         fieldtype = WIDGET_MAPPING[type(field.field.widget)]
 
+    if isinstance(field.field.widget, forms.CheckboxInput):
+        attrs["checked"] = field.value()
+
     ret = fieldtype(fieldname=field.name, widgetattributes=attrs, **elementattributes)
     ret.boundfield = field
 

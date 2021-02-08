@@ -3,6 +3,7 @@ from htmlgenerator import *  # noqa
 from . import components  # noqa
 from .base import *  # noqa
 from .components import button  # noqa
+from .components import context_switcher  # noqa
 from .components import datatable  # noqa
 from .components import form  # noqa
 from .components import grid  # noqa
