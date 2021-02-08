@@ -114,3 +114,9 @@ td .bx--form-item {
         }
     }
 }
+
+// make standalone checkboxes appear better alligned:
+.bx--form-item.bx--checkbox-wrapper.standalone {
+    height: 5rem;
+    justify-content: center;
+}
