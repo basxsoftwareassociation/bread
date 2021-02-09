@@ -1,45 +1,31 @@
-from django.views.generic import DetailView
-from guardian.mixins import PermissionRequiredMixin
+from django.http import HttpResponseNotAllowed
 
 from .. import layout as _layout  # prevent name clashing
-from ..utils import (
-    filter_fieldlist,
-    pretty_fieldname,
-    pretty_modelname,
-    resolve_relationship,
-)
-from .util import BreadView
+from .edit import EditView
 
 
-class ReadView(BreadView, PermissionRequiredMixin, DetailView):
-    fields = None
-    accept_global_perms = True
+# Read view is the same as the edit view but form elements are disabled
+class ReadView(EditView):
     template_name = "bread/layout.html"
+    accept_global_perms = True
+    fields = None
+    urlparams = (("pk", int),)
 
-    def __init__(self, *args, **kwargs):
-        self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"]))
-        super().__init__(*args, **kwargs)
+    def post(self, *args, **kwargs):
+        return HttpResponseNotAllowed()
 
     def layout(self, request):
-        return _layout.BaseElement(
-            _layout.H3(
-                pretty_modelname(self.model),
-                " ",
-                _layout.I(lambda c: c["object"]),
-            ),
-            [
-                _layout.form.FormField(field, widgetattributes={"readonly": True})
-                for field in filter_fieldlist(self.model, self.fields, for_form=True)
-            ],
+        ret = super().layout(request)
+        ret.wrap(
+            lambda element, ancestors: isinstance(element, _layout.form.Form),
+            _layout.FIELDSET(disabled="disabled"),
         )
 
-    def field_values(self):
-        for accessor in self.fields:
-            fieldchain = resolve_relationship(self.model, accessor)
-            if not fieldchain:
-                yield accessor, accessor.replace("_", " ").title()
-            else:
-                yield accessor, pretty_fieldname(fieldchain[-1][1])
+        ret.delete(
+            lambda element, ancestors: isinstance(element, _layout.BUTTON)
+            and element.attributes["type"] == "submit"
+        )
+        return ret
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]

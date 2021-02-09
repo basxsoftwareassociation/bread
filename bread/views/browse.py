@@ -50,7 +50,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
     def valuelayout(self, fieldname, request):
         ret = lyt.FC(f"row.{fieldname}")
         ret.td_attributes = lyt.aslink_attributes(
-            lyt.F(lambda c, e: lyt.objectaction(c["row"], "edit"))
+            lyt.F(lambda c, e: lyt.objectaction(c["row"], "read"))
         )
         return ret
 

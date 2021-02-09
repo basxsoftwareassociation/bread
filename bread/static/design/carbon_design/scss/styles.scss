@@ -120,3 +120,9 @@ td .bx--form-item {
     height: 5rem;
     justify-content: center;
 }
+
+// prevent disabled fields form becoming unreadable
+fieldset[disabled=disabled] :disabled {
+    color: initial;
+    cursor: auto !important;
+}
