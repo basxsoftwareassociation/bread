@@ -15,17 +15,20 @@ class ReadView(EditView):
         return HttpResponseNotAllowed()
 
     def layout(self, request):
-        ret = super().layout(request)
-        ret.wrap(
-            lambda element, ancestors: isinstance(element, _layout.form.Form),
-            _layout.FIELDSET(disabled="disabled"),
-        )
-
-        ret.delete(
-            lambda element, ancestors: isinstance(element, _layout.BUTTON)
-            and element.attributes["type"] == "submit"
-        )
-        return ret
+        return layoutasreadonly(super().layout(request))
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
+
+
+def layoutasreadonly(layout):
+    layout.wrap(
+        lambda element, ancestors: isinstance(element, _layout.form.Form),
+        _layout.FIELDSET(disabled="disabled"),
+    )
+
+    layout.delete(
+        lambda element, ancestors: isinstance(element, _layout.BUTTON)
+        and element.attributes["type"] == "submit"
+    )
+    return layout
