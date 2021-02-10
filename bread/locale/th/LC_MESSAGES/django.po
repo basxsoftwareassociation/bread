@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-12 13:29+0700\n"
+"POT-Creation-Date: 2021-02-10 16:12+0700\n"
 "PO-Revision-Date: 2021-01-15 10:36+0700\n"
 "Last-Translator: Tida <tida@basx.dev>\n"
 "Language-Team: \n"
@@ -18,58 +18,68 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 2.2.4\n"
 
-#: bread/layout/components/button.py:60
+#: bread/layout/components/button.py:63
 msgid "Print"
 msgstr "พิมพ์"
 
 #: bread/layout/components/checkbox.py:34
 #: bread/layout/components/date_picker.py:79
+#: bread/layout/components/file_uploader.py:63
 #: bread/layout/components/select.py:61 bread/layout/components/text_area.py:51
 #: bread/layout/components/text_input.py:46
+#: bread/layout/components/text_input.py:164
 #: bread/layout/components/toggle.py:42
 msgid " (required)"
 msgstr "(จำเป็น)"
 
-#: bread/layout/components/datatable.py:89
+#: bread/layout/components/datatable.py:183
+msgid "Cancel"
+msgstr ""
+
+#: bread/layout/components/datatable.py:194
 msgid " items selected"
 msgstr "เลือกรายการ"
 
-#: bread/layout/components/datatable.py:95
+#: bread/layout/components/datatable.py:200
 msgid "Table Action Bar"
 msgstr "แถบงาน"
 
-#: bread/layout/components/datatable.py:128 bread/views/__init__.py:35
-msgid "Edit"
-msgstr "แก้ไข"
-
-#: bread/layout/components/datatable.py:130 bread/views/__init__.py:36
-msgid "Delete"
-msgstr "ลบ"
-
-#: bread/layout/components/datatable.py:160 bread/views/add.py:35
-#: bread/views/add.py:58 bread/views/browse.py:67
+#: bread/layout/components/datatable.py:270 bread/views/add.py:36
+#: bread/views/add.py:59 bread/views/browse.py:71
 #, python-format
 msgid "Add %s"
 msgstr "เพิ่ม %s"
 
-#: bread/layout/components/form.py:29
+#: bread/layout/components/file_uploader.py:25
+#, fuzzy
+#| msgid "Add %s"
+msgid "Add files"
+msgstr "เพิ่ม %s"
+
+#: bread/layout/components/form.py:28
 msgid "Save"
 msgstr "บันทึก"
 
-#: bread/layout/components/form.py:65
+#: bread/layout/components/form.py:64
 msgid "Form error"
 msgstr "เกิดข้อผิดพลาด"
 
-#: bread/layout/components/form.py:71
+#: bread/layout/components/form.py:70
 msgid "Form error: "
 msgstr "เกิดข้อผิดพลาด"
 
-#: bread/layout/components/form.py:159
+#: bread/layout/components/form.py:182
 msgid "Add"
 msgstr "เพิ่ม"
 
+#: bread/layout/components/form.py:202
+msgid "Delete"
+msgstr "ลบ"
+
 #: bread/layout/components/notification.py:122
-msgid "Time stamp "
+#, fuzzy
+#| msgid "Time stamp "
+msgid "Time stamp"
 msgstr "บันทึกเวลา"
 
 #: bread/layout/components/progress_indicator.py:34
@@ -121,7 +131,7 @@ msgstr "คุณแน่ใจว่าต้องการลบข้อม
 msgid "Yes, delete"
 msgstr "ใช่ ลบข้อมูล"
 
-#: bread/views/add.py:26
+#: bread/views/add.py:27
 #, python-format
 msgid "Added %s"
 msgstr "เพิ่ม %s"
@@ -131,6 +141,10 @@ msgstr "เพิ่ม %s"
 msgid "Delete %s"
 msgstr "ลบ %s"
 
-#: bread/views/edit.py:86
+#: bread/views/edit.py:88
 msgid "Copy"
 msgstr "คัดลอก"
+
+#: bread/views/system.py:12
+msgid "Login"
+msgstr ""
