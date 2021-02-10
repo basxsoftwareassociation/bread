@@ -1,3 +1,4 @@
+import htmlgenerator as hg
 from django.http import HttpResponseNotAllowed
 
 from .. import layout as _layout  # prevent name clashing
@@ -24,11 +25,13 @@ class ReadView(EditView):
 def layoutasreadonly(layout):
     layout.wrap(
         lambda element, ancestors: isinstance(element, _layout.form.Form),
-        _layout.FIELDSET(disabled="disabled"),
+        hg.FIELDSET(disabled="disabled"),
     )
 
     layout.delete(
-        lambda element, ancestors: isinstance(element, _layout.BUTTON)
-        and element.attributes["type"] == "submit"
+        lambda element, ancestors: any(
+            [isinstance(a, _layout.form.Form) for a in ancestors]
+        )
+        and isinstance(element, hg.BUTTON)
     )
     return layout

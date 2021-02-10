@@ -1,5 +1,6 @@
 import urllib
 
+import htmlgenerator as hg
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -30,13 +31,13 @@ class AddView(
         super().__init__(*args, **kwargs)
 
     def layout(self, request):
-        return _layout.BaseElement(
-            _layout.H3(
+        return hg.BaseElement(
+            hg.H3(
                 _("Add %s") % pretty_modelname(self.model),
             ),
             _layout.form.Form.wrap_with_form(
-                _layout.C("form"),
-                _layout.BaseElement(
+                hg.C("form"),
+                hg.BaseElement(
                     *[
                         _layout.form.FormField(field)
                         for field in filter_fieldlist(

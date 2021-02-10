@@ -126,3 +126,10 @@ fieldset[disabled=disabled] :disabled {
     color: initial;
     cursor: auto !important;
 }
+
+@keyframes notification {
+    0%   {opacity: 0;}
+    10%  {opacity: 1;}
+    90% {opacity: 1;}
+    100% {opacity: 0;}
+}

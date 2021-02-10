@@ -2,6 +2,7 @@ import html
 import re
 
 import django_filters
+import htmlgenerator as hg
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -13,7 +14,7 @@ from django.utils.translation import gettext_lazy as _
 from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin
 
-from .. import layout as lyt  # prevent name clashing
+from .. import layout as _layout  # prevent name clashing
 from ..fields.queryfield import parsequeryexpression
 from ..formatters import render_field
 from ..forms.forms import FilterForm
@@ -45,17 +46,17 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
         super().__init__(*args, **kwargs)
 
     def labellayout(self, fieldname, request):
-        return lyt.fieldlabel(self.model, fieldname)
+        return _layout.fieldlabel(self.model, fieldname)
 
     def valuelayout(self, fieldname, request):
-        ret = lyt.FC(f"row.{fieldname}")
-        ret.td_attributes = lyt.aslink_attributes(
-            lyt.F(lambda c, e: lyt.objectaction(c["row"], "read"))
+        ret = _layout.FC(f"row.{fieldname}")
+        ret.td_attributes = _layout.aslink_attributes(
+            hg.F(lambda c, e: _layout.objectaction(c["row"], "read"))
         )
         return ret
 
     def layout(self, request):
-        return lyt.datatable.DataTable(
+        return _layout.datatable.DataTable(
             [
                 (
                     self.labellayout(field, request),
@@ -63,12 +64,12 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
                 )
                 for field in list(filter_fieldlist(self.model, self.fields))
             ],
-            lyt.C("object_list"),
+            hg.C("object_list"),
         ).wrap(
             title=pretty_modelname(self.model, plural=True),
-            primary_button=lyt.button.Button(
+            primary_button=_layout.button.Button(
                 _("Add %s") % pretty_modelname(self.model),
-                icon=lyt.icon.Icon("add", size=20),
+                icon=_layout.icon.Icon("add", size=20),
                 onclick=f"document.location = '{reverse_model(self.model, 'add')}'",
             ),
             bulkactions=self.bulkactions,

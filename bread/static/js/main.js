@@ -1,3 +1,11 @@
+
+// support onload after page loaded for all elements
+document.addEventListener(
+    "DOMContentLoaded",
+    (e) => { console.log('heeeeeeeeeee'); $$('[onload]:not(body):not(frame):not(iframe):not(img):not(input):not(link):not(script):not(style)')._.fire("load"); }
+);
+
+
 function initAllChoices(element=$("body")) {
     var selectElements = $$("select", element);
     for(let element of selectElements) {

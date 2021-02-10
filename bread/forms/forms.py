@@ -1,3 +1,4 @@
+import htmlgenerator as hg
 from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
@@ -136,7 +137,7 @@ def _generate_formset_class(
     """Returns a FormSet class which handles inline forms correctly."""
 
     formfieldelements = _get_form_fields_from_layout(
-        _layout.BaseElement(*formsetfieldelement)
+        hg.BaseElement(*formsetfieldelement)
     )  # make sure the _layout.form.FormsetField does not be considered recursively
 
     formclass = breadmodelform_factory(
@@ -215,7 +216,7 @@ class PreferencesForm(GlobalPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.layout = lambda request: _layout.form.Form.from_fieldnames(
-            _layout.C("form"), self.fields
+            hg.C("form"), self.fields
         )
 
 
@@ -223,7 +224,7 @@ class UserPreferencesForm(UserPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.layout = lambda request: _layout.form.Form.from_fieldnames(
-            _layout.C("form"), self.fields
+            hg.C("form"), self.fields
         )
 
 
@@ -242,7 +243,7 @@ def _get_form_fields_from_layout(layout):
         ):
             yield element
         for e in element:
-            if isinstance(e, _layout.BaseElement):
+            if isinstance(e, hg.BaseElement):
                 yield from walk(e)
 
     return list(walk(layout))

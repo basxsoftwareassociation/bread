@@ -1,3 +1,4 @@
+import htmlgenerator as hg
 from django import forms
 
 from .. import layout as _layout  # prevent name clashing
@@ -29,7 +30,7 @@ class CustomFormMixin:
         )
 
     def formlayout(self, request):
-        return _layout.BaseElement(
+        return hg.BaseElement(
             *[
                 _layout.form.FormField(field)
                 for field in filter_fieldlist(self.model, self.fields, for_form=True)

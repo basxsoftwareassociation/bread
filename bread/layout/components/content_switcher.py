@@ -2,7 +2,7 @@ import htmlgenerator as hg
 
 
 # TODO: add method to connect Context-Switcher
-class ContextSwitcher(hg.DIV):
+class ContentSwitcher(hg.DIV):
     def __init__(self, *labels, selected=0, **wrapperkwargs):
         """
         labels: tuples in the form (label, button-attributes)

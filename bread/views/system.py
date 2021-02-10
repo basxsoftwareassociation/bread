@@ -1,7 +1,7 @@
 from django.contrib.auth.views import LoginView, LogoutView
 from django.utils.translation import gettext_lazy as _
 
-from .. import layout as layout
+from .. import layout
 
 
 class BreadLoginView(LoginView):

@@ -119,7 +119,7 @@ class ToastNotification(htmlgenerator.DIV):
         timestampelem = (
             [
                 htmlgenerator.P(
-                    _("Time stamp "), _class="bx--toast-notification__caption"
+                    _("Time stamp"), " ", _class="bx--toast-notification__caption"
                 )
             ]
             if not hidetimestamp
@@ -132,7 +132,7 @@ class ToastNotification(htmlgenerator.DIV):
                 _class="bx--toast-notification__icon",
             ),
             htmlgenerator.DIV(
-                htmlgenerator.H3(title, _class="bx--toast-notification__title"),
+                htmlgenerator.P(title, _class="bx--toast-notification__title"),
                 htmlgenerator.P(subtitle, _class="bx--toast-notification__subtitle"),
                 *timestampelem,
                 _class="bx--toast-notification__details",

@@ -24,13 +24,9 @@
             {% include "bread/components/side-nav.html" %}
         {% endif %}
 
-        {% if messages %}
-            <ul>
-                {% for message in messages %}
-                    <li{% if message.tags %} class="message-{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        <div style="position: fixed; right: 0; z-index: 999">
+            {% display_messages messages %}
+        </div>
 
         <div class="bx--content">
             <div>
@@ -39,19 +35,17 @@
             </div>
         </div>
 
+
         {% compress js %}
         <script type="text/javascript" src="{% static "js/main.js" %}"></script>
         <script type="text/javascript" src="{% static "js/bliss.min.js" %}"></script>
         <script type="text/javascript" src="{% static "js/htmx.min.js" %}"></script>
-        {% endcompress js %}
-
-        {% compress js %}
-            <script type="text/javascript" src="{% static "js/choices.min.js" %}"></script>
-            <script type="text/javascript" src="{% static "design/carbon_design/js/carbon-components.min.js" %}"></script>
-            <script>
-                // TODO: this will very likely be rather slow. We should instead add watch only to dynamic parts of pages. However, please profile before starting to optimize.
-                CarbonComponents.watch(document);
-            </script>
+        <script type="text/javascript" src="{% static "js/choices.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "design/carbon_design/js/carbon-components.min.js" %}"></script>
+        <script>
+            // TODO: this will very likely be rather slow. We should instead add watch only to dynamic parts of pages. However, please profile before starting to optimize.
+            CarbonComponents.watch(document);
+        </script>
         {% endcompress js %}
 
     </body>

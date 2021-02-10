@@ -1,9 +1,8 @@
 import logging
 import warnings
-from _strptime import TimeRE
 
-import htmlgenerator
-from bread import menu as menuregister
+import htmlgenerator as hg
+from _strptime import TimeRE
 from django import template
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
@@ -11,6 +10,8 @@ from django.forms import DateInput, Textarea, TextInput
 from django.utils import formats
 from django.utils.html import mark_safe
 
+from .. import layout as layout
+from .. import menu as menuregister
 from ..formatters import as_object_link, format_value
 from ..forms import forms
 from ..utils import has_permission, pretty_fieldname, title
@@ -48,9 +49,7 @@ def linkurl(context, link):
 def render_layout(context):
     # try first to get "raw" layout object from context, otherwise use layout method of view
     layout = context.get("layout") or context.get("view").layout
-    return mark_safe(
-        htmlgenerator.render(layout(context["request"]), context.flatten())
-    )
+    return mark_safe(hg.render(layout(context["request"]), context.flatten()))
 
 
 @register.simple_tag
@@ -247,9 +246,24 @@ def list_delete_protection(object):
 # TODO: this should be removed in the future when we will only use htmlgenerator layouts
 @register.simple_tag
 def carbon_icon(name, size, **attributes):
-    from ..layout.components.icon import Icon
+    return mark_safe(hg.render(layout.icon.Icon(name, size, **attributes), {}))
 
-    return mark_safe(htmlgenerator.render(Icon(name, size, **attributes), {}))
+
+@register.simple_tag
+def display_messages(messages):
+    notifications = []
+    for i, message in enumerate(messages):
+        kind = "info" if message.level_tag == "debug" else message.level_tag
+        notifications.append(
+            layout.notification.ToastNotification(
+                title=message.tags.capitalize(),
+                subtitle=message.message,
+                kind=kind,
+                hidetimestamp=True,
+                style=f"opacity: 0; animation: {4 + 3 * i}s ease-in-out notification",
+            )
+        )
+    return mark_safe(hg.render(hg.DIV(*notifications), {}))
 
 
 @register.filter

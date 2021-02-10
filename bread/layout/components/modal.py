@@ -18,7 +18,9 @@ class Modal(hg.DIV):
         assert size in ["xs", "sm", "md", "lg"]
         if buttons and "data_modal_primary_focus" not in buttons[-1].attributes:
             buttons[-1].attributes["data_modal_primary_focus"] = True
+        attributes["_class"] = attributes.get("_class", "") + " bx--modal"
         self.id = id or hg.html_id(self, prefix="modal-")
+        self.openerattributes = {"data_modal_target": f"#{self.id}"}
         super().__init__(
             hg.DIV(
                 hg.DIV(
@@ -56,12 +58,8 @@ class Modal(hg.DIV):
             hg.SPAN(tabindex="0"),
             data_modal=True,
             id=self.id,
-            _class="bx--modal",
             role="dialog",
             aria_modal="true",
             tabindex="-1",
+            **attributes,
         )
-
-    def withopenbutton(self, button):
-        button.attributes["data_modal_target"] = f"#{self.id}"
-        return hg.DIV(button, self)

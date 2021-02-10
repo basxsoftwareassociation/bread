@@ -7,6 +7,7 @@ an argument "admin" which is an instance of the according BreadAdmin class
 import re
 import urllib
 
+import htmlgenerator as hg
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
@@ -41,19 +42,17 @@ class EditView(
         super().__init__(*args, **kwargs)
 
     def layout(self, request):
-        return _layout.BaseElement(
+        return hg.BaseElement(
             _layout.grid.Grid(
                 _layout.grid.Row(
                     _layout.grid.Col(
-                        _layout.H3(
-                            _layout.I(_layout.F(lambda c, e: c["object"])),
+                        hg.H3(
+                            hg.I(hg.F(lambda c, e: c["object"])),
                         )
                     )
                 ),
             ),
-            _layout.form.Form.wrap_with_form(
-                _layout.C("form"), self.formlayout(request)
-            ),
+            _layout.form.Form.wrap_with_form(hg.C("form"), self.formlayout(request)),
         )
 
     def get_required_permissions(self, request):
@@ -67,7 +66,7 @@ class EditView(
     def get_success_url(self):
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
-        return reverse(model_urlname(self.model, "browse"))
+        return reverse(model_urlname(self.model, "read"), kwargs={"pk": self.object.pk})
 
     # prevent browser caching edit views
     @never_cache
