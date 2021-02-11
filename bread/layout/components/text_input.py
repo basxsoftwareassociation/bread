@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from .button import Button
 from .helpers import (
+    REQUIRED_LABEL,
     ErrorList,
     ErrorListElement,
     HelperText,
@@ -50,7 +51,7 @@ class TextInput(hg.DIV):
             self.label.attributes["_for"] = self.boundfield.id_for_label
             self.label.append(self.boundfield.label)
             if self.boundfield.field.required:
-                self.label.append(_(" (required)"))
+                self.label.append(REQUIRED_LABEL)
             if self.boundfield.help_text:
                 self.append(HelperText(self.boundfield.help_text))
             if self.boundfield.errors:

@@ -1,8 +1,7 @@
 import htmlgenerator as hg
+from bread import layout
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-
-from bread import layout
 
 
 def generate_wizard_form(wizardview, wizardtitle, steptitle, formlayout):
@@ -19,13 +18,13 @@ def generate_wizard_form(wizardview, wizardtitle, steptitle, formlayout):
         return f"document.location='{url}'"
 
     steps = []
-    for i, step in enumerate(wizardview.get_form_list().keys()):
+    for i, (step, formclass) in enumerate(wizardview.get_form_list().items()):
         status = "incomplete"
         if i < wizardview.steps.index:
             status = "complete"
         if step == wizardview.steps.current:
             status = "current"
-        steps.append((_(step), status))
+        steps.append((formclass.title, status))
 
     return hg.BaseElement(
         hg.H3(wizardtitle),

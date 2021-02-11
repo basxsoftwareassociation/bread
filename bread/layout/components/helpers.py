@@ -1,7 +1,8 @@
 import htmlgenerator as hg
-from django.utils.translation import gettext_lazy as _
 
 from . import button
+
+REQUIRED_LABEL = " *"
 
 
 class SubmitButton(hg.DIV):
@@ -44,7 +45,7 @@ class LabelElement(hg.If):
             label,
             Label(
                 label,
-                hg.If(required, _(" (required)")),
+                hg.If(required, REQUIRED_LABEL),
                 _for=_for,
                 _class=hg.BaseElement(
                     "bx--label",

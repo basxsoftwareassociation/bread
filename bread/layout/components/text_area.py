@@ -1,7 +1,6 @@
 import htmlgenerator as hg
-from django.utils.translation import gettext as _
 
-from .helpers import ErrorList, HelperText, Label
+from .helpers import REQUIRED_LABEL, ErrorList, HelperText, Label
 from .icon import Icon
 
 
@@ -48,7 +47,7 @@ class TextArea(hg.DIV):
             self.label.attributes["_for"] = self.boundfield.id_for_label
             self.label.append(self.boundfield.label)
             if self.boundfield.field.required:
-                self.label.append(_(" (required)"))
+                self.label.append(REQUIRED_LABEL)
 
             self.input.append(self.input.attributes.pop("value", ""))
 

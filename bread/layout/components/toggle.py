@@ -1,7 +1,7 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
-from .helpers import ErrorList, HelperText, Label
+from .helpers import REQUIRED_LABEL, ErrorList, HelperText, Label
 
 
 class Toggle(hg.DIV):
@@ -39,7 +39,7 @@ class Toggle(hg.DIV):
                 self.label.attributes["_for"] = self.boundfield.id_for_label
                 self.label.insert(0, self.boundfield.label)
                 if self.boundfield.field.required:
-                    self.label.append(_(" (required)"))
+                    self.label.append(REQUIRED_LABEL)
                 if self.boundfield.help_text:
                     self.append(HelperText(self.boundfield.help_text))
                 if self.boundfield.errors:

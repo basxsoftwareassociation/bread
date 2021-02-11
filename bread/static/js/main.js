@@ -2,7 +2,7 @@
 // support onload after page loaded for all elements
 document.addEventListener(
     "DOMContentLoaded",
-    (e) => { $$('[onload]:not(body):not(frame):not(iframe):not(img):not(input):not(link):not(script):not(style)')._.fire("load"); }
+    (e) => { $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load"); }
 );
 
 

@@ -1,10 +1,10 @@
 import htmlgenerator as hg
 from _strptime import TimeRE
-from bread.utils.datetimeformatstring import to_php_formatstr
 from django.utils import formats
-from django.utils.translation import gettext as _
 
-from .helpers import ErrorList, HelperText, Label
+from bread.utils.datetimeformatstring import to_php_formatstr
+
+from .helpers import REQUIRED_LABEL, ErrorList, HelperText, Label
 from .icon import Icon
 
 
@@ -75,7 +75,7 @@ class DatePicker(hg.DIV):
             self.label.attributes["_for"] = self.boundfield.id_for_label
             self.label.append(self.boundfield.label)
             if self.boundfield.field.required:
-                self.label.append(_(" (required)"))
+                self.label.append(REQUIRED_LABEL)
 
             dateformat = (
                 self.boundfield.field.widget.format
