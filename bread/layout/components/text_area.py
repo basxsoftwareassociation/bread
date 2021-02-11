@@ -1,11 +1,11 @@
-import htmlgenerator
+import htmlgenerator as hg
 from django.utils.translation import gettext as _
 
-from .form import ErrorList, HelperText
+from .helpers import ErrorList, HelperText, Label
 from .icon import Icon
 
 
-class TextArea(htmlgenerator.DIV):
+class TextArea(hg.DIV):
     def __init__(
         self,
         fieldname,
@@ -29,9 +29,9 @@ class TextArea(htmlgenerator.DIV):
             widgetattributes["cols"] = cols
 
         super().__init__(
-            htmlgenerator.LABEL(_class="bx--label"),
-            htmlgenerator.DIV(
-                htmlgenerator.TEXTAREA(placeholder=placeholder, **widgetattributes),
+            Label(),
+            hg.DIV(
+                hg.TEXTAREA(placeholder=placeholder, **widgetattributes),
                 _class="bx--text-area__wrapper",
             ),
             **attributes,

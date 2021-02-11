@@ -253,6 +253,7 @@ def carbon_icon(name, size, **attributes):
 def display_messages(messages):
     notifications = []
     for i, message in enumerate(messages):
+        print(message.message)
         kind = "info" if message.level_tag == "debug" else message.level_tag
         notifications.append(
             layout.notification.ToastNotification(

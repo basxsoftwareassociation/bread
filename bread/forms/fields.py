@@ -1,12 +1,11 @@
 import re
 
 from ckeditor_uploader.fields import RichTextUploadingFormField
-from dynamic_preferences.types import StringPreference
-
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags
+from dynamic_preferences.types import StringPreference
 
 
 class GenericForeignKeyField(forms.TypedChoiceField):
@@ -102,6 +101,7 @@ class FormsetField(forms.Field):
         self.parent_instance = parent_instance
         self.formsetargs = formsetargs
         kwargs["required"] = False
+        kwargs.setdefault("label", formsetclass.model._meta.verbose_name_plural)
         super().__init__(*args, **kwargs)
 
     def to_python(self, value):
@@ -114,7 +114,7 @@ class FormsetField(forms.Field):
                 for field, errorlist in formerrors.items():
                     for error in errorlist:
                         if isinstance(error, str):
-                            error = ValidationError("A Form has errors")
+                            error = ValidationError(error)
                         raise error
 
     def get_bound_field(self, form, field_name):

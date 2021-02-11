@@ -1,15 +1,14 @@
-import htmlgenerator
+import htmlgenerator as hg
 from _strptime import TimeRE
+from bread.utils.datetimeformatstring import to_php_formatstr
 from django.utils import formats
 from django.utils.translation import gettext as _
 
-from bread.utils.datetimeformatstring import to_php_formatstr
-
-from .form import ErrorList, HelperText
+from .helpers import ErrorList, HelperText, Label
 from .icon import Icon
 
 
-class DatePicker(htmlgenerator.DIV):
+class DatePicker(hg.DIV):
     def __init__(
         self,
         fieldname,
@@ -31,7 +30,7 @@ class DatePicker(htmlgenerator.DIV):
             widgetattributes.get("_class", "") + " bx--date-picker__input"
         )
 
-        input = htmlgenerator.INPUT(
+        input = hg.INPUT(
             placeholder=placeholder,
             type="text",
             **widgetattributes,
@@ -39,7 +38,7 @@ class DatePicker(htmlgenerator.DIV):
         self.input = input
         if not simple:
             input.attributes["data-date-picker-input"] = True
-            input = htmlgenerator.DIV(
+            input = hg.DIV(
                 input,
                 Icon(
                     "calendar",
@@ -51,9 +50,9 @@ class DatePicker(htmlgenerator.DIV):
             )
 
         super().__init__(
-            htmlgenerator.DIV(
-                htmlgenerator.DIV(
-                    htmlgenerator.LABEL(_class="bx--label"),
+            hg.DIV(
+                hg.DIV(
+                    Label(),
                     input,
                     _class="bx--date-picker-container",
                 ),

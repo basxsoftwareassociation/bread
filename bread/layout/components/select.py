@@ -1,7 +1,7 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext as _
 
-from .form import ErrorList, HelperText
+from .helpers import ErrorList, HelperText, Label
 from .icon import Icon
 
 
@@ -37,7 +37,7 @@ class Select(hg.DIV):
             )
         super().__init__(
             hg.DIV(
-                hg.LABEL(_class="bx--label"),
+                Label(),
                 select_wrapper,
                 _class="bx--select"
                 + (" bx--select--inline" if inline else "")

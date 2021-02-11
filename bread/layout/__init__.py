@@ -5,6 +5,7 @@ from .components import content_switcher  # noqa
 from .components import datatable  # noqa
 from .components import form  # noqa
 from .components import grid  # noqa
+from .components import helpers  # noqa
 from .components import icon  # noqa
 from .components import modal  # noqa
 from .components import notification  # noqa

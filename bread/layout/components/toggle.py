@@ -1,7 +1,7 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
-from .form import ErrorList, HelperText
+from .helpers import ErrorList, HelperText, Label
 
 
 class Toggle(hg.DIV):
@@ -20,7 +20,7 @@ class Toggle(hg.DIV):
         )
         widgetattributes["type"] = "checkbox"
         self.input = hg.INPUT(**widgetattributes)
-        self.label = hg.LABEL(
+        self.label = Label(
             hg.SPAN(
                 hg.SPAN(offlabel, _class="bx--toggle__text--off", aria_hidden="true"),
                 hg.SPAN(onlabel, _class="bx--toggle__text--on", aria_hidden="true"),

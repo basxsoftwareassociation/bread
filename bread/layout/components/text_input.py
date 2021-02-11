@@ -2,7 +2,14 @@ import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
 from .button import Button
-from .form import ErrorList, HelperText
+from .helpers import (
+    ErrorList,
+    ErrorListElement,
+    HelperText,
+    HelpTextElement,
+    Label,
+    LabelElement,
+)
 from .icon import Icon
 
 
@@ -24,7 +31,7 @@ class TextInput(hg.DIV):
         )
 
         super().__init__(
-            hg.LABEL(_class="bx--label"),
+            Label(),
             hg.DIV(
                 hg.INPUT(**widgetattributes),
                 _class="bx--text-input__field-wrapper",
@@ -85,6 +92,8 @@ class PasswordInput(TextInput):
         self[1].append(showhidebtn)
 
 
+# TEST IMPLEMENTATION ACCORDING TO helpers.py TODO comment, not currently used
+# The nice thing here is that we do not need to overwrite the render method
 class TextInputElement(hg.DIV):
     def __init__(
         self,
@@ -142,6 +151,8 @@ class TextInputElement(hg.DIV):
     def from_formfieldcontext(
         cls, fieldcontext, light=False, widgetattributes=None, **attributes
     ):
+        # TODO: this implementation still stems from the context/value provider implementation of
+        # htmlgenerator, it should be changed to use context variables, e.g. hg.C
         "fieldcontext: adds an attribute 'boundfield' to bound elements"
         return cls(
             label=fieldcontext.Binding(hg.ATTR("boundfield.label")),
@@ -152,45 +163,4 @@ class TextInputElement(hg.DIV):
             errors=fieldcontext.Binding(hg.ATTR("boundfield.errors")),
             widgetattributes=widgetattributes,
             **attributes,
-        )
-
-
-class LabelElement(hg.If):
-    def __init__(self, label, _for, required, disabled=False):
-        super().__init__(
-            label,
-            hg.LABEL(
-                label,
-                hg.If(required, _(" (required)")),
-                _for=_for,
-                _class=hg.BaseElement(
-                    "bx--label",
-                    hg.If(disabled, " bx--label--disabled"),
-                ),
-            ),
-        )
-
-
-class HelpTextElement(hg.If):
-    def __init__(self, helptext, disabled=False):
-        super().__init__(
-            helptext,
-            hg.DIV(
-                helptext,
-                _class=hg.BaseElement(
-                    "bx--form__helper-text",
-                    hg.If(disabled, " bx--form__helper-text--disabled"),
-                ),
-            ),
-        )
-
-
-class ErrorListElement(hg.If):
-    def __init__(self, errors):
-        super().__init__(
-            errors,
-            hg.DIV(
-                hg.UL(hg.Iterator(errors or (), "error", hg.C("error"))),
-                _class="bx--form-requirement",
-            ),
         )

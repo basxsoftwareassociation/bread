@@ -132,8 +132,8 @@ class ToastNotification(htmlgenerator.DIV):
                 _class="bx--toast-notification__icon",
             ),
             htmlgenerator.DIV(
-                htmlgenerator.P(title, _class="bx--toast-notification__title"),
-                htmlgenerator.P(subtitle, _class="bx--toast-notification__subtitle"),
+                htmlgenerator.DIV(title, _class="bx--toast-notification__title"),
+                htmlgenerator.DIV(subtitle, _class="bx--toast-notification__subtitle"),
                 *timestampelem,
                 _class="bx--toast-notification__details",
             ),

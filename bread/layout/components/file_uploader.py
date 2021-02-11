@@ -1,7 +1,9 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
-from .form import ErrorList
+from .helpers import ErrorList
+
+# TODO: not finished, does not really well integrate with django FileField in the current state
 
 
 class FileUploader(hg.DIV):

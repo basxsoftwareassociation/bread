@@ -36,7 +36,7 @@ class Form(hg.FORM):
         form: lazy evaluated value which should resolve to the form object
         children: any child elements, can be formfields or other
         use_csrf: add a CSRF input, but only for POST submission and standalone forms
-        standalone: if false, will not add CSRF token and will not render enclosing form-tag
+        standalone: if true, will add a CSRF token and will render enclosing FORM-element
         """
         self.form = form
         self.standalone = standalone
@@ -317,22 +317,3 @@ def _mapwidget(
         )
 
     return ret
-
-
-class SubmitButton(hg.DIV):
-    def __init__(self, *args, **kwargs):
-        kwargs["type"] = "submit"
-        super().__init__(Button(*args, **kwargs), _class="bx--form-item")
-
-
-class ErrorList(hg.DIV):
-    def __init__(self, errors):
-        super().__init__(
-            hg.UL(*[hg.LI(e) for e in errors]),
-            _class="bx--form-requirement",
-        )
-
-
-class HelperText(hg.DIV):
-    def __init__(self, helpertext):
-        super().__init__(helpertext, _class="bx--form__helper-text")

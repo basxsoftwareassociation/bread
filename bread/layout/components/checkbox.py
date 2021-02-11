@@ -1,10 +1,10 @@
-import htmlgenerator
+import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
-from .form import ErrorList, HelperText
+from .helpers import ErrorList, HelperText, Label
 
 
-class Checkbox(htmlgenerator.DIV):
+class Checkbox(hg.DIV):
     def __init__(
         self,
         fieldname,
@@ -19,8 +19,8 @@ class Checkbox(htmlgenerator.DIV):
             widgetattributes.get("_class", "") + " bx--checkbox"
         )
         widgetattributes["type"] = "checkbox"
-        self.input = htmlgenerator.INPUT(**widgetattributes)
-        self.label = htmlgenerator.LABEL(self.input, _class="bx--checkbox-label")
+        self.input = hg.INPUT(**widgetattributes)
+        self.label = Label(self.input, _class="bx--checkbox-label")
         super().__init__(self.label, **attributes)
 
     def render(self, context):

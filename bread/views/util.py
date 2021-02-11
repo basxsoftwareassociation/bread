@@ -1,5 +1,7 @@
 import htmlgenerator as hg
 from django import forms
+from django.contrib import messages
+from django.utils.html import mark_safe
 
 from .. import layout as _layout  # prevent name clashing
 from ..forms.forms import breadmodelform_factory
@@ -52,6 +54,19 @@ class CustomFormMixin:
                     form.fields[fieldelement.fieldname].widget = forms.HiddenInput(
                         attrs=form.fields[fieldelement.fieldname].widget.attrs
                     )
+        else:
+            if form.errors:
+                messages.error(
+                    self.request,
+                    mark_safe(
+                        "<br/>".join(
+                            [
+                                f"<em>{form.fields[field].label}</em>: {', '.join(msg if isinstance(msg, list) else [msg])}"
+                                for field, msg in form.errors.items()
+                            ]
+                        )
+                    ),
+                )
         return form
 
 
