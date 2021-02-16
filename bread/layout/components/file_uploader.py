@@ -53,7 +53,6 @@ class FileUploader(hg.DIV):
 
     def render(self, context):
         if self.boundfield is not None:
-            print(self.boundfield.form.initial)
             if self.boundfield.field.disabled:
                 self.uploadbutton.attributes["disabled"] = True
                 self.input.attributes["disabled"] = True
