@@ -63,7 +63,8 @@ class FileUploader(hg.DIV):
             if self.boundfield.help_text:
                 self.help_text.append(self.boundfield.help_text)
             if self.boundfield.errors:
-                self.append(ErrorList(self.boundfield.errors))
+                self.input.attributes["data_invalid"] = True
+                self.wrapper.append(ErrorList(self.boundfield.errors))
             if self.boundfield.value():
                 self.container.append(
                     hg.SPAN(
