@@ -35,7 +35,7 @@ class InlineNotification(htmlgenerator.DIV):
             raise ValueError(
                 f"kind '{kind}' does not exists, must be one of {KIND_ICON_MAPPING.keys()}"
             )
-        if action is not None and (len(action) == 2):
+        if action is not None and (len(action) != 2):
             raise ValueError(
                 "action must be a tuple with: (action_name, javascript_onclick)"
             )
