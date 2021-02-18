@@ -27,10 +27,10 @@ class Col(htmlgenerator.DIV):
         """
         colclass = "bx--col"
         if breakpoint is not None or width is not None:
-            assert width is not None, "When breakpoint is given, width is also required"
-            assert (
-                breakpoint is not None
-            ), "When width is given, breakpoint is also required"
+            if width is None:
+                raise ValueError("When breakpoint is given, width is also required")
+            if breakpoint is None:
+                raise ValueError("When width is given, breakpoint is also required")
             colclass += f"-{breakpoint}-{width}"
         attributes["_class"] = attributes.get("_class", "") + f" {colclass}"
         super().__init__(*children, **attributes)

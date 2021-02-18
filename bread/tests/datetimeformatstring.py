@@ -21,9 +21,9 @@ class ToPHPFormatstrTest(TestCase):
 
         for _ in range(self.RANDOM_ROUNDS):
             d = datetime.datetime.min + datetime.timedelta(
-                days=random.randint(0, max_delta.days),
-                seconds=random.randint(0, max_delta.seconds),
-                microseconds=random.randint(0, max_delta.microseconds),
+                days=random.randint(0, max_delta.days),  # nosec
+                seconds=random.randint(0, max_delta.seconds),  # nosec
+                microseconds=random.randint(0, max_delta.microseconds),  # nosec
             )
             for f in self.ALL_FORMATS:
                 if "y" not in f:

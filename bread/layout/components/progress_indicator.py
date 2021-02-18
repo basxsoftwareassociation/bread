@@ -15,9 +15,8 @@ class ProgressStep(hg.LI):
     def __init__(
         self, label, status, optional=False, tooltip=None, disabled=False, **kwargs
     ):
-        assert (
-            status in ProgressStep.STATUS
-        ), f"{status} must be one of {ProgressStep.STATUS}"
+        if status not in ProgressStep.STATUS:
+            raise ValueError(f"{status} must be one of {ProgressStep.STATUS}")
         kwargs["class"] = (
             kwargs.get("class", "") + f" bx--progress-step bx--progress-step--{status}"
         )

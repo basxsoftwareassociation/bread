@@ -1,13 +1,11 @@
 import datetime
 import numbers
-import random
 from collections.abc import Iterable
 
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from dateutil import tz
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.utils.functional import Promise
@@ -47,29 +45,6 @@ def render_field(instance, fieldname):
     if callable(value) and not isinstance(value, models.Manager):
         value = value()
     return format_value(value, fieldtype)
-
-
-def render_field_aggregation(queryset, fieldname):
-    DEFAULT_AGGREGATORS = {models.DurationField: models.Sum(fieldname)}
-    modelfield = None
-    try:
-        modelfield = queryset.model._meta.get_field(fieldname)
-        if isinstance(modelfield, GenericForeignKey):
-            modelfield = None
-    except FieldDoesNotExist:
-        pass
-    aggregation_func = getattr(queryset.model, f"{fieldname}_aggregation", None)
-    # if there is no custom aggregation defined but the field is a database fields, we just count distinct
-    if aggregation_func is None:
-        if type(modelfield) not in DEFAULT_AGGREGATORS:
-            return ""
-        aggregation = DEFAULT_AGGREGATORS[type(modelfield)]
-    else:
-        aggregation = aggregation_func(queryset)
-
-    if isinstance(aggregation, models.Aggregate):
-        return format_value(queryset.aggregate(value=aggregation)["value"], modelfield)
-    return format_value(aggregation, modelfield)
 
 
 def format_value(value, fieldtype=None):
@@ -121,29 +96,7 @@ def as_url(value):
 
 
 def as_text(value):
-    char_limit = getattr(
-        settings, "TEXT_FIELD_DISPLAY_LIMIT", app_settings.TEXT_FIELD_DISPLAY_LIMIT
-    )
-    preview = None
-    if len(value) > char_limit:
-        preview = value[:char_limit]
-        if len(preview.splitlines()) > 3:
-            preview = "\n".join(preview.splitlines()[:3])
-        preview = linebreaks(preview, autoescape=True)
-
-    value = linebreaks(value, autoescape=True)
-    if preview:
-        modalid = int(random.random() * 100000000)
-        value = f"""{preview}... <a class="modal-trigger" href="#modal_{modalid}">Show</a>
-<div id="modal_{modalid}" class="modal modal-fixed-footer">
-    <div class="modal-content">
-        <p>{value}</p>
-    </div>
-    <div class="modal-footer">
-        <a href="#!" class="modal-close btn-flat">Close</a>
-    </div>
-</div>"""
-    return mark_safe(value)
+    return mark_safe(linebreaks(value, autoescape=True))
 
 
 def as_time(value):

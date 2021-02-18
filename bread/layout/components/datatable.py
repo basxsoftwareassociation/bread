@@ -13,6 +13,8 @@ from .search import Search
 
 
 class DataTable(hg.BaseElement):
+    SPACINGS = ["default", "compact", "short", "tall"]
+
     def __init__(
         self,
         columns,
@@ -28,7 +30,10 @@ class DataTable(hg.BaseElement):
         spacing: one of "default", "compact", "short", "tall"
         zebra: alternate row colors
         """
-        assert spacing in ["default", "compact", "short", "tall"]
+        if spacing not in DataTable.SPACINGS:
+            raise ValueError(
+                f"argument 'spacin' is {spacing} but needs to be one of {DataTable.SPACINGS}"
+            )
         classes = ["bx--data-table"]
         if spacing != "default":
             classes.append(f"bx--data-table--{spacing}")

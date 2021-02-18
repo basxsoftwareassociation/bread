@@ -1,11 +1,14 @@
 """This files contains only testing settings in order to easily run manage.py and tests. Never use them in production"""
 import os
+import tempfile
 
 from bread.settings.required import *  # noqa
 
 SITE_ID = 1
 
-BASE_DIR = "/tmp"
+BASE_DIR = tempfile.mkdtemp()
+
+
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATIC_URL = "/static/"
 

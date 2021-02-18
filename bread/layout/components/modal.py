@@ -4,6 +4,8 @@ from .icon import Icon
 
 
 class Modal(hg.DIV):
+    SIZES = ["xs", "sm", "md", "lg"]
+
     def __init__(
         self, heading, *content, label="", size="md", buttons=(), id=None, **attributes
     ):
@@ -15,7 +17,10 @@ class Modal(hg.DIV):
         buttons: buttons displayed on bottom of modal, last button has default focus
                  the attribute "data_modal_close" can be set on an button in order to make it a cancel button
         """
-        assert size in ["xs", "sm", "md", "lg"]
+        if size not in Modal.SIZES:
+            raise ValueError(
+                f"argument 'size' has value {size} but needs to be one of {Modal.SIZES}"
+            )
         if buttons and "data_modal_primary_focus" not in buttons[-1].attributes:
             buttons[-1].attributes["data_modal_primary_focus"] = True
         attributes["_class"] = attributes.get("_class", "") + " bx--modal"

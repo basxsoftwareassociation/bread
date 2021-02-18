@@ -31,12 +31,14 @@ class InlineNotification(htmlgenerator.DIV):
         action: typle with (action_name, javascript_onclick), e.g. ("Open Google", "windows.location='https://google.com'")
         kind: can be one of "error" "info", "info-square", "success", "warning", "warning-alt"
         """
-        assert (
-            kind in KIND_ICON_MAPPING
-        ), f"kind '{kind}' does not exists, must be one of {KIND_ICON_MAPPING.keys()}"
-        assert action is None or (
-            len(action) == 2
-        ), "action must be a tuple with: (action_name, javascript_onclick)"
+        if kind not in KIND_ICON_MAPPING:
+            raise ValueError(
+                f"kind '{kind}' does not exists, must be one of {KIND_ICON_MAPPING.keys()}"
+            )
+        if action is not None and (len(action) == 2):
+            raise ValueError(
+                "action must be a tuple with: (action_name, javascript_onclick)"
+            )
 
         attributes["data-notification"] = True
         attributes["_class"] = (
@@ -102,9 +104,10 @@ class ToastNotification(htmlgenerator.DIV):
         """
         kind: can be one of "error" "info", "info-square", "success", "warning", "warning-alt"
         """
-        assert (
-            kind in KIND_ICON_MAPPING
-        ), f"kind '{kind}' does not exists, must be one of {KIND_ICON_MAPPING.keys()}"
+        if kind not in KIND_ICON_MAPPING:
+            raise ValueError(
+                f"kind '{kind}' does not exists, must be one of {KIND_ICON_MAPPING.keys()}"
+            )
         self.hidetimestamp = hidetimestamp
 
         attributes["data-notification"] = True

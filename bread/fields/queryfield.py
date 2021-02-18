@@ -45,12 +45,15 @@ def checkexpression(expression):
 
 
 def parsequeryexpression(basequeryset, expression):
-    assert isinstance(expression, str)
+    if not isinstance(expression, str):
+        raise RuntimeError(
+            f"expression '{expression}' needs to be of type str instead of {type(expression)}"
+        )
     if not expression:
         return basequeryset
     checkexpression(expression)
     try:
-        query = eval(
+        query = eval(  # nosec for now, will later be replaced with DjangoQL
             f"qs.filter({expression})",
             {},
             {"qs": basequeryset, "Q": models.Q, "F": models.F},
