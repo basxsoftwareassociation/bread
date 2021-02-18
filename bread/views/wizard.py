@@ -1,7 +1,8 @@
 import htmlgenerator as hg
-from bread import layout
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+
+from bread import layout
 
 
 def generate_wizard_form(wizardview, wizardtitle, steptitle, formlayout):

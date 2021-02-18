@@ -2,13 +2,12 @@ import datetime
 import inspect
 import random
 
+from ddf import G, teach
 from django.db import models
 from django.test import Client, TestCase
 from django.urls import reverse
 from django.views.generic import CreateView
 from django.views.generic.edit import SingleObjectMixin
-
-from ddf import G, teach
 from django_dynamic_fixture import DDFLibrary
 from djmoney.models.fields import CurrencyField, MoneyField
 from djmoney.money import Money
