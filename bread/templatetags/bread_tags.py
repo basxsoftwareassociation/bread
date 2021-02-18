@@ -256,8 +256,8 @@ def display_messages(messages):
         kind = "info" if message.level_tag == "debug" else message.level_tag
         notifications.append(
             layout.notification.ToastNotification(
-                title=message.tags.capitalize(),
-                subtitle=message.message,
+                message=message.tags.capitalize(),
+                details=message.message,
                 kind=kind,
                 hidetimestamp=True,
                 style=f"opacity: 0; animation: {4 + 3 * i}s ease-in-out notification",
