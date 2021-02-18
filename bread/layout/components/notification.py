@@ -19,8 +19,8 @@ KIND_ICON_MAPPING = {
 class InlineNotification(htmlgenerator.DIV):
     def __init__(
         self,
-        title,
-        subtitle,
+        message,
+        details,
         action=None,
         kind="info",
         lowcontrast=False,
@@ -55,9 +55,9 @@ class InlineNotification(htmlgenerator.DIV):
                     _class="bx--inline-notification__icon",
                 ),
                 htmlgenerator.DIV(
-                    htmlgenerator.P(title, _class="bx--inline-notification__title"),
+                    htmlgenerator.P(message, _class="bx--inline-notification__title"),
                     htmlgenerator.P(
-                        subtitle, _class="bx--inline-notification__subtitle"
+                        details, _class="bx--inline-notification__subtitle"
                     ),
                     _class="bx--inline-notification__text-wrapper",
                 ),
@@ -69,7 +69,7 @@ class InlineNotification(htmlgenerator.DIV):
                 Button(
                     action[0],
                     onclick=action[1],
-                    type="ghost",
+                    buttontype="ghost",
                     small=True,
                     _class="bx--inline-notification__action-button",
                 )
@@ -91,8 +91,8 @@ class InlineNotification(htmlgenerator.DIV):
 class ToastNotification(htmlgenerator.DIV):
     def __init__(
         self,
-        title,
-        subtitle,
+        message,
+        details,
         kind="info",
         lowcontrast=False,
         hideclosebutton=False,
@@ -132,8 +132,8 @@ class ToastNotification(htmlgenerator.DIV):
                 _class="bx--toast-notification__icon",
             ),
             htmlgenerator.DIV(
-                htmlgenerator.DIV(title, _class="bx--toast-notification__title"),
-                htmlgenerator.DIV(subtitle, _class="bx--toast-notification__subtitle"),
+                htmlgenerator.DIV(message, _class="bx--toast-notification__title"),
+                htmlgenerator.DIV(details, _class="bx--toast-notification__subtitle"),
                 *timestampelem,
                 _class="bx--toast-notification__details",
             ),
