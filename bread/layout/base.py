@@ -36,7 +36,20 @@ def fieldlabel(model, field):
     try:
         return pretty_fieldname(model._meta.get_field(field))
     except FieldDoesNotExist:
-        return getattr(getattr(model, field), "verbose_name", "")
+        context = model
+        for accessor in field.split("."):
+            if hasattr(context, accessor):
+                context = getattr(context, accessor)
+            elif hasattr(context, "get"):
+                context = context.get(accessor)
+
+        if hasattr(context, "field"):
+            return fieldlabel(context.field.model, context.field.name)
+        if callable(context):
+            return getattr(
+                context, "verbose_name", context.__name__.replace("_", " ").title()
+            )
+        return getattr(context, "verbose_name", str(context))
 
 
 class ModelName(hg.ContextValue):
