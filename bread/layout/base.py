@@ -1,9 +1,10 @@
 import htmlgenerator as hg
 from django.core.exceptions import FieldDoesNotExist
-from django.utils import formats
 
 from bread.utils import pretty_fieldname, pretty_modelname
 from bread.utils.urls import reverse_model
+
+from ..formatters import format_value
 
 
 def objectaction(object, action, *args, **kwargs):
@@ -57,9 +58,23 @@ class ModelName(hg.ContextValue):
         return pretty_modelname(super().resolve(context, element))
 
 
+class FieldLabel(hg.BaseElement):
+    def __init__(self, model, fieldname):
+        self.model = model
+        self.fieldname = fieldname
+
+    def render(self, context):
+        model = hg.resolve_lazy(self.model, context, self)
+        fieldname = hg.resolve_lazy(self.fieldname, context, self)
+        if isinstance(fieldname, str):
+            return fieldlabel(model, fieldname)
+        return fieldname
+
+
 class FormattedContextValue(hg.ContextValue):
     def resolve(self, context, element):
-        return formats.localize(super().resolve(context, element))
+        value = super().resolve(context, element)
+        return format_value(value)
 
 
 FC = FormattedContextValue

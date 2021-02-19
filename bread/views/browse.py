@@ -10,7 +10,6 @@ from django.db import models
 from django.db.models.functions import Lower
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
-from django.utils.translation import gettext_lazy as _
 from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin
 
@@ -18,13 +17,7 @@ from .. import layout as _layout  # prevent name clashing
 from ..fields.queryfield import parsequeryexpression
 from ..formatters import render_field
 from ..forms.forms import FilterForm
-from ..utils import (
-    filter_fieldlist,
-    pretty_fieldname,
-    pretty_modelname,
-    reverse_model,
-    xlsxresponse,
-)
+from ..utils import pretty_fieldname, pretty_modelname, xlsxresponse
 from .util import BreadView
 
 
@@ -45,33 +38,11 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
         )
         super().__init__(*args, **kwargs)
 
-    def labellayout(self, fieldname, request):
-        return _layout.fieldlabel(self.model, fieldname)
-
-    def valuelayout(self, fieldname, request):
-        ret = _layout.FC(f"row.{fieldname}")
-        ret.td_attributes = _layout.aslink_attributes(
-            hg.F(lambda c, e: _layout.objectaction(c["row"], "read"))
-        )
-        return ret
-
     def layout(self, request):
-        return _layout.datatable.DataTable(
-            [
-                (
-                    self.labellayout(field, request),
-                    self.valuelayout(field, request),
-                )
-                for field in list(filter_fieldlist(self.model, self.fields))
-            ],
+        return _layout.datatable.DataTable.from_model(
+            self.model,
             hg.C("object_list"),
-        ).wrap(
-            title=pretty_modelname(self.model, plural=True),
-            primary_button=_layout.button.Button(
-                _("Add %s") % pretty_modelname(self.model),
-                icon=_layout.icon.Icon("add", size=20),
-                onclick=f"document.location = '{reverse_model(self.model, 'add')}'",
-            ),
+            fields=self.fields,
             bulkactions=self.bulkactions,
             searchurl=self.searchurl,
             queryfieldname=self.queryfieldname,

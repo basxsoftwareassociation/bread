@@ -5,7 +5,7 @@ from bread.menu import Action, Link
 from bread.utils import filter_fieldlist, pretty_modelname
 from bread.utils.urls import reverse_model
 
-from ..base import FC, fieldlabel
+from ..base import FC, FieldLabel
 from .button import Button
 from .icon import Icon
 from .overflow_menu import OverflowMenu
@@ -238,10 +238,14 @@ class DataTable(hg.BaseElement):
         model,
         queryset=None,
         fields=["__all__"],
-        bulkactions=None,
+        rowactions=None,
+        bulkactions=(),
         title=None,
         addurl=None,
         backurl=None,
+        searchurl=None,
+        queryfieldname=None,
+        **kwargs,
     ):
         if title is None:
             title = pretty_modelname(model, plural=True)
@@ -251,7 +255,7 @@ class DataTable(hg.BaseElement):
             addurl = reverse_model(model, "add", query=backquery)
 
         objectactions_menu = OverflowMenu(
-            bulkactions,
+            rowactions,
             flip=True,
             item_attributes={"_class": "bx--table-row--menu-option"},
         )
@@ -260,15 +264,29 @@ class DataTable(hg.BaseElement):
         action_menu_header = hg.BaseElement()
         action_menu_header.td_attributes = {"_class": "bx--table-column-menu"}
         queryset = model.objects.all() if queryset is None else queryset
+        if "__all__" in fields:
+            fields = filter_fieldlist(model, fields)
+        columns = []
+        for field in fields:
+            if isinstance(field, str):
+                columns.append(
+                    (
+                        FieldLabel(model, field),
+                        FC(f"{kwargs.get('rowvariable', 'row')}.{field}"),
+                    )
+                )
+            elif isinstance(field, tuple) and len(field) == 2:
+                columns.append(field)
+            else:
+                raise ValueError(
+                    f"argument for 'fields' needs to be of a list with items of type str or tuple (headvalue, cellvalue), but found {field}"
+                )
 
         return DataTable(
-            [
-                (fieldlabel(model, field), FC(f"row.{field}"))
-                for field in list(filter_fieldlist(model, fields))
-            ]
-            + ([(None, objectactions_menu)] if bulkactions else []),
+            columns + ([(None, objectactions_menu)] if rowactions else []),
             # querysets are cached, the call to all will make sure a new query is used in every request
             hg.F(lambda c, e: queryset),
+            **kwargs,
         ).wrap(
             title,
             primary_button=Button(
@@ -276,23 +294,17 @@ class DataTable(hg.BaseElement):
                 icon=Icon("add", size=20),
                 onclick=f"document.location = '{addurl}'",
             ),
+            searchurl=searchurl,
+            bulkactions=bulkactions,
         )
 
     @staticmethod
     def from_queryset(
         queryset,
-        fields=["__all__"],
-        bulkactions=None,
-        title=None,
-        addurl=None,
-        backurl=None,
+        **kwargs,
     ):
         return DataTable.from_model(
             queryset.model,
             queryset=queryset,
-            fields=fields,
-            bulkactions=bulkactions,
-            title=title,
-            addurl=addurl,
-            backurl=backurl,
+            **kwargs,
         )

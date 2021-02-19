@@ -94,7 +94,13 @@ def get_modelfields(model, fieldlist, for_form=False):
 def _expand_ALL_constant(model, fieldnames):
     """Replaces the constant ``__all__`` with all concrete fields of the model"""
     if "__all__" in fieldnames:
-        concrete_fields = [f.name for f in model._meta.get_fields() if f.concrete]
+        concrete_fields = []
+        for f in model._meta.get_fields():
+            if f.concrete:
+                if f.one_to_one or f.many_to_many:
+                    concrete_fields.append(f.name + ".all")
+                else:
+                    concrete_fields.append(f.name)
         i = fieldnames.index("__all__")
         return fieldnames[:i] + concrete_fields + fieldnames[i + 1 :]
     return fieldnames

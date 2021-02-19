@@ -2,6 +2,7 @@ import datetime
 import numbers
 from collections.abc import Iterable
 
+import htmlgenerator as hg
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from dateutil import tz
@@ -15,6 +16,7 @@ from easy_thumbnails.files import get_thumbnailer
 
 import bread.settings as app_settings
 
+from . import layout
 from .models import AccessConcreteInstanceMixin
 from .utils.urls import reverse_model
 
@@ -121,10 +123,7 @@ def as_countries(value):
 
 
 def as_list(iterable):
-    return format_html(
-        "<ul>{}</ul>",
-        format_html_join("\n", "<li>{}</li>", ((format_value(v),) for v in iterable)),
-    )
+    return (format_html_join(", ", "{}", ((format_value(v),) for v in iterable)),)
 
 
 def as_richtext(value):
@@ -136,9 +135,21 @@ def as_download(value):
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
         return mark_safe("<small><emph>File not found</emph></small>")
-    return format_html(
-        '<a class="center" href="{}"><i class="material-icons">open_in_browser</i></a>',
-        value.url,
+    return mark_safe(
+        hg.render(
+            hg.BaseElement(
+                hg.A(
+                    layout.icon.Icon("launch", size=16),
+                    newtab=True,
+                    href=value.url,
+                    style="margin-right: 0.5rem; margin-left: 0.5rem",
+                ),
+                hg.A(
+                    layout.icon.Icon("download", size=16), download=True, href=value.url
+                ),
+            ),
+            {},
+        )
     )
 
 
