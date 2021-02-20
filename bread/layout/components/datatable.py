@@ -5,7 +5,7 @@ from bread.menu import Action, Link
 from bread.utils import filter_fieldlist, pretty_modelname
 from bread.utils.urls import reverse_model
 
-from ..base import FC, FieldLabel
+from ..base import FC, FieldLabel, aslink_attributes, objectaction
 from .button import Button
 from .icon import Icon
 from .overflow_menu import OverflowMenu
@@ -245,10 +245,12 @@ class DataTable(hg.BaseElement):
         backurl=None,
         searchurl=None,
         queryfieldname=None,
+        rowclickaction=None,
         **kwargs,
     ):
         if title is None:
             title = pretty_modelname(model, plural=True)
+        rowvariable = kwargs.get("rowvariable", "row")
 
         backquery = {"next": backurl} if backurl else {}
         if addurl is None:
@@ -259,6 +261,7 @@ class DataTable(hg.BaseElement):
             flip=True,
             item_attributes={"_class": "bx--table-row--menu-option"},
         )
+
         # the data-table object will check child elements for td_attributes to fill in attributes for TD-elements
         objectactions_menu.td_attributes = {"_class": "bx--table-column-menu"}
         action_menu_header = hg.BaseElement()
@@ -269,18 +272,19 @@ class DataTable(hg.BaseElement):
         columns = []
         for field in fields:
             if isinstance(field, str):
-                columns.append(
-                    (
-                        FieldLabel(model, field),
-                        FC(f"{kwargs.get('rowvariable', 'row')}.{field}"),
-                    )
+                field = (
+                    FieldLabel(model, field),
+                    FC(f"{rowvariable}.{field}"),
                 )
-            elif isinstance(field, tuple) and len(field) == 2:
-                columns.append(field)
-            else:
+            elif not (isinstance(field, tuple) and len(field) == 2):
                 raise ValueError(
                     f"argument for 'fields' needs to be of a list with items of type str or tuple (headvalue, cellvalue), but found {field}"
                 )
+            if rowclickaction:
+                field[1].td_attributes = aslink_attributes(
+                    hg.F(lambda c, e: objectaction(c[rowvariable], rowclickaction))
+                )
+            columns.append(field)
 
         return DataTable(
             columns + ([(None, objectactions_menu)] if rowactions else []),

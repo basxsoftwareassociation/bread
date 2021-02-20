@@ -36,6 +36,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
         self.queryfieldname = kwargs.get(
             "queryfieldname", getattr(self, "queryfieldname", ())
         )
+        self.rowclickaction = kwargs.get(
+            "rowclickaction", getattr(self, "rowclickaction", None)
+        )
         super().__init__(*args, **kwargs)
 
     def layout(self, request):
@@ -46,6 +49,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
             bulkactions=self.bulkactions,
             searchurl=self.searchurl,
             queryfieldname=self.queryfieldname,
+            rowclickaction=self.rowclickaction,
         )
 
     def get_required_permissions(self, request):

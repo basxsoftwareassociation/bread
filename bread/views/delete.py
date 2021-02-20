@@ -11,9 +11,10 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DeleteView as DjangoDeleteView
+from django.views.generic import RedirectView
 from guardian.mixins import PermissionRequiredMixin
 
-from ..utils import reverse_model
+from ..utils import pretty_modelname, reverse_model
 from .util import BreadView
 
 
@@ -43,6 +44,44 @@ class DeleteView(
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
         return reverse_model(self.model, "browse")
+
+
+class BulkDeleteView(
+    PermissionRequiredMixin,
+    RedirectView,
+):
+    objectids_argname = "selected"  # see bread/static/js/main.js:submitbulkaction
+    accept_global_perms = True
+    model = None
+
+    def get(self, *args, **kwargs):
+        objectids = self.request.GET.getlist(self.objectids_argname, ())
+        deleted = 0
+        for i in objectids:
+            object = self.model.objects.get(pk=i)
+            try:
+                object.delete()
+                deleted += 1
+            except Exception as e:
+                messages.error(
+                    self.request,
+                    _("%s could not be deleted: %s") % (object, e),
+                )
+
+        messages.success(
+            self.request,
+            _("Deleted %s %s")
+            % (deleted, pretty_modelname(self.model, plural=deleted > 1)),
+        )
+        return super().get(*args, **kwargs)
+
+    def get_redirect_url(self, *args, **kwargs):
+        if self.url:
+            return super().get_redirect_url(*args, **kwargs)
+        return reverse_model(self.model, "browse")
+
+    def get_required_permissions(self, request):
+        return [f"{self.model._meta.app_label}.delete_{self.model.__name__.lower()}"]
 
 
 warnings.warn(

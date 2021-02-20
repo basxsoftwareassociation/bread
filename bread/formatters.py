@@ -9,6 +9,7 @@ from dateutil import tz
 from django.conf import settings
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
+from django.urls import NoReverseMatch
 from django.utils.functional import Promise
 from django.utils.html import format_html, format_html_join, linebreaks, mark_safe
 from django_countries.fields import CountryField
@@ -80,7 +81,10 @@ def format_value(value, fieldtype=None):
     if isinstance(value, Iterable) and not isinstance(value, (str, bytes, Promise)):
         return as_list(value)
     if isinstance(value, models.Model):
-        return as_object_link(value)
+        try:
+            return as_object_link(value)
+        except NoReverseMatch:
+            return value
     return value
 
 
