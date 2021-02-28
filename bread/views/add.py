@@ -2,13 +2,12 @@ import urllib
 
 import htmlgenerator as hg
 from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 from guardian.mixins import PermissionRequiredMixin
 
 from .. import layout as _layout  # prevent name clashing
-from ..utils import filter_fieldlist, model_urlname, pretty_modelname
+from ..utils import filter_fieldlist, pretty_modelname, reverse_model
 from .util import BreadView, CustomFormMixin
 
 
@@ -62,4 +61,6 @@ class AddView(
     def get_success_url(self):
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
-        return reverse(model_urlname(self.model, "browse"))
+        if self.success_url:
+            return self.success_url
+        return reverse_model(self.model, "edit", kwargs={"pk": self.object.pk})

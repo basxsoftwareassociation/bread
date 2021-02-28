@@ -14,7 +14,6 @@ from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin
 
 from .. import layout as _layout  # prevent name clashing
-from ..fields.queryfield import parsequeryexpression
 from ..formatters import render_field
 from ..forms.forms import FilterForm
 from ..utils import pretty_fieldname, pretty_modelname, xlsxresponse
@@ -30,7 +29,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
 
     def __init__(self, *args, **kwargs):
         self.bulkactions = kwargs.get("bulkactions", getattr(self, "bulkactions", ()))
-        self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"]))
+        self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"])) or [
+            "__all__"
+        ]
         self.filterset_fields = kwargs.get("filterset_fields", self.filterset_fields)
         self.searchurl = kwargs.get("searchurl", getattr(self, "searchurl", ()))
         self.queryfieldname = kwargs.get(
@@ -197,7 +198,7 @@ def generate_excel_view(queryset, fields, filterstr=None):
     """
     Generates an excel file from the given queryset with the specified fields.
     fields: list [<fieldname1>, <fieldname2>, ...] or dict with {<fieldname>: formatting_function(object, fieldname)}
-    filterstr: a django-style filter str which will lazy evaluated, see bread.fields.queryfield.parsequeryexpression
+    filterstr: a djangoql filter string which will lazy evaluated, see bread.fields.queryfield.parsequeryexpression
     """
     import openpyxl
     from openpyxl.styles import Font
@@ -208,9 +209,11 @@ def generate_excel_view(queryset, fields, filterstr=None):
         fields = {field: render_field for field in fields}
 
     def excelview(request):
+        from bread.contrib.reports.fields.queryfield import parsequeryexpression
+
         items = queryset
         if isinstance(filterstr, str):
-            items = parsequeryexpression(model.objects.all(), filterstr).queryset
+            items = parsequeryexpression(model.objects.all(), filterstr)
         if "selected" in request.GET:
             items = items.filter(
                 pk__in=[int(i) for i in request.GET.getlist("selected")]

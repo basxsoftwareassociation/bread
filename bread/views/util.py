@@ -32,10 +32,11 @@ class CustomFormMixin:
         )
 
     def formlayout(self, request):
+        formfields = filter_fieldlist(self.model, self.fields, for_form=True)
         return hg.BaseElement(
             *[
-                _layout.form.FormField(field)
-                for field in filter_fieldlist(self.model, self.fields, for_form=True)
+                _layout.form.FormField(field) if field in formfields else field
+                for field in self.fields
             ]
         )
 
