@@ -246,6 +246,7 @@ class DataTable(hg.BaseElement):
         searchurl=None,
         queryfieldname=None,
         rowclickaction=None,
+        wrap=True,
         **kwargs,
     ):
         if title is None:
@@ -286,21 +287,24 @@ class DataTable(hg.BaseElement):
                 )
             columns.append(field)
 
-        return DataTable(
+        table = DataTable(
             columns + ([(None, objectactions_menu)] if rowactions else []),
             # querysets are cached, the call to all will make sure a new query is used in every request
             hg.F(lambda c, e: queryset),
             **kwargs,
-        ).wrap(
-            title,
-            primary_button=Button(
-                _("Add %s") % pretty_modelname(model),
-                icon=Icon("add", size=20),
-                onclick=f"document.location = '{addurl}'",
-            ),
-            searchurl=searchurl,
-            bulkactions=bulkactions,
         )
+        if wrap:
+            table = table.wrap(
+                title,
+                primary_button=Button(
+                    _("Add %s") % pretty_modelname(model),
+                    icon=Icon("add", size=20),
+                    onclick=f"document.location = '{addurl}'",
+                ),
+                searchurl=searchurl,
+                bulkactions=bulkactions,
+            )
+        return table
 
     @staticmethod
     def from_queryset(

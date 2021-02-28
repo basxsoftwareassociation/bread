@@ -20,7 +20,7 @@ class TextArea(hg.DIV):
 
         widgetattributes["_class"] = (
             widgetattributes.get("_class", "")
-            + f" bx--text-area bx--text-area--v2 {'bx--text-area--light' if light else ''}",
+            + f" bx--text-area bx--text-area--v2 {'bx--text-area--light' if light else ''}"
         )
         if rows:
             widgetattributes["rows"] = rows

@@ -270,10 +270,10 @@ def _mapwidget(
         forms.CheckboxInput: Checkbox,
         forms.Select: Select,
         forms.NullBooleanSelect: Select,
-        forms.SelectMultiple: TextInput,  # TODO HIGH
+        forms.SelectMultiple: Select,  # TODO HIGH
         forms.RadioSelect: TextInput,  # TODO HIGH
         forms.CheckboxSelectMultiple: TextInput,  # TODO HIGH
-        forms.FileInput: FileUploader,  # TODO HIGH
+        forms.FileInput: FileUploader,
         forms.ClearableFileInput: FileUploader,  # TODO HIGH
         forms.MultipleHiddenInput: TextInput,  # TODO
         forms.SplitDateTimeWidget: TextInput,  # TODO
@@ -299,13 +299,25 @@ def _mapwidget(
     if value is not None and "value" not in attrs:
         attrs["value"] = value
 
-    if fieldtype is None:
-        fieldtype = WIDGET_MAPPING[type(field.field.widget)]
+    fieldtype = (
+        fieldtype
+        or getattr(field.field, "layout", None)
+        or WIDGET_MAPPING[type(field.field.widget)]
+    )
+    elementattributes = {
+        **getattr(field.field, "layout_kwargs", {}),
+        **elementattributes,
+    }
 
     if isinstance(field.field.widget, forms.CheckboxInput):
         attrs["checked"] = field.value()
 
-    ret = fieldtype(fieldname=field.name, widgetattributes=attrs, **elementattributes)
+    if isinstance(fieldtype, type) and issubclass(fieldtype, hg.BaseElement):
+        ret = fieldtype(
+            fieldname=field.name, widgetattributes=attrs, **elementattributes
+        )
+    else:
+        ret = fieldtype
     ret.boundfield = field
 
     if (
