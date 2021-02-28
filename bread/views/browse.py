@@ -1,6 +1,3 @@
-import html
-import re
-
 import django_filters
 import htmlgenerator as hg
 from django.conf import settings
@@ -9,14 +6,14 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 from django.db.models.functions import Lower
 from django.shortcuts import redirect
-from django.utils.html import strip_tags
 from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin
 
 from .. import layout as _layout  # prevent name clashing
 from ..formatters import render_field
 from ..forms.forms import FilterForm
-from ..utils import pretty_fieldname, pretty_modelname, xlsxresponse
+from ..utils import generate_excel, pretty_modelname, xlsxresponse
+from ..utils.model_helpers import _expand_ALL_constant
 from .util import BreadView
 
 
@@ -26,9 +23,11 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
     filterfields = None
     page_kwarg = "browsepage"  # need to use something different than the default "page" because we also filter through kwargs
     bulkactions = ()  # list of links
+    rowactions = ()  # list of links
 
     def __init__(self, *args, **kwargs):
         self.bulkactions = kwargs.get("bulkactions", getattr(self, "bulkactions", ()))
+        self.rowactions = kwargs.get("rowactions", getattr(self, "rowactions", ()))
         self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"])) or [
             "__all__"
         ]
@@ -48,6 +47,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
             hg.C("object_list"),
             fields=self.fields,
             bulkactions=self.bulkactions,
+            rowactions=self.rowactions,
             searchurl=self.searchurl,
             queryfieldname=self.queryfieldname,
             rowclickaction=self.rowclickaction,
@@ -200,10 +200,11 @@ def generate_excel_view(queryset, fields, filterstr=None):
     fields: list [<fieldname1>, <fieldname2>, ...] or dict with {<fieldname>: formatting_function(object, fieldname)}
     filterstr: a djangoql filter string which will lazy evaluated, see bread.fields.queryfield.parsequeryexpression
     """
-    import openpyxl
-    from openpyxl.styles import Font
 
     model = queryset.model
+
+    if isinstance(fields, list):
+        fields = _expand_ALL_constant(model, fields)
 
     if not isinstance(fields, dict):
         fields = {field: render_field for field in fields}
@@ -219,27 +220,8 @@ def generate_excel_view(queryset, fields, filterstr=None):
                 pk__in=[int(i) for i in request.GET.getlist("selected")]
             )
         items = list(items.all())
-
-        workbook = openpyxl.Workbook()
+        workbook = generate_excel(items, fields)
         workbook.title = pretty_modelname(model)
-        header_cells = workbook.active.iter_cols(
-            min_row=1, max_col=len(fields) + 1, max_row=len(items) + 1
-        )
-        newline_regex = re.compile(
-            r"<\s*br\s*/?\s*>"
-        )  # replace HTML line breaks with newlines
-        for field, col in zip(
-            [(field, pretty_fieldname(field)) for field in fields],
-            header_cells,
-        ):
-            col[0].value = field[1]
-            col[0].font = Font(bold=True)
-            for i, cell in enumerate(col[1:]):
-                html_value = str(fields[field[0]](items[i], field[0]))
-                cleaned = html.unescape(
-                    newline_regex.sub(r"\n", strip_tags(html_value))
-                )
-                cell.value = cleaned
 
         return xlsxresponse(workbook, workbook.title)
 

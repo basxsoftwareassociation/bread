@@ -54,6 +54,10 @@ class BulkDeleteView(
     accept_global_perms = True
     model = None
 
+    def __init__(self, model, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.model = model
+
     def get(self, *args, **kwargs):
         objectids = self.request.GET.getlist(self.objectids_argname, ())
         deleted = 0

@@ -239,6 +239,7 @@ class DataTable(hg.BaseElement):
         queryset=None,
         fields=["__all__"],
         rowactions=None,
+        rowactions_dropdown=False,
         bulkactions=(),
         title=None,
         addurl=None,
@@ -257,14 +258,27 @@ class DataTable(hg.BaseElement):
         if addurl is None:
             addurl = reverse_model(model, "add", query=backquery)
 
-        objectactions_menu = OverflowMenu(
-            rowactions,
-            flip=True,
-            item_attributes={"_class": "bx--table-row--menu-option"},
-        )
+        if rowactions_dropdown:
+            objectactions_menu = OverflowMenu(
+                rowactions,
+                flip=True,
+                item_attributes={"_class": "bx--table-row--menu-option"},
+            )
+        else:
+            objectactions_menu = hg.Iterator(
+                rowactions,
+                "action",
+                hg.F(
+                    lambda c, e: Button.fromaction(
+                        c["action"],
+                        notext=True,
+                        small=True,
+                        buttontype="ghost",
+                        style="border: 1px black solid",
+                    )
+                ),
+            )
 
-        # the data-table object will check child elements for td_attributes to fill in attributes for TD-elements
-        objectactions_menu.td_attributes = {"_class": "bx--table-column-menu"}
         action_menu_header = hg.BaseElement()
         action_menu_header.td_attributes = {"_class": "bx--table-column-menu"}
         queryset = model.objects.all() if queryset is None else queryset
@@ -288,7 +302,8 @@ class DataTable(hg.BaseElement):
             columns.append(field)
 
         table = DataTable(
-            columns + ([(None, objectactions_menu)] if rowactions else []),
+            columns
+            + ([(action_menu_header, objectactions_menu)] if rowactions else []),
             # querysets are cached, the call to all will make sure a new query is used in every request
             hg.F(lambda c, e: queryset),
             **kwargs,

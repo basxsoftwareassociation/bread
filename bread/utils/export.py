@@ -1,8 +1,11 @@
+import html
 import io
+import re
 
 from django.conf import settings
 from django.http import HttpResponse
 from django.template import Context, Template
+from django.utils.html import strip_tags
 
 
 def render_template(value, context):
@@ -38,6 +41,32 @@ def html_to_pdf(html, as_http_response=False, name=None):
         ret = HttpResponse(ret, content_type="application/pdf")
         ret["Content-Disposition"] = f"inline; filename={name}.pdf"
     return ret
+
+
+def generate_excel(rows, fields):
+    import openpyxl
+    from openpyxl.styles import Font
+
+    from ..utils import pretty_fieldname
+
+    workbook = openpyxl.Workbook()
+    header_cells = workbook.active.iter_cols(
+        min_row=1, max_col=len(fields) + 1, max_row=len(rows) + 1
+    )
+    newline_regex = re.compile(
+        r"<\s*br\s*/?\s*>"
+    )  # replace HTML line breaks with newlines
+    for field, col in zip(
+        [(field, pretty_fieldname(field)) for field in fields],
+        header_cells,
+    ):
+        col[0].value = field[1]
+        col[0].font = Font(bold=True)
+        for i, cell in enumerate(col[1:]):
+            html_value = str(fields[field[0]](rows[i], field[0]))
+            cleaned = html.unescape(newline_regex.sub(r"\n", strip_tags(html_value)))
+            cell.value = cleaned
+    return workbook
 
 
 def xlsxresponse(workbook, title, filters=True):
@@ -79,9 +108,9 @@ def prepare_excel(workbook, filters=True):
             adjusted_width = (max_length + 3) * 1.2
             worksheet.column_dimensions[column].width = min([adjusted_width, 50])
 
-        # enable excel filters
-        if filters is True:
-            worksheet.auto_filter.ref = f"A1:{column}1"
+            # enable excel filters
+            if filters is True:
+                worksheet.auto_filter.ref = f"A1:{column}1"
 
         # enable word wrap
         for row in worksheet.iter_rows():

@@ -42,12 +42,13 @@ class Button(htmlgenerator.BUTTON):
 
     @staticmethod
     def fromaction(action, **kwargs):
-        return Button(
-            action.label,
-            icon=action.icon,
-            notext=not action.label,
-            onclick=action.js,
-        )
+        buttonargs = {
+            "icon": action.icon,
+            "notext": not action.label,
+            "onclick": action.js,
+        }
+        buttonargs.update(kwargs)
+        return Button(action.label, **buttonargs)
 
 
 class ButtonSet(htmlgenerator.htmltags.DIV):

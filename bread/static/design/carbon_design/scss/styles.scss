@@ -115,6 +115,11 @@ td .bx--form-item {
     }
 }
 
+// fix position of unlabeled table bulk action buttons
+.bx--action-list .bx--btn.bx--btn--icon-only .bx--btn__icon {
+    margin-left: 0;
+}
+
 // make standalone checkboxes appear better alligned:
 .bx--form-item.bx--checkbox-wrapper.standalone {
     height: 5rem;

@@ -8,7 +8,7 @@ import re
 import urllib
 
 import htmlgenerator as hg
-from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -25,7 +25,7 @@ from .util import BreadView, CustomFormMixin
 class EditView(
     BreadView,
     CustomFormMixin,
-    SuccessMessageMixin,
+    messages.views.SuccessMessageMixin,
     PermissionRequiredMixin,
     UpdateView,
 ):
@@ -99,5 +99,43 @@ def generate_copyview(model, attrs=None, labelfield=None):
 
         clone = create_copy_of_instance(instance, attrs=attrs)
         return redirect(reverse(model_urlname(model, "edit"), args=[clone.pk]))
+
+    return copy
+
+
+def generate_bulkcopyview(model, pk_queryname="selected", attrs=None, labelfield=None):
+    """creates a copy of a list of instances and redirects to the edit view of the newly created instance
+    pk_queryname: name of the HTTP query parameter which carries the pk's of the object to duplicate
+    attrs: custom field values for the new instance
+    labelfield: name of a model field which will be used to create copy-labels (Example, Example (Copy 2), Example (Copy 3), etc)
+    """
+    attrs = attrs or {}
+
+    def copy(request):
+        created = 0
+        errors = 0
+        for pk in request.GET.getlist(pk_queryname):
+            instance = get_object_or_404(model, pk=pk)
+            # create labels with the sequence (Copy), (Copy 2), (Copy 3), etc.
+            if labelfield:
+                copylabel = _("Copy")
+                copy_re = f"\\({copylabel}( [0-9]*)?\\)"
+                match = re.search(copy_re, instance.name)
+                if match is None:
+                    label = f"{instance.name} ({copylabel})"
+                elif match.groups()[0] is None:
+                    label = re.sub(copy_re, f"({copylabel} 2)", instance.name)
+                else:
+                    n = int(match.groups()[0].strip()) + 1
+                    label = re.sub(copy_re, f"({copylabel} {n})", instance.name)
+                attrs[labelfield] = label
+            try:
+                create_copy_of_instance(instance, attrs=attrs)
+                created += 1
+            except Exception as e:
+                messages.error(request, e)
+                errors += 1
+            messages.success(request, _("Created %s copies" % created))
+        return redirect(reverse(model_urlname(model, "browse")))
 
     return copy
