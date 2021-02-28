@@ -45,7 +45,6 @@ setup(
         "django-markdown2",
         "django-countries",
         "django-money[exchange]",
-        "Arpeggio",  # used to create strong parsers
         "django-simple-history",
         "django-clone",
         # Required for multimedia
@@ -62,6 +61,8 @@ setup(
         "django-haystack",
         "whoosh",
         "celery-haystack",
+        # required for query-field
+        "djangoql",
     ],
     packages=find_packages(),
     setup_requires=["setuptools_scm"],

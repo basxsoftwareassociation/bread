@@ -10,6 +10,8 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sites",
     "bread",
+    "bread.contrib.reports",
+    "easy_thumbnails",
 ]
 
 settings.configure(

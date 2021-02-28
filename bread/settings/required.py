@@ -24,6 +24,7 @@ _third_party_apps = [
     "haystack",
     "whoosh",
     "celery_haystack",
+    "djangoql",
 ]
 _django_apps = [
     "django.forms",
