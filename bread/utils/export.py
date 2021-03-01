@@ -43,27 +43,25 @@ def html_to_pdf(html, as_http_response=False, name=None):
     return ret
 
 
-def generate_excel(rows, fields):
+def generate_excel(rows, columns):
+    """
+    columns: dict with {<columnname>: formatting_function(row)}
+    """
     import openpyxl
     from openpyxl.styles import Font
 
-    from ..utils import pretty_fieldname
-
     workbook = openpyxl.Workbook()
-    header_cells = workbook.active.iter_cols(
-        min_row=1, max_col=len(fields) + 1, max_row=len(rows) + 1
+    workbookcolumns = workbook.active.iter_cols(
+        min_row=1, max_col=len(columns) + 1, max_row=len(rows) + 1
     )
     newline_regex = re.compile(
         r"<\s*br\s*/?\s*>"
     )  # replace HTML line breaks with newlines
-    for field, col in zip(
-        [(field, pretty_fieldname(field)) for field in fields],
-        header_cells,
-    ):
-        col[0].value = field[1]
-        col[0].font = Font(bold=True)
-        for i, cell in enumerate(col[1:]):
-            html_value = str(fields[field[0]](rows[i], field[0]))
+    for columnname, columndata in zip(columns, workbookcolumns):
+        columndata[0].value = str(columnname)
+        columndata[0].font = Font(bold=True)
+        for i, cell in enumerate(columndata[1:]):
+            html_value = str(columns[columnname](rows[i]))
             cleaned = html.unescape(newline_regex.sub(r"\n", strip_tags(html_value)))
             cell.value = cleaned
     return workbook
