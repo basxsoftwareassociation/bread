@@ -21,7 +21,15 @@ class EditView(views.EditView):
                 _layout.grid.Row(
                     _layout.grid.Col(
                         hg.H3(
-                            hg.I(hg.F(lambda c, e: c["object"])),
+                            hg.I(
+                                hg.If(
+                                    hg.C("object.name"),
+                                    hg.F(lambda c, e: c["object"]),
+                                    hg.BaseElement(
+                                        _("New report: "), hg.C("object.model")
+                                    ),
+                                )
+                            ),
                         )
                     )
                 ),
