@@ -45,7 +45,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
         return _layout.datatable.DataTable.from_model(
             self.model,
             hg.C("object_list"),
-            fields=self.fields,
+            columns=self.fields,
             bulkactions=self.bulkactions,
             rowactions=self.rowactions,
             searchurl=self.searchurl,
