@@ -6,6 +6,7 @@ from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils.html import mark_safe
+from django.utils.translation import gettext_lazy as _
 from djangoql.exceptions import DjangoQLError
 from djangoql.queryset import apply_search
 from djangoql.schema import DjangoQLSchema
@@ -34,11 +35,8 @@ class QuerySetDescriptor:
             instance.refresh_from_db(fields=[self.field.name])
         value = instance.__dict__[self.field.name]
         model = getattr(instance, self.field.modelfieldname, None)
-        if model:
-            try:
-                return parsequeryexpression(model.model_class().objects, value)
-            except ValidationError:
-                return value
+        if model and model.model_class():
+            return parsequeryexpression(model.model_class().objects, value)
         return value
 
     def __set__(self, instance, value):
@@ -102,6 +100,9 @@ class QuerysetField(models.TextField):
 
     def validate(self, value, model_instance):
         super().validate(value, model_instance)
+        model = getattr(model_instance, self.modelfieldname)
+        if not model or not model.model_class():
+            raise ValidationError(_("Invalid model '%s' selected") % model)
         parsequeryexpression(
             getattr(model_instance, self.modelfieldname).model_class().objects, value
         )
@@ -113,48 +114,40 @@ class QuerySetFormWidget(layout.text_area.TextArea):
         self.modelfieldname = modelfieldname
 
     def render(self, context):
-        self.append(
-            hg.SCRIPT(
-                mark_safe(
-                    """
-document.addEventListener("DOMContentLoaded", () => DjangoQL.DOMReady(function () {
-new DjangoQL({
-    introspections: %s,
-    selector: 'textarea[name=%s]',
-    syntaxHelp: '%s',
-    autoResize: false
-  });
-}));
-"""
-                    % (
-                        json.dumps(
-                            DjangoQLSchemaSerializer().serialize(
-                                DjangoQLSchema(
-                                    getattr(
-                                        self.boundfield.form.instance,
-                                        self.modelfieldname,
-                                    ).model_class()
+        model = getattr(self.boundfield.form.instance, self.modelfieldname)
+        if model and model.model_class():
+            self.append(
+                hg.SCRIPT(
+                    mark_safe(
+                        """
+    document.addEventListener("DOMContentLoaded", () => DjangoQL.DOMReady(function () {
+    new DjangoQL({
+        introspections: %s,
+        selector: 'textarea[name=%s]',
+        syntaxHelp: '%s',
+        autoResize: false
+      });
+    }));
+    """
+                        % (
+                            json.dumps(
+                                DjangoQLSchemaSerializer().serialize(
+                                    DjangoQLSchema(model.model_class())
                                 )
-                            )
-                        ),
-                        self.boundfield.name,
-                        reverse("reporthelp"),
+                            ),
+                            self.boundfield.name,
+                            reverse("reporthelp"),
+                        )
                     )
-                )
-            ),
-        )
+                ),
+            )
         return super().render(context)
 
 
 def parsequeryexpression(basequeryset, expression):
-    if not isinstance(expression, str):
-        raise RuntimeError(
-            f"expression '{expression}' needs to be of type str instead of {type(expression)}"
-        )
     if not expression:
-        return basequeryset
+        return QueryValue(basequeryset.all(), expression)
     try:
-        query = apply_search(basequeryset, expression)
+        return QueryValue(apply_search(basequeryset, expression), expression)
     except DjangoQLError as e:
         raise ValidationError(str(e))
-    return QueryValue(query, expression)

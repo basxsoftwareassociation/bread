@@ -1,6 +1,6 @@
 from django.db import models
 
 
-class ModelFieldLookup(models.TextField):
+class ModelFieldLookup(models.CharField):
     # TODO: implement
     pass

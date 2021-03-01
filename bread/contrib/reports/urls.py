@@ -4,31 +4,53 @@ from django.urls import path
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView
 
+from bread import layout as _layout
 from bread import menu, views
-from bread.formatters import render_field
 from bread.utils import generate_excel, pretty_modelname, urls, xlsxresponse
-from bread.utils.model_helpers import _expand_ALL_constant
 
 from .models import Report
 
 
 class EditView(views.EditView):
-    fields = ["filter"]
-
     def layout(self, request):
-        ret = super().layout(request)
-        ret.append(hg.C("object.preview"))
+        F = _layout.form.FormField
+        R = _layout.grid.Row
+        C = _layout.grid.Col
+        ret = hg.BaseElement(
+            _layout.grid.Grid(
+                _layout.grid.Row(
+                    _layout.grid.Col(
+                        hg.H3(
+                            hg.I(hg.F(lambda c, e: c["object"])),
+                        )
+                    )
+                ),
+            ),
+            _layout.form.Form.wrap_with_form(
+                hg.C("form"),
+                hg.BaseElement(
+                    F("name"),
+                    F("filter"),
+                    hg.H4(_("Columns")),
+                    _layout.form.FormsetField(
+                        "columns", R(C(F("column")), C(F("name"))), extra=1
+                    ),
+                    _layout.form.FormsetAddButton("columns"),
+                ),
+            ),
+            hg.C("object.preview"),
+        )
         return ret
 
 
 def exceldownload(request, report_pk: int):
     report = get_object_or_404(Report, pk=report_pk)
-    fields = {
-        field: render_field
-        for field in _expand_ALL_constant(report.model.model_class(), ["__all__"])
+    columns = {
+        column.name: lambda row, c=column.column: hg.resolve_lookup(row, c)
+        for column in report.columns.all()
     }
 
-    workbook = generate_excel(report.filter.queryset, fields)
+    workbook = generate_excel(report.filter.queryset, columns)
     workbook.title = pretty_modelname(report.model.model_class(), plural=True)
 
     return xlsxresponse(workbook, workbook.title)
@@ -38,6 +60,7 @@ urlpatterns = [
     *urls.default_model_paths(
         Report,
         browseview=views.BrowseView._with(
+            fields=["name"],
             rowclickaction="read",
             bulkactions=[
                 menu.Link(
