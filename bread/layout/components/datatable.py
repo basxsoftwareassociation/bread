@@ -5,7 +5,7 @@ from bread.menu import Action, Link
 from bread.utils import filter_fieldlist, pretty_modelname
 from bread.utils.urls import reverse_model
 
-from ..base import FC, FieldLabel, aslink_attributes, objectaction
+from ..base import FC, aslink_attributes, fieldlabel, objectaction
 from .button import Button
 from .icon import Icon
 from .overflow_menu import OverflowMenu
@@ -237,7 +237,7 @@ class DataTable(hg.BaseElement):
     def from_model(
         model,
         queryset=None,
-        fields=["__all__"],
+        columns=["__all__"],
         rowactions=None,
         rowactions_dropdown=False,
         bulkactions=(),
@@ -282,27 +282,27 @@ class DataTable(hg.BaseElement):
         action_menu_header = hg.BaseElement()
         action_menu_header.td_attributes = {"_class": "bx--table-column-menu"}
         queryset = model.objects.all() if queryset is None else queryset
-        if "__all__" in fields:
-            fields = filter_fieldlist(model, fields)
-        columns = []
-        for field in fields:
-            if isinstance(field, str):
-                field = (
-                    FieldLabel(model, field),
-                    FC(f"{rowvariable}.{field}"),
+        if "__all__" in columns:
+            columns = filter_fieldlist(model, columns)
+        columndefinitions = []
+        for column in columns:
+            if isinstance(column, str):
+                column = (
+                    fieldlabel(model, column),
+                    FC(f"{rowvariable}.{column}"),
                 )
-            elif not (isinstance(field, tuple) and len(field) == 2):
+            elif not (isinstance(column, tuple) and len(column) == 2):
                 raise ValueError(
-                    f"argument for 'fields' needs to be of a list with items of type str or tuple (headvalue, cellvalue), but found {field}"
+                    f"Argument 'columns' needs to be of a list with items of type str or tuple (headvalue, cellvalue), but found {column}"
                 )
             if rowclickaction:
-                field[1].td_attributes = aslink_attributes(
+                column[1].td_attributes = aslink_attributes(
                     hg.F(lambda c, e: objectaction(c[rowvariable], rowclickaction))
                 )
-            columns.append(field)
+            columndefinitions.append(column)
 
         table = DataTable(
-            columns
+            columndefinitions
             + ([(action_menu_header, objectactions_menu)] if rowactions else []),
             # querysets are cached, the call to all will make sure a new query is used in every request
             hg.F(lambda c, e: queryset),

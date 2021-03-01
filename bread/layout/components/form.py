@@ -27,6 +27,7 @@ class Form(hg.FORM):
                 hg.DIV(
                     Button(submit_label or _("Save"), type="submit"),
                     _class="bx--form-item",
+                    style="margin-top: 2rem",
                 ),
             )
         return Form(form, *elements, **kwargs)
