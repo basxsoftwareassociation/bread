@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-04 12:00+0700\n"
+"POT-Creation-Date: 2021-03-04 15:50+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: bread/contrib/reports/fields/queryfield.py:105
 #, python-format
@@ -74,25 +73,25 @@ msgstr ""
 
 #: bread/layout/components/button.py:64
 msgid "Print"
-msgstr "Drucken"
+msgstr ""
 
-#: bread/layout/components/datatable.py:254
+#: bread/layout/components/datatable.py:249
 msgid "Cancel"
-msgstr "Abbrechen"
+msgstr ""
 
-#: bread/layout/components/datatable.py:265
+#: bread/layout/components/datatable.py:260
 msgid " items selected"
-msgstr " Einträge ausgewählt"
+msgstr ""
 
-#: bread/layout/components/datatable.py:271
+#: bread/layout/components/datatable.py:266
 msgid "Table Action Bar"
-msgstr "Tabellen Aktionsbar"
+msgstr ""
 
-#: bread/layout/components/datatable.py:385 bread/views/add.py:35
+#: bread/layout/components/datatable.py:383 bread/views/add.py:35
 #: bread/views/add.py:58
 #, python-format
 msgid "Add %s"
-msgstr "%s erstellen"
+msgstr ""
 
 #: bread/layout/components/file_uploader.py:28
 msgid "Select file"
@@ -100,88 +99,90 @@ msgstr ""
 
 #: bread/layout/components/form.py:28
 msgid "Save"
-msgstr "Speichern"
+msgstr ""
 
 #: bread/layout/components/form.py:65
 msgid "Form error"
-msgstr "Formfehler"
+msgstr ""
 
 #: bread/layout/components/form.py:71
 msgid "Form error: "
-msgstr "Formfehler: "
+msgstr ""
 
 #: bread/layout/components/form.py:183
 msgid "Add"
-msgstr "Erstellen"
+msgstr ""
 
 #: bread/layout/components/form.py:203
 msgid "Delete"
-msgstr "Löschen"
+msgstr ""
 
 #: bread/layout/components/notification.py:125
 msgid "Time stamp"
-msgstr "Zeitpunkt"
+msgstr ""
 
 #: bread/layout/components/progress_indicator.py:33
 msgid "Optional"
-msgstr "Optional"
+msgstr ""
 
 #: bread/layout/components/search.py:17 bread/layout/components/search.py:22
 msgid "Search"
-msgstr "Suchen"
+msgstr ""
 
 #: bread/layout/components/search.py:28 bread/layout/components/search.py:29
 msgid "Clear search input"
-msgstr "Suchtext löschen"
+msgstr ""
+
+#: bread/layout/components/tag.py:17
+msgid "Remove"
+msgstr ""
 
 #: bread/layout/components/text_input.py:78
 msgid "Show password"
-msgstr "Zeige Passwort"
+msgstr ""
 
 #: bread/layout/components/toggle.py:11
 msgid "On"
-msgstr "An"
+msgstr ""
 
 #: bread/layout/components/toggle.py:12
 msgid "Off"
-msgstr "Aus"
+msgstr ""
 
 #: bread/templates/admin/base_site.html:3
 msgid "System Settings"
-msgstr "Systemeinstellungen"
+msgstr ""
 
 #: bread/templates/bread/components/header.html:42
 #: bread/templates/bread/components/header.html:43
 msgid "Logout"
-msgstr "Ausloggen"
+msgstr ""
 
 #: bread/templates/bread/confirm_delete.html:8
 msgid "cannot be deleted because of the following related objects:"
 msgstr ""
-" kann nicht gelöscht werden weil folgende Objekte nicht automatisch gelöscht "
-"werden können"
 
 #: bread/templates/bread/confirm_delete.html:24
 msgid "The following objects will be deleted too:"
-msgstr "Die folgenden Objekte werden ebenfalls gelöscht:"
+msgstr ""
 
 #: bread/templates/bread/confirm_delete.html:36
 msgid "Are you sure you want to delete"
-msgstr "Sind sie sicher, dass Sie dises Objekt löschen wollen:"
+msgstr ""
 
 #: bread/templates/bread/confirm_delete.html:38
 msgid "Yes, delete"
-msgstr "Ja, löschen"
+msgstr ""
 
 #: bread/views/add.py:26
 #, python-format
 msgid "Added %s"
-msgstr "%s erstellt"
+msgstr ""
 
 #: bread/views/delete.py:39
 #, python-format
 msgid "Delete %s"
-msgstr "Lösche %s"
+msgstr ""
 
 #: bread/views/delete.py:72
 #, python-format
@@ -189,14 +190,13 @@ msgid "%s could not be deleted: %s"
 msgstr ""
 
 #: bread/views/delete.py:77
-#, fuzzy, python-format
-#| msgid "Delete %s"
+#, python-format
 msgid "Deleted %s %s"
-msgstr "Lösche %s"
+msgstr ""
 
 #: bread/views/edit.py:88 bread/views/edit.py:121
 msgid "Copy"
-msgstr "Kopieren"
+msgstr ""
 
 #: bread/views/edit.py:138
 #, python-format
@@ -205,7 +205,7 @@ msgstr ""
 
 #: bread/views/system.py:12
 msgid "Login"
-msgstr "Einloggen"
+msgstr ""
 
 #: bread/views/wizard.py:50
 msgid "Back"
@@ -218,10 +218,3 @@ msgstr ""
 #: bread/views/wizard.py:64
 msgid "Continue"
 msgstr ""
-
-#~ msgid " (required)"
-#~ msgstr " (erforderlich)"
-
-#, fuzzy
-#~ msgid "Add files"
-#~ msgstr "Dateien hinzufügen"

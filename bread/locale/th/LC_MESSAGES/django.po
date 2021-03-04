@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-10 16:12+0700\n"
+"POT-Creation-Date: 2021-03-04 12:00+0700\n"
 "PO-Revision-Date: 2021-01-15 10:36+0700\n"
 "Last-Translator: Tida <tida@basx.dev>\n"
 "Language-Team: \n"
@@ -18,71 +18,113 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 2.2.4\n"
 
-#: bread/layout/components/button.py:63
+#: bread/contrib/reports/fields/queryfield.py:105
+#, python-format
+msgid "Invalid model '%s' selected"
+msgstr ""
+
+#: bread/contrib/reports/models.py:12
+msgid "Created"
+msgstr ""
+
+#: bread/contrib/reports/models.py:13 bread/contrib/reports/models.py:50
+msgid "Name"
+msgstr ""
+
+#: bread/contrib/reports/models.py:18
+msgid "Model"
+msgstr ""
+
+#: bread/contrib/reports/models.py:19
+msgid "Filter"
+msgstr ""
+
+#: bread/contrib/reports/models.py:28
+msgid "Preview"
+msgstr ""
+
+#: bread/contrib/reports/models.py:38
+msgid "Report"
+msgstr ""
+
+#: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:121
+#: bread/contrib/reports/urls.py:122
+msgid "Reports"
+msgstr ""
+
+#: bread/contrib/reports/models.py:49
+msgid "Column"
+msgstr ""
+
+#: bread/contrib/reports/models.py:52
+msgid "Aggregation"
+msgstr ""
+
+#: bread/contrib/reports/urls.py:29
+msgid "New report: "
+msgstr ""
+
+#: bread/contrib/reports/urls.py:42
+msgid "Columns"
+msgstr ""
+
+#: bread/contrib/reports/urls.py:92
+msgid "Excel"
+msgstr ""
+
+#: bread/layout/components/button.py:64
 msgid "Print"
 msgstr "พิมพ์"
 
-#: bread/layout/components/checkbox.py:34
-#: bread/layout/components/date_picker.py:79
-#: bread/layout/components/file_uploader.py:63
-#: bread/layout/components/select.py:61 bread/layout/components/text_area.py:51
-#: bread/layout/components/text_input.py:46
-#: bread/layout/components/text_input.py:164
-#: bread/layout/components/toggle.py:42
-msgid " (required)"
-msgstr "(จำเป็น)"
-
-#: bread/layout/components/datatable.py:183
+#: bread/layout/components/datatable.py:254
 msgid "Cancel"
 msgstr ""
 
-#: bread/layout/components/datatable.py:194
+#: bread/layout/components/datatable.py:265
 msgid " items selected"
 msgstr "เลือกรายการ"
 
-#: bread/layout/components/datatable.py:200
+#: bread/layout/components/datatable.py:271
 msgid "Table Action Bar"
 msgstr "แถบงาน"
 
-#: bread/layout/components/datatable.py:270 bread/views/add.py:36
-#: bread/views/add.py:59 bread/views/browse.py:71
+#: bread/layout/components/datatable.py:385 bread/views/add.py:35
+#: bread/views/add.py:58
 #, python-format
 msgid "Add %s"
 msgstr "เพิ่ม %s"
 
-#: bread/layout/components/file_uploader.py:25
-#, fuzzy
-#| msgid "Add %s"
-msgid "Add files"
-msgstr "เพิ่ม %s"
+#: bread/layout/components/file_uploader.py:28
+msgid "Select file"
+msgstr ""
 
 #: bread/layout/components/form.py:28
 msgid "Save"
 msgstr "บันทึก"
 
-#: bread/layout/components/form.py:64
+#: bread/layout/components/form.py:65
 msgid "Form error"
 msgstr "เกิดข้อผิดพลาด"
 
-#: bread/layout/components/form.py:70
+#: bread/layout/components/form.py:71
 msgid "Form error: "
 msgstr "เกิดข้อผิดพลาด"
 
-#: bread/layout/components/form.py:182
+#: bread/layout/components/form.py:183
 msgid "Add"
 msgstr "เพิ่ม"
 
-#: bread/layout/components/form.py:202
+#: bread/layout/components/form.py:203
 msgid "Delete"
 msgstr "ลบ"
 
-#: bread/layout/components/notification.py:122
+#: bread/layout/components/notification.py:125
 #, fuzzy
 #| msgid "Time stamp "
 msgid "Time stamp"
 msgstr "บันทึกเวลา"
 
-#: bread/layout/components/progress_indicator.py:34
+#: bread/layout/components/progress_indicator.py:33
 msgid "Optional"
 msgstr "ตัวเลือกเพิ่มเติม"
 
@@ -94,7 +136,7 @@ msgstr "ค้นหา"
 msgid "Clear search input"
 msgstr "ล้างข้อมูลการค้นหา"
 
-#: bread/layout/components/text_input.py:70
+#: bread/layout/components/text_input.py:78
 msgid "Show password"
 msgstr "เห็นรหัสผ่าน"
 
@@ -131,20 +173,56 @@ msgstr "คุณแน่ใจว่าต้องการลบข้อม
 msgid "Yes, delete"
 msgstr "ใช่ ลบข้อมูล"
 
-#: bread/views/add.py:27
+#: bread/views/add.py:26
 #, python-format
 msgid "Added %s"
 msgstr "เพิ่ม %s"
 
-#: bread/views/delete.py:38
+#: bread/views/delete.py:39
 #, python-format
 msgid "Delete %s"
 msgstr "ลบ %s"
 
-#: bread/views/edit.py:88
+#: bread/views/delete.py:72
+#, python-format
+msgid "%s could not be deleted: %s"
+msgstr ""
+
+#: bread/views/delete.py:77
+#, fuzzy, python-format
+#| msgid "Delete %s"
+msgid "Deleted %s %s"
+msgstr "ลบ %s"
+
+#: bread/views/edit.py:88 bread/views/edit.py:121
 msgid "Copy"
 msgstr "คัดลอก"
+
+#: bread/views/edit.py:138
+#, python-format
+msgid "Created %s copies"
+msgstr ""
 
 #: bread/views/system.py:12
 msgid "Login"
 msgstr ""
+
+#: bread/views/wizard.py:50
+msgid "Back"
+msgstr ""
+
+#: bread/views/wizard.py:61
+msgid "Complete"
+msgstr ""
+
+#: bread/views/wizard.py:64
+msgid "Continue"
+msgstr ""
+
+#~ msgid " (required)"
+#~ msgstr "(จำเป็น)"
+
+#, fuzzy
+#~| msgid "Add %s"
+#~ msgid "Add files"
+#~ msgstr "เพิ่ม %s"
