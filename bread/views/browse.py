@@ -22,6 +22,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
     itemsperpage_urlparameter = "itemsperpage"
     pagination_choices = ()
     columns = ["__all__"]
+    searchurl = None
+    queryfieldname = None
+    rowclickaction = None
     filterfields = None
     bulkactions = ()  # list of links
     rowactions = ()  # list of links
