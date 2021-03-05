@@ -1,15 +1,64 @@
 import htmlgenerator as hg
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from bread.menu import Action, Link
-from bread.utils import filter_fieldlist, pretty_modelname
+from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
 from bread.utils.urls import reverse_model
 
-from ..base import FC, aslink_attributes, fieldlabel, objectaction
+from ..base import aslink_attributes, fieldlabel, objectaction
 from .button import Button
 from .icon import Icon
 from .overflow_menu import OverflowMenu
+from .pagination import Pagination
 from .search import Search
+
+
+def sortingclass_for_column(orderingurlparameter, columnname):
+    def extracturlparameter(context, element):
+        value = context["request"].GET.get(orderingurlparameter, "")
+        if not value:
+            return ""
+        if value == columnname:
+            return "bx--table-sort--active"
+        if value == "-" + columnname:
+            return "bx--table-sort--active bx--table-sort--ascending"
+        return ""
+
+    return hg.F(extracturlparameter)
+
+
+def sortingname_for_column(model, column):
+    components = []
+    for field in resolve_modellookup(model, column):
+        if hasattr(field, "sorting_name"):
+            components.append(field.sorting_name)
+        elif isinstance(field, models.Field):
+            components.append(field.name)
+        else:
+            return None
+    return "__".join(components)
+
+
+def sortinglink_for_column(orderingurlparameter, columnname):
+    ORDERING_VALUES = {
+        "": columnname,
+        columnname: "-" + columnname,
+        "-" + columnname: "",
+    }
+
+    def extractsortinglink(context, element):
+        currentordering = context["request"].GET.get(orderingurlparameter, "")
+        nextordering = ORDERING_VALUES.get(currentordering, columnname)
+        urlparams = context["request"].GET.copy()
+        urlparams[orderingurlparameter] = nextordering
+        if not nextordering:
+            del urlparams[orderingurlparameter]
+        return context["request"].path + (
+            f"?{urlparams.urlencode()}" if urlparams else ""
+        )
+
+    return aslink_attributes(hg.F(extractsortinglink))
 
 
 class DataTable(hg.BaseElement):
@@ -21,12 +70,14 @@ class DataTable(hg.BaseElement):
         row_iterator,
         rowvariable="row",
         spacing="default",
+        orderingurlparameter="ordering",
         zebra=False,
     ):
-        """columns: tuple(header_expression, row_expression)
+        """columns: tuple(header_expression, row_expression, sortingname)
         row_iterator: python iterator of htmlgenerator.Lazy object which returns an iterator
         rowvariable: name of the current object passed to childrens context
         if the header_expression/row_expression has an attribute td_attributes it will be used as attributes for the TH/TD elements (necessary because sometimes the content requires additional classes on the parent element)
+        sortingname: value for the URL parameter 'orderingurlparameter', None if sorting is not allowed
         spacing: one of "default", "compact", "short", "tall"
         zebra: alternate row colors
         """
@@ -34,31 +85,42 @@ class DataTable(hg.BaseElement):
             raise ValueError(
                 f"argument 'spacin' is {spacing} but needs to be one of {DataTable.SPACINGS}"
             )
-        classes = ["bx--data-table"]
+        classes = ["bx--data-table bx--data-table--sort"]
         if spacing != "default":
-            classes.append(f"bx--data-table--{spacing}")
+            classes.append(f" bx--data-table--{spacing}")
         if zebra:
-            classes.append("bx--data-table--zebra")
+            classes.append(" bx--data-table--zebra")
 
-        self.head = hg.TR(
-            *[
-                hg.TH(
-                    hg.SPAN(
-                        header,
-                        _class="bx--table-header-label",
+        self.head = hg.TR()
+        for header, cell, sortingname in columns:
+            headcontent = hg.SPAN(header, _class="bx--table-header-label")
+            if sortingname:
+                headcontent = hg.BUTTON(
+                    headcontent,
+                    Icon("arrow--down", _class="bx--table-sort__icon", size=16),
+                    Icon(
+                        "arrows--vertical",
+                        _class="bx--table-sort__icon-unsorted",
+                        size=16,
                     ),
-                    **getattr(header, "td_attributes", {}),
+                    _class=hg.BaseElement(
+                        "bx--table-sort ",
+                        sortingclass_for_column(orderingurlparameter, sortingname),
+                    ),
+                    data_event="sort",
+                    title=header,
+                    **sortinglink_for_column(orderingurlparameter, sortingname),
                 )
-                for header, cell in columns
-            ]
-        )
+
+            self.head.append(hg.TH(headcontent, **getattr(header, "td_attributes", {})))
+
         self.iterator = hg.Iterator(
             row_iterator,
             rowvariable,
             hg.TR(
                 *[
                     hg.TD(cell, **getattr(cell, "td_attributes", {}))
-                    for header, cell in columns
+                    for header, cell, _ in columns
                 ]
             ),
         )
@@ -70,7 +132,7 @@ class DataTable(hg.BaseElement):
             )
         )
 
-    def wrap(
+    def with_toolbar(
         self,
         title,
         helper_text=None,
@@ -78,6 +140,10 @@ class DataTable(hg.BaseElement):
         searchurl=None,
         queryfieldname=None,
         bulkactions=(),
+        pagination_options=(),
+        paginator=None,
+        page_urlparameter="page",
+        itemsperpage_urlparameter="itemsperpage",
     ):
         """
         wrap this datatable with title and toolbar
@@ -229,6 +295,18 @@ class DataTable(hg.BaseElement):
                 style="width: 100%; position: relative",
             ),
             self,
+            *(
+                [
+                    Pagination(
+                        paginator,
+                        pagination_options,
+                        page_urlparameter=page_urlparameter,
+                        itemsperpage_urlparameter=itemsperpage_urlparameter,
+                    )
+                ]
+                if paginator
+                else []
+            ),
             _class="bx--data-table-container",
             data_table=True,
         )
@@ -247,7 +325,12 @@ class DataTable(hg.BaseElement):
         searchurl=None,
         queryfieldname=None,
         rowclickaction=None,
-        wrap=True,
+        preven_automatic_sortingnames=False,
+        with_toolbar=True,
+        pagination_options=(),
+        paginator=None,
+        page_urlparameter="page",
+        itemsperpage_urlparameter="itemsperpage",
         **kwargs,
     ):
         if title is None:
@@ -286,14 +369,20 @@ class DataTable(hg.BaseElement):
             columns = filter_fieldlist(model, columns)
         columndefinitions = []
         for column in columns:
+            if not (
+                (isinstance(column, tuple) and len(column) == 3)
+                or isinstance(column, str)
+            ):
+                raise ValueError(
+                    f"Argument 'columns' needs to be of a list with items of type str or tuple (headvalue, cellvalue, sort-name), but found {column}"
+                )
             if isinstance(column, str):
                 column = (
                     fieldlabel(model, column),
-                    FC(f"{rowvariable}.{column}"),
-                )
-            elif not (isinstance(column, tuple) and len(column) == 2):
-                raise ValueError(
-                    f"Argument 'columns' needs to be of a list with items of type str or tuple (headvalue, cellvalue), but found {column}"
+                    hg.C(f"{rowvariable}.{column}"),
+                    sortingname_for_column(model, column)
+                    if not preven_automatic_sortingnames
+                    else None,
                 )
             if rowclickaction:
                 column[1].td_attributes = aslink_attributes(
@@ -303,13 +392,13 @@ class DataTable(hg.BaseElement):
 
         table = DataTable(
             columndefinitions
-            + ([(action_menu_header, objectactions_menu)] if rowactions else []),
+            + ([(action_menu_header, objectactions_menu, None)] if rowactions else []),
             # querysets are cached, the call to all will make sure a new query is used in every request
             hg.F(lambda c, e: queryset),
             **kwargs,
         )
-        if wrap:
-            table = table.wrap(
+        if with_toolbar:
+            table = table.with_toolbar(
                 title,
                 primary_button=Button(
                     _("Add %s") % pretty_modelname(model),
@@ -318,6 +407,10 @@ class DataTable(hg.BaseElement):
                 ),
                 searchurl=searchurl,
                 bulkactions=bulkactions,
+                pagination_options=pagination_options,
+                page_urlparameter=page_urlparameter,
+                paginator=paginator,
+                itemsperpage_urlparameter=itemsperpage_urlparameter,
             )
         return table
 

@@ -1,15 +1,21 @@
 Progress of components implementation
 -------------------------------------
 
+NOTE FOR DEVELOPERS:
+The form components do currently use a rather suboptimal implementation where a lot of work is done inside the render method and only working when used inside django generated forms (but not as standalone elements).
+The clean way would be to do everything inside __init__ and use lazy evaluation from htmlgenerator.
+Please check the implementation of Select in select.py for how to do it right.
+The other form elements should be implemented the same way.
+
 Grids and icons are already implemented as well.
 
 High prio:
 - [x] Button: button.py
 - [x] Checkbox: checkbox.py
-- [/] Data table: datatable.py needs pagination and sorting added
+- [x] Data table: datatable.py needs pagination and sorting added
 - [x] Date picker: date_picker.py
 - [ ] Dropdown: 
-- [ ] File uploader: 
+- [x] File uploader: 
 - [x] Form: form.py
 - [x] Modal: modal.py
 - [ ] Multiselect: 
@@ -23,7 +29,7 @@ High prio:
 - [x] Select: select.py
 - [ ] Slider: 
 - [x] Tabs: tabs.py
-- [ ] Tag: 
+- [x] Tag: 
 - [x] Text input: text_area.py, text_input.py
 - [ ] Tile: 
 - [x] Toggle: toggle.py

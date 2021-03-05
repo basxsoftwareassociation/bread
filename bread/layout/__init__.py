@@ -13,6 +13,7 @@ from .components import overflow_menu  # noqa
 from .components import progress_indicator  # noqa
 from .components import search  # noqa
 from .components import tabs  # noqa
+from .components import tag  # noqa
 from .components import text_area  # noqa
 from .components import text_input  # noqa
 from .components import toggle  # noqa

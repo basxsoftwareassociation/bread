@@ -171,8 +171,11 @@ BRANDING = {
     "platform": "PLATFORM_NAME",
 }
 
-DEFAULT_PAGINATION = 1000
-DEFAULT_PAGINATION_CHOICES = [10, 100, 1000]
+DEFAULT_PAGINATION_CHOICES = [
+    25,
+    50,
+    100,
+]  # Defines what the default options for pagination are
 
 # This one should only be activated in production or in dev environments with celery ready to run
 # HAYSTACK_SIGNAL_PROCESSOR = "celery_haystack.signals.CelerySignalProcessor"

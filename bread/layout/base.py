@@ -1,10 +1,14 @@
 import htmlgenerator as hg
-from django.core.exceptions import FieldDoesNotExist
 
-from bread.utils import pretty_modelname
+from bread.utils import pretty_modelname, resolve_modellookup
 from bread.utils.urls import reverse_model
 
 from ..formatters import format_value
+
+
+def fieldlabel(model, accessor):
+    label = resolve_modellookup(model, accessor)[-1]
+    return getattr(label, "verbose_name", None) or label
 
 
 def objectaction(object, action, *args, **kwargs):
@@ -36,19 +40,6 @@ def aslink_attributes(href):
 class ModelName(hg.ContextValue):
     def resolve(self, context, element):
         return pretty_modelname(super().resolve(context, element))
-
-
-def fieldlabel(model, accessor):
-    try:
-        # if the accessor starts with access to a field we would only get the DeferredAttribute
-        # from django, therefore we need to insert a "field" attribute accessor
-        first = accessor.split(".")[0]
-        model._meta.get_field(first)
-        accessor = ".".join([first, "field"] + accessor.split(".")[1:])
-    except FieldDoesNotExist:
-        pass
-    label = hg.resolve_lookup(model, accessor, call_functions=False)
-    return getattr(label, "verbose_name", label)
 
 
 class FormattedContextValue(hg.ContextValue):

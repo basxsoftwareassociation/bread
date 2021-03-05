@@ -5,8 +5,8 @@ from django.db import models
 def pretty_modelname(model, plural=False):
     """Canonical way to pretty print a model name"""
     if plural:
-        return title(model._meta.verbose_name_plural)
-    return title(model._meta.verbose_name)
+        return model._meta.verbose_name_plural
+    return model._meta.verbose_name
 
 
 def pretty_fieldname(field):
@@ -35,10 +35,31 @@ def pretty_fieldname(field):
     return str(ret)
 
 
-def title(label):
-    if label and label[0].islower():
-        return label.title()
-    return label
+def resolve_modellookup(model, accessor):
+    """Takes a model and an accessor string like 'address.street' and returns a list of the according python objects"""
+    attrib = model
+    attribchain = []
+    for attribstr in accessor.split("."):
+        if isinstance(attrib, models.Model) or (
+            isinstance(attrib, type) and issubclass(attrib, models.Model)
+        ):
+            try:
+                attrib = attrib._meta.get_field(attribstr)
+            except FieldDoesNotExist:
+                attrib = getattr(attrib, attribstr)
+        elif isinstance(attrib, models.fields.related.RelatedField):
+            attrib = attrib.related_model
+            try:
+                attrib = attrib._meta.get_field(attribstr)
+            except FieldDoesNotExist:
+                attrib = getattr(attrib, attribstr)
+        else:
+            try:
+                attrib = attrib[attribstr]
+            except (TypeError, AttributeError, KeyError, ValueError, IndexError):
+                attrib = getattr(attrib, attribstr)
+        attribchain.append(attrib)
+    return attribchain
 
 
 def has_permission(user, operation, instance):

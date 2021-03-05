@@ -6,15 +6,13 @@ from _strptime import TimeRE
 from django import template
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
-from django.forms import DateInput, Textarea, TextInput
 from django.utils import formats
 from django.utils.html import mark_safe
 
 from .. import layout as layout
 from .. import menu as menuregister
 from ..formatters import as_object_link, format_value
-from ..forms import forms
-from ..utils import has_permission, pretty_fieldname, title
+from ..utils import has_permission, pretty_fieldname
 from ..utils.datetimeformatstring import to_php_formatstr
 
 logger = logging.getLogger(__name__)
@@ -81,22 +79,10 @@ def has_link_permission(link, request, obj=None):
 
 
 @register.simple_tag
-def pretty_modelname(model, plural=False):
-    if plural:
-        return title(model._meta.verbose_name_plural)
-    return title(model._meta.verbose_name)
-
-
-@register.simple_tag
-def modelname(model):
-    return model._meta.model_name
-
-
-@register.simple_tag
 def pagename(request):
     return " / ".join(
         [
-            title(namespace.replace("_", " "))
+            namespace.replace("_", " ").title()
             for namespace in request.resolver_match.namespaces
         ]
     )
@@ -131,32 +117,6 @@ def updated_querystring(context, key, value):
 
 
 # filters
-
-
-@register.filter
-def is_external_url(url):
-    """Return ``True`` if the url is linked to an external page"""
-    return url.startswith("http")
-
-
-@register.filter
-def is_inline_formset(field):
-    return isinstance(field.field, forms.FormsetField)
-
-
-@register.filter
-def is_textinput(field):
-    return isinstance(field.field.widget, TextInput)
-
-
-@register.filter
-def is_textarea(field):
-    return isinstance(field.field.widget, Textarea)
-
-
-@register.filter
-def is_dateinput(field):
-    return isinstance(field.field.widget, DateInput)
 
 
 @register.simple_tag

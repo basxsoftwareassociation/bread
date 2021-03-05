@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
-from django.db.models.functions import Lower
 from django.shortcuts import redirect
 from django_filters.views import FilterView
 from guardian.mixins import PermissionListMixin
@@ -19,38 +18,50 @@ from .util import BreadView
 
 class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView):
     template_name = "bread/layout.html"
-    fields = None
+    orderingurlparameter = "ordering"
+    itemsperpage_urlparameter = "itemsperpage"
+    pagination_choices = ()
+    columns = ["__all__"]
     filterfields = None
-    page_kwarg = "browsepage"  # need to use something different than the default "page" because we also filter through kwargs
     bulkactions = ()  # list of links
     rowactions = ()  # list of links
 
     def __init__(self, *args, **kwargs):
-        self.bulkactions = kwargs.get("bulkactions", getattr(self, "bulkactions", ()))
-        self.rowactions = kwargs.get("rowactions", getattr(self, "rowactions", ()))
-        self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"])) or [
-            "__all__"
-        ]
-        self.filterset_fields = kwargs.get("filterset_fields", self.filterset_fields)
-        self.searchurl = kwargs.get("searchurl", getattr(self, "searchurl", ()))
-        self.queryfieldname = kwargs.get(
-            "queryfieldname", getattr(self, "queryfieldname", ())
+        self.bulkactions = kwargs.get("bulkactions") or self.bulkactions
+        self.orderingurlparameter = (
+            kwargs.get("orderingurlparameter") or self.orderingurlparameter
         )
-        self.rowclickaction = kwargs.get(
-            "rowclickaction", getattr(self, "rowclickaction", None)
+        self.itemsperpage_urlparameter = (
+            kwargs.get("itemsperpage_urlparameter") or self.itemsperpage_urlparameter
         )
+        self.pagination_choices = (
+            kwargs.get("pagination_choices")
+            or self.pagination_choices
+            or settings.DEFAULT_PAGINATION_CHOICES
+        )
+        self.rowactions = kwargs.get("rowactions") or self.rowactions
+        self.columns = kwargs.get("columns") or self.columns
+        self.filterset_fields = kwargs.get("filterset_fields") or self.filterset_fields
+        self.searchurl = kwargs.get("searchurl") or self.searchurl
+        self.queryfieldname = kwargs.get("queryfieldname") or self.queryfieldname
+        self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
         super().__init__(*args, **kwargs)
 
     def layout(self, request):
+        qs = self.get_queryset()
         return _layout.datatable.DataTable.from_model(
             self.model,
             hg.C("object_list"),
-            columns=self.fields,
+            columns=self.columns,
             bulkactions=self.bulkactions,
             rowactions=self.rowactions,
             searchurl=self.searchurl,
             queryfieldname=self.queryfieldname,
             rowclickaction=self.rowclickaction,
+            pagination_options=self.pagination_choices,
+            page_urlparameter=self.page_kwarg,
+            paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
+            itemsperpage_urlparameter=self.itemsperpage_urlparameter,
         )
 
     def get_required_permissions(self, request):
@@ -59,41 +70,36 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
     def get_filterset_class(self):
         return generate_filterset_class(self.model, self.filterset_fields)
 
-    def get_paginate_by(self, queryset=None):
-        return int(
-            self.request.GET.get(
-                "paginate_by",
-                getattr(self, "paginate_by") or settings.DEFAULT_PAGINATION,
-            )
-        )
-
-    def get_pagination_choices(self):
-        return sorted(
-            set(
-                getattr(self, "pagination_choices", settings.DEFAULT_PAGINATION_CHOICES)
-            )
-            | set((self.get_paginate_by(),))
-        )
-
     def get(self, *args, **kwargs):
         if "reset" in self.request.GET:
             return redirect(self.request.path)
 
         return super().get(*args, **kwargs)
 
+    def get_paginate_by(self, queryset):
+        return self.request.GET.get(
+            self.itemsperpage_urlparameter, self.pagination_choices[0]
+        )
+
     def get_queryset(self):
         """Prefetch related tables to speed up queries. Also order result by get-parameters."""
-        ret = super().get_queryset()
-
-        # order fields
-        order = self.request.GET.get("order")
+        qs = super().get_queryset()
+        order = self.request.GET.get(self.orderingurlparameter)
         if order:
-            fields = order.split(",")
-            ordering = [
-                Lower(f[1:]).desc() if f.startswith("-") else Lower(f) for f in fields
-            ]
-            ret = ret.order_by(*ordering)
-        return ret
+            if order.endswith("__int"):
+                order = order[:-5]
+                qs = qs.order_by(
+                    models.functions.Cast(order[1:], models.IntegerField()).desc()
+                    if order.startswith("-")
+                    else models.functions.Cast(order, models.IntegerField())
+                )
+            else:
+                qs = qs.order_by(
+                    models.functions.Lower(order[1:]).desc()
+                    if order.startswith("-")
+                    else models.functions.Lower(order)
+                )
+        return qs
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

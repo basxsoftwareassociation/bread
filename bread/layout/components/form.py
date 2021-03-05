@@ -300,11 +300,6 @@ def _mapwidget(
     if value is not None and "value" not in attrs:
         attrs["value"] = value
 
-    fieldtype = (
-        fieldtype
-        or getattr(field.field, "layout", None)
-        or WIDGET_MAPPING[type(field.field.widget)]
-    )
     elementattributes = {
         **getattr(field.field, "layout_kwargs", {}),
         **elementattributes,
@@ -313,6 +308,31 @@ def _mapwidget(
     if isinstance(field.field.widget, forms.CheckboxInput):
         attrs["checked"] = field.value()
 
+    if isinstance(field.field.widget, forms.Select):
+        return hg.DIV(
+            Select(
+                field.field.widget.optgroups(
+                    field.name,
+                    field.field.widget.get_context(field.name, field.value(), {})[
+                        "widget"
+                    ]["value"],
+                ),
+                label=field.label,
+                help_text=field.help_text,
+                errors=field.errors,
+                disabled=field.field.disabled,
+                required=field.field.required,
+                widgetattributes=attrs,
+                **elementattributes,
+            ),
+            _class="bx--form-item",
+        )
+
+    fieldtype = (
+        fieldtype
+        or getattr(field.field, "layout", None)
+        or WIDGET_MAPPING[type(field.field.widget)]
+    )
     if isinstance(fieldtype, type) and issubclass(fieldtype, hg.BaseElement):
         ret = fieldtype(
             fieldname=field.name, widgetattributes=attrs, **elementattributes

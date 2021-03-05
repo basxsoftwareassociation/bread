@@ -22,7 +22,7 @@ class Report(models.Model):
     def preview(self):
         columns = []
         for column in self.columns.all():
-            columns.append((column.name, layout.FC(f"row.{column.column}")))
+            columns.append((column.name, layout.FC(f"row.{column.column}"), None))
 
         return hg.BaseElement(
             hg.H3(_("Preview")),
