@@ -21,56 +21,56 @@ msgstr ""
 #: bread/contrib/reports/fields/queryfield.py:105
 #, python-format
 msgid "Invalid model '%s' selected"
-msgstr ""
+msgstr "Ungültiges Model '%s' ausgewählt"
 
 #: bread/contrib/reports/models.py:12
 msgid "Created"
-msgstr ""
+msgstr "Erstellt"
 
 #: bread/contrib/reports/models.py:13 bread/contrib/reports/models.py:50
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: bread/contrib/reports/models.py:18
 msgid "Model"
-msgstr ""
+msgstr "Model"
 
 #: bread/contrib/reports/models.py:19
 msgid "Filter"
-msgstr ""
+msgstr "Filter"
 
 #: bread/contrib/reports/models.py:28
 msgid "Preview"
-msgstr ""
+msgstr "Vorschau"
 
 #: bread/contrib/reports/models.py:38
 msgid "Report"
-msgstr ""
+msgstr "Bericht"
 
 #: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:121
 #: bread/contrib/reports/urls.py:122
 msgid "Reports"
-msgstr ""
+msgstr "Berichte"
 
 #: bread/contrib/reports/models.py:49
 msgid "Column"
-msgstr ""
+msgstr "Spalte"
 
 #: bread/contrib/reports/models.py:52
 msgid "Aggregation"
-msgstr ""
+msgstr "Aggregation"
 
 #: bread/contrib/reports/urls.py:29
 msgid "New report: "
-msgstr ""
+msgstr "Neuer Bericht: "
 
 #: bread/contrib/reports/urls.py:42
 msgid "Columns"
-msgstr ""
+msgstr "Spalten"
 
 #: bread/contrib/reports/urls.py:92
 msgid "Excel"
-msgstr ""
+msgstr "Excel"
 
 #: bread/layout/components/button.py:64
 msgid "Print"
@@ -96,7 +96,7 @@ msgstr "%s erstellen"
 
 #: bread/layout/components/file_uploader.py:28
 msgid "Select file"
-msgstr ""
+msgstr "Datei auswählen"
 
 #: bread/layout/components/form.py:28
 msgid "Save"
@@ -186,13 +186,11 @@ msgstr "Lösche %s"
 #: bread/views/delete.py:72
 #, python-format
 msgid "%s could not be deleted: %s"
-msgstr ""
+msgstr "%s konnte nicht gelöscht werden: %s"
 
 #: bread/views/delete.py:77
-#, fuzzy, python-format
-#| msgid "Delete %s"
 msgid "Deleted %s %s"
-msgstr "Lösche %s"
+msgstr "%s wurde gelöscht"
 
 #: bread/views/edit.py:88 bread/views/edit.py:121
 msgid "Copy"
@@ -201,7 +199,7 @@ msgstr "Kopieren"
 #: bread/views/edit.py:138
 #, python-format
 msgid "Created %s copies"
-msgstr ""
+msgstr "%s Kopien erstellt"
 
 #: bread/views/system.py:12
 msgid "Login"
@@ -209,19 +207,12 @@ msgstr "Einloggen"
 
 #: bread/views/wizard.py:50
 msgid "Back"
-msgstr ""
+msgstr "Zurück"
 
 #: bread/views/wizard.py:61
 msgid "Complete"
-msgstr ""
+msgstr "Fertigstellen"
 
 #: bread/views/wizard.py:64
 msgid "Continue"
-msgstr ""
-
-#~ msgid " (required)"
-#~ msgstr " (erforderlich)"
-
-#, fuzzy
-#~ msgid "Add files"
-#~ msgstr "Dateien hinzufügen"
+msgstr "Weiter"
