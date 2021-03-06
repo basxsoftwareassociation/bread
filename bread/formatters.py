@@ -13,7 +13,6 @@ from django.urls import NoReverseMatch
 from django.utils.functional import Promise
 from django.utils.html import format_html, format_html_join, linebreaks, mark_safe
 from django_countries.fields import CountryField
-from easy_thumbnails.files import get_thumbnailer
 
 import bread.settings as app_settings
 
@@ -162,6 +161,8 @@ def as_image(value):
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
         return mark_safe("<small><emph>Image not found</emph></small>")
+    from easy_thumbnails.files import get_thumbnailer
+
     im = get_thumbnailer(value).get_thumbnail({"size": (100, 100), "quality": 75})
     return format_html(
         '<a class="center" href="{}"><img src={} width="{}" height="{}"/></a>',
