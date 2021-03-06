@@ -7,7 +7,7 @@ document.addEventListener(
 
 
 function initAllChoices(element=$("body")) {
-    var selectElements = $$("select", element);
+    var selectElements = $$("select[multiple]", element);
     for(let element of selectElements) {
         makeChoices(element);
     }

@@ -253,6 +253,7 @@ def _mapwidget(
     from .checkbox import Checkbox
     from .date_picker import DatePicker
     from .file_uploader import FileUploader
+    from .multiselect import MultiSelect
     from .select import Select
     from .text_area import TextArea
     from .text_input import PasswordInput, TextInput
@@ -271,7 +272,7 @@ def _mapwidget(
         forms.CheckboxInput: Checkbox,
         forms.Select: Select,
         forms.NullBooleanSelect: Select,
-        forms.SelectMultiple: Select,  # TODO HIGH
+        forms.SelectMultiple: MultiSelect,  # TODO HIGH
         forms.RadioSelect: TextInput,  # TODO HIGH
         forms.CheckboxSelectMultiple: TextInput,  # TODO HIGH
         forms.FileInput: FileUploader,
@@ -292,6 +293,9 @@ def _mapwidget(
     attrs = dict(field.field.widget.attrs)
     attrs.update(widgetattributes)
     attrs = field.build_widget_attrs(attrs)
+    if getattr(field.field.widget, "allow_multiple_selected", False):
+        attrs["multiple"] = True
+        attrs["style"] = "height: 16rem"
     if field.auto_id and "id" not in field.field.widget.attrs:
         attrs.setdefault("id", field.html_initial_id if only_initial else field.auto_id)
     if "name" not in attrs:
@@ -309,6 +313,27 @@ def _mapwidget(
         attrs["checked"] = field.value()
 
     if isinstance(field.field.widget, forms.Select):
+        if False and isinstance(
+            field.field.widget, forms.SelectMultiple
+        ):  # TODO: implement this
+            return hg.DIV(
+                MultiSelect(
+                    field.field.widget.optgroups(
+                        field.name,
+                        field.field.widget.get_context(field.name, field.value(), {})[
+                            "widget"
+                        ]["value"],
+                    ),
+                    label=field.label,
+                    help_text=field.help_text,
+                    errors=field.errors,
+                    disabled=field.field.disabled,
+                    required=field.field.required,
+                    widgetattributes=attrs,
+                    **elementattributes,
+                ),
+                _class="bx--form-item",
+            )
         return hg.DIV(
             Select(
                 field.field.widget.optgroups(
