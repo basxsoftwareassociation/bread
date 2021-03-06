@@ -50,6 +50,15 @@ def reverse(*args, **kwargs):
     return django_reverse(*args, **kwargs)
 
 
+def link_with_urlparameters(request, **kwargs):
+    urlparams = request.GET.copy()
+    for parametername, value in kwargs.items():
+        urlparams[parametername] = value
+        if value in (None, ""):
+            del urlparams[parametername]
+    return request.path + (f"?{urlparams.urlencode()}" if urlparams else "")
+
+
 def reverse_model(model, action, *args, **kwargs):
     # make sure we get the most concrete instance in case the model parameter is an object
     if isinstance(model, models.Model):

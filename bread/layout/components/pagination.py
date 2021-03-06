@@ -1,52 +1,41 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
+from bread.utils.urls import link_with_urlparameters
+
 from ..base import aslink_attributes
 from .icon import Icon
 from .select import Select
 
 
 def linktopage(page_urlparameter, page):
-    def wrapper(context, element):
-        urlparams = context["request"].GET.copy()
-        urlparams[page_urlparameter] = hg.resolve_lazy(page, context, element)
-        return context["request"].path + (
-            f"?{urlparams.urlencode()}" if urlparams else ""
+    return hg.F(
+        lambda c, e: link_with_urlparameters(
+            c["request"], **{page_urlparameter: hg.resolve_lazy(page, c, e)}
         )
-
-    return hg.F(wrapper)
+    )
 
 
 def linktorelativepage(page_urlparameter, direction, maxnum):
     """direction: number of pages to jump, e.g. -1 or 1"""
-
-    def wrapper(context, element):
-        try:
-            currentpage = int(context["request"].GET.get(page_urlparameter, "1"))
-        except ValueError:
-            currentpage = 1
-        nextpage = currentpage + hg.resolve_lazy(direction, context, element)
-        urlparams = context["request"].GET.copy()
-        if 0 < nextpage <= hg.resolve_lazy(maxnum, context, element):
-            urlparams[page_urlparameter] = nextpage
-        return context["request"].path + (
-            f"?{urlparams.urlencode()}" if urlparams else ""
+    return hg.F(
+        lambda c, e: link_with_urlparameters(
+            c["request"],
+            **{
+                page_urlparameter: int(c["request"].GET.get(page_urlparameter, "1"))
+                + hg.resolve_lazy(direction, c, e)
+            },
         )
-
-    return hg.F(wrapper)
+    )
 
 
 def linkwithitemsperpage(itemsperpage_urlparameter, itemsperpage, page_urlparameter):
-    def wrapper(context, element):
-        urlparams = context["request"].GET.copy()
-        urlparams[itemsperpage_urlparameter] = itemsperpage
-        if page_urlparameter in urlparams:
-            del urlparams[page_urlparameter]
-        return context["request"].path + (
-            f"?{urlparams.urlencode()}" if urlparams else ""
+    return hg.F(
+        lambda c, e: link_with_urlparameters(
+            c["request"],
+            **{itemsperpage_urlparameter: itemsperpage, page_urlparameter: None},
         )
-
-    return hg.F(wrapper)
+    )
 
 
 def get_page(paginator, page_urlparameter):

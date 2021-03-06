@@ -1,30 +1,36 @@
-import django_filters
 import htmlgenerator as hg
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 from django.shortcuts import redirect
-from django_filters.views import FilterView
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import ListView
+from djangoql.queryset import apply_search
 from guardian.mixins import PermissionListMixin
 
 from .. import layout as _layout  # prevent name clashing
 from ..formatters import render_field
-from ..forms.forms import FilterForm
-from ..utils import generate_excel, pretty_modelname, xlsxresponse
+from ..menu import Action
+from ..utils import (
+    generate_excel,
+    link_with_urlparameters,
+    pretty_modelname,
+    xlsxresponse,
+)
 from ..utils.model_helpers import _expand_ALL_constant
 from .util import BreadView
 
 
-class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView):
+class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     template_name = "bread/layout.html"
     orderingurlparameter = "ordering"
     itemsperpage_urlparameter = "itemsperpage"
     pagination_choices = ()
     columns = ["__all__"]
     searchurl = None
-    queryfieldname = None
+    query_urlparameter = "q"
     rowclickaction = None
+    filteroptions = ()
     filterfields = None
     bulkactions = ()  # list of links
     rowactions = ()  # list of links
@@ -44,10 +50,12 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
         )
         self.rowactions = kwargs.get("rowactions") or self.rowactions
         self.columns = kwargs.get("columns") or self.columns
-        self.filterset_fields = kwargs.get("filterset_fields") or self.filterset_fields
         self.searchurl = kwargs.get("searchurl") or self.searchurl
-        self.queryfieldname = kwargs.get("queryfieldname") or self.queryfieldname
+        self.query_urlparameter = (
+            kwargs.get("query_urlparameter") or self.query_urlparameter
+        )
         self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
+        self.filteroptions = kwargs.get("filteroptions") or self.filteroptions
         super().__init__(*args, **kwargs)
 
     def layout(self, request):
@@ -59,19 +67,61 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
             bulkactions=self.bulkactions,
             rowactions=self.rowactions,
             searchurl=self.searchurl,
-            queryfieldname=self.queryfieldname,
+            query_urlparameter=self.query_urlparameter,
             rowclickaction=self.rowclickaction,
             pagination_options=self.pagination_choices,
             page_urlparameter=self.page_kwarg,
             paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
             itemsperpage_urlparameter=self.itemsperpage_urlparameter,
+            toolbar_action_menus=[
+                (
+                    "filter",
+                    [
+                        Action(
+                            js=hg.BaseElement(
+                                "document.location ='",
+                                hg.F(
+                                    lambda c, e, filter=filter: link_with_urlparameters(
+                                        c["request"],
+                                        **{
+                                            self.query_urlparameter: filter,
+                                            self.page_kwarg: None,
+                                        },
+                                    )
+                                ),
+                                "'",
+                            ),
+                            label=name,
+                        )
+                        for name, filter in self.filteroptions
+                    ]
+                    + [
+                        Action(
+                            js=hg.BaseElement(
+                                "document.location ='",
+                                hg.F(
+                                    lambda c, e: link_with_urlparameters(
+                                        c["request"],
+                                        **{
+                                            self.query_urlparameter: None,
+                                            self.page_kwarg: None,
+                                        },
+                                    )
+                                ),
+                                "'",
+                            ),
+                            icon="filter--remove",
+                            label=_("Reset"),
+                        )
+                    ],
+                )
+            ]
+            if self.filteroptions
+            else [],
         )
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
-
-    def get_filterset_class(self):
-        return generate_filterset_class(self.model, self.filterset_fields)
 
     def get(self, *args, **kwargs):
         if "reset" in self.request.GET:
@@ -87,6 +137,8 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView)
     def get_queryset(self):
         """Prefetch related tables to speed up queries. Also order result by get-parameters."""
         qs = super().get_queryset()
+        if self.query_urlparameter in self.request.GET:
+            qs = apply_search(qs, self.request.GET[self.query_urlparameter])
         order = self.request.GET.get(self.orderingurlparameter)
         if order:
             if order.endswith("__int"):
@@ -147,60 +199,6 @@ class TreeView(BrowseView):
             return ret
 
         return build_tree(children[None])
-
-
-def generate_filterset_class(model, fields):
-    # make text-based fields filtering with icontains and datefield as range
-    config = {
-        "model": model,
-        "filter_overrides": {
-            models.CharField: {
-                "filter_class": django_filters.CharFilter,
-                "extra": lambda f: {"lookup_expr": "icontains"},
-            },
-            models.TextField: {
-                "filter_class": django_filters.CharFilter,
-                "extra": lambda f: {"lookup_expr": "icontains"},
-            },
-            models.EmailField: {
-                "filter_class": django_filters.CharFilter,
-                "extra": lambda f: {"lookup_expr": "icontains"},
-            },
-            models.URLField: {
-                "filter_class": django_filters.CharFilter,
-                "extra": lambda f: {"lookup_expr": "icontains"},
-            },
-            models.DateField: {
-                "filter_class": django_filters.DateFromToRangeFilter,
-                "extra": lambda f: {
-                    "widget": django_filters.widgets.DateRangeWidget(
-                        attrs={"type": "text", "class": "validate datepicker"}
-                    )
-                },
-            },
-            models.DateTimeField: {
-                "filter_class": django_filters.DateFromToRangeFilter,
-                "extra": lambda f: {
-                    "widget": django_filters.widgets.DateRangeWidget(
-                        attrs={"type": "text", "class": "validate datepicker"}
-                    )
-                },
-            },
-        },
-    }
-    config["exclude"] = [
-        f.name
-        for f in model._meta.get_fields()
-        if isinstance(f, models.FileField) or isinstance(f, GenericForeignKey)
-    ]
-    config["fields"] = fields
-    config["form"] = FilterForm
-    filterset = type(
-        f"{model._meta.object_name}FilterSet",
-        (django_filters.FilterSet,),
-        {"Meta": type("Meta", (object,), config)},
-    )
-    return filterset
 
 
 def generate_excel_view(queryset, fields, filterstr=None):

@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from bread.menu import Action, Link
 from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
-from bread.utils.urls import reverse_model
+from bread.utils.urls import link_with_urlparameters, reverse_model
 
 from ..base import aslink_attributes, fieldlabel, objectaction
 from .button import Button
@@ -42,20 +42,16 @@ def sortingname_for_column(model, column):
 
 def sortinglink_for_column(orderingurlparameter, columnname):
     ORDERING_VALUES = {
-        "": columnname,
+        None: columnname,
         columnname: "-" + columnname,
-        "-" + columnname: "",
+        "-" + columnname: None,
     }
 
     def extractsortinglink(context, element):
-        currentordering = context["request"].GET.get(orderingurlparameter, "")
+        currentordering = context["request"].GET.get(orderingurlparameter, None)
         nextordering = ORDERING_VALUES.get(currentordering, columnname)
-        urlparams = context["request"].GET.copy()
-        urlparams[orderingurlparameter] = nextordering
-        if not nextordering:
-            del urlparams[orderingurlparameter]
-        return context["request"].path + (
-            f"?{urlparams.urlencode()}" if urlparams else ""
+        return link_with_urlparameters(
+            context["request"], **{orderingurlparameter: nextordering}
         )
 
     return aslink_attributes(hg.F(extractsortinglink))
@@ -138,12 +134,13 @@ class DataTable(hg.BaseElement):
         helper_text=None,
         primary_button=None,
         searchurl=None,
-        queryfieldname=None,
+        query_urlparameter=None,
         bulkactions=(),
         pagination_options=(),
         paginator=None,
         page_urlparameter="page",
         itemsperpage_urlparameter="itemsperpage",
+        toolbar_action_menus=(),
     ):
         """
         wrap this datatable with title and toolbar
@@ -151,11 +148,12 @@ class DataTable(hg.BaseElement):
         helper_text: sub title
         primary_button: bread.layout.button.Button instance
         searchurl: url to which values entered in the searchfield should be submitted
-        queryfieldname: name of the query field for the searchurl which contains the entered text
+        query_urlparameter: name of the query field for the searchurl which contains the entered text
         bulkactions: List of bread.menu.Action or bread.menu.Link instances
                      bread.menu.Link will send a post or a get (depending on its "method" attribute) to the target url
                      the sent data will be a form with the selected checkboxes as fields
                      if the head-checkbox has been selected only that field will be selected
+        toolbar_action_menus: list of tuples with (menuiconname, list_of_actions) where the items in list_of_actions must instances of bread.menu.Action
         """
         checkboxallid = f"datatable-check-{hg.html_id(self)}"
         header = [hg.H4(title, _class="bx--data-table-header__title")]
@@ -274,7 +272,7 @@ class DataTable(hg.BaseElement):
                     hg.DIV(
                         Search().withajaxurl(
                             url=searchurl,
-                            queryfieldname=queryfieldname,
+                            query_urlparameter=query_urlparameter,
                             resultcontainerid=resultcontainerid,
                             resultcontainer=False,
                         ),
@@ -282,6 +280,15 @@ class DataTable(hg.BaseElement):
                     )
                     if searchurl
                     else "",
+                    *[
+                        OverflowMenu(
+                            actions=actionlist,
+                            menuiconname=menuiconname,
+                            _class="bx--toolbar-action",
+                            item_attributes={"_class": "bx--overflow-menu--data-table"},
+                        )
+                        for menuiconname, actionlist in toolbar_action_menus
+                    ],
                     primary_button or "",
                     _class="bx--toolbar-content",
                 ),
@@ -323,13 +330,14 @@ class DataTable(hg.BaseElement):
         addurl=None,
         backurl=None,
         searchurl=None,
-        queryfieldname=None,
+        query_urlparameter=None,
         rowclickaction=None,
         preven_automatic_sortingnames=False,
         with_toolbar=True,
         pagination_options=(),
         paginator=None,
         page_urlparameter="page",
+        toolbar_action_menus=(),
         itemsperpage_urlparameter="itemsperpage",
         **kwargs,
     ):
@@ -409,8 +417,10 @@ class DataTable(hg.BaseElement):
                 bulkactions=bulkactions,
                 pagination_options=pagination_options,
                 page_urlparameter=page_urlparameter,
+                query_urlparameter=query_urlparameter,
                 paginator=paginator,
                 itemsperpage_urlparameter=itemsperpage_urlparameter,
+                toolbar_action_menus=toolbar_action_menus,
             )
         return table
 
