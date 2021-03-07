@@ -221,6 +221,7 @@ def display_messages(messages):
                 kind=kind,
                 hidetimestamp=True,
                 style=f"opacity: 0; animation: {4 + 3 * i}s ease-in-out notification",
+                onload=f"setTimeout(() => this.style.display = 'None', {(4 + 3 * i) * 1000})",  # need to hide the element after animation is done
             )
         )
     return mark_safe(hg.render(hg.DIV(*notifications), {}))

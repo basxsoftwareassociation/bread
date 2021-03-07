@@ -99,7 +99,12 @@ def breadmodelform_factory(
         ):
             attribs[modelfield.name] = FormsetField(
                 _generate_formset_class(
-                    request, model, modelfield, baseformclass, formfieldelement
+                    request,
+                    model,
+                    modelfield,
+                    baseformclass,
+                    formfieldelement,
+                    instance,
                 ),
                 instance,
                 formfieldelement.formsetinitial,
@@ -116,7 +121,7 @@ def breadmodelform_factory(
             if isinstance(f, _layout.form.FormField)
         ],
         formfield_callback=lambda field: _formfield_callback_with_request(
-            field, request, model
+            field, request, model, instance
         ),
     )
     return ret
@@ -132,7 +137,7 @@ class InlineFormSetWithLimits(forms.BaseInlineFormSet):
 
 
 def _generate_formset_class(
-    request, model, modelfield, baseformclass, formsetfieldelement
+    request, model, modelfield, baseformclass, formsetfieldelement, instance
 ):
     """Returns a FormSet class which handles inline forms correctly."""
 
@@ -144,7 +149,7 @@ def _generate_formset_class(
         request=request,
         model=modelfield.related_model,
         layout=formfieldelements,
-        instance=None,
+        instance=instance,
         baseformclass=baseformclass,
     )
 
@@ -164,7 +169,7 @@ def _generate_formset_class(
             fk_field=modelfield.object_id_field_name,
             formset=InlineFormSetWithLimits,
             formfield_callback=lambda field: _formfield_callback_with_request(
-                field, request, modelfield.related_model
+                field, request, modelfield.related_model, instance
             ),
             **base_formset_kwargs,
         )
@@ -174,22 +179,24 @@ def _generate_formset_class(
             modelfield.related_model,
             formset=InlineFormSetWithLimits,
             formfield_callback=lambda field: _formfield_callback_with_request(
-                field, request, model
+                field, request, model, instance
             ),
             fk_name=modelfield.field.name,
             **base_formset_kwargs,
         )
 
 
-def _formfield_callback_with_request(field, request, model):
+def _formfield_callback_with_request(field, request, model, instance):
     kwargs = {}
-    if hasattr(field, "lazy_choices"):
-        field.choices = field.lazy_choices(field, request, object)
+    if hasattr(field, "lazy_choices") and not (field.many_to_one or field.many_to_many):
+        field.choices = field.lazy_choices(field, request, instance)
 
     if hasattr(field, "lazy_initial"):
-        kwargs["initial"] = field.lazy_initial(field, request, object)
+        kwargs["initial"] = field.lazy_initial(field, request, instance)
 
     ret = field.formfield(**kwargs)
+    if hasattr(field, "lazy_choices") and (field.many_to_one or field.many_to_many):
+        ret.queryset = field.lazy_choices(field, request, instance)
 
     # apply permissions for querysets
     if hasattr(ret, "queryset"):
@@ -203,7 +210,6 @@ def _formfield_callback_with_request(field, request, model):
     return ret
 
 
-# TODO: the following custom forms could and probably shoudl be replace with template filters or tags
 class FilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
