@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.core.exceptions import FieldDoesNotExist
-from django.db import transaction
+from django.db import models, transaction
 from django.forms.formsets import DELETION_FIELD_NAME
 from dynamic_preferences.forms import GlobalPreferenceForm
 from dynamic_preferences.users.forms import UserPreferenceForm
@@ -188,15 +188,18 @@ def _generate_formset_class(
 
 def _formfield_callback_with_request(field, request, model, instance):
     kwargs = {}
-    if hasattr(field, "lazy_choices") and not (field.many_to_one or field.many_to_many):
-        field.choices = field.lazy_choices(field, request, instance)
+    choices = None
+    if hasattr(field, "lazy_choices"):
+        choices = field.lazy_choices(field, request, instance)
+    if not (choices is None or isinstance(choices, models.QuerySet)):
+        field.choices = choices
 
     if hasattr(field, "lazy_initial"):
         kwargs["initial"] = field.lazy_initial(field, request, instance)
 
     ret = field.formfield(**kwargs)
-    if hasattr(field, "lazy_choices") and (field.many_to_one or field.many_to_many):
-        ret.queryset = field.lazy_choices(field, request, instance)
+    if isinstance(choices, models.QuerySet):
+        ret.queryset = choices
 
     # apply permissions for querysets
     if hasattr(ret, "queryset"):
