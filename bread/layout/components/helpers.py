@@ -39,10 +39,10 @@ class Label(hg.LABEL):
 
 
 class LabelElement(hg.If):
-    def __init__(self, label, _for, required=None, disabled=None):
+    def __init__(self, label, _for, required=None, disabled=None, **kwargs):
         super().__init__(
             label,
-            Label(
+            hg.LABEL(
                 label,
                 hg.If(required, REQUIRED_LABEL),
                 _for=_for,
@@ -50,6 +50,7 @@ class LabelElement(hg.If):
                     "bx--label",
                     hg.If(disabled, " bx--label--disabled"),
                 ),
+                **kwargs
             ),
         )
 

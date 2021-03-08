@@ -2,7 +2,7 @@
 // support onload after page loaded for all elements
 document.addEventListener(
     "DOMContentLoaded",
-    (e) => { $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load"); }
+    (e) => { $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load"); initAllChoices()}
 );
 
 
@@ -19,18 +19,38 @@ function makeChoices(selectElem) {
         return null;
     }
     var choices = new Choices(selectElem, {
-        /*
+        removeItemButton: true,
+        position: 'bottom',
+        itemSelectText: '',
         classNames: {
-            input: 'choices__input browser-default',
-        }
-        */
-        searchResultLimit: 20
+            containerOuter: 'choices',
+            containerInner: 'choices__inner',
+            input: 'choices__input',
+            inputCloned: 'choices__input--cloned bx--text-input',
+            list: 'choices__list',
+            listItems: 'choices__list--multiple',
+            listSingle: 'choices__list--single',
+            listDropdown: 'choices__list--dropdown',
+            item: 'choices__item bx--tag',
+            itemSelectable: 'choices__item--selectable',
+            itemDisabled: 'choices__item--disabled',
+            itemChoice: 'choices__item--choice',
+            placeholder: 'choices__placeholder',
+            group: 'choices__group',
+            groupHeading: 'choices__heading',
+            button: 'choices__button',
+            activeState: 'is-active',
+            focusState: 'is-focused',
+            openState: 'is-open',
+            disabledState: 'is-disabled',
+            highlightedState: 'is-highlighted',
+            selectedState: 'is-selected',
+            flippedState: 'is-flipped',
+            loadingState: 'is-loading',
+            noResults: 'has-no-results',
+            noChoices: 'has-no-choices'
+        },
     });
-    // TODO: wait for choices.js to fix the error when using space to separate classes
-    // when fixed we can uncomment the code above and remove the line below
-    // https://github.com/jshjohnson/Choices/issues/832
-    $('input.choices__input', selectElem.parentNode.parentNode).classList.add("browser-default");
-
     // check readonly
     if(selectElem.hasAttribute("readonly")) {
         $(selectElem.parentNode)._.style({cursor: "not-allowed", pointerEvents: "none"});
