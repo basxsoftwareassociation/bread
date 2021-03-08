@@ -18,7 +18,7 @@ from guardian.mixins import PermissionRequiredMixin
 from model_clone.utils import create_copy_of_instance
 
 from .. import layout as _layout  # prevent name clashing
-from ..utils import model_urlname
+from ..utils import filter_fieldlist, model_urlname
 from .util import BreadView, CustomFormMixin
 
 
@@ -38,7 +38,8 @@ class EditView(
         return f"Saved {self.object}"
 
     def __init__(self, *args, **kwargs):
-        self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"]))
+        all = filter_fieldlist(kwargs.get("model"), ["__all__"])
+        self.fields = kwargs.get("fields", getattr(self, "fields", None)) or all
         super().__init__(*args, **kwargs)
 
     def layout(self, request):
