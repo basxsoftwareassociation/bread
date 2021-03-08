@@ -27,7 +27,7 @@ class Report(models.Model):
         return hg.BaseElement(
             hg.H3(_("Preview")),
             layout.datatable.DataTable.from_queryset(
-                self.filter.queryset, columns=columns, wrap=False
+                self.filter.queryset[:25], columns=columns, with_toolbar=False
             ),
         )
 

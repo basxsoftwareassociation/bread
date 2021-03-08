@@ -37,11 +37,26 @@ class EditView(views.EditView):
             _layout.form.Form.wrap_with_form(
                 hg.C("form"),
                 hg.BaseElement(
+                    hg.DIV(
+                        _("Base model"),
+                        ": ",
+                        hg.C("object.model"),
+                        style="margin: 2rem 0 2rem 0",
+                    ),
                     F("name"),
                     F("filter"),
                     hg.H4(_("Columns")),
                     _layout.form.FormsetField(
-                        "columns", R(C(F("column")), C(F("name"))), extra=1
+                        "columns",
+                        R(
+                            C(F("column")),
+                            C(F("name")),
+                            C(
+                                _layout.form.InlineDeleteButton(".bx--row"),
+                                style="align-self: center",
+                            ),
+                        ),
+                        extra=1,
                     ),
                     _layout.form.FormsetAddButton("columns"),
                 ),
