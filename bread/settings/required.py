@@ -177,6 +177,8 @@ DEFAULT_PAGINATION_CHOICES = [
     100,
 ]  # Defines what the default options for pagination are
 
+HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
+
 # This one should only be activated in production or in dev environments with celery ready to run
 # HAYSTACK_SIGNAL_PROCESSOR = "celery_haystack.signals.CelerySignalProcessor"
 
