@@ -79,7 +79,7 @@ def exceldownload(request, report_pk: int):
     workbook.title = report.name
 
     return xlsxresponse(
-        workbook, workbook.title + f'-{datetime.date.today().isoformat(" ")[:19]}'
+        workbook, workbook.title + f"-{datetime.date.today().isoformat()}"
     )
 
 
