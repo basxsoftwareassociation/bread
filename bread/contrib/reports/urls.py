@@ -1,3 +1,5 @@
+import datetime
+
 import htmlgenerator as hg
 from django.shortcuts import get_object_or_404
 from django.urls import path
@@ -6,7 +8,7 @@ from django.views.generic import TemplateView
 
 from bread import layout as _layout
 from bread import menu, views
-from bread.utils import generate_excel, pretty_modelname, urls, xlsxresponse
+from bread.utils import generate_excel, urls, xlsxresponse
 
 from .models import Report
 
@@ -69,14 +71,16 @@ class EditView(views.EditView):
 def exceldownload(request, report_pk: int):
     report = get_object_or_404(Report, pk=report_pk)
     columns = {
-        column.name: lambda row, c=column.column: hg.resolve_lookup(row, c)
+        column.name: lambda row, c=column.column: hg.resolve_lookup(row, c) or ""
         for column in report.columns.all()
     }
 
     workbook = generate_excel(report.filter.queryset, columns)
-    workbook.title = pretty_modelname(report.model.model_class(), plural=True)
+    workbook.title = report.name
 
-    return xlsxresponse(workbook, workbook.title)
+    return xlsxresponse(
+        workbook, workbook.title + f'-{datetime.date.today().isoformat(" ")[:19]}'
+    )
 
 
 urlpatterns = [
