@@ -12,15 +12,13 @@ def fieldlabel(model, accessor):
 
 
 def objectaction(object, action, *args, **kwargs):
+    kwargs["kwargs"] = {"pk": object.pk}
     return str(
         reverse_model(
             object,
             action,
-            args=args,
-            kwargs={
-                **kwargs,
-                "pk": object.pk,
-            },
+            *args,
+            **kwargs,
         )
     )
 

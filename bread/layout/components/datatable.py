@@ -394,7 +394,11 @@ class DataTable(hg.BaseElement):
                 )
             if rowclickaction:
                 column[1].td_attributes = aslink_attributes(
-                    hg.F(lambda c, e: objectaction(c[rowvariable], rowclickaction))
+                    hg.F(
+                        lambda c, e: objectaction(
+                            c[rowvariable], rowclickaction, query=backquery
+                        )
+                    )
                 )
             columndefinitions.append(column)
 
