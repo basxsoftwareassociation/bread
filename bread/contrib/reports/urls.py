@@ -83,7 +83,7 @@ urlpatterns = [
     *urls.default_model_paths(
         Report,
         browseview=views.BrowseView._with(
-            fields=["name"],
+            columns=["name", "created"],
             rowclickaction="read",
             bulkactions=[
                 menu.Link(
