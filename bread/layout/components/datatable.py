@@ -208,9 +208,7 @@ class DataTable(hg.BaseElement):
                         id=hg.BaseElement(
                             checkboxallid,
                             "-",
-                            hg.F(
-                                lambda c, e: hg.html_id(c[self.iterator.loopvariable])
-                            ),
+                            hg.C(self.iterator.loopvariable + "_index"),
                         ),
                         _class="bx--checkbox",
                         type="checkbox",
@@ -229,9 +227,7 @@ class DataTable(hg.BaseElement):
                         _for=hg.BaseElement(
                             checkboxallid,
                             "-",
-                            hg.F(
-                                lambda c, e: hg.html_id(c[self.iterator.loopvariable])
-                            ),
+                            hg.C(self.iterator.loopvariable + "_index"),
                         ),
                         _class="bx--checkbox-label",
                         aria_label="Label name",
@@ -365,7 +361,7 @@ class DataTable(hg.BaseElement):
                         notext=True,
                         small=True,
                         buttontype="ghost",
-                        style="border: 1px black solid",
+                        _class="bx--overflow-menu",
                     )
                 ),
             )

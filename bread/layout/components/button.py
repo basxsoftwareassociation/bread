@@ -48,7 +48,7 @@ class Button(htmlgenerator.BUTTON):
             "onclick": action.js,
         }
         buttonargs.update(kwargs)
-        return Button(action.label, **buttonargs)
+        return Button(*([action.label] if action.label else []), **buttonargs)
 
 
 class ButtonSet(htmlgenerator.htmltags.DIV):
