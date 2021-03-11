@@ -158,7 +158,7 @@ def _generate_formset_class(
             formfieldelement.fieldname for formfieldelement in formfieldelements
         ],
         "form": formclass,
-        "extra": 0,
+        "extra": 1 - bool(getattr(instance, modelfield.name).count()),
         "can_delete": True,
     }
     base_formset_kwargs.update(formsetfieldelement.formsetfactory_kwargs)
