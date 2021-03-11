@@ -7,9 +7,12 @@ document.addEventListener(
 
 
 function initAllChoices(element=$("body")) {
-    var selectElements = $$("select[multiple]", element);
-    for(let element of selectElements) {
-        makeChoices(element);
+    for(let e of $$("fieldset[disabled] select[multiple]", element)) {
+        makeChoices(e).disable();
+    }
+
+    for(let e of $$(":not(fieldset[disabled]) select[multiple]", element)) {
+        makeChoices(e);
     }
 }
 
