@@ -5,15 +5,17 @@ extendable and composable by subclassing them. Most of the views require
 an argument "admin" which is an instance of the according BreadAdmin class
 """
 import urllib
-import warnings
 
+import htmlgenerator as hg
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.forms import Form
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DeleteView as DjangoDeleteView
 from django.views.generic import RedirectView
 from guardian.mixins import PermissionRequiredMixin
 
+from .. import layout as _layout
 from ..utils import pretty_modelname, reverse_model
 from .util import BreadView
 
@@ -21,12 +23,28 @@ from .util import BreadView
 class DeleteView(
     BreadView, PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView
 ):
-    template_name = "bread/confirm_delete.html"
+    template_name = "bread/layout.html"
     accept_global_perms = True
     urlparams = (("pk", int),)
 
     def layout(self, request):
-        return None
+        return hg.BaseElement(
+            hg.H3(
+                _("Are you sure you want to delete %s %s?")
+                % (pretty_modelname(self.object), self.object)
+            ),
+            _layout.form.Form(
+                Form(),
+                _layout.button.Button(
+                    _("No, cancel"),
+                    buttontype="secondary",
+                    onclick="window.history.back()",
+                ),
+                _layout.button.Button(
+                    _("Yes, delete"), type="submit", buttontype="danger"
+                ),
+            ),
+        )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -40,7 +58,10 @@ class DeleteView(
         return context
 
     def get_success_url(self):
-        messages.info(self.request, f"Deleted {self.object}")
+        messages.success(
+            self.request,
+            _("Deleted %s %s") % (pretty_modelname(self.object), self.object),
+        )
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
         return reverse_model(self.model, "browse")
@@ -86,8 +107,3 @@ class BulkDeleteView(
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.delete_{self.model.__name__.lower()}"]
-
-
-warnings.warn(
-    f"{DeleteView} needs to implement the layout method propertly in the future, see https://github.com/basxsoftwareassociation/bread/issues/7"
-)
