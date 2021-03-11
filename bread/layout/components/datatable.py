@@ -266,13 +266,13 @@ class DataTable(hg.BaseElement):
                 ),
                 hg.DIV(
                     hg.DIV(
-                        Search().withajaxurl(
+                        Search(widgetattributes={"autofocus": True}).withajaxurl(
                             url=searchurl,
                             query_urlparameter=query_urlparameter,
                             resultcontainerid=resultcontainerid,
                             resultcontainer=False,
                         ),
-                        _class="bx--toolbar-search-container-expandable",
+                        _class="bx--toolbar-search-container-persistent",
                     )
                     if searchurl
                     else "",
@@ -337,6 +337,7 @@ class DataTable(hg.BaseElement):
         itemsperpage_urlparameter="itemsperpage",
         **kwargs,
     ):
+        """TODO: Write Docs!!!!"""
         if title is None:
             title = pretty_modelname(model, plural=True)
         rowvariable = kwargs.get("rowvariable", "row")
@@ -374,12 +375,13 @@ class DataTable(hg.BaseElement):
         columndefinitions = []
         for column in columns:
             if not (
-                (isinstance(column, tuple) and len(column) == 3)
+                (isinstance(column, tuple) and len(column) in [3, 4])
                 or isinstance(column, str)
             ):
                 raise ValueError(
-                    f"Argument 'columns' needs to be of a list with items of type str or tuple (headvalue, cellvalue, sort-name), but found {column}"
+                    f"Argument 'columns' needs to be of a list with items of type str or tuple (headvalue, cellvalue, sort-name, enable-row-click=True), but found {column}"
                 )
+            # convert simple string (modelfield) to column definition
             if isinstance(column, str):
                 column = (
                     fieldlabel(model, column),
@@ -388,7 +390,10 @@ class DataTable(hg.BaseElement):
                     if not preven_automatic_sortingnames
                     else None,
                 )
-            if rowclickaction:
+            # add the default parameter for enable-row-click
+            column += (True,)
+
+            if rowclickaction and column[3]:
                 column[1].td_attributes = aslink_attributes(
                     hg.F(
                         lambda c, e: objectaction(
@@ -396,7 +401,7 @@ class DataTable(hg.BaseElement):
                         )
                     )
                 )
-            columndefinitions.append(column)
+            columndefinitions.append(column[:3])
 
         table = DataTable(
             columndefinitions
@@ -429,6 +434,7 @@ class DataTable(hg.BaseElement):
         queryset,
         **kwargs,
     ):
+        """TODO: Write Docs!!!!"""
         return DataTable.from_model(
             queryset.model,
             queryset=queryset,
