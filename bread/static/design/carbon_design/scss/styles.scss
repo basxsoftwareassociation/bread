@@ -9,6 +9,7 @@ $feature-flags: (
 
 @import 'globals/scss/vendor/@carbon/type/scss/styles';
 @import 'choices';
+@import 'carbon-tokens';
 
 // do some custom coloring and spacing for our ui-shell
 html, body {

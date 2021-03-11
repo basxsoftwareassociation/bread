@@ -1,0 +1,200 @@
+// This files is added by basx in order to easily allow styling of certain elements
+// according to the define theme tokens by simply adding a class
+
+// Colors (with text and background versions 
+
+.ui-background { color: $ui-background }
+.ui-background-background { background-color: $ui-background }
+.interactive-01 { color: $interactive-01 }
+.interactive-01-background { background-color: $interactive-01 }
+.interactive-02 { color: $interactive-02 }
+.interactive-02-background { background-color: $interactive-02 }
+.interactive-03 { color: $interactive-03 }
+.interactive-03-background { background-color: $interactive-03 }
+.interactive-04 { color: $interactive-04 }
+.interactive-04-background { background-color: $interactive-04 }
+.danger { color: $danger }
+.danger-background { background-color: $danger }
+.ui-01 { color: $ui-01 }
+.ui-01-background { background-color: $ui-01 }
+.ui-02 { color: $ui-02 }
+.ui-02-background { background-color: $ui-02 }
+.ui-03 { color: $ui-03 }
+.ui-03-background { background-color: $ui-03 }
+.ui-04 { color: $ui-04 }
+.ui-04-background { background-color: $ui-04 }
+.ui-05 { color: $ui-05 }
+.ui-05-background { background-color: $ui-05 }
+.button-separator { color: $button-separator }
+.button-separator-background { background-color: $button-separator }
+.decorative-01 { color: $decorative-01 }
+.decorative-01-background { background-color: $decorative-01 }
+.text-01 { color: $text-01 }
+.text-01-background { background-color: $text-01 }
+.text-02 { color: $text-02 }
+.text-02-background { background-color: $text-02 }
+.text-03 { color: $text-03 }
+.text-03-background { background-color: $text-03 }
+.text-04 { color: $text-04 }
+.text-04-background { background-color: $text-04 }
+.text-05 { color: $text-05 }
+.text-05-background { background-color: $text-05 }
+.text-error { color: $text-error }
+.text-error-background { background-color: $text-error }
+.link-01 { color: $link-01 }
+.link-01-background { background-color: $link-01 }
+.inverse-link { color: $inverse-link }
+.inverse-link-background { background-color: $inverse-link }
+.icon-01 { color: $icon-01 }
+.icon-01-background { background-color: $icon-01 }
+.icon-02 { color: $icon-02 }
+.icon-02-background { background-color: $icon-02 }
+.icon-03 { color: $icon-03 }
+.icon-03-background { background-color: $icon-03 }
+.field-01 { color: $field-01 }
+.field-01-background { background-color: $field-01 }
+.field-02 { color: $field-02 }
+.field-02-background { background-color: $field-02 }
+.inverse-01 { color: $inverse-01 }
+.inverse-01-background { background-color: $inverse-01 }
+.inverse-02 { color: $inverse-02 }
+.inverse-02-background { background-color: $inverse-02 }
+.support-01 { color: $support-01 }
+.support-01-background { background-color: $support-01 }
+.support-02 { color: $support-02 }
+.support-02-background { background-color: $support-02 }
+.support-03 { color: $support-03 }
+.support-03-background { background-color: $support-03 }
+.support-04 { color: $support-04 }
+.support-04-background { background-color: $support-04 }
+.inverse-support-01 { color: $inverse-support-01 }
+.inverse-support-01-background { background-color: $inverse-support-01 }
+.inverse-support-02 { color: $inverse-support-02 }
+.inverse-support-02-background { background-color: $inverse-support-02 }
+.inverse-support-03 { color: $inverse-support-03 }
+.inverse-support-03-background { background-color: $inverse-support-03 }
+.inverse-support-04 { color: $inverse-support-04 }
+.inverse-support-04-background { background-color: $inverse-support-04 }
+.overlay-01 { color: $overlay-01 }
+.overlay-01-background { background-color: $overlay-01 }
+.focus { color: $focus }
+.focus-background { background-color: $focus }
+.inverse-focus-ui { color: $inverse-focus-ui }
+.inverse-focus-ui-background { background-color: $inverse-focus-ui }
+.hover-primary { color: $hover-primary }
+.hover-primary-background { background-color: $hover-primary }
+.hover-primary-text { color: $hover-primary-text }
+.hover-primary-text-background { background-color: $hover-primary-text }
+.hover-secondary { color: $hover-secondary }
+.hover-secondary-background { background-color: $hover-secondary }
+.hover-tertiary { color: $hover-tertiary }
+.hover-tertiary-background { background-color: $hover-tertiary }
+.hover-ui { color: $hover-ui }
+.hover-ui-background { background-color: $hover-ui }
+.hover-light-ui { color: $hover-light-ui }
+.hover-light-ui-background { background-color: $hover-light-ui }
+.hover-selected-ui { color: $hover-selected-ui }
+.hover-selected-ui-background { background-color: $hover-selected-ui }
+.hover-danger { color: $hover-danger }
+.hover-danger-background { background-color: $hover-danger }
+.hover-row { color: $hover-row }
+.hover-row-background { background-color: $hover-row }
+.inverse-hover-ui { color: $inverse-hover-ui }
+.inverse-hover-ui-background { background-color: $inverse-hover-ui }
+.active-primary { color: $active-primary }
+.active-primary-background { background-color: $active-primary }
+.active-secondary { color: $active-secondary }
+.active-secondary-background { background-color: $active-secondary }
+.active-tertiary { color: $active-tertiary }
+.active-tertiary-background { background-color: $active-tertiary }
+.active-ui { color: $active-ui }
+.active-ui-background { background-color: $active-ui }
+.active-danger { color: $active-danger }
+.active-danger-background { background-color: $active-danger }
+.selected-ui { color: $selected-ui }
+.selected-ui-background { background-color: $selected-ui }
+.selected-light-ui { color: $selected-light-ui }
+.selected-light-ui-background { background-color: $selected-light-ui }
+.highlight { color: $highlight }
+.highlight-background { background-color: $highlight }
+.skeleton-01 { color: $skeleton-01 }
+.skeleton-01-background { background-color: $skeleton-01 }
+.skeleton-02 { color: $skeleton-02 }
+.skeleton-02-background { background-color: $skeleton-02 }
+.visited-link { color: $visited-link }
+.visited-link-background { background-color: $visited-link }
+.disabled-01 { color: $disabled-01 }
+.disabled-01-background { background-color: $disabled-01 }
+.disabled-02 { color: $disabled-02 }
+.disabled-02-background { background-color: $disabled-02 }
+.disabled-03 { color: $disabled-03 }
+.disabled-03-background { background-color: $disabled-03 }
+
+// Typography
+
+@mixin map-to-props($map){
+	@if type-of($map) == map {
+		@each $prop, $value in $map {
+			@if type-of($value) != map {
+				@if inspect($prop) == 'description' {
+					/* #{inspect($value)} */
+				}
+				@else {
+					#{inspect($prop)}: #{inspect($value)};
+				}
+			}
+			@else {
+				@include map-to-props($value);
+			}
+		}
+	}
+}
+
+.caption-01 {
+    @include properties($caption-01);
+}
+.label-01 {
+    @include properties($label-01);
+}
+.helper-text-01 {
+    @include properties($helper-text-01);
+}
+.body-short-01 {
+    @include properties($body-short-01);
+}
+.body-long-01 {
+    @include properties($body-long-01);
+}
+.body-short-02 {
+    @include properties($body-short-02);
+}
+.body-long-02 {
+    @include properties($body-long-02);
+}
+.code-01 {
+    @include properties($code-01);
+}
+.code-02 {
+    @include properties($code-02);
+}
+.productive-heading-01 {
+    @include properties($productive-heading-01);
+}
+.productive-heading-02 {
+    @include properties($productive-heading-02);
+}
+.productive-heading-03 {
+    @include properties($productive-heading-03);
+}
+.productive-heading-04 {
+    @include properties($productive-heading-04);
+}
+.productive-heading-05 {
+    @include properties($productive-heading-05);
+}
+.productive-heading-06 {
+    @include properties($productive-heading-06);
+}
+.productive-heading-07 {
+    @include properties($productive-heading-07);
+}
