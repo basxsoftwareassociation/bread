@@ -194,7 +194,7 @@ msgstr "%s wurde gelöscht"
 
 #: bread/views/edit.py:88 bread/views/edit.py:121
 msgid "Copy"
-msgstr "Kopieren"
+msgstr "Kopie"
 
 #: bread/views/edit.py:138
 #, python-format

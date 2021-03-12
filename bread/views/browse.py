@@ -9,7 +9,7 @@ from djangoql.queryset import apply_search
 from guardian.mixins import PermissionListMixin
 
 from .. import layout as _layout  # prevent name clashing
-from ..formatters import render_field
+from ..formatters import format_value
 from ..menu import Action
 from ..utils import (
     generate_excel,
@@ -219,7 +219,9 @@ def generate_excel_view(queryset, fields, filterstr=None):
         fields = _expand_ALL_constant(model, fields)
 
     if not isinstance(fields, dict):
-        fields = {field: render_field for field in fields}
+        fields = {
+            field: lambda inst: format_value(getattr(inst, field)) for field in fields
+        }
 
     def excelview(request):
         from bread.contrib.reports.fields.queryfield import parsequeryexpression
