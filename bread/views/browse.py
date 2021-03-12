@@ -138,7 +138,12 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         """Prefetch related tables to speed up queries. Also order result by get-parameters."""
         qs = super().get_queryset()
         if self.query_urlparameter in self.request.GET:
-            qs = apply_search(qs, self.request.GET[self.query_urlparameter])
+            qs = apply_search(
+                qs,
+                "("
+                + ") and (".join(self.request.GET.getlist(self.query_urlparameter))
+                + ")",
+            )
         order = self.request.GET.get(self.orderingurlparameter)
         if order:
             if order.endswith("__int"):
