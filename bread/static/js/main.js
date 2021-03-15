@@ -5,6 +5,30 @@ document.addEventListener(
     (e) => { $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load"); initAllChoices()}
 );
 
+function updateMultiselect(e) {
+    $('.bx--list-box__selection', e).firstChild.textContent = $$('fieldset input[type=checkbox][checked]', e).length;
+}
+
+function filterOptions(e) {
+    var searchterm = $('input.bx--text-input', e).value.toLowerCase()
+    console.log(searchterm);
+    for(i of $$('fieldset .bx--list-box__menu-item', e)) {
+        if (i.innerText.toLowerCase().includes(searchterm)) {
+            $(i)._.style({display: "initial"});
+        } else {
+            $(i)._.style({display: "none"});
+        }
+    }
+}
+
+function clearMultiselect(e) {
+    for(i of $$('fieldset input[type=checkbox][checked]', e)) {
+        i.parentElement.setAttribute("data-contained-checkbox-state", "false");
+        i.removeAttribute("checked");
+        i.removeAttribute("aria-checked");
+    }
+    updateMultiselect(e);
+}
 
 function initAllChoices(element=$("body")) {
     for(let e of $$("fieldset[disabled] select[multiple]", element)) {

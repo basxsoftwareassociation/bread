@@ -8,14 +8,14 @@ class MultiSelect(hg.DIV):
     def __init__(
         self,
         optgroups,
-        light=False,
-        inline=False,
-        widgetattributes=None,
         label=None,
         help_text=None,
         errors=None,
         disabled=None,
         required=None,
+        # light=False, # TODO?
+        # inline=False, # TODO?
+        widgetattributes=None,  # not really in use, these are attributes coming from django for a select[multiple] widget, would need to convert accordingly
         **attributes,
     ):
         """
@@ -24,120 +24,69 @@ class MultiSelect(hg.DIV):
 
         """
 
+        def countselected(context, element):
+            options = [
+                o for og in hg.resolve_lazy(optgroups, context, element) for o in og[1]
+            ]
+            print(options)
+            return len([o for o in options if o and o["selected"]])
+
         widgetattributes = widgetattributes or {}
         widgetattributes.setdefault("id", hg.html_id(self))
-
-        select_wrapper = hg.SELECT(
-            hg.Iterator(
-                optgroups,
-                "optgroup",
-                hg.If(
-                    hg.C("optgroup.0"),
-                    hg.OPTGROUP(
-                        hg.Iterator(
-                            hg.C("optgroup.1"),
-                            "option",
-                            hg.OPTION(
-                                hg.C("option.label"),
-                                value=hg.C("option.value"),
-                                lazy_attributes=hg.C("option.attrs"),
-                            ),
-                        ),
-                        label=hg.C("optgroup.0"),
-                    ),
-                    hg.Iterator(
-                        hg.C("optgroup.1"),
-                        "option",
-                        hg.OPTION(
-                            hg.C("option.label"),
-                            value=hg.C("option.value"),
-                            lazy_attributes=hg.C("option.attrs"),
-                        ),
-                    ),
-                ),
-            ),
-            **widgetattributes,
-        )
-
+        searchfieldid = hg.html_id(self)
         super().__init__(
             LabelElement(
                 label,
-                _for=widgetattributes["id"],
+                _for=searchfieldid,
                 required=required,
                 disabled=disabled,
-            ),
-            select_wrapper,
-            HelpTextElement(help_text),
-            ErrorListElement(errors),
-            **attributes,
-        )
-
-
-class MultiSelect1(hg.DIV):
-    def __init__(
-        self,
-        optgroups,
-        widgetattributes=None,
-        label=None,
-        help_text=None,
-        errors=None,
-        disabled=None,
-        required=None,
-        **kwargs,
-    ):
-        widgetattributes = widgetattributes or {}
-        widgetattributes["_class"] = (
-            widgetattributes.get("_class", "") + " bx--checkbox"
-        )
-        searchfield_id = hg.html_id(self)
-        label_id = searchfield_id + "-label"
-
-        super().__init__(
-            LabelElement(
-                label,
-                _for=searchfield_id,
-                required=required,
-                disabled=disabled,
-                id=label_id,
             ),
             hg.DIV(
                 hg.DIV(
-                    hg.DIV(
-                        hg.F(
-                            lambda c, e: len(
-                                [
-                                    i
-                                    for group in hg.resolve_lazy(optgroups, c, e)
-                                    for i in group[1]
-                                    if i.get("selected")
-                                ]
-                            )
+                    hg.If(
+                        errors,
+                        Icon(
+                            "warning--filled",
+                            size=16,
+                            _class="bx--list-box__invalid-icon",
                         ),
-                        Icon("close", size=16),
+                    ),
+                    hg.DIV(
+                        hg.F(countselected),
+                        Icon(
+                            "close",
+                            focusable="false",
+                            size=15,
+                            role="img",
+                            onclick="clearMultiselect(this.parentElement.parentElement.parentElement)",
+                        ),
                         role="button",
                         _class="bx--list-box__selection bx--list-box__selection--multi bx--tag--filter",
                         tabindex="0",
+                        title="Clear all selected items",
                     ),
                     hg.INPUT(
-                        id=searchfield_id,
-                        _class="bx--text-input bx--text-input--empty",
-                        aria_autocomplete="list",
-                        aria_labelledby=label_id,
-                        autocomplete="off",
-                        value="",
+                        id=searchfieldid,
+                        _class="bx--text-input",
+                        placeholder="Filter...",
+                        onclick="this.parentElement.nextElementSibling.style.display = 'block'",
+                        onkeyup="filterOptions(this.parentElement.parentElement)",
                     ),
                     hg.DIV(
-                        Icon("chevron--down", size=16), _class="bx--list-box__menu-icon"
+                        Icon("chevron--down", size=16, role="img", focusable="false"),
+                        _class="bx--list-box__menu-icon",
+                        onclick="this.parentElement.nextElementSibling.style.display = this.parentElement.nextElementSibling.style.display == 'none' ? 'block' : 'none';",
                     ),
                     role="button",
-                    type="button",
-                    data_toggle="true",
-                    aria_haspopup="true",
-                    aria_labelledby=label_id,
                     _class="bx--list-box__field",
-                    tabindex="-1",
+                    tabindex="0",
+                    onload="window.addEventListener('click', (e) => {this.nextElementSibling.style.display = 'none'})",
                 ),
-                hg.DIV(
+                hg.FIELDSET(
+                    hg.LEGEND(
+                        "Description of form elements within the fieldset",
+                        _class="bx--assistive-text",
+                    ),
                     hg.Iterator(
                         optgroups,
                         "optgroup",
@@ -151,8 +100,12 @@ class MultiSelect1(hg.DIV):
                                             hg.INPUT(
                                                 type="checkbox",
                                                 readonly=True,
+                                                _class="bx--checkbox",
+                                                value=hg.C("option.value"),
                                                 lazy_attributes=hg.C("option.attrs"),
-                                                **widgetattributes,
+                                                onchange="updateMultiselect(this.closest('.bx--multi-select'))",
+                                                checked=hg.C("option.selected"),
+                                                name=hg.C("option.name"),
                                             ),
                                             hg.SPAN(_class="bx--checkbox-appearance"),
                                             hg.SPAN(
@@ -166,22 +119,23 @@ class MultiSelect1(hg.DIV):
                                     ),
                                     _class="bx--list-box__menu-item__option",
                                 ),
-                                role="option",
-                                aria_selected=hg.C("option.selected"),
                                 _class="bx--list-box__menu-item",
                             ),
                         ),
                     ),
                     _class="bx--list-box__menu",
                     role="listbox",
+                    style="display: none",
                 ),
-                role="combobox",
-                aria_expanded="false",
-                aria_haspopup="listbox",
-                aria_labelledby=label_id,
-                _class="bx--multi-select bx--list-box bx--combo-box bx--multi-select--filterable",
+                _class=hg.BaseElement(
+                    "bx--multi-select bx--list-box bx--multi-select--selected bx--combo-box bx--multi-select--filterable",
+                    hg.If(disabled, "bx--list-box--disabled"),
+                ),
+                data_invalid=hg.If(errors, True),
             ),
             HelpTextElement(help_text),
             ErrorListElement(errors),
             _class="bx--list-box__wrapper",
+            onclick="event.stopPropagation()",
+            **attributes,
         )

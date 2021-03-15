@@ -7,7 +7,7 @@ from .icon import Icon
 class Search(hg.DIV):
     def __init__(self, size="xl", placeholder=None, widgetattributes=None, **kwargs):
         kwargs["_class"] = kwargs.get("_class", "") + f" bx--search bx--search--{size}"
-        kwargs["data-search"] = True
+        kwargs["data_search"] = True
         kwargs["role"] = "search"
 
         attributes = {
