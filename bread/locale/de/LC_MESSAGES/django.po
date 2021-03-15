@@ -190,7 +190,7 @@ msgstr "%s konnte nicht gelöscht werden: %s"
 
 #: bread/views/delete.py:77
 msgid "Deleted %s %s"
-msgstr "%s wurde gelöscht"
+msgstr "%s %s wurde gelöscht"
 
 #: bread/views/edit.py:88 bread/views/edit.py:121
 msgid "Copy"
