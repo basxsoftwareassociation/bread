@@ -313,7 +313,7 @@ def _mapwidget(
         attrs["checked"] = field.value()
 
     if isinstance(field.field.widget, forms.Select):
-        if isinstance(field.field.widget, forms.SelectMultiple):  # TODO: implement this
+        if isinstance(field.field.widget, forms.SelectMultiple):
             return hg.DIV(
                 MultiSelect(
                     field.field.widget.optgroups(

@@ -15,6 +15,12 @@ class ReadView(EditView):
     def post(self, *args, **kwargs):
         return HttpResponseNotAllowed()
 
+    def get_form(self, *args, **kwargs):
+        form = super().get_form(*args, **kwargs)
+        for field in form.fields.values():
+            field.disabled = True
+        return form
+
     def layout(self, request):
         return layoutasreadonly(super().layout(request))
 
