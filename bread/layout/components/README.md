@@ -18,10 +18,10 @@ High prio:
 - [x] File uploader: 
 - [x] Form: form.py
 - [x] Modal: modal.py
-- [ ] Multiselect: 
+- [x] Multiselect: 
 - [x] Notification: notification.py
 - [ ] Number input: 
-- [ ] Pagination: 
+- [x] Pagination: 
 - [/] Progress indicator: progress_indicator.py
 - [x] Overflow menu: overflow_menu.py
 - [ ] Radio button: 
@@ -37,7 +37,7 @@ High prio:
 
 Low prio:
 - [ ] Accordion
-- [ ] Content switcher
+- [x] Content switcher
 - [ ] Link
 - [ ] List
 - [ ] Loading
