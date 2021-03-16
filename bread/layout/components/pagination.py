@@ -62,7 +62,8 @@ class Pagination(hg.DIV):
         super().__init__(
             hg.DIV(
                 hg.LABEL(
-                    _("Items per page:"),
+                    _("Items per page"),
+                    ":",
                     _class="bx--pagination__text",
                     _for=select1_id,
                 ),
