@@ -60,7 +60,11 @@ class DeleteView(
     def get_success_url(self):
         messages.success(
             self.request,
-            _("Deleted %s %s") % (pretty_modelname(self.object), self.object),
+            _("Deleted %(modelname)s %(objectname)s")
+            % {
+                "objectname": self.object,
+                "modelname": pretty_modelname(self.model),
+            },
         )
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
@@ -95,8 +99,11 @@ class BulkDeleteView(
 
         messages.success(
             self.request,
-            _("Deleted %s %s")
-            % (deleted, pretty_modelname(self.model, plural=deleted > 1)),
+            _("Deleted %(count) %(modelname)s")
+            % {
+                "count": deleted,
+                "modelname": pretty_modelname(self.model, plural=deleted > 1),
+            },
         )
         return super().get(*args, **kwargs)
 

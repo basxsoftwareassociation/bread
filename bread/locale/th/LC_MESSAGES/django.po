@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-04 12:00+0700\n"
+"POT-Creation-Date: 2021-03-16 12:45+0700\n"
 "PO-Revision-Date: 2021-03-16 03:47+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -209,19 +209,19 @@ msgstr "ใช่ ลบข้อมูล"
 msgid "Delete %s"
 msgstr "ลบ %s"
 
-#: bread/views/delete.py:72
+#: bread/views/delete.py:63
+#, python-format
+msgid "Deleted %(modelname)s %(objectname)s"
+msgstr ""
+
+#: bread/views/delete.py:97
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s ไม่ควรลบเพราะ: %s"
 
-#: bread/views/delete.py:77
+#: bread/views/delete.py:102
 #, python-format
-msgid "Deleted %s %s"
-msgstr "ลบ %s %s"
-
-#: bread/views/delete.py:93
-#, python-format
-msgid "%s could not be deleted: %s"
+msgid "Deleted %(count) %(modelname)s"
 msgstr ""
 
 #: bread/views/edit.py:89 bread/views/edit.py:122
@@ -248,6 +248,10 @@ msgstr "เรียบร้อย"
 #: bread/views/wizard.py:64
 msgid "Continue"
 msgstr "ต่อไป"
+
+#, python-format
+#~ msgid "Deleted %s %s"
+#~ msgstr "ลบ %s %s"
 
 #~ msgid "cannot be deleted because of the following related objects:"
 #~ msgstr "ไม่สามารถลบได้เนื่องจากสิ่งต่อไปนี้"

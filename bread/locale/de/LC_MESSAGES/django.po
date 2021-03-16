@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-16 12:34+0700\n"
+"POT-Creation-Date: 2021-03-16 12:45+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -190,6 +190,7 @@ msgid "Reset"
 msgstr "Zurücksetzen"
 
 #: bread/views/delete.py:33
+#, python-format
 msgid "Are you sure you want to delete %s %s?"
 msgstr "Sind Sie sicher, dass Sie %s '%s' löschen wollen?"
 
@@ -206,15 +207,20 @@ msgstr "Ja, löschen"
 msgid "Delete %s"
 msgstr "Lösche %s"
 
-#: bread/views/delete.py:63 bread/views/delete.py:98
+#: bread/views/delete.py:63
 #, python-format
-msgid "Deleted %s %s"
-msgstr "%s %s wurde gelöscht"
+msgid "Deleted %(modelname)s %(objectname)s"
+msgstr "%(modelname)s %(objectname)s wurde gelöscht"
 
-#: bread/views/delete.py:93
+#: bread/views/delete.py:97
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s konnte nicht gelöscht werden: %s"
+
+#: bread/views/delete.py:102
+#, python-format
+msgid "Deleted %(count) %(modelname)s"
+msgstr "%(count) %(modelname)s gelöscht"
 
 #: bread/views/edit.py:89 bread/views/edit.py:122
 msgid "Copy"
