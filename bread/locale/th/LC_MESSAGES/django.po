@@ -8,69 +8,70 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-04 12:00+0700\n"
-"PO-Revision-Date: 2021-01-15 10:36+0700\n"
-"Last-Translator: Tida <tida@basx.dev>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2021-03-16 03:47+0000\n"
+"Last-Translator: Tidaphan <tida@basx.dev>\n"
+"Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
+"th/>\n"
 "Language: th\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Weblate 4.5.2-dev\n"
 
 #: bread/contrib/reports/fields/queryfield.py:105
 #, python-format
 msgid "Invalid model '%s' selected"
-msgstr ""
+msgstr "เลือกโมเดล '%s'ที่ไม่ถูกต้อง"
 
 #: bread/contrib/reports/models.py:12
 msgid "Created"
-msgstr ""
+msgstr "สร้าง"
 
 #: bread/contrib/reports/models.py:13 bread/contrib/reports/models.py:50
 msgid "Name"
-msgstr ""
+msgstr "ชื่อ"
 
 #: bread/contrib/reports/models.py:18
 msgid "Model"
-msgstr ""
+msgstr "โมเดล"
 
 #: bread/contrib/reports/models.py:19
 msgid "Filter"
-msgstr ""
+msgstr "ค้นหา"
 
 #: bread/contrib/reports/models.py:28
 msgid "Preview"
-msgstr ""
+msgstr "มุมมอง"
 
 #: bread/contrib/reports/models.py:38
 msgid "Report"
-msgstr ""
+msgstr "รายงาน"
 
 #: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:121
 #: bread/contrib/reports/urls.py:122
 msgid "Reports"
-msgstr ""
+msgstr "รายงาน"
 
 #: bread/contrib/reports/models.py:49
 msgid "Column"
-msgstr ""
+msgstr "ช่อง"
 
 #: bread/contrib/reports/models.py:52
 msgid "Aggregation"
-msgstr ""
+msgstr "สูตรรวม"
 
 #: bread/contrib/reports/urls.py:29
 msgid "New report: "
-msgstr ""
+msgstr "รายงานใหม่ "
 
 #: bread/contrib/reports/urls.py:42
 msgid "Columns"
-msgstr ""
+msgstr "ช่อง"
 
 #: bread/contrib/reports/urls.py:92
 msgid "Excel"
-msgstr ""
+msgstr "Excel"
 
 #: bread/layout/components/button.py:64
 msgid "Print"
@@ -78,7 +79,7 @@ msgstr "พิมพ์"
 
 #: bread/layout/components/datatable.py:254
 msgid "Cancel"
-msgstr ""
+msgstr "ยกเลิก"
 
 #: bread/layout/components/datatable.py:265
 msgid " items selected"
@@ -96,7 +97,7 @@ msgstr "เพิ่ม %s"
 
 #: bread/layout/components/file_uploader.py:28
 msgid "Select file"
-msgstr ""
+msgstr "เลือกไฟล์"
 
 #: bread/layout/components/form.py:28
 msgid "Save"
@@ -119,8 +120,6 @@ msgid "Delete"
 msgstr "ลบ"
 
 #: bread/layout/components/notification.py:125
-#, fuzzy
-#| msgid "Time stamp "
 msgid "Time stamp"
 msgstr "บันทึกเวลา"
 
@@ -186,13 +185,12 @@ msgstr "ลบ %s"
 #: bread/views/delete.py:72
 #, python-format
 msgid "%s could not be deleted: %s"
-msgstr ""
+msgstr "%s ไม่ควรลบเพราะ: %s"
 
 #: bread/views/delete.py:77
-#, fuzzy, python-format
-#| msgid "Delete %s"
+#, python-format
 msgid "Deleted %s %s"
-msgstr "ลบ %s"
+msgstr "ลบ %s %s"
 
 #: bread/views/edit.py:88 bread/views/edit.py:121
 msgid "Copy"
@@ -201,23 +199,23 @@ msgstr "คัดลอก"
 #: bread/views/edit.py:138
 #, python-format
 msgid "Created %s copies"
-msgstr ""
+msgstr "สร้าง %s สำเนา"
 
 #: bread/views/system.py:12
 msgid "Login"
-msgstr ""
+msgstr "ลงชื่อเข้าใช้"
 
 #: bread/views/wizard.py:50
 msgid "Back"
-msgstr ""
+msgstr "กลับ"
 
 #: bread/views/wizard.py:61
 msgid "Complete"
-msgstr ""
+msgstr "เรียบร้อย"
 
 #: bread/views/wizard.py:64
 msgid "Continue"
-msgstr ""
+msgstr "ต่อไป"
 
 #~ msgid " (required)"
 #~ msgstr "(จำเป็น)"
