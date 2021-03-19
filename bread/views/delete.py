@@ -13,6 +13,7 @@ from django.forms import Form
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DeleteView as DjangoDeleteView
 from django.views.generic import RedirectView
+from djangoql.queryset import apply_search
 from guardian.mixins import PermissionRequiredMixin
 
 from .. import layout as _layout
@@ -23,6 +24,8 @@ from .util import BreadView
 class DeleteView(
     BreadView, PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView
 ):
+    """TODO: documentation"""
+
     template_name = "bread/layout.html"
     accept_global_perms = True
     urlparams = (("pk", int),)
@@ -75,20 +78,31 @@ class BulkDeleteView(
     PermissionRequiredMixin,
     RedirectView,
 ):
-    objectids_argname = "selected"  # see bread/static/js/main.js:submitbulkaction
+    objectids_urlparameter = "selected"  # see bread/static/js/main.js:submitbulkaction
+    query_urlparameter = "q"
     accept_global_perms = True
     model = None
 
     def __init__(self, model, *args, **kwargs):
+        self.query_urlparameter = (
+            kwargs.get("query_urlparameter") or self.query_urlparameter
+        )
+        self.objectids_urlparameter = (
+            kwargs.get("objectids_urlparameter") or self.objectids_urlparameter
+        )
         super().__init__(*args, **kwargs)
         self.model = model
 
     def get(self, *args, **kwargs):
-        objectids = self.request.GET.getlist(self.objectids_argname, ())
         deleted = 0
-        for i in objectids:
-            object = self.model.objects.get(pk=i)
+        for object in self.get_queryset():
             try:
+                if not self.request.user.has_perm(
+                    self.get_required_permissions(self.request), object
+                ):
+                    raise Exception(
+                        _("Your user has not the permissions to delete %s") % object
+                    )
                 object.delete()
                 deleted += 1
             except Exception as e:
@@ -99,7 +113,7 @@ class BulkDeleteView(
 
         messages.success(
             self.request,
-            _("Deleted %(count) %(modelname)s")
+            _("Deleted %(count)s %(modelname)s")
             % {
                 "count": deleted,
                 "modelname": pretty_modelname(self.model, plural=deleted > 1),
@@ -114,3 +128,19 @@ class BulkDeleteView(
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.delete_{self.model.__name__.lower()}"]
+
+    def get_queryset(self):
+        """Prefetch related tables to speed up queries. Also order result by get-parameters."""
+        qs = self.model.objects.all()
+        if self.query_urlparameter in self.request.GET:
+            qs = apply_search(
+                qs,
+                "("
+                + ") and (".join(self.request.GET.getlist(self.query_urlparameter))
+                + ")",
+            )
+        selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
+        if selectedobjects and "all" not in selectedobjects:
+            qs |= self.model.objects.filter(pk__in=selectedobjects)
+
+        return qs
