@@ -1,16 +1,19 @@
 import htmlgenerator as hg
 
-from .helpers import REQUIRED_LABEL, ErrorList, HelperText, Label
+from .helpers import REQUIRED_LABEL, ErrorListElement, HelpTextElement
 
 
 class Checkbox(hg.DIV):
     def __init__(
         self,
-        fieldname,
+        label=None,
+        help_text=None,
+        errors=None,
+        disabled=None,
+        required=None,
         widgetattributes={},
         **attributes,
     ):
-        self.fieldname = fieldname
         attributes["_class"] = (
             attributes.get("_class", "") + " bx--form-item bx--checkbox-wrapper"
         )
@@ -19,20 +22,18 @@ class Checkbox(hg.DIV):
         )
         widgetattributes["type"] = "checkbox"
         self.input = hg.INPUT(**widgetattributes)
-        self.label = Label(self.input, _class="bx--checkbox-label")
-        super().__init__(self.label, **attributes)
-
-    def render(self, context):
-        if self.boundfield.field.disabled:
-            self.label.attributes["_class"] += " bx--label--disabled"
-            self.input.attributes["disabled"] = True
-        if self.boundfield is not None:
-            self.label.attributes["_for"] = self.boundfield.id_for_label
-            self.label.append(self.boundfield.label)
-            if self.boundfield.field.required:
-                self.label.append(REQUIRED_LABEL)
-            if self.boundfield.help_text:
-                self.append(HelperText(self.boundfield.help_text))
-            if self.boundfield.errors:
-                self.append(ErrorList(self.boundfield.errors))
-        return super().render(context)
+        self.label = hg.LABEL(
+            self.input,
+            label,
+            hg.If(required, REQUIRED_LABEL),
+            _class=hg.BaseElement(
+                "bx--checkbox-label",
+                hg.If(disabled, " bx--label--disabled"),
+            ),
+        )
+        super().__init__(
+            self.label,
+            HelpTextElement(help_text),
+            ErrorListElement(errors),
+            **attributes,
+        )
