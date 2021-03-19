@@ -311,7 +311,18 @@ def _mapwidget(
 
     if isinstance(field.field.widget, forms.CheckboxInput):
         attrs["checked"] = field.value()
-
+        return hg.DIV(
+            Checkbox(
+                label=field.label,
+                help_text=field.help_text,
+                errors=field.errors,
+                disabled=field.field.disabled,
+                required=field.field.required,
+                widgetattributes=attrs,
+                **elementattributes,
+            ),
+            _class="bx--form-item",
+        )
     if isinstance(field.field.widget, forms.Select):
         if isinstance(field.field.widget, forms.SelectMultiple):
             return hg.DIV(
