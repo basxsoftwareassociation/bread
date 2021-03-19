@@ -140,3 +140,7 @@ fieldset[disabled=disabled] :disabled {
     90% {opacity: 1;}
     100% {opacity: 0;}
 }
+
+.raised {
+    @include layer('raised');
+}
