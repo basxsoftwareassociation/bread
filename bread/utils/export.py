@@ -2,6 +2,7 @@ import html
 import io
 import re
 
+import htmlgenerator as hg
 from django.conf import settings
 from django.http import HttpResponse
 from django.template import Context, Template
@@ -61,8 +62,12 @@ def generate_excel(rows, columns):
         columndata[0].value = str(columnname)
         columndata[0].font = Font(bold=True)
         for i, cell in enumerate(columndata[1:]):
-            html_value = str(columns[columnname](rows[i]))
-            cleaned = html.unescape(newline_regex.sub(r"\n", strip_tags(html_value)))
+            value = columns[columnname](rows[i])
+            if isinstance(value, hg.BaseElement):
+                value = hg.render(value, {})
+            cleaned = html.unescape(
+                newline_regex.sub(r"\n", strip_tags(str(value or "")))
+            )
             cell.value = cleaned
     return workbook
 
