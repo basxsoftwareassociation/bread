@@ -1,6 +1,7 @@
 from . import components  # noqa
 from .base import *  # noqa
 from .components import button  # noqa
+from .components import checkbox  # noqa
 from .components import content_switcher  # noqa
 from .components import datatable  # noqa
 from .components import form  # noqa
