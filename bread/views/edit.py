@@ -29,6 +29,8 @@ class EditView(
     PermissionRequiredMixin,
     UpdateView,
 ):
+    """TODO: documentation"""
+
     template_name = "bread/layout.html"
     accept_global_perms = True
     fields = None

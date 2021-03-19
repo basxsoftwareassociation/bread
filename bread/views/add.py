@@ -18,6 +18,8 @@ class AddView(
     PermissionRequiredMixin,
     CreateView,
 ):
+    """TODO: documentation"""
+
     template_name = "bread/layout.html"
     accept_global_perms = True
     layout = None

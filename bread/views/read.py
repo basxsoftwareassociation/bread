@@ -7,6 +7,8 @@ from .edit import EditView
 
 # Read view is the same as the edit view but form elements are disabled
 class ReadView(EditView):
+    """TODO: documentation"""
+
     template_name = "bread/layout.html"
     accept_global_perms = True
     fields = None
