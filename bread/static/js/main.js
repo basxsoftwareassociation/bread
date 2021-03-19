@@ -11,7 +11,6 @@ function updateMultiselect(e) {
 
 function filterOptions(e) {
     var searchterm = $('input.bx--text-input', e).value.toLowerCase()
-    console.log(searchterm);
     for(i of $$('fieldset .bx--list-box__menu-item', e)) {
         if (i.innerText.toLowerCase().includes(searchterm)) {
             $(i)._.style({display: "initial"});
@@ -89,7 +88,7 @@ function makeChoices(selectElem) {
 
 
 function init_formset(form_prefix) {
-    _update_add_button(form_prefix);
+    update_add_button(form_prefix);
 }
 
 function delete_inline_element(checkbox, element) {
@@ -97,7 +96,7 @@ function delete_inline_element(checkbox, element) {
     element.style.display = "none";
 }
 
-function _update_add_button(form_prefix) {
+function update_add_button(form_prefix) {
     var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
     var maxforms = $('#id_' + form_prefix + '-MAX_NUM_FORMS')
     var addbutton = $('#add_' + form_prefix + '_button')
@@ -117,7 +116,8 @@ function formset_add(form_prefix, list_container) {
         $(list_container).appendChild(element);
     }
     formcount.value = parseInt(formcount.value) + 1;
-    _update_add_button(form_prefix);
+    update_add_button(form_prefix);
+    updateMultiselect(list_container);
 }
 
 function validate_fields() {
@@ -141,6 +141,9 @@ function submitbulkaction(table, actionurl, method="GET") {
     form.method = method;
     form.action = actionurl;
     for(let checkbox of table.querySelectorAll('input[type=checkbox][data-event=select]')) {
+        form.appendChild(checkbox.cloneNode(true));
+    }
+    for(let checkbox of table.querySelectorAll('input[type=checkbox][data-event=select-all]')) {
         form.appendChild(checkbox.cloneNode(true));
     }
     document.body.appendChild(form);
