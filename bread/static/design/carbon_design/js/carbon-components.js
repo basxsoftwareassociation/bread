@@ -3908,6 +3908,10 @@ var CarbonComponents = (function (exports) {
         _this._actionBarToggle(_this.state.checkboxCount > 0);
 
         if (_this.batchActionEl) {
+          var count = element.closest('[data-table]').querySelector('[data-total-items]').innerText;
+          if(count && checked) {
+            _this.state.checkboxCount = parseInt(count);
+          }
           _this.countEl.textContent = _this.state.checkboxCount;
         }
       });

@@ -299,7 +299,7 @@ class DataTable(hg.BaseElement):
                     hg.DIV(settingspanel, _class="bx--tile raised"),
                     _class="settingscontainer",
                     style="position: absolute; z-index: 999; right: 0; display: none",
-                    onload="document.addEventListener('click', (e) => {console.log('hooo'); this.style.display = 'none'})",
+                    onload="document.addEventListener('click', (e) => {this.style.display = 'none'})",
                 ),
                 style="position: relative",
                 onclick="event.stopPropagation()",

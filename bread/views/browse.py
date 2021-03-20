@@ -23,6 +23,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     template_name = "bread/layout.html"
     orderingurlparameter = "ordering"
     itemsperpage_urlparameter = "itemsperpage"
+    objectids_urlparameter = "selected"  # see bread/static/js/main.js:submitbulkaction
     pagination_choices = ()
     columns = ["__all__"]
     searchurl = None
@@ -38,6 +39,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         )
         self.itemsperpage_urlparameter = (
             kwargs.get("itemsperpage_urlparameter") or self.itemsperpage_urlparameter
+        )
+        self.objectids_urlparameter = (
+            kwargs.get("objectids_urlparameter") or self.objectids_urlparameter
         )
         self.pagination_choices = (
             kwargs.get("pagination_choices")
@@ -80,6 +84,8 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     def get(self, *args, **kwargs):
         if "reset" in self.request.GET:
             return redirect(self.request.path)
+        if "export" in self.request.GET:
+            return self.export(*args, **kwargs)
 
         return super().get(*args, **kwargs)
 
@@ -98,6 +104,11 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 + ") and (".join(self.request.GET.getlist(self.query_urlparameter))
                 + ")",
             )
+
+        selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
+        if selectedobjects and "all" not in selectedobjects:
+            qs |= super().get_queryset().filter(pk__in=selectedobjects)
+
         order = self.request.GET.get(self.orderingurlparameter)
         if order:
             if order.endswith("__int"):
@@ -120,32 +131,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         context["pagetitle"] = pretty_modelname(self.model, plural=True)
         return context
 
-
-class ExcelExportView(LoginRequiredMixin, PermissionListMixin, ListView):
-    """TODO: documentation"""
-
-    orderingurlparameter = "ordering"
-    columns = ["__all__"]
-    query_urlparameter = "q"
-    objectids_urlparameter = "selected"  # see bread/static/js/main.js:submitbulkaction
-
-    def __init__(self, *args, **kwargs):
-        self.orderingurlparameter = (
-            kwargs.get("orderingurlparameter") or self.orderingurlparameter
-        )
-        self.columns = kwargs.get("columns") or self.columns
-        self.query_urlparameter = (
-            kwargs.get("query_urlparameter") or self.query_urlparameter
-        )
-        self.objectids_urlparameter = (
-            kwargs.get("objectids_urlparameter") or self.objectids_urlparameter
-        )
-        super().__init__(*args, **kwargs)
-
-    def get_required_permissions(self, request):
-        return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
-
-    def get(self, *args, **kwargs):
+    def export(self, *args, **kwargs):
         columns = self.columns
         if "__all__" in columns:
             columns = filter_fieldlist(self.model, columns)
@@ -170,6 +156,8 @@ class ExcelExportView(LoginRequiredMixin, PermissionListMixin, ListView):
             columndefinitions[column[0]] = column[1]
         return generate_excel_view(self.get_queryset(), columndefinitions)(self.request)
 
+
+class ExcelExportView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     def get_queryset(self):
         """Prefetch related tables to speed up queries. Also order result by get-parameters."""
         qs = super().get_queryset()

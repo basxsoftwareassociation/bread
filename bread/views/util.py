@@ -81,10 +81,10 @@ class BreadView:
     @classmethod
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        if not hasattr(cls, "layout") and callable(cls.layout):
-            raise NotImplementedError(
-                f"{cls} needs to implement a method 'layout(request)'"
-            )
+        # if not hasattr(cls, "layout") and callable(cls.layout):
+        # raise NotImplementedError(
+        # f"{cls} needs to implement a method 'layout(request)'"
+        # )
 
     @classmethod
     def _with(cls, **kwargs):
