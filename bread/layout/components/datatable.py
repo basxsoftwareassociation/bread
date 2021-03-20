@@ -140,7 +140,7 @@ class DataTable(hg.BaseElement):
         paginator=None,
         page_urlparameter="page",
         itemsperpage_urlparameter="itemsperpage",
-        toolbar_action_menus=(),
+        settingspanel=None,
     ):
         """
         wrap this datatable with title and toolbar
@@ -153,7 +153,6 @@ class DataTable(hg.BaseElement):
                      bread.menu.Link will send a post or a get (depending on its "method" attribute) to the target url
                      the sent data will be a form with the selected checkboxes as fields
                      if the head-checkbox has been selected only that field will be selected
-        toolbar_action_menus: list of tuples with (menuiconname, list_of_actions) where the items in list_of_actions must instances of bread.menu.Action
         """
         checkboxallid = f"datatable-check-{hg.html_id(self)}"
         header = [hg.H4(title, _class="bx--data-table-header__title")]
@@ -276,15 +275,13 @@ class DataTable(hg.BaseElement):
                     )
                     if searchurl
                     else "",
-                    *[
-                        OverflowMenu(
-                            actions=actionlist,
-                            menuiconname=menuiconname,
-                            _class="bx--toolbar-action",
-                            item_attributes={"_class": "bx--overflow-menu--data-table"},
-                        )
-                        for menuiconname, actionlist in toolbar_action_menus
-                    ],
+                    Button(
+                        icon="settings--adjust",
+                        buttontype="ghost",
+                        onclick="this.parentElement.parentElement.parentElement.querySelector('.settingscontainer').style.display = this.parentElement.parentElement.parentElement.querySelector('.settingscontainer').style.display == 'block' ? 'none' : 'block'; event.stopPropagation()",
+                    )
+                    if settingspanel
+                    else "",
                     primary_button or "",
                     _class="bx--toolbar-content",
                 ),
@@ -293,9 +290,19 @@ class DataTable(hg.BaseElement):
             hg.DIV(
                 hg.DIV(
                     id=resultcontainerid,
-                    _style="width: 100%; position: absolute; z-index: 999",
+                    style="width: 100%; position: absolute; z-index: 999",
                 ),
                 style="width: 100%; position: relative",
+            ),
+            hg.DIV(
+                hg.DIV(
+                    hg.DIV(settingspanel, _class="bx--tile raised"),
+                    _class="settingscontainer",
+                    style="position: absolute; z-index: 999; right: 0; display: none",
+                    onload="document.addEventListener('click', (e) => {this.style.display = 'none'})",
+                ),
+                style="position: relative",
+                onclick="event.stopPropagation()",
             ),
             self,
             *(
@@ -333,8 +340,8 @@ class DataTable(hg.BaseElement):
         pagination_options=(),
         paginator=None,
         page_urlparameter="page",
-        toolbar_action_menus=(),
         itemsperpage_urlparameter="itemsperpage",
+        settingspanel=None,
         **kwargs,
     ):
         """TODO: Write Docs!!!!"""
@@ -425,7 +432,7 @@ class DataTable(hg.BaseElement):
                 query_urlparameter=query_urlparameter,
                 paginator=paginator,
                 itemsperpage_urlparameter=itemsperpage_urlparameter,
-                toolbar_action_menus=toolbar_action_menus,
+                settingspanel=settingspanel,
             )
         return table
 

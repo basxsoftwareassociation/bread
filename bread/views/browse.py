@@ -3,35 +3,32 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import models
 from django.shortcuts import redirect
-from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
 from djangoql.queryset import apply_search
 from guardian.mixins import PermissionListMixin
 
+from bread.utils import filter_fieldlist
+
 from .. import layout as _layout  # prevent name clashing
 from ..formatters import format_value
-from ..menu import Action
-from ..utils import (
-    generate_excel,
-    link_with_urlparameters,
-    pretty_modelname,
-    xlsxresponse,
-)
+from ..layout.base import fieldlabel
+from ..utils import generate_excel, pretty_modelname, xlsxresponse
 from ..utils.model_helpers import _expand_ALL_constant
 from .util import BreadView
 
 
 class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
+    """TODO: documentation"""
+
     template_name = "bread/layout.html"
     orderingurlparameter = "ordering"
     itemsperpage_urlparameter = "itemsperpage"
+    objectids_urlparameter = "selected"  # see bread/static/js/main.js:submitbulkaction
     pagination_choices = ()
     columns = ["__all__"]
     searchurl = None
     query_urlparameter = "q"
     rowclickaction = None
-    filteroptions = ()
-    filterfields = None
     bulkactions = ()  # list of links
     rowactions = ()  # list of links
 
@@ -42,6 +39,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         )
         self.itemsperpage_urlparameter = (
             kwargs.get("itemsperpage_urlparameter") or self.itemsperpage_urlparameter
+        )
+        self.objectids_urlparameter = (
+            kwargs.get("objectids_urlparameter") or self.objectids_urlparameter
         )
         self.pagination_choices = (
             kwargs.get("pagination_choices")
@@ -55,7 +55,6 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             kwargs.get("query_urlparameter") or self.query_urlparameter
         )
         self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
-        self.filteroptions = kwargs.get("filteroptions") or self.filteroptions
         super().__init__(*args, **kwargs)
 
     def layout(self, request):
@@ -73,52 +72,11 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             page_urlparameter=self.page_kwarg,
             paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
             itemsperpage_urlparameter=self.itemsperpage_urlparameter,
-            toolbar_action_menus=[
-                (
-                    "filter",
-                    [
-                        Action(
-                            js=hg.BaseElement(
-                                "document.location ='",
-                                hg.F(
-                                    lambda c, e, filter=filter: link_with_urlparameters(
-                                        c["request"],
-                                        **{
-                                            self.query_urlparameter: filter,
-                                            self.page_kwarg: None,
-                                        },
-                                    )
-                                ),
-                                "'",
-                            ),
-                            label=name,
-                        )
-                        for name, filter in self.filteroptions
-                    ]
-                    + [
-                        Action(
-                            js=hg.BaseElement(
-                                "document.location ='",
-                                hg.F(
-                                    lambda c, e: link_with_urlparameters(
-                                        c["request"],
-                                        **{
-                                            self.query_urlparameter: None,
-                                            self.page_kwarg: None,
-                                        },
-                                    )
-                                ),
-                                "'",
-                            ),
-                            icon="filter--remove",
-                            label=_("Reset"),
-                        )
-                    ],
-                )
-            ]
-            if self.filteroptions
-            else [],
+            settingspanel=self.get_settingspanel(),
         )
+
+    def get_settingspanel(self):
+        return None
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
@@ -126,6 +84,8 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     def get(self, *args, **kwargs):
         if "reset" in self.request.GET:
             return redirect(self.request.path)
+        if "export" in self.request.GET:
+            return self.export(*args, **kwargs)
 
         return super().get(*args, **kwargs)
 
@@ -144,6 +104,11 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 + ") and (".join(self.request.GET.getlist(self.query_urlparameter))
                 + ")",
             )
+
+        selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
+        if selectedobjects and "all" not in selectedobjects:
+            qs |= super().get_queryset().filter(pk__in=selectedobjects)
+
         order = self.request.GET.get(self.orderingurlparameter)
         if order:
             if order.endswith("__int"):
@@ -166,44 +131,63 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         context["pagetitle"] = pretty_modelname(self.model, plural=True)
         return context
 
+    def export(self, *args, **kwargs):
+        columns = self.columns
+        if "__all__" in columns:
+            columns = filter_fieldlist(self.model, columns)
+        columndefinitions = {}
+        for column in columns:
+            if not (
+                (isinstance(column, tuple) and len(column) >= 2)
+                or isinstance(column, str)
+            ):
+                raise ValueError(
+                    f"Argument 'columns' needs to be of a list with items of type str or tuple (head, cellvalue), but found {column}"
+                )
+            if isinstance(column, str):
+                column = (fieldlabel(self.model, column), hg.C(f"row.{column}"))
+            # allow to use lazy objects same as for BrowseView/DataTables
+            if isinstance(column[1], hg.Lazy):
+                column = (
+                    column[0],
+                    lambda row, c=column[1]: c.resolve({"row": row}, None),
+                )
 
-class TreeView(BrowseView):
-    template_name = "bread/tree.html"
-    parent_accessor = None
-    label_function = None
+            columndefinitions[column[0]] = column[1]
+        return generate_excel_view(self.get_queryset(), columndefinitions)(self.request)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.parent_accessor = kwargs.get("parent_accessor", self.parent_accessor)
-        self.label_function = kwargs.get("label_function", lambda o: str(o))
 
-    def nodes(self):
-        # we do this here a bit more complicated in order to hit database only once
-        # and to make use of the filtered queryset
-        objects = list(self.object_list)
+class ExcelExportView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
+    def get_queryset(self):
+        """Prefetch related tables to speed up queries. Also order result by get-parameters."""
+        qs = super().get_queryset()
+        if self.query_urlparameter in self.request.GET:
+            qs = apply_search(
+                qs,
+                "("
+                + ") and (".join(self.request.GET.getlist(self.query_urlparameter))
+                + ")",
+            )
+        selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
+        if "all" not in selectedobjects:
+            qs |= super().get_queryset().filter(pk__in=selectedobjects)
 
-        # first pass: get child relationships
-        children = {None: []}
-        for object in objects:
-            parent_pk = None
-            parent = getattr(object, self.parent_accessor)
-            if parent is not None and parent in objects:
-                parent_pk = parent.pk
-            if parent_pk not in children:
-                children[parent_pk] = []
-            children[parent_pk].append(object)
-
-        # second pass: build tree recursively
-        def build_tree(nodes):
-            ret = {}
-            for node in nodes:
-                node.tree_label = self.label_function(node)
-                ret[node] = None
-                if node.pk in children:
-                    ret[node] = build_tree(children[node.pk])
-            return ret
-
-        return build_tree(children[None])
+        order = self.request.GET.get(self.orderingurlparameter)
+        if order:
+            if order.endswith("__int"):
+                order = order[:-5]
+                qs = qs.order_by(
+                    models.functions.Cast(order[1:], models.IntegerField()).desc()
+                    if order.startswith("-")
+                    else models.functions.Cast(order, models.IntegerField())
+                )
+            else:
+                qs = qs.order_by(
+                    models.functions.Lower(order[1:]).desc()
+                    if order.startswith("-")
+                    else models.functions.Lower(order)
+                )
+        return qs
 
 
 def generate_excel_view(queryset, fields, filterstr=None):
@@ -229,7 +213,7 @@ def generate_excel_view(queryset, fields, filterstr=None):
         items = queryset
         if isinstance(filterstr, str):
             items = parsequeryexpression(model.objects.all(), filterstr)
-        if "selected" in request.GET:
+        if "selected" in request.GET and "all" not in request.GET.getlist("selected"):
             items = items.filter(
                 pk__in=[int(i) for i in request.GET.getlist("selected")]
             )

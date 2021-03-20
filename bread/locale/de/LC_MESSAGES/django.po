@@ -219,8 +219,8 @@ msgstr "%s konnte nicht gelöscht werden: %s"
 
 #: bread/views/delete.py:102
 #, python-format
-msgid "Deleted %(count) %(modelname)s"
-msgstr "%(count) %(modelname)s gelöscht"
+msgid "Deleted %(count)s %(modelname)s"
+msgstr "%(count)s %(modelname)s gelöscht"
 
 #: bread/views/edit.py:89 bread/views/edit.py:122
 msgid "Copy"

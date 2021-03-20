@@ -51,6 +51,7 @@ def reverse(*args, **kwargs):
 
 
 def link_with_urlparameters(request, **kwargs):
+    """Takes the current URL path and replaces, updates or removes url query parameters based on the passed in named arguments, an argument of None or empty string will remove the parameter from the URL. Existing parameters in the full path which are not one of the named argument will be left untouched."""
     urlparams = request.GET.copy()
     for parametername, value in kwargs.items():
         urlparams[parametername] = value
