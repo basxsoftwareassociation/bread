@@ -4164,7 +4164,7 @@ var CarbonComponents = (function (exports) {
           selectorActions: ".".concat(prefix, "--batch-actions"),
           selectorCount: '[data-items-selected]',
           selectorActionCancel: ".".concat(prefix, "--batch-summary__cancel"),
-          selectorCheckbox: ".".concat(prefix, "--checkbox"),
+          selectorCheckbox: ".bx--table-column-checkbox " + ".".concat(prefix, "--checkbox"),
           selectorExpandHeader: "th.".concat(prefix, "--table-expand"),
           selectorExpandCells: "td.".concat(prefix, "--table-expand"),
           selectorExpandableRows: ".".concat(prefix, "--expandable-row"),
