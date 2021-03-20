@@ -30,6 +30,9 @@ class Checkbox(hg.DIV):
                 "bx--checkbox-label",
                 hg.If(disabled, " bx--label--disabled"),
             ),
+            data_contained_checkbox_state="true"
+            if widgetattributes.get("checked", False)
+            else "false",
         )
         super().__init__(
             self.label,
