@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-16 12:45+0700\n"
+"POT-Creation-Date: 2021-03-22 14:13+0700\n"
 "PO-Revision-Date: 2021-03-16 03:47+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -48,18 +48,22 @@ msgstr "มุมมอง"
 msgid "Report"
 msgstr "รายงาน"
 
-#: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:140
-#: bread/contrib/reports/urls.py:141
+#: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:142
+#: bread/contrib/reports/urls.py:143
 msgid "Reports"
 msgstr "รายงาน"
 
-#: bread/contrib/reports/models.py:49
+#: bread/contrib/reports/models.py:49 bread/contrib/reports/models.py:56
 msgid "Column"
 msgstr "ช่อง"
 
 #: bread/contrib/reports/models.py:52
 msgid "Aggregation"
 msgstr "สูตรรวม"
+
+#: bread/contrib/reports/models.py:57 bread/contrib/reports/urls.py:50
+msgid "Columns"
+msgstr "ช่อง"
 
 #: bread/contrib/reports/urls.py:31
 msgid "New report: "
@@ -69,32 +73,28 @@ msgstr "รายงานใหม่ "
 msgid "Base model"
 msgstr ""
 
-#: bread/contrib/reports/urls.py:50
-msgid "Columns"
-msgstr "ช่อง"
-
-#: bread/contrib/reports/urls.py:111
+#: bread/contrib/reports/urls.py:113
 msgid "Excel"
 msgstr "Excel"
 
-#: bread/layout/components/button.py:64
+#: bread/layout/components/button.py:67
 msgid "Print"
 msgstr "พิมพ์"
 
-#: bread/layout/components/datatable.py:248
+#: bread/layout/components/datatable.py:247
 msgid "Cancel"
 msgstr "ยกเลิก"
 
-#: bread/layout/components/datatable.py:259
+#: bread/layout/components/datatable.py:258
 msgid " items selected"
 msgstr "เลือกรายการ"
 
-#: bread/layout/components/datatable.py:265
+#: bread/layout/components/datatable.py:264
 msgid "Table Action Bar"
 msgstr "แถบงาน"
 
-#: bread/layout/components/datatable.py:417 bread/views/add.py:35
-#: bread/views/add.py:58
+#: bread/layout/components/datatable.py:424 bread/views/add.py:37
+#: bread/views/add.py:60
 #, python-format
 msgid "Add %s"
 msgstr "เพิ่ม %s"
@@ -103,23 +103,23 @@ msgstr "เพิ่ม %s"
 msgid "Select file"
 msgstr "เลือกไฟล์"
 
-#: bread/layout/components/form.py:28
+#: bread/layout/components/form.py:26
 msgid "Save"
 msgstr "บันทึก"
 
-#: bread/layout/components/form.py:65
+#: bread/layout/components/form.py:63
 msgid "Form error"
 msgstr "เกิดข้อผิดพลาด"
 
-#: bread/layout/components/form.py:71
+#: bread/layout/components/form.py:69
 msgid "Form error: "
 msgstr "เกิดข้อผิดพลาด"
 
-#: bread/layout/components/form.py:183
+#: bread/layout/components/form.py:181
 msgid "Add"
 msgstr "เพิ่ม"
 
-#: bread/layout/components/form.py:203
+#: bread/layout/components/form.py:201
 msgid "Delete"
 msgstr "ลบ"
 
@@ -181,54 +181,55 @@ msgstr "ตั้งค่าระบบ"
 msgid "Logout"
 msgstr "ลงชื่อออก"
 
-#: bread/views/add.py:26
+#: bread/views/add.py:28
 #, python-format
 msgid "Added %s"
 msgstr "เพิ่ม %s"
 
-#: bread/views/browse.py:114
-msgid "Reset"
-msgstr ""
-
-#: bread/views/delete.py:33
+#: bread/views/delete.py:36
 #, fuzzy, python-format
 #| msgid "Are you sure you want to delete"
 msgid "Are you sure you want to delete %s %s?"
 msgstr "คุณแน่ใจว่าต้องการลบข้อมูล"
 
-#: bread/views/delete.py:39
+#: bread/views/delete.py:42
 msgid "No, cancel"
 msgstr ""
 
-#: bread/views/delete.py:44
+#: bread/views/delete.py:47
 msgid "Yes, delete"
 msgstr "ใช่ ลบข้อมูล"
 
-#: bread/views/delete.py:57
+#: bread/views/delete.py:60
 #, python-format
 msgid "Delete %s"
 msgstr "ลบ %s"
 
-#: bread/views/delete.py:63
+#: bread/views/delete.py:66
 #, python-format
 msgid "Deleted %(modelname)s %(objectname)s"
 msgstr ""
 
-#: bread/views/delete.py:97
+#: bread/views/delete.py:104
+#, python-format
+msgid "Your user has not the permissions to delete %s"
+msgstr ""
+
+#: bread/views/delete.py:111
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s ไม่ควรลบเพราะ: %s"
 
-#: bread/views/delete.py:102
+#: bread/views/delete.py:116
 #, python-format
-msgid "Deleted %(count) %(modelname)s"
+msgid "Deleted %(count)s %(modelname)s"
 msgstr ""
 
-#: bread/views/edit.py:89 bread/views/edit.py:122
+#: bread/views/edit.py:91 bread/views/edit.py:124
 msgid "Copy"
 msgstr "คัดลอก"
 
-#: bread/views/edit.py:139
+#: bread/views/edit.py:141
 #, python-format
 msgid "Created %s copies"
 msgstr "สร้าง %s สำเนา"
