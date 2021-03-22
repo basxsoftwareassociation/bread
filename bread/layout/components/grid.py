@@ -4,15 +4,14 @@ import htmlgenerator
 class Grid(htmlgenerator.DIV):
     MODES = ("narrow", "condensed", "full-width")
 
-    def __init__(self, *children, gridmode=None, **attributes):
-        """
-        gridmode can be one of None,
-        """
+    def __init__(self, *children, gridmode=None, gutter=True, **attributes):
         attributes["_class"] = attributes.get("_class", "") + " bx--grid"
         if gridmode is not None:
             if gridmode not in Grid.MODES:
                 raise ValueError(f"argument 'gridmode' must be one of {Grid.MODES}")
             attributes["_class"] += f" bx--grid--{gridmode}"
+        if not gutter:
+            attributes["_class"] += " bx--no-gutter"
         super().__init__(*children, **attributes)
 
 
