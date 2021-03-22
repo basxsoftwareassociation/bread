@@ -51,3 +51,8 @@ class ReportColumn(models.Model):
     aggregation = models.CharField(
         _("Aggregation"), max_length=64, choices=tuple(AGGREGATIONS.items()), blank=True
     )
+
+    class Meta:
+        verbose_name = _("Column")
+        verbose_name_plural = _("Columns")
+        order_with_respect_to = "report"

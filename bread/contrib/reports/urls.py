@@ -53,12 +53,14 @@ class EditView(views.EditView):
                         R(
                             C(F("column")),
                             C(F("name")),
+                            C(F("ORDER")),
                             C(
                                 _layout.form.InlineDeleteButton(".bx--row"),
                                 style="align-self: center",
                             ),
                         ),
                         extra=1,
+                        can_order=True,
                     ),
                     _layout.form.FormsetAddButton("columns"),
                 ),

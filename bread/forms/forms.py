@@ -4,7 +4,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models, transaction
-from django.forms.formsets import DELETION_FIELD_NAME
+from django.forms.formsets import DELETION_FIELD_NAME, ORDERING_FIELD_NAME
 from dynamic_preferences.forms import GlobalPreferenceForm
 from dynamic_preferences.users.forms import UserPreferenceForm
 from guardian.shortcuts import get_objects_for_user
@@ -27,7 +27,7 @@ def generate_form(request, model, layout, instance, **kwargs):
     )
 
 
-def breadmodelform_factory(
+def breadmodelform_factory(  # noqa
     request, model, layout, instance=None, baseformclass=forms.models.ModelForm
 ):
     """Returns a form class which can handle inline-modelform sets and generic foreign keys."""
@@ -81,6 +81,16 @@ def breadmodelform_factory(
                     if isinstance(field, FormsetField):
                         self.cleaned_data[fieldname].instance = forminstance
                         self.cleaned_data[fieldname].save()
+                        if self.cleaned_data[fieldname].can_order:
+                            order = [
+                                f.instance.pk
+                                for f in self.cleaned_data[fieldname].ordered_forms
+                            ]
+                            getattr(
+                                forminstance,
+                                f"set_{self.cleaned_data[fieldname].model._meta.model_name}_order",
+                            )(order)
+
             return forminstance
 
     # GenericForeignKey and one-to-n fields need to be added separatly to the form class
@@ -238,7 +248,7 @@ class UserPreferencesForm(UserPreferenceForm):
 
 
 def _get_form_fields_from_layout(layout):
-    INTERNAL_FIELDS = [DELETION_FIELD_NAME]
+    INTERNAL_FIELDS = [DELETION_FIELD_NAME, ORDERING_FIELD_NAME]
 
     def walk(element):
         if isinstance(
