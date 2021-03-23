@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-22 14:13+0700\n"
+"POT-Creation-Date: 2021-03-23 14:47+0700\n"
 "PO-Revision-Date: 2021-03-16 03:47+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -225,14 +225,17 @@ msgstr "%s ไม่ควรลบเพราะ: %s"
 msgid "Deleted %(count)s %(modelname)s"
 msgstr ""
 
-#: bread/views/edit.py:91 bread/views/edit.py:124
-msgid "Copy"
-msgstr "คัดลอก"
-
-#: bread/views/edit.py:141
+#: bread/views/edit.py:122
 #, python-format
 msgid "Created %s copies"
 msgstr "สร้าง %s สำเนา"
+
+#: bread/views/edit.py:134
+#, fuzzy
+#| msgid "Copy"
+msgctxt "this is a copy"
+msgid "Copy"
+msgstr "คัดลอก"
 
 #: bread/views/system.py:12
 msgid "Login"
