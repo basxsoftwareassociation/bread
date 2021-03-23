@@ -123,7 +123,9 @@ urlpatterns = [
         urls.model_urlname(Report, "bulkdelete"),
     ),
     urls.generate_path(
-        views.generate_bulkcopyview(Report),
+        views.generate_bulkcopyview(
+            Report, labelfield="name", copy_related_fields=("columns",)
+        ),
         urls.model_urlname(Report, "bulkcopy"),
     ),
     urls.generate_path(

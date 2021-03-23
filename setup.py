@@ -46,7 +46,6 @@ setup(
         "django-countries",
         "django-money[exchange]",
         "django-simple-history",
-        "django-clone",
         # Required for multimedia
         "Pillow",  # image processing
         "easy_thumbnails",  # thumbnails
