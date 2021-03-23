@@ -107,7 +107,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
 
         selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
         if selectedobjects and "all" not in selectedobjects:
-            qs |= super().get_queryset().filter(pk__in=selectedobjects)
+            qs &= super().get_queryset().filter(pk__in=selectedobjects)
 
         order = self.request.GET.get(self.orderingurlparameter)
         if order:
@@ -155,39 +155,6 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
 
             columndefinitions[column[0]] = column[1]
         return generate_excel_view(self.get_queryset(), columndefinitions)(self.request)
-
-
-class ExcelExportView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
-    def get_queryset(self):
-        """Prefetch related tables to speed up queries. Also order result by get-parameters."""
-        qs = super().get_queryset()
-        if self.query_urlparameter in self.request.GET:
-            qs = apply_search(
-                qs,
-                "("
-                + ") and (".join(self.request.GET.getlist(self.query_urlparameter))
-                + ")",
-            )
-        selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
-        if "all" not in selectedobjects:
-            qs |= super().get_queryset().filter(pk__in=selectedobjects)
-
-        order = self.request.GET.get(self.orderingurlparameter)
-        if order:
-            if order.endswith("__int"):
-                order = order[:-5]
-                qs = qs.order_by(
-                    models.functions.Cast(order[1:], models.IntegerField()).desc()
-                    if order.startswith("-")
-                    else models.functions.Cast(order, models.IntegerField())
-                )
-            else:
-                qs = qs.order_by(
-                    models.functions.Lower(order[1:]).desc()
-                    if order.startswith("-")
-                    else models.functions.Lower(order)
-                )
-        return qs
 
 
 def generate_excel_view(queryset, fields, filterstr=None):
