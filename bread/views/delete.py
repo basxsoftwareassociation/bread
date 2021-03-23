@@ -24,6 +24,7 @@ class DeleteView(BreadView, PermissionRequiredMixin, RedirectView):
     softdeletefield = "deleted"
     accept_global_perms = True
     urlparams = (("pk", int),)
+    harddelete = False
 
     def layout(self, request):
         None
@@ -33,8 +34,11 @@ class DeleteView(BreadView, PermissionRequiredMixin, RedirectView):
 
     def get(self, *args, **kwargs):
         instance = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
-        setattr(instance, self.softdeletefield, True)
-        instance.save()
+        if self.harddelete:
+            instance.delete()
+        else:
+            setattr(instance, self.softdeletefield, True)
+            instance.save()
         messages.success(
             self.request,
             _("Deleted %(modelname)s %(objectname)s")
