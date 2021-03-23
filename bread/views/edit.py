@@ -158,6 +158,7 @@ def deepcopy_object(instance, attrs=None, copy_related_fields=()):
             setattr(obj, related_name, instance)
             obj.save()
 
+    instance.save()
     return instance
 
 
