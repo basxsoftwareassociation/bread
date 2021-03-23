@@ -6,69 +6,46 @@ an argument "admin" which is an instance of the according BreadAdmin class
 """
 import urllib
 
-import htmlgenerator as hg
 from django.contrib import messages
-from django.contrib.messages.views import SuccessMessageMixin
-from django.forms import Form
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DeleteView as DjangoDeleteView
 from django.views.generic import RedirectView
 from djangoql.queryset import apply_search
 from guardian.mixins import PermissionRequiredMixin
 
-from .. import layout as _layout
 from ..utils import pretty_modelname, reverse_model
 from .util import BreadView
 
 
-class DeleteView(
-    BreadView, PermissionRequiredMixin, SuccessMessageMixin, DjangoDeleteView
-):
+class DeleteView(BreadView, PermissionRequiredMixin, RedirectView):
     """TODO: documentation"""
 
-    template_name = "bread/layout.html"
+    model = None
+    softdeletefield = "deleted"
     accept_global_perms = True
     urlparams = (("pk", int),)
 
     def layout(self, request):
-        return hg.BaseElement(
-            hg.H3(
-                _("Are you sure you want to delete %s %s?")
-                % (pretty_modelname(self.object), self.object)
-            ),
-            _layout.form.Form(
-                Form(),
-                _layout.button.Button(
-                    _("No, cancel"),
-                    buttontype="secondary",
-                    onclick="window.history.back()",
-                ),
-                _layout.button.Button(
-                    _("Yes, delete"), type="submit", buttontype="danger"
-                ),
-            ),
-        )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        None
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.delete_{self.model.__name__.lower()}"]
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["pagetitle"] = _("Delete %s") % self.object
-        return context
-
-    def get_success_url(self):
+    def get(self, *args, **kwargs):
+        instance = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
+        setattr(instance, self.softdeletefield, True)
+        instance.save()
         messages.success(
             self.request,
             _("Deleted %(modelname)s %(objectname)s")
             % {
-                "objectname": self.object,
+                "objectname": instance,
                 "modelname": pretty_modelname(self.model),
             },
         )
+        return super().get(*args, **kwargs)
+
+    def get_redirect_url(self, *args, **kwargs):
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
         return reverse_model(self.model, "browse")
@@ -82,6 +59,7 @@ class BulkDeleteView(
     query_urlparameter = "q"
     accept_global_perms = True
     model = None
+    softdeletefield = "deleted"
 
     def __init__(self, model, *args, **kwargs):
         self.query_urlparameter = (
@@ -95,15 +73,16 @@ class BulkDeleteView(
 
     def get(self, *args, **kwargs):
         deleted = 0
-        for object in self.get_queryset():
+        for instance in self.get_queryset():
             try:
                 if not self.request.user.has_perm(
-                    self.get_required_permissions(self.request), object
+                    self.get_required_permissions(self.request), instance
                 ):
                     raise Exception(
-                        _("Your user has not the permissions to delete %s") % object
+                        _("Your user has not the permissions to delete %s") % instance
                     )
-                object.delete()
+                setattr(instance, self.softdeletefield, True)
+                instance.save()
                 deleted += 1
             except Exception as e:
                 messages.error(
@@ -141,6 +120,6 @@ class BulkDeleteView(
             )
         selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
         if selectedobjects and "all" not in selectedobjects:
-            qs |= self.model.objects.filter(pk__in=selectedobjects)
+            qs &= self.model.objects.filter(pk__in=selectedobjects)
 
         return qs
