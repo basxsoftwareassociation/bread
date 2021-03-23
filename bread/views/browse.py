@@ -31,6 +31,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     rowclickaction = None
     bulkactions = ()  # list of links
     rowactions = ()  # list of links
+    asexcel = False
 
     def __init__(self, *args, **kwargs):
         self.bulkactions = kwargs.get("bulkactions") or self.bulkactions
@@ -84,7 +85,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     def get(self, *args, **kwargs):
         if "reset" in self.request.GET:
             return redirect(self.request.path)
-        if "export" in self.request.GET:
+        if self.asexcel:
             return self.export(*args, **kwargs)
 
         return super().get(*args, **kwargs)
