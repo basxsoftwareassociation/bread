@@ -13,14 +13,12 @@ from .. import layout as layout
 from .. import menu as menuregister
 from ..formatters import as_object_link, format_value
 from ..utils import has_permission, pretty_fieldname
-from ..utils.datetimeformatstring import to_php_formatstr
 
 logger = logging.getLogger(__name__)
 register = template.Library()
 
 register.simple_tag(pretty_fieldname)
 register.simple_tag(has_permission)
-register.simple_tag(to_php_formatstr)
 register.filter(format_value)
 
 

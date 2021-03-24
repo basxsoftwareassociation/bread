@@ -9,6 +9,7 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sites",
+    "guardian",
     "bread",
     "bread.contrib.reports",
     "easy_thumbnails",
@@ -22,6 +23,10 @@ settings.configure(
     MIDDLEWARE_CLASSES=(),
     SITE_ID=1,
     INSTALLED_APPS=INSTALLED_APPS,
+    AUTHENTICATION_BACKENDS=(
+        "django.contrib.auth.backends.ModelBackend",
+        "guardian.backends.ObjectPermissionBackend",
+    ),
 )
 
 django.setup()

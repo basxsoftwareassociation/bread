@@ -29,7 +29,7 @@ LETTER_MAPPING = {
 }
 
 
-def to_php_formatstr(formatstr, format_key):
+def to_php_formatstr(formatstr, format_key=None):
     """Maps a python datetime format string to a PHP format string
 
     This function is usefull because a lot of template/front-end code uses
