@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-23 14:47+0700\n"
+"POT-Creation-Date: 2021-03-24 09:37+0700\n"
 "PO-Revision-Date: 2021-03-16 03:47+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -48,8 +48,8 @@ msgstr "มุมมอง"
 msgid "Report"
 msgstr "รายงาน"
 
-#: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:142
-#: bread/contrib/reports/urls.py:143
+#: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:144
+#: bread/contrib/reports/urls.py:145
 msgid "Reports"
 msgstr "รายงาน"
 
@@ -186,41 +186,22 @@ msgstr "ลงชื่อออก"
 msgid "Added %s"
 msgstr "เพิ่ม %s"
 
-#: bread/views/delete.py:36
-#, fuzzy, python-format
-#| msgid "Are you sure you want to delete"
-msgid "Are you sure you want to delete %s %s?"
-msgstr "คุณแน่ใจว่าต้องการลบข้อมูล"
-
-#: bread/views/delete.py:42
-msgid "No, cancel"
-msgstr ""
-
-#: bread/views/delete.py:47
-msgid "Yes, delete"
-msgstr "ใช่ ลบข้อมูล"
-
-#: bread/views/delete.py:60
-#, python-format
-msgid "Delete %s"
-msgstr "ลบ %s"
-
-#: bread/views/delete.py:66
+#: bread/views/delete.py:44
 #, python-format
 msgid "Deleted %(modelname)s %(objectname)s"
 msgstr ""
 
-#: bread/views/delete.py:104
+#: bread/views/delete.py:86
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr ""
 
-#: bread/views/delete.py:111
+#: bread/views/delete.py:94
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s ไม่ควรลบเพราะ: %s"
 
-#: bread/views/delete.py:116
+#: bread/views/delete.py:99
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr ""
@@ -230,7 +211,7 @@ msgstr ""
 msgid "Created %s copies"
 msgstr "สร้าง %s สำเนา"
 
-#: bread/views/edit.py:134
+#: bread/views/edit.py:167
 #, fuzzy
 #| msgid "Copy"
 msgctxt "this is a copy"
@@ -252,6 +233,18 @@ msgstr "เรียบร้อย"
 #: bread/views/wizard.py:64
 msgid "Continue"
 msgstr "ต่อไป"
+
+#, fuzzy, python-format
+#~| msgid "Are you sure you want to delete"
+#~ msgid "Are you sure you want to delete %s %s?"
+#~ msgstr "คุณแน่ใจว่าต้องการลบข้อมูล"
+
+#~ msgid "Yes, delete"
+#~ msgstr "ใช่ ลบข้อมูล"
+
+#, python-format
+#~ msgid "Delete %s"
+#~ msgstr "ลบ %s"
 
 #, python-format
 #~ msgid "Deleted %s %s"

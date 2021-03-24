@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-23 14:47+0700\n"
+"POT-Creation-Date: 2021-03-24 09:37+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,8 +47,8 @@ msgstr "Vorschau"
 msgid "Report"
 msgstr "Bericht"
 
-#: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:142
-#: bread/contrib/reports/urls.py:143
+#: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:144
+#: bread/contrib/reports/urls.py:145
 msgid "Reports"
 msgstr "Berichte"
 
@@ -185,40 +185,22 @@ msgstr "Ausloggen"
 msgid "Added %s"
 msgstr "%s erstellt"
 
-#: bread/views/delete.py:36
-#, python-format
-msgid "Are you sure you want to delete %s %s?"
-msgstr "Sind Sie sicher, dass Sie %s '%s' löschen wollen?"
-
-#: bread/views/delete.py:42
-msgid "No, cancel"
-msgstr "Nein, abbrechen"
-
-#: bread/views/delete.py:47
-msgid "Yes, delete"
-msgstr "Ja, löschen"
-
-#: bread/views/delete.py:60
-#, python-format
-msgid "Delete %s"
-msgstr "Lösche %s"
-
-#: bread/views/delete.py:66
+#: bread/views/delete.py:44
 #, python-format
 msgid "Deleted %(modelname)s %(objectname)s"
 msgstr "%(modelname)s %(objectname)s wurde gelöscht"
 
-#: bread/views/delete.py:104
+#: bread/views/delete.py:86
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "Benutzer hat nicht die benötigten Berechtigungnen um '%s' zu löschen"
 
-#: bread/views/delete.py:111
+#: bread/views/delete.py:94
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s konnte nicht gelöscht werden: %s"
 
-#: bread/views/delete.py:116
+#: bread/views/delete.py:99
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s %(modelname)s gelöscht"
@@ -228,7 +210,7 @@ msgstr "%(count)s %(modelname)s gelöscht"
 msgid "Created %s copies"
 msgstr "%s Kopien erstellt"
 
-#: bread/views/edit.py:134
+#: bread/views/edit.py:167
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "Kopie"
@@ -248,6 +230,20 @@ msgstr "Fertigstellen"
 #: bread/views/wizard.py:64
 msgid "Continue"
 msgstr "Weiter"
+
+#, python-format
+#~ msgid "Are you sure you want to delete %s %s?"
+#~ msgstr "Sind Sie sicher, dass Sie %s '%s' löschen wollen?"
+
+#~ msgid "No, cancel"
+#~ msgstr "Nein, abbrechen"
+
+#~ msgid "Yes, delete"
+#~ msgstr "Ja, löschen"
+
+#, python-format
+#~ msgid "Delete %s"
+#~ msgstr "Lösche %s"
 
 #~ msgid "Reset"
 #~ msgstr "Zurücksetzen"
