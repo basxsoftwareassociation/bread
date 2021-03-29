@@ -1,7 +1,5 @@
 import os
 
-from easy_thumbnails.conf import Settings as thumbnail_settings
-
 _third_party_apps = [
     "simple_history",
     "ckeditor",
@@ -115,12 +113,6 @@ MIDDLEWARE = [
 SITE_ID = 1
 
 BREAD_PUBLIC_FILES_PREFIX = "public/"
-
-IMAGE_CROPPING_BACKEND = "image_cropping.backends.easy_thumbs.EasyThumbnailsBackend"
-IMAGE_CROPPING_BACKEND_PARAMS = {}
-THUMBNAIL_PROCESSORS = (
-    "image_cropping.thumbnail_processors.crop_corners",
-) + thumbnail_settings.THUMBNAIL_PROCESSORS
 
 # from default django config
 TEMPLATES = [
