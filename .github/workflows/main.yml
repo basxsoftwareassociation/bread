@@ -40,7 +40,7 @@ jobs:
       run: bandit -r . || true
     - name: Run bandit
       # there is no allow-failure yet. see https://github.com/actions/toolkit/issues/399
-      run: safety || true
+      run: safety check || true
 
     - name: Test with pytest
       run: |
