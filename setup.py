@@ -26,32 +26,20 @@ setup(
     author_email="sam@basx.dev",
     license="New BSD License",
     install_requires=[
-        # custom code in other packages
-        "htmlgenerator",  # replacement for django templates
         # core dependencies
         "Django",
         "python-dateutil",
+        "htmlgenerator",  # replacement for django templates
         "django-compressor",  # compress html assets
         "django-libsass",  # serve *.scss files with compressor
-        "django-crispy-forms",  # TODO: remove this dependency
         "django-extensions",  # bunch of usefull management commands and functions
-        "django-filter",  # url-based filtering, filter-forms
         "django-guardian",  # object level permissions
-        # other dependencies, TODO: remove unnecessary ones
-        "django-ckeditor",
-        "django-model-utils",
         "django-dynamic-preferences",  # easy handling of preferences
-        "django-dynamic-fixture",
-        "django-markdown2",
         "django-countries",
         "django-money[exchange]",
         "django-simple-history",
-        # Required for multimedia
-        "Pillow",  # image processing
-        "easy_thumbnails",  # thumbnails
-        "django-image-cropping",  # cropping images, only usefull in admin backend
         "openpyxl",  # working with excel files
-        "WeasyPrint",  # creating PDFs
+        "djangoql",
         # required for task scheduling
         "celery <5.0,>=4.4",
         "django-celery-results",
@@ -60,8 +48,17 @@ setup(
         "django-haystack",
         "whoosh",
         "celery-haystack",
-        # required for query-field
-        "djangoql",
+        # TODO: review whether we can or should remove these
+        "django-image-cropping",  # cropping images, only usefull in admin backend
+        "WeasyPrint",  # creating PDFs
+        "Pillow",  # image processing
+        "easy_thumbnails",  # thumbnails
+        "django-markdown2",
+        "django-dynamic-fixture",
+        "django-model-utils",
+        "django-filter",
+        "django-ckeditor",
+        "django-crispy-forms",
     ],
     packages=find_packages(),
     setup_requires=["setuptools_scm"],
