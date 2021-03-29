@@ -1,4 +1,5 @@
 [![CI](https://github.com/basxsoftwareassociation/bread/actions/workflows/main.yml/badge.svg)](https://github.com/basxsoftwareassociation/bread/actions/workflows/main.yml)
+[![Documentation Status](https://readthedocs.org/projects/basx-bread/badge/?version=latest)](https://basx-bread.readthedocs.io/en/latest/?badge=latest)
 [![Translation status](https://hosted.weblate.org/widgets/basxconnect/-/bread/svg-badge.svg)](https://hosted.weblate.org/engage/basxconnect/)
 
 Important
