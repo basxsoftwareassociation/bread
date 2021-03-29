@@ -21,10 +21,15 @@ class DeleteView(BreadView, PermissionRequiredMixin, RedirectView):
     """TODO: documentation"""
 
     model = None
-    softdeletefield = "deleted"
+    softdeletefield = None  # set to a boolean field on the modle which will be set to True instead of deleting the object
     accept_global_perms = True
     urlparams = (("pk", int),)
-    harddelete = False
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # raise exception in case the model has no field with the given name
+        if self.softdeletefield:
+            self.model._meta.get_field(self.softdeletefield)
 
     def layout(self, request):
         None
@@ -34,11 +39,11 @@ class DeleteView(BreadView, PermissionRequiredMixin, RedirectView):
 
     def get(self, *args, **kwargs):
         instance = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
-        if self.harddelete:
-            instance.delete()
-        else:
+        if self.softdeletefield:
             setattr(instance, self.softdeletefield, True)
             instance.save()
+        else:
+            instance.delete()
         messages.success(
             self.request,
             _("Deleted %(modelname)s %(objectname)s")
@@ -63,7 +68,7 @@ class BulkDeleteView(
     query_urlparameter = "q"
     accept_global_perms = True
     model = None
-    softdeletefield = "deleted"
+    softdeletefield = None
 
     def __init__(self, model, *args, **kwargs):
         self.query_urlparameter = (
@@ -74,6 +79,8 @@ class BulkDeleteView(
         )
         super().__init__(*args, **kwargs)
         self.model = model
+        if self.softdeletefield:
+            self.model._meta.get_field(self.softdeletefield)
 
     def get(self, *args, **kwargs):
         deleted = 0
@@ -85,8 +92,11 @@ class BulkDeleteView(
                     raise Exception(
                         _("Your user has not the permissions to delete %s") % instance
                     )
-                setattr(instance, self.softdeletefield, True)
-                instance.save()
+                if self.softdeletefield:
+                    setattr(instance, self.softdeletefield, True)
+                    instance.save()
+                else:
+                    instance.delete()
                 deleted += 1
             except Exception as e:
                 messages.error(
