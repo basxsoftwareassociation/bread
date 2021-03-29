@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-24 09:37+0700\n"
+"POT-Creation-Date: 2021-03-29 20:56+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -92,8 +92,8 @@ msgstr " Einträge ausgewählt"
 msgid "Table Action Bar"
 msgstr "Tabellen Aktionsbar"
 
-#: bread/layout/components/datatable.py:424 bread/views/add.py:37
-#: bread/views/add.py:60
+#: bread/layout/components/datatable.py:428 bread/views/add.py:41
+#: bread/views/add.py:48
 #, python-format
 msgid "Add %s"
 msgstr "%s erstellen"
@@ -155,6 +155,17 @@ msgstr "Suchen"
 msgid "Clear search input"
 msgstr "Suchtext löschen"
 
+#: bread/layout/components/shell_header.py:51
+#: bread/layout/components/shell_header.py:52
+#: bread/templates/bread/components/header.html:31
+#: bread/templates/bread/components/header.html:32
+msgid "Logout"
+msgstr "Ausloggen"
+
+#: bread/layout/components/shell_header.py:53
+msgid "Close"
+msgstr ""
+
 #: bread/layout/components/tag.py:17
 msgid "Remove"
 msgstr "Entfernen"
@@ -175,47 +186,48 @@ msgstr "Aus"
 msgid "System Settings"
 msgstr "Systemeinstellungen"
 
-#: bread/templates/bread/components/header.html:42
-#: bread/templates/bread/components/header.html:43
-msgid "Logout"
-msgstr "Ausloggen"
-
-#: bread/views/add.py:28
+#: bread/views/add.py:26
 #, python-format
 msgid "Added %s"
 msgstr "%s erstellt"
 
-#: bread/views/delete.py:44
+#: bread/views/delete.py:46
 #, python-format
 msgid "Deleted %(modelname)s %(objectname)s"
 msgstr "%(modelname)s %(objectname)s wurde gelöscht"
 
-#: bread/views/delete.py:86
+#: bread/views/delete.py:90
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "Benutzer hat nicht die benötigten Berechtigungnen um '%s' zu löschen"
 
-#: bread/views/delete.py:94
+#: bread/views/delete.py:101
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s konnte nicht gelöscht werden: %s"
 
-#: bread/views/delete.py:99
+#: bread/views/delete.py:106
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s %(modelname)s gelöscht"
 
-#: bread/views/edit.py:122
+#: bread/views/edit.py:89
+#, fuzzy, python-format
+#| msgid "Created %s copies"
+msgid "Created copy %s"
+msgstr "%s Kopien erstellt"
+
+#: bread/views/edit.py:118
 #, python-format
 msgid "Created %s copies"
 msgstr "%s Kopien erstellt"
 
-#: bread/views/edit.py:167
+#: bread/views/edit.py:163
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "Kopie"
 
-#: bread/views/system.py:12
+#: bread/views/system.py:15 bread/views/system.py:17
 msgid "Login"
 msgstr "Einloggen"
 
