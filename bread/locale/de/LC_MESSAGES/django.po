@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-10 16:12+0700\n"
+"POT-Creation-Date: 2021-03-29 20:56+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,68 +18,132 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: bread/layout/components/button.py:63
+#: bread/contrib/reports/fields/queryfield.py:105
+#, python-format
+msgid "Invalid model '%s' selected"
+msgstr "Ungültiges Model '%s' ausgewählt"
+
+#: bread/contrib/reports/models.py:12
+msgid "Created"
+msgstr "Erstellt"
+
+#: bread/contrib/reports/models.py:13 bread/contrib/reports/models.py:50
+msgid "Name"
+msgstr "Name"
+
+#: bread/contrib/reports/models.py:18
+msgid "Model"
+msgstr "Model"
+
+#: bread/contrib/reports/models.py:19
+msgid "Filter"
+msgstr "Filter"
+
+#: bread/contrib/reports/models.py:28
+msgid "Preview"
+msgstr "Vorschau"
+
+#: bread/contrib/reports/models.py:38
+msgid "Report"
+msgstr "Bericht"
+
+#: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:144
+#: bread/contrib/reports/urls.py:145
+msgid "Reports"
+msgstr "Berichte"
+
+#: bread/contrib/reports/models.py:49 bread/contrib/reports/models.py:56
+msgid "Column"
+msgstr "Spalte"
+
+#: bread/contrib/reports/models.py:52
+msgid "Aggregation"
+msgstr "Aggregation"
+
+#: bread/contrib/reports/models.py:57 bread/contrib/reports/urls.py:50
+msgid "Columns"
+msgstr "Spalten"
+
+#: bread/contrib/reports/urls.py:31
+msgid "New report: "
+msgstr "Neuer Bericht: "
+
+#: bread/contrib/reports/urls.py:43
+msgid "Base model"
+msgstr "Basis Model"
+
+#: bread/contrib/reports/urls.py:113
+msgid "Excel"
+msgstr "Excel"
+
+#: bread/layout/components/button.py:67
 msgid "Print"
 msgstr "Drucken"
 
-#: bread/layout/components/checkbox.py:34
-#: bread/layout/components/date_picker.py:79
-#: bread/layout/components/file_uploader.py:63
-#: bread/layout/components/select.py:61 bread/layout/components/text_area.py:51
-#: bread/layout/components/text_input.py:46
-#: bread/layout/components/text_input.py:164
-#: bread/layout/components/toggle.py:42
-msgid " (required)"
-msgstr " (erforderlich)"
-
-#: bread/layout/components/datatable.py:183
+#: bread/layout/components/datatable.py:247
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: bread/layout/components/datatable.py:194
+#: bread/layout/components/datatable.py:258
 msgid " items selected"
 msgstr " Einträge ausgewählt"
 
-#: bread/layout/components/datatable.py:200
+#: bread/layout/components/datatable.py:264
 msgid "Table Action Bar"
 msgstr "Tabellen Aktionsbar"
 
-#: bread/layout/components/datatable.py:270 bread/views/add.py:36
-#: bread/views/add.py:59 bread/views/browse.py:71
+#: bread/layout/components/datatable.py:428 bread/views/add.py:41
+#: bread/views/add.py:48
 #, python-format
 msgid "Add %s"
 msgstr "%s erstellen"
 
-#: bread/layout/components/file_uploader.py:25
-#, fuzzy
-msgid "Add files"
-msgstr "Dateien hinzufügen"
+#: bread/layout/components/file_uploader.py:28
+msgid "Select file"
+msgstr "Datei auswählen"
 
-#: bread/layout/components/form.py:28
+#: bread/layout/components/form.py:26
 msgid "Save"
 msgstr "Speichern"
 
-#: bread/layout/components/form.py:64
+#: bread/layout/components/form.py:63
 msgid "Form error"
 msgstr "Formfehler"
 
-#: bread/layout/components/form.py:70
+#: bread/layout/components/form.py:69
 msgid "Form error: "
 msgstr "Formfehler: "
 
-#: bread/layout/components/form.py:182
+#: bread/layout/components/form.py:181
 msgid "Add"
 msgstr "Erstellen"
 
-#: bread/layout/components/form.py:202
+#: bread/layout/components/form.py:201
 msgid "Delete"
 msgstr "Löschen"
 
-#: bread/layout/components/notification.py:122
+#: bread/layout/components/notification.py:125
 msgid "Time stamp"
 msgstr "Zeitpunkt"
 
-#: bread/layout/components/progress_indicator.py:34
+#: bread/layout/components/pagination.py:65
+msgid "Items per page"
+msgstr "Einträge pro Seite"
+
+#: bread/layout/components/pagination.py:113
+#: bread/layout/components/pagination.py:160
+msgid "of"
+msgstr "von"
+
+#: bread/layout/components/pagination.py:122
+msgid "items"
+msgstr "Einträgen"
+
+#: bread/layout/components/pagination.py:164
+msgid "pages"
+msgstr "Seiten"
+
+#: bread/layout/components/progress_indicator.py:33
 msgid "Optional"
 msgstr "Optional"
 
@@ -91,7 +155,22 @@ msgstr "Suchen"
 msgid "Clear search input"
 msgstr "Suchtext löschen"
 
-#: bread/layout/components/text_input.py:70
+#: bread/layout/components/shell_header.py:51
+#: bread/layout/components/shell_header.py:52
+#: bread/templates/bread/components/header.html:31
+#: bread/templates/bread/components/header.html:32
+msgid "Logout"
+msgstr "Ausloggen"
+
+#: bread/layout/components/shell_header.py:53
+msgid "Close"
+msgstr ""
+
+#: bread/layout/components/tag.py:17
+msgid "Remove"
+msgstr "Entfernen"
+
+#: bread/layout/components/text_input.py:78
 msgid "Show password"
 msgstr "Zeige Passwort"
 
@@ -107,43 +186,76 @@ msgstr "Aus"
 msgid "System Settings"
 msgstr "Systemeinstellungen"
 
-#: bread/templates/bread/components/header.html:42
-#: bread/templates/bread/components/header.html:43
-msgid "Logout"
-msgstr "Ausloggen"
-
-#: bread/templates/bread/confirm_delete.html:8
-msgid "cannot be deleted because of the following related objects:"
-msgstr ""
-" kann nicht gelöscht werden weil folgende Objekte nicht automatisch gelöscht "
-"werden können"
-
-#: bread/templates/bread/confirm_delete.html:24
-msgid "The following objects will be deleted too:"
-msgstr "Die folgenden Objekte werden ebenfalls gelöscht:"
-
-#: bread/templates/bread/confirm_delete.html:36
-msgid "Are you sure you want to delete"
-msgstr "Sind sie sicher, dass Sie dises Objekt löschen wollen:"
-
-#: bread/templates/bread/confirm_delete.html:38
-msgid "Yes, delete"
-msgstr "Ja, löschen"
-
-#: bread/views/add.py:27
+#: bread/views/add.py:26
 #, python-format
 msgid "Added %s"
 msgstr "%s erstellt"
 
-#: bread/views/delete.py:38
+#: bread/views/delete.py:46
 #, python-format
-msgid "Delete %s"
-msgstr "Lösche %s"
+msgid "Deleted %(modelname)s %(objectname)s"
+msgstr "%(modelname)s %(objectname)s wurde gelöscht"
 
-#: bread/views/edit.py:88
+#: bread/views/delete.py:90
+#, python-format
+msgid "Your user has not the permissions to delete %s"
+msgstr "Benutzer hat nicht die benötigten Berechtigungnen um '%s' zu löschen"
+
+#: bread/views/delete.py:101
+#, python-format
+msgid "%s could not be deleted: %s"
+msgstr "%s konnte nicht gelöscht werden: %s"
+
+#: bread/views/delete.py:106
+#, python-format
+msgid "Deleted %(count)s %(modelname)s"
+msgstr "%(count)s %(modelname)s gelöscht"
+
+#: bread/views/edit.py:89
+#, fuzzy, python-format
+#| msgid "Created %s copies"
+msgid "Created copy %s"
+msgstr "%s Kopien erstellt"
+
+#: bread/views/edit.py:118
+#, python-format
+msgid "Created %s copies"
+msgstr "%s Kopien erstellt"
+
+#: bread/views/edit.py:163
+msgctxt "this is a copy"
 msgid "Copy"
-msgstr "Kopieren"
+msgstr "Kopie"
 
-#: bread/views/system.py:12
+#: bread/views/system.py:15 bread/views/system.py:17
 msgid "Login"
 msgstr "Einloggen"
+
+#: bread/views/wizard.py:50
+msgid "Back"
+msgstr "Zurück"
+
+#: bread/views/wizard.py:61
+msgid "Complete"
+msgstr "Fertigstellen"
+
+#: bread/views/wizard.py:64
+msgid "Continue"
+msgstr "Weiter"
+
+#, python-format
+#~ msgid "Are you sure you want to delete %s %s?"
+#~ msgstr "Sind Sie sicher, dass Sie %s '%s' löschen wollen?"
+
+#~ msgid "No, cancel"
+#~ msgstr "Nein, abbrechen"
+
+#~ msgid "Yes, delete"
+#~ msgstr "Ja, löschen"
+
+#, python-format
+#~ msgid "Delete %s"
+#~ msgstr "Lösche %s"
+
+#~ msgid "Reset"
+#~ msgstr "Zurücksetzen"

@@ -7,7 +7,9 @@ from .edit import EditView
 
 # Read view is the same as the edit view but form elements are disabled
 class ReadView(EditView):
-    template_name = "bread/layout.html"
+    """TODO: documentation"""
+
+    template_name = "bread/base.html"
     accept_global_perms = True
     fields = None
     urlparams = (("pk", int),)
@@ -15,8 +17,16 @@ class ReadView(EditView):
     def post(self, *args, **kwargs):
         return HttpResponseNotAllowed()
 
-    def layout(self, request):
-        return layoutasreadonly(super().layout(request))
+    def get_form(self, *args, **kwargs):
+        form = super().get_form(*args, **kwargs)
+        for field in form.fields.values():
+            field.disabled = True
+        return form
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["layout"] = layoutasreadonly(self.layout())
+        return context
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]

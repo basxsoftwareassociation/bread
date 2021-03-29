@@ -6,23 +6,19 @@ from _strptime import TimeRE
 from django import template
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
-from django.forms import DateInput, Textarea, TextInput
 from django.utils import formats
 from django.utils.html import mark_safe
 
 from .. import layout as layout
 from .. import menu as menuregister
 from ..formatters import as_object_link, format_value
-from ..forms import forms
-from ..utils import has_permission, pretty_fieldname, title
-from ..utils.datetimeformatstring import to_php_formatstr
+from ..utils import has_permission, pretty_fieldname
 
 logger = logging.getLogger(__name__)
 register = template.Library()
 
 register.simple_tag(pretty_fieldname)
 register.simple_tag(has_permission)
-register.simple_tag(to_php_formatstr)
 register.filter(format_value)
 
 
@@ -46,10 +42,8 @@ def linkurl(context, link):
 
 
 @register.simple_tag(takes_context=True)
-def render_layout(context):
-    # try first to get "raw" layout object from context, otherwise use layout method of view
-    layout = context.get("layout") or context.get("view").layout
-    return mark_safe(hg.render(layout(context["request"]), context.flatten()))
+def render_layout(context, layout):
+    return mark_safe(hg.render(layout, context.flatten()))
 
 
 @register.simple_tag
@@ -81,22 +75,10 @@ def has_link_permission(link, request, obj=None):
 
 
 @register.simple_tag
-def pretty_modelname(model, plural=False):
-    if plural:
-        return title(model._meta.verbose_name_plural)
-    return title(model._meta.verbose_name)
-
-
-@register.simple_tag
-def modelname(model):
-    return model._meta.model_name
-
-
-@register.simple_tag
 def pagename(request):
     return " / ".join(
         [
-            title(namespace.replace("_", " "))
+            namespace.replace("_", " ").title()
             for namespace in request.resolver_match.namespaces
         ]
     )
@@ -131,32 +113,6 @@ def updated_querystring(context, key, value):
 
 
 # filters
-
-
-@register.filter
-def is_external_url(url):
-    """Return ``True`` if the url is linked to an external page"""
-    return url.startswith("http")
-
-
-@register.filter
-def is_inline_formset(field):
-    return isinstance(field.field, forms.FormsetField)
-
-
-@register.filter
-def is_textinput(field):
-    return isinstance(field.field.widget, TextInput)
-
-
-@register.filter
-def is_textarea(field):
-    return isinstance(field.field.widget, Textarea)
-
-
-@register.filter
-def is_dateinput(field):
-    return isinstance(field.field.widget, DateInput)
 
 
 @register.simple_tag
@@ -261,6 +217,7 @@ def display_messages(messages):
                 kind=kind,
                 hidetimestamp=True,
                 style=f"opacity: 0; animation: {4 + 3 * i}s ease-in-out notification",
+                onload=f"setTimeout(() => this.style.display = 'None', {(4 + 3 * i) * 1000})",  # need to hide the element after animation is done
             )
         )
     return mark_safe(hg.render(hg.DIV(*notifications), {}))

@@ -2,15 +2,6 @@
 
 <header class="bx--header" role="banner" aria-label="{{ branding.platform }}" data-header>
     <a class="bx--skip-to-content" href="#main-content" tabindex="0">Skip to main content</a>
-    <!-- <button
-        class="bx--header__menu-trigger bx--header__action"
-        aria-label="Open menu"
-        title="Open menu"
-+
-−        data-navigation-menu-panel-label-expand="Open menu"
-        data-navigation-menu-panel-label-collapse="Close menu"
-        data-navigation-menu-target="#navigation-menu-{{ navigationMenu.idSuffix }}"
-    >
         {% carbon_icon "close" 20 class="bx--navigation-menu-panel-collapse-icon" aria_hidden="true" %}
         {% carbon_icon "menu" 20 class="bx--navigation-menu-panel-expand-icon" aria_hidden="true" %}
     </button>
@@ -18,8 +9,6 @@
     <a class="bx--header__name" href="/" title="{{ branding.name }}">
         <span class="bx--header__name--prefix">{{ branding.company }}&nbsp;</span>{{ branding.platform }}
     </a>
-
-    {# {% include "bread/components/header-nav.html" %} #}
 
     <div class="bx--header__global">
         {% for actions_i in header.actions %}

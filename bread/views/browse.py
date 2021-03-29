@@ -1,242 +1,194 @@
-import html
-import re
-
-import django_filters
 import htmlgenerator as hg
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
-from django.db.models.functions import Lower
 from django.shortcuts import redirect
-from django.utils.html import strip_tags
-from django_filters.views import FilterView
+from django.views.generic import ListView
+from djangoql.queryset import apply_search
 from guardian.mixins import PermissionListMixin
 
+from bread.utils import filter_fieldlist
+
 from .. import layout as _layout  # prevent name clashing
-from ..fields.queryfield import parsequeryexpression
-from ..formatters import render_field
-from ..forms.forms import FilterForm
-from ..utils import pretty_fieldname, pretty_modelname, xlsxresponse
+from ..formatters import format_value
+from ..layout.base import fieldlabel
+from ..utils import generate_excel, pretty_modelname, xlsxresponse
+from ..utils.model_helpers import _expand_ALL_constant
 from .util import BreadView
 
 
-class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, FilterView):
-    template_name = "bread/layout.html"
-    fields = None
-    filterfields = None
-    page_kwarg = "browsepage"  # need to use something different than the default "page" because we also filter through kwargs
+class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
+    """TODO: documentation"""
+
+    template_name = "bread/base.html"
+    orderingurlparameter = "ordering"
+    itemsperpage_urlparameter = "itemsperpage"
+    objectids_urlparameter = "selected"  # see bread/static/js/main.js:submitbulkaction
+    pagination_choices = ()
+    columns = ["__all__"]
+    searchurl = None
+    query_urlparameter = "q"
+    rowclickaction = None
     bulkactions = ()  # list of links
+    rowactions = ()  # list of links
+    asexcel = False
 
     def __init__(self, *args, **kwargs):
-        self.bulkactions = kwargs.get("bulkactions", getattr(self, "bulkactions", ()))
-        self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"]))
-        self.filterset_fields = kwargs.get("filterset_fields", self.filterset_fields)
-        self.searchurl = kwargs.get("searchurl", getattr(self, "searchurl", ()))
-        self.queryfieldname = kwargs.get(
-            "queryfieldname", getattr(self, "queryfieldname", ())
+        self.bulkactions = kwargs.get("bulkactions") or self.bulkactions
+        self.orderingurlparameter = (
+            kwargs.get("orderingurlparameter") or self.orderingurlparameter
         )
-        self.rowclickaction = kwargs.get(
-            "rowclickaction", getattr(self, "rowclickaction", None)
+        self.itemsperpage_urlparameter = (
+            kwargs.get("itemsperpage_urlparameter") or self.itemsperpage_urlparameter
         )
+        self.objectids_urlparameter = (
+            kwargs.get("objectids_urlparameter") or self.objectids_urlparameter
+        )
+        self.pagination_choices = (
+            kwargs.get("pagination_choices")
+            or self.pagination_choices
+            or settings.DEFAULT_PAGINATION_CHOICES
+        )
+        self.rowactions = kwargs.get("rowactions") or self.rowactions
+        self.columns = kwargs.get("columns") or self.columns
+        self.searchurl = kwargs.get("searchurl") or self.searchurl
+        self.query_urlparameter = (
+            kwargs.get("query_urlparameter") or self.query_urlparameter
+        )
+        self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
         super().__init__(*args, **kwargs)
 
-    def layout(self, request):
-        return _layout.datatable.DataTable.from_model(
+    def get_context_data(self, *args, **kwargs):
+        qs = self.get_queryset()
+        layout = _layout.datatable.DataTable.from_model(
             self.model,
             hg.C("object_list"),
-            fields=self.fields,
+            columns=self.columns,
             bulkactions=self.bulkactions,
+            rowactions=self.rowactions,
             searchurl=self.searchurl,
-            queryfieldname=self.queryfieldname,
+            query_urlparameter=self.query_urlparameter,
             rowclickaction=self.rowclickaction,
+            pagination_options=self.pagination_choices,
+            page_urlparameter=self.page_kwarg,
+            paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
+            itemsperpage_urlparameter=self.itemsperpage_urlparameter,
+            settingspanel=self.get_settingspanel(),
         )
+
+        return {
+            **super().get_context_data(*args, **kwargs),
+            "layout": layout,
+            "pagetitle": pretty_modelname(self.model, plural=True),
+        }
+
+    def get_settingspanel(self):
+        return None
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
 
-    def get_filterset_class(self):
-        return generate_filterset_class(self.model, self.filterset_fields)
-
-    def get_paginate_by(self, queryset=None):
-        return int(
-            self.request.GET.get(
-                "paginate_by",
-                getattr(self, "paginate_by") or settings.DEFAULT_PAGINATION,
-            )
-        )
-
-    def get_pagination_choices(self):
-        return sorted(
-            set(
-                getattr(self, "pagination_choices", settings.DEFAULT_PAGINATION_CHOICES)
-            )
-            | set((self.get_paginate_by(),))
-        )
-
     def get(self, *args, **kwargs):
         if "reset" in self.request.GET:
             return redirect(self.request.path)
+        if self.asexcel:
+            return self.export(*args, **kwargs)
 
         return super().get(*args, **kwargs)
 
+    def get_paginate_by(self, queryset):
+        return self.request.GET.get(
+            self.itemsperpage_urlparameter, self.pagination_choices[0]
+        )
+
     def get_queryset(self):
         """Prefetch related tables to speed up queries. Also order result by get-parameters."""
-        ret = super().get_queryset()
+        qs = super().get_queryset()
+        if self.query_urlparameter in self.request.GET:
+            qs = apply_search(
+                qs,
+                "("
+                + ") and (".join(self.request.GET.getlist(self.query_urlparameter))
+                + ")",
+            )
 
-        # order fields
-        order = self.request.GET.get("order")
+        selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
+        if selectedobjects and "all" not in selectedobjects:
+            qs &= super().get_queryset().filter(pk__in=selectedobjects)
+
+        order = self.request.GET.get(self.orderingurlparameter)
         if order:
-            fields = order.split(",")
-            ordering = [
-                Lower(f[1:]).desc() if f.startswith("-") else Lower(f) for f in fields
-            ]
-            ret = ret.order_by(*ordering)
-        return ret
+            if order.endswith("__int"):
+                order = order[:-5]
+                qs = qs.order_by(
+                    models.functions.Cast(order[1:], models.IntegerField()).desc()
+                    if order.startswith("-")
+                    else models.functions.Cast(order, models.IntegerField())
+                )
+            else:
+                qs = qs.order_by(
+                    models.functions.Lower(order[1:]).desc()
+                    if order.startswith("-")
+                    else models.functions.Lower(order)
+                )
+        return qs
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["pagetitle"] = pretty_modelname(self.model, plural=True)
-        return context
+    def export(self, *args, **kwargs):
+        columns = self.columns
+        if "__all__" in columns:
+            columns = filter_fieldlist(self.model, columns)
+        columndefinitions = {}
+        for column in columns:
+            if not (
+                (isinstance(column, tuple) and len(column) >= 2)
+                or isinstance(column, str)
+            ):
+                raise ValueError(
+                    f"Argument 'columns' needs to be of a list with items of type str or tuple (head, cellvalue), but found {column}"
+                )
+            if isinstance(column, str):
+                column = (fieldlabel(self.model, column), hg.C(f"row.{column}"))
+            # allow to use lazy objects same as for BrowseView/DataTables
+            if isinstance(column[1], hg.Lazy):
+                column = (
+                    column[0],
+                    lambda row, c=column[1]: c.resolve({"row": row}, None),
+                )
 
-
-class TreeView(BrowseView):
-    template_name = "bread/tree.html"
-    parent_accessor = None
-    label_function = None
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.parent_accessor = kwargs.get("parent_accessor", self.parent_accessor)
-        self.label_function = kwargs.get("label_function", lambda o: str(o))
-
-    def nodes(self):
-        # we do this here a bit more complicated in order to hit database only once
-        # and to make use of the filtered queryset
-        objects = list(self.object_list)
-
-        # first pass: get child relationships
-        children = {None: []}
-        for object in objects:
-            parent_pk = None
-            parent = getattr(object, self.parent_accessor)
-            if parent is not None and parent in objects:
-                parent_pk = parent.pk
-            if parent_pk not in children:
-                children[parent_pk] = []
-            children[parent_pk].append(object)
-
-        # second pass: build tree recursively
-        def build_tree(nodes):
-            ret = {}
-            for node in nodes:
-                node.tree_label = self.label_function(node)
-                ret[node] = None
-                if node.pk in children:
-                    ret[node] = build_tree(children[node.pk])
-            return ret
-
-        return build_tree(children[None])
-
-
-def generate_filterset_class(model, fields):
-    # make text-based fields filtering with icontains and datefield as range
-    config = {
-        "model": model,
-        "filter_overrides": {
-            models.CharField: {
-                "filter_class": django_filters.CharFilter,
-                "extra": lambda f: {"lookup_expr": "icontains"},
-            },
-            models.TextField: {
-                "filter_class": django_filters.CharFilter,
-                "extra": lambda f: {"lookup_expr": "icontains"},
-            },
-            models.EmailField: {
-                "filter_class": django_filters.CharFilter,
-                "extra": lambda f: {"lookup_expr": "icontains"},
-            },
-            models.URLField: {
-                "filter_class": django_filters.CharFilter,
-                "extra": lambda f: {"lookup_expr": "icontains"},
-            },
-            models.DateField: {
-                "filter_class": django_filters.DateFromToRangeFilter,
-                "extra": lambda f: {
-                    "widget": django_filters.widgets.DateRangeWidget(
-                        attrs={"type": "text", "class": "validate datepicker"}
-                    )
-                },
-            },
-            models.DateTimeField: {
-                "filter_class": django_filters.DateFromToRangeFilter,
-                "extra": lambda f: {
-                    "widget": django_filters.widgets.DateRangeWidget(
-                        attrs={"type": "text", "class": "validate datepicker"}
-                    )
-                },
-            },
-        },
-    }
-    config["exclude"] = [
-        f.name
-        for f in model._meta.get_fields()
-        if isinstance(f, models.FileField) or isinstance(f, GenericForeignKey)
-    ]
-    config["fields"] = fields
-    config["form"] = FilterForm
-    filterset = type(
-        f"{model._meta.object_name}FilterSet",
-        (django_filters.FilterSet,),
-        {"Meta": type("Meta", (object,), config)},
-    )
-    return filterset
+            columndefinitions[column[0]] = column[1]
+        return generate_excel_view(self.get_queryset(), columndefinitions)(self.request)
 
 
 def generate_excel_view(queryset, fields, filterstr=None):
     """
     Generates an excel file from the given queryset with the specified fields.
     fields: list [<fieldname1>, <fieldname2>, ...] or dict with {<fieldname>: formatting_function(object, fieldname)}
-    filterstr: a django-style filter str which will lazy evaluated, see bread.fields.queryfield.parsequeryexpression
+    filterstr: a djangoql filter string which will lazy evaluated, see bread.fields.queryfield.parsequeryexpression
     """
-    import openpyxl
-    from openpyxl.styles import Font
 
     model = queryset.model
 
+    if isinstance(fields, list):
+        fields = _expand_ALL_constant(model, fields)
+
     if not isinstance(fields, dict):
-        fields = {field: render_field for field in fields}
+        fields = {
+            field: lambda inst: format_value(getattr(inst, field)) for field in fields
+        }
 
     def excelview(request):
+        from bread.contrib.reports.fields.queryfield import parsequeryexpression
+
         items = queryset
         if isinstance(filterstr, str):
-            items = parsequeryexpression(model.objects.all(), filterstr).queryset
-        if "selected" in request.GET:
+            items = parsequeryexpression(model.objects.all(), filterstr)
+        if "selected" in request.GET and "all" not in request.GET.getlist("selected"):
             items = items.filter(
                 pk__in=[int(i) for i in request.GET.getlist("selected")]
             )
         items = list(items.all())
-
-        workbook = openpyxl.Workbook()
+        workbook = generate_excel(items, fields)
         workbook.title = pretty_modelname(model)
-        header_cells = workbook.active.iter_cols(
-            min_row=1, max_col=len(fields) + 1, max_row=len(items) + 1
-        )
-        newline_regex = re.compile(
-            r"<\s*br\s*/?\s*>"
-        )  # replace HTML line breaks with newlines
-        for field, col in zip(
-            [(field, pretty_fieldname(field)) for field in fields],
-            header_cells,
-        ):
-            col[0].value = field[1]
-            col[0].font = Font(bold=True)
-            for i, cell in enumerate(col[1:]):
-                html_value = str(fields[field[0]](items[i], field[0]))
-                cleaned = html.unescape(
-                    newline_regex.sub(r"\n", strip_tags(html_value))
-                )
-                cell.value = cleaned
 
         return xlsxresponse(workbook, workbook.title)
 

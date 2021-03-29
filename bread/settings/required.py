@@ -4,26 +4,23 @@ from easy_thumbnails.conf import Settings as thumbnail_settings
 
 _third_party_apps = [
     "simple_history",
-    "crispy_forms",
     "ckeditor",
     "ckeditor_uploader",
     "guardian",
     "dynamic_preferences",
     "dynamic_preferences.users.apps.UserPreferencesConfig",
     "compressor",
-    "easy_thumbnails",
-    "image_cropping",
-    "djmoney",
     "django_countries",
+    "djmoney",
     "djmoney.contrib.exchange",
     "django_celery_results",
     "django_celery_beat",
     "django_markdown2",
-    "django_filters",
     "django_extensions",
     "haystack",
     "whoosh",
     "celery_haystack",
+    "djangoql",
 ]
 _django_apps = [
     "django.forms",
@@ -170,8 +167,13 @@ BRANDING = {
     "platform": "PLATFORM_NAME",
 }
 
-DEFAULT_PAGINATION = 1000
-DEFAULT_PAGINATION_CHOICES = [10, 100, 1000]
+DEFAULT_PAGINATION_CHOICES = [
+    25,
+    50,
+    100,
+]  # Defines what the default options for pagination are
+
+HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
 
 # This one should only be activated in production or in dev environments with celery ready to run
 # HAYSTACK_SIGNAL_PROCESSOR = "celery_haystack.signals.CelerySignalProcessor"

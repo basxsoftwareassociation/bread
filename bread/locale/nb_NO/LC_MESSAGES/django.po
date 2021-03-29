@@ -1,0 +1,250 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-24 09:37+0700\n"
+"PO-Revision-Date: 2021-03-29 13:56+0000\n"
+"Last-Translator: Timotheus Pokorra <mailinglists@tpokorra.de>\n"
+"Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
+"basxconnect/bread/nb_NO/>\n"
+"Language: nb_NO\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.6-dev\n"
+
+#: bread/contrib/reports/fields/queryfield.py:105
+#, python-format
+msgid "Invalid model '%s' selected"
+msgstr ""
+
+#: bread/contrib/reports/models.py:12
+msgid "Created"
+msgstr "Opprettet"
+
+#: bread/contrib/reports/models.py:13 bread/contrib/reports/models.py:50
+msgid "Name"
+msgstr "Navn"
+
+#: bread/contrib/reports/models.py:18
+msgid "Model"
+msgstr "Modell"
+
+#: bread/contrib/reports/models.py:19
+#, fuzzy
+msgid "Filter"
+msgstr "Filtrer"
+
+#: bread/contrib/reports/models.py:28
+msgid "Preview"
+msgstr "Forhåndsvis"
+
+#: bread/contrib/reports/models.py:38
+msgid "Report"
+msgstr "Rapport"
+
+#: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:144
+#: bread/contrib/reports/urls.py:145
+msgid "Reports"
+msgstr "Rapporter"
+
+#: bread/contrib/reports/models.py:49 bread/contrib/reports/models.py:56
+msgid "Column"
+msgstr "Kolonne"
+
+#: bread/contrib/reports/models.py:52
+msgid "Aggregation"
+msgstr ""
+
+#: bread/contrib/reports/models.py:57 bread/contrib/reports/urls.py:50
+msgid "Columns"
+msgstr "Kolonner"
+
+#: bread/contrib/reports/urls.py:31
+msgid "New report: "
+msgstr "Ny rapport: "
+
+#: bread/contrib/reports/urls.py:43
+msgid "Base model"
+msgstr "Grunnmodell"
+
+#: bread/contrib/reports/urls.py:113
+msgid "Excel"
+msgstr ""
+
+#: bread/layout/components/button.py:67
+msgid "Print"
+msgstr "Skriv ut"
+
+#: bread/layout/components/datatable.py:247
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: bread/layout/components/datatable.py:258
+msgid " items selected"
+msgstr " elementer valgt"
+
+#: bread/layout/components/datatable.py:264
+msgid "Table Action Bar"
+msgstr ""
+
+#: bread/layout/components/datatable.py:428 bread/views/add.py:41
+#: bread/views/add.py:48
+#, python-format
+msgid "Add %s"
+msgstr "Legg til %s"
+
+#: bread/layout/components/file_uploader.py:28
+msgid "Select file"
+msgstr "Velg fil"
+
+#: bread/layout/components/form.py:26
+msgid "Save"
+msgstr "Lagre"
+
+#: bread/layout/components/form.py:63
+msgid "Form error"
+msgstr "Skjemafeil"
+
+#: bread/layout/components/form.py:69
+msgid "Form error: "
+msgstr "Skjemafeil: "
+
+#: bread/layout/components/form.py:181
+msgid "Add"
+msgstr "Legg til"
+
+#: bread/layout/components/form.py:201
+msgid "Delete"
+msgstr "Slett"
+
+#: bread/layout/components/notification.py:125
+#, fuzzy
+msgid "Time stamp"
+msgstr "Tidsstempel"
+
+#: bread/layout/components/pagination.py:65
+msgid "Items per page"
+msgstr "Elementer per side"
+
+#: bread/layout/components/pagination.py:113
+#: bread/layout/components/pagination.py:160
+msgid "of"
+msgstr "av"
+
+#: bread/layout/components/pagination.py:122
+msgid "items"
+msgstr "elementer"
+
+#: bread/layout/components/pagination.py:164
+msgid "pages"
+msgstr "sider"
+
+#: bread/layout/components/progress_indicator.py:33
+msgid "Optional"
+msgstr ""
+
+#: bread/layout/components/search.py:17 bread/layout/components/search.py:22
+msgid "Search"
+msgstr "Søk"
+
+#: bread/layout/components/search.py:28 bread/layout/components/search.py:29
+msgid "Clear search input"
+msgstr ""
+
+#: bread/layout/components/shell_header.py:51
+#: bread/layout/components/shell_header.py:52
+#: bread/templates/bread/components/header.html:31
+#: bread/templates/bread/components/header.html:32
+#, fuzzy
+msgid "Logout"
+msgstr "Logg ut"
+
+#: bread/layout/components/shell_header.py:53
+msgid "Close"
+msgstr ""
+
+#: bread/layout/components/tag.py:17
+msgid "Remove"
+msgstr "Fjern"
+
+#: bread/layout/components/text_input.py:78
+msgid "Show password"
+msgstr "Vis passord"
+
+#: bread/layout/components/toggle.py:11
+msgid "On"
+msgstr "På"
+
+#: bread/layout/components/toggle.py:12
+msgid "Off"
+msgstr "Av"
+
+#: bread/templates/admin/base_site.html:3
+msgid "System Settings"
+msgstr "Systeminnstillinger"
+
+#: bread/views/add.py:26
+#, python-format
+msgid "Added %s"
+msgstr "%s tillagt"
+
+#: bread/views/delete.py:46
+#, fuzzy, python-format
+msgid "Deleted %(modelname)s %(objectname)s"
+msgstr "Slettet %(modelname)s %(objectname)s"
+
+#: bread/views/delete.py:90
+#, python-format
+msgid "Your user has not the permissions to delete %s"
+msgstr "Din bruker har ikke tilgang til å slette %s"
+
+#: bread/views/delete.py:101
+#, python-format
+msgid "%s could not be deleted: %s"
+msgstr "%s kunne ikke slettes: %s"
+
+#: bread/views/delete.py:106
+#, python-format
+msgid "Deleted %(count)s %(modelname)s"
+msgstr "%(count)s %(modelname)s slettet"
+
+#: bread/views/edit.py:89
+#, fuzzy, python-format
+#| msgid "Created %s copies"
+msgid "Created copy %s"
+msgstr "Opprettet % kopier"
+
+#: bread/views/edit.py:118
+#, python-format
+msgid "Created %s copies"
+msgstr "Opprettet %s kopier"
+
+#: bread/views/edit.py:163
+msgctxt "this is a copy"
+msgid "Copy"
+msgstr "Kopier"
+
+#: bread/views/system.py:15 bread/views/system.py:17
+#, fuzzy
+msgid "Login"
+msgstr "Logg inn"
+
+#: bread/views/wizard.py:50
+msgid "Back"
+msgstr "Tilbake"
+
+#: bread/views/wizard.py:61
+#, fuzzy
+msgid "Complete"
+msgstr "Fullført"
+
+#: bread/views/wizard.py:64
+msgid "Continue"
+msgstr "Fortsett"

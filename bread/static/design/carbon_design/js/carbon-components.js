@@ -3908,6 +3908,10 @@ var CarbonComponents = (function (exports) {
         _this._actionBarToggle(_this.state.checkboxCount > 0);
 
         if (_this.batchActionEl) {
+          var count = element.closest('[data-table]').querySelector('[data-total-items]').innerText;
+          if(count && checked) {
+            _this.state.checkboxCount = parseInt(count);
+          }
           _this.countEl.textContent = _this.state.checkboxCount;
         }
       });
@@ -4164,7 +4168,7 @@ var CarbonComponents = (function (exports) {
           selectorActions: ".".concat(prefix, "--batch-actions"),
           selectorCount: '[data-items-selected]',
           selectorActionCancel: ".".concat(prefix, "--batch-summary__cancel"),
-          selectorCheckbox: ".".concat(prefix, "--checkbox"),
+          selectorCheckbox: ".bx--table-column-checkbox " + ".".concat(prefix, "--checkbox"),
           selectorExpandHeader: "th.".concat(prefix, "--table-expand"),
           selectorExpandCells: "td.".concat(prefix, "--table-expand"),
           selectorExpandableRows: ".".concat(prefix, "--expandable-row"),

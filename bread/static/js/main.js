@@ -2,14 +2,40 @@
 // support onload after page loaded for all elements
 document.addEventListener(
     "DOMContentLoaded",
-    (e) => { $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load"); }
+    (e) => { $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load"); initAllChoices()}
 );
 
+function updateMultiselect(e) {
+    $('.bx--list-box__selection', e).firstChild.textContent = $$('fieldset input[type=checkbox][checked]', e).length;
+}
+
+function filterOptions(e) {
+    var searchterm = $('input.bx--text-input', e).value.toLowerCase()
+    for(i of $$('fieldset .bx--list-box__menu-item', e)) {
+        if (i.innerText.toLowerCase().includes(searchterm)) {
+            $(i)._.style({display: "initial"});
+        } else {
+            $(i)._.style({display: "none"});
+        }
+    }
+}
+
+function clearMultiselect(e) {
+    for(i of $$('fieldset input[type=checkbox][checked]', e)) {
+        i.parentElement.setAttribute("data-contained-checkbox-state", "false");
+        i.removeAttribute("checked");
+        i.removeAttribute("aria-checked");
+    }
+    updateMultiselect(e);
+}
 
 function initAllChoices(element=$("body")) {
-    var selectElements = $$("select", element);
-    for(let element of selectElements) {
-        makeChoices(element);
+    for(let e of $$("fieldset[disabled] select[multiple]", element)) {
+        makeChoices(e).disable();
+    }
+
+    for(let e of $$(":not(fieldset[disabled]) select[multiple]", element)) {
+        makeChoices(e);
     }
 }
 
@@ -19,18 +45,38 @@ function makeChoices(selectElem) {
         return null;
     }
     var choices = new Choices(selectElem, {
-        /*
+        removeItemButton: true,
+        position: 'bottom',
+        itemSelectText: '',
         classNames: {
-            input: 'choices__input browser-default',
-        }
-        */
-        searchResultLimit: 20
+            containerOuter: 'choices',
+            containerInner: 'choices__inner',
+            input: 'choices__input',
+            inputCloned: 'choices__input--cloned bx--text-input',
+            list: 'choices__list',
+            listItems: 'choices__list--multiple',
+            listSingle: 'choices__list--single',
+            listDropdown: 'choices__list--dropdown',
+            item: 'choices__item bx--tag',
+            itemSelectable: 'choices__item--selectable',
+            itemDisabled: 'choices__item--disabled',
+            itemChoice: 'choices__item--choice',
+            placeholder: 'choices__placeholder',
+            group: 'choices__group',
+            groupHeading: 'choices__heading',
+            button: 'choices__button',
+            activeState: 'is-active',
+            focusState: 'is-focused',
+            openState: 'is-open',
+            disabledState: 'is-disabled',
+            highlightedState: 'is-highlighted',
+            selectedState: 'is-selected',
+            flippedState: 'is-flipped',
+            loadingState: 'is-loading',
+            noResults: 'has-no-results',
+            noChoices: 'has-no-choices'
+        },
     });
-    // TODO: wait for choices.js to fix the error when using space to separate classes
-    // when fixed we can uncomment the code above and remove the line below
-    // https://github.com/jshjohnson/Choices/issues/832
-    $('input.choices__input', selectElem.parentNode.parentNode).classList.add("browser-default");
-
     // check readonly
     if(selectElem.hasAttribute("readonly")) {
         $(selectElem.parentNode)._.style({cursor: "not-allowed", pointerEvents: "none"});
@@ -42,7 +88,7 @@ function makeChoices(selectElem) {
 
 
 function init_formset(form_prefix) {
-    _update_add_button(form_prefix);
+    update_add_button(form_prefix);
 }
 
 function delete_inline_element(checkbox, element) {
@@ -50,7 +96,7 @@ function delete_inline_element(checkbox, element) {
     element.style.display = "none";
 }
 
-function _update_add_button(form_prefix) {
+function update_add_button(form_prefix) {
     var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
     var maxforms = $('#id_' + form_prefix + '-MAX_NUM_FORMS')
     var addbutton = $('#add_' + form_prefix + '_button')
@@ -70,7 +116,8 @@ function formset_add(form_prefix, list_container) {
         $(list_container).appendChild(element);
     }
     formcount.value = parseInt(formcount.value) + 1;
-    _update_add_button(form_prefix);
+    update_add_button(form_prefix);
+    updateMultiselect(list_container);
 }
 
 function validate_fields() {
@@ -94,6 +141,9 @@ function submitbulkaction(table, actionurl, method="GET") {
     form.method = method;
     form.action = actionurl;
     for(let checkbox of table.querySelectorAll('input[type=checkbox][data-event=select]')) {
+        form.appendChild(checkbox.cloneNode(true));
+    }
+    for(let checkbox of table.querySelectorAll('input[type=checkbox][data-event=select-all]')) {
         form.appendChild(checkbox.cloneNode(true));
     }
     document.body.appendChild(form);

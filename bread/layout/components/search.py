@@ -7,7 +7,7 @@ from .icon import Icon
 class Search(hg.DIV):
     def __init__(self, size="xl", placeholder=None, widgetattributes=None, **kwargs):
         kwargs["_class"] = kwargs.get("_class", "") + f" bx--search bx--search--{size}"
-        kwargs["data-search"] = True
+        kwargs["data_search"] = True
         kwargs["role"] = "search"
 
         attributes = {
@@ -33,7 +33,7 @@ class Search(hg.DIV):
         )
 
     def withajaxurl(
-        self, url, queryfieldname, resultcontainerid=None, resultcontainer=True
+        self, url, query_urlparameter, resultcontainerid=None, resultcontainer=True
     ):
         resultcontainerid = (
             resultcontainerid or f"search-result-{hg.html_id((self, url))}"
@@ -41,7 +41,7 @@ class Search(hg.DIV):
         self[1].attributes["hx_get"] = url
         self[1].attributes["hx_trigger"] = "changed, keyup changed delay:100ms"
         self[1].attributes["hx_target"] = f"#{resultcontainerid}"
-        self[1].attributes["name"] = queryfieldname
+        self[1].attributes["name"] = query_urlparameter
         self[3].attributes[
             "onclick"
         ] = f"document.getElementById('{resultcontainerid}').innerHTML = ''"

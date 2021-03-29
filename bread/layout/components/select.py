@@ -1,100 +1,113 @@
 import htmlgenerator as hg
 
-from .helpers import REQUIRED_LABEL, ErrorList, HelperText, Label
+from .helpers import ErrorListElement, HelpTextElement, LabelElement
 from .icon import Icon
 
 
 class Select(hg.DIV):
-    LABEL = 0
-    SELECT = 1
-
     def __init__(
         self,
-        fieldname,
+        optgroups,
         light=False,
         inline=False,
         widgetattributes=None,
+        label=None,
+        help_text=None,
+        errors=None,
+        disabled=None,
+        required=None,
         **attributes,
     ):
+        """
+        optgroups: list of 2-tuples: (group_name, group_items)
+                   group_items: list of objects with attributes ['label', 'value', 'attrs'], attrs is a dict with html attributes
+
+        """
+
+        _class = attributes.pop("_class", "")
         widgetattributes = widgetattributes or {}
-        self.fieldname = fieldname
-        attributes["_class"] = attributes.get("_class", "") + " bx--form-item"
         widgetattributes["_class"] = (
             widgetattributes.get("_class", "") + " bx--select-input"
         )
+        widgetattributes.setdefault("id", hg.html_id(self))
 
         select_wrapper = hg.DIV(
-            hg.SELECT(**widgetattributes),
+            hg.SELECT(
+                hg.Iterator(
+                    optgroups,
+                    "optgroup",
+                    hg.If(
+                        hg.C("optgroup.0"),
+                        hg.OPTGROUP(
+                            hg.Iterator(
+                                hg.C("optgroup.1"),
+                                "option",
+                                hg.OPTION(
+                                    hg.C("option.label"),
+                                    _class="bx--select-option",
+                                    value=hg.C("option.value"),
+                                    lazy_attributes=hg.C("option.attrs"),
+                                ),
+                            ),
+                            _class="bx--select-optgroup",
+                            label=hg.C("optgroup.0"),
+                        ),
+                        hg.Iterator(
+                            hg.C("optgroup.1"),
+                            "option",
+                            hg.OPTION(
+                                hg.C("option.label"),
+                                _class="bx--select-option",
+                                value=hg.C("option.value"),
+                                lazy_attributes=hg.C("option.attrs"),
+                            ),
+                        ),
+                    ),
+                ),
+                **widgetattributes,
+            ),
             Icon(
                 "chevron--down", size=16, _class="bx--select__arrow", aria_hidden="true"
             ),
+            hg.If(
+                errors,
+                Icon(
+                    "warning--filled",
+                    size=16,
+                    _class="bx--select__invalid-icon",
+                ),
+            ),
             _class="bx--select-input__wrapper",
+            data_invalid=hg.If(errors, True),
         )
-        if inline:
-            select_wrapper = hg.DIV(
-                select_wrapper, _class="bx--select-input--inline__wrapper"
-            )
+
         super().__init__(
-            hg.DIV(
-                Label(),
+            LabelElement(
+                label,
+                _for=widgetattributes["id"],
+                required=required,
+                disabled=disabled,
+            ),
+            hg.If(
+                inline,
+                hg.DIV(
+                    select_wrapper,
+                    ErrorListElement(errors),
+                    _class="bx--select-input--inline__wrapper",
+                ),
                 select_wrapper,
-                _class="bx--select"
-                + (" bx--select--inline" if inline else "")
-                + (" bx--select--light" if light else ""),
+            ),
+            HelpTextElement(help_text),
+            hg.If(
+                inline, None, ErrorListElement(errors)
+            ),  # not displayed if this is inline
+            _class=hg.BaseElement(
+                _class,
+                " bx--select",
+                hg.If(inline, " bx--select--inline"),
+                hg.If(light, " bx--select--light"),
+                hg.If(errors, " bx--select--invalid"),
+                hg.If(disabled, " bx--select--disabled"),
             ),
             **attributes,
         )
-        # for easier reference in the render method:
-        self.label = self[0][0]
-        self.select = self[0][1][0]
-        self.inline = inline
-
-    def render(self, context):
-        if self.boundfield.field.disabled:
-            self[0].attributes["_class"] += " bx--select--disabled"
-            self.label.attributes["_class"] += " bx--label--disabled"
-        if self.boundfield is not None:
-            self.label.attributes["_for"] = self.boundfield.id_for_label
-            self.label.append(self.boundfield.label)
-            if self.boundfield.field.required:
-                self.label.append(REQUIRED_LABEL)
-
-            for group_name, subgroup, index in self.boundfield.field.widget.optgroups(
-                self.boundfield.name,
-                self.boundfield.field.widget.get_context(
-                    self.boundfield.name, self.boundfield.value(), {}
-                )["widget"]["value"],
-            ):
-                group = self.select
-                if group_name:
-                    group = hg.OPTGROUP(_class="bx--select-optgroup", label=group_name)
-                for option in subgroup:
-                    group.append(
-                        hg.OPTION(
-                            option["label"],
-                            _class="bx--select-option",
-                            value=option["value"],
-                            **option["attrs"],
-                        )
-                    )
-
-                if group_name:
-                    self.select.append(group)
-
-            if self.boundfield.help_text:
-                self[0].append(HelperText(self.boundfield.help_text))
-            if self.boundfield.errors:
-                self[0].attributes["_class"] += " bx--select--invalid"
-                self[0][1].attributes["data-invalid"] = True
-                self[0][1].append(
-                    Icon(
-                        "warning--filled",
-                        size=16,
-                        _class="bx--select__invalid-icon",
-                    )
-                )
-                if self.inline:
-                    self[0][1][0].append(ErrorList(self.boundfield.errors))
-                else:
-                    self[0].append(ErrorList(self.boundfield.errors))
-        return super().render(context)

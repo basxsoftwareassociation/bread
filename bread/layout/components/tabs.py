@@ -37,7 +37,7 @@ class TabPanel(hg.DIV):
 class Tabs(hg.DIV):
     def __init__(self, *tabs, container=False, **attributes):
         self.tablabels = hg.UL(_class="bx--tabs__nav bx--tabs__nav--hidden")
-        labelcontainer = hg.DIV(
+        self.labelcontainer = hg.DIV(
             hg.DIV(
                 hg.A(
                     href="javascript:void(0)",
@@ -63,7 +63,7 @@ class Tabs(hg.DIV):
             self.tablabels.append(TabLabel(label, tabid, panelid, i == 0))
             self.tabpanels.append(TabPanel(content, panelid, tabid, i == 0))
         super().__init__(
-            labelcontainer,
+            self.labelcontainer,
             self.tabpanels,
             **attributes,
         )

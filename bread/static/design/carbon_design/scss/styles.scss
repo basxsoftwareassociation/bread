@@ -8,6 +8,8 @@ $feature-flags: (
 @import 'globals/scss/styles';
 
 @import 'globals/scss/vendor/@carbon/type/scss/styles';
+@import 'choices';
+@import 'carbon-tokens';
 
 // do some custom coloring and spacing for our ui-shell
 html, body {
@@ -115,6 +117,11 @@ td .bx--form-item {
     }
 }
 
+// fix position of unlabeled table bulk action buttons
+.bx--action-list .bx--btn.bx--btn--icon-only .bx--btn__icon {
+    margin-left: 0;
+}
+
 // make standalone checkboxes appear better alligned:
 .bx--form-item.bx--checkbox-wrapper.standalone {
     height: 5rem;
@@ -132,4 +139,8 @@ fieldset[disabled=disabled] :disabled {
     10%  {opacity: 1;}
     90% {opacity: 1;}
     100% {opacity: 0;}
+}
+
+.raised {
+    @include layer('raised');
 }

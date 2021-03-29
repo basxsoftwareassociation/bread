@@ -1,14 +1,11 @@
-import urllib
-
 import htmlgenerator as hg
 from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 from guardian.mixins import PermissionRequiredMixin
 
 from .. import layout as _layout  # prevent name clashing
-from ..utils import filter_fieldlist, model_urlname, pretty_modelname
+from ..utils import pretty_modelname
 from .util import BreadView, CustomFormMixin
 
 
@@ -19,7 +16,9 @@ class AddView(
     PermissionRequiredMixin,
     CreateView,
 ):
-    template_name = "bread/layout.html"
+    """TODO: documentation"""
+
+    template_name = "bread/base.html"
     accept_global_perms = True
     layout = None
 
@@ -30,24 +29,6 @@ class AddView(
         self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"]))
         super().__init__(*args, **kwargs)
 
-    def layout(self, request):
-        return hg.BaseElement(
-            hg.H3(
-                _("Add %s") % pretty_modelname(self.model),
-            ),
-            _layout.form.Form.wrap_with_form(
-                hg.C("form"),
-                hg.BaseElement(
-                    *[
-                        _layout.form.FormField(field)
-                        for field in filter_fieldlist(
-                            self.model, self.fields, for_form=True
-                        )
-                    ]
-                ),
-            ),
-        )
-
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.add_{self.model.__name__.lower()}"]
 
@@ -55,11 +36,14 @@ class AddView(
         return None
 
     def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["pagetitle"] = _("Add %s") % pretty_modelname(self.model)
-        return context
-
-    def get_success_url(self):
-        if self.request.GET.get("next"):
-            return urllib.parse.unquote(self.request.GET["next"])
-        return reverse(model_urlname(self.model, "browse"))
+        layout = hg.BaseElement(
+            hg.H3(
+                _("Add %s") % pretty_modelname(self.model),
+            ),
+            _layout.form.Form.wrap_with_form(hg.C("form"), self.layout()),
+        )
+        return {
+            **super().get_context_data(*args, **kwargs),
+            "layout": layout,
+            "pagetitle": _("Add %s") % pretty_modelname(self.model),
+        }

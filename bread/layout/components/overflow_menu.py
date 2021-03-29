@@ -3,28 +3,6 @@ import htmlgenerator as hg
 from .icon import Icon
 
 
-class OverflowMenuItem(hg.LI):
-    def __init__(self, iconname, label, js=False, **attributes):
-        attributes["_class"] = (
-            attributes.get("_class", "") + " bx--overflow-menu-options__option"
-        )
-        super().__init__(
-            hg.BUTTON(
-                hg.DIV(
-                    Icon(iconname, size=16),
-                    label,
-                    _class="bx--overflow-menu-options__option-content",
-                ),
-                _class="bx--overflow-menu-options__btn",
-                role="menuitem",
-                type="button",
-                title=label,
-                onclick=js,
-            ),
-            **attributes,
-        )
-
-
 class OverflowMenu(hg.DIV):
     """Implements https://www.carbondesignsystem.com/components/overflow-menu/usage"""
 
@@ -33,6 +11,7 @@ class OverflowMenu(hg.DIV):
     def __init__(
         self,
         actions,
+        menuiconname="overflow-menu--vertical",
         menuname=None,
         direction="bottom",
         flip=False,
@@ -42,6 +21,9 @@ class OverflowMenu(hg.DIV):
         """actions: an iterable which contains bread.menu.Action objects where the onclick value is what will be passed to the onclick attribute of the menu-item (and therefore should be javascript, e.g. "window.location.href='/home'")."""
         attributes["data-overflow-menu"] = True
         attributes["_class"] = attributes.get("_class", "") + " bx--overflow-menu"
+        item_attributes["_class"] = (
+            item_attributes.get("_class", "") + " bx--overflow-menu-options__option"
+        )
 
         menuid = hg.F(
             lambda c, e: OverflowMenu.MENUID_TEMPLATE % hg.html_id(c.get("row", self))
@@ -53,7 +35,7 @@ class OverflowMenu(hg.DIV):
 
         super().__init__(
             hg.BUTTON(
-                Icon("overflow-menu--vertical", size=16),
+                Icon(menuiconname, size=16),
                 _class="bx--overflow-menu__trigger"
                 + (
                     " bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--right bx--tooltip--align-start"
@@ -71,10 +53,22 @@ class OverflowMenu(hg.DIV):
                     hg.Iterator(
                         actions,
                         "action",
-                        OverflowMenuItem(
-                            iconname=hg.C("action.icon"),
-                            label=hg.C("action.label"),
-                            js=hg.C("action.js"),
+                        hg.LI(
+                            hg.BUTTON(
+                                hg.DIV(
+                                    hg.If(
+                                        hg.C("action.icon"),
+                                        Icon(hg.C("action.icon"), size=16),
+                                    ),
+                                    hg.C("action.label"),
+                                    _class="bx--overflow-menu-options__option-content",
+                                ),
+                                _class="bx--overflow-menu-options__btn",
+                                role="menuitem",
+                                type="button",
+                                title=hg.C("action.label"),
+                                onclick=hg.C("action.js"),
+                            ),
                             **item_attributes,
                         ),
                     ),

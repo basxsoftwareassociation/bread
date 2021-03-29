@@ -1,9 +1,7 @@
-import django_filters
 import htmlgenerator as hg
 from django import forms
 from django.utils.html import mark_safe
 from django.utils.translation import gettext as _
-from django_countries.widgets import LazySelect
 
 from .button import Button
 from .notification import InlineNotification
@@ -27,6 +25,7 @@ class Form(hg.FORM):
                 hg.DIV(
                     Button(submit_label or _("Save"), type="submit"),
                     _class="bx--form-item",
+                    style="margin-top: 2rem",
                 ),
             )
         return Form(form, *elements, **kwargs)
@@ -252,6 +251,7 @@ def _mapwidget(
     from .checkbox import Checkbox
     from .date_picker import DatePicker
     from .file_uploader import FileUploader
+    from .multiselect import MultiSelect
     from .select import Select
     from .text_area import TextArea
     from .text_input import PasswordInput, TextInput
@@ -268,20 +268,15 @@ def _mapwidget(
         forms.TimeInput: TextInput,  # TODO HIGH
         forms.Textarea: TextArea,
         forms.CheckboxInput: Checkbox,
-        forms.Select: Select,
         forms.NullBooleanSelect: Select,
-        forms.SelectMultiple: TextInput,  # TODO HIGH
+        forms.SelectMultiple: MultiSelect,  # TODO HIGH
         forms.RadioSelect: TextInput,  # TODO HIGH
-        forms.CheckboxSelectMultiple: TextInput,  # TODO HIGH
-        forms.FileInput: FileUploader,  # TODO HIGH
+        forms.FileInput: FileUploader,
         forms.ClearableFileInput: FileUploader,  # TODO HIGH
         forms.MultipleHiddenInput: TextInput,  # TODO
         forms.SplitDateTimeWidget: TextInput,  # TODO
         forms.SplitHiddenDateTimeWidget: TextInput,  # TODO
         forms.SelectDateWidget: TextInput,  # TODO
-        # 3rd party widgets
-        django_filters.widgets.DateRangeWidget: TextInput,  # TODO
-        LazySelect: Select,
     }
 
     # The following is a bit of magic to play nicely with the django form processing
@@ -291,6 +286,8 @@ def _mapwidget(
     attrs = dict(field.field.widget.attrs)
     attrs.update(widgetattributes)
     attrs = field.build_widget_attrs(attrs)
+    if getattr(field.field.widget, "allow_multiple_selected", False):
+        attrs["multiple"] = True
     if field.auto_id and "id" not in field.field.widget.attrs:
         attrs.setdefault("id", field.html_initial_id if only_initial else field.auto_id)
     if "name" not in attrs:
@@ -299,13 +296,94 @@ def _mapwidget(
     if value is not None and "value" not in attrs:
         attrs["value"] = value
 
-    if fieldtype is None:
-        fieldtype = WIDGET_MAPPING[type(field.field.widget)]
+    elementattributes = {
+        **getattr(field.field, "layout_kwargs", {}),
+        **elementattributes,
+    }
 
+    kwargs = {
+        "label": field.label,
+        "help_text": field.help_text,
+        "errors": field.errors,
+        "disabled": field.field.disabled,
+        "required": field.field.required,
+        "widgetattributes": attrs,
+        **elementattributes,
+    }
     if isinstance(field.field.widget, forms.CheckboxInput):
         attrs["checked"] = field.value()
+        return hg.DIV(
+            Checkbox(**kwargs),
+            _class="bx--form-item",
+        )
+    if isinstance(field.field.widget, forms.CheckboxSelectMultiple):
 
-    ret = fieldtype(fieldname=field.name, widgetattributes=attrs, **elementattributes)
+        def extract_attrs(data):
+            return {
+                "name": data["name"],
+                "value": data["value"],
+                "checked": data["selected"],
+                **data["attrs"],
+                **widgetattributes,
+            }
+            return ret
+
+        del kwargs["label"]
+        del kwargs["required"]
+
+        return hg.DIV(
+            *[
+                Checkbox(
+                    **{
+                        **kwargs,
+                        "label": widget.data["label"],
+                        "widgetattributes": extract_attrs(widget.data),
+                    }
+                )
+                for widget in field.subwidgets
+            ],
+            _class="bx--form-item",
+        )
+        # {'name': 'naturalperson_subtypes', 'value': <django.forms.models.ModelChoiceIteratorValue object at 0x7f292e116640>, 'label': 'Interessent*in', 'selected': False, 'index': '0', 'attrs': {'id': 'id_naturalperson_subtypes_0'}, 'type': 'checkbox', 'template_name': 'django/forms/widgets/checkbox_option.html', 'wrap_label': True}
+
+    if isinstance(field.field.widget, forms.Select):
+        if isinstance(field.field.widget, forms.SelectMultiple):
+            return hg.DIV(
+                MultiSelect(
+                    field.field.widget.optgroups(
+                        field.name,
+                        field.field.widget.get_context(field.name, field.value(), {})[
+                            "widget"
+                        ]["value"],
+                    ),
+                    **kwargs,
+                ),
+                _class="bx--form-item",
+            )
+        return hg.DIV(
+            Select(
+                field.field.widget.optgroups(
+                    field.name,
+                    field.field.widget.get_context(field.name, field.value(), {})[
+                        "widget"
+                    ]["value"],
+                ),
+                **kwargs,
+            ),
+            _class="bx--form-item",
+        )
+
+    fieldtype = (
+        fieldtype
+        or getattr(field.field, "layout", None)
+        or WIDGET_MAPPING[type(field.field.widget)]
+    )
+    if isinstance(fieldtype, type) and issubclass(fieldtype, hg.BaseElement):
+        ret = fieldtype(
+            fieldname=field.name, widgetattributes=attrs, **elementattributes
+        )
+    else:
+        ret = fieldtype
     ret.boundfield = field
 
     if (

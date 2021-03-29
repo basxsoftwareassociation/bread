@@ -1,3 +1,6 @@
+[![CI](https://github.com/basxsoftwareassociation/bread/actions/workflows/main.yml/badge.svg)](https://github.com/basxsoftwareassociation/bread/actions/workflows/main.yml)
+[![Translation status](https://hosted.weblate.org/widgets/basxconnect/-/bread/svg-badge.svg)](https://hosted.weblate.org/engage/basxconnect/)
+
 Important
 =========
 

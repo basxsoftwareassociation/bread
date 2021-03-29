@@ -3,8 +3,8 @@ from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django.core.exceptions import FieldDoesNotExist
-from django.db import transaction
-from django.forms.formsets import DELETION_FIELD_NAME
+from django.db import models, transaction
+from django.forms.formsets import DELETION_FIELD_NAME, ORDERING_FIELD_NAME
 from dynamic_preferences.forms import GlobalPreferenceForm
 from dynamic_preferences.users.forms import UserPreferenceForm
 from guardian.shortcuts import get_objects_for_user
@@ -27,7 +27,7 @@ def generate_form(request, model, layout, instance, **kwargs):
     )
 
 
-def breadmodelform_factory(
+def breadmodelform_factory(  # noqa
     request, model, layout, instance=None, baseformclass=forms.models.ModelForm
 ):
     """Returns a form class which can handle inline-modelform sets and generic foreign keys."""
@@ -81,6 +81,16 @@ def breadmodelform_factory(
                     if isinstance(field, FormsetField):
                         self.cleaned_data[fieldname].instance = forminstance
                         self.cleaned_data[fieldname].save()
+                        if self.cleaned_data[fieldname].can_order:
+                            order = [
+                                f.instance.pk
+                                for f in self.cleaned_data[fieldname].ordered_forms
+                            ]
+                            getattr(
+                                forminstance,
+                                f"set_{self.cleaned_data[fieldname].model._meta.model_name}_order",
+                            )(order)
+
             return forminstance
 
     # GenericForeignKey and one-to-n fields need to be added separatly to the form class
@@ -99,7 +109,12 @@ def breadmodelform_factory(
         ):
             attribs[modelfield.name] = FormsetField(
                 _generate_formset_class(
-                    request, model, modelfield, baseformclass, formfieldelement
+                    request,
+                    model,
+                    modelfield,
+                    baseformclass,
+                    formfieldelement,
+                    instance,
                 ),
                 instance,
                 formfieldelement.formsetinitial,
@@ -116,7 +131,7 @@ def breadmodelform_factory(
             if isinstance(f, _layout.form.FormField)
         ],
         formfield_callback=lambda field: _formfield_callback_with_request(
-            field, request, model
+            field, request, model, instance
         ),
     )
     return ret
@@ -132,7 +147,7 @@ class InlineFormSetWithLimits(forms.BaseInlineFormSet):
 
 
 def _generate_formset_class(
-    request, model, modelfield, baseformclass, formsetfieldelement
+    request, model, modelfield, baseformclass, formsetfieldelement, instance
 ):
     """Returns a FormSet class which handles inline forms correctly."""
 
@@ -144,7 +159,7 @@ def _generate_formset_class(
         request=request,
         model=modelfield.related_model,
         layout=formfieldelements,
-        instance=None,
+        instance=instance,
         baseformclass=baseformclass,
     )
 
@@ -153,7 +168,7 @@ def _generate_formset_class(
             formfieldelement.fieldname for formfieldelement in formfieldelements
         ],
         "form": formclass,
-        "extra": 0,
+        "extra": 1 - bool(getattr(instance, modelfield.name).count()),
         "can_delete": True,
     }
     base_formset_kwargs.update(formsetfieldelement.formsetfactory_kwargs)
@@ -164,7 +179,7 @@ def _generate_formset_class(
             fk_field=modelfield.object_id_field_name,
             formset=InlineFormSetWithLimits,
             formfield_callback=lambda field: _formfield_callback_with_request(
-                field, request, modelfield.related_model
+                field, request, modelfield.related_model, instance
             ),
             **base_formset_kwargs,
         )
@@ -174,22 +189,27 @@ def _generate_formset_class(
             modelfield.related_model,
             formset=InlineFormSetWithLimits,
             formfield_callback=lambda field: _formfield_callback_with_request(
-                field, request, model
+                field, request, model, instance
             ),
             fk_name=modelfield.field.name,
             **base_formset_kwargs,
         )
 
 
-def _formfield_callback_with_request(field, request, model):
+def _formfield_callback_with_request(field, request, model, instance):
     kwargs = {}
+    choices = None
     if hasattr(field, "lazy_choices"):
-        field.choices = field.lazy_choices(field, request, object)
+        choices = field.lazy_choices(field, request, instance)
+    if not (choices is None or isinstance(choices, models.QuerySet)):
+        field.choices = choices
 
     if hasattr(field, "lazy_initial"):
-        kwargs["initial"] = field.lazy_initial(field, request, object)
+        kwargs["initial"] = field.lazy_initial(field, request, instance)
 
     ret = field.formfield(**kwargs)
+    if isinstance(choices, models.QuerySet):
+        ret.queryset = choices
 
     # apply permissions for querysets
     if hasattr(ret, "queryset"):
@@ -203,7 +223,6 @@ def _formfield_callback_with_request(field, request, model):
     return ret
 
 
-# TODO: the following custom forms could and probably shoudl be replace with template filters or tags
 class FilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -229,7 +248,7 @@ class UserPreferencesForm(UserPreferenceForm):
 
 
 def _get_form_fields_from_layout(layout):
-    INTERNAL_FIELDS = [DELETION_FIELD_NAME]
+    INTERNAL_FIELDS = [DELETION_FIELD_NAME, ORDERING_FIELD_NAME]
 
     def walk(element):
         if isinstance(

@@ -50,6 +50,16 @@ def reverse(*args, **kwargs):
     return django_reverse(*args, **kwargs)
 
 
+def link_with_urlparameters(request, **kwargs):
+    """Takes the current URL path and replaces, updates or removes url query parameters based on the passed in named arguments, an argument of None or empty string will remove the parameter from the URL. Existing parameters in the full path which are not one of the named argument will be left untouched."""
+    urlparams = request.GET.copy()
+    for parametername, value in kwargs.items():
+        urlparams[parametername] = value
+        if value in (None, ""):
+            del urlparams[parametername]
+    return request.path + (f"?{urlparams.urlencode()}" if urlparams else "")
+
+
 def reverse_model(model, action, *args, **kwargs):
     # make sure we get the most concrete instance in case the model parameter is an object
     if isinstance(model, models.Model):
@@ -63,7 +73,7 @@ def aslayout(view):
     @wraps(view)
     def wrapper(request, *args, **kwargs):
         return render(
-            request, "bread/layout.html", {"layout": view(request, *args, **kwargs)}
+            request, "bread/base.html", {"layout": view(request, *args, **kwargs)}
         )
 
     return wrapper
@@ -175,6 +185,14 @@ def default_model_paths(
             generate_path(
                 browseview.as_view(model=model, bulkactions=browseview.bulkactions),
                 model_urlname(model, "browse"),
+            )
+        )
+        ret.append(
+            generate_path(
+                browseview.as_view(
+                    model=model, bulkactions=browseview.bulkactions, asexcel=True
+                ),
+                model_urlname(model, "excel"),
             )
         )
     if readview is not None:

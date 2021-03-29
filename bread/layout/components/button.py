@@ -14,8 +14,11 @@ class Button(htmlgenerator.BUTTON):
         icon=None,
         notext=False,
         small=False,
+        islink=False,
         **attributes,
     ):
+        if islink:
+            self.tag = "a"
         attributes["type"] = attributes.get("type", "button")
         attributes["tabindex"] = attributes.get("tabindex", "0")
         attributes["_class"] = (
@@ -42,12 +45,13 @@ class Button(htmlgenerator.BUTTON):
 
     @staticmethod
     def fromaction(action, **kwargs):
-        return Button(
-            action.label,
-            icon=action.icon,
-            notext=not action.label,
-            onclick=action.js,
-        )
+        buttonargs = {
+            "icon": action.icon,
+            "notext": not action.label,
+            "onclick": action.js,
+        }
+        buttonargs.update(kwargs)
+        return Button(*([action.label] if action.label else []), **buttonargs)
 
 
 class ButtonSet(htmlgenerator.htmltags.DIV):

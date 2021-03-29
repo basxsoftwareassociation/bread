@@ -192,7 +192,7 @@
     opacity: 1;
   }
 
-  .#{$prefix}--table-row--menu-option
+  // .#{$prefix}--table-row--menu-option // removed by sam because we want SVG to be centered everywhere, not only in table row-overflow menus
     .#{$prefix}--overflow-menu-options__btn
     .#{$prefix}--overflow-menu-options__option-content
     svg {

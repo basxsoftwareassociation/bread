@@ -34,16 +34,15 @@ class HelperText(hg.DIV):
 
 class Label(hg.LABEL):
     def __init__(self, *args, **kwargs):
-        kwargs["_class"] = kwargs.get("_class", "") + " bx--label"
+        kwargs["_class"] = hg.BaseElement(kwargs.get("_class", ""), " bx--label")
         super().__init__(*args, **kwargs)
 
 
-# --------- CURRENTLY NOT USED, KEEP FOR FUTURE EXPLORATION --------------
 class LabelElement(hg.If):
-    def __init__(self, label, _for, required, disabled=False):
+    def __init__(self, label, _for, required=None, disabled=None, **kwargs):
         super().__init__(
             label,
-            Label(
+            hg.LABEL(
                 label,
                 hg.If(required, REQUIRED_LABEL),
                 _for=_for,
@@ -51,6 +50,7 @@ class LabelElement(hg.If):
                     "bx--label",
                     hg.If(disabled, " bx--label--disabled"),
                 ),
+                **kwargs
             ),
         )
 
