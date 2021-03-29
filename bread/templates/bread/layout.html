@@ -1,5 +1,0 @@
-{% extends request.GET.ajax|yesno:"bread/base_ajax.html,bread/base.html" %}
-
-{% load bread_tags %}
-
-{% block content %}{{request.GET.ajax}}{% render_layout %}{% endblock content %}

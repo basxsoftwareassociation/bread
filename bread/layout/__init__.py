@@ -14,6 +14,7 @@ from .components import notification  # noqa
 from .components import overflow_menu  # noqa
 from .components import progress_indicator  # noqa
 from .components import search  # noqa
+from .components import shell_header  # noqa
 from .components import tabs  # noqa
 from .components import tag  # noqa
 from .components import text_area  # noqa

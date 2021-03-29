@@ -25,21 +25,21 @@ class EditView(
 ):
     """TODO: documentation"""
 
-    template_name = "bread/layout.html"
+    template_name = "bread/base.html"
     accept_global_perms = True
     fields = None
     urlparams = (("pk", int),)
-
-    def get_success_message(self, cleaned_data):
-        return f"Saved {self.object}"
 
     def __init__(self, *args, **kwargs):
         all = filter_fieldlist(kwargs.get("model"), ["__all__"])
         self.fields = kwargs.get("fields", getattr(self, "fields", None)) or all
         super().__init__(*args, **kwargs)
 
-    def layout(self, request):
-        return hg.BaseElement(
+    def get_required_permissions(self, request):
+        return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
+
+    def get_context_data(self, *args, **kwargs):
+        layout = hg.BaseElement(
             _layout.grid.Grid(
                 _layout.grid.Row(
                     _layout.grid.Col(
@@ -49,21 +49,16 @@ class EditView(
                     )
                 ),
             ),
-            _layout.form.Form.wrap_with_form(hg.C("form"), self.formlayout(request)),
+            _layout.form.Form.wrap_with_form(hg.C("form"), self.layout()),
         )
+        return {
+            **super().get_context_data(*args, **kwargs),
+            "layout": layout,
+            "pagetitle": str(self.object),
+        }
 
-    def get_required_permissions(self, request):
-        return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["pagetitle"] = str(self.object)
-        return context
-
-    def get_success_url(self):
-        if self.request.GET.get("next"):
-            return urllib.parse.unquote(self.request.GET["next"])
-        return reverse(model_urlname(self.model, "read"), kwargs={"pk": self.object.pk})
+    def get_success_message(self, cleaned_data):
+        return f"Saved {self.object}"
 
     # prevent browser caching edit views
     @never_cache

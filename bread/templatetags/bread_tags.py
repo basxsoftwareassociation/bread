@@ -42,10 +42,8 @@ def linkurl(context, link):
 
 
 @register.simple_tag(takes_context=True)
-def render_layout(context):
-    # try first to get "raw" layout object from context, otherwise use layout method of view
-    layout = context.get("layout") or context.get("view").layout
-    return mark_safe(hg.render(layout(context["request"]), context.flatten()))
+def render_layout(context, layout):
+    return mark_safe(hg.render(layout, context.flatten()))
 
 
 @register.simple_tag

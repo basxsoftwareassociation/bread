@@ -19,7 +19,7 @@
     </head>
 
     <body>
-        {% include "bread/components/header.html" %}
+        {% render_layout headerlayout %}
 
         {% if user.is_authenticated %}
             {% include "bread/components/side-nav.html" %}
@@ -31,8 +31,7 @@
 
         <div class="bx--content">
             <div>
-                {% block content %}
-                {% endblock content %}
+                {% render_layout layout %}
             </div>
         </div>
 
@@ -51,7 +50,5 @@
             CarbonComponents.watch(document);
         </script>
         {% endcompress js %}
-
     </body>
-
 </html>

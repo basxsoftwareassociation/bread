@@ -49,14 +49,9 @@ setup(
         "whoosh",
         "celery-haystack",
         # TODO: review whether we can or should remove these
-        "django-image-cropping",  # cropping images, only usefull in admin backend
         "WeasyPrint",  # creating PDFs
-        "Pillow",  # image processing
-        "easy_thumbnails",  # thumbnails
         "django-markdown2",
         "django-dynamic-fixture",
-        "django-model-utils",
-        "django-filter",
         "django-ckeditor",
         "django-crispy-forms",
     ],

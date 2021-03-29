@@ -20,7 +20,7 @@ from .util import BreadView
 class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     """TODO: documentation"""
 
-    template_name = "bread/layout.html"
+    template_name = "bread/base.html"
     orderingurlparameter = "ordering"
     itemsperpage_urlparameter = "itemsperpage"
     objectids_urlparameter = "selected"  # see bread/static/js/main.js:submitbulkaction
@@ -58,9 +58,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
         super().__init__(*args, **kwargs)
 
-    def layout(self, request):
+    def get_context_data(self, *args, **kwargs):
         qs = self.get_queryset()
-        return _layout.datatable.DataTable.from_model(
+        layout = _layout.datatable.DataTable.from_model(
             self.model,
             hg.C("object_list"),
             columns=self.columns,
@@ -75,6 +75,12 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             itemsperpage_urlparameter=self.itemsperpage_urlparameter,
             settingspanel=self.get_settingspanel(),
         )
+
+        return {
+            **super().get_context_data(*args, **kwargs),
+            "layout": layout,
+            "pagetitle": pretty_modelname(self.model, plural=True),
+        }
 
     def get_settingspanel(self):
         return None
@@ -126,11 +132,6 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                     else models.functions.Lower(order)
                 )
         return qs
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["pagetitle"] = pretty_modelname(self.model, plural=True)
-        return context
 
     def export(self, *args, **kwargs):
         columns = self.columns

@@ -73,7 +73,7 @@ def aslayout(view):
     @wraps(view)
     def wrapper(request, *args, **kwargs):
         return render(
-            request, "bread/layout.html", {"layout": view(request, *args, **kwargs)}
+            request, "bread/base.html", {"layout": view(request, *args, **kwargs)}
         )
 
     return wrapper

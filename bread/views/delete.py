@@ -31,9 +31,6 @@ class DeleteView(BreadView, PermissionRequiredMixin, RedirectView):
         if self.softdeletefield:
             self.model._meta.get_field(self.softdeletefield)
 
-    def layout(self, request):
-        None
-
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.delete_{self.model.__name__.lower()}"]
 

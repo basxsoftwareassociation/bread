@@ -1,3 +1,5 @@
+import urllib
+
 import htmlgenerator as hg
 from django import forms
 from django.contrib import messages
@@ -6,7 +8,7 @@ from django.utils.html import mark_safe
 from .. import layout as _layout  # prevent name clashing
 from ..forms.forms import breadmodelform_factory
 from ..layout.components.form import FormField
-from ..utils import filter_fieldlist
+from ..utils import filter_fieldlist, reverse_model
 
 
 class CustomFormMixin:
@@ -26,12 +28,12 @@ class CustomFormMixin:
         return breadmodelform_factory(
             request=self.request,
             model=self.model,
-            layout=self.layout(self.request),
+            layout=self.layout(),
             instance=self.object,
             baseformclass=form,
         )
 
-    def formlayout(self, request):
+    def layout(self):
         formfields = filter_fieldlist(self.model, self.fields, for_form=True)
         ret = hg.BaseElement()
         for field in self.fields:
@@ -46,7 +48,7 @@ class CustomFormMixin:
 
         # hide or disable predefined fields passed in GET parameters
         if self.request.method != "POST":
-            for fieldelement in self.layout(self.request).filter(
+            for fieldelement in self.layout().filter(
                 lambda element, ancestors: isinstance(element, FormField)
             ):
                 if (
@@ -71,20 +73,20 @@ class CustomFormMixin:
                 )
         return form
 
+    def get_success_url(self):
+        if self.request.GET.get("next"):
+            return urllib.parse.unquote(self.request.GET["next"])
+        return reverse_model(self.model, "read", kwargs={"pk": self.object.pk})
+
 
 class BreadView:
     """
-    Enforces the definition of a layout method which is used to render the view
     Shortcut to create a subclass with the given attributes
     """
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        # if not hasattr(cls, "layout") and callable(cls.layout):
-        # raise NotImplementedError(
-        # f"{cls} needs to implement a method 'layout(request)'"
-        # )
 
     @classmethod
     def _with(cls, **kwargs):

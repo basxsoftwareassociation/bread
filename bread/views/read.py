@@ -9,7 +9,7 @@ from .edit import EditView
 class ReadView(EditView):
     """TODO: documentation"""
 
-    template_name = "bread/layout.html"
+    template_name = "bread/base.html"
     accept_global_perms = True
     fields = None
     urlparams = (("pk", int),)
@@ -23,8 +23,10 @@ class ReadView(EditView):
             field.disabled = True
         return form
 
-    def layout(self, request):
-        return layoutasreadonly(super().layout(request))
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["layout"] = layoutasreadonly(self.layout())
+        return context
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
