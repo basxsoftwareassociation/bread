@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-29 20:56+0700\n"
-"PO-Revision-Date: 2021-03-27 03:29+0000\n"
-"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
+"POT-Creation-Date: 2021-03-24 09:37+0700\n"
+"PO-Revision-Date: 2021-03-29 13:56+0000\n"
+"Last-Translator: Timotheus Pokorra <mailinglists@tpokorra.de>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
 "basxconnect/bread/nb_NO/>\n"
 "Language: nb_NO\n"
@@ -224,7 +224,7 @@ msgstr "Opprettet % kopier"
 #: bread/views/edit.py:118
 #, python-format
 msgid "Created %s copies"
-msgstr "Opprettet % kopier"
+msgstr "Opprettet %s kopier"
 
 #: bread/views/edit.py:163
 msgctxt "this is a copy"
