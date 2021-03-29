@@ -296,7 +296,11 @@ class DataTable(hg.BaseElement):
             ),
             hg.DIV(
                 hg.DIV(
-                    hg.DIV(settingspanel, _class="bx--tile raised"),
+                    hg.DIV(
+                        settingspanel,
+                        _class="bx--tile raised",
+                        style="margin: 0; padding: 0",
+                    ),
                     _class="settingscontainer",
                     style="position: absolute; z-index: 999; right: 0; display: none",
                     onload="document.addEventListener('click', (e) => {this.style.display = 'none'})",
