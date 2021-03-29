@@ -1,4 +1,4 @@
-[![basxconnect-ci](https://github.com/basxsoftwareassociation/bread/actions/workflows/main.yml/badge.svg)](https://github.com/basxsoftwareassociation/bread/actions/workflows/main.yml)
+[![CI](https://github.com/basxsoftwareassociation/bread/actions/workflows/main.yml/badge.svg)](https://github.com/basxsoftwareassociation/bread/actions/workflows/main.yml)
 
 Important
 =========
