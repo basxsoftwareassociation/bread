@@ -12,7 +12,6 @@ INSTALLED_APPS = [
     "guardian",
     "bread",
     "bread.contrib.reports",
-    "easy_thumbnails",
 ]
 
 settings.configure(
