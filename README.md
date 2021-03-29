@@ -7,6 +7,11 @@ Important
 
 This repo is in alpha-stage and highly experimental. We will not keep any backwards-compatability during the next few months. We work on improving stability as well as adding documentation and tests.
 
+Documentation
+-------------
+
+Documentation is hosted at [readthedocs.io](https://basx-bread.readthedocs.io/en/latest/)
+
 TODO before going to beta
 -------------------------
 
