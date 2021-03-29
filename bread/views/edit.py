@@ -91,6 +91,7 @@ def generate_copyview(model, attrs=None, labelfield=None, copy_related_fields=()
             return reverse_model(model, "browse")
         if request.GET.get("next"):
             return urllib.parse.unquote(request.GET["next"])
+        messages.success(request, _("Created copy %s" % instance))
         return redirect(reverse(model_urlname(model, "read"), args=[clone.pk]))
 
     return copy
