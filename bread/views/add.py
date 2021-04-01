@@ -20,7 +20,6 @@ class AddView(
 
     template_name = "bread/base.html"
     accept_global_perms = True
-    layout = None
 
     def get_success_message(self, cleaned_data):
         return _("Added %s") % self.object
