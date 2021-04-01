@@ -32,7 +32,8 @@ class EditView(
 
     def __init__(self, *args, **kwargs):
         all = filter_fieldlist(kwargs.get("model"), ["__all__"])
-        self.fields = kwargs.get("fields", getattr(self, "fields", None)) or all
+        self.fields = kwargs.get("fields", getattr(self, "fields", None))
+        self.fields = all if self.fields is None else self.fields
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):

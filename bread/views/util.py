@@ -36,7 +36,7 @@ class CustomFormMixin:
     def layout(self):
         formfields = filter_fieldlist(self.model, self.fields, for_form=True)
         ret = hg.BaseElement()
-        for field in self.fields:
+        for field in self.fields or formfields:
             if field in formfields:
                 ret.append(_layout.form.FormField(field))
             else:

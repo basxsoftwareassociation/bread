@@ -25,7 +25,7 @@ class ReadView(EditView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context["layout"] = layoutasreadonly(self.layout())
+        context["layout"] = layoutasreadonly(context["layout"])
         return context
 
     def get_required_permissions(self, request):
