@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-29 20:56+0700\n"
+"POT-Creation-Date: 2021-04-01 21:12+0700\n"
 "PO-Revision-Date: 2021-03-25 02:48+0000\n"
 "Last-Translator: Nathan <bonnemainsnathan@gmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -93,8 +93,8 @@ msgstr " éléments sélectionnés"
 msgid "Table Action Bar"
 msgstr "Barre d'actions de la table"
 
-#: bread/layout/components/datatable.py:428 bread/views/add.py:41
-#: bread/views/add.py:48
+#: bread/layout/components/datatable.py:428 bread/views/add.py:40
+#: bread/views/add.py:47
 #, python-format
 msgid "Add %s"
 msgstr "Ajouter %s"
@@ -148,11 +148,11 @@ msgstr "pages"
 msgid "Optional"
 msgstr "Facultatif"
 
-#: bread/layout/components/search.py:17 bread/layout/components/search.py:22
+#: bread/layout/components/search.py:18 bread/layout/components/search.py:23
 msgid "Search"
 msgstr "Rechercher"
 
-#: bread/layout/components/search.py:28 bread/layout/components/search.py:29
+#: bread/layout/components/search.py:29 bread/layout/components/search.py:30
 msgid "Clear search input"
 msgstr "Effacer la recherche"
 
@@ -187,7 +187,7 @@ msgstr "Désactivé"
 msgid "System Settings"
 msgstr "Paramètres du système"
 
-#: bread/views/add.py:26
+#: bread/views/add.py:25
 #, python-format
 msgid "Added %s"
 msgstr "%s a été ajouté"
@@ -212,18 +212,18 @@ msgstr "%s n'a pas pu être supprimé : %s"
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s%(modelname)s supprimé(s)"
 
-#: bread/views/edit.py:89
+#: bread/views/edit.py:90
 #, fuzzy, python-format
 #| msgid "Created %s copies"
 msgid "Created copy %s"
 msgstr "%s copies créées"
 
-#: bread/views/edit.py:118
+#: bread/views/edit.py:119
 #, python-format
 msgid "Created %s copies"
 msgstr "%s copies créées"
 
-#: bread/views/edit.py:163
+#: bread/views/edit.py:164
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "Copier"

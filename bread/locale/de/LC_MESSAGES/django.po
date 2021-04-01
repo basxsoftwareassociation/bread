@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-29 20:56+0700\n"
+"POT-Creation-Date: 2021-04-01 21:12+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -92,8 +92,8 @@ msgstr " Einträge ausgewählt"
 msgid "Table Action Bar"
 msgstr "Tabellen Aktionsbar"
 
-#: bread/layout/components/datatable.py:428 bread/views/add.py:41
-#: bread/views/add.py:48
+#: bread/layout/components/datatable.py:428 bread/views/add.py:40
+#: bread/views/add.py:47
 #, python-format
 msgid "Add %s"
 msgstr "%s erstellen"
@@ -147,11 +147,11 @@ msgstr "Seiten"
 msgid "Optional"
 msgstr "Optional"
 
-#: bread/layout/components/search.py:17 bread/layout/components/search.py:22
+#: bread/layout/components/search.py:18 bread/layout/components/search.py:23
 msgid "Search"
 msgstr "Suchen"
 
-#: bread/layout/components/search.py:28 bread/layout/components/search.py:29
+#: bread/layout/components/search.py:29 bread/layout/components/search.py:30
 msgid "Clear search input"
 msgstr "Suchtext löschen"
 
@@ -164,7 +164,7 @@ msgstr "Ausloggen"
 
 #: bread/layout/components/shell_header.py:53
 msgid "Close"
-msgstr ""
+msgstr "Schliessen"
 
 #: bread/layout/components/tag.py:17
 msgid "Remove"
@@ -186,7 +186,7 @@ msgstr "Aus"
 msgid "System Settings"
 msgstr "Systemeinstellungen"
 
-#: bread/views/add.py:26
+#: bread/views/add.py:25
 #, python-format
 msgid "Added %s"
 msgstr "%s erstellt"
@@ -211,18 +211,16 @@ msgstr "%s konnte nicht gelöscht werden: %s"
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s %(modelname)s gelöscht"
 
-#: bread/views/edit.py:89
-#, fuzzy, python-format
-#| msgid "Created %s copies"
+#: bread/views/edit.py:90
 msgid "Created copy %s"
-msgstr "%s Kopien erstellt"
+msgstr "Kopie von %s erstellt"
 
-#: bread/views/edit.py:118
+#: bread/views/edit.py:119
 #, python-format
 msgid "Created %s copies"
 msgstr "%s Kopien erstellt"
 
-#: bread/views/edit.py:163
+#: bread/views/edit.py:164
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "Kopie"

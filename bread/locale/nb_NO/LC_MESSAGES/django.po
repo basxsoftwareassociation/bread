@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-24 09:37+0700\n"
+"POT-Creation-Date: 2021-04-01 21:12+0700\n"
 "PO-Revision-Date: 2021-03-29 13:56+0000\n"
 "Last-Translator: Timotheus Pokorra <mailinglists@tpokorra.de>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
@@ -94,8 +94,8 @@ msgstr " elementer valgt"
 msgid "Table Action Bar"
 msgstr ""
 
-#: bread/layout/components/datatable.py:428 bread/views/add.py:41
-#: bread/views/add.py:48
+#: bread/layout/components/datatable.py:428 bread/views/add.py:40
+#: bread/views/add.py:47
 #, python-format
 msgid "Add %s"
 msgstr "Legg til %s"
@@ -150,11 +150,11 @@ msgstr "sider"
 msgid "Optional"
 msgstr ""
 
-#: bread/layout/components/search.py:17 bread/layout/components/search.py:22
+#: bread/layout/components/search.py:18 bread/layout/components/search.py:23
 msgid "Search"
 msgstr "Søk"
 
-#: bread/layout/components/search.py:28 bread/layout/components/search.py:29
+#: bread/layout/components/search.py:29 bread/layout/components/search.py:30
 msgid "Clear search input"
 msgstr ""
 
@@ -190,7 +190,7 @@ msgstr "Av"
 msgid "System Settings"
 msgstr "Systeminnstillinger"
 
-#: bread/views/add.py:26
+#: bread/views/add.py:25
 #, python-format
 msgid "Added %s"
 msgstr "%s tillagt"
@@ -215,18 +215,18 @@ msgstr "%s kunne ikke slettes: %s"
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s %(modelname)s slettet"
 
-#: bread/views/edit.py:89
+#: bread/views/edit.py:90
 #, fuzzy, python-format
 #| msgid "Created %s copies"
 msgid "Created copy %s"
 msgstr "Opprettet % kopier"
 
-#: bread/views/edit.py:118
+#: bread/views/edit.py:119
 #, python-format
 msgid "Created %s copies"
 msgstr "Opprettet %s kopier"
 
-#: bread/views/edit.py:163
+#: bread/views/edit.py:164
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "Kopier"
