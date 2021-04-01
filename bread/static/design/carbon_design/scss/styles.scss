@@ -144,3 +144,8 @@ fieldset[disabled=disabled] :disabled {
 .raised {
     @include layer('raised');
 }
+
+// for search result highlighting
+.highlighted {
+    font-weight: 600;
+}

@@ -8,6 +8,7 @@ from .components import form  # noqa
 from .components import grid  # noqa
 from .components import helpers  # noqa
 from .components import icon  # noqa
+from .components import loading  # noqa
 from .components import modal  # noqa
 from .components import multiselect  # noqa
 from .components import notification  # noqa

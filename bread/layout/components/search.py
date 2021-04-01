@@ -2,6 +2,7 @@ import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
 from .icon import Icon
+from .loading import Loading
 
 
 class Search(hg.DIV):
@@ -41,10 +42,19 @@ class Search(hg.DIV):
         self[1].attributes["hx_get"] = url
         self[1].attributes["hx_trigger"] = "changed, keyup changed delay:100ms"
         self[1].attributes["hx_target"] = f"#{resultcontainerid}"
+        self[1].attributes["hx_indicator"] = f"#{resultcontainerid}-indicator"
         self[1].attributes["name"] = query_urlparameter
         self[3].attributes[
             "onclick"
         ] = f"document.getElementById('{resultcontainerid}').innerHTML = ''"
+        self.append(
+            hg.DIV(
+                Loading(small=True),
+                id=f"{resultcontainerid}-indicator",
+                _class="htmx-indicator",
+                style="position: absolute; right: 2rem",
+            ),
+        )
         if resultcontainer:
             return hg.BaseElement(
                 self,
