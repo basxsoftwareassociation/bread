@@ -35,13 +35,13 @@ class ReadView(EditView):
 def layoutasreadonly(layout):
     layout.wrap(
         lambda element, ancestors: isinstance(element, _layout.form.Form),
-        hg.FIELDSET(disabled="disabled"),
+        hg.FIELDSET(readonly="true"),
     )
 
     layout.delete(
         lambda element, ancestors: any(
             [isinstance(a, _layout.form.Form) for a in ancestors]
         )
-        and isinstance(element, hg.BUTTON)
+        and isinstance(element, _layout.button.Button)
     )
     return layout
