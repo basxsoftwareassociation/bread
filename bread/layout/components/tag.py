@@ -13,7 +13,6 @@ class Tag(hg.BUTTON):
             + (f" bx--tag--{tag_color}" if tag_color else "")
         )
         if can_delete:
-            kwargs["_class"] += " bx--tag--filter"
             kwargs.setdefault("title", _("Remove"))
 
         super().__init__(
