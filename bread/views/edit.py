@@ -40,21 +40,9 @@ class EditView(
         return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
 
     def get_context_data(self, *args, **kwargs):
-        layout = hg.BaseElement(
-            _layout.grid.Grid(
-                _layout.grid.Row(
-                    _layout.grid.Col(
-                        hg.H3(
-                            hg.I(hg.F(lambda c, e: c["object"])),
-                        )
-                    )
-                ),
-            ),
-            _layout.form.Form.wrap_with_form(hg.C("form"), self.layout()),
-        )
         return {
             **super().get_context_data(*args, **kwargs),
-            "layout": layout,
+            "layout": _layout.form.Form(hg.C("form"), self.layout()),
             "pagetitle": str(self.object),
         }
 

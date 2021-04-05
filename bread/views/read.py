@@ -2,6 +2,7 @@ import htmlgenerator as hg
 from django.http import HttpResponseNotAllowed
 
 from .. import layout as _layout  # prevent name clashing
+from ..forms.fields import FormsetField
 from .edit import EditView
 
 
@@ -21,6 +22,9 @@ class ReadView(EditView):
         form = super().get_form(*args, **kwargs)
         for field in form.fields.values():
             field.disabled = True
+            if isinstance(field, FormsetField):
+                for subfield in field.formsetclass.form.base_fields.values():
+                    subfield.disabled = True
         return form
 
     def get_context_data(self, *args, **kwargs):
@@ -42,6 +46,8 @@ def layoutasreadonly(layout):
         lambda element, ancestors: any(
             [isinstance(a, _layout.form.Form) for a in ancestors]
         )
-        and isinstance(element, _layout.button.Button)
+        and isinstance(
+            element, (_layout.form.InlineDeleteButton, _layout.form.FormsetAddButton)
+        )
     )
     return layout
