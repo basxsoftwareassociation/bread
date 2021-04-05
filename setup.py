@@ -31,6 +31,7 @@ setup(
         "python-dateutil",
         "htmlgenerator",  # replacement for django templates
         "django-compressor",  # compress html assets
+        "csscompressor",  # needed for better css compression
         "django-libsass",  # serve *.scss files with compressor
         "django-extensions",  # bunch of usefull management commands and functions
         "django-guardian",  # object level permissions
