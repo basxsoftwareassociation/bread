@@ -3,7 +3,7 @@
 <html class="no-js" lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>{{ pagetitle|default:PLATFORMNAME }} | {{ PLATFORMNAME }}</title>
+        <title>{{ pagetitle|default:PLATFORMNAME|striptags }} | {{ PLATFORMNAME|striptags }}</title>
         <meta name="description" content="{% block page_description %}{% endblock%}" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {% block favicon %}<link rel="shortcut icon" href="{% static "logo.png" %}"/>{% endblock %}
