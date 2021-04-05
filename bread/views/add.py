@@ -10,8 +10,8 @@ from .util import BreadView, CustomFormMixin
 
 
 class AddView(
-    BreadView,
     CustomFormMixin,
+    BreadView,
     SuccessMessageMixin,
     PermissionRequiredMixin,
     CreateView,
@@ -39,7 +39,7 @@ class AddView(
             hg.H3(
                 _("Add %s") % pretty_modelname(self.model),
             ),
-            _layout.form.Form.wrap_with_form(hg.C("form"), self.layout()),
+            _layout.form.Form.wrap_with_form(hg.C("form"), self.get_layout()),
         )
         return {
             **super().get_context_data(*args, **kwargs),

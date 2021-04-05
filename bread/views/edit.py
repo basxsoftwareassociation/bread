@@ -17,8 +17,8 @@ from .util import BreadView, CustomFormMixin
 
 
 class EditView(
-    BreadView,
     CustomFormMixin,
+    BreadView,
     messages.views.SuccessMessageMixin,
     PermissionRequiredMixin,
     UpdateView,
@@ -42,7 +42,7 @@ class EditView(
     def get_context_data(self, *args, **kwargs):
         return {
             **super().get_context_data(*args, **kwargs),
-            "layout": _layout.form.Form(hg.C("form"), self.layout()),
+            "layout": _layout.form.Form(hg.C("form"), self.get_layout()),
             "pagetitle": str(self.object),
         }
 

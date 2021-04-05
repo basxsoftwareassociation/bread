@@ -58,9 +58,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
         super().__init__(*args, **kwargs)
 
-    def get_context_data(self, *args, **kwargs):
+    def get_layout(self):
         qs = self.get_queryset()
-        layout = _layout.datatable.DataTable.from_model(
+        return _layout.datatable.DataTable.from_model(
             self.model,
             hg.C("object_list"),
             columns=self.columns,
@@ -76,9 +76,10 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             settingspanel=self.get_settingspanel(),
         )
 
+    def get_context_data(self, *args, **kwargs):
         return {
             **super().get_context_data(*args, **kwargs),
-            "layout": layout,
+            "layout": self.get_layout(),
             "pagetitle": pretty_modelname(self.model, plural=True),
         }
 

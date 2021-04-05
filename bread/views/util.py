@@ -28,12 +28,12 @@ class CustomFormMixin:
         return breadmodelform_factory(
             request=self.request,
             model=self.model,
-            layout=self.layout(),
+            layout=self.get_layout(),
             instance=self.object,
             baseformclass=form,
         )
 
-    def layout(self):
+    def get_layout(self):
         formfields = filter_fieldlist(self.model, self.fields, for_form=True)
         ret = hg.BaseElement()
         for field in self.fields or formfields:
@@ -48,7 +48,7 @@ class CustomFormMixin:
 
         # hide or disable predefined fields passed in GET parameters
         if self.request.method != "POST":
-            for fieldelement in self.layout().filter(
+            for fieldelement in self.get_layout().filter(
                 lambda element, ancestors: isinstance(element, FormField)
             ):
                 if (
@@ -84,6 +84,8 @@ class BreadView:
     Shortcut to create a subclass with the given attributes
     """
 
+    layout = None
+
     @classmethod
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
@@ -91,3 +93,8 @@ class BreadView:
     @classmethod
     def _with(cls, **kwargs):
         return type(f"Custom{cls.__name__}", (cls,), kwargs)
+
+    def get_layout(self):
+        if self.layout is None:
+            raise RuntimeError(f"'layout' of view {self} is None")
+        return self.layout
