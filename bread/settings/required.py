@@ -79,6 +79,13 @@ CKEDITOR_CONFIGS = {
 # required to compile sass theme
 COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 COMPRESS_OFFLINE_CONTEXT = "bread.context_processors.compress_offline_context"
+COMPRESS_FILTERS = {
+    "css": [
+        "compressor.filters.css_default.CssAbsoluteFilter",
+        "compressor.filters.cssmin.CSSCompressorFilter",
+    ],
+    "js": ["compressor.filters.jsmin.JSMinFilter"],
+}
 LIBSASS_OUTPUT_STYLE = "compressed"
 
 # not sure why we need this
