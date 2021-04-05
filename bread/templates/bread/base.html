@@ -6,7 +6,7 @@
         <title>{{ pagetitle|default:PLATFORMNAME }} | {{ PLATFORMNAME }}</title>
         <meta name="description" content="{% block page_description %}{% endblock%}" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {% block favicon %}<link rel="shortcut icon" href="{% static "favicon.png" %}"/>{% endblock %}
+        {% block favicon %}<link rel="shortcut icon" href="{% static "logo.png" %}"/>{% endblock %}
 
         {% if OVERRIDE_STYLESHEET %}
             <link rel="stylesheet" type="text/css" href="{{ OVERRIDE_STYLESHEET }}" media="all"/>

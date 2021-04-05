@@ -1,5 +1,4 @@
 import htmlgenerator as hg
-from django.utils.html import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from bread.utils import reverse
@@ -9,13 +8,31 @@ from .icon import Icon
 
 class ShellHeader(hg.HEADER):
     def __init__(self, platform, company, actions=(), *args, **kwargs):
+        from django.contrib.staticfiles.storage import staticfiles_storage
+
         super().__init__(
-            hg.A(
-                hg.SPAN(platform, _class="bx--header__name--prefix"),
-                mark_safe("&nbsp;"),
-                company,
-                _class="bx--header__name",
-                href="/",
+            hg.If(
+                hg.C(
+                    "request.user.preferences.user_interface__navigation_menu_extended"
+                ),
+                hg.A(
+                    hg.SPAN(platform, _class="bx--header__name--prefix"),
+                    hg.SPAN(company, style="position: absolute; left: 17rem"),
+                    _class="bx--header__name",
+                    style="font-weight: 400",  # override carbon design
+                    href="/",
+                ),
+                hg.A(
+                    hg.IMG(
+                        src=staticfiles_storage.url("logo.png"),
+                        _class="bx--header__name--prefix",
+                        style="width: 1.7rem; height; 1.7rem",
+                    ),
+                    hg.SPAN(company, style="position: absolute; left: 4rem"),
+                    _class="bx--header__name",
+                    style="font-weight: 400",  # override carbon design
+                    href="/",
+                ),
             ),
             hg.DIV(
                 hg.If(
