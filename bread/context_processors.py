@@ -3,7 +3,6 @@ from django.conf import settings
 
 def bread_context(request):
     ret = {
-        "branding": getattr(settings, "BRANDING", {}),
         "OVERRIDE_STYLESHEET": getattr(settings, "OVERRIDE_STYLESHEET", None),
     }
     return ret

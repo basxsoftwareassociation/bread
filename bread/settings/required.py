@@ -153,12 +153,6 @@ USE_TZ = True
 
 USE_THOUSAND_SEPARATOR = True
 
-BRANDING = {
-    "name": "PRODUCT_NAME",
-    "company": "COMPANY_NAME",
-    "platform": "PLATFORM_NAME",
-}
-
 DEFAULT_PAGINATION_CHOICES = [
     25,
     50,

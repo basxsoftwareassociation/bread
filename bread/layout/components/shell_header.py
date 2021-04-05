@@ -16,7 +16,6 @@ class ShellHeader(hg.HEADER):
                 company,
                 _class="bx--header__name",
                 href="/",
-                title=platform,
             ),
             hg.DIV(
                 hg.If(
