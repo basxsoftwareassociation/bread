@@ -1,0 +1,242 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-04-06 19:38+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: bread/contrib/reports/fields/queryfield.py:105
+#, python-format
+msgid "Invalid model '%s' selected"
+msgstr ""
+
+#: bread/contrib/reports/models.py:12
+msgid "Created"
+msgstr ""
+
+#: bread/contrib/reports/models.py:13 bread/contrib/reports/models.py:50
+msgid "Name"
+msgstr ""
+
+#: bread/contrib/reports/models.py:18
+msgid "Model"
+msgstr ""
+
+#: bread/contrib/reports/models.py:19
+msgid "Filter"
+msgstr ""
+
+#: bread/contrib/reports/models.py:28
+msgid "Preview"
+msgstr ""
+
+#: bread/contrib/reports/models.py:38
+msgid "Report"
+msgstr ""
+
+#: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:144
+#: bread/contrib/reports/urls.py:145
+msgid "Reports"
+msgstr ""
+
+#: bread/contrib/reports/models.py:49 bread/contrib/reports/models.py:56
+msgid "Column"
+msgstr ""
+
+#: bread/contrib/reports/models.py:52
+msgid "Aggregation"
+msgstr ""
+
+#: bread/contrib/reports/models.py:57 bread/contrib/reports/urls.py:50
+msgid "Columns"
+msgstr ""
+
+#: bread/contrib/reports/urls.py:31
+msgid "New report: "
+msgstr ""
+
+#: bread/contrib/reports/urls.py:43
+msgid "Base model"
+msgstr ""
+
+#: bread/contrib/reports/urls.py:113
+msgid "Excel"
+msgstr ""
+
+#: bread/layout/components/button.py:67
+msgid "Print"
+msgstr ""
+
+#: bread/layout/components/datatable.py:247
+msgid "Cancel"
+msgstr ""
+
+#: bread/layout/components/datatable.py:258
+msgid " items selected"
+msgstr ""
+
+#: bread/layout/components/datatable.py:264
+msgid "Table Action Bar"
+msgstr ""
+
+#: bread/layout/components/datatable.py:428 bread/views/add.py:40
+#: bread/views/add.py:47
+#, python-format
+msgid "Add %s"
+msgstr ""
+
+#: bread/layout/components/file_uploader.py:28
+msgid "Select file"
+msgstr ""
+
+#: bread/layout/components/form.py:26
+msgid "Save"
+msgstr ""
+
+#: bread/layout/components/form.py:63
+msgid "Form error"
+msgstr ""
+
+#: bread/layout/components/form.py:69
+msgid "Form error: "
+msgstr ""
+
+#: bread/layout/components/form.py:181
+msgid "Add"
+msgstr ""
+
+#: bread/layout/components/form.py:201
+msgid "Delete"
+msgstr ""
+
+#: bread/layout/components/notification.py:125
+msgid "Time stamp"
+msgstr ""
+
+#: bread/layout/components/pagination.py:65
+msgid "Items per page"
+msgstr ""
+
+#: bread/layout/components/pagination.py:113
+#: bread/layout/components/pagination.py:160
+msgid "of"
+msgstr ""
+
+#: bread/layout/components/pagination.py:122
+msgid "items"
+msgstr ""
+
+#: bread/layout/components/pagination.py:164
+msgid "pages"
+msgstr ""
+
+#: bread/layout/components/progress_indicator.py:33
+msgid "Optional"
+msgstr ""
+
+#: bread/layout/components/search.py:18 bread/layout/components/search.py:23
+msgid "Search"
+msgstr ""
+
+#: bread/layout/components/search.py:29 bread/layout/components/search.py:30
+msgid "Clear search input"
+msgstr ""
+
+#: bread/layout/components/shell_header.py:67
+#: bread/layout/components/shell_header.py:68
+#: bread/templates/bread/components/header.html:31
+#: bread/templates/bread/components/header.html:32
+msgid "Logout"
+msgstr ""
+
+#: bread/layout/components/shell_header.py:69
+msgid "Close"
+msgstr ""
+
+#: bread/layout/components/tag.py:16
+msgid "Remove"
+msgstr ""
+
+#: bread/layout/components/text_input.py:78
+msgid "Show password"
+msgstr ""
+
+#: bread/layout/components/toggle.py:11
+msgid "On"
+msgstr ""
+
+#: bread/layout/components/toggle.py:12
+msgid "Off"
+msgstr ""
+
+#: bread/templates/admin/base_site.html:3
+msgid "System Settings"
+msgstr ""
+
+#: bread/views/add.py:25
+#, python-format
+msgid "Added %s"
+msgstr ""
+
+#: bread/views/delete.py:46
+#, python-format
+msgid "Deleted %(modelname)s %(objectname)s"
+msgstr ""
+
+#: bread/views/delete.py:90
+#, python-format
+msgid "Your user has not the permissions to delete %s"
+msgstr ""
+
+#: bread/views/delete.py:101
+#, python-format
+msgid "%s could not be deleted: %s"
+msgstr ""
+
+#: bread/views/delete.py:106
+#, python-format
+msgid "Deleted %(count)s %(modelname)s"
+msgstr ""
+
+#: bread/views/edit.py:78
+#, python-format
+msgid "Created copy %s"
+msgstr ""
+
+#: bread/views/edit.py:107
+#, python-format
+msgid "Created %s copies"
+msgstr ""
+
+#: bread/views/edit.py:152
+msgctxt "this is a copy"
+msgid "Copy"
+msgstr ""
+
+#: bread/views/system.py:15 bread/views/system.py:17
+msgid "Login"
+msgstr ""
+
+#: bread/views/wizard.py:50
+msgid "Back"
+msgstr ""
+
+#: bread/views/wizard.py:61
+msgid "Complete"
+msgstr ""
+
+#: bread/views/wizard.py:64
+msgid "Continue"
+msgstr ""
