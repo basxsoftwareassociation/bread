@@ -39,11 +39,7 @@ class ShellHeader(hg.HEADER):
                     hg.F(lambda c, e: c["request"].user.is_authenticated),
                     hg.A(
                         hg.SPAN(
-                            hg.If(
-                                hg.C("request.user.get_full_name"),
-                                hg.C("request.user.get_full_name"),
-                                hg.C("request.user.get_username"),
-                            ),
+                            hg.C("request.user.get_username"),
                             _class="bx--header__name--prefix",
                         ),
                         _class="bx--header__name",
