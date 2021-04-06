@@ -13,7 +13,6 @@ _third_party_apps = [
     "djmoney.contrib.exchange",
     "django_celery_results",
     "django_celery_beat",
-    "django_markdown2",
     "django_extensions",
     "haystack",
     "whoosh",

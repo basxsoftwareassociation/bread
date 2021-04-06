@@ -51,10 +51,7 @@ setup(
         "celery-haystack",
         # TODO: review whether we can or should remove these
         "WeasyPrint",  # creating PDFs
-        "django-markdown2",
-        "django-dynamic-fixture",
         "django-ckeditor",
-        "django-crispy-forms",
     ],
     packages=find_packages(),
     setup_requires=["setuptools_scm"],
