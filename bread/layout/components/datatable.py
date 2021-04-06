@@ -149,10 +149,7 @@ class DataTable(hg.BaseElement):
         primary_button: bread.layout.button.Button instance
         searchurl: url to which values entered in the searchfield should be submitted
         query_urlparameter: name of the query field for the searchurl which contains the entered text
-        bulkactions: List of bread.menu.Action or bread.menu.Link instances
-                     bread.menu.Link will send a post or a get (depending on its "method" attribute) to the target url
-                     the sent data will be a form with the selected checkboxes as fields
-                     if the head-checkbox has been selected only that field will be selected
+        bulkactions: List of bread.menu.Action or bread.menu.Link instances bread.menu.Link will send a post or a get (depending on its "method" attribute) to the target url the sent data will be a form with the selected checkboxes as fields if the head-checkbox has been selected only that field will be selected
         """
         checkboxallid = f"datatable-check-{hg.html_id(self)}"
         header = [hg.H4(title, _class="bx--data-table-header__title")]

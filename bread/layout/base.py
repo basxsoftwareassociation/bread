@@ -26,7 +26,7 @@ def objectaction(object, action, *args, **kwargs):
 def aslink_attributes(href):
     """
     Shortcut to generate HTMLElement attributes to make any element behave like a link.
-    This should normally be used like this: hg.DIV("hello", **aslink_attributes('google.com'))
+    This should normally be used like this: hg.DIV("hello", \\*\\*aslink_attributes('google.com'))
     """
     return {
         "onclick": hg.BaseElement("document.location = '", href, "'"),

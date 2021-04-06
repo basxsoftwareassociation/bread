@@ -118,17 +118,19 @@ def updated_querystring(context, key, value):
 @register.simple_tag
 def menu(request):
     """
-    returns nested iterables:
-    [
-        [group, active, (
-            (item, active, url),
-            (item, active, url),
-        )],
-        [group, active, (
-            (item, active, url),
-            (item, active, url),
-        )]
-    ]
+    Returns nested iterables::
+
+        [
+            [group, active, (
+                (item, active, url),
+                (item, active, url),
+            )],
+            [group, active, (
+                (item, active, url),
+                (item, active, url),
+            )]
+        ]
+
     If no menu group is active will try to find active menu by comparing labels to current appname
     """
     menugroups = []

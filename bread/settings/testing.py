@@ -24,6 +24,7 @@ DEBUG = True
 USE_TZ = True
 USE_I18N = True
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}}
+HAYSTACK_CONNECTIONS = {"default": ""}
 
 TEMPLATES = [
     {
