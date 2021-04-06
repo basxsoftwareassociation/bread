@@ -16,7 +16,7 @@ class ReadView(EditView):
     urlparams = (("pk", int),)
 
     def post(self, *args, **kwargs):
-        return HttpResponseNotAllowed()
+        return HttpResponseNotAllowed(["GET"])
 
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
