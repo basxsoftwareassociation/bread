@@ -3,8 +3,23 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to bread's documentation!
-=================================
+Welcome to |project|'s documentation!
+=====================================
+
+|project| is a framework which helps building Django based database applications.
+|project| itself does not assume anything about the data model of your application.
+Instead it tries to provide common abstractions, shortcus and APIs which can be used
+within any django project. While in some regards similar to :py:mod:`django:django.contrib.admin`
+|project| focuses much more on building a complete database system instead of a backend
+administrations tool for websites. Therefore |project| is *not* API compatible with 
+:py:mod:`django:django.contrib.admin`, unlike some other projects
+(see `here <https://djangopackages.org/grids/g/admin-interface/>`_).
+
+A core component of |project| is the implementation of an UI system which helps creating
+consistent user interfaces. The implementation is based on the
+`IBM Carbon Design System <https://djangopackages.org/grids/g/admin-interface/>`_ and provides
+most of the carbon components components.
+
 
 .. toctree::
    :maxdepth: 2

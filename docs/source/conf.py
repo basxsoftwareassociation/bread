@@ -23,9 +23,12 @@ django.setup()
 
 # -- Project information -----------------------------------------------------
 
-project = "bread"
+project = "*bread*"
 copyright = "2021, basx Software Association"
 author = "basx Software Association"
+
+rst_epilog = ".. |project| replace:: %s" % project
+
 
 # The full version, including alpha/beta/rc tags
 release = "0.3"
@@ -36,8 +39,19 @@ release = "0.3"
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx_rtd_theme", "sphinx.ext.autodoc", "sphinx.ext.autosummary"]
+extensions = [
+    "sphinx_rtd_theme",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.intersphinx",
+]
 autosummary_generate = True
+intersphinx_mapping = {
+    "django": (
+        "https://docs.djangoproject.com/en/dev",
+        "https://docs.djangoproject.com/en/dev/_objects/",
+    ),
+}
 
 
 # Add any paths that contain templates here, relative to this directory.
