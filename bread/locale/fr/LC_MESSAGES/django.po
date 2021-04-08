@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-01 21:12+0700\n"
-"PO-Revision-Date: 2021-03-25 02:48+0000\n"
+"PO-Revision-Date: 2021-04-05 18:26+0000\n"
 "Last-Translator: Nathan <bonnemainsnathan@gmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/basxconnect/bread/"
 "fr/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.5.2-dev\n"
+"X-Generator: Weblate 4.6-dev\n"
 
 #: bread/contrib/reports/fields/queryfield.py:105
 #, python-format
@@ -165,7 +165,7 @@ msgstr "Se déconnecter"
 
 #: bread/layout/components/shell_header.py:53
 msgid "Close"
-msgstr ""
+msgstr "Fermer"
 
 #: bread/layout/components/tag.py:17
 msgid "Remove"
@@ -213,10 +213,9 @@ msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s%(modelname)s supprimé(s)"
 
 #: bread/views/edit.py:90
-#, fuzzy, python-format
-#| msgid "Created %s copies"
+#, python-format
 msgid "Created copy %s"
-msgstr "%s copies créées"
+msgstr "Copie %s créée"
 
 #: bread/views/edit.py:119
 #, python-format
