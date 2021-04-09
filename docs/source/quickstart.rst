@@ -7,8 +7,8 @@ Required tools (assumed to be run on a linux system):
 * make
 * python3 (with venv, python development files and a build environment)
 
-... from example model (CRM)
-----------------------------
+... with example project (CRM)
+------------------------------
 
 A fully functional implementation of a CRM is available through the 
 `basxconnect <https://github.com/basxsoftwareassociation/basxconnect>`_
@@ -46,3 +46,28 @@ Setup up the basic project structure:
     django-admin startproject librarymanagement .
     django-admin startapp library
 
+This will generate the following directory structure::
+
+    .
+    ├── library
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── __init__.py
+    │   ├── migrations
+    │   │   └── __init__.py
+    │   ├── models.py
+    │   ├── tests.py
+    │   └── views.py
+    ├── librarymanagement
+    │   ├── asgi.py
+    │   ├── __init__.py
+    │   ├── settings.py
+    │   ├── urls.py
+    │   └── wsgi.py
+    └── manage.p
+
+.. note:: TODO: explain librarymanagement/settings.py
+.. note:: TODO: define models
+.. note:: TODO: define urls
+.. note:: TODO: define views/layouts
+.. note:: TODO: run project

@@ -11,14 +11,14 @@ Welcome to |project|'s documentation!
 Instead it tries to provide common abstractions, shortcus and APIs which can be used
 within any django project. While in some regards similar to :py:mod:`django:django.contrib.admin`
 |project| focuses much more on building a complete database system instead of a backend
-administrations tool for websites. Therefore |project| is *not* API compatible with 
+administration tool for websites. Therefore |project| is *not* API compatible with 
 :py:mod:`django:django.contrib.admin`, unlike some other projects
 (see `here <https://djangopackages.org/grids/g/admin-interface/>`_).
 
 A core component of |project| is the implementation of an UI system which helps creating
 consistent user interfaces. The implementation is based on the
 `IBM Carbon Design System <https://djangopackages.org/grids/g/admin-interface/>`_ and provides
-most of the carbon components components.
+most of the official carbon components.
 
 
 .. toctree::
@@ -30,10 +30,9 @@ most of the carbon components components.
    concepts
    recepies
 
-Reference
-==================
 .. toctree::
    :maxdepth: 3
+   :caption: Reference:
 
    reference/modules
 
