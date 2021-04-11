@@ -26,7 +26,7 @@ most of the official carbon components.
    :caption: Contents:
 
    quickstart
-   overview
+   guide
    concepts
    recepies
 
