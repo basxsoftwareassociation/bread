@@ -6,6 +6,8 @@
 Welcome to |project|'s documentation!
 =====================================
 
+.. warning:: This documentation is work in progress
+
 |project| is a framework which helps building Django based database applications.
 |project| itself does not assume anything about the data model of your application.
 Instead it tries to provide common abstractions, shortcus and APIs which can be used
