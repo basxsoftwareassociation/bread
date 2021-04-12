@@ -1,6 +1,7 @@
 import htmlgenerator as hg
-from bread.utils import reverse
 from django.utils.translation import gettext_lazy as _
+
+from bread.utils import reverse
 
 from .icon import Icon
 
