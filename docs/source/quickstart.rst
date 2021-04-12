@@ -129,7 +129,7 @@ Creating the |project| user interface for the application is done by registering
     urlpatterns = (
         [
             path("", include("bread.urls")),
-            path("", RedirectView.as_view(pattern_name="accounts.login")),
+            path("", RedirectView.as_view(url="/accounts/login/")),
         ]
         + default_model_paths(
               models.Event, browseview=views.BrowseView._with(rowclickaction="edit")
