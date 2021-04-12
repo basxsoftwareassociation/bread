@@ -45,7 +45,7 @@ Setup up the basic project structure by running the following commands in a term
     mkdir eventdemo && cd eventdemo
     python3 -m venv .venv
     . .venv/bin/activate
-    pip install Django git+https://github.com/basxsoftwareassociation/bread.git
+    pip install Django git+https://github.com/basxsoftwareassociation/htmlgenerator.git git+https://github.com/basxsoftwareassociation/bread.git
     django-admin startproject eventmanagement .
     django-admin startapp events
 
