@@ -237,3 +237,6 @@ Finally we can start the application in development mode and open the browser at
 
     ./manage.py runserver
 
+.. note:: Coming soon: Adding registrations to an event
+
+.. note:: Coming soon: Precompile the css files for better loading times
