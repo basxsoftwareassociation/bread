@@ -38,11 +38,11 @@ of setting up a fresh Django project, adding |project| and defining models and v
 Setup
 *****
 
-Setup up the basic project structure:
+Setup up the basic project structure by running the following commands in a terminal:
 
 .. code-block:: shell
 
-    mkdir library_demo && cd library_demo
+    mkdir eventdemo && cd eventdemo
     python3 -m venv .venv
     . .venv/bin/activate
     pip install Django git+https://github.com/basxsoftwareassociation/bread.git
@@ -62,25 +62,28 @@ This will generate the following directory structure::
     │   ├── tests.py
     │   └── views.py
     ├── eventmanagement
-    │   ├── asgi.py
+    │   ├── asgi.py # only interesting for production deployments
     │   ├── __init__.py
     │   ├── settings.py
     │   ├── urls.py
-    │   └── wsgi.py
+    │   └── wsgi.py # only interesting for production deployments
     └── manage.p
 
+This is a default django project structure and not all files are actually needed.
+We will focus on the files ``events/models.py``, ``eventmanagement/settings.py`` and ``eventmanagement/urls.py``
 
 Model definition
 ****************
 
-The next step is to define our data model. In case you are familiar with creating Django application this will be the same as you are familiar with.
+The next step is to define our data model.
+In case you are familiar with creating Django applications this will be the same as always.
 If you are new to Django you might want to read :py:mod:`django:django.db.models` in addition to this guide.
-Django modles are essentialy an abstraction over SQL tables and provide a very straight forward API as well as support for data model migrations.
-When using |project| is is assumed that you know how to develop relational data models for your application.
+Django modles are essentialy an abstraction over SQL tables and provide a very straight forward database API as well as support for data model migrations.
+When using |project| it is assumed that you know how to develop relational data models for your application.
 This means additional effort for the application developer but prevents unnecessary restrictions on the modeling side.
-Further it allows the framework to be used in all different kinds of project contexts.
+Further it allows the framework to be used in many different kinds of scenarios.
 
-So, let us get started with a small example model in order manage events and registrations::
+Let us get started with a small example model for managing events and registrations::
 
     # library/models.py
 
@@ -91,7 +94,10 @@ So, let us get started with a small example model in order manage events and reg
         name = models.CharField(max_length=255)
         description = models.TextField(blank=True)
         date = models.DateField()
-        time = models.TimeField(blank=True, blank=True)
+        time = models.TimeField(null=True, blank=True)
+
+        def __str__(self):
+            return self.name
 
     class Registration(models.Model):
         event = models.ForeignKey(Event, on_delete=models.CASCADE)
@@ -101,42 +107,133 @@ So, let us get started with a small example model in order manage events and reg
 
 
 
-This is just a very basic example. There are many things which could be taken into consideration.
-For this quickstart we will try to keep the complexity low.
-
-Views
-*****
-
-.. note:: TODO
+This is just a very basic example.
+There are many things which could be taken into consideration.
+However, for this quickstart we will try to keep the complexity low.
 
 URLs
 ****
 
-.. note:: TODO
+Creating the |project| user interface for the application is done by registering the default views with the shortcut :py:func:`bread.utils.urls.default_model_paths`::
+
+    # eventmanagement/urls.py
+
+    from bread import views, menu
+    from django.views.generic import RedirectView
+    from bread.utils.urls import default_model_paths, reverse_model
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    from django.urls import include, path
+
+    from events import models
+
+    urlpatterns = (
+        [
+            path("", include("bread.urls")),
+            path("", RedirectView.as_view(pattern_name="accounts.login")),
+        ]
+        + default_model_paths(
+              models.Event, browseview=views.BrowseView._with(rowclickaction="edit")
+          )
+
+        + staticfiles_urlpatterns()
+    )
+
+    menu.registeritem(
+        menu.Item(menu.Link(reverse_model(models.Event, "browse"), "Events"), "Events")
+    )
+
+The :py:func:`bread.utils.urls.default_model_paths` shortcut does only require a single argument, the desired model to generate URLs for.
+We add here an optional argument ``browseview`` to parameterize the browse view. By setting ``rowclickaction`` to ``"edit"`` a click on an entry in the browse list will open the according edit-form of the clicked item.
+
 
 Settings
 ********
 
-.. note:: TODO
+In order to get |project| working corretly we need to make a few changes to the django settings file at ``eventmanagement/settings.py``.
+There is a full list of recommended settings inside the module :py:mod:`bread.settings.required`.
+
+::
+
+    # eventmanagement/settings.py
+
+    ...
+
+    INSTALLED_APPS = [
+        # our custom event app
+        "events",
+        # required 3rd party dependencies
+        "bread",
+        "djangoql",
+        "guardian",
+        "compressor",
+        "dynamic_preferences",
+        "dynamic_preferences.users.apps.UserPreferencesConfig",
+        # default django apps
+        "django.contrib.admin",
+        "django.contrib.auth",
+        "django.contrib.contenttypes",
+        "django.contrib.sessions",
+        "django.contrib.messages",
+        "django.contrib.staticfiles",
+    ]
+
+    ...
+
+    # The TEMPLATE setting should already be in the pre-generated settings.py file
+    # Only the additional context processor needs to be added
+    TEMPLATES = [
+        {
+            "BACKEND": "django.template.backends.django.DjangoTemplates",
+            "APP_DIRS": True,
+            "OPTIONS": {
+                "context_processors": [
+                    "django.template.context_processors.debug",
+                    "django.template.context_processors.request",
+                    "django.contrib.auth.context_processors.auth",
+                    "django.contrib.messages.context_processors.messages",
+                     # the following line needs to be appended to the existing entries
+                    "bread.context_processors.bread_context",
+                ]
+            },
+        }
+    ]
+
+    ...
+
+    # Setup for django-compressor to compress and serve SCSS and other
+    # static files
+    STATIC_ROOT="static"
+
+    from bread.settings.required import LIBSASS_ADDITIONAL_INCLUDE_PATHS
+    COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
+    STATICFILES_FINDERS = [
+        "django.contrib.staticfiles.finders.FileSystemFinder",
+        "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+        "compressor.finders.CompressorFinder",
+    ]
+
+    # Django will redirect to /accounts/profile by default but we want to
+    # access our events directly
+    LOGIN_REDIRECT_URL = "/events/event/browse"
 
 
 Running the application
 ***********************
 
-The file we created contains the our model definition but we first need to tell Django to create migrations (which basically is Python code describing the required SQL commands)::
+In order to run the application we first need to create migration files which are used to create our event tables::
 
     ./manage.py makemigrations
 
-In order to execute these migrations and create and populate the initial database we need to call::
+Now we execute these migrations and create and populate the initial database::
 
     ./manage.py migrate
 
-The initial super user needs to created via commandline::
+The initial super user needs also to be created via commandline::
 
     ./manage.py createsuperuser
 
 
-Finally we can start the application in development mode and access the application at http://127.0.0.1:8000::
+Finally we can start the application in development mode and open the browser at http://127.0.0.1:8000::
 
     ./manage.py runserver
 

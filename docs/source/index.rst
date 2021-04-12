@@ -17,7 +17,7 @@ administration tool for websites. Therefore |project| is *not* API compatible wi
 :py:mod:`django:django.contrib.admin`, unlike some other projects
 (see `here <https://djangopackages.org/grids/g/admin-interface/>`_).
 
-A core component of |project| is the implementation of an UI system which helps creating
+A core component of |project| is the implementation of a UI system which helps creating
 consistent user interfaces. The implementation is based on the
 `IBM Carbon Design System <https://djangopackages.org/grids/g/admin-interface/>`_ and provides
 most of the official carbon components.
