@@ -1,4 +1,5 @@
 import htmlgenerator as hg
+from bread.utils import filter_fieldlist
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import models
@@ -6,8 +7,6 @@ from django.shortcuts import redirect
 from django.views.generic import ListView
 from djangoql.queryset import apply_search
 from guardian.mixins import PermissionListMixin
-
-from bread.utils import filter_fieldlist
 
 from .. import layout as _layout  # prevent name clashing
 from ..formatters import format_value
@@ -47,7 +46,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         self.pagination_choices = (
             kwargs.get("pagination_choices")
             or self.pagination_choices
-            or settings.DEFAULT_PAGINATION_CHOICES
+            or getattr(settings, "DEFAULT_PAGINATION_CHOICES", [25, 100, 500])
         )
         self.rowactions = kwargs.get("rowactions") or self.rowactions
         self.columns = kwargs.get("columns") or self.columns

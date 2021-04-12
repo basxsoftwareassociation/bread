@@ -14,7 +14,7 @@ from .models import Report
 
 
 class EditView(views.EditView):
-    def layout(self):
+    def get_layout(self):
         F = _layout.form.FormField
         R = _layout.grid.Row
         C = _layout.grid.Col

@@ -78,6 +78,6 @@ external_urlpatterns = [
 
 
 urlpatterns = [
-    path("login", system.BreadLoginView.as_view(), name="login"),
-    path("logout", system.BreadLogoutView.as_view(), name="logout"),
+    path("accounts/login/", system.BreadLoginView.as_view(), name="login"),
+    path("accounts/logout/", system.BreadLogoutView.as_view(), name="logout"),
 ] + external_urlpatterns

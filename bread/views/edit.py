@@ -11,7 +11,6 @@ from django.views.decorators.cache import never_cache
 from django.views.generic import UpdateView
 from guardian.mixins import PermissionRequiredMixin
 
-from .. import layout as _layout  # prevent name clashing
 from ..utils import filter_fieldlist, model_urlname, reverse_model
 from .util import BreadView, CustomFormMixin
 
@@ -40,9 +39,13 @@ class EditView(
         return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
 
     def get_context_data(self, *args, **kwargs):
+        layout = hg.BaseElement(
+            hg.H3(self.object),
+            self.get_layout(),
+        )
         return {
             **super().get_context_data(*args, **kwargs),
-            "layout": _layout.form.Form(hg.C("form"), self.get_layout()),
+            "layout": layout,
             "pagetitle": str(self.object),
         }
 

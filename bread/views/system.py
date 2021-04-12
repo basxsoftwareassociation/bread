@@ -1,5 +1,6 @@
 import htmlgenerator as hg
 from django.contrib.auth.views import LoginView, LogoutView
+from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 
 from .. import layout
@@ -24,4 +25,15 @@ class BreadLoginView(LoginView):
 
 
 class BreadLogoutView(LogoutView):
-    pass
+    template_name = "bread/base.html"
+
+    def get(self, *args, **kwargs):
+        super().get(*args, **kwargs)
+        return redirect("login")
+
+    def get_context_data(self, *args, **kwargs):
+        return {
+            **super().get_context_data(*args, **kwargs),
+            "layout": hg.DIV("Logged out"),
+            "pagetitle": _("Logout"),
+        }

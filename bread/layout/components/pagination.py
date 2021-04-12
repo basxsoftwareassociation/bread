@@ -40,8 +40,9 @@ def linkwithitemsperpage(itemsperpage_urlparameter, itemsperpage, page_urlparame
 
 def get_page(paginator, page_urlparameter):
     def wrapper(context, element):
-        page = int(context["request"].GET.get(page_urlparameter, "1"))
-        return paginator.get_page(page)
+        return paginator.get_page(
+            int(context["request"].GET.get(page_urlparameter, "1"))
+        )
 
     return hg.F(wrapper)
 
@@ -170,6 +171,11 @@ class Pagination(hg.DIV):
                     _class="bx--pagination__button bx--pagination__button--backward",
                     tabindex="0",
                     type="button",
+                    disabled=hg.F(
+                        lambda c, e: not paginator.get_page(
+                            int(c["request"].GET.get(page_urlparameter, "1"))
+                        ).has_previous()
+                    ),
                     data_page_backward=True,
                     **aslink_attributes(
                         linktorelativepage(
@@ -184,6 +190,11 @@ class Pagination(hg.DIV):
                     _class="bx--pagination__button bx--pagination__button--forward",
                     tabindex="0",
                     type="button",
+                    disabled=hg.F(
+                        lambda c, e: not paginator.get_page(
+                            int(c["request"].GET.get(page_urlparameter, "1"))
+                        ).has_next()
+                    ),
                     data_page_forward=True,
                     **aslink_attributes(
                         linktorelativepage(

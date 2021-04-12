@@ -1,7 +1,6 @@
 import htmlgenerator as hg
-from django.utils.translation import gettext_lazy as _
-
 from bread.utils import reverse
+from django.utils.translation import gettext_lazy as _
 
 from .icon import Icon
 
@@ -12,8 +11,16 @@ class ShellHeader(hg.HEADER):
 
         super().__init__(
             hg.If(
-                hg.C(
-                    "request.user.preferences.user_interface__navigation_menu_extended"
+                hg.F(
+                    lambda c, e: c["request"].user.is_authenticated
+                    and hasattr(c["request"].user, "preferences")
+                    and hasattr(
+                        c["request"].user.preferences,
+                        "user_interface__navigation_menu_extended",
+                    )
+                    and c[
+                        "request"
+                    ].user.preferences.user_interface__navigation_menu_extended
                 ),
                 hg.A(
                     hg.SPAN(platform, _class="bx--header__name--prefix"),

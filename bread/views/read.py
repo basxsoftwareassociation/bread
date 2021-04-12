@@ -46,8 +46,12 @@ def layoutasreadonly(layout):
         lambda element, ancestors: any(
             [isinstance(a, _layout.form.Form) for a in ancestors]
         )
-        and isinstance(
-            element, (_layout.form.InlineDeleteButton, _layout.form.FormsetAddButton)
+        and (
+            isinstance(
+                element,
+                (_layout.form.InlineDeleteButton, _layout.form.FormsetAddButton),
+            )
+            or getattr(element, "attributes", {}).get("type") == "submit"
         )
     )
     return layout

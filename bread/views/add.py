@@ -4,7 +4,6 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 from guardian.mixins import PermissionRequiredMixin
 
-from .. import layout as _layout  # prevent name clashing
 from ..utils import pretty_modelname
 from .util import BreadView, CustomFormMixin
 
@@ -39,7 +38,7 @@ class AddView(
             hg.H3(
                 _("Add %s") % pretty_modelname(self.model),
             ),
-            _layout.form.Form.wrap_with_form(hg.C("form"), self.get_layout()),
+            self.get_layout(),
         )
         return {
             **super().get_context_data(*args, **kwargs),

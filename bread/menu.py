@@ -91,7 +91,7 @@ class Link(Action):
                         layout.resolve_lazy(object, c, e),
                         actionname,
                         *args,
-                        **{**kwargs, "pk": layout.resolve_lazy(object, c, e).pk}
+                        **{**kwargs, "pk": layout.resolve_lazy(object, c, e).pk},
                     ),
                 )
             ),
@@ -102,6 +102,10 @@ class Link(Action):
 
 class Item:
     def __init__(self, link, group, order=None):
+        if not isinstance(link, Link):
+            raise ValueError(
+                f"argument 'link' must be of type Link but is of type {type(link)}"
+            )
         self.link = link
         self.group = group
         self._order = order
