@@ -32,7 +32,7 @@ and login with the username `demo` and the password `connectdemo`.
 ... from scratch (Event management)
 -------------------------------------
 
-In the second part of the quickstart guide we will go through a the process
+In the second part of the quickstart guide we will go through the process
 of setting up a fresh Django project, adding |project| and defining models and views.
 
 Setup
