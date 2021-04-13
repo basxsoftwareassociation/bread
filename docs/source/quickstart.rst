@@ -78,14 +78,14 @@ Model definition
 The next step is to define our data model.
 In case you are familiar with creating Django applications this will be the same as always.
 If you are new to Django you might want to read :py:mod:`django:django.db.models` in addition to this guide.
-Django modles are essentialy an abstraction over SQL tables and provide a very straight forward database API as well as support for data model migrations.
+Django models are essentialy an abstraction over SQL tables and provide a very straight forward database API as well as support for data model migrations.
 When using |project| it is assumed that you know how to develop relational data models for your application.
 This means additional effort for the application developer but prevents unnecessary restrictions on the modeling side.
 Further it allows the framework to be used in many different kinds of scenarios.
 
 Let us get started with a small example model for managing events and registrations::
 
-    # library/models.py
+    # events/models.py
 
     from django.db import models
     
@@ -149,7 +149,7 @@ We add here an optional argument ``browseview`` to parameterize the browse view.
 Settings
 ********
 
-In order to get |project| working corretly we need to make a few changes to the django settings file at ``eventmanagement/settings.py``.
+In order to get |project| working correctly we need to make a few changes to the django settings file at ``eventmanagement/settings.py``.
 There is a full list of recommended settings inside the module :py:mod:`bread.settings.required`.
 
 ::
