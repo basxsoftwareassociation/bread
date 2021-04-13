@@ -19,6 +19,7 @@ class EditView(views.EditView):
         R = _layout.grid.Row
         C = _layout.grid.Col
         ret = hg.BaseElement(
+            hg.H3(self.object),
             _layout.form.Form.wrap_with_form(
                 hg.C("form"),
                 hg.BaseElement(

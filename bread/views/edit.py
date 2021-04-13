@@ -1,7 +1,6 @@
 import re
 import urllib
 
-import htmlgenerator as hg
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
@@ -39,13 +38,9 @@ class EditView(
         return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
 
     def get_context_data(self, *args, **kwargs):
-        layout = hg.BaseElement(
-            hg.H3(self.object),
-            self.get_layout(),
-        )
         return {
             **super().get_context_data(*args, **kwargs),
-            "layout": layout,
+            "layout": self.get_layout(),
             "pagetitle": str(self.object),
         }
 

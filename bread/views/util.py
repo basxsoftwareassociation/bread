@@ -41,7 +41,10 @@ class CustomFormMixin:
                 ret.append(_layout.form.FormField(field))
             else:
                 ret.append(field)
-        return _layout.form.Form.wrap_with_form(hg.C("form"), ret)
+        return hg.BaseElement(
+            hg.H3(self.object),
+            _layout.form.Form.wrap_with_form(hg.C("form"), ret),
+        )
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
