@@ -19,23 +19,6 @@ class EditView(views.EditView):
         R = _layout.grid.Row
         C = _layout.grid.Col
         ret = hg.BaseElement(
-            _layout.grid.Grid(
-                _layout.grid.Row(
-                    _layout.grid.Col(
-                        hg.H3(
-                            hg.I(
-                                hg.If(
-                                    hg.C("object.name"),
-                                    hg.F(lambda c, e: c["object"]),
-                                    hg.BaseElement(
-                                        _("New report: "), hg.C("object.model")
-                                    ),
-                                )
-                            ),
-                        )
-                    )
-                ),
-            ),
             _layout.form.Form.wrap_with_form(
                 hg.C("form"),
                 hg.BaseElement(
@@ -114,7 +97,7 @@ urlpatterns = [
                 ),
             ],
         ),
-        addview=views.AddView._with(fields=["model"]),
+        addview=views.AddView._with(fields=["name", "model"]),
         editview=EditView,
         readview=EditView,
     ),
