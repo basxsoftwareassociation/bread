@@ -15,13 +15,9 @@ class ShellHeader(hg.HEADER):
                 hg.F(
                     lambda c, e: c["request"].user.is_authenticated
                     and hasattr(c["request"].user, "preferences")
-                    and hasattr(
-                        c["request"].user.preferences,
-                        "user_interface__navigation_menu_extended",
+                    and c["request"].user.preferences.get(
+                        "user_interface__navigation_menu_extended", True
                     )
-                    and c[
-                        "request"
-                    ].user.preferences.user_interface__navigation_menu_extended
                 ),
                 hg.A(
                     hg.SPAN(platform, _class="bx--header__name--prefix"),

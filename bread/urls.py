@@ -1,5 +1,6 @@
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import include, path
+from django.utils.translation import gettext_lazy as _
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.forms import preference_form_builder
 from dynamic_preferences.registries import global_preferences_registry
@@ -26,14 +27,19 @@ PreferencesView = type(
     (SuccessMessageMixin, preferences_views.PreferenceFormView),
     {"success_message": "Preferences updated"},
 )
-UserPreferencesView = type(
-    "UserPreferencesView",
-    (SuccessMessageMixin, user_preferences_views.UserPreferenceFormView),
-    {
-        "success_message": "Preferences updated",
-        "get_form_class": user_get_form_class,
-    },
-)
+
+
+class UserPreferencesView(
+    SuccessMessageMixin, user_preferences_views.UserPreferenceFormView
+):
+    get_form_class = user_get_form_class
+
+    def get_success_message(self, data):
+        data.pop("user_interface__navigation_menu_extended")
+        if data:
+            return _("Preferences updated")
+        return None
+
 
 external_urlpatterns = [
     path("ckeditor/", include("ckeditor_uploader.urls")),
