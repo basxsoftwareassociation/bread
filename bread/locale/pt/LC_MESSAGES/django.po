@@ -3,57 +3,59 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-06 19:38+0700\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2021-04-14 19:26+0000\n"
+"Last-Translator: Adneuza Tête <adneuzaquaresma@gmail.com>\n"
+"Language-Team: Portuguese <https://hosted.weblate.org/projects/basxconnect/"
+"bread/pt/>\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.6-dev\n"
+
 #: bread/contrib/reports/fields/queryfield.py:105
 #, python-format
 msgid "Invalid model '%s' selected"
-msgstr ""
+msgstr "Modelo inválido '%s' seleccionado"
 
 #: bread/contrib/reports/models.py:12
 msgid "Created"
-msgstr ""
+msgstr "Criado"
 
 #: bread/contrib/reports/models.py:13 bread/contrib/reports/models.py:50
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: bread/contrib/reports/models.py:18
 msgid "Model"
-msgstr ""
+msgstr "Modelo"
 
 #: bread/contrib/reports/models.py:19
 msgid "Filter"
-msgstr ""
+msgstr "Filtrar"
 
 #: bread/contrib/reports/models.py:28
 msgid "Preview"
-msgstr ""
+msgstr "Pré-visualização"
 
 #: bread/contrib/reports/models.py:38
 msgid "Report"
-msgstr ""
+msgstr "Relatório"
 
 #: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:144
 #: bread/contrib/reports/urls.py:145
 msgid "Reports"
-msgstr ""
+msgstr "Relatórios"
 
 #: bread/contrib/reports/models.py:49 bread/contrib/reports/models.py:56
 msgid "Column"
-msgstr ""
+msgstr "Coluna"
 
 #: bread/contrib/reports/models.py:52
 msgid "Aggregation"
@@ -81,7 +83,7 @@ msgstr ""
 
 #: bread/layout/components/datatable.py:247
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: bread/layout/components/datatable.py:258
 msgid " items selected"
@@ -95,7 +97,7 @@ msgstr ""
 #: bread/views/add.py:47
 #, python-format
 msgid "Add %s"
-msgstr ""
+msgstr "Adicionar %s"
 
 #: bread/layout/components/file_uploader.py:28
 msgid "Select file"
@@ -103,7 +105,7 @@ msgstr ""
 
 #: bread/layout/components/form.py:26
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: bread/layout/components/form.py:63
 msgid "Form error"
@@ -119,7 +121,7 @@ msgstr ""
 
 #: bread/layout/components/form.py:201
 msgid "Delete"
-msgstr ""
+msgstr "Apagar"
 
 #: bread/layout/components/notification.py:125
 msgid "Time stamp"
@@ -148,7 +150,7 @@ msgstr ""
 
 #: bread/layout/components/search.py:18 bread/layout/components/search.py:23
 msgid "Search"
-msgstr ""
+msgstr "Pesquisar"
 
 #: bread/layout/components/search.py:29 bread/layout/components/search.py:30
 msgid "Clear search input"
@@ -231,12 +233,12 @@ msgstr ""
 
 #: bread/views/wizard.py:50
 msgid "Back"
-msgstr ""
+msgstr "Voltar"
 
 #: bread/views/wizard.py:61
 msgid "Complete"
-msgstr ""
+msgstr "Completo"
 
 #: bread/views/wizard.py:64
 msgid "Continue"
-msgstr ""
+msgstr "Continuar"
