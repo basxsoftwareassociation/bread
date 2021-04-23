@@ -12,6 +12,7 @@ INSTALLED_APPS = [
     "guardian",
     "bread",
     "bread.contrib.reports",
+    "bread.contrib.activities",
 ]
 
 settings.configure(
