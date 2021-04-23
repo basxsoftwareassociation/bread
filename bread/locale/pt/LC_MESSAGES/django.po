@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-06 19:38+0700\n"
-"PO-Revision-Date: 2021-04-14 19:26+0000\n"
+"PO-Revision-Date: 2021-04-24 18:31+0000\n"
 "Last-Translator: Adneuza Tête <adneuzaquaresma@gmail.com>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/basxconnect/"
 "bread/pt/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.6-dev\n"
+"X-Generator: Weblate 4.7-dev\n"
 
 #: bread/contrib/reports/fields/queryfield.py:105
 #, python-format
@@ -59,27 +59,27 @@ msgstr "Coluna"
 
 #: bread/contrib/reports/models.py:52
 msgid "Aggregation"
-msgstr ""
+msgstr "Agregação"
 
 #: bread/contrib/reports/models.py:57 bread/contrib/reports/urls.py:50
 msgid "Columns"
-msgstr ""
+msgstr "Colunas"
 
 #: bread/contrib/reports/urls.py:31
 msgid "New report: "
-msgstr ""
+msgstr "Novo relatório: "
 
 #: bread/contrib/reports/urls.py:43
 msgid "Base model"
-msgstr ""
+msgstr "Modelo básico"
 
 #: bread/contrib/reports/urls.py:113
 msgid "Excel"
-msgstr ""
+msgstr "Excel"
 
 #: bread/layout/components/button.py:67
 msgid "Print"
-msgstr ""
+msgstr "Imprimir"
 
 #: bread/layout/components/datatable.py:247
 msgid "Cancel"
@@ -87,11 +87,11 @@ msgstr "Cancelar"
 
 #: bread/layout/components/datatable.py:258
 msgid " items selected"
-msgstr ""
+msgstr " artigos seleccionados"
 
 #: bread/layout/components/datatable.py:264
 msgid "Table Action Bar"
-msgstr ""
+msgstr "Barra de Acção da Tabela"
 
 #: bread/layout/components/datatable.py:428 bread/views/add.py:40
 #: bread/views/add.py:47
@@ -101,7 +101,7 @@ msgstr "Adicionar %s"
 
 #: bread/layout/components/file_uploader.py:28
 msgid "Select file"
-msgstr ""
+msgstr "Seleccione ficheiro"
 
 #: bread/layout/components/form.py:26
 msgid "Save"
@@ -109,15 +109,15 @@ msgstr "Guardar"
 
 #: bread/layout/components/form.py:63
 msgid "Form error"
-msgstr ""
+msgstr "Erro no formulário"
 
 #: bread/layout/components/form.py:69
 msgid "Form error: "
-msgstr ""
+msgstr "Erro no formulário: "
 
 #: bread/layout/components/form.py:181
 msgid "Add"
-msgstr ""
+msgstr "Adicione"
 
 #: bread/layout/components/form.py:201
 msgid "Delete"
@@ -125,28 +125,28 @@ msgstr "Apagar"
 
 #: bread/layout/components/notification.py:125
 msgid "Time stamp"
-msgstr ""
+msgstr "Carimbo de tempo"
 
 #: bread/layout/components/pagination.py:65
 msgid "Items per page"
-msgstr ""
+msgstr "Artigos por página"
 
 #: bread/layout/components/pagination.py:113
 #: bread/layout/components/pagination.py:160
 msgid "of"
-msgstr ""
+msgstr "de"
 
 #: bread/layout/components/pagination.py:122
 msgid "items"
-msgstr ""
+msgstr "artigos"
 
 #: bread/layout/components/pagination.py:164
 msgid "pages"
-msgstr ""
+msgstr "Paginas"
 
 #: bread/layout/components/progress_indicator.py:33
 msgid "Optional"
-msgstr ""
+msgstr "Opcional"
 
 #: bread/layout/components/search.py:18 bread/layout/components/search.py:23
 msgid "Search"
@@ -161,75 +161,75 @@ msgstr ""
 #: bread/templates/bread/components/header.html:31
 #: bread/templates/bread/components/header.html:32
 msgid "Logout"
-msgstr ""
+msgstr "Sair"
 
 #: bread/layout/components/shell_header.py:69
 msgid "Close"
-msgstr ""
+msgstr "Fechar"
 
 #: bread/layout/components/tag.py:16
 msgid "Remove"
-msgstr ""
+msgstr "Remover"
 
 #: bread/layout/components/text_input.py:78
 msgid "Show password"
-msgstr ""
+msgstr "Mostrar senha"
 
 #: bread/layout/components/toggle.py:11
 msgid "On"
-msgstr ""
+msgstr "Em"
 
 #: bread/layout/components/toggle.py:12
 msgid "Off"
-msgstr ""
+msgstr "Desligado"
 
 #: bread/templates/admin/base_site.html:3
 msgid "System Settings"
-msgstr ""
+msgstr "Configurações do sistema"
 
 #: bread/views/add.py:25
 #, python-format
 msgid "Added %s"
-msgstr ""
+msgstr "Adicionado %s"
 
 #: bread/views/delete.py:46
 #, python-format
 msgid "Deleted %(modelname)s %(objectname)s"
-msgstr ""
+msgstr "Apagado %(nome do modelo)s %(nome do objecto)s"
 
 #: bread/views/delete.py:90
 #, python-format
 msgid "Your user has not the permissions to delete %s"
-msgstr ""
+msgstr "O seu utilizador não tem as permissões para eliminar %s"
 
 #: bread/views/delete.py:101
 #, python-format
 msgid "%s could not be deleted: %s"
-msgstr ""
+msgstr "%s não pôde ser apagado: %s"
 
 #: bread/views/delete.py:106
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
-msgstr ""
+msgstr "Apagado %(contagem)s %(nome do modelo)s"
 
 #: bread/views/edit.py:78
 #, python-format
 msgid "Created copy %s"
-msgstr ""
+msgstr "Cópia criada %s"
 
 #: bread/views/edit.py:107
 #, python-format
 msgid "Created %s copies"
-msgstr ""
+msgstr "Cópias criadas %s"
 
 #: bread/views/edit.py:152
 msgctxt "this is a copy"
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
 #: bread/views/system.py:15 bread/views/system.py:17
 msgid "Login"
-msgstr ""
+msgstr "Entrar"
 
 #: bread/views/wizard.py:50
 msgid "Back"
