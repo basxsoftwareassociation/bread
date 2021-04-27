@@ -58,11 +58,15 @@ class ActivityBase(models.Model):
             [t.verify() for t in target]
 
     @classmethod
-    def as_dot(cls):
+    def as_dot(cls, attrs=None):
+        default_attrs = {
+            "rankdir": "TD",
+            "concentrate": "true",
+        }
+        default_attrs.update(attrs or {})
         dot = [
             f'digraph "{cls._meta.verbose_name}" {{',
-            "rankdir=TD",
-            "concentrate=true",
+            *[f"{k}={v}" for k, v in default_attrs.items()],
             "graph[splines=ortho, nodesep=1]",
             "edge[arrowhead=open]",
         ]
@@ -292,55 +296,3 @@ class GenericDecision(DecisionBase):
     def __init__(self, decision_func, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.decision = decision_func
-
-
-class shortcut:
-    """
-    Convenient shortcuts for commonly used nodes. Example::
-
-        import random
-
-        from bread.contrib.activities.models import ActivityBase
-        from bread.contrib.activities.models import shortcut as s
-
-
-        class MyActivity(ActivityBase):
-            yesno = s.decision(lambda s, a: random.choice(("yes", "no")))
-            print_yes = s.action(
-                lambda s, a: True, lambda s, a: print("yes"), label="print yes"
-            )
-            print_no = s.action(lambda s, a: True, lambda s, a: print("no"), label="print no")
-            merge_final = s.merge()
-            DIAGRAM = {
-                s.start(): yesno,
-                yesno: {"yes": print_yes, "no": print_no},
-                print_yes: merge_final,
-                print_no: merge_final,
-                merge_final: s.finish(),
-            }
-
-    """
-
-    @staticmethod
-    def start(*args, **kwargs):
-        return Initial(*args, **kwargs)
-
-    @staticmethod
-    def action(*args, **kwargs):
-        return GenericAction(*args, **kwargs)
-
-    @staticmethod
-    def decision(*args, **kwargs):
-        return GenericDecision(*args, **kwargs)
-
-    @staticmethod
-    def merge(*args, **kwargs):
-        return Merge(*args, **kwargs)
-
-    @staticmethod
-    def finish(*args, **kwargs):
-        return ActivityFinal(*args, **kwargs)
-
-    @staticmethod
-    def end_flow(*args, **kwargs):
-        return FlowFinal(*args, **kwargs)
