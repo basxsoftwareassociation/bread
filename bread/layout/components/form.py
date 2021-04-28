@@ -4,7 +4,10 @@ from django.utils.html import mark_safe
 from django.utils.translation import gettext as _
 
 from .button import Button
+from .email_input import EmailInput
 from .notification import InlineNotification
+from .phone_number_input import PhoneNumberInput
+from .url_input import UrlInput
 
 
 class Form(hg.FORM):
@@ -258,9 +261,10 @@ def _mapwidget(
 
     WIDGET_MAPPING = {
         forms.TextInput: TextInput,
-        forms.NumberInput: TextInput,  # TODO HIGH
-        forms.EmailInput: TextInput,  # TODO
-        forms.URLInput: TextInput,  # TODO
+        # Attention: NumberInput is not the widget that is used for phone numbers. See below for handling of phone numbers
+        forms.NumberInput: TextInput,
+        forms.EmailInput: EmailInput,
+        forms.URLInput: UrlInput,
         forms.PasswordInput: PasswordInput,
         forms.HiddenInput: HiddenInput,
         forms.DateInput: DatePicker,
@@ -372,10 +376,16 @@ def _mapwidget(
             ),
             _class="bx--form-item",
         )
-
     fieldtype = (
         fieldtype
         or getattr(field.field, "layout", None)
+        # needs to be above the WIDGET_MAPPING, because the field.field.widget is a forms.TextInput which would match
+        or (
+            PhoneNumberInput
+            if hasattr(field.field.widget, "input_type")
+            and field.field.widget.input_type == "tel"
+            else None
+        )
         or WIDGET_MAPPING[type(field.field.widget)]
     )
     if isinstance(fieldtype, type) and issubclass(fieldtype, hg.BaseElement):
