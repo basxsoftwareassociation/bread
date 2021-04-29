@@ -1,10 +1,8 @@
-import logging
 import math
+import subprocess
 
+import htmlgenerator as hg
 from django.db import models
-from django.utils.translation import gettext_lazy as _
-
-logger = logging.getLogger(__name__)
 
 
 class ActivityBase(models.Model):
@@ -19,16 +17,11 @@ class ActivityBase(models.Model):
     They require tuple(:py:class:`bread.contrib.acitivities.models.Node`) and of type dict{str: :py:class:`bread.contrib.acitivities.models.Node`} as values.
     """
 
-    _STATES = (
-        ("ongoing", _("Ongoing")),
-        ("completed", _("Completed")),
-        ("cancelled", _("Cancelled")),
-    )
     started = models.DateTimeField(auto_now_add=True, editable=False)
     completed = models.DateTimeField(null=True, editable=False)
-    status = models.CharField(max_length=32, choices=_STATES, default=_STATES[0][0])
+    cancelled = models.DateTimeField(null=True, editable=False)
 
-    def __init_subclass__(cls, /, **kwargs):
+    def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         assert hasattr(cls, "DIAGRAM")
         assert isinstance(cls.DIAGRAM, dict)
@@ -47,7 +40,7 @@ class ActivityBase(models.Model):
                 target = (target,)
             node.outputs += target
             for t in target:
-                assert isinstance(t, Node)
+                assert isinstance(t, Node), f"{t} is not of instance Node but {type(t)}"
                 t.inputs += (node,)
         for node, target in cls.DIAGRAM.items():
             node.verify()
@@ -59,15 +52,12 @@ class ActivityBase(models.Model):
 
     @classmethod
     def as_dot(cls, attrs=None):
-        default_attrs = {
-            "rankdir": "TD",
-            "concentrate": "true",
-        }
+        default_attrs = {}
         default_attrs.update(attrs or {})
         dot = [
             f'digraph "{cls._meta.verbose_name}" {{',
             *[f"{k}={v}" for k, v in default_attrs.items()],
-            "graph[splines=ortho, nodesep=1]",
+            'graph[bgcolor="#ffffff00" ranksep=1]',
             "edge[arrowhead=open]",
         ]
         nodes = set()
@@ -81,7 +71,13 @@ class ActivityBase(models.Model):
             for i, t in enumerate(target):
                 nodes.add(t.as_dot())
                 if isinstance(node, DecisionBase):
-                    edges.append((node, t, f"xlabel = {node.decision_labels[i]}"))
+                    edges.append(
+                        (
+                            node,
+                            t,
+                            f'xlabel = "[{node.decision_labels[i]}]"',
+                        )
+                    )
                 else:
                     edges.append((node, t))
 
@@ -89,13 +85,82 @@ class ActivityBase(models.Model):
         dot.extend(
             f"{id(n1)} -> {id(n2)}[{' '.join(attrs)}]" for n1, n2, *attrs in edges
         )
+
         dot.append("}")
         return "\n".join(dot)
 
-    def done(self):
-        def _recursive_check():
-            pass
+    @classmethod
+    def as_svg(cls, attrs=None):
+        dot = cls.as_dot(attrs).encode()
+        try:
+            process = subprocess.run(
+                ["dot", "-Tsvg"],
+                input=dot,
+                capture_output=True,
+                check=True,
+            )
+            return process.stdout.decode()
+        except subprocess.CalledProcessError as e:
+            return hg.render(
+                hg.DIV(
+                    hg.DIV(
+                        "Activity diagram could not be generated, the error message was:"
+                    ),
+                    hg.DIV(hg.CODE(e)),
+                    hg.DIV(hg.CODE(e.stderr.decode())),
+                    hg.DIV(hg.PRE(hg.CODE(dot.decode()))),
+                ),
+                {},
+            )
 
+    @classmethod
+    def help_as_dot(cls, attrs=None):
+        default_attrs = {"rankdir": "LR"}
+        default_attrs.update(attrs or {})
+        dot = [
+            f'digraph "{cls._meta.verbose_name}" {{',
+            *[f"{k}={v}" for k, v in default_attrs.items()],
+            'graph[bgcolor="#ffffff00", ranksep=5]',
+            "edge[arrowhead=open]",
+        ]
+        helpnodes = (
+            ("Start node", Initial()),
+            ("End node, will finish activity", ActivityFinal()),
+            ("End node, will finish branch but no activity", FlowFinal()),
+            ("Decision node", GenericDecision(lambda s, a: None, label=" ")),
+            ("Action node", GenericAction(lambda s, a: None, label=" ")),
+        )
+
+        dot.extend(n.as_dot({"xlabel": '"' + label + '"'}) for label, n in helpnodes)
+        dot.append("}")
+        return "\n".join(dot)
+
+    @classmethod
+    def help_as_svg(cls, attrs=None):
+        dot = cls.help_as_dot(attrs).encode()
+        try:
+            process = subprocess.run(
+                ["dot", "-Tsvg"],
+                input=dot,
+                capture_output=True,
+                check=True,
+            )
+            return process.stdout.decode()
+        except subprocess.CalledProcessError as e:
+            return hg.render(
+                hg.DIV(
+                    hg.DIV(
+                        "Activity diagram could not be generated, the error message was:"
+                    ),
+                    hg.DIV(hg.CODE(e)),
+                    hg.DIV(hg.CODE(e.stderr.decode())),
+                    hg.DIV(hg.PRE(hg.CODE(dot.decode()))),
+                ),
+                {},
+            )
+
+    @property
+    def done(self):
         return any(
             isinstance(i, ActivityFinal) and i.done(self) for i in self.DIAGRAM.values()
         )
@@ -126,16 +191,21 @@ class Node:
         return all(i.done(activity) for i in self.inputs)
 
     def dot_attrs(self):
-        return
+        return {}
 
-    def as_dot(self):
+    def as_dot(self, attrs=None):
         attrs = ", ".join(
-            f"{k}={v}" for k, v in {"label": f'"{self}"', **self.dot_attrs()}.items()
+            f"{k}={v}"
+            for k, v in {
+                "label": f'"{self}"',
+                **self.dot_attrs(),
+                **(attrs or {}),
+            }.items()
         )
         return f"{id(self)}[{attrs}]"
 
     def __str__(self):
-        return self.label or self.__class__.__name__
+        return str(self.label or self.__class__.__name__)
 
 
 # Action node and Decision node, need to be sublassed
@@ -158,6 +228,11 @@ class ActionBase(Node):
         raise NotImplementedError()
 
     def do(self, activity):
+        """
+        This method must be idempotent (running it multiple times should only apply ones).
+        Often this requires a flag to be set on the activity model, e.g. for marking that an email has been sent.
+        The ``do`` method will only be executed if ``done()`` returns a value which evaluates to False.
+        """
         pass
 
     def dot_attrs(self):
@@ -228,7 +303,13 @@ class FlowFinal(Node):
         assert len(self.inputs) == 1 and len(self.outputs) == 0
 
     def dot_attrs(self):
-        return {"shape": "Mcircle", "label": '""'}
+        return {
+            "shape": "circle",
+            "label": '"X"',
+            "fixedsize": "shape",
+            "width": 0.2,
+            "height": 0.2,
+        }
 
 
 class ActivityFinal(Node):
@@ -287,9 +368,15 @@ class Join(Node):
 class GenericAction(ActionBase):
     def __init__(self, done_func, do_func=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.done = done_func
-        if do_func is not None:
-            self.do = do_func
+        self.done_func = done_func
+        self.do_func = do_func
+
+    def done(self, activity):
+        return self.done_func(self, activity)
+
+    def do(self, activity):
+        if self.do_func is not None:
+            self.do(self, activity)
 
 
 class GenericDecision(DecisionBase):

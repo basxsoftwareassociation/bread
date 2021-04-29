@@ -10,4 +10,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         Activity = apps.get_model(options["activity"])
-        print(Activity.as_dot())
+        print(Activity.as_svg())
