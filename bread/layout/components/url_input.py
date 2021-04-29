@@ -1,16 +1,6 @@
-from htmlgenerator import DIV
-
-from bread.layout.components.icon import Icon
-from bread.layout.components.text_input import TextInput
+from bread.layout.components.text_input_with_icon import TextInputWithIcon
 
 
-class UrlInput(TextInput):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self[1].append(
-            DIV(
-                Icon("link"),
-                _class="text-input-icon",
-            )
-        )
+class UrlInput(TextInputWithIcon):
+    def __init__(self, **attributes):
+        super().__init__("link", **attributes)

@@ -161,9 +161,19 @@ fieldset[readonly=true] :disabled {
     align-items: center;
 }
 
-// to achieve that the icon is lighter in view-only mode
+// icon should be displayed lighter in view-only mode
 .bx--text-input:disabled
 + .text-input-icon
 svg {
     fill: #c6c6c6;
+}
+
+// icon should be displayed in red if data is invalid
+.text-input-with-icon[data-invalid] .text-input-icon svg {
+    fill: $ibm-color__red-60;
+}
+
+// the usual exclamation mark for invalid input should not be displayed to prevent overlap with the other icon
+.text-input-with-icon .bx--text-input__invalid-icon {
+    display: none;
 }

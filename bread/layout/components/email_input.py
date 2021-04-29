@@ -1,16 +1,6 @@
-from htmlgenerator import DIV
-
-from bread.layout.components.icon import Icon
-from bread.layout.components.text_input import TextInput
+from bread.layout.components.text_input_with_icon import TextInputWithIcon
 
 
-class EmailInput(TextInput):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self[1].append(
-            DIV(
-                Icon("email"),
-                _class="text-input-icon",
-            )
-        )
+class EmailInput(TextInputWithIcon):
+    def __init__(self, **attributes):
+        super().__init__("email", **attributes)
