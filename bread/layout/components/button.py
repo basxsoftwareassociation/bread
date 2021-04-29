@@ -5,7 +5,7 @@ from .icon import Icon
 
 
 class Button(htmlgenerator.BUTTON):
-    """ buttontype: "primary", "secondary", "tertiary", "danger", "ghost" """
+    """buttontype: "primary", "secondary", "tertiary", "danger", "ghost" """
 
     def __init__(
         self,
