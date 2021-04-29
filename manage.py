@@ -12,6 +12,7 @@ INSTALLED_APPS = [
     "guardian",
     "bread",
     "bread.contrib.reports",
+    "bread.contrib.activities",
 ]
 
 settings.configure(
@@ -26,6 +27,7 @@ settings.configure(
         "django.contrib.auth.backends.ModelBackend",
         "guardian.backends.ObjectPermissionBackend",
     ),
+    SECRET_KEY="SECRET_KEY_FOR_TESTING",
 )
 
 django.setup()

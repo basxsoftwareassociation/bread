@@ -12,4 +12,5 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   bread.contrib.activities
    bread.contrib.reports
