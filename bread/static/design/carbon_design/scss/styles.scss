@@ -48,7 +48,7 @@ html, body {
 
 // get nicer prints
 @media print
-{    
+{
     html, body {
         background-color: white !important;
     }
@@ -148,4 +148,22 @@ fieldset[readonly=true] :disabled {
 // for search result highlighting
 .highlighted {
     font-weight: 600;
+}
+
+// for icons inside text inputs
+// needs to be added to a div surrounding the icon
+.text-input-icon {
+    position: absolute;
+    right: $carbon--spacing-05;
+    width: rem(16px);
+    height: rem(16px);
+    display: inline-flex;
+    align-items: center;
+}
+
+// to achieve that the icon is lighter in view-only mode
+.bx--text-input:disabled
++ .text-input-icon
+svg {
+    fill: #c6c6c6;
 }
