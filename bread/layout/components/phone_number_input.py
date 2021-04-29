@@ -8,8 +8,9 @@ class PhoneNumberInput(TextInput):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        icon = DIV(
-            Icon("phone"),
-            _class="text-input-icon",
+        self[1].append(
+            DIV(
+                Icon("phone"),
+                _class="text-input-icon",
+            )
         )
-        self[1].append(icon)

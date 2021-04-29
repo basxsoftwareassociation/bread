@@ -8,8 +8,9 @@ class UrlInput(TextInput):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        icon = DIV(
-            Icon("link"),
-            _class="text-input-icon",
+        self[1].append(
+            DIV(
+                Icon("link"),
+                _class="text-input-icon",
+            )
         )
-        self[1].append(icon)
