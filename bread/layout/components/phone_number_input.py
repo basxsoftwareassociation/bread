@@ -1,6 +1,6 @@
-from bread.layout.components.text_input_with_icon import TextInputWithIcon
+from bread.layout.components.text_input import TextInput
 
 
-class PhoneNumberInput(TextInputWithIcon):
+class PhoneNumberInput(TextInput):
     def __init__(self, **attributes):
         super().__init__("phone", **attributes)

@@ -20,6 +20,7 @@ class TextInput(hg.DIV):
         fieldname,
         light=False,
         widgetattributes={},
+        icon=None,
         **attributes,
     ):
         self.fieldname = fieldname
@@ -39,9 +40,25 @@ class TextInput(hg.DIV):
             ),
             **attributes,
         )
+
+        if icon is not None:
+            self.add_icon(icon)
+
         # for easier reference in the render method:
         self.label = self[0]
         self.input = self[1][0]
+
+    def add_icon(self, icon):
+        field_wrapper = self[1]
+        field_wrapper.attributes["_class"] = (
+            field_wrapper.attributes.get("_class", "") + " text-input-with-icon"
+        )
+        field_wrapper.append(
+            hg.DIV(
+                Icon(icon),
+                _class="text-input-icon",
+            )
+        )
 
     def render(self, context):
         if self.boundfield.field.disabled:
