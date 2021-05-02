@@ -1,10 +1,16 @@
 from django.http import HttpResponseRedirect
-from django.urls import Resolver404, resolve, reverse
+from django.urls import reverse
 
 
-def RequireAuthenticationMiddleware(get_response):
-    def middleware(request):
+class RequireAuthenticationMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
 
+    def __call__(self, request):
+        response = self.get_response(request)
+        return response
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
         whitelisted_urlnames = (
             "login",
             "password_reset",
@@ -12,16 +18,9 @@ def RequireAuthenticationMiddleware(get_response):
             "password_reset_confirm",
             "password_reset_complete",
         )
-        resolver_match = None
-        try:
-            resolver_match = resolve(request.path)
-        except Resolver404:
-            pass
-
-        if request.user.is_authenticated or (
-            resolver_match and resolver_match.url_name in whitelisted_urlnames
+        if not (
+            request.user.is_authenticated
+            or request.resolver_match.url_name in whitelisted_urlnames
         ):
-            return get_response(request)
-        return HttpResponseRedirect(reverse("login") + "?next=" + request.path)
-
-    return middleware
+            return HttpResponseRedirect(reverse("login") + "?next=" + request.path)
+        return None
