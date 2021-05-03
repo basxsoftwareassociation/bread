@@ -36,29 +36,24 @@ class TextInput(hg.DIV):
             Label(),
             hg.DIV(
                 hg.INPUT(**widgetattributes),
-                _class="bx--text-input__field-wrapper",
+                hg.If(
+                    icon,
+                    hg.DIV(
+                        Icon(icon),
+                        _class="text-input-icon",
+                    ),
+                ),
+                _class=(
+                    "bx--text-input__field-wrapper"
+                    + (" text-input-with-icon" if icon is not None else "")
+                ),
             ),
             **attributes,
         )
 
-        if icon is not None:
-            self.add_icon(icon)
-
         # for easier reference in the render method:
         self.label = self[0]
         self.input = self[1][0]
-
-    def add_icon(self, icon):
-        field_wrapper = self[1]
-        field_wrapper.attributes["_class"] = (
-            field_wrapper.attributes.get("_class", "") + " text-input-with-icon"
-        )
-        field_wrapper.append(
-            hg.DIV(
-                Icon(icon),
-                _class="text-input-icon",
-            )
-        )
 
     def render(self, context):
         if self.boundfield.field.disabled:
