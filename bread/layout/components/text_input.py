@@ -2,69 +2,8 @@ import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
 from .button import Button
-from .helpers import (
-    REQUIRED_LABEL,
-    ErrorList,
-    ErrorListElement,
-    HelperText,
-    HelpTextElement,
-    Label,
-    LabelElement,
-)
+from .helpers import ErrorListElement, HelpTextElement, LabelElement
 from .icon import Icon
-
-
-class TextInputOld(hg.DIV):
-    def __init__(
-        self,
-        fieldname,
-        light=False,
-        widgetattributes={},
-        **attributes,
-    ):
-        self.fieldname = fieldname
-        attributes["_class"] = (
-            attributes.get("_class", "") + " bx--form-item bx--text-input-wrapper"
-        )
-        widgetattributes["_class"] = (
-            widgetattributes.get("_class", "")
-            + f" bx--text-input {'bx--text-input--light' if light else ''}"
-        )
-
-        super().__init__(
-            Label(),
-            hg.DIV(
-                hg.INPUT(**widgetattributes),
-                _class="bx--text-input__field-wrapper",
-            ),
-            **attributes,
-        )
-        # for easier reference in the render method:
-        self.label = self[0]
-        self.input = self[1][0]
-
-    def render(self, context):
-        if self.boundfield.field.disabled:
-            self.label.attributes["_class"] += " bx--label--disabled"
-            self.input.attributes["disabled"] = True
-        if self.boundfield is not None:
-            self.label.attributes["_for"] = self.boundfield.id_for_label
-            self.label.append(self.boundfield.label)
-            if self.boundfield.field.required:
-                self.label.append(REQUIRED_LABEL)
-            if self.boundfield.help_text:
-                self.append(HelperText(self.boundfield.help_text))
-            if self.boundfield.errors:
-                self[1].attributes["data-invalid"] = True
-                self[1].append(
-                    Icon(
-                        "warning--filled",
-                        size=16,
-                        _class="bx--text-input__invalid-icon",
-                    )
-                )
-                self.append(ErrorList(self.boundfield.errors))
-        return super().render(context)
 
 
 class TextInput(hg.DIV):
