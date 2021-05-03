@@ -14,7 +14,7 @@ from .helpers import (
 from .icon import Icon
 
 
-class TextInput(hg.DIV):
+class TextInputOld(hg.DIV):
     def __init__(
         self,
         fieldname,
@@ -67,6 +67,57 @@ class TextInput(hg.DIV):
         return super().render(context)
 
 
+class TextInput(hg.DIV):
+    def __init__(
+        self,
+        light=False,
+        widgetattributes=None,
+        label=None,
+        help_text=None,
+        errors=None,
+        required=None,
+        disabled=None,
+        **attributes,
+    ):
+        widgetattributes = widgetattributes or {}
+        widgetattributes["_class"] = hg.BaseElement(
+            widgetattributes.get("_class", ""),
+            "bx--text-input",
+            hg.If(light, " bx--text-input--light"),
+            hg.If(errors, " bx--text-input--invalid"),
+        )
+
+        super().__init__(
+            LabelElement(
+                label,
+                widgetattributes.get("id"),
+                required=required,
+                disabled=disabled,
+            ),
+            hg.DIV(
+                hg.If(
+                    errors,
+                    Icon(
+                        "warning--filled",
+                        size=16,
+                        _class="bx--text-input__invalid-icon",
+                    ),
+                ),
+                hg.INPUT(
+                    type="text",
+                    **widgetattributes,
+                ),
+                _class="bx--text-input__field-wrapper",
+                data_invalid=hg.If(errors, True),
+            ),
+            HelpTextElement(
+                help_text, disabled=widgetattributes.get("disabled", False)
+            ),
+            ErrorListElement(errors),
+            _class="bx--text-input-wrapper",
+        )
+
+
 class PasswordInput(TextInput):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -91,77 +142,3 @@ class PasswordInput(TextInput):
             Icon("view", _class="bx--icon--visibility-on", aria_hidden="true")
         )
         self[1].append(showhidebtn)
-
-
-# TEST IMPLEMENTATION ACCORDING TO helpers.py TODO comment, not currently used
-# The nice thing here is that we do not need to overwrite the render method
-class TextInputElement(hg.DIV):
-    def __init__(
-        self,
-        label=None,
-        id=None,
-        help_text=None,
-        required=None,
-        light=False,
-        errors=None,
-        widgetattributes=None,
-        **attributes,
-    ):
-        widgetattributes = widgetattributes or {}
-        widgetattributes["_class"] = hg.BaseElement(
-            widgetattributes.get("_class", ""),
-            "bx--text-input",
-            hg.If(light, " bx--text-input--light"),
-            hg.If(errors, " bx--text-input--invalid"),
-        )
-
-        id = (id or hg.html_id(self),)
-
-        super().__init__(
-            hg.DIV(
-                LabelElement(
-                    label,
-                    id,
-                    required,
-                    disabled=widgetattributes.get("disabled", False),
-                ),
-                hg.If(
-                    errors,
-                    Icon(
-                        "warning--filled",
-                        size=16,
-                        _class="bx--text-input__invalid-icon",
-                    ),
-                ),
-                hg.INPUT(
-                    id=id,
-                    type="text",
-                    **widgetattributes,
-                ),
-                _class="bx--text-input__field-wrapper",
-                data_invalid=hg.If(errors, True),
-            ),
-            HelpTextElement(
-                help_text, disabled=widgetattributes.get("disabled", False)
-            ),
-            ErrorListElement(errors),
-            _class="bx--text-input-wrapper",
-        )
-
-    @classmethod
-    def from_formfieldcontext(
-        cls, fieldcontext, light=False, widgetattributes=None, **attributes
-    ):
-        # TODO: this implementation still stems from the context/value provider implementation of
-        # htmlgenerator, it should be changed to use context variables, e.g. hg.C
-        "fieldcontext: adds an attribute 'boundfield' to bound elements"
-        return cls(
-            label=fieldcontext.Binding(hg.ATTR("boundfield.label")),
-            id=fieldcontext.Binding(hg.ATTR("boundfield.auto_id")),
-            help_text=fieldcontext.Binding(hg.ATTR("boundfield.help_text")),
-            required=fieldcontext.Binding(hg.ATTR("boundfield.field.required")),
-            light=light,
-            errors=fieldcontext.Binding(hg.ATTR("boundfield.errors")),
-            widgetattributes=widgetattributes,
-            **attributes,
-        )

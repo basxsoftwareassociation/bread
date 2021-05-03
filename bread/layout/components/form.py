@@ -389,9 +389,14 @@ def _mapwidget(
         or WIDGET_MAPPING[type(field.field.widget)]
     )
     if isinstance(fieldtype, type) and issubclass(fieldtype, hg.BaseElement):
-        ret = fieldtype(
-            fieldname=field.name, widgetattributes=attrs, **elementattributes
-        )
+        if issubclass(fieldtype, TextInput):
+            return fieldtype(**kwargs)
+        else:
+            ret = fieldtype(
+                fieldname=field.name,
+                widgetattributes=attrs,
+                **elementattributes,
+            )
     else:
         ret = fieldtype
     ret.boundfield = field
