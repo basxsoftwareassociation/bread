@@ -330,7 +330,6 @@ def _mapwidget(
                 **data["attrs"],
                 **widgetattributes,
             }
-            return ret
 
         del kwargs["label"]
         del kwargs["required"]
