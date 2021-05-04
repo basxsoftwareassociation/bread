@@ -249,7 +249,7 @@ class CsrfToken(FormChild, hg.INPUT):
 
 
 def _mapwidget(
-    field, fieldtype, elementattributes={}, widgetattributes={}, only_initial=False
+    field, fieldtype, elementattributes=None, widgetattributes=None, only_initial=False
 ):
     from .checkbox import Checkbox
     from .date_picker import DatePicker
@@ -258,6 +258,9 @@ def _mapwidget(
     from .select import Select
     from .text_area import TextArea
     from .text_input import PasswordInput, TextInput
+
+    elementattributes = elementattributes or {}
+    widgetattributes = widgetattributes or {}
 
     WIDGET_MAPPING = {
         forms.TextInput: TextInput,
