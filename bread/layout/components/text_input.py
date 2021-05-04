@@ -16,6 +16,7 @@ class TextInput(hg.DIV):
         errors=None,
         required=None,
         disabled=None,
+        icon=None,
         **attributes,
     ):
         widgetattributes = widgetattributes or {}
@@ -46,14 +47,25 @@ class TextInput(hg.DIV):
                     type="text",
                     **widgetattributes,
                 ),
-                _class="bx--text-input__field-wrapper",
+                hg.If(
+                    icon,
+                    Icon(
+                        icon,
+                        size=16,
+                        _class="text-input-icon",
+                    ),
+                ),
+                _class=(
+                    "bx--text-input__field-wrapper"
+                    + (" text-input-with-icon" if icon is not None else "")
+                ),
                 data_invalid=hg.If(errors, True),
             ),
             HelpTextElement(
                 help_text, disabled=widgetattributes.get("disabled", False)
             ),
             ErrorListElement(errors),
-            _class="bx--text-input-wrapper",
+            _class="bx--text-input-wrapper bx--form-item",
         )
 
 
@@ -62,9 +74,10 @@ class PasswordInput(TextInput):
         super().__init__(*args, **kwargs)
         self.attributes["data-text-input"] = True
         self.attributes["_class"] += " bx--password-input-wrapper"
-        self.input.attributes["type"] = "password"
-        self.input.attributes["data-toggle-password-visibility"] = True
-        self.input.attributes["_class"] += " bx--password-input"
+        inputElement = self[1][1]
+        inputElement.attributes["type"] = "password"
+        inputElement.attributes["data-toggle-password-visibility"] = True
+        inputElement.attributes["_class"] += " bx--password-input"
         showhidebtn = Button(_("Show password"), notext=True)
         showhidebtn.attributes[
             "_class"
