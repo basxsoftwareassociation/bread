@@ -155,21 +155,16 @@ fieldset[readonly=true] :disabled {
 .text-input-icon {
     position: absolute;
     right: $carbon--spacing-05;
-    width: rem(16px);
-    height: rem(16px);
-    display: inline-flex;
-    align-items: center;
 }
 
 // icon should be displayed lighter in view-only mode
 .bx--text-input:disabled
-+ .text-input-icon
-svg {
++ .text-input-icon {
     fill: #c6c6c6;
 }
 
 // icon should be displayed in red if data is invalid
-.text-input-with-icon[data-invalid] .text-input-icon svg {
+.text-input-with-icon[data-invalid] .text-input-icon {
     fill: $ibm-color__red-60;
 }
 

@@ -49,8 +49,9 @@ class TextInput(hg.DIV):
                 ),
                 hg.If(
                     icon,
-                    hg.DIV(
-                        Icon(icon),
+                    Icon(
+                        icon,
+                        size=16,
                         _class="text-input-icon",
                     ),
                 ),
