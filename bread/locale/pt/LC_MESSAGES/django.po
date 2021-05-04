@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-06 19:38+0700\n"
-"PO-Revision-Date: 2021-04-24 18:31+0000\n"
-"Last-Translator: Adneuza Tête <adneuzaquaresma@gmail.com>\n"
+"PO-Revision-Date: 2021-05-02 08:31+0000\n"
+"Last-Translator: Timotheus Pokorra <mailinglists@tpokorra.de>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/basxconnect/"
 "bread/pt/>\n"
 "Language: pt\n"
@@ -195,7 +195,7 @@ msgstr "Adicionado %s"
 #: bread/views/delete.py:46
 #, python-format
 msgid "Deleted %(modelname)s %(objectname)s"
-msgstr "Apagado %(nome do modelo)s %(nome do objecto)s"
+msgstr "Apagado %(modelname)s %(objectname)s"
 
 #: bread/views/delete.py:90
 #, python-format
@@ -210,7 +210,7 @@ msgstr "%s não pôde ser apagado: %s"
 #: bread/views/delete.py:106
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
-msgstr "Apagado %(contagem)s %(nome do modelo)s"
+msgstr "Apagado %(count)s %(modelname)s"
 
 #: bread/views/edit.py:78
 #, python-format

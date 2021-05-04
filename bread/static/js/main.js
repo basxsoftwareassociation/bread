@@ -30,6 +30,9 @@ function clearMultiselect(e) {
 }
 
 function initAllChoices(element=$("body")) {
+    // this initializes the old choices widget from ChoicesJS which do no longer really use
+    // Remove this in the next JS refactoring
+    return;
     for(let e of $$("fieldset[disabled] select[multiple]", element)) {
         makeChoices(e).disable();
     }
