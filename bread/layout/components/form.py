@@ -92,13 +92,13 @@ class FormField(FormChild, hg.BaseElement):
         fieldname,
         fieldtype=None,
         hidelabel=False,
-        elementattributes={},
-        widgetattributes={},
+        elementattributes=None,
+        widgetattributes=None,
     ):
         self.fieldname = fieldname
         self.fieldtype = fieldtype
-        self.widgetattributes = widgetattributes
-        self.elementattributes = elementattributes
+        self.widgetattributes = widgetattributes or {}
+        self.elementattributes = elementattributes or {}
         self.form = None  # will be set by the render method of the parent method
         self.hidelabel = hidelabel
 
