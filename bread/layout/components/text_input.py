@@ -64,7 +64,7 @@ class TextInput(hg.DIV):
                 help_text, disabled=widgetattributes.get("disabled", False)
             ),
             ErrorListElement(errors),
-            _class="bx--text-input-wrapper",
+            _class="bx--text-input-wrapper bx--form-item",
         )
 
 
