@@ -74,9 +74,10 @@ class PasswordInput(TextInput):
         super().__init__(*args, **kwargs)
         self.attributes["data-text-input"] = True
         self.attributes["_class"] += " bx--password-input-wrapper"
-        self.input.attributes["type"] = "password"
-        self.input.attributes["data-toggle-password-visibility"] = True
-        self.input.attributes["_class"] += " bx--password-input"
+        inputElement = self[1][1]
+        inputElement.attributes["type"] = "password"
+        inputElement.attributes["data-toggle-password-visibility"] = True
+        inputElement.attributes["_class"] += " bx--password-input"
         showhidebtn = Button(_("Show password"), notext=True)
         showhidebtn.attributes[
             "_class"
