@@ -288,8 +288,6 @@ def _mapwidget(
 
     # The following is a bit of magic to play nicely with the django form processing
     # TODO: This can be simplified, and improved
-    if field.field.localize:
-        field.field.widget.is_localized = True
     attrs = dict(field.field.widget.attrs)
     attrs.update(widgetattributes)
     attrs = field.build_widget_attrs(attrs)
