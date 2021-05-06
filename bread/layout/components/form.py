@@ -225,17 +225,15 @@ class InlineDeleteButton(FormChild, Button):
 
 
 class HiddenInput(FormChild, hg.INPUT):
-    def __init__(self, fieldname, widgetattributes, **attributes):
+    def __init__(self, fieldname, widgetattributes, boundfield=None, **attributes):
         self.fieldname = fieldname
         super().__init__(type="hidden", **{**widgetattributes, **attributes})
 
-    def render(self, context):
-        self.attributes["id"] = self.boundfield.auto_id
-        if self.boundfield is not None:
-            self.attributes["name"] = self.boundfield.html_name
-            if self.boundfield.value() is not None:
-                self.attributes["value"] = self.boundfield.value()
-        return super().render(context)
+        self.attributes["id"] = boundfield.auto_id
+        if boundfield is not None:
+            self.attributes["name"] = boundfield.html_name
+            if boundfield.value() is not None:
+                self.attributes["value"] = boundfield.value()
 
 
 class CsrfToken(FormChild, hg.INPUT):
@@ -258,9 +256,6 @@ def _mapwidget(
     from .select import Select
     from .text_area import TextArea
     from .text_input import PasswordInput, TextInput
-
-    elementattributes = elementattributes or {}
-    widgetattributes = widgetattributes or {}
 
     WIDGET_MAPPING = {
         forms.TextInput: TextInput,
@@ -286,69 +281,50 @@ def _mapwidget(
         forms.SelectDateWidget: TextInput,  # TODO
     }
 
-    # The following is a bit of magic to play nicely with the django form processing
-    # TODO: This can be simplified, and improved
-    attrs = dict(field.field.widget.attrs)
-    attrs.update(widgetattributes)
-    attrs = field.build_widget_attrs(attrs)
-    if getattr(field.field.widget, "allow_multiple_selected", False):
-        attrs["multiple"] = True
-    if field.auto_id and "id" not in field.field.widget.attrs:
-        attrs.setdefault("id", field.html_initial_id if only_initial else field.auto_id)
-    if "name" not in attrs:
-        attrs["name"] = field.html_initial_name if only_initial else field.html_name
-    value = field.field.widget.format_value(field.value())
-    if value is not None and "value" not in attrs:
-        attrs["value"] = value
-
+    widgetattributes = update_widgetattributes(field, only_initial, widgetattributes)
     elementattributes = {
-        **getattr(field.field, "layout_kwargs", {}),
-        **elementattributes,
-    }
-
-    kwargs = {
         "label": field.label,
         "help_text": field.help_text,
         "errors": field.errors,
         "disabled": field.field.disabled,
         "required": field.field.required,
-        "widgetattributes": attrs,
-        **elementattributes,
+        **getattr(field.field, "layout_kwargs", {}),
+        **(elementattributes or {}),
     }
+
     if isinstance(field.field.widget, forms.CheckboxInput):
-        attrs["checked"] = field.value()
+        widgetattributes["checked"] = field.value()
         return hg.DIV(
-            Checkbox(**kwargs),
+            Checkbox(
+                widgetattributes=widgetattributes,
+                **elementattributes,
+            ),
             _class="bx--form-item",
         )
+
     if isinstance(field.field.widget, forms.CheckboxSelectMultiple):
-
-        def extract_attrs(data):
-            return {
-                "name": data["name"],
-                "value": data["value"],
-                "checked": data["selected"],
-                **data["attrs"],
-                **widgetattributes,
-            }
-
-        del kwargs["label"]
-        del kwargs["required"]
+        del elementattributes["label"]
+        del elementattributes["required"]
 
         return hg.DIV(
             *[
                 Checkbox(
                     **{
-                        **kwargs,
+                        **elementattributes,
                         "label": widget.data["label"],
-                        "widgetattributes": extract_attrs(widget.data),
+                        "widgetattributes": {
+                            "name": widget.data["name"],
+                            "value": widget.data["value"],
+                            "checked": widget.data["selected"],
+                            **widget.data["attrs"],
+                            **widgetattributes,
+                        },
                     }
                 )
                 for widget in field.subwidgets
             ],
             _class="bx--form-item",
         )
-        # {'name': 'naturalperson_subtypes', 'value': <django.forms.models.ModelChoiceIteratorValue object at 0x7f292e116640>, 'label': 'Interessent*in', 'selected': False, 'index': '0', 'attrs': {'id': 'id_naturalperson_subtypes_0'}, 'type': 'checkbox', 'template_name': 'django/forms/widgets/checkbox_option.html', 'wrap_label': True}
 
     if isinstance(field.field.widget, forms.Select):
         if isinstance(field.field.widget, forms.SelectMultiple):
@@ -360,7 +336,8 @@ def _mapwidget(
                             "widget"
                         ]["value"],
                     ),
-                    **kwargs,
+                    widgetattributes=widgetattributes,
+                    **elementattributes,
                 ),
                 _class="bx--form-item",
             )
@@ -372,10 +349,12 @@ def _mapwidget(
                         "widget"
                     ]["value"],
                 ),
-                **kwargs,
+                widgetattributes=widgetattributes,
+                **elementattributes,
             ),
             _class="bx--form-item",
         )
+
     fieldtype = (
         fieldtype
         or getattr(field.field, "layout", None)
@@ -389,17 +368,14 @@ def _mapwidget(
         or WIDGET_MAPPING[type(field.field.widget)]
     )
     if isinstance(fieldtype, type) and issubclass(fieldtype, hg.BaseElement):
-        if issubclass(fieldtype, TextInput):
-            return fieldtype(**kwargs)
-        else:
-            ret = fieldtype(
-                fieldname=field.name,
-                widgetattributes=attrs,
-                **elementattributes,
-            )
+        ret = fieldtype(
+            fieldname=field.name,
+            widgetattributes=widgetattributes,
+            boundfield=field,
+            **elementattributes,
+        )
     else:
-        ret = fieldtype
-    ret.boundfield = field
+        raise Exception(f"Could not find a widget for field {field.name}")
 
     if (
         field.field.show_hidden_initial and fieldtype != HiddenInput
@@ -410,3 +386,21 @@ def _mapwidget(
         )
 
     return ret
+
+
+def update_widgetattributes(field, only_initial, widgetattributes):
+    # TODO: This can be simplified, and improved
+    widgetattributes = widgetattributes or {}
+    attrs = dict(field.field.widget.attrs)
+    attrs.update(widgetattributes)
+    attrs = field.build_widget_attrs(attrs)
+    if getattr(field.field.widget, "allow_multiple_selected", False):
+        attrs["multiple"] = True
+    if field.auto_id and "id" not in field.field.widget.attrs:
+        attrs.setdefault("id", field.html_initial_id if only_initial else field.auto_id)
+    if "name" not in attrs:
+        attrs["name"] = field.html_initial_name if only_initial else field.html_name
+    value = field.field.widget.format_value(field.value())
+    if value is not None and "value" not in attrs:
+        attrs["value"] = value
+    return attrs
