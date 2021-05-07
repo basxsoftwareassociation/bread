@@ -312,11 +312,11 @@ def _mapwidget(
                     **elementattributes,
                     label=widget.data["label"],
                     widgetattributes={
+                        **widgetattributes,
                         "name": widget.data["name"],
                         "value": widget.data["value"],
                         "checked": widget.data["selected"],
                         **widget.data["attrs"],
-                        **widgetattributes,
                     },
                 )
                 for widget in field.subwidgets
