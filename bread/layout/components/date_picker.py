@@ -16,6 +16,7 @@ class DatePicker(hg.DIV):
         short=False,
         simple=False,
         widgetattributes={},
+        boundfield=None,
         **attributes,
     ):
         self.fieldname = fieldname
@@ -67,31 +68,30 @@ class DatePicker(hg.DIV):
         self.label = self[0][0][0]
         self.simple = simple
 
-    def render(self, context):
-        if self.boundfield is not None:
-            if self.boundfield.field.disabled:
+        if boundfield is not None:
+            if boundfield.field.disabled:
                 self.label.attributes["_class"] += " bx--label--disabled"
-            self.label.attributes["_for"] = self.boundfield.id_for_label
-            self.label.append(self.boundfield.label)
-            if self.boundfield.field.required:
+            self.label.attributes["_for"] = boundfield.id_for_label
+            self.label.append(boundfield.label)
+            if boundfield.field.required:
                 self.label.append(REQUIRED_LABEL)
 
             dateformat = (
-                self.boundfield.field.widget.format
-                or formats.get_format(self.boundfield.field.widget.format_key)[0]
+                boundfield.field.widget.format
+                or formats.get_format(boundfield.field.widget.format_key)[0]
             )
             dateformat_widget = to_php_formatstr(
-                self.boundfield.field.widget.format,
-                self.boundfield.field.widget.format_key,
+                boundfield.field.widget.format,
+                boundfield.field.widget.format_key,
             )
             if self.simple:
                 self.input.attributes["pattern"] = TimeRE().compile(dateformat).pattern
             else:
                 self.input.attributes["data_date_format"] = dateformat_widget
 
-            if self.boundfield.help_text:
-                self[0][0].append(HelperText(self.boundfield.help_text))
-            if self.boundfield.errors:
+            if boundfield.help_text:
+                self[0][0].append(HelperText(boundfield.help_text))
+            if boundfield.errors:
                 self.input.attributes["data-invalid"] = True
                 self[1].append(
                     Icon(
@@ -100,5 +100,4 @@ class DatePicker(hg.DIV):
                         _class="bx--text-input__invalid-icon",
                     )
                 )
-                self[0][0].append(ErrorList(self.boundfield.errors))
-        return super().render(context)
+                self[0][0].append(ErrorList(boundfield.errors))

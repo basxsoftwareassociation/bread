@@ -13,6 +13,7 @@ class TextArea(hg.DIV):
         cols=None,
         light=False,
         widgetattributes={},
+        boundfield=None,
         **attributes,
     ):
         self.fieldname = fieldname
@@ -35,25 +36,25 @@ class TextArea(hg.DIV):
             ),
             **attributes,
         )
-        # for easier reference in the render method:
+
+        # for easier reference
         self.label = self[0]
         self.input = self[1][0]
 
-    def render(self, context):
-        if self.boundfield.field.disabled:
+        if boundfield.field.disabled:
             self.label.attributes["_class"] += " bx--label--disabled"
             self.input.attributes["disabled"] = True
-        if self.boundfield is not None:
-            self.label.attributes["_for"] = self.boundfield.id_for_label
-            self.label.append(self.boundfield.label)
-            if self.boundfield.field.required:
+        if boundfield is not None:
+            self.label.attributes["_for"] = boundfield.id_for_label
+            self.label.append(boundfield.label)
+            if boundfield.field.required:
                 self.label.append(REQUIRED_LABEL)
 
             self.input.append(self.input.attributes.pop("value", ""))
 
-            if self.boundfield.help_text:
-                self.append(HelperText(self.boundfield.help_text))
-            if self.boundfield.errors:
+            if boundfield.help_text:
+                self.append(HelperText(boundfield.help_text))
+            if boundfield.errors:
                 self[1].attributes["data-invalid"] = True
                 self.input.attributes["_class"] += " bx--text-area--invalid"
                 self[1].append(
@@ -63,5 +64,4 @@ class TextArea(hg.DIV):
                         _class="bx--text-area__invalid-icon",
                     )
                 )
-                self.append(ErrorList(self.boundfield.errors))
-        return super().render(context)
+                self.append(ErrorList(boundfield.errors))
