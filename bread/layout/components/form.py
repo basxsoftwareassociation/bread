@@ -309,17 +309,15 @@ def _mapwidget(
         return hg.DIV(
             *[
                 Checkbox(
-                    **{
-                        **elementattributes,
-                        "label": widget.data["label"],
-                        "widgetattributes": {
-                            "name": widget.data["name"],
-                            "value": widget.data["value"],
-                            "checked": widget.data["selected"],
-                            **widget.data["attrs"],
-                            **widgetattributes,
-                        },
-                    }
+                    **elementattributes,
+                    label=widget.data["label"],
+                    widgetattributes={
+                        "name": widget.data["name"],
+                        "value": widget.data["value"],
+                        "checked": widget.data["selected"],
+                        **widget.data["attrs"],
+                        **widgetattributes,
+                    },
                 )
                 for widget in field.subwidgets
             ],
