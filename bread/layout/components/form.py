@@ -372,7 +372,7 @@ def _mapwidget(
             **elementattributes,
         )
     else:
-        raise Exception(f"Could not find a widget for field {field.name}")
+        ret = hg.DIV(f"Field {field.name}")
 
     if (
         field.field.show_hidden_initial and fieldtype != HiddenInput
