@@ -303,7 +303,6 @@ def _mapwidget(
         )
 
     if isinstance(field.field.widget, forms.CheckboxSelectMultiple):
-        del elementattributes["label"]
         del elementattributes["required"]
 
         return hg.DIV(
