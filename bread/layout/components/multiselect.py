@@ -16,7 +16,6 @@ class MultiSelect(hg.DIV):
         required=None,
         # light=False, # TODO?
         # inline=False, # TODO?
-        widgetattributes=None,  # not really in use, these are attributes coming from django for a select[multiple] widget, would need to convert accordingly
         **attributes,
     ):
         """
@@ -31,8 +30,6 @@ class MultiSelect(hg.DIV):
             ]
             return len([o for o in options if o and o["selected"]])
 
-        widgetattributes = widgetattributes or {}
-        widgetattributes.setdefault("id", hg.html_id(self))
         searchfieldid = hg.html_id(self)
         super().__init__(
             LabelElement(
