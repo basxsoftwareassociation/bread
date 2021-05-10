@@ -74,7 +74,12 @@ class QuerysetField(models.TextField):
     def formfield(self, **kwargs):
         ret = super().formfield(**kwargs)
         ret.layout = QuerySetFormWidget
-        ret.layout_kwargs = {"modelfieldname": self.modelfieldname, "rows": 1}
+        ret.layout_kwargs = {
+            "modelfieldname": self.modelfieldname,
+            "rows": 1,
+            "model": self.model,
+            "name": self.name,
+        }
         return ret
 
     def check(self, **kwargs):
@@ -109,13 +114,14 @@ class QuerysetField(models.TextField):
 
 
 class QuerySetFormWidget(layout.text_area.TextArea):
-    def __init__(self, *args, modelfieldname, **kwargs):
+    def __init__(self, *args, modelfieldname, model, name, **kwargs):
         super().__init__(*args, **kwargs)
         self.modelfieldname = modelfieldname
+        self.model = model
+        self.name = name
 
     def render(self, context):
-        model = getattr(self.boundfield.form.instance, self.modelfieldname)
-        if model and model.model_class():
+        if self.model:
             self.append(
                 hg.SCRIPT(
                     mark_safe(
@@ -132,10 +138,10 @@ class QuerySetFormWidget(layout.text_area.TextArea):
                         % (
                             json.dumps(
                                 DjangoQLSchemaSerializer().serialize(
-                                    DjangoQLSchema(model.model_class())
+                                    DjangoQLSchema(self.model)
                                 )
                             ),
-                            self.boundfield.name,
+                            self.name,
                             reverse("reporthelp"),
                         )
                     )

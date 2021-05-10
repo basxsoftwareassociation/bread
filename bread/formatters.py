@@ -125,8 +125,8 @@ def as_countries(value):
     return as_list((c.name for c in value))
 
 
-def as_list(iterable):
-    return (format_html_join(", ", "{}", ((format_value(v),) for v in iterable)),)
+def as_list(iterable, sep=", "):
+    return format_html_join(sep, "{}", ((format_value(v),) for v in iterable))
 
 
 def as_richtext(value):
