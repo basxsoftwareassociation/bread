@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from bread import layout
 
+from ...layout.components.datatable import DataTableColumn
 from .fields.queryfield import QuerysetField
 
 
@@ -22,7 +23,9 @@ class Report(models.Model):
     def preview(self):
         columns = []
         for column in self.columns.all():
-            columns.append((column.name, layout.FC(f"row.{column.column}"), None))
+            columns.append(
+                DataTableColumn(column.name, layout.FC(f"row.{column.column}"))
+            )
 
         return hg.BaseElement(
             hg.H3(_("Preview")),

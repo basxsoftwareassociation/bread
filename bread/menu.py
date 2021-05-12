@@ -1,3 +1,4 @@
+import htmlgenerator as hg
 from django.apps import apps
 from django.utils.text import format_lazy
 
@@ -97,6 +98,18 @@ class Link(Action):
             ),
             label=label,
             icon=icon,
+        )
+
+
+class Delete(Action):
+    def __init__(self):
+        from . import layout
+
+        super().__init__(
+            js=hg.F(
+                lambda c, e: f'window.location = \'{layout.objectaction(c["row"], "delete")}?next=\' + window.location.pathname + window.location.search',
+            ),
+            icon="trash-can",
         )
 
 

@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+from typing import Any, List, Union
+
 import htmlgenerator as hg
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -57,19 +60,27 @@ def sortinglink_for_column(orderingurlparameter, columnname):
     return aslink_attributes(hg.F(extractsortinglink))
 
 
+@dataclass
+class DataTableColumn:
+    header: Any
+    cell: Any
+    sortingname: str = None
+    enable_row_click: bool = True
+
+
 class DataTable(hg.BaseElement):
     SPACINGS = ["default", "compact", "short", "tall"]
 
     def __init__(
         self,
-        columns,
+        columns: List[DataTableColumn],
         row_iterator,
         rowvariable="row",
         spacing="default",
         orderingurlparameter="ordering",
         zebra=False,
     ):
-        """columns: tuple(header_expression, row_expression, sortingname)
+        """columns: list of DataTableColumn(header, cell, sortingname, enable_row_click)
         row_iterator: python iterator of htmlgenerator.Lazy object which returns an iterator
         rowvariable: name of the current object passed to childrens context
         if the header_expression/row_expression has an attribute td_attributes it will be used as attributes for the TH/TD elements (necessary because sometimes the content requires additional classes on the parent element)
@@ -88,9 +99,9 @@ class DataTable(hg.BaseElement):
             classes.append(" bx--data-table--zebra")
 
         self.head = hg.TR()
-        for header, cell, sortingname in columns:
-            headcontent = hg.SPAN(header, _class="bx--table-header-label")
-            if sortingname:
+        for col in columns:
+            headcontent = hg.SPAN(col.header, _class="bx--table-header-label")
+            if col.sortingname:
                 headcontent = hg.BUTTON(
                     headcontent,
                     Icon("arrow--down", _class="bx--table-sort__icon", size=16),
@@ -101,22 +112,24 @@ class DataTable(hg.BaseElement):
                     ),
                     _class=hg.BaseElement(
                         "bx--table-sort ",
-                        sortingclass_for_column(orderingurlparameter, sortingname),
+                        sortingclass_for_column(orderingurlparameter, col.sortingname),
                     ),
                     data_event="sort",
-                    title=header,
-                    **sortinglink_for_column(orderingurlparameter, sortingname),
+                    title=col.header,
+                    **sortinglink_for_column(orderingurlparameter, col.sortingname),
                 )
 
-            self.head.append(hg.TH(headcontent, **getattr(header, "td_attributes", {})))
+            self.head.append(
+                hg.TH(headcontent, **getattr(col.header, "td_attributes", {}))
+            )
 
         self.iterator = hg.Iterator(
             row_iterator,
             rowvariable,
             hg.TR(
                 *[
-                    hg.TD(cell, **getattr(cell, "td_attributes", {}))
-                    for header, cell, _ in columns
+                    hg.TD(col.cell, **getattr(col.cell, "td_attributes", {}))
+                    for col in columns
                 ]
             ),
         )
@@ -326,7 +339,7 @@ class DataTable(hg.BaseElement):
     def from_model(
         model,
         queryset=None,
-        columns=["__all__"],
+        columns=None,
         rowactions=None,
         rowactions_dropdown=False,
         bulkactions=(),
@@ -346,8 +359,7 @@ class DataTable(hg.BaseElement):
         **kwargs,
     ):
         """TODO: Write Docs!!!!"""
-        if title is None:
-            title = pretty_modelname(model, plural=True)
+        title = title or pretty_modelname(model, plural=True)
         rowvariable = kwargs.get("rowvariable", "row")
 
         backquery = {"next": backurl} if backurl else {}
@@ -378,42 +390,40 @@ class DataTable(hg.BaseElement):
         action_menu_header = hg.BaseElement()
         action_menu_header.td_attributes = {"_class": "bx--table-column-menu"}
         queryset = model.objects.all() if queryset is None else queryset
-        if "__all__" in columns:
-            columns = filter_fieldlist(model, columns)
-        columndefinitions = []
-        for column in columns:
-            if not (
-                (isinstance(column, tuple) and len(column) in [3, 4])
-                or isinstance(column, str)
-            ):
+        columns = columns or filter_fieldlist(model, ["__all__"])
+        column_definitions: List[DataTableColumn] = []
+        for col in columns:
+            if not (isinstance(col, DataTableColumn) or isinstance(col, str)):
                 raise ValueError(
-                    f"Argument 'columns' needs to be of a list with items of type str or tuple (headvalue, cellvalue, sort-name, enable-row-click=True), but found {column}"
+                    f"Argument 'columns' needs to be of a List[str] or a List[DataTableColumn], but found {col}"
                 )
             # convert simple string (modelfield) to column definition
-            if isinstance(column, str):
-                column = (
-                    fieldlabel(model, column),
-                    hg.C(f"{rowvariable}.{column}"),
-                    sortingname_for_column(model, column)
+            if isinstance(col, str):
+                col = DataTableColumn(
+                    fieldlabel(model, col),
+                    hg.C(f"{rowvariable}.{col}"),
+                    sortingname_for_column(model, col)
                     if not preven_automatic_sortingnames
                     else None,
                 )
-            # add the default parameter for enable-row-click
-            column += (True,)
 
-            if rowclickaction and column[3]:
-                column[1].td_attributes = aslink_attributes(
+            if rowclickaction and col.enable_row_click:
+                col.cell.td_attributes = aslink_attributes(
                     hg.F(
                         lambda c, e: objectaction(
                             c[rowvariable], rowclickaction, query=backquery
                         )
                     )
                 )
-            columndefinitions.append(column[:3])
+            column_definitions.append(col)
 
         table = DataTable(
-            columndefinitions
-            + ([(action_menu_header, objectactions_menu, None)] if rowactions else []),
+            column_definitions
+            + (
+                [DataTableColumn(action_menu_header, objectactions_menu)]
+                if rowactions
+                else []
+            ),
             # querysets are cached, the call to all will make sure a new query is used in every request
             hg.F(lambda c, e: queryset),
             **kwargs,
