@@ -60,7 +60,7 @@ def sortinglink_for_column(orderingurlparameter, columnname):
     return aslink_attributes(hg.F(extractsortinglink))
 
 
-@dataclass
+@dataclass(frozen=True)
 class DataTableColumn:
     header: Any
     cell: Any
