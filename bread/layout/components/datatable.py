@@ -66,15 +66,16 @@ class DataTableColumn(NamedTuple):
     enable_row_click: bool = True
 
     @staticmethod
-    def from_modelfield(col, model, prevent_automatic_sortingnames, rowvariable):
-        col = DataTableColumn(
+    def from_modelfield(
+        col, model, prevent_automatic_sortingnames, rowvariable
+    ) -> "DataTableColumn":
+        return DataTableColumn(
             fieldlabel(model, col),
             hg.C(f"{rowvariable}.{col}"),
             sortingname_for_column(model, col)
             if not prevent_automatic_sortingnames
             else None,
         )
-        return col
 
 
 class DataTable(hg.BaseElement):
