@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Any, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
