@@ -366,11 +366,11 @@ class DataTable(hg.BaseElement):
         page_urlparameter="page",
         itemsperpage_urlparameter="itemsperpage",
         settingspanel=None,
+        rowvariable="row",
         **kwargs,
     ):
         """TODO: Write Docs!!!!"""
         title = title or pretty_modelname(model, plural=True)
-        rowvariable = kwargs.get("rowvariable", "row")
 
         backquery = {"next": backurl} if backurl else {}
         if addurl is None:
