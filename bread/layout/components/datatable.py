@@ -349,7 +349,7 @@ class DataTable(hg.BaseElement):
         searchurl=None,
         query_urlparameter=None,
         rowclickaction=None,
-        preven_automatic_sortingnames=False,
+        prevent_automatic_sortingnames=False,
         with_toolbar=True,
         pagination_options=(),
         paginator=None,
@@ -403,7 +403,7 @@ class DataTable(hg.BaseElement):
                     fieldlabel(model, col),
                     hg.C(f"{rowvariable}.{col}"),
                     sortingname_for_column(model, col)
-                    if not preven_automatic_sortingnames
+                    if not prevent_automatic_sortingnames
                     else None,
                 )
 
