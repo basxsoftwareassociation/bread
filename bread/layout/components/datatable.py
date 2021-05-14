@@ -66,6 +66,17 @@ class DataTableColumn(NamedTuple):
     sortingname: Optional[str] = None
     enable_row_click: bool = True
 
+    @staticmethod
+    def from_modelfield(col, model, prevent_automatic_sortingnames, rowvariable):
+        col = DataTableColumn(
+            fieldlabel(model, col),
+            hg.C(f"{rowvariable}.{col}"),
+            sortingname_for_column(model, col)
+            if not prevent_automatic_sortingnames
+            else None,
+        )
+        return col
+
 
 class DataTable(hg.BaseElement):
     SPACINGS = ["default", "compact", "short", "tall"]
@@ -338,7 +349,7 @@ class DataTable(hg.BaseElement):
     def from_model(
         model,
         queryset=None,
-        columns=None,
+        columns: Union[List[str], List[DataTableColumn]] = None,
         rowactions=None,
         rowactions_dropdown=False,
         bulkactions=(),
@@ -398,12 +409,8 @@ class DataTable(hg.BaseElement):
                 )
             # convert simple string (modelfield) to column definition
             if isinstance(col, str):
-                col = DataTableColumn(
-                    fieldlabel(model, col),
-                    hg.C(f"{rowvariable}.{col}"),
-                    sortingname_for_column(model, col)
-                    if not prevent_automatic_sortingnames
-                    else None,
+                col = DataTableColumn.from_modelfield(
+                    col, model, prevent_automatic_sortingnames, rowvariable
                 )
 
             if rowclickaction and col.enable_row_click:
