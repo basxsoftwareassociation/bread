@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, List, NamedTuple, Union
+from typing import Any, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.db import models
@@ -63,7 +63,7 @@ def sortinglink_for_column(orderingurlparameter, columnname):
 class DataTableColumn(NamedTuple):
     header: Any
     cell: Any
-    sortingname: str = None
+    sortingname: Optional[str] = None
     enable_row_click: bool = True
 
 
