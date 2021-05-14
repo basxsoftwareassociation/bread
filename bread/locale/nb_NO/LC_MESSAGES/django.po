@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-04-01 21:12+0700\n"
-"PO-Revision-Date: 2021-03-29 13:56+0000\n"
-"Last-Translator: Timotheus Pokorra <mailinglists@tpokorra.de>\n"
+"PO-Revision-Date: 2021-05-15 05:32+0000\n"
+"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
 "basxconnect/bread/nb_NO/>\n"
 "Language: nb_NO\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.6-dev\n"
+"X-Generator: Weblate 4.7-dev\n"
 
 #: bread/contrib/reports/fields/queryfield.py:105
 #, python-format
@@ -216,10 +216,9 @@ msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s %(modelname)s slettet"
 
 #: bread/views/edit.py:90
-#, fuzzy, python-format
-#| msgid "Created %s copies"
+#, python-format
 msgid "Created copy %s"
-msgstr "Opprettet % kopier"
+msgstr "Opprettet kopi %s"
 
 #: bread/views/edit.py:119
 #, python-format
