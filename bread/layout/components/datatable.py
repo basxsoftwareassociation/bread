@@ -370,6 +370,12 @@ class DataTable(hg.BaseElement):
         **kwargs,
     ):
         """TODO: Write Docs!!!!"""
+        for col in columns:
+            if not (isinstance(col, DataTableColumn) or isinstance(col, str)):
+                raise ValueError(
+                    f"Argument 'columns' needs to be of a List[str] or a List[DataTableColumn], but found {col}"
+                )
+
         title = title or pretty_modelname(model, plural=True)
 
         backquery = {"next": backurl} if backurl else {}
@@ -403,10 +409,6 @@ class DataTable(hg.BaseElement):
         columns = columns or filter_fieldlist(model, ["__all__"])
         column_definitions: List[DataTableColumn] = []
         for col in columns:
-            if not (isinstance(col, DataTableColumn) or isinstance(col, str)):
-                raise ValueError(
-                    f"Argument 'columns' needs to be of a List[str] or a List[DataTableColumn], but found {col}"
-                )
             # convert simple string (modelfield) to column definition
             if isinstance(col, str):
                 col = DataTableColumn.from_modelfield(
