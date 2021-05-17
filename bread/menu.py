@@ -1,4 +1,3 @@
-import htmlgenerator as hg
 from django.apps import apps
 from django.utils.text import format_lazy
 
