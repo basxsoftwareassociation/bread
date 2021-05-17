@@ -101,18 +101,6 @@ class Link(Action):
         )
 
 
-class Delete(Action):
-    def __init__(self):
-        from . import layout
-
-        super().__init__(
-            js=hg.F(
-                lambda c, e: f'window.location = \'{layout.objectaction(c["row"], "delete")}?next=\' + window.location.pathname + window.location.search',
-            ),
-            icon="trash-can",
-        )
-
-
 class Item:
     def __init__(self, link, group, order=None):
         if not isinstance(link, Link):
