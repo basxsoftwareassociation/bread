@@ -23,7 +23,8 @@
         {% render_layout headerlayout %}
 
         {% if user.is_authenticated %}
-            {% include "bread/components/side-nav.html" %}
+            {% render_layout sidenav %} 
+            {#  {% include "bread/components/side-nav.html" %} #}
         {% endif %}
 
         <div style="position: fixed; right: 0; z-index: 999">
