@@ -36,6 +36,9 @@ class TabPanel(hg.DIV):
         )
 
 
+Tab = collections.namedtuple("Tab", "label content")
+
+
 class Tabs(hg.DIV):
     def __init__(
         self,
