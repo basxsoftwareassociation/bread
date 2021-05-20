@@ -60,7 +60,7 @@ class Tabs(hg.DIV):
             ),
             self.tablabels,
             data_tabs=True,
-            _class=" bx--tabs" + (" bx--tabs--container" if container else ""),
+            _class=" bx--tabs" + ("bx--tabs--container" if container else ""),
         )
         tabpanel_attributes["_class"] += " bx--tab-content"
         self.tabpanels = hg.DIV(**tabpanel_attributes)
