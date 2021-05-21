@@ -1,3 +1,5 @@
+import collections
+
 import htmlgenerator as hg
 
 
@@ -35,7 +37,15 @@ class TabPanel(hg.DIV):
 
 
 class Tabs(hg.DIV):
-    def __init__(self, *tabs, container=False, **attributes):
+    def __init__(
+        self,
+        *tabs,
+        container=False,
+        tabpanel_attributes=None,
+        **attributes,
+    ):
+        tabpanel_attributes = collections.defaultdict(str, tabpanel_attributes or {})
+
         self.tablabels = hg.UL(_class="bx--tabs__nav bx--tabs__nav--hidden")
         self.labelcontainer = hg.DIV(
             hg.DIV(
@@ -52,7 +62,8 @@ class Tabs(hg.DIV):
             data_tabs=True,
             _class="bx--tabs" + (" bx--tabs--container" if container else ""),
         )
-        self.tabpanels = hg.DIV(_class="bx--tab-content")
+        tabpanel_attributes["_class"] += " bx--tab-content"
+        self.tabpanels = hg.DIV(**tabpanel_attributes)
 
         tabid_template = f"tab-{hg.html_id(self)}-label-%s"
         panelid_template = f"tab-{hg.html_id(self)}-panel-%s"
