@@ -6,7 +6,10 @@ document.addEventListener(
 );
 
 function updateMultiselect(e) {
-    $('.bx--list-box__selection', e).firstChild.textContent = $$('fieldset input[type=checkbox][checked]', e).length;
+    let elem = $('.bx--list-box__selection', e);
+    if (elem) {
+        elem.firstChild.textContent = $$('fieldset input[type=checkbox][checked]', e).length;
+    }
 }
 
 function filterOptions(e) {
@@ -112,15 +115,16 @@ function update_add_button(form_prefix) {
 }
 
 function formset_add(form_prefix, list_container) {
+    let container_elem = $(list_container);
     var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
     var newElementStr = $('#empty_' + form_prefix + '_form').innerHTML.replace(/__prefix__/g, formcount.value)
     var newElements = new DOMParser().parseFromString(newElementStr, "text/html").getElementsByTagName("body")[0].children;
     for(let element of newElements) {
-        $(list_container).appendChild(element);
+        container_elem.appendChild(element);
     }
     formcount.value = parseInt(formcount.value) + 1;
     update_add_button(form_prefix);
-    updateMultiselect(list_container);
+    updateMultiselect(container_elem);
 }
 
 function validate_fields() {
