@@ -89,6 +89,7 @@ class DataTable(hg.BaseElement):
         spacing="default",
         orderingurlparameter="ordering",
         zebra=False,
+        is_inlineformset=False,
     ):
         """columns: list of DataTableColumn(header, cell, sortingname, enable_row_click)
         row_iterator: python iterator of htmlgenerator.Lazy object which returns an iterator
@@ -97,6 +98,7 @@ class DataTable(hg.BaseElement):
         sortingname: value for the URL parameter 'orderingurlparameter', None if sorting is not allowed
         spacing: one of "default", "compact", "short", "tall"
         zebra: alternate row colors
+        is_inlineformset: indicates that row_iterator is the name of model form field and not hg.Iterator but .form.FieldsetField will be used for iteration
         """
         if spacing not in DataTable.SPACINGS:
             raise ValueError(
@@ -133,16 +135,21 @@ class DataTable(hg.BaseElement):
                 hg.TH(headcontent, **getattr(col.header, "td_attributes", {}))
             )
 
-        self.iterator = hg.Iterator(
-            row_iterator,
-            rowvariable,
-            hg.TR(
-                *[
-                    hg.TD(col.cell, **getattr(col.cell, "td_attributes", {}))
-                    for col in columns
-                ]
-            ),
+        row_template = hg.TR(
+            *[
+                hg.TD(col.cell, **getattr(col.cell, "td_attributes", {}))
+                for col in columns
+            ]
         )
+
+        # combining Formsets with datatables needs to handle iteratons differently
+        if is_inlineformset:
+            # need local import here to prevent circular import
+            from .form import FormsetField
+
+            self.iterator = FormsetField(row_iterator, row_template)
+        else:
+            self.iterator = hg.Iterator(row_iterator, rowvariable, row_template)
         super().__init__(
             hg.TABLE(
                 hg.THEAD(self.head),

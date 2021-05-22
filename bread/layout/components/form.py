@@ -4,6 +4,7 @@ from django.utils.html import mark_safe
 from django.utils.translation import gettext as _
 
 from .button import Button
+from .datatable import DataTable, DataTableColumn
 from .email_input import EmailInput
 from .notification import InlineNotification
 from .phone_number_input import PhoneNumberInput
@@ -152,6 +153,12 @@ class FormsetField(FormChild, hg.BaseElement):
         for field in internal_fields:
             self.append(FormField(field))
 
+        empty_template = hg.DIV(
+            Form(formset.empty_form, *self, standalone=False),
+            id=f"empty_{ formset.prefix }_form",
+            _class="template-form",
+            style="display:none;",
+        )
         skeleton = hg.DIV(
             Form.from_django_form(formset.management_form, standalone=False),
             self.containertag(
@@ -162,12 +169,7 @@ class FormsetField(FormChild, hg.BaseElement):
                 ),
                 id=f"formset_{formset.prefix}_container",
             ),
-            hg.DIV(
-                Form(formset.empty_form, *self, standalone=False),
-                id=f"empty_{ formset.prefix }_form",
-                _class="template-form",
-                style="display:none;",
-            ),
+            empty_template,
             hg.SCRIPT(
                 mark_safe(
                     f"""document.addEventListener("DOMContentLoaded", e => init_formset("{ formset.prefix }"));"""
@@ -178,6 +180,39 @@ class FormsetField(FormChild, hg.BaseElement):
 
     def __repr__(self):
         return f"Formset({self.fieldname}, {self.formsetfactory_kwargs})"
+
+    @staticmethod
+    def as_datatable(
+        fieldname, inlinefieldnames, can_delete=True, formname="form", title=None
+    ):
+        """
+        :param str fieldname: The fieldname which should be used for an formset, in general a n-to-many field
+        :param list inlinefieldnames: A list of strings or objects. Strings are converted to DataTableColumn, objects are passed on as they are
+        :return: A datatable with inline-editing capabilities
+        :rtype: hg.HTMLElement
+        """
+
+        columns = []
+        for f in inlinefieldnames:
+            if isinstance(f, str):
+                f = DataTableColumn(
+                    hg.C(f"{formname}.{fieldname}.formset.form.base_fields.{f}.label"),
+                    FormField(f, hidelabel=True),
+                )
+            columns.append(f)
+        if can_delete:
+            columns.append(
+                DataTableColumn("", InlineDeleteButton(parentcontainerselector="tr"))
+            )
+
+        return DataTable(
+            row_iterator=fieldname,
+            columns=columns,
+            is_inlineformset=True,
+        ).with_toolbar(
+            title=title or hg.C(f"{formname}.{fieldname}.label"),
+            primary_button=FormsetAddButton(fieldname),
+        )
 
 
 class FormsetAddButton(FormChild, Button):
