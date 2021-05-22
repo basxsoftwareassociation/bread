@@ -143,6 +143,8 @@ class FormsetField(FormChild, hg.BaseElement):
             f.fieldname
             for f in self.filter(lambda e, ancestors: isinstance(e, FormField))
         ]
+
+        # internal fields are required to make the form play nicely (read: correctly) with Django
         internal_fields = [
             field
             for field in formset.empty_form.fields
@@ -153,14 +155,10 @@ class FormsetField(FormChild, hg.BaseElement):
         for field in internal_fields:
             self.append(FormField(field))
 
-        empty_template = hg.DIV(
-            Form(formset.empty_form, *self, standalone=False),
-            id=f"empty_{ formset.prefix }_form",
-            _class="template-form",
-            style="display:none;",
-        )
-        skeleton = hg.DIV(
+        yield from hg.BaseElement(
+            # management forms, for housekeeping of inline forms
             Form.from_django_form(formset.management_form, standalone=False),
+            # the existing entries and maybe empty forms
             self.containertag(
                 hg.Iterator(
                     formset,
@@ -169,25 +167,38 @@ class FormsetField(FormChild, hg.BaseElement):
                 ),
                 id=f"formset_{formset.prefix}_container",
             ),
-            empty_template,
+            # empty form as template for new entries, the script works very well for this
+            # since we a single need raw, unescaped HTML string
+            hg.SCRIPT(
+                mark_safe(
+                    hg.render(Form(formset.empty_form, *self, standalone=False), {})
+                ),
+                id=f"empty_{ formset.prefix }_form",
+                type="text/plain",
+            ),
             hg.SCRIPT(
                 mark_safe(
                     f"""document.addEventListener("DOMContentLoaded", e => init_formset("{ formset.prefix }"));"""
                 )
             ),
-        )
-        yield from skeleton.render(context)
+        ).render(context)
 
     def __repr__(self):
         return f"Formset({self.fieldname}, {self.formsetfactory_kwargs})"
 
     @staticmethod
     def as_datatable(
-        fieldname, inlinefieldnames, can_delete=True, formname="form", title=None
+        fieldname,
+        inlinefieldnames,
+        formname="form",
+        title=None,
+        **formsetfactory_kwargs,
     ):
         """
         :param str fieldname: The fieldname which should be used for an formset, in general a n-to-many field
         :param list inlinefieldnames: A list of strings or objects. Strings are converted to DataTableColumn, objects are passed on as they are
+        :param str formname: Name of the surounding django-form object in the context
+        :param str title: Datatable title, automatically generated from form if None
         :return: A datatable with inline-editing capabilities
         :rtype: hg.HTMLElement
         """
@@ -200,18 +211,26 @@ class FormsetField(FormChild, hg.BaseElement):
                     FormField(f, hidelabel=True),
                 )
             columns.append(f)
-        if can_delete:
-            columns.append(
-                DataTableColumn("", InlineDeleteButton(parentcontainerselector="tr"))
+        columns.append(
+            DataTableColumn(
+                "",
+                hg.If(
+                    hg.C(f"{formname}.{fieldname}.formset.can_delete"),
+                    InlineDeleteButton(parentcontainerselector="tr"),
+                ),
             )
+        )
 
-        return DataTable(
+        ret = DataTable(
             row_iterator=fieldname,
             columns=columns,
             is_inlineformset=True,
-        ).with_toolbar(
+        )
+        # iterator is FormsetField, we want to pass the some args
+        ret.iterator.formsetfactory_kwargs = formsetfactory_kwargs
+        return ret.with_toolbar(
             title=title or hg.C(f"{formname}.{fieldname}.label"),
-            primary_button=FormsetAddButton(fieldname),
+            primary_button=FormsetAddButton(fieldname, buttontype="primary"),
         )
 
 

@@ -143,17 +143,22 @@ class DataTable(hg.BaseElement):
         )
 
         # combining Formsets with datatables needs to handle iteratons differently
+        # the formsetfield needs to control the container in order to attach new entires
         if is_inlineformset:
             # need local import here to prevent circular import
             from .form import FormsetField
 
-            self.iterator = FormsetField(row_iterator, row_template)
+            self.iterator = FormsetField(
+                row_iterator, row_template, containertag=hg.TBODY
+            )
+            body = self.iterator
         else:
             self.iterator = hg.Iterator(row_iterator, rowvariable, row_template)
+            body = hg.TBODY(self.iterator)
         super().__init__(
             hg.TABLE(
                 hg.THEAD(self.head),
-                hg.TBODY(self.iterator),
+                body,
                 _class=" ".join(classes),
             )
         )
