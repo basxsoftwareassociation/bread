@@ -142,8 +142,8 @@ class DataTable(hg.BaseElement):
             ]
         )
 
-        # combining Formsets with datatables needs to handle iteratons differently
-        # the formsetfield needs to control the container in order to attach new entires
+        # combining Formsets with Datatables needs to handle iterations differently,
+        # the formsetfield needs to control the container in order to attach new entries/rows
         if is_inlineformset:
             # need local import here to prevent circular import
             from .form import FormsetField
