@@ -135,8 +135,8 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 )
         return qs
 
-    def export(self, *args, **kwargs):
-        columns = self.columns
+    def export(self, *args, columns=None, **kwargs):
+        columns = columns or self.columns
         if "__all__" in columns:
             columns = filter_fieldlist(self.model, columns)
         columndefinitions = {}
