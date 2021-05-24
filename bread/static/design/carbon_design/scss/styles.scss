@@ -145,7 +145,9 @@ fieldset[readonly=true] :disabled {
 }
 
 
-// build a zoned theme that is applied by using a namespace class
+// Sometimes we have elements inside a white box. In this case the elements should be displayed according to the white
+// theme (i.e. gray elements on white background).
+// Therefore we create a zoned theme that is applied by using a namespace class (theme-white).
 .theme-white {
     @include carbon--theme($carbon--theme--white) {
         @include button;
