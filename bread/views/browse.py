@@ -23,7 +23,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     template_name = "bread/base.html"
     orderingurlparameter = "ordering"
     itemsperpage_urlparameter = "itemsperpage"
-    objectids_urlparameter = "selected"  # see bread/static/js/main.js:submitbulkaction
+    objectids_urlparameter = "_selected"  # see bread/static/js/main.js:submitbulkaction and bread/layout/components/datatable.py
     pagination_choices = ()
     columns = ["__all__"]
     searchurl = None
@@ -73,6 +73,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             page_urlparameter=self.page_kwarg,
             paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
             itemsperpage_urlparameter=self.itemsperpage_urlparameter,
+            checkbox_for_bulkaction_name=self.objectids_urlparameter,
             settingspanel=self.get_settingspanel(),
         )
 

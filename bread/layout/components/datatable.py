@@ -175,6 +175,7 @@ class DataTable(hg.BaseElement):
         paginator=None,
         page_urlparameter="page",
         itemsperpage_urlparameter="itemsperpage",
+        checkbox_for_bulkaction_name="_selected",
         settingspanel=None,
     ):
         """
@@ -221,7 +222,7 @@ class DataTable(hg.BaseElement):
                         id=checkboxallid,
                         _class="bx--checkbox",
                         type="checkbox",
-                        name="selected",
+                        name=checkbox_for_bulkaction_name,
                         value="all",
                     ),
                     hg.LABEL(
@@ -377,6 +378,7 @@ class DataTable(hg.BaseElement):
         paginator=None,
         page_urlparameter="page",
         itemsperpage_urlparameter="itemsperpage",
+        checkbox_for_bulkaction_name="_selected",
         settingspanel=None,
         rowvariable="row",
         **kwargs,
@@ -463,6 +465,7 @@ class DataTable(hg.BaseElement):
                 query_urlparameter=query_urlparameter,
                 paginator=paginator,
                 itemsperpage_urlparameter=itemsperpage_urlparameter,
+                checkbox_for_bulkaction_name=checkbox_for_bulkaction_name,
                 settingspanel=settingspanel,
             )
         return table

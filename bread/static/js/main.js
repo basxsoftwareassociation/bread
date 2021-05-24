@@ -150,12 +150,24 @@ function submitbulkaction(table, actionurl, method="GET") {
     let form = document.createElement("form");
     form.method = method;
     form.action = actionurl;
+
+    // make sure query parameters of the URL are passed as well (necessary for filters)
+    let url = new URL(actionurl, new URL(document.baseURI).origin);
+    for (const [key, value] of url.searchParams) {
+        let input = document.createElement("input");
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
+    }
+
     for(let checkbox of table.querySelectorAll('input[type=checkbox][data-event=select]')) {
         form.appendChild(checkbox.cloneNode(true));
     }
+
     for(let checkbox of table.querySelectorAll('input[type=checkbox][data-event=select-all]')) {
         form.appendChild(checkbox.cloneNode(true));
     }
+
     document.body.appendChild(form);
     form.submit();
 }
