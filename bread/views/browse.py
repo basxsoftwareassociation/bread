@@ -142,14 +142,16 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         columndefinitions = {}
         for column in columns:
             if not (
-                (isinstance(column, tuple) and len(column) >= 2)
+                isinstance(column, _layout.datatable.DataTableColumn)
                 or isinstance(column, str)
             ):
                 raise ValueError(
-                    f"Argument 'columns' needs to be of a list with items of type str or tuple (head, cellvalue), but found {column}"
+                    f"Argument 'columns' needs to be of a list with items of type str or DataTableColumn, but found {column}"
                 )
             if isinstance(column, str):
-                column = (fieldlabel(self.model, column), hg.C(f"row.{column}"))
+                column = _layout.datatable.DataTableColumn(
+                    fieldlabel(self.model, column), hg.C(f"row.{column}")
+                )
             # allow to use lazy objects same as for BrowseView/DataTables
             if isinstance(column[1], hg.Lazy):
                 column = (
