@@ -156,6 +156,7 @@ function submitbulkaction(table, actionurl, method="GET") {
     for (const [key, value] of url.searchParams) {
         let input = document.createElement("input");
         input.name = key;
+        input.type = "hidden";
         input.value = value;
         form.appendChild(input);
     }

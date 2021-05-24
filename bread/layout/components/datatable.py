@@ -244,7 +244,7 @@ class DataTable(hg.BaseElement):
                         ),
                         _class="bx--checkbox",
                         type="checkbox",
-                        name="selected",
+                        name=checkbox_for_bulkaction_name,
                         value=hg.If(
                             hg.F(
                                 lambda c, e: hasattr(

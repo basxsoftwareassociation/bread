@@ -158,7 +158,10 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 )
 
             columndefinitions[column[0]] = column[1]
-        return generate_excel_view(self.get_queryset(), columndefinitions)(self.request)
+        return generate_excel_view(
+            self.get_queryset(),
+            columndefinitions,
+        )(self.request)
 
 
 def generate_excel_view(queryset, fields, filterstr=None):
@@ -184,10 +187,6 @@ def generate_excel_view(queryset, fields, filterstr=None):
         items = queryset
         if isinstance(filterstr, str):
             items = parsequeryexpression(model.objects.all(), filterstr)
-        if "selected" in request.GET and "all" not in request.GET.getlist("selected"):
-            items = items.filter(
-                pk__in=[int(i) for i in request.GET.getlist("selected")]
-            )
         items = list(items.all())
         workbook = generate_excel(items, fields)
         workbook.title = pretty_modelname(model)
