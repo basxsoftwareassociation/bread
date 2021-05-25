@@ -16,6 +16,8 @@ $carbon--theme: $carbon--theme--g10;
     // carbon-design system sets an insignificant transform for bx--content which breaks modals
     // removing the insignificant transform does not break anything
     transform: none;
+    overflow-x: hidden;
+
 }
 
 // get nicer prints
@@ -142,6 +144,30 @@ fieldset[readonly=true] :disabled {
 // the usual exclamation mark for invalid input should not be displayed to prevent overlap with the other icon
 .text-input-with-icon .bx--text-input__invalid-icon {
     display: none;
+}
+
+
+// full-width background banner exactly as seen in the Carbon Design tutorial for React
+@mixin full-width-white-background-mixin() {
+  background-color: white;
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    left: -$spacing-10;
+    top: 0;
+    right: -$spacing-09 - $spacing-03;
+    bottom: 0;
+    background: white;
+    z-index: -1;
+  }
+}
+
+// full-width background banner exactly as seen in the Carbon Design tutorial for React
+.full-width-white-background {
+    @include full-width-white-background-mixin;
+    transform: translateZ(0);
+    justify-content: flex-end;
 }
 
 
