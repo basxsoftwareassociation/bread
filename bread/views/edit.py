@@ -69,10 +69,10 @@ def generate_copyview(model, attrs=None, labelfield=None, copy_related_fields=()
         except Exception as e:
             messages.error(request, e)
             if request.GET.get("next"):
-                return urllib.parse.unquote(request.GET["next"])
-            return reverse_model(model, "browse")
+                return redirect(urllib.parse.unquote(request.GET["next"]))
+            return redirect(reverse_model(model, "browse"))
         if request.GET.get("next"):
-            return urllib.parse.unquote(request.GET["next"])
+            return redirect(urllib.parse.unquote(request.GET["next"]))
         messages.success(request, _("Created copy %s" % instance))
         return redirect(reverse(model_urlname(model, "read"), args=[clone.pk]))
 
