@@ -20,6 +20,12 @@ $carbon--theme: $carbon--theme--g10;
 
 }
 
+.bx--side-nav {
+    // this border is not in the vanilla CSS of the carbon design, but it seems to be rather standard since
+    // even the carbon design website has it.
+    border-right: 1px solid #e0e0e0;
+}
+
 // get nicer prints
 @media print
 {
