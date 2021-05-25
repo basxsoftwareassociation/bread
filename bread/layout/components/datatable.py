@@ -98,7 +98,7 @@ class DataTable(hg.BaseElement):
         sortingname: value for the URL parameter 'orderingurlparameter', None if sorting is not allowed
         spacing: one of "default", "compact", "short", "tall"
         zebra: alternate row colors
-        is_inlineformset: indicates that row_iterator is the name of model form field and not hg.Iterator but .form.FieldsetField will be used for iteration
+        is_inlineformset: indicates that row_iterator is the name of model form field and not hg.Iterator but .form.FormsetField will be used for iteration
         """
         if spacing not in DataTable.SPACINGS:
             raise ValueError(
