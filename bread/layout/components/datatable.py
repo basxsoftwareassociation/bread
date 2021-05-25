@@ -392,9 +392,17 @@ class DataTable(hg.BaseElement):
 
         title = title or pretty_modelname(model, plural=True)
 
-        backquery = {"next": backurl} if backurl else {}
         if addurl is None:
-            addurl = reverse_model(model, "add", query=backquery)
+            addurl = hg.F(
+                lambda c, e: reverse_model(
+                    model,
+                    "add",
+                    query={
+                        "next": hg.resolve_lazy(backurl, c, e)
+                        or c["request"].get_full_path()
+                    },
+                )
+            )
 
         if rowactions_dropdown:
             objectactions_menu = OverflowMenu(
@@ -433,7 +441,12 @@ class DataTable(hg.BaseElement):
                 col.cell.td_attributes = aslink_attributes(
                     hg.F(
                         lambda c, e: objectaction(
-                            c[rowvariable], rowclickaction, query=backquery
+                            c[rowvariable],
+                            rowclickaction,
+                            query={
+                                "next": hg.resolve_lazy(backurl, c, e)
+                                or c["request"].get_full_path()
+                            },
                         )
                     )
                 )
@@ -456,7 +469,7 @@ class DataTable(hg.BaseElement):
                 primary_button=Button(
                     _("Add %s") % pretty_modelname(model),
                     icon=Icon("add", size=20),
-                    onclick=f"document.location = '{addurl}'",
+                    onclick=hg.BaseElement("document.location = '", addurl, "'"),
                 ),
                 searchurl=searchurl,
                 bulkactions=bulkactions,
