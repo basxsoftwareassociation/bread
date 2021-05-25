@@ -226,7 +226,7 @@ class FormsetField(FormChild, hg.BaseElement):
             columns=columns,
             is_inlineformset=True,
         )
-        # iterator is FormsetField, we want to pass the some args
+        # iterator is FormsetField, we want to pass the same args
         ret.iterator.formsetfactory_kwargs = formsetfactory_kwargs
         return ret.with_toolbar(
             title=title or hg.C(f"{formname}.{fieldname}.label"),
