@@ -26,6 +26,12 @@ $carbon--theme: $carbon--theme--g10;
     border-right: 1px solid #e0e0e0;
 }
 
+.bx--header {
+    // this border is not in the vanilla CSS of the carbon design, but it seems to be rather standard since
+    // even the carbon design website has it.
+    border-bottom: 1px solid #393939;
+}
+
 // get nicer prints
 @media print
 {
