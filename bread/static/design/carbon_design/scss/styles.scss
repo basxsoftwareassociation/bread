@@ -16,8 +16,8 @@ $carbon--theme: $carbon--theme--g10;
     // carbon-design system sets an insignificant transform for bx--content which breaks modals
     // removing the insignificant transform does not break anything
     transform: none;
+    // needed because the full-width-white-background sometimes overlaps the page horizontally
     overflow-x: hidden;
-
 }
 
 .bx--side-nav {
