@@ -191,6 +191,7 @@ fieldset[readonly=true] :disabled {
         @include text-area;
         @include content-switcher;
         @include data-table-core;
+        @include data-table-v2-action;
         @include form;
 
         // Makes background gray. This is how according to carbon it should look in the white theme.
