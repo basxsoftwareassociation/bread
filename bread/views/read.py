@@ -49,9 +49,11 @@ def layoutasreadonly(layout):
         and (
             isinstance(
                 element,
-                (_layout.form.InlineDeleteButton, _layout.form.FormsetAddButton),
+                hg.BUTTON,
             )
             or getattr(element, "attributes", {}).get("type") == "submit"
         )
     )
+    for form in layout.filter(lambda element, ancestors: isinstance(element, hg.FORM)):
+        form.attributes["onsubmit"] = "return false;"
     return layout

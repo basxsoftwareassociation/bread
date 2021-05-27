@@ -251,10 +251,12 @@ def _get_form_fields_from_layout(layout):
     INTERNAL_FIELDS = [DELETION_FIELD_NAME, ORDERING_FIELD_NAME]
 
     def walk(element):
-        if isinstance(
-            element, _layout.form.FormsetField
-        ):  # do not descend into formsets
+        # do not descend into formsets, they need to be gathered separately
+        if isinstance(element, _layout.form.FormsetField):
             yield element
+            return
+        # do not descend into script tags because we keep formset-empty form templates there
+        if isinstance(element, hg.SCRIPT):
             return
         if (
             isinstance(element, _layout.form.FormField)

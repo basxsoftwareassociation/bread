@@ -1,4 +1,4 @@
-from typing import Any, List, NamedTuple, Optional, Union
+from typing import Any, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.db import models
@@ -14,49 +14,6 @@ from .icon import Icon
 from .overflow_menu import OverflowMenu
 from .pagination import Pagination
 from .search import Search
-
-
-def sortingclass_for_column(orderingurlparameter, columnname):
-    def extracturlparameter(context, element):
-        value = context["request"].GET.get(orderingurlparameter, "")
-        if not value:
-            return ""
-        if value == columnname:
-            return "bx--table-sort--active"
-        if value == "-" + columnname:
-            return "bx--table-sort--active bx--table-sort--ascending"
-        return ""
-
-    return hg.F(extracturlparameter)
-
-
-def sortingname_for_column(model, column):
-    components = []
-    for field in resolve_modellookup(model, column):
-        if hasattr(field, "sorting_name"):
-            components.append(field.sorting_name)
-        elif isinstance(field, models.Field):
-            components.append(field.name)
-        else:
-            return None
-    return "__".join(components)
-
-
-def sortinglink_for_column(orderingurlparameter, columnname):
-    ORDERING_VALUES = {
-        None: columnname,
-        columnname: "-" + columnname,
-        "-" + columnname: None,
-    }
-
-    def extractsortinglink(context, element):
-        currentordering = context["request"].GET.get(orderingurlparameter, None)
-        nextordering = ORDERING_VALUES.get(currentordering, columnname)
-        return link_with_urlparameters(
-            context["request"], **{orderingurlparameter: nextordering}
-        )
-
-    return aslink_attributes(hg.F(extractsortinglink))
 
 
 class DataTableColumn(NamedTuple):
@@ -77,79 +34,63 @@ class DataTableColumn(NamedTuple):
             else None,
         )
 
+    def as_header_cell(self, orderingurlparameter="ordering"):
+        headcontent = hg.SPAN(self.header, _class="bx--table-header-label")
+        if self.sortingname:
+            headcontent = hg.BUTTON(
+                headcontent,
+                Icon("arrow--down", _class="bx--table-sort__icon", size=16),
+                Icon(
+                    "arrows--vertical",
+                    _class="bx--table-sort__icon-unsorted",
+                    size=16,
+                ),
+                _class=hg.BaseElement(
+                    "bx--table-sort ",
+                    sortingclass_for_column(orderingurlparameter, self.sortingname),
+                ),
+                data_event="sort",
+                title=self.header,
+                **sortinglink_for_column(orderingurlparameter, self.sortingname),
+            )
+        return hg.TH(headcontent, **getattr(self.header, "td_attributes", {}))
 
-class DataTable(hg.BaseElement):
+
+class DataTable(hg.TABLE):
     SPACINGS = ["default", "compact", "short", "tall"]
 
     def __init__(
         self,
         columns: List[DataTableColumn],
-        row_iterator,
-        rowvariable="row",
-        spacing="default",
-        orderingurlparameter="ordering",
-        zebra=False,
+        row_iterator: Union[hg.Lazy, Iterable, hg.Iterator],
+        orderingurlparameter: str = "ordering",
+        rowvariable: str = "row",
+        spacing: str = "default",
+        zebra: bool = False,
+        **kwargs: dict,
     ):
-        """columns: list of DataTableColumn(header, cell, sortingname, enable_row_click)
-        row_iterator: python iterator of htmlgenerator.Lazy object which returns an iterator
-        rowvariable: name of the current object passed to childrens context
-        if the header_expression/row_expression has an attribute td_attributes it will be used as attributes for the TH/TD elements (necessary because sometimes the content requires additional classes on the parent element)
-        sortingname: value for the URL parameter 'orderingurlparameter', None if sorting is not allowed
-        spacing: one of "default", "compact", "short", "tall"
-        zebra: alternate row colors
+        """A carbon DataTable element
+
+        :param columns: Column definitions
+        :param row_iterator: Iterator which yields row objects. If this is a hg.Iterator instance it will be used for the table body, otherwise a default Iterator will be used to render the column cells.
+        :param rowvariable: Name of the current object passed to childrens context
+        :param orderingurlparameter: The name of the GET query parameter which is used to set the table ordering
+        :param spacing: One of "default", "compact", "short", "tall", according to the carbon styles
+        :parma zebra: If True alternate row colors
+        :parma kwargs: HTML element attributes
         """
-        if spacing not in DataTable.SPACINGS:
-            raise ValueError(
-                f"argument 'spacin' is {spacing} but needs to be one of {DataTable.SPACINGS}"
+
+        self.head = DataTable.headrow(columns, orderingurlparameter)
+        if isinstance(row_iterator, hg.Iterator):
+            self.iterator = row_iterator
+        else:
+            self.iterator = hg.Iterator(
+                row_iterator, rowvariable, DataTable.row(columns)
             )
-        classes = ["bx--data-table bx--data-table--sort"]
-        if spacing != "default":
-            classes.append(f" bx--data-table--{spacing}")
-        if zebra:
-            classes.append(" bx--data-table--zebra")
-
-        self.head = hg.TR()
-        for col in columns:
-            headcontent = hg.SPAN(col.header, _class="bx--table-header-label")
-            if col.sortingname:
-                headcontent = hg.BUTTON(
-                    headcontent,
-                    Icon("arrow--down", _class="bx--table-sort__icon", size=16),
-                    Icon(
-                        "arrows--vertical",
-                        _class="bx--table-sort__icon-unsorted",
-                        size=16,
-                    ),
-                    _class=hg.BaseElement(
-                        "bx--table-sort ",
-                        sortingclass_for_column(orderingurlparameter, col.sortingname),
-                    ),
-                    data_event="sort",
-                    title=col.header,
-                    **sortinglink_for_column(orderingurlparameter, col.sortingname),
-                )
-
-            self.head.append(
-                hg.TH(headcontent, **getattr(col.header, "td_attributes", {}))
-            )
-
-        self.iterator = hg.Iterator(
-            row_iterator,
-            rowvariable,
-            hg.TR(
-                *[
-                    hg.TD(col.cell, **getattr(col.cell, "td_attributes", {}))
-                    for col in columns
-                ]
-            ),
+        kwargs["_class"] = kwargs.get("_class", "") + " ".join(
+            DataTable.tableclasses(spacing, zebra)
         )
-        super().__init__(
-            hg.TABLE(
-                hg.THEAD(self.head),
-                hg.TBODY(self.iterator),
-                _class=" ".join(classes),
-            )
-        )
+        super().__init__(hg.THEAD(self.head), hg.TBODY(self.iterator), **kwargs)
 
     def with_toolbar(
         self,
@@ -466,3 +407,76 @@ class DataTable(hg.BaseElement):
             queryset=queryset,
             **kwargs,
         )
+
+    # A few helper classes to make the composition in the __init__ method easier
+
+    @staticmethod
+    def headrow(columns, orderingurlparameter):
+        """Returns the head-row element based on the specified columns"""
+        return hg.TR(*[c.as_header_cell(orderingurlparameter) for c in columns])
+
+    @staticmethod
+    def row(columns):
+        """Returns a row element based on the specified columns"""
+        return hg.TR(
+            *[
+                hg.TD(col.cell, **getattr(col.cell, "td_attributes", {}))
+                for col in columns
+            ]
+        )
+
+    @staticmethod
+    def tableclasses(spacing, zebra):
+        if spacing not in DataTable.SPACINGS:
+            raise ValueError(
+                f"argument 'spacin' is {spacing} but needs to be one of {DataTable.SPACINGS}"
+            )
+        classes = ["bx--data-table bx--data-table--sort"]
+        if spacing != "default":
+            classes.append(f" bx--data-table--{spacing}")
+        if zebra:
+            classes.append(" bx--data-table--zebra")
+        return classes
+
+
+def sortingclass_for_column(orderingurlparameter, columnname):
+    def extracturlparameter(context, element):
+        value = context["request"].GET.get(orderingurlparameter, "")
+        if not value:
+            return ""
+        if value == columnname:
+            return "bx--table-sort--active"
+        if value == "-" + columnname:
+            return "bx--table-sort--active bx--table-sort--ascending"
+        return ""
+
+    return hg.F(extracturlparameter)
+
+
+def sortingname_for_column(model, column):
+    components = []
+    for field in resolve_modellookup(model, column):
+        if hasattr(field, "sorting_name"):
+            components.append(field.sorting_name)
+        elif isinstance(field, models.Field):
+            components.append(field.name)
+        else:
+            return None
+    return "__".join(components)
+
+
+def sortinglink_for_column(orderingurlparameter, columnname):
+    ORDERING_VALUES = {
+        None: columnname,
+        columnname: "-" + columnname,
+        "-" + columnname: None,
+    }
+
+    def extractsortinglink(context, element):
+        currentordering = context["request"].GET.get(orderingurlparameter, None)
+        nextordering = ORDERING_VALUES.get(currentordering, columnname)
+        return link_with_urlparameters(
+            context["request"], **{orderingurlparameter: nextordering}
+        )
+
+    return aslink_attributes(hg.F(extractsortinglink))

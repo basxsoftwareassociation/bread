@@ -4,6 +4,7 @@ from django.utils.html import mark_safe
 from django.utils.translation import gettext as _
 
 from .button import Button
+from .datatable import DataTable, DataTableColumn
 from .email_input import EmailInput
 from .notification import InlineNotification
 from .phone_number_input import PhoneNumberInput
@@ -50,6 +51,7 @@ class Form(hg.FORM):
             and standalone is True
         ):
             children = (CsrfToken(),) + children
+
         super().__init__(*children, **defaults)
 
     def formfieldelements(self):
@@ -94,17 +96,20 @@ class FormField(FormChild, hg.BaseElement):
         hidelabel=False,
         elementattributes=None,
         widgetattributes=None,
+        formname="form",
     ):
         self.fieldname = fieldname
         self.fieldtype = fieldtype
         self.widgetattributes = widgetattributes or {}
         self.elementattributes = elementattributes or {}
-        self.form = None  # will be set by the render method of the parent method
         self.hidelabel = hidelabel
+        self.form = None  # will be set by the render method of the parent method
+        self.formname = formname  # in the future we should only depend on the formname to extract the form from the context
 
     def render(self, context):
+        form = self.form or hg.resolve_lazy(context[self.formname], context, self)
         element = _mapwidget(
-            self.form[self.fieldname],
+            form[self.fieldname],
             self.fieldtype,
             self.elementattributes,
             self.widgetattributes,
@@ -115,89 +120,187 @@ class FormField(FormChild, hg.BaseElement):
             )
         return element.render(context)
 
-    def __repr__(self):
-        return f"FormField({self.fieldname})"
 
-
-class FormsetField(FormChild, hg.BaseElement):
+class FormsetField(hg.Iterator):
     def __init__(
         self,
         fieldname,
-        *children,
-        containertag=hg.DIV,
+        content,
+        formname="form",
         formsetinitial=None,
         **formsetfactory_kwargs,
     ):
-        super().__init__(*children)
         self.fieldname = fieldname
-        self.formsetfactory_kwargs = formsetfactory_kwargs
-        self.formsetinitial = formsetinitial
-        self.containertag = containertag
+        self.formname = formname
+        self.formsetfactory_kwargs = formsetfactory_kwargs  # used in bread.forms.forms._generate_formset_class, maybe refactor this?
+        self.formsetinitial = formsetinitial  # used in bread.forms.forms._generate_formset_class, maybe refactor this?
+        self.content = content
 
-    def render(self, context):
-        formset = self.form[self.fieldname].formset
-        # Detect internal fields like the delete-checkbox, the order-widget, id fields, etc and add their
-        # HTML representations. But we never show the "delete" checkbox, it should be manually added via InlineDeleteButton
-        declared_fields = [
+        # search fields which have explicitly been defined in the content element
+        declared_fields = set(
             f.fieldname
-            for f in self.filter(lambda e, ancestors: isinstance(e, FormField))
-        ]
-        internal_fields = [
-            field
-            for field in formset.empty_form.fields
-            if field not in declared_fields
-            and field != forms.formsets.DELETION_FIELD_NAME
-        ]
+            for f in self.content.filter(lambda e, ancestors: isinstance(e, FormField))
+        )
 
-        for field in internal_fields:
-            self.append(FormField(field))
+        # append all additional fields of the form which are not rendered explicitly
+        # These should be internal, hidden fields (can we test this somehow?)
+        self.content.append(
+            hg.F(
+                lambda c, e: hg.BaseElement(
+                    *[
+                        FormField(field, formname="formset_form")
+                        for field in c[self.formname][
+                            self.fieldname
+                        ].formset.empty_form.fields
+                        if field not in declared_fields
+                        and field != forms.formsets.DELETION_FIELD_NAME
+                    ]
+                )
+            )
+        )
 
-        skeleton = hg.DIV(
-            Form.from_django_form(formset.management_form, standalone=False),
-            self.containertag(
-                hg.Iterator(
-                    formset,
-                    loopvariable="formset_form",
-                    content=Form(hg.C("formset_form"), *self, standalone=False),
-                ),
-                id=f"formset_{formset.prefix}_container",
+        super().__init__(
+            iterator=hg.C(f"{self.formname}.{self.fieldname}.formset"),
+            loopvariable="formset_form",
+            content=Form(hg.C("formset_form"), self.content, standalone=False),
+        )
+
+    @property
+    def management_form(self):
+        # the management form is required for Django formsets
+        return hg.BaseElement(
+            # management forms, for housekeeping of inline forms
+            hg.F(
+                lambda c, e: Form.from_django_form(
+                    c[self.formname][self.fieldname].formset.management_form,
+                    standalone=False,
+                )
             ),
-            hg.DIV(
-                Form(formset.empty_form, *self, standalone=False),
-                id=f"empty_{ formset.prefix }_form",
-                _class="template-form",
-                style="display:none;",
+            # Empty form as template for new entries. The script tag works very well
+            # for this since we need a single, raw, unescaped HTML string
+            hg.SCRIPT(
+                Form(
+                    hg.C(f"{self.formname}.{self.fieldname}.formset.empty_form"),
+                    hg.WithContext(
+                        self.content,
+                        formset_form=hg.C(
+                            f"{self.formname}.{self.fieldname}.formset.empty_form"
+                        ),
+                    ),
+                    standalone=False,
+                ),
+                id=hg.BaseElement(
+                    "empty_",
+                    hg.C(f"{self.formname}.{self.fieldname}.formset.prefix"),
+                    "_form",
+                ),
+                type="text/plain",
             ),
             hg.SCRIPT(
                 mark_safe(
-                    f"""document.addEventListener("DOMContentLoaded", e => init_formset("{ formset.prefix }"));"""
-                )
+                    "document.addEventListener('DOMContentLoaded', e => init_formset('"
+                ),
+                hg.C(f"{self.formname}.{self.fieldname}.formset.prefix"),
+                mark_safe("'));"),
             ),
         )
-        yield from skeleton.render(context)
 
-    def __repr__(self):
-        return f"Formset({self.fieldname}, {self.formsetfactory_kwargs})"
-
-
-class FormsetAddButton(FormChild, Button):
-    def __init__(self, fieldname, label=_("Add"), **kwargs):
+    def add_button(self, container_css_selector, label=_("Add"), **kwargs):
+        prefix = hg.C(f"{self.formname}.{self.fieldname}.formset.prefix")
         defaults = {
             "icon": "add",
             "notext": True,
             "buttontype": "tertiary",
+            "id": hg.BaseElement(
+                "add_", prefix, "_button"
+            ),  # required for javascript to work correctly
+            "onclick": hg.BaseElement(
+                "formset_add('",
+                prefix,
+                "', '",
+                container_css_selector,
+                "');",
+            ),
         }
-        defaults.update(kwargs)
-        self.fieldname = fieldname
-        super().__init__(label, **defaults)
+        return Button(label, **{**defaults, **kwargs})
 
-    def render(self, context):
-        formset = self.form[self.fieldname].formset
-        self.attributes["id"] = f"add_{formset.prefix}_button"
-        self.attributes[
-            "onclick"
-        ] = f"formset_add('{ formset.prefix }', '#formset_{ formset.prefix }_container');"
-        return super().render(context)
+    @staticmethod
+    def as_plain(*args, add_label=_("Add"), **kwargs):
+        """Shortcut to render a complete formset with add-button"""
+        formset = FormsetField(*args, **kwargs)
+        id = hg.html_id(formset, prefix="formset-")
+        return hg.BaseElement(
+            hg.DIV(formset, id=id),
+            formset.management_form,
+            formset.add_button(
+                buttontype="ghost",
+                notext=False,
+                label=add_label,
+                container_css_selector=f"#{id}",
+            ),
+        )
+
+    @staticmethod
+    def as_datatable(
+        fieldname,
+        fields,
+        title=None,
+        formname="form",
+        formsetfield_kwargs=None,
+        **kwargs,
+    ):
+        """
+        :param str fieldname: The fieldname which should be used for an formset, in general a n-to-many field
+        :param list fields: A list of strings or objects. Strings are converted to DataTableColumn, objects are passed on as they are
+        :param str title: Datatable title, automatically generated from form if None
+        :param str formname: Name of the surounding django-form object in the context
+        :param dict formsetfield_kwargs: Arguments to be passed to the FormSetField constructor
+        :param dict kwargs: Arguments to be passed to the DataTable constructor
+        :return: A datatable with inline-editing capabilities
+        :rtype: hg.HTMLElement
+        """
+
+        columns = []
+        for f in fields:
+            if isinstance(f, str):
+                f = DataTableColumn(
+                    hg.C(f"{formname}.{fieldname}.formset.form.base_fields.{f}.label"),
+                    FormField(f, hidelabel=True),
+                )
+            columns.append(f)
+        columns.append(
+            DataTableColumn(
+                "",
+                hg.If(
+                    hg.C(f"{formname}.{fieldname}.formset.can_delete"),
+                    InlineDeleteButton(parentcontainerselector="tr"),
+                ),
+            )
+        )
+
+        formset = FormsetField(
+            fieldname,
+            DataTable.row(columns),
+            formname=formname,
+            **(formsetfield_kwargs or {}),
+        )
+        id = hg.html_id(formset, prefix="formset-")
+
+        return hg.BaseElement(
+            DataTable(
+                row_iterator=formset,
+                rowvariable="",
+                columns=columns,
+                id=id,
+                **kwargs,
+            ).with_toolbar(
+                title=title or hg.C(f"{formname}.{fieldname}.label"),
+                primary_button=formset.add_button(
+                    buttontype="primary", container_css_selector=f"#{id} tbody"
+                ),
+            ),
+            formset.management_form,
+        )
 
 
 class InlineDeleteButton(FormChild, Button):
