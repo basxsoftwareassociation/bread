@@ -130,6 +130,7 @@ class FormsetWidget(forms.Widget):
         self.formsetargs = formsetargs
         self.parent_instance = parent_instance
         self.needs_multipart_form = self.formsetclass().is_multipart()
+        self.template_name = "django/forms/widgets/text.html"  # we set this in order to prevent __str__ on the parent form to fail
 
     def value_from_datadict(self, data, files, name):
         return {
