@@ -16,6 +16,20 @@ $carbon--theme: $carbon--theme--g10;
     // carbon-design system sets an insignificant transform for bx--content which breaks modals
     // removing the insignificant transform does not break anything
     transform: none;
+    // needed because the full-width-white-background sometimes overlaps the page horizontally
+    overflow-x: hidden;
+}
+
+.bx--side-nav {
+    // this border is not in the vanilla CSS of the carbon design, but it seems to be rather standard since
+    // even the carbon design website has it.
+    border-right: 1px solid #e0e0e0;
+}
+
+.bx--header {
+    // this border is not in the vanilla CSS of the carbon design, but it seems to be rather standard since
+    // even the carbon design website has it.
+    border-bottom: 1px solid #393939;
 }
 
 // get nicer prints
@@ -145,6 +159,30 @@ fieldset[readonly=true] :disabled {
 }
 
 
+// full-width background banner exactly as seen in the Carbon Design tutorial for React
+@mixin full-width-white-background-mixin() {
+  background-color: white;
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    left: -$spacing-10;
+    top: 0;
+    right: -$spacing-10;
+    bottom: 0;
+    background: white;
+    z-index: -1;
+  }
+}
+
+// full-width background banner exactly as seen in the Carbon Design tutorial for React
+.full-width-white-background {
+    @include full-width-white-background-mixin;
+    transform: translateZ(0);
+    justify-content: flex-end;
+}
+
+
 // Sometimes we have elements inside a white box. In this case the elements should be displayed according to the white
 // theme (i.e. gray elements on white background).
 // Therefore we create a zoned theme that is applied by using a namespace class (theme-white).
@@ -159,6 +197,7 @@ fieldset[readonly=true] :disabled {
         @include text-area;
         @include content-switcher;
         @include data-table-core;
+        @include data-table-v2-action;
         @include form;
 
         // Makes background gray. This is how according to carbon it should look in the white theme.
