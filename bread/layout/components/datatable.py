@@ -72,12 +72,12 @@ class DataTable(hg.TABLE):
         """A carbon DataTable element
 
         :param columns: Column definitions
-        :param row_iterator: Iterator which yields row objects. If this is a hg.Iterator instance it will be used for the table body, otherwise a default Iterator will be used to render the column cells.
+        :param row_iterator: Iterator which yields row objects. If this is a hg.Iterator instance it will be used for the table body, otherwise a default Iterator will be used to render the column cells. This can also be htmlgenerator.Lazy object which returns a Python iterator when beeing evaluated.
         :param rowvariable: Name of the current object passed to childrens context
         :param orderingurlparameter: The name of the GET query parameter which is used to set the table ordering
         :param spacing: One of "default", "compact", "short", "tall", according to the carbon styles
-        :parma zebra: If True alternate row colors
-        :parma kwargs: HTML element attributes
+        :param zebra: If True alternate row colors
+        :param kwargs: HTML element attributes
         """
 
         self.head = DataTable.headrow(columns, orderingurlparameter)
