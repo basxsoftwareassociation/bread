@@ -13,6 +13,7 @@ class FileUploader(hg.DIV):
         fieldname,
         light=False,
         widgetattributes={},
+        boundfield=None,
         **attributes,
     ):
         self.fieldname = fieldname
@@ -21,6 +22,7 @@ class FileUploader(hg.DIV):
             widgetattributes.get("_class", "") + " bx--file-input bx--visually-hidden"
         )
         widgetattributes["type"] = "file"
+        self.boundfield = boundfield
 
         self.label = hg.STRONG(_class="bx--file--label")
         self.help_text = hg.P(_class="bx--label-description")

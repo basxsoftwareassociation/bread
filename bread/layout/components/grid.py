@@ -4,7 +4,7 @@ import htmlgenerator
 class Grid(htmlgenerator.DIV):
     MODES = ("narrow", "condensed", "full-width")
 
-    def __init__(self, *children, gridmode=None, gutter=True, **attributes):
+    def __init__(self, *children, gridmode="full-width", gutter=True, **attributes):
         attributes["_class"] = attributes.get("_class", "") + " bx--grid"
         if gridmode is not None:
             if gridmode not in Grid.MODES:

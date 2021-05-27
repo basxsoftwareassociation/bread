@@ -3,47 +3,33 @@ $feature-flags: (
 );
 
 // for changing the theme uncomment the following two lines
-// @import 'globals/scss/vendor/@carbon/themes/scss/generated/themes';
-// $carbon--theme: $carbon--theme--g10;
+@import 'globals/scss/vendor/@carbon/themes/scss/generated/themes';
+$carbon--theme: $carbon--theme--g10;
 @import 'globals/scss/styles';
 
 @import 'globals/scss/vendor/@carbon/type/scss/styles';
 @import 'choices';
 @import 'carbon-tokens';
 
-// do some custom coloring and spacing for our ui-shell
-html, body {
-    background-color: $ui-01;
-    height: 100%
-}
 
 .bx--content {
-    // do some custom coloring and spacing for our ui-shell
-    background-color: $ui-01;
-    padding: $spacing-05;
-    > div:nth-child(1) {
-        padding: $spacing-05;
-        background-color: $ui-background;
-    }
-    height: 100%;
     // carbon-design system sets an insignificant transform for bx--content which breaks modals
-    // removing the insignificang transform does not break anything
+    // removing the insignificant transform does not break anything
     transform: none;
+    // needed because the full-width-white-background sometimes overlaps the page horizontally
+    overflow-x: hidden;
 }
 
-// for creating some section borders
-.section-separator-top {
-    border-top: $ui-01 solid;
+.bx--side-nav {
+    // this border is not in the vanilla CSS of the carbon design, but it seems to be rather standard since
+    // even the carbon design website has it.
+    border-right: 1px solid #e0e0e0;
 }
-.section-separator-right {
-    border-right: $ui-01 solid;
-}
-.section-separator-left {
-    border-left: $ui-01 solid;
-}
-.section-separator-bottom {
-    border-bottom: $ui-01 solid;
-    margin-bottom: 2rem;
+
+.bx--header {
+    // this border is not in the vanilla CSS of the carbon design, but it seems to be rather standard since
+    // even the carbon design website has it.
+    border-bottom: 1px solid #393939;
 }
 
 // get nicer prints
@@ -130,7 +116,7 @@ td .bx--form-item {
 
 // prevent disabled fields form becoming unreadable
 fieldset[readonly=true] :disabled {
-    color: initial;
+    color: initial !important;
     cursor: auto !important;
 }
 
@@ -170,4 +156,60 @@ fieldset[readonly=true] :disabled {
 // the usual exclamation mark for invalid input should not be displayed to prevent overlap with the other icon
 .text-input-with-icon .bx--text-input__invalid-icon {
     display: none;
+}
+
+
+// full-width background banner exactly as seen in the Carbon Design tutorial for React
+@mixin full-width-white-background-mixin() {
+  background-color: white;
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    left: -$spacing-10;
+    top: 0;
+    right: -$spacing-10;
+    bottom: 0;
+    background: white;
+    z-index: -1;
+  }
+}
+
+// full-width background banner exactly as seen in the Carbon Design tutorial for React
+.full-width-white-background {
+    @include full-width-white-background-mixin;
+    transform: translateZ(0);
+    justify-content: flex-end;
+}
+
+
+// Sometimes we have elements inside a white box. In this case the elements should be displayed according to the white
+// theme (i.e. gray elements on white background).
+// Therefore we create a zoned theme that is applied by using a namespace class (theme-white).
+.theme-white {
+    @include carbon--theme($carbon--theme--white) {
+        @include button;
+        @include search;
+        @include select;
+        @include text-input;
+        @include multiselect;
+        @include tabs;
+        @include text-area;
+        @include content-switcher;
+        @include data-table-core;
+        @include data-table-v2-action;
+        @include form;
+
+        // Makes background gray. This is how according to carbon it should look in the white theme.
+        // TODO: Pascal Wiesmann: No idea why it doesn't do it automatically
+        .bx--text-area:disabled, .bx--text-area:hover:disabled{
+            background-color: $ui-01;
+        }
+
+        // Makes background gray. This is how according to carbon it should look in the white theme.
+        // TODO: Pascal Wiesmann: No idea why it doesn't do it automatically
+        .bx--select-input:disabled, .bx--select-input:hover:disabled{
+            background-color: $ui-01;
+        }
+    }
 }
