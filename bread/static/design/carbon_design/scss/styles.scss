@@ -199,6 +199,7 @@ fieldset[readonly=true] :disabled {
         @include data-table-core;
         @include data-table-v2-action;
         @include form;
+        @include date-picker;
 
         // Makes background gray. This is how according to carbon it should look in the white theme.
         // TODO: Pascal Wiesmann: No idea why it doesn't do it automatically
@@ -210,6 +211,31 @@ fieldset[readonly=true] :disabled {
         // TODO: Pascal Wiesmann: No idea why it doesn't do it automatically
         .bx--select-input:disabled, .bx--select-input:hover:disabled{
             background-color: $ui-01;
+        }
+
+        // Makes background gray. This is how according to carbon it should look in the white theme.
+        // TODO: Pascal Wiesmann: No idea why it doesn't do it automatically
+        .bx--date-picker__input:disabled, .bx--date-picker__input:hover:disabled{
+            background-color: $ui-01;
+        }
+
+        // having form elements inside datatables is our own idea, so we need some custom styling
+        .bx--data-table {
+            .bx--text-area:disabled, .bx--text-area:hover:disabled{
+                border-bottom: none;
+            }
+
+            .bx--select-input:disabled, .bx--select-input:hover:disabled{
+                border-bottom: none;
+            }
+
+            .bx--date-picker__input {
+                border-bottom: none;
+            }
+
+            .bx--select-input {
+                border-bottom: none;
+            }
         }
     }
 }
