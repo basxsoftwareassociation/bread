@@ -119,7 +119,7 @@ def _expand_ALL_constant(model, fieldnames):
         for f in model._meta.get_fields():
             if f.concrete:
                 if f.one_to_one or f.many_to_many:
-                    concrete_fields.append(f.name + ".all")
+                    concrete_fields.append(f.name)
                 else:
                     concrete_fields.append(f.name)
         i = fieldnames.index("__all__")
