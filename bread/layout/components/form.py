@@ -428,6 +428,12 @@ def _mapwidget(
         )
 
     if isinstance(field.field.widget, forms.Select):
+        # This is to prevent rendering extrem long lists of database entries
+        # (e.g. all persons) for relational fields if the field is disabled.
+        if field.field.disabled and hasattr(field.field, "queryset"):
+            field.field.queryset = field.field.queryset.filter(
+                pk=field.form.initial.get(field.name) or None
+            )
         if isinstance(field.field.widget, forms.SelectMultiple):
             return hg.DIV(
                 MultiSelect(

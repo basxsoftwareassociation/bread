@@ -38,7 +38,8 @@ class ReadView(EditView):
 
 def layoutasreadonly(layout):
     layout.wrap(
-        lambda element, ancestors: isinstance(element, _layout.form.Form),
+        lambda element, ancestors: isinstance(element, _layout.form.Form)
+        and element.standalone,
         hg.FIELDSET(readonly="true"),
     )
 
