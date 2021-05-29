@@ -71,7 +71,7 @@ class Form(hg.FORM):
                 self.insert(
                     0,
                     InlineNotification(
-                        _("Form error: "), hidden.name, error, kind="error"
+                        _("Form error: "), f"{hidden.name}: {error}", kind="error"
                     ),
                 )
         if self.standalone:
