@@ -40,6 +40,8 @@ Tab = collections.namedtuple("Tab", "label content")
 
 
 class Tabs(hg.DIV):
+    # TODO: Select current tab via URL fragment
+    # https://github.com/basxsoftwareassociation/bread/issues/39
     def __init__(
         self,
         *tabs,
