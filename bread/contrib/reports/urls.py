@@ -6,6 +6,7 @@ from django.urls import path
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView
 
+from bread import formatters
 from bread import layout as _layout
 from bread import menu, views
 from bread.utils import generate_excel, urls, xlsxresponse
@@ -47,7 +48,9 @@ class EditView(views.EditView):
 def exceldownload(request, report_pk: int):
     report = get_object_or_404(Report, pk=report_pk)
     columns = {
-        column.name: lambda row, c=column.column: hg.resolve_lookup(row, c) or ""
+        column.name: lambda row, c=column.column: formatters.format_value(
+            hg.resolve_lookup(row, c)
+        )
         for column in report.columns.all()
     }
 
