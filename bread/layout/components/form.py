@@ -135,6 +135,8 @@ class FormsetField(hg.Iterator):
         self.formsetfactory_kwargs = formsetfactory_kwargs  # used in bread.forms.forms._generate_formset_class, maybe refactor this?
         self.formsetinitial = formsetinitial  # used in bread.forms.forms._generate_formset_class, maybe refactor this?
         self.content = content
+        if isinstance(self.content, FormField):
+            self.content = hg.BaseElement(self.content)
 
         # search fields which have explicitly been defined in the content element
         declared_fields = set(
