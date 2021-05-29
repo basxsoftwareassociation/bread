@@ -104,6 +104,7 @@ class DataTable(hg.TABLE):
         paginator=None,
         page_urlparameter="page",
         itemsperpage_urlparameter="itemsperpage",
+        checkbox_for_bulkaction_name="_selected",
         settingspanel=None,
     ):
         """
@@ -150,7 +151,7 @@ class DataTable(hg.TABLE):
                         id=checkboxallid,
                         _class="bx--checkbox",
                         type="checkbox",
-                        name="selected",
+                        name=checkbox_for_bulkaction_name,
                         value="all",
                     ),
                     hg.LABEL(
@@ -172,7 +173,7 @@ class DataTable(hg.TABLE):
                         ),
                         _class="bx--checkbox",
                         type="checkbox",
-                        name="selected",
+                        name=checkbox_for_bulkaction_name,
                         value=hg.If(
                             hg.F(
                                 lambda c, e: hasattr(
@@ -306,6 +307,7 @@ class DataTable(hg.TABLE):
         paginator=None,
         page_urlparameter="page",
         itemsperpage_urlparameter="itemsperpage",
+        checkbox_for_bulkaction_name="_selected",
         settingspanel=None,
         rowvariable="row",
         **kwargs,
@@ -319,9 +321,17 @@ class DataTable(hg.TABLE):
 
         title = title or pretty_modelname(model, plural=True)
 
-        backquery = {"next": backurl} if backurl else {}
         if addurl is None:
-            addurl = reverse_model(model, "add", query=backquery)
+            addurl = hg.F(
+                lambda c, e: reverse_model(
+                    model,
+                    "add",
+                    query={
+                        "next": hg.resolve_lazy(backurl, c, e)
+                        or c["request"].get_full_path()
+                    },
+                )
+            )
 
         if rowactions_dropdown:
             objectactions_menu = OverflowMenu(
@@ -360,7 +370,12 @@ class DataTable(hg.TABLE):
                 col.cell.td_attributes = aslink_attributes(
                     hg.F(
                         lambda c, e: objectaction(
-                            c[rowvariable], rowclickaction, query=backquery
+                            c[rowvariable],
+                            rowclickaction,
+                            query={
+                                "next": hg.resolve_lazy(backurl, c, e)
+                                or c["request"].get_full_path()
+                            },
                         )
                     )
                 )
@@ -383,7 +398,7 @@ class DataTable(hg.TABLE):
                 primary_button=Button(
                     _("Add %s") % pretty_modelname(model),
                     icon=Icon("add", size=20),
-                    onclick=f"document.location = '{addurl}'",
+                    onclick=hg.BaseElement("document.location = '", addurl, "'"),
                 ),
                 searchurl=searchurl,
                 bulkactions=bulkactions,
@@ -392,6 +407,7 @@ class DataTable(hg.TABLE):
                 query_urlparameter=query_urlparameter,
                 paginator=paginator,
                 itemsperpage_urlparameter=itemsperpage_urlparameter,
+                checkbox_for_bulkaction_name=checkbox_for_bulkaction_name,
                 settingspanel=settingspanel,
             )
         return table

@@ -23,7 +23,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     template_name = "bread/base.html"
     orderingurlparameter = "ordering"
     itemsperpage_urlparameter = "itemsperpage"
-    objectids_urlparameter = "selected"  # see bread/static/js/main.js:submitbulkaction
+    objectids_urlparameter = "_selected"  # see bread/static/js/main.js:submitbulkaction and bread/layout/components/datatable.py
     pagination_choices = ()
     columns = ["__all__"]
     searchurl = None
@@ -73,6 +73,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             page_urlparameter=self.page_kwarg,
             paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
             itemsperpage_urlparameter=self.itemsperpage_urlparameter,
+            checkbox_for_bulkaction_name=self.objectids_urlparameter,
             settingspanel=self.get_settingspanel(),
         )
 
@@ -134,21 +135,23 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 )
         return qs
 
-    def export(self, *args, **kwargs):
-        columns = self.columns
+    def export(self, *args, columns=None, **kwargs):
+        columns = columns or self.columns
         if "__all__" in columns:
             columns = filter_fieldlist(self.model, columns)
         columndefinitions = {}
         for column in columns:
             if not (
-                (isinstance(column, tuple) and len(column) >= 2)
+                isinstance(column, _layout.datatable.DataTableColumn)
                 or isinstance(column, str)
             ):
                 raise ValueError(
-                    f"Argument 'columns' needs to be of a list with items of type str or tuple (head, cellvalue), but found {column}"
+                    f"Argument 'columns' needs to be of a list with items of type str or DataTableColumn, but found {column}"
                 )
             if isinstance(column, str):
-                column = (fieldlabel(self.model, column), hg.C(f"row.{column}"))
+                column = _layout.datatable.DataTableColumn(
+                    fieldlabel(self.model, column), hg.C(f"row.{column}")
+                )
             # allow to use lazy objects same as for BrowseView/DataTables
             if isinstance(column[1], hg.Lazy):
                 column = (
@@ -157,7 +160,10 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 )
 
             columndefinitions[column[0]] = column[1]
-        return generate_excel_view(self.get_queryset(), columndefinitions)(self.request)
+        return generate_excel_view(
+            self.get_queryset(),
+            columndefinitions,
+        )(self.request)
 
 
 def generate_excel_view(queryset, fields, filterstr=None):
@@ -183,10 +189,6 @@ def generate_excel_view(queryset, fields, filterstr=None):
         items = queryset
         if isinstance(filterstr, str):
             items = parsequeryexpression(model.objects.all(), filterstr)
-        if "selected" in request.GET and "all" not in request.GET.getlist("selected"):
-            items = items.filter(
-                pk__in=[int(i) for i in request.GET.getlist("selected")]
-            )
         items = list(items.all())
         workbook = generate_excel(items, fields)
         workbook.title = pretty_modelname(model)

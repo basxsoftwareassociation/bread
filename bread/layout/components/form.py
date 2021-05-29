@@ -250,7 +250,7 @@ class FormsetField(hg.Iterator):
         **kwargs,
     ):
         """
-        :param str fieldname: The fieldname which should be used for an formset, in general a n-to-many field
+        :param str fieldname: The fieldname which should be used for an formset, in general a one-to-many or many-to-many field
         :param list fields: A list of strings or objects. Strings are converted to DataTableColumn, objects are passed on as they are
         :param str title: Datatable title, automatically generated from form if None
         :param str formname: Name of the surounding django-form object in the context
