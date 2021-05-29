@@ -16,8 +16,6 @@ from .models import Report
 class EditView(views.EditView):
     def get_layout(self):
         F = _layout.form.FormField
-        R = _layout.grid.Row
-        C = _layout.grid.Col
         ret = hg.BaseElement(
             hg.H3(self.object),
             _layout.form.Form.wrap_with_form(
@@ -31,22 +29,14 @@ class EditView(views.EditView):
                     ),
                     F("name"),
                     F("filter"),
-                    hg.H4(_("Columns")),
-                    _layout.form.FormsetField(
+                    _layout.form.FormsetField.as_datatable(
                         "columns",
-                        R(
-                            C(F("column")),
-                            C(F("name")),
-                            C(F("ORDER")),
-                            C(
-                                _layout.form.InlineDeleteButton(".bx--row"),
-                                style="align-self: center",
-                            ),
-                        ),
-                        extra=1,
-                        can_order=True,
+                        ["column", "name"],
+                        formsetfield_kwargs={
+                            "extra": 1,
+                            "can_order": True,
+                        },
                     ),
-                    _layout.form.FormsetAddButton("columns"),
                 ),
             ),
             hg.C("object.preview"),
