@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-06 19:38+0700\n"
+"POT-Creation-Date: 2021-05-29 10:59+0700\n"
 "PO-Revision-Date: 2021-05-08 20:32+0000\n"
 "Last-Translator: ssantos <ssantos@web.de>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/basxconnect/"
@@ -19,61 +19,57 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.7-dev\n"
 
-#: bread/contrib/reports/fields/queryfield.py:105
+#: bread/contrib/reports/fields/queryfield.py:110
 #, python-format
 msgid "Invalid model '%s' selected"
 msgstr "Modelo inválido '%s' seleccionado"
 
-#: bread/contrib/reports/models.py:12
+#: bread/contrib/reports/models.py:13
 msgid "Created"
 msgstr "Criado"
 
-#: bread/contrib/reports/models.py:13 bread/contrib/reports/models.py:50
+#: bread/contrib/reports/models.py:14 bread/contrib/reports/models.py:53
 msgid "Name"
 msgstr "Nome"
 
-#: bread/contrib/reports/models.py:18
+#: bread/contrib/reports/models.py:19
 msgid "Model"
 msgstr "Modelo"
 
-#: bread/contrib/reports/models.py:19
+#: bread/contrib/reports/models.py:20
 msgid "Filter"
 msgstr "Filtrar"
 
-#: bread/contrib/reports/models.py:28
+#: bread/contrib/reports/models.py:31
 msgid "Preview"
 msgstr "Pré-visualização"
 
-#: bread/contrib/reports/models.py:38
+#: bread/contrib/reports/models.py:41
 msgid "Report"
 msgstr "Relatório"
 
-#: bread/contrib/reports/models.py:39 bread/contrib/reports/urls.py:144
-#: bread/contrib/reports/urls.py:145
+#: bread/contrib/reports/models.py:42 bread/contrib/reports/urls.py:128
+#: bread/contrib/reports/urls.py:129
 msgid "Reports"
 msgstr "Relatórios"
 
-#: bread/contrib/reports/models.py:49 bread/contrib/reports/models.py:56
+#: bread/contrib/reports/models.py:52 bread/contrib/reports/models.py:59
 msgid "Column"
 msgstr "Coluna"
 
-#: bread/contrib/reports/models.py:52
+#: bread/contrib/reports/models.py:55
 msgid "Aggregation"
 msgstr "Agregação"
 
-#: bread/contrib/reports/models.py:57 bread/contrib/reports/urls.py:50
+#: bread/contrib/reports/models.py:60 bread/contrib/reports/urls.py:34
 msgid "Columns"
 msgstr "Colunas"
 
-#: bread/contrib/reports/urls.py:31
-msgid "New report: "
-msgstr "Novo relatório: "
-
-#: bread/contrib/reports/urls.py:43
+#: bread/contrib/reports/urls.py:27
 msgid "Base model"
 msgstr "Modelo básico"
 
-#: bread/contrib/reports/urls.py:113
+#: bread/contrib/reports/urls.py:97
 msgid "Excel"
 msgstr "Excel"
 
@@ -81,45 +77,45 @@ msgstr "Excel"
 msgid "Print"
 msgstr "Imprimir"
 
-#: bread/layout/components/datatable.py:247
+#: bread/layout/components/datatable.py:209
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: bread/layout/components/datatable.py:258
+#: bread/layout/components/datatable.py:220
 msgid " items selected"
 msgstr " artigos seleccionados"
 
-#: bread/layout/components/datatable.py:264
+#: bread/layout/components/datatable.py:226
 msgid "Table Action Bar"
 msgstr "Barra de Acção da Tabela"
 
-#: bread/layout/components/datatable.py:428 bread/views/add.py:40
-#: bread/views/add.py:47
+#: bread/layout/components/datatable.py:399 bread/views/add.py:39
+#: bread/views/add.py:46
 #, python-format
 msgid "Add %s"
 msgstr "Adicionar %s"
 
-#: bread/layout/components/file_uploader.py:28
+#: bread/layout/components/file_uploader.py:30
 msgid "Select file"
 msgstr "Seleccione ficheiro"
 
-#: bread/layout/components/form.py:26
+#: bread/layout/components/form.py:30
 msgid "Save"
 msgstr "Guardar"
 
-#: bread/layout/components/form.py:63
+#: bread/layout/components/form.py:68
 msgid "Form error"
 msgstr "Erro no formulário"
 
-#: bread/layout/components/form.py:69
+#: bread/layout/components/form.py:74
 msgid "Form error: "
 msgstr "Erro no formulário: "
 
-#: bread/layout/components/form.py:181
+#: bread/layout/components/form.py:208 bread/layout/components/form.py:228
 msgid "Add"
 msgstr "Adicione"
 
-#: bread/layout/components/form.py:201
+#: bread/layout/components/form.py:307
 msgid "Delete"
 msgstr "Apagar"
 
@@ -127,20 +123,20 @@ msgstr "Apagar"
 msgid "Time stamp"
 msgstr "Carimbo de tempo"
 
-#: bread/layout/components/pagination.py:65
+#: bread/layout/components/pagination.py:66
 msgid "Items per page"
 msgstr "Artigos por página"
 
-#: bread/layout/components/pagination.py:113
-#: bread/layout/components/pagination.py:160
+#: bread/layout/components/pagination.py:114
+#: bread/layout/components/pagination.py:161
 msgid "of"
 msgstr "de"
 
-#: bread/layout/components/pagination.py:122
+#: bread/layout/components/pagination.py:123
 msgid "items"
 msgstr "artigos"
 
-#: bread/layout/components/pagination.py:164
+#: bread/layout/components/pagination.py:165
 msgid "pages"
 msgstr "Paginas"
 
@@ -156,14 +152,14 @@ msgstr "Pesquisar"
 msgid "Clear search input"
 msgstr "Limpar entrada de pesquisa"
 
-#: bread/layout/components/shell_header.py:67
-#: bread/layout/components/shell_header.py:68
+#: bread/layout/components/shell_header.py:71
+#: bread/layout/components/shell_header.py:72
 #: bread/templates/bread/components/header.html:31
-#: bread/templates/bread/components/header.html:32
+#: bread/templates/bread/components/header.html:32 bread/views/system.py:38
 msgid "Logout"
 msgstr "Sair"
 
-#: bread/layout/components/shell_header.py:69
+#: bread/layout/components/shell_header.py:73
 msgid "Close"
 msgstr "Fechar"
 
@@ -171,7 +167,7 @@ msgstr "Fechar"
 msgid "Remove"
 msgstr "Remover"
 
-#: bread/layout/components/text_input.py:78
+#: bread/layout/components/text_input.py:81
 msgid "Show password"
 msgstr "Mostrar senha"
 
@@ -187,7 +183,11 @@ msgstr "Desligado"
 msgid "System Settings"
 msgstr "Configurações do sistema"
 
-#: bread/views/add.py:25
+#: bread/urls.py:40
+msgid "Preferences updated"
+msgstr ""
+
+#: bread/views/add.py:24
 #, python-format
 msgid "Added %s"
 msgstr "Adicionado %s"
@@ -212,22 +212,22 @@ msgstr "%s não pôde ser apagado: %s"
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "Apagado %(count)s %(modelname)s"
 
-#: bread/views/edit.py:78
+#: bread/views/edit.py:76
 #, python-format
 msgid "Created copy %s"
 msgstr "Cópia criada %s"
 
-#: bread/views/edit.py:107
+#: bread/views/edit.py:105
 #, python-format
 msgid "Created %s copies"
 msgstr "Cópias criadas %s"
 
-#: bread/views/edit.py:152
+#: bread/views/edit.py:150
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "Copiar"
 
-#: bread/views/system.py:15 bread/views/system.py:17
+#: bread/views/system.py:16 bread/views/system.py:18
 msgid "Login"
 msgstr "Entrar"
 
@@ -242,3 +242,6 @@ msgstr "Completo"
 #: bread/views/wizard.py:64
 msgid "Continue"
 msgstr "Continuar"
+
+#~ msgid "New report: "
+#~ msgstr "Novo relatório: "
