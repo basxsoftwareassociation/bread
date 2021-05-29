@@ -31,6 +31,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     rowclickaction = None
     bulkactions = ()  # list of links
     rowactions = ()  # list of links
+    backurl = None
     asexcel = False
 
     def __init__(self, *args, **kwargs):
@@ -56,6 +57,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             kwargs.get("query_urlparameter") or self.query_urlparameter
         )
         self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
+        self.backurl = kwargs.get("backurl") or self.backurl
         super().__init__(*args, **kwargs)
 
     def get_layout(self):
@@ -75,6 +77,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             itemsperpage_urlparameter=self.itemsperpage_urlparameter,
             checkbox_for_bulkaction_name=self.objectids_urlparameter,
             settingspanel=self.get_settingspanel(),
+            backurl=self.backurl,
         )
 
     def get_context_data(self, *args, **kwargs):
