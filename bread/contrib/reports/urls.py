@@ -90,6 +90,7 @@ urlpatterns = [
                     label=_("Excel"),
                 ),
             ],
+            backurl="#",
         ),
         addview=views.AddView._with(fields=["name", "model"]),
         editview=EditView,
