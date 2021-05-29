@@ -94,7 +94,7 @@ class Pagination(hg.DIV):
                     inline=True,
                     widgetattributes={
                         "data_items_per_page": True,
-                        "onclick": "document.location = this.value",
+                        "onchange": "document.location = this.value",
                         "onauxclick": "window.open(this.value, '_blank')",
                     },
                     _class="bx--select__item-count",
@@ -152,7 +152,7 @@ class Pagination(hg.DIV):
                     inline=True,
                     widgetattributes={
                         "data_page_number_input": True,
-                        "onclick": "document.location = this.value",
+                        "onchange": "document.location = this.value",
                         "onauxclick": "window.open(this.value, '_blank')",
                     },
                     _class="bx--select__page-number",
