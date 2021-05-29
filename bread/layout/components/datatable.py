@@ -297,7 +297,7 @@ class DataTable(hg.TABLE):
         bulkactions=(),
         title=None,
         addurl=None,
-        backurl=None,
+        backurl: Union[hg.Lazy, str] = None,
         searchurl=None,
         query_urlparameter=None,
         rowclickaction=None,
@@ -312,7 +312,26 @@ class DataTable(hg.TABLE):
         rowvariable="row",
         **kwargs,
     ):
-        """TODO: Write Docs!!!!"""
+        """TODO: Write Docs!!!!
+        Yeah yeah, on it already...
+
+        :param str backurl: sets the "next" parameter for the add-url and row-click actions.
+                            In most cases this can be used to return to the current page
+                            (default behaviour), stying on the according new page (use "#"
+                            as value) or direct to a certain other page. Maybe this parameter
+                            is unnecessary powerfull because there are other ways to set
+                            these behaviours. However, the option of staying on the new page
+                            coming back to the current page should somehow be kept available,
+                            it is used very often.
+        :param hg.BaseElement settingspanel: A panel which will be opened when clicking on the
+                                             "Settings" button of the datatable, usefull e.g.
+                                             for showing filter options. Currently only one
+                                             button and one panel are supported. More buttons
+                                             and panels could be interesting but may to over-
+                                             engineered because it is a rare case and it is not
+                                             difficutl to add another button by modifying the
+                                             datatable after creation.
+        """
         for col in columns:
             if not (isinstance(col, DataTableColumn) or isinstance(col, str)):
                 raise ValueError(
