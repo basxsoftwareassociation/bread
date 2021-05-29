@@ -432,11 +432,11 @@ def _mapwidget(
     if isinstance(field.field.widget, forms.Select):
         # This is to prevent rendering extrem long lists of database entries
         # (e.g. all persons) for relational fields if the field is disabled.
-        if field.field.disabled and hasattr(field.field, "queryset"):
-            field.field.queryset = field.field.queryset.filter(
-                pk=field.form.initial.get(field.name) or None
-            )
         if isinstance(field.field.widget, forms.SelectMultiple):
+            if field.field.disabled and hasattr(field.field, "queryset"):
+                field.field.queryset = field.field.queryset.filter(
+                    pk__in=[i.pk for i in field.form.initial.get(field.name)]
+                )
             return hg.DIV(
                 MultiSelect(
                     field.field.widget.optgroups(
@@ -449,6 +449,10 @@ def _mapwidget(
                     **elementattributes,
                 ),
                 _class="bx--form-item",
+            )
+        if field.field.disabled and hasattr(field.field, "queryset"):
+            field.field.queryset = field.field.queryset.filter(
+                pk=field.form.initial.get(field.name) or None
             )
         return hg.DIV(
             Select(
