@@ -8,45 +8,6 @@ from .icon import Icon
 from .select import Select
 
 
-def linktopage(page_urlparameter, page):
-    return hg.F(
-        lambda c, e: link_with_urlparameters(
-            c["request"], **{page_urlparameter: hg.resolve_lazy(page, c, e)}
-        )
-    )
-
-
-def linktorelativepage(page_urlparameter, direction, maxnum):
-    """direction: number of pages to jump, e.g. -1 or 1"""
-    return hg.F(
-        lambda c, e: link_with_urlparameters(
-            c["request"],
-            **{
-                page_urlparameter: int(c["request"].GET.get(page_urlparameter, "1"))
-                + hg.resolve_lazy(direction, c, e)
-            },
-        )
-    )
-
-
-def linkwithitemsperpage(itemsperpage_urlparameter, itemsperpage, page_urlparameter):
-    return hg.F(
-        lambda c, e: link_with_urlparameters(
-            c["request"],
-            **{itemsperpage_urlparameter: itemsperpage, page_urlparameter: None},
-        )
-    )
-
-
-def get_page(paginator, page_urlparameter):
-    def wrapper(context, element):
-        return paginator.get_page(
-            int(context["request"].GET.get(page_urlparameter, "1"))
-        )
-
-    return hg.F(wrapper)
-
-
 class Pagination(hg.DIV):
     def __init__(
         self,
@@ -208,3 +169,42 @@ class Pagination(hg.DIV):
             ),
             **kwargs,
         )
+
+
+def linktopage(page_urlparameter, page):
+    return hg.F(
+        lambda c, e: link_with_urlparameters(
+            c["request"], **{page_urlparameter: hg.resolve_lazy(page, c, e)}
+        )
+    )
+
+
+def linktorelativepage(page_urlparameter, direction, maxnum):
+    """direction: number of pages to jump, e.g. -1 or 1"""
+    return hg.F(
+        lambda c, e: link_with_urlparameters(
+            c["request"],
+            **{
+                page_urlparameter: int(c["request"].GET.get(page_urlparameter, "1"))
+                + hg.resolve_lazy(direction, c, e)
+            },
+        )
+    )
+
+
+def linkwithitemsperpage(itemsperpage_urlparameter, itemsperpage, page_urlparameter):
+    return hg.F(
+        lambda c, e: link_with_urlparameters(
+            c["request"],
+            **{itemsperpage_urlparameter: itemsperpage, page_urlparameter: None},
+        )
+    )
+
+
+def get_page(paginator, page_urlparameter):
+    def wrapper(context, element):
+        return paginator.get_page(
+            int(context["request"].GET.get(page_urlparameter, "1"))
+        )
+
+    return hg.F(wrapper)
