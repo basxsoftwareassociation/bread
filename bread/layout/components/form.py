@@ -460,8 +460,9 @@ def _mapwidget(
                 _class="bx--form-item",
             )
         if field.field.disabled and hasattr(field.field, "queryset"):
+            default = field.form.initial.get(field.name) or None
             field.field.queryset = field.field.queryset.filter(
-                pk=field.form.initial.get(field.name) or None
+                pk=getattr(default, "pk", default)
             )
         return hg.DIV(
             Select(
