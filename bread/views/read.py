@@ -1,8 +1,10 @@
 import htmlgenerator as hg
+from django import forms
 from django.http import HttpResponseNotAllowed
 
 from .. import layout as _layout  # prevent name clashing
 from ..forms.fields import FormsetField
+from ..forms.forms import breadmodelform_factory
 from .edit import EditView
 
 
@@ -17,6 +19,16 @@ class ReadView(EditView):
 
     def post(self, *args, **kwargs):
         return HttpResponseNotAllowed(["GET"])
+
+    def get_form_class(self, form=forms.models.ModelForm):
+        return breadmodelform_factory(
+            request=self.request,
+            model=self.model,
+            layout=self.get_layout(),
+            instance=self.object,
+            baseformclass=form,
+            cache_querysets=False,
+        )
 
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)

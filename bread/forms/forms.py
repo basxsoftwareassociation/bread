@@ -28,7 +28,12 @@ def generate_form(request, model, layout, instance, **kwargs):
 
 
 def breadmodelform_factory(  # noqa
-    request, model, layout, instance=None, baseformclass=forms.models.ModelForm
+    request,
+    model,
+    layout,
+    instance=None,
+    baseformclass=forms.models.ModelForm,
+    cache_querysets=True,
 ):
     """Returns a form class which can handle inline-modelform sets and generic foreign keys."""
     formfieldelements = _get_form_fields_from_layout(layout)
@@ -115,6 +120,7 @@ def breadmodelform_factory(  # noqa
                     baseformclass,
                     formfieldelement,
                     instance,
+                    cache_querysets,
                 ),
                 instance,
                 formfieldelement.formsetinitial,
@@ -131,7 +137,7 @@ def breadmodelform_factory(  # noqa
             if isinstance(f, _layout.form.FormField)
         ],
         formfield_callback=lambda field: _formfield_callback_with_request(
-            field, request, model, instance
+            field, request, model, instance, cache_querysets
         ),
     )
     return ret
@@ -147,7 +153,13 @@ class InlineFormSetWithLimits(forms.BaseInlineFormSet):
 
 
 def _generate_formset_class(
-    request, model, modelfield, baseformclass, formsetfieldelement, instance
+    request,
+    model,
+    modelfield,
+    baseformclass,
+    formsetfieldelement,
+    instance,
+    cache_querysets,
 ):
     """Returns a FormSet class which handles inline forms correctly."""
 
@@ -179,7 +191,7 @@ def _generate_formset_class(
             fk_field=modelfield.object_id_field_name,
             formset=InlineFormSetWithLimits,
             formfield_callback=lambda field: _formfield_callback_with_request(
-                field, request, modelfield.related_model, instance
+                field, request, modelfield.related_model, instance, cache_querysets
             ),
             **base_formset_kwargs,
         )
@@ -189,14 +201,14 @@ def _generate_formset_class(
             modelfield.related_model,
             formset=InlineFormSetWithLimits,
             formfield_callback=lambda field: _formfield_callback_with_request(
-                field, request, model, instance
+                field, request, model, instance, cache_querysets
             ),
             fk_name=modelfield.field.name,
             **base_formset_kwargs,
         )
 
 
-def _formfield_callback_with_request(field, request, model, instance):
+def _formfield_callback_with_request(field, request, model, instance, cache_querysets):
     kwargs = {}
     choices = None
     if hasattr(field, "lazy_choices"):
@@ -211,15 +223,23 @@ def _formfield_callback_with_request(field, request, model, instance):
     if isinstance(choices, models.QuerySet):
         ret.queryset = choices
 
-    # apply permissions for querysets
+    # apply permissions for querysets and chache the result
     if hasattr(ret, "queryset"):
-        qs = ret.queryset
         ret.queryset = get_objects_for_user(
             request.user,
-            f"view_{qs.model.__name__.lower()}",
-            qs,
+            f"view_{ret.queryset.model.__name__.lower()}",
+            ret.queryset,
             with_superuser=True,
         )
+        # do a cheap per-request caching
+        if cache_querysets:
+            if not hasattr(request, "formfield_cache"):
+                request.formfield_cache = {}
+            cache_key = f"{field}-query-cache"
+            if cache_key not in request.formfield_cache:
+                forms.models.apply_limit_choices_to_to_formfield(ret)
+                request.formfield_cache[cache_key] = [*ret.choices]
+            ret.choices = request.formfield_cache[cache_key]
     return ret
 
 
