@@ -40,7 +40,7 @@ class Search(hg.DIV):
             resultcontainerid or f"search-result-{hg.html_id((self, url))}"
         )
         self[1].attributes["hx_get"] = url
-        self[1].attributes["hx_trigger"] = "changed, keyup changed delay:100ms"
+        self[1].attributes["hx_trigger"] = "changed, keyup changed delay:500ms"
         self[1].attributes["hx_target"] = f"#{resultcontainerid}"
         self[1].attributes["hx_indicator"] = f"#{resultcontainerid}-indicator"
         self[1].attributes["name"] = query_urlparameter
