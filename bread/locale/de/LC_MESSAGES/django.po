@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-29 10:59+0700\n"
+"POT-Creation-Date: 2021-06-05 18:58+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: bread/contrib/reports/fields/queryfield.py:110
+#: bread/contrib/reports/fields/queryfield.py:109
 #, python-format
 msgid "Invalid model '%s' selected"
 msgstr "Ungültiges Model '%s' ausgewählt"
@@ -47,8 +47,8 @@ msgstr "Vorschau"
 msgid "Report"
 msgstr "Bericht"
 
-#: bread/contrib/reports/models.py:42 bread/contrib/reports/urls.py:128
-#: bread/contrib/reports/urls.py:129
+#: bread/contrib/reports/models.py:42 bread/contrib/reports/urls.py:122
+#: bread/contrib/reports/urls.py:123
 msgid "Reports"
 msgstr "Berichte"
 
@@ -60,15 +60,15 @@ msgstr "Spalte"
 msgid "Aggregation"
 msgstr "Aggregation"
 
-#: bread/contrib/reports/models.py:60 bread/contrib/reports/urls.py:34
+#: bread/contrib/reports/models.py:60
 msgid "Columns"
 msgstr "Spalten"
 
-#: bread/contrib/reports/urls.py:27
+#: bread/contrib/reports/urls.py:26
 msgid "Base model"
 msgstr "Basis Model"
 
-#: bread/contrib/reports/urls.py:97
+#: bread/contrib/reports/urls.py:90
 msgid "Excel"
 msgstr "Excel"
 
@@ -88,7 +88,7 @@ msgstr " Einträge ausgewählt"
 msgid "Table Action Bar"
 msgstr "Tabellen Aktionsbar"
 
-#: bread/layout/components/datatable.py:399 bread/views/add.py:39
+#: bread/layout/components/datatable.py:418 bread/views/add.py:39
 #: bread/views/add.py:46
 #, python-format
 msgid "Add %s"
@@ -110,11 +110,15 @@ msgstr "Formfehler"
 msgid "Form error: "
 msgstr "Formfehler: "
 
-#: bread/layout/components/form.py:208 bread/layout/components/form.py:228
+#: bread/layout/components/form.py:210 bread/layout/components/form.py:230
 msgid "Add"
 msgstr "Erstellen"
 
-#: bread/layout/components/form.py:307
+#: bread/layout/components/form.py:275
+msgid "Order"
+msgstr "Reihenfolge"
+
+#: bread/layout/components/form.py:318
 msgid "Delete"
 msgstr "Löschen"
 
@@ -122,20 +126,20 @@ msgstr "Löschen"
 msgid "Time stamp"
 msgstr "Zeitpunkt"
 
-#: bread/layout/components/pagination.py:66
+#: bread/layout/components/pagination.py:27
 msgid "Items per page"
 msgstr "Einträge pro Seite"
 
-#: bread/layout/components/pagination.py:114
-#: bread/layout/components/pagination.py:161
+#: bread/layout/components/pagination.py:75
+#: bread/layout/components/pagination.py:122
 msgid "of"
 msgstr "von"
 
-#: bread/layout/components/pagination.py:123
+#: bread/layout/components/pagination.py:84
 msgid "items"
 msgstr "Einträgen"
 
-#: bread/layout/components/pagination.py:165
+#: bread/layout/components/pagination.py:126
 msgid "pages"
 msgstr "Seiten"
 
@@ -191,22 +195,26 @@ msgstr "Einstellungen wurden gespeichert"
 msgid "Added %s"
 msgstr "%s erstellt"
 
-#: bread/views/delete.py:46
+#: bread/views/delete.py:47
+msgid "Restored %(modelname)s %(objectname)s"
+msgstr "%(modelname)s %(objectname)s wurde wiederhergestellt"
+
+#: bread/views/delete.py:49 bread/views/delete.py:53
 #, python-format
 msgid "Deleted %(modelname)s %(objectname)s"
 msgstr "%(modelname)s %(objectname)s wurde gelöscht"
 
-#: bread/views/delete.py:90
+#: bread/views/delete.py:100
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "Benutzer hat nicht die benötigten Berechtigungnen um '%s' zu löschen"
 
-#: bread/views/delete.py:101
+#: bread/views/delete.py:111
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s konnte nicht gelöscht werden: %s"
 
-#: bread/views/delete.py:106
+#: bread/views/delete.py:116
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s %(modelname)s gelöscht"
