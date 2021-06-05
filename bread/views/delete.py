@@ -10,7 +10,6 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import RedirectView
-from djangoql.queryset import apply_search
 from guardian.mixins import PermissionRequiredMixin
 
 from ..utils import pretty_modelname, reverse_model
@@ -32,18 +31,29 @@ class DeleteView(BreadView, PermissionRequiredMixin, RedirectView):
             self.model._meta.get_field(self.softdeletefield)
 
     def get_required_permissions(self, request):
+        if "restore" in self.request.GET:
+            return [
+                f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"
+            ]
         return [f"{self.model._meta.app_label}.delete_{self.model.__name__.lower()}"]
 
     def get(self, *args, **kwargs):
         instance = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
+        restore = "restore" in self.request.GET
         if self.softdeletefield:
-            setattr(instance, self.softdeletefield, True)
+            setattr(instance, self.softdeletefield, not restore)
             instance.save()
+            msg = (
+                _("Restored %(modelname)s %(objectname)s")
+                if restore
+                else _("Deleted %(modelname)s %(objectname)s")
+            )
         else:
             instance.delete()
+            msg = _("Deleted %(modelname)s %(objectname)s")
         messages.success(
             self.request,
-            _("Deleted %(modelname)s %(objectname)s")
+            msg
             % {
                 "objectname": instance,
                 "modelname": pretty_modelname(self.model),
@@ -54,6 +64,10 @@ class DeleteView(BreadView, PermissionRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
+        if "restore" in self.request.GET and self.softdeletefield:
+            return reverse_model(
+                self.model, "read", kwargs={"pk": self.kwargs.get("pk")}
+            )
         return reverse_model(self.model, "browse")
 
 
@@ -61,16 +75,12 @@ class BulkDeleteView(
     PermissionRequiredMixin,
     RedirectView,
 ):
-    objectids_urlparameter = "selected"  # see bread/static/js/main.js:submitbulkaction
-    query_urlparameter = "q"
+    objectids_urlparameter = "_selected"  # see bread/layout/components/datatable.py
     accept_global_perms = True
     model = None
     softdeletefield = None
 
     def __init__(self, model, *args, **kwargs):
-        self.query_urlparameter = (
-            kwargs.get("query_urlparameter") or self.query_urlparameter
-        )
         self.objectids_urlparameter = (
             kwargs.get("objectids_urlparameter") or self.objectids_urlparameter
         )
@@ -122,13 +132,6 @@ class BulkDeleteView(
     def get_queryset(self):
         """Prefetch related tables to speed up queries. Also order result by get-parameters."""
         qs = self.model.objects.all()
-        if self.query_urlparameter in self.request.GET:
-            qs = apply_search(
-                qs,
-                "("
-                + ") and (".join(self.request.GET.getlist(self.query_urlparameter))
-                + ")",
-            )
         selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
         if selectedobjects and "all" not in selectedobjects:
             qs &= self.model.objects.filter(pk__in=selectedobjects)
