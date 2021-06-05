@@ -38,7 +38,7 @@ class AddView(
             hg.H3(
                 _("Add %s") % pretty_modelname(self.model),
             ),
-            self.get_layout(),
+            self._get_layout_cached(),
         )
         return {
             **super().get_context_data(*args, **kwargs),

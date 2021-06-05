@@ -29,7 +29,7 @@ class EditView(
     urlparams = (("pk", int),)
 
     def __init__(self, *args, **kwargs):
-        all = filter_fieldlist(kwargs.get("model"), ["__all__"])
+        all = filter_fieldlist(kwargs.get("model"), ["__all__"], for_form=True)
         self.fields = kwargs.get("fields", getattr(self, "fields", None))
         self.fields = all if self.fields is None else self.fields
         super().__init__(*args, **kwargs)
@@ -40,7 +40,7 @@ class EditView(
     def get_context_data(self, *args, **kwargs):
         return {
             **super().get_context_data(*args, **kwargs),
-            "layout": self.get_layout(),
+            "layout": self._get_layout_cached(),
             "pagetitle": str(self.object),
         }
 

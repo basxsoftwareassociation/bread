@@ -28,7 +28,7 @@ class CustomFormMixin:
         return breadmodelform_factory(
             request=self.request,
             model=self.model,
-            layout=self.get_layout(),
+            layout=self._get_layout_cached(),
             instance=self.object,
             baseformclass=form,
         )
@@ -51,7 +51,7 @@ class CustomFormMixin:
 
         # hide or disable predefined fields passed in GET parameters
         if self.request.method != "POST":
-            for fieldelement in self.get_layout().filter(
+            for fieldelement in self._get_layout_cached().filter(
                 lambda element, ancestors: isinstance(element, FormField)
             ):
                 if (
@@ -88,6 +88,7 @@ class BreadView:
     """
 
     layout = None
+    _layout = None
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
@@ -97,7 +98,14 @@ class BreadView:
     def _with(cls, **kwargs):
         return type(f"Custom{cls.__name__}", (cls,), kwargs)
 
+    def _get_layout_cached(self):
+        """Used for caching layouts, only bread-internal"""
+        if self._layout is None:
+            self._layout = self.get_layout()
+        return self._layout
+
     def get_layout(self):
+        """Returns the layout for this view, returns the ``layout`` attribute by default"""
         if self.layout is None:
             raise RuntimeError(f"'layout' of view {self} is None")
         return self.layout
