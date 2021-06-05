@@ -25,24 +25,69 @@ class ActivityBase(models.Model):
         super().__init_subclass__(**kwargs)
         assert hasattr(cls, "DIAGRAM")
         assert isinstance(cls.DIAGRAM, dict)
+        cls.build_internal_diagram()
         cls.build_graph()
 
     @classmethod
+    def build_internal_diagram(cls):
+        cls._GENERATED_DIAGRAM = {}
+        for source, target in cls.DIAGRAM.items():
+            # automatically generte initial nodes for nodes without incoming edges
+            if source not in cls.DIAGRAM.values():
+                cls._GENERATED_DIAGRAM[Initial()] = source
+            # automatically generte flow final nodes for nodes who have None as target
+            if target is None:
+                target = FlowFinal()
+            # automatically generate Activity final nodes for nodes without outgoing edges
+            elif not isinstance(target, dict) and target not in cls.DIAGRAM:
+                target = ActivityFinal()
+
+            # automatically generte merge nodes
+            if list(cls.DIAGRAM.values()).count(target) > 1:
+                try:
+                    mergenode = list(cls._GENERATED_DIAGRAM.keys())[
+                        list(cls._GENERATED_DIAGRAM.values()).index(target)
+                    ]
+                except ValueError:
+                    mergenode = Merge()
+                    cls._GENERATED_DIAGRAM[mergenode] = target
+                cls._GENERATED_DIAGRAM[source] = mergenode
+            # generate fork nodes
+            elif isinstance(target, tuple):
+                cls._GENERATED_DIAGRAM[source] = Fork()
+                for node in target:
+                    cls._GENERATED_DIAGRAM[cls._GENERATED_DIAGRAM[source]] = node
+            elif isinstance(target, dict):
+                assert hasattr(
+                    source, "choices"
+                ), f"Node {source} needs to be a Django field with attribute 'choices'"
+                cls._GENERATED_DIAGRAM[DecisionBase()] = target
+            else:
+                cls._GENERATED_DIAGRAM[source] = target
+
+    @classmethod
     def build_graph(cls):
-        assert any(isinstance(i, Initial) for i in cls.DIAGRAM.keys())
-        assert any(isinstance(i, ActivityFinal) for i in cls.DIAGRAM.values())
-        for node, target in cls.DIAGRAM.items():
-            if isinstance(node, DecisionBase):
+        assert any(isinstance(i, Initial) for i in cls._GENERATED_DIAGRAM.keys())
+        assert any(
+            isinstance(i, ActivityFinal) for i in cls._GENERATED_DIAGRAM.values()
+        )
+        for node, target in cls._GENERATED_DIAGRAM.items():
+            if isinstance(target, dict):
+                assert isinstance(
+                    node, DecisionBase
+                ), f"Node {node} has a dict value but no 'choices' attributes"
                 node.decision_labels = tuple(target.keys())
                 target = tuple(target.values())
-            assert isinstance(node, Node)
+            assert isinstance(
+                node, Node
+            ), f"Node {node} is not of instance Node but {type(node)}"
             if not isinstance(target, tuple):
                 target = (target,)
             node.outputs += target
             for t in target:
                 assert isinstance(t, Node), f"{t} is not of instance Node but {type(t)}"
                 t.inputs += (node,)
-        for node, target in cls.DIAGRAM.items():
+        for node, target in cls._GENERATED_DIAGRAM.items():
             node.verify()
             if isinstance(node, DecisionBase):
                 target = tuple(target.values())
@@ -62,7 +107,7 @@ class ActivityBase(models.Model):
         ]
         nodes = set()
         edges = []
-        for node, target in cls.DIAGRAM.items():
+        for node, target in cls._GENERATED_DIAGRAM.items():
             nodes.add(node.as_dot())
             if isinstance(target, dict):
                 target = tuple(target.values())
@@ -127,8 +172,8 @@ class ActivityBase(models.Model):
             ("Start node", Initial()),
             ("End node, will finish activity", ActivityFinal()),
             ("End node, will finish branch but no activity", FlowFinal()),
-            ("Decision node", GenericDecision(lambda s, a: None, label=" ")),
-            ("Action node", GenericAction(lambda s, a: None, label=" ")),
+            # ("Decision node", GenericDecision(lambda s, a: None, label=" ")),
+            ("Action node", Action(lambda s, a: None, label=" ")),
         )
 
         dot.extend(n.as_dot({"xlabel": '"' + label + '"'}) for label, n in helpnodes)
@@ -162,7 +207,8 @@ class ActivityBase(models.Model):
     @property
     def done(self):
         return any(
-            isinstance(i, ActivityFinal) and i.done(self) for i in self.DIAGRAM.values()
+            isinstance(i, ActivityFinal) and i.done(self)
+            for i in self._GENERATED_DIAGRAM.values()
         )
 
     class Meta:
@@ -211,29 +257,27 @@ class Node:
 # Action node and Decision node, need to be sublassed
 
 
-class ActionBase(Node):
+class Action(models.BooleanField, Node):
     """
     Represents an action node in an Activity Diagram.
     Should be subclassed with an implementation for ``done()`` and optionally one for ``do()``
     Changes should only happen through the ``do()`` method or user actions.
     """
 
+    def __init__(self, *args, action, **kwargs):
+        self.action = action
+        super().__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        del kwargs["max_length"]
+        return name, path, args, self.action, kwargs
+
     def verify(self):
         super().verify()
         assert (
             len(self.inputs) == 1 and len(self.outputs) == 1
         ), f"{self} can only have one input and one output"
-
-    def done(self, activity):
-        raise NotImplementedError()
-
-    def do(self, activity):
-        """
-        This method must be idempotent (running it multiple times should only apply ones).
-        Often this requires a flag to be set on the activity model, e.g. for marking that an email has been sent.
-        The ``do`` method will only be executed if ``done()`` returns a value which evaluates to False.
-        """
-        pass
 
     def dot_attrs(self):
         return {"shape": "box", "style": "rounded"}
@@ -359,27 +403,3 @@ class Join(Node):
             "width": math.floor(len(self.inputs) * 1.5),
             "height": 0.1,
         }
-
-
-# Implementation of a generic Action and a generic Decision which
-# just take the according done, do and decision functions
-
-
-class GenericAction(ActionBase):
-    def __init__(self, done_func, do_func=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.done_func = done_func
-        self.do_func = do_func
-
-    def done(self, activity):
-        return self.done_func(self, activity)
-
-    def do(self, activity):
-        if self.do_func is not None:
-            self.do(self, activity)
-
-
-class GenericDecision(DecisionBase):
-    def __init__(self, decision_func, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.decision = decision_func
