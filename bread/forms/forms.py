@@ -173,6 +173,7 @@ def _generate_formset_class(
         layout=formfieldelements,
         instance=instance,
         baseformclass=baseformclass,
+        cache_querysets=cache_querysets,
     )
 
     base_formset_kwargs = {
@@ -180,7 +181,7 @@ def _generate_formset_class(
             formfieldelement.fieldname for formfieldelement in formfieldelements
         ],
         "form": formclass,
-        "extra": 1 - bool(getattr(instance, modelfield.name).count()),
+        "extra": 0,
         "can_delete": True,
     }
     base_formset_kwargs.update(formsetfieldelement.formsetfactory_kwargs)
@@ -231,7 +232,6 @@ def _formfield_callback_with_request(field, request, model, instance, cache_quer
             ret.queryset,
             with_superuser=True,
         )
-        # do a cheap per-request caching
         if cache_querysets:
             if not hasattr(request, "formfield_cache"):
                 request.formfield_cache = {}
