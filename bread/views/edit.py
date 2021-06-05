@@ -40,7 +40,7 @@ class EditView(
     def get_context_data(self, *args, **kwargs):
         return {
             **super().get_context_data(*args, **kwargs),
-            "layout": self.get_layout(),
+            "layout": self._get_layout_cached(),
             "pagetitle": str(self.object),
         }
 
