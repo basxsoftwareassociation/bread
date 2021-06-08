@@ -7,7 +7,7 @@ from django.views.generic import ListView
 from djangoql.queryset import apply_search
 from guardian.mixins import PermissionListMixin
 
-from bread.utils import filter_fieldlist
+from bread.utils import expand_ALL_constant, filter_fieldlist
 
 from .. import layout as _layout  # prevent name clashing
 from ..layout.base import fieldlabel
@@ -49,7 +49,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             or getattr(settings, "DEFAULT_PAGINATION_CHOICES", [25, 100, 500])
         )
         self.rowactions = kwargs.get("rowactions") or self.rowactions
-        self.columns = kwargs.get("columns") or self.columns
+        self.columns = expand_ALL_constant(
+            kwargs["model"], kwargs.get("columns") or self.columns
+        )
         self.searchurl = kwargs.get("searchurl") or self.searchurl
         self.query_urlparameter = (
             kwargs.get("query_urlparameter") or self.query_urlparameter
