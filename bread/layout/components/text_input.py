@@ -19,6 +19,11 @@ class TextInput(hg.DIV):
         icon=None,
         **attributes,
     ):
+        attributes.pop("boundfield")
+        attributes.pop("fieldname")
+        attributes["_class"] = (
+            attributes.get("_class", "") + " bx--text-input-wrapper bx--form-item"
+        )
         widgetattributes = widgetattributes or {}
         widgetattributes["_class"] = hg.BaseElement(
             widgetattributes.get("_class", ""),
@@ -65,7 +70,7 @@ class TextInput(hg.DIV):
                 help_text, disabled=widgetattributes.get("disabled", False)
             ),
             ErrorListElement(errors),
-            _class="bx--text-input-wrapper bx--form-item",
+            **attributes,
         )
 
 
