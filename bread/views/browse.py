@@ -10,10 +10,8 @@ from guardian.mixins import PermissionListMixin
 from bread.utils import filter_fieldlist
 
 from .. import layout as _layout  # prevent name clashing
-from ..formatters import format_value
 from ..layout.base import fieldlabel
 from ..utils import generate_excel, pretty_modelname, xlsxresponse
-from ..utils.model_helpers import _expand_ALL_constant
 from .util import BreadView
 
 
@@ -155,47 +153,12 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 column = _layout.datatable.DataTableColumn(
                     fieldlabel(self.model, column), hg.C(f"row.{column}")
                 )
-            # allow to use lazy objects same as for BrowseView/DataTables
-            if isinstance(column[1], hg.Lazy):
-                column = (
-                    column[0],
-                    lambda row, c=column[1]: c.resolve({"row": row}, None),
-                )
+            print(column.header, column.cell, getattr(column.cell, "value", ""))
 
-            columndefinitions[column[0]] = column[1]
-        return generate_excel_view(
-            self.get_queryset(),
-            columndefinitions,
-        )(self.request)
+            columndefinitions[column.header] = lambda row, column=column: hg.render(
+                hg.BaseElement(column.cell), {"row": row}
+            )
 
-
-def generate_excel_view(queryset, fields, filterstr=None):
-    """
-    Generates an excel file from the given queryset with the specified fields.
-    fields: list [<fieldname1>, <fieldname2>, ...] or dict with {<fieldname>: formatting_function(object, fieldname)}
-    filterstr: a djangoql filter string which will lazy evaluated, see bread.fields.queryfield.parsequeryexpression
-    """
-
-    model = queryset.model
-
-    if isinstance(fields, list):
-        fields = _expand_ALL_constant(model, fields)
-
-    if not isinstance(fields, dict):
-        fields = {
-            field: lambda inst: format_value(getattr(inst, field)) for field in fields
-        }
-
-    def excelview(request):
-        from bread.contrib.reports.fields.queryfield import parsequeryexpression
-
-        items = queryset
-        if isinstance(filterstr, str):
-            items = parsequeryexpression(model.objects.all(), filterstr)
-        items = list(items.all())
-        workbook = generate_excel(items, fields)
-        workbook.title = pretty_modelname(model)
-
+        workbook = generate_excel(self.get_queryset(), columndefinitions)
+        workbook.title = pretty_modelname(self.model)
         return xlsxresponse(workbook, workbook.title)
-
-    return excelview

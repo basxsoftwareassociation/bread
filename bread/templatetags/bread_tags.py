@@ -41,11 +41,6 @@ def linkurl(context, link):
     return link.url
 
 
-@register.simple_tag(takes_context=True)
-def render_layout(context, layout):
-    return mark_safe(hg.render(layout, context.flatten()))
-
-
 @register.simple_tag
 def display_link(link, request, obj=None, atag_class="", atag_style=""):
     warnings.warn(
@@ -239,3 +234,28 @@ def getplaceholder(field):
         except FieldDoesNotExist:
             return ""
     return ""
+
+
+def render_layout(parser, token):
+    try:
+        tag_name, layoutvariable = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError(
+            "%r tag requires a single argument" % token.contents.split()[0]
+        )
+    return LayoutNode(layoutvariable)
+
+
+class LayoutNode(template.Node):
+    def __init__(self, layout_variable):
+        self.layout_variable = template.Variable(layout_variable)
+
+    def render(self, context):
+        try:
+            layout = self.layout_variable.resolve(context)
+            return "".join(layout.render(context.flatten()))
+        except template.VariableDoesNotExist:
+            return ""
+
+
+register.tag("render_layout", render_layout)
