@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-05 18:58+0700\n"
-"PO-Revision-Date: 2021-05-29 09:05+0000\n"
+"PO-Revision-Date: 2021-06-08 02:22+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
 "th/>\n"
@@ -117,7 +117,7 @@ msgstr "เพิ่ม"
 
 #: bread/layout/components/form.py:275
 msgid "Order"
-msgstr ""
+msgstr "คำสั่ง"
 
 #: bread/layout/components/form.py:318
 msgid "Delete"
@@ -197,10 +197,9 @@ msgid "Added %s"
 msgstr "เพิ่ม %s"
 
 #: bread/views/delete.py:47
-#, fuzzy, python-format
-#| msgid "Deleted %(modelname)s %(objectname)s"
+#, python-format
 msgid "Restored %(modelname)s %(objectname)s"
-msgstr "ลบ %(modelname)s %(objectname)s"
+msgstr "คืนค่า %(modelname)s %(objectname)s"
 
 #: bread/views/delete.py:49 bread/views/delete.py:53
 #, python-format
