@@ -153,7 +153,6 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 column = _layout.datatable.DataTableColumn(
                     fieldlabel(self.model, column), hg.C(f"row.{column}")
                 )
-            print(column.header, column.cell, getattr(column.cell, "value", ""))
 
             columndefinitions[column.header] = lambda row, column=column: hg.render(
                 hg.BaseElement(column.cell), {"row": row}
