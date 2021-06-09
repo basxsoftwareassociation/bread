@@ -87,4 +87,5 @@ urlpatterns = [
     path("auth/", include("django.contrib.auth.urls")),
     path("accounts/login/", system.BreadLoginView.as_view(), name="login"),
     path("accounts/logout/", system.BreadLogoutView.as_view(), name="logout"),
+    path("systeminformation", system.systeminformation, name="systeminformation"),
 ] + external_urlpatterns

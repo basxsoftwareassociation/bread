@@ -1,6 +1,8 @@
+import subprocess
+
 import htmlgenerator as hg
 from django.contrib.auth.views import LoginView, LogoutView
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.utils.translation import gettext_lazy as _
 
 from .. import layout
@@ -37,3 +39,51 @@ class BreadLogoutView(LogoutView):
             "layout": hg.DIV("Logged out"),
             "pagetitle": _("Logout"),
         }
+
+
+def systeminformation(request):
+    git_status = ""
+    try:
+        git_status = subprocess.run(
+            ["git", "log", "-n", "5", "--oneline"], capture_output=True, check=True
+        ).stdout.decode()
+    except subprocess.SubprocessError as e:
+        git_status = hg.BaseElement(
+            "ERROR",
+            hg.BR(),
+            str(e),
+            hg.BR(),
+            getattr(e, "stdout", b"").decode(),
+            hg.BR(),
+            getattr(e, "stderr", b"").decode(),
+        )
+    pip_status = ""
+    try:
+        pip_status = subprocess.run(
+            ["pip", "freeze"], capture_output=True, check=True
+        ).stdout.decode()
+    except subprocess.SubprocessError as e:
+        pip_status = hg.BaseElement(
+            "ERROR",
+            hg.BR(),
+            str(e),
+            hg.BR(),
+            getattr(e, "stdout", b"").decode(),
+            hg.BR(),
+            getattr(e, "stderr", b"").decode(),
+        )
+
+    return render(
+        request,
+        "bread/base.html",
+        context={
+            "layout": hg.BaseElement(
+                hg.H3("System information"),
+                hg.H4("Git log"),
+                hg.PRE(hg.CODE(git_status)),
+                hg.H4("PIP packages", style="margin-top: 2rem"),
+                hg.PRE(hg.CODE(pip_status)),
+            ),
+            "pagetitle": _("System information"),
+        },
+    )
