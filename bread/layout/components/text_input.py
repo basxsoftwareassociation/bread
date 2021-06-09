@@ -19,6 +19,18 @@ class TextInput(hg.DIV):
         icon=None,
         **attributes,
     ):
+        # Pop these attributes because "attributes" should be passed
+        # as HTML attributes to the parent __init__ and they do not render
+        # properly sometimes (e.g. boundfield will render the fields HTML
+        # inside the attribute
+        # TODO: Define and implement a better interface for components which can
+        # be instantiated in bread.layout.component._mapwidget
+        # See https://github.com/basxsoftwareassociation/bread/issues/16
+        attributes.pop("boundfield")
+        attributes.pop("fieldname")
+        attributes["_class"] = (
+            attributes.get("_class", "") + " bx--text-input-wrapper bx--form-item"
+        )
         widgetattributes = widgetattributes or {}
         widgetattributes["_class"] = hg.BaseElement(
             widgetattributes.get("_class", ""),
@@ -65,7 +77,7 @@ class TextInput(hg.DIV):
                 help_text, disabled=widgetattributes.get("disabled", False)
             ),
             ErrorListElement(errors),
-            _class="bx--text-input-wrapper bx--form-item",
+            **attributes,
         )
 
 
