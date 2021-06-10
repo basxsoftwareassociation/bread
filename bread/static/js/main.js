@@ -130,6 +130,11 @@ function formset_add(form_prefix, list_container) {
     updateMultiselect(container_elem);
 }
 
+function set_value(selector, value) {
+    let element = $(selector)
+    element.value = value
+}
+
 function validate_fields() {
     var error = false;
     for(input of $$("input")) {
@@ -144,8 +149,8 @@ function validate_fields() {
     if(error)
         console.log("There are errors in some fields")
 }
-
 // Function which is used to collect checkboxes from a datatable and submit the selected checkboxes to a URL for bulk processing
+
 function submitbulkaction(table, actionurl, method="GET") {
     let form = document.createElement("form");
     form.method = method;

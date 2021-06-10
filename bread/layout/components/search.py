@@ -6,7 +6,15 @@ from .loading import Loading
 
 
 class Search(hg.DIV):
-    def __init__(self, size="xl", placeholder=None, widgetattributes=None, **kwargs):
+    def __init__(
+        self,
+        size="xl",
+        placeholder=None,
+        widgetattributes=None,
+        selected_result_attributes=None,
+        **kwargs,
+    ):
+        selected_result_attributes = selected_result_attributes or {}
         kwargs["_class"] = kwargs.get("_class", "") + f" bx--search bx--search--{size}"
         kwargs["data_search"] = True
         kwargs["role"] = "search"
@@ -29,6 +37,10 @@ class Search(hg.DIV):
                 title=_("Clear search input"),
                 aria_label=_("Clear search input"),
                 type="button",
+            ),
+            hg.If(
+                selected_result_attributes,
+                hg.INPUT(_type="hidden", **selected_result_attributes),
             ),
             **kwargs,
         )
