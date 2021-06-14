@@ -128,6 +128,8 @@ function formset_add(form_prefix, list_container) {
     formcount.value = parseInt(formcount.value) + 1;
     update_add_button(form_prefix);
     updateMultiselect(container_elem);
+
+    htmx.process(container_elem);
 }
 
 function set_value(selector, value) {

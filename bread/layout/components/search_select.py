@@ -1,9 +1,10 @@
 import htmlgenerator as hg
-from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
+import bread.utils
 from .icon import Icon
 from .loading import Loading
+from .tag import Tag
 
 
 class SearchSelect(hg.BaseElement):
@@ -12,11 +13,11 @@ class SearchSelect(hg.BaseElement):
         search_view,
         query_urlparameter="q",
         size="xl",
-        placeholder=None,
         searchinput_widgetattributes=None,
         widgetattributes=None,
         **elementattributes,
     ):
+        widgetattributes["value"] = widgetattributes["value"][0]
         del elementattributes["boundfield"]
         elementattributes = elementattributes or {}
         elementattributes["_class"] = (
@@ -29,27 +30,37 @@ class SearchSelect(hg.BaseElement):
             "id": "search__" + hg.html_id(self),
             "_class": "bx--search-input",
             "type": "text",
-            "placeholder": placeholder or _("Search"),
             **(searchinput_widgetattributes or {}),
         }
 
         resultcontainerid = f"search-result-{hg.html_id((self, search_view))}"
 
+        url = bread.utils.reverse(
+            search_view,
+            query={
+                "target-id-to-store-selected": widgetattributes["id"],
+            },
+        )
         super().__init__(
             hg.DIV(
                 hg.LABEL(
                     _("Search"), _class="bx--label", _for=search_widget_attributes["id"]
                 ),
                 hg.INPUT(
-                    hx_get=reverse_lazy(search_view),
+                    hx_get=url,
                     hx_trigger="changed, keyup changed delay:500ms",
                     hx_target=f"#{resultcontainerid}",
                     hx_indicator=f"#{resultcontainerid}-indicator",
                     name=query_urlparameter,
                     **search_widget_attributes,
                 ),
-                Icon(
-                    "search", size=16, _class="bx--search-magnifier", aria_hidden="true"
+                Tag(
+                    widgetattributes["value"],
+                    id=widgetattributes["id"] + "-tag",
+                    style=hg.If(
+                        widgetattributes["value"] == "",
+                        hg.BaseElement("visibility: hidden"),
+                    ),
                 ),
                 hg.BUTTON(
                     Icon("close", size=20, _class="bx--search-clear"),
