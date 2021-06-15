@@ -64,15 +64,6 @@ class SearchSelect(hg.BaseElement):
                     name=query_urlparameter,
                     **search_widget_attributes,
                 ),
-                hg.If(
-                    current_selection_id == "",
-                    Icon(
-                        "search",
-                        size=16,
-                        _class="bx--search-magnifier",
-                        aria_hidden="true",
-                    ),
-                ),
                 Tag(
                     current_selection,
                     id=widgetattributes["id"] + "-tag",
