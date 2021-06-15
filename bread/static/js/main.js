@@ -152,7 +152,6 @@ function validate_fields() {
         console.log("There are errors in some fields")
 }
 // Function which is used to collect checkboxes from a datatable and submit the selected checkboxes to a URL for bulk processing
-
 function submitbulkaction(table, actionurl, method="GET") {
     let form = document.createElement("form");
     form.method = method;
