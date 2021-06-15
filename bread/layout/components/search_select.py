@@ -2,6 +2,7 @@ import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
 import bread.utils
+
 from .icon import Icon
 from .loading import Loading
 from .tag import Tag
@@ -17,9 +18,16 @@ class SearchSelect(hg.BaseElement):
         widgetattributes=None,
         **elementattributes,
     ):
-        widgetattributes["value"] = widgetattributes["value"][0]
+        current_selection_id = widgetattributes["value"][0]
+        current_selection = (
+            getattr(
+                elementattributes["boundfield"].form.instance,
+                elementattributes["fieldname"],
+            )
+            if current_selection_id
+            else None
+        )
         del elementattributes["boundfield"]
-        elementattributes = elementattributes or {}
         elementattributes["_class"] = (
             elementattributes.get("_class", "") + f" bx--search bx--search--{size}"
         )
@@ -30,6 +38,7 @@ class SearchSelect(hg.BaseElement):
             "id": "search__" + hg.html_id(self),
             "_class": "bx--search-input",
             "type": "text",
+            "style": "width: auto;",
             **(searchinput_widgetattributes or {}),
         }
 
@@ -54,13 +63,23 @@ class SearchSelect(hg.BaseElement):
                     name=query_urlparameter,
                     **search_widget_attributes,
                 ),
+                hg.If(
+                    current_selection_id == "",
+                    Icon(
+                        "search",
+                        size=16,
+                        _class="bx--search-magnifier",
+                        aria_hidden="true",
+                    ),
+                ),
                 Tag(
-                    widgetattributes["value"],
+                    current_selection,
                     id=widgetattributes["id"] + "-tag",
                     style=hg.If(
-                        widgetattributes["value"] == "",
+                        current_selection_id == "",
                         hg.BaseElement("visibility: hidden"),
                     ),
+                    onclick="return false;",
                 ),
                 hg.BUTTON(
                     Icon("close", size=20, _class="bx--search-clear"),
