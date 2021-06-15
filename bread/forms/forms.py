@@ -34,7 +34,7 @@ def breadmodelform_factory(  # noqa
     instance=None,
     baseformclass=forms.models.ModelForm,
     baseinlineformclass=None,
-    cache_querysets=True,
+    cache_querysets=False,
 ):
     """Returns a form class which can handle inline-modelform sets and generic foreign keys."""
     formfieldelements = _get_form_fields_from_layout(layout)
