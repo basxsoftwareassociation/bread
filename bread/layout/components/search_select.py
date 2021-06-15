@@ -13,34 +13,23 @@ class SearchSelect(hg.DIV):
         self,
         search_view,
         boundfield,
+        widgetattributes,
         query_urlparameter="q",
         size="lg",
-        searchinput_widgetattributes=None,
-        widgetattributes=None,
+        searchinput_attributes=None,
         **elementattributes,
     ):
+        searchinput_attributes = searchinput_attributes or {}
         current_selection_id = widgetattributes["value"][0]
         # This works inside a formset. Might need to be changed for other usages.
-        current_selection = (
-            getattr(
-                boundfield.form.instance,
-                elementattributes["fieldname"],
-            )
-            if current_selection_id
-            else None
+        current_selection = getattr(
+            boundfield.form.instance, elementattributes["fieldname"]
         )
         elementattributes["_class"] = (
             elementattributes.get("_class", "") + f" bx--search bx--search--{size}"
         )
         elementattributes["data_search"] = True
         elementattributes["role"] = "search"
-
-        search_widget_attributes = {
-            "id": "search__" + hg.html_id(self),
-            "_class": "bx--search-input",
-            "type": "text",
-            **(searchinput_widgetattributes or {}),
-        }
 
         resultcontainerid = f"search-result-{hg.html_id((self, search_view))}"
 
@@ -50,6 +39,7 @@ class SearchSelect(hg.DIV):
                 "target-id-to-store-selected": widgetattributes["id"],
             },
         )
+        search_input_id = "search__" + hg.html_id(self)
         super().__init__(
             Tag(
                 current_selection,
@@ -62,18 +52,17 @@ class SearchSelect(hg.DIV):
             ),
             hg.DIV(
                 hg.DIV(
-                    hg.LABEL(
-                        _("Search"),
-                        _class="bx--label",
-                        _for=search_widget_attributes["id"],
-                    ),
+                    hg.LABEL(_("Search"), _class="bx--label", _for=search_input_id),
                     hg.INPUT(
                         hx_get=url,
                         hx_trigger="changed, keyup changed delay:500ms",
                         hx_target=f"#{resultcontainerid}",
                         hx_indicator=f"#{resultcontainerid}-indicator",
                         name=query_urlparameter,
-                        **search_widget_attributes,
+                        id=search_input_id,
+                        _class="bx--search-input",
+                        type="text",
+                        **searchinput_attributes,
                     ),
                     Icon(
                         "search",
