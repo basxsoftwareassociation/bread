@@ -50,6 +50,7 @@ class SearchSelect(hg.DIV):
                 ),
                 onclick="return false;",
             ),
+            hg.INPUT(_type="hidden", **widgetattributes),
             hg.DIV(
                 hg.DIV(
                     hg.LABEL(_("Search"), _class="bx--label", _for=search_input_id),
@@ -78,7 +79,6 @@ class SearchSelect(hg.DIV):
                         type="button",
                         onclick=f"document.getElementById('{resultcontainerid}').innerHTML = '';",
                     ),
-                    hg.INPUT(_type="hidden", **widgetattributes),
                     hg.DIV(
                         Loading(small=True),
                         id=f"{resultcontainerid}-indicator",
