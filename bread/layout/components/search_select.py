@@ -23,7 +23,7 @@ class SearchSelect(hg.DIV):
         current_selection_id = widgetattributes["value"][0]
         # This works inside a formset. Might need to be changed for other usages.
         current_selection = getattr(
-            boundfield.form.instance, elementattributes["fieldname"]
+            boundfield.form.instance, elementattributes["fieldname"], ""
         )
         elementattributes["_class"] = (
             elementattributes.get("_class", "") + f" bx--search bx--search--{size}"
