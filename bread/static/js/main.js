@@ -132,11 +132,6 @@ function formset_add(form_prefix, list_container) {
     htmx.process(container_elem);
 }
 
-function set_value(selector, value) {
-    let element = $(selector)
-    element.value = value
-}
-
 function validate_fields() {
     var error = false;
     for(input of $$("input")) {
