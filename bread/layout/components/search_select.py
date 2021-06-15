@@ -19,6 +19,7 @@ class SearchSelect(hg.BaseElement):
         **elementattributes,
     ):
         current_selection_id = widgetattributes["value"][0]
+        # This works inside a formset. Might need to be changed for other usages.
         current_selection = (
             getattr(
                 elementattributes["boundfield"].form.instance,
