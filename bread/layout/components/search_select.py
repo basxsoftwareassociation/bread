@@ -1,8 +1,6 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
-import bread.utils
-
 from .icon import Icon
 from .loading import Loading
 from .tag import Tag
@@ -11,7 +9,7 @@ from .tag import Tag
 class SearchSelect(hg.DIV):
     def __init__(
         self,
-        search_view,
+        search_url,
         boundfield,
         widgetattributes,
         query_urlparameter="q",
@@ -31,14 +29,9 @@ class SearchSelect(hg.DIV):
         elementattributes["data_search"] = True
         elementattributes["role"] = "search"
 
-        resultcontainerid = f"search-result-{hg.html_id((self, search_view))}"
+        resultcontainerid = f"search-result-{hg.html_id((self, search_url))}"
 
-        url = bread.utils.reverse(
-            search_view,
-            query={
-                "target-id-to-store-selected": widgetattributes["id"],
-            },
-        )
+        url = f"{search_url}&target-id-to-store-selected={widgetattributes['id']}"
         search_input_id = "search__" + hg.html_id(self)
         super().__init__(
             Tag(
