@@ -100,8 +100,8 @@ def _search_input(
 def _click_on_result_handler(widget_id, tag_id):
     return (
         "function(evt) { "
-        f"let label = $(this).getElementsByClassName('{ITEM_LABEL_SELECTOR}')[0].innerHTML;"
-        f"let value = $(this).getElementsByClassName('{ITEM_VALUE_SELECTOR}')[0].innerHTML;"
+        f"let label = $('.{ITEM_LABEL_SELECTOR}', this).innerHTML;"
+        f"let value = $('.{ITEM_VALUE_SELECTOR}', this).innerHTML;"
         f"$('#{widget_id}').value = value;"
         f"$('#{tag_id}').innerHTML = label;"
         "}"
