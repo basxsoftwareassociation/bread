@@ -24,7 +24,7 @@ class DataTableColumn(NamedTuple):
 
     @staticmethod
     def from_modelfield(
-        col, model, prevent_automatic_sortingnames, rowvariable
+        col, model, prevent_automatic_sortingnames=False, rowvariable="row"
     ) -> "DataTableColumn":
         return DataTableColumn(
             fieldlabel(model, col),
