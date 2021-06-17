@@ -55,7 +55,7 @@ class ReadView(views.ReadView):
         order = self.request.GET.get("ordering")
         if order:
             if order.endswith("__int"):
-                order = order[:-5]
+                order = order[: -len("__int")]
                 qs = qs.order_by(
                     models.functions.Cast(order[1:], models.IntegerField()).desc()
                     if order.startswith("-")
