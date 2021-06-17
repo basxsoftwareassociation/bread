@@ -359,18 +359,21 @@ class DataTable(hg.TABLE):
                 item_attributes={"_class": "bx--table-row--menu-option"},
             )
         else:
-            objectactions_menu = hg.Iterator(
-                rowactions,
-                "action",
-                hg.F(
-                    lambda c, e: Button.fromaction(
-                        c["action"],
-                        notext=True,
-                        small=True,
-                        buttontype="ghost",
-                        _class="bx--overflow-menu",
-                    )
+            objectactions_menu = hg.DIV(
+                hg.Iterator(
+                    rowactions,
+                    "action",
+                    hg.F(
+                        lambda c, e: Button.fromaction(
+                            c["action"],
+                            notext=True,
+                            small=True,
+                            buttontype="ghost",
+                            _class="bx--overflow-menu",
+                        )
+                    ),
                 ),
+                style="display: flex",
             )
 
         action_menu_header = hg.BaseElement()
