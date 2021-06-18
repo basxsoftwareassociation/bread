@@ -108,14 +108,14 @@ def _click_on_result_handler(
     item_label_selector,
     item_value_selector,
 ):
-    return (
-        "function(evt) { "
-        f"let label = $('{item_label_selector}', this).innerHTML;"
-        f"let value = $('{item_value_selector}', this).innerHTML;"
-        f"$('#{widget_id}').value = value;"
-        f"$('#{tag_id}').innerHTML = label;"
-        "}"
-    )
+    return f"""
+        function(evt) {{
+        let label = $('{item_label_selector}', this).innerHTML;"
+        let value = $('{item_value_selector}', this).innerHTML;"
+        $('#{widget_id}').value = value;"
+        $('#{tag_id}').innerHTML = label;"
+        }}
+        """
 
 
 def _search_icon():
