@@ -1,3 +1,5 @@
+import typing
+
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
@@ -6,27 +8,33 @@ from .loading import Loading
 from .tag import Tag
 
 
+class SearchBackendConfig(typing.NamedTuple):
+    url: typing.Any
+    result_selector: str
+    result_label_selector: str
+    result_value_selector: str
+    query_parameter: str = "q"
+
+
 class SearchSelect(hg.DIV):
     def __init__(
         self,
-        search_url,
+        backend,
         boundfield,
         widgetattributes,
-        item_selector,
-        item_label_selector,
-        item_value_selector,
-        query_urlparameter="q",
-        size="lg",
         **elementattributes,
     ):
+        """
+        :param SearchBackendConfig backend: Where and how to get search results
+        """
+
         widgetattributes["value"] = widgetattributes["value"][0]
         # This works inside a formset. Might need to be changed for other usages.
         current_selection = getattr(
             boundfield.form.instance, elementattributes["fieldname"], ""
         )
 
-        resultcontainerid = f"search-result-{hg.html_id((self, search_url))}"
-        search_input_id = "search__" + hg.html_id(self)
+        resultcontainerid = f"search-result-{hg.html_id((self))}"
         widget_id = widgetattributes["id"]
         tag_id = f"{widget_id}-tag"
         super().__init__(
@@ -39,83 +47,67 @@ class SearchSelect(hg.DIV):
                 ),
                 onclick="return false;",
             ),
-            hg.INPUT(_type="hidden", **widgetattributes),
-            _search_input(
-                query_urlparameter,
-                search_url,
-                widget_id,
-                search_input_id,
+            hg.INPUT(_type="hidden", **widgetattributes),  # the actual form field
+            Search(
+                backend,
                 resultcontainerid,
-                size,
-                tag_id,
-                item_selector,
-                item_label_selector,
-                item_value_selector,
+                self._init_js(backend, resultcontainerid, tag_id, widget_id),
+                size="lg",
             ),
             style="display: flex;",
             **elementattributes,
         )
 
+    @staticmethod
+    def _init_js(backend, resultcontainerid, tag_id, widget_id):
+        on_click = f"""function(evt) {{
+            let label = $('{backend.result_label_selector}', this).innerHTML;
+            let value = $('{backend.result_value_selector}', this).innerHTML;
+            $('#{widget_id}').value = value;
+            $('#{tag_id}').innerHTML = label;
+            }}"""
 
-def _search_input(
-    query_urlparameter,
-    search_url,
-    widget_id,
-    search_input_id,
-    resultcontainerid,
-    size,
-    tag_id,
-    item_selector,
-    item_label_selector,
-    item_value_selector,
-):
-    return hg.DIV(
-        hg.DIV(
-            hg.INPUT(
-                hx_get=search_url,
-                hx_trigger="changed, keyup changed delay:500ms",
-                hx_target=f"#{resultcontainerid}",
-                hx_indicator=f"#{resultcontainerid}-indicator",
-                name=query_urlparameter,
-                id=search_input_id,
-                _class="bx--search-input",
-                type="text",
-            ),
-            _search_icon(),
-            _clear_search_input_button(resultcontainerid),
-            _loading_indicator(resultcontainerid),
-            _class=f"bx--search bx--search--{size}",
-            data_search=True,
-            role="search",
-        ),
-        hg.DIV(
+        return f"""htmx.onLoad(function(target) {{
+        $$('#{resultcontainerid} {backend.result_selector}')._
+        .addEventListener('click', {on_click});
+        }});"""
+
+
+class Search(hg.DIV):
+    def __init__(
+        self,
+        backend,
+        resultcontainerid,
+        init_js,
+        size,
+    ):
+        super().__init__(
             hg.DIV(
-                id=resultcontainerid,
-                _style="width: 100%; position: absolute; z-index: 999",
-                onload="htmx.onLoad(function(target) { "
-                f"$$('#{resultcontainerid} {item_selector}')._"
-                f".addEventListener('click', {_click_on_result_handler(widget_id, tag_id, item_label_selector, item_value_selector)});"
-                "});",
+                hg.INPUT(
+                    hx_get=backend.url,
+                    hx_trigger="changed, keyup changed delay:500ms",
+                    hx_target=f"#{resultcontainerid}",
+                    hx_indicator=f"#{resultcontainerid}-indicator",
+                    name=backend.query_parameter,
+                    _class="bx--search-input",
+                    type="text",
+                ),
+                _search_icon(),
+                _clear_search(resultcontainerid),
+                _loading_indicator(resultcontainerid),
+                _class=f"bx--search bx--search--{size}",
+                data_search=True,
+                role="search",
             ),
-            style="width: 100%; position: relative",
-        ),
-    )
-
-
-def _click_on_result_handler(
-    widget_id,
-    tag_id,
-    item_label_selector,
-    item_value_selector,
-):
-    return f"""
-        function(evt) {{
-        let label = $('{item_label_selector}', this).innerHTML;"
-        let value = $('{item_value_selector}', this).innerHTML;"
-        $('#{widget_id}').value = value;"
-        $('#{tag_id}').innerHTML = label;"
-        }}
-        """
+            hg.DIV(
+                hg.DIV(
+                    id=resultcontainerid,
+                    _style="width: 100%; position: absolute; z-index: 999",
+                    onload=init_js,
+                ),
+                style="width: 100%; position: relative",
+            ),
+        )
 
 
 def _search_icon():
@@ -136,7 +128,7 @@ def _loading_indicator(resultcontainerid):
     )
 
 
-def _clear_search_input_button(resultcontainerid):
+def _clear_search(resultcontainerid):
     return hg.BUTTON(
         Icon("close", size=20, _class="bx--search-clear"),
         _class="bx--search-close bx--search-close--hidden",
