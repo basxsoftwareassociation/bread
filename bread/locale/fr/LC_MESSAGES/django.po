@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-05 18:58+0700\n"
-"PO-Revision-Date: 2021-04-05 18:26+0000\n"
+"PO-Revision-Date: 2021-06-17 19:32+0000\n"
 "Last-Translator: Nathan <bonnemainsnathan@gmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/basxconnect/bread/"
 "fr/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.6-dev\n"
+"X-Generator: Weblate 4.7\n"
 
 #: bread/contrib/reports/fields/queryfield.py:109
 #, python-format
@@ -117,7 +117,7 @@ msgstr "Ajouter"
 
 #: bread/layout/components/form.py:275
 msgid "Order"
-msgstr ""
+msgstr "Tri"
 
 #: bread/layout/components/form.py:318
 msgid "Delete"
@@ -189,7 +189,7 @@ msgstr "Paramètres du système"
 
 #: bread/urls.py:40
 msgid "Preferences updated"
-msgstr ""
+msgstr "Préférences mises à jour"
 
 #: bread/views/add.py:24
 #, python-format
@@ -197,10 +197,9 @@ msgid "Added %s"
 msgstr "%s a été ajouté"
 
 #: bread/views/delete.py:47
-#, fuzzy, python-format
-#| msgid "Deleted %(modelname)s %(objectname)s"
+#, python-format
 msgid "Restored %(modelname)s %(objectname)s"
-msgstr "%(modelname)s %(objectname)s a été supprimé"
+msgstr "%(modelname)s %(objectname)s a été restauré"
 
 #: bread/views/delete.py:49 bread/views/delete.py:53
 #, python-format

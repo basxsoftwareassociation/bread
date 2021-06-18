@@ -1,6 +1,7 @@
 import datetime
 
 import htmlgenerator as hg
+from django.db import models
 from django.shortcuts import get_object_or_404
 from django.urls import path
 from django.utils.translation import gettext_lazy as _
@@ -9,8 +10,9 @@ from django.views.generic import TemplateView
 from bread import formatters
 from bread import layout as _layout
 from bread import menu, views
-from bread.utils import generate_excel, urls, xlsxresponse
+from bread.utils import filter_fieldlist, generate_excel, urls, xlsxresponse
 
+from ...layout.components.datatable import DataTableColumn, sortingname_for_column
 from .models import Report
 
 
@@ -45,14 +47,76 @@ class EditView(views.EditView):
         return ret
 
 
-def exceldownload(request, report_pk: int):
-    report = get_object_or_404(Report, pk=report_pk)
+class ReadView(views.ReadView):
+    def get_layout(self):
+
+        # ordering, copied from bread.views.browse.BrowseView.get_queryset
+        qs = self.object.filter.queryset
+        order = self.request.GET.get("ordering")
+        if order:
+            if order.endswith("__int"):
+                order = order[: -len("__int")]
+                qs = qs.order_by(
+                    models.functions.Cast(order[1:], models.IntegerField()).desc()
+                    if order.startswith("-")
+                    else models.functions.Cast(order, models.IntegerField())
+                )
+            else:
+                qs = qs.order_by(
+                    models.functions.Lower(order[1:]).desc()
+                    if order.startswith("-")
+                    else models.functions.Lower(order)
+                )
+
+        columns = [
+            DataTableColumn(
+                col.name,
+                _layout.FC(f"row.{col.column}"),
+                sortingname_for_column(self.object.model.model_class(), col.column),
+            )
+            for col in self.object.columns.all()
+        ]
+        if not columns:
+            columns = [
+                DataTableColumn.from_modelfield(col, self.object.model.model_class())
+                for col in filter_fieldlist(
+                    self.object.model.model_class(), ["__all__"]
+                )
+            ]
+
+        # generate a nice table
+        return _layout.datatable.DataTable(
+            columns=columns, row_iterator=qs
+        ).with_toolbar(
+            title=self.object.name,
+            helper_text=f"{self.object.filter.queryset.count()} {self.object.model.model_class()._meta.verbose_name_plural}",
+            primary_button=_layout.button.Button.fromaction(
+                menu.Link.from_objectaction(
+                    self.object,
+                    "excel",
+                    label=_("Excel"),
+                    icon="download",
+                )
+            ),
+        )
+
+
+def exceldownload(request, pk: int):
+    report = get_object_or_404(Report, pk=pk)
+
     columns = {
         column.name: lambda row, c=column.column: formatters.format_value(
             hg.resolve_lookup(row, c)
         )
         for column in report.columns.all()
     }
+    if not columns:
+        columns = {
+            column: lambda row, c=column: formatters.format_value(
+                hg.resolve_lookup(row, c)
+            )
+            for column in filter_fieldlist(report.model.model_class(), ["__all__"])
+        }
 
     workbook = generate_excel(report.filter.queryset, columns)
     workbook.title = report.name
@@ -81,7 +145,7 @@ urlpatterns = [
                         "document.location = '",
                         hg.F(
                             lambda c, e: urls.reverse_model(
-                                Report, "excel", kwargs={"report_pk": c["row"].pk}
+                                Report, "excel", kwargs={"pk": c["row"].pk}
                             )
                         ),
                         "'",
@@ -89,12 +153,25 @@ urlpatterns = [
                     icon="download",
                     label=_("Excel"),
                 ),
+                menu.Action(
+                    js=hg.BaseElement(
+                        "document.location = '",
+                        hg.F(lambda c, e: _layout.objectaction(c["row"], "edit")),
+                        "'",
+                    ),
+                    icon="edit",
+                    label=_("Edit"),
+                ),
             ],
-            backurl="#",
         ),
-        addview=views.AddView._with(fields=["name", "model"]),
+        addview=views.AddView._with(
+            fields=["name", "model"],
+            get_success_url=lambda s: urls.reverse_model(
+                Report, "edit", kwargs={"pk": s.object.pk}
+            ),
+        ),
         editview=EditView,
-        readview=EditView,
+        readview=ReadView,
     ),
     urls.generate_path(
         views.BulkDeleteView.as_view(model=Report),

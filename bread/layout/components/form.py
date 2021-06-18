@@ -257,7 +257,7 @@ class FormsetField(hg.Iterator):
         :param str title: Datatable title, automatically generated from form if None
         :param str formname: Name of the surounding django-form object in the context
         :param dict formsetfield_kwargs: Arguments to be passed to the FormSetField constructor
-        :param dict kwargs: Arguments to be passed to the DataTable constructor
+        :param kwargs: Arguments to be passed to the DataTable constructor
         :return: A datatable with inline-editing capabilities
         :rtype: hg.HTMLElement
         """
