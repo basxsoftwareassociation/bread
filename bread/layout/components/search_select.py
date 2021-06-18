@@ -5,10 +5,6 @@ from .icon import Icon
 from .loading import Loading
 from .tag import Tag
 
-ITEM_SELECTOR = "search_result_item"
-ITEM_LABEL_SELECTOR = "search_result_label"
-ITEM_VALUE_SELECTOR = "search_result_value"
-
 
 class SearchSelect(hg.DIV):
     def __init__(
@@ -16,6 +12,9 @@ class SearchSelect(hg.DIV):
         search_url,
         boundfield,
         widgetattributes,
+        item_selector,
+        item_label_selector,
+        item_value_selector,
         query_urlparameter="q",
         size="lg",
         **elementattributes,
@@ -49,6 +48,9 @@ class SearchSelect(hg.DIV):
                 resultcontainerid,
                 size,
                 tag_id,
+                item_selector,
+                item_label_selector,
+                item_value_selector,
             ),
             style="display: flex;",
             **elementattributes,
@@ -63,6 +65,9 @@ def _search_input(
     resultcontainerid,
     size,
     tag_id,
+    item_selector,
+    item_label_selector,
+    item_value_selector,
 ):
     return hg.DIV(
         hg.DIV(
@@ -88,8 +93,8 @@ def _search_input(
                 id=resultcontainerid,
                 _style="width: 100%; position: absolute; z-index: 999",
                 onload="htmx.onLoad(function(target) { "
-                f"$$('#{resultcontainerid} .{ITEM_SELECTOR}')._"
-                f".addEventListener('click', {_click_on_result_handler(widget_id, tag_id)});"
+                f"$$('#{resultcontainerid} {item_selector}')._"
+                f".addEventListener('click', {_click_on_result_handler(widget_id, tag_id, item_label_selector, item_value_selector)});"
                 "});",
             ),
             style="width: 100%; position: relative",
@@ -97,11 +102,16 @@ def _search_input(
     )
 
 
-def _click_on_result_handler(widget_id, tag_id):
+def _click_on_result_handler(
+    widget_id,
+    tag_id,
+    item_label_selector,
+    item_value_selector,
+):
     return (
         "function(evt) { "
-        f"let label = $('.{ITEM_LABEL_SELECTOR}', this).innerHTML;"
-        f"let value = $('.{ITEM_VALUE_SELECTOR}', this).innerHTML;"
+        f"let label = $('{item_label_selector}', this).innerHTML;"
+        f"let value = $('{item_value_selector}', this).innerHTML;"
         f"$('#{widget_id}').value = value;"
         f"$('#{tag_id}').innerHTML = label;"
         "}"
