@@ -93,7 +93,7 @@ def _search_input(
                 id=resultcontainerid,
                 _style="width: 100%; position: absolute; z-index: 999",
                 onload="htmx.onLoad(function(target) { "
-                f"$$('#{resultcontainerid} .{item_selector}')._"
+                f"$$('#{resultcontainerid} {item_selector}')._"
                 f".addEventListener('click', {_click_on_result_handler(widget_id, tag_id, item_label_selector, item_value_selector)});"
                 "});",
             ),
@@ -110,8 +110,8 @@ def _click_on_result_handler(
 ):
     return (
         "function(evt) { "
-        f"let label = $('.{item_label_selector}', this).innerHTML;"
-        f"let value = $('.{item_value_selector}', this).innerHTML;"
+        f"let label = $('{item_label_selector}', this).innerHTML;"
+        f"let value = $('{item_value_selector}', this).innerHTML;"
         f"$('#{widget_id}').value = value;"
         f"$('#{tag_id}').innerHTML = label;"
         "}"
