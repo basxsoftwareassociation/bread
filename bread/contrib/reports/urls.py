@@ -72,14 +72,16 @@ class ReadView(views.ReadView):
                     else models.functions.Lower(order)
                 )
 
-        columns = [
-            DataTableColumn(
-                col.name,
-                _layout.FC(f"row.{col.column}"),
+        columns = []
+        for col in self.object.columns.all():
+            sortingname = None
+            try:
                 sortingname_for_column(self.object.model.model_class(), col.column),
+            except AttributeError:
+                pass
+            columns.append(
+                DataTableColumn(col.name, _layout.FC(f"row.{col.column}"), sortingname)
             )
-            for col in self.object.columns.all()
-        ]
         if not columns:
             columns = [
                 DataTableColumn.from_modelfield(col, self.object.model.model_class())
@@ -147,6 +149,15 @@ urlpatterns = [
                 menu.Action(
                     js=hg.BaseElement(
                         "document.location = '",
+                        hg.F(lambda c, e: _layout.objectaction(c["row"], "edit")),
+                        "'",
+                    ),
+                    icon="edit",
+                    label=_("Edit"),
+                ),
+                menu.Action(
+                    js=hg.BaseElement(
+                        "document.location = '",
                         hg.F(
                             lambda c, e: urls.reverse_model(
                                 Report, "excel", kwargs={"pk": c["row"].pk}
@@ -156,15 +167,6 @@ urlpatterns = [
                     ),
                     icon="download",
                     label=_("Excel"),
-                ),
-                menu.Action(
-                    js=hg.BaseElement(
-                        "document.location = '",
-                        hg.F(lambda c, e: _layout.objectaction(c["row"], "edit")),
-                        "'",
-                    ),
-                    icon="edit",
-                    label=_("Edit"),
                 ),
             ],
         ),

@@ -10,6 +10,12 @@ from ...layout.components.datatable import DataTableColumn
 from .fields.queryfield import QuerysetField
 
 
+def available_report_filters(modelfield, request, report):
+    from django.conf import settings
+
+    return tuple((i, i) for i in getattr(settings, "REPORT_FILTERS", {}).keys())
+
+
 class Report(models.Model):
     created = models.DateField(_("Created"), auto_now_add=True)
     name = models.CharField(_("Name"), max_length=255)
@@ -27,6 +33,7 @@ class Report(models.Model):
         ),
         blank=True,
     )
+    custom_queryset.lazy_choices = available_report_filters
 
     @property
     def preview(self):
