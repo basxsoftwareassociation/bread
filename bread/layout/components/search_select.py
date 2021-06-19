@@ -114,6 +114,7 @@ def _click_on_result_handler(
         f"let value = $('{item_value_selector}', this).innerHTML;"
         f"$('#{widget_id}').value = value;"
         f"$('#{tag_id}').innerHTML = label;"
+        f"$('#{tag_id}').style = 'visiblity: visible';"
         "}"
     )
 
