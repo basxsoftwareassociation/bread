@@ -130,7 +130,7 @@ function formset_add(form_prefix, list_container) {
     updateMultiselect(container_elem);
 
     htmx.process(container_elem);
-    $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load");
+    $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)', container_elem)._.fire("load");
 }
 
 function validate_fields() {
