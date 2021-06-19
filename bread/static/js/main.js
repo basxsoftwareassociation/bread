@@ -129,8 +129,8 @@ function formset_add(form_prefix, list_container) {
     update_add_button(form_prefix);
     updateMultiselect(container_elem);
 
-    htmx.process(container_elem);
     $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)', container_elem)._.fire("load");
+    htmx.process(container_elem);
 }
 
 function validate_fields() {

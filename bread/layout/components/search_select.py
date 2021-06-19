@@ -75,7 +75,7 @@ def _search_input(
         hg.DIV(
             hg.INPUT(
                 hx_get=search_url,
-                hx_trigger="changed, keyup changed delay:500ms",
+                hx_trigger="changed, click, keyup changed delay:500ms",
                 hx_target=f"#{resultcontainerid}",
                 hx_indicator=f"#{resultcontainerid}-indicator",
                 name=query_urlparameter,
@@ -94,7 +94,8 @@ def _search_input(
             hg.DIV(
                 id=resultcontainerid,
                 _style="width: 100%; position: absolute; z-index: 999",
-                onload="htmx.onLoad(function(target) { "
+                onload="document.addEventListener('click', (evt) => this.innerHTML='');"
+                "htmx.onLoad(function(target) { "
                 f"$$('#{resultcontainerid} {item_selector}')._"
                 f".addEventListener('click', {_click_on_result_handler(widget_id, tag_id, item_label_selector, item_value_selector)});"
                 "});",
