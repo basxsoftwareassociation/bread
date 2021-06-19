@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-19 12:29+0700\n"
-"PO-Revision-Date: 2021-06-08 02:22+0000\n"
+"PO-Revision-Date: 2021-06-19 06:45+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
 "th/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.7-dev\n"
+"X-Generator: Weblate 4.7\n"
 
 #: bread/contrib/reports/fields/queryfield.py:109
 #, python-format
@@ -41,15 +41,14 @@ msgid "Filter"
 msgstr "ค้นหา"
 
 #: bread/contrib/reports/models.py:29
-#, fuzzy
-#| msgid "Filter"
 msgid "Custom Filter"
-msgstr "ค้นหา"
+msgstr "ตัวกรองแบบกำหนดเอง"
 
 #: bread/contrib/reports/models.py:32
 msgid ""
 "Key in 'settings.REPORT_FILTERS' must be a function returning a queryset"
 msgstr ""
+"คีย์ใน 'settings.REPORT_FILTERS' ต้องเป็นฟังก์ชันที่ส่งคืนชุดข้อความค้นหา"
 
 #: bread/contrib/reports/models.py:47
 msgid "Preview"
@@ -60,12 +59,14 @@ msgstr "มุมมอง"
 msgid ""
 "settings.REPORT_FILTERS[\"%s\"] did not return a queryset but returned: %s"
 msgstr ""
+"คีย์ใน 'settings.REPORT_FILTERS' ต้องเป็นฟังก์ชันที่ส่งคืนชุดข้อความค้นหา"
 
 #: bread/contrib/reports/models.py:70
 #, python-format
 msgid ""
 "settings.REPORT_FILTERS[\"%s\"] did not return a queryset for %s but for %s"
 msgstr ""
+"ตั้งค่า.REPORT_FILTERS[\"%s\"] ไม่ได้ส่งคืนชุดการสืบค้นสำหรับ %s แต่สำหรับ %s"
 
 #: bread/contrib/reports/models.py:81
 msgid "Report"
@@ -98,7 +99,7 @@ msgstr "Excel"
 
 #: bread/contrib/reports/urls.py:156
 msgid "Edit"
-msgstr ""
+msgstr "แก้ไข"
 
 #: bread/layout/components/button.py:67
 msgid "Print"
@@ -270,10 +271,8 @@ msgid "Login"
 msgstr "ลงชื่อเข้าใช้"
 
 #: bread/views/system.py:87
-#, fuzzy
-#| msgid "System Settings"
 msgid "System information"
-msgstr "ตั้งค่าระบบ"
+msgstr "ข้อมูลระบบ"
 
 #: bread/views/wizard.py:50
 msgid "Back"
