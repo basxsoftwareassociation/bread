@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-19 12:29+0700\n"
-"PO-Revision-Date: 2021-06-19 06:45+0000\n"
+"PO-Revision-Date: 2021-06-19 07:43+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
 "th/>\n"
@@ -59,7 +59,8 @@ msgstr "มุมมอง"
 msgid ""
 "settings.REPORT_FILTERS[\"%s\"] did not return a queryset but returned: %s"
 msgstr ""
-"คีย์ใน 'settings.REPORT_FILTERS' ต้องเป็นฟังก์ชันที่ส่งคืนชุดข้อความค้นหา"
+"คีย์ใน 'settings.REPORT_FILTERS'[\"%s\"] "
+"ต้องเป็นฟังก์ชันที่ส่งคืนชุดข้อความค้นหา %s"
 
 #: bread/contrib/reports/models.py:70
 #, python-format
