@@ -25,7 +25,7 @@ class SearchSelect(hg.DIV):
             boundfield.form.instance, elementattributes["fieldname"], ""
         )
 
-        resultcontainerid = f"search-result-{hg.html_id((self, search_url))}"
+        resultcontainerid = f"search-result-{widgetattributes['id']}"
         search_input_id = "search__" + hg.html_id(self)
         widget_id = widgetattributes["id"]
         tag_id = f"{widget_id}-tag"
