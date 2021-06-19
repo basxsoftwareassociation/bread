@@ -51,6 +51,7 @@ class SearchSelect(hg.DIV):
                 item_selector,
                 item_label_selector,
                 item_value_selector,
+                disabled=widgetattributes.get("disabled", False),
             ),
             style="display: flex;",
             **elementattributes,
@@ -68,6 +69,7 @@ def _search_input(
     item_selector,
     item_label_selector,
     item_value_selector,
+    disabled,
 ):
     return hg.DIV(
         hg.DIV(
@@ -99,6 +101,7 @@ def _search_input(
             ),
             style="width: 100%; position: relative",
         ),
+        style=hg.If(disabled, "display: none"),
     )
 
 
