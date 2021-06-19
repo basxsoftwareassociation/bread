@@ -25,7 +25,7 @@ class SearchSelect(hg.DIV):
             boundfield.form.instance, elementattributes["fieldname"], ""
         )
 
-        resultcontainerid = f"search-result-{hg.html_id((self, search_url))}"
+        resultcontainerid = f"search-result-{widgetattributes['id']}"
         search_input_id = "search__" + hg.html_id(self)
         widget_id = widgetattributes["id"]
         tag_id = f"{widget_id}-tag"
@@ -51,6 +51,7 @@ class SearchSelect(hg.DIV):
                 item_selector,
                 item_label_selector,
                 item_value_selector,
+                disabled=widgetattributes.get("disabled", False),
             ),
             style="display: flex;",
             **elementattributes,
@@ -68,12 +69,13 @@ def _search_input(
     item_selector,
     item_label_selector,
     item_value_selector,
+    disabled,
 ):
     return hg.DIV(
         hg.DIV(
             hg.INPUT(
                 hx_get=search_url,
-                hx_trigger="changed, keyup changed delay:500ms",
+                hx_trigger="changed, click, keyup changed delay:500ms",
                 hx_target=f"#{resultcontainerid}",
                 hx_indicator=f"#{resultcontainerid}-indicator",
                 name=query_urlparameter,
@@ -92,13 +94,15 @@ def _search_input(
             hg.DIV(
                 id=resultcontainerid,
                 _style="width: 100%; position: absolute; z-index: 999",
-                onload="htmx.onLoad(function(target) { "
+                onload="document.addEventListener('click', (evt) => this.innerHTML='');"
+                "htmx.onLoad(function(target) { "
                 f"$$('#{resultcontainerid} {item_selector}')._"
                 f".addEventListener('click', {_click_on_result_handler(widget_id, tag_id, item_label_selector, item_value_selector)});"
                 "});",
             ),
             style="width: 100%; position: relative",
         ),
+        style=hg.If(disabled, "display: none"),
     )
 
 
@@ -114,6 +118,7 @@ def _click_on_result_handler(
         f"let value = $('{item_value_selector}', this).innerHTML;"
         f"$('#{widget_id}').value = value;"
         f"$('#{tag_id}').innerHTML = label;"
+        f"$('#{tag_id}').style = 'visiblity: visible';"
         "}"
     )
 
