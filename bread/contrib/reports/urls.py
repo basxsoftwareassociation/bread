@@ -32,6 +32,7 @@ class EditView(views.EditView):
                     ),
                     F("name"),
                     F("filter"),
+                    F("custom_queryset"),
                     _layout.form.FormsetField.as_datatable(
                         "columns",
                         ["column", "name"],
@@ -46,12 +47,15 @@ class EditView(views.EditView):
         )
         return ret
 
+    def get_success_url(self):
+        return self.request.get_full_path()
+
 
 class ReadView(views.ReadView):
     def get_layout(self):
 
         # ordering, copied from bread.views.browse.BrowseView.get_queryset
-        qs = self.object.filter.queryset
+        qs = self.object.queryset
         order = self.request.GET.get("ordering")
         if order:
             if order.endswith("__int"):
@@ -89,7 +93,7 @@ class ReadView(views.ReadView):
             columns=columns, row_iterator=qs
         ).with_toolbar(
             title=self.object.name,
-            helper_text=f"{self.object.filter.queryset.count()} {self.object.model.model_class()._meta.verbose_name_plural}",
+            helper_text=f"{self.object.queryset.count()} {self.object.model.model_class()._meta.verbose_name_plural}",
             primary_button=_layout.button.Button.fromaction(
                 menu.Link.from_objectaction(
                     self.object,
@@ -118,7 +122,7 @@ def exceldownload(request, pk: int):
             for column in filter_fieldlist(report.model.model_class(), ["__all__"])
         }
 
-    workbook = generate_excel(report.filter.queryset, columns)
+    workbook = generate_excel(report.queryset, columns)
     workbook.title = report.name
 
     return xlsxresponse(
