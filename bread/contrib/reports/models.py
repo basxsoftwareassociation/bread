@@ -54,7 +54,9 @@ class Report(models.Model):
     def queryset(self):
         if self.custom_queryset:
             # do not check whether the settings exists, an exception can be raised automatically
-            ret = settings.REPORT_FILTERS[self.custom_queryset]()
+            ret = settings.REPORT_FILTERS[self.custom_queryset](
+                self.model.model_class()
+            )
             if not isinstance(ret, models.QuerySet):
                 raise ValueError(
                     _(
