@@ -92,9 +92,9 @@ class Search(hg.DIV):
                     _class="bx--search-input",
                     type="text",
                 ),
-                _search_icon(),
-                _clear_search(resultcontainerid),
-                _loading_indicator(resultcontainerid),
+                self._search_icon(),
+                self._clear_search(resultcontainerid),
+                self._loading_indicator(resultcontainerid),
                 _class=f"bx--search bx--search--{size}",
                 data_search=True,
                 role="search",
@@ -109,31 +109,31 @@ class Search(hg.DIV):
             ),
         )
 
+    @staticmethod
+    def _search_icon():
+        return Icon(
+            "search",
+            size=16,
+            _class="bx--search-magnifier",
+            aria_hidden="true",
+        )
 
-def _search_icon():
-    return Icon(
-        "search",
-        size=16,
-        _class="bx--search-magnifier",
-        aria_hidden="true",
-    )
+    @staticmethod
+    def _loading_indicator(resultcontainerid):
+        return hg.DIV(
+            Loading(small=True),
+            id=f"{resultcontainerid}-indicator",
+            _class="htmx-indicator",
+            style="position: absolute; right: 2rem",
+        )
 
-
-def _loading_indicator(resultcontainerid):
-    return hg.DIV(
-        Loading(small=True),
-        id=f"{resultcontainerid}-indicator",
-        _class="htmx-indicator",
-        style="position: absolute; right: 2rem",
-    )
-
-
-def _clear_search(resultcontainerid):
-    return hg.BUTTON(
-        Icon("close", size=20, _class="bx--search-clear"),
-        _class="bx--search-close bx--search-close--hidden",
-        title=_("Clear search input"),
-        aria_label=_("Clear search input"),
-        type="button",
-        onclick=f"document.getElementById('{resultcontainerid}').innerHTML = '';",
-    )
+    @staticmethod
+    def _clear_search(resultcontainerid):
+        return hg.BUTTON(
+            Icon("close", size=20, _class="bx--search-clear"),
+            _class="bx--search-close bx--search-close--hidden",
+            title=_("Clear search input"),
+            aria_label=_("Clear search input"),
+            type="button",
+            onclick=f"document.getElementById('{resultcontainerid}').innerHTML = '';",
+        )
