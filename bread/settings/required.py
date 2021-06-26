@@ -92,6 +92,7 @@ LIBSASS_OUTPUT_STYLE = "compressed"
 # not sure why we need this
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+# named urlpattern to redirect to if login is required
 LOGIN_URL = "login"
 
 # required for compressor (which is the base of the sass compiler)
