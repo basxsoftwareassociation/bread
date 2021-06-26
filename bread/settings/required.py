@@ -1,33 +1,35 @@
 import os
 
 _third_party_apps = [
-    "simple_history",
+    "django_extensions",  # for developer friendliness
+    "guardian",  # per-object permissions
+    "compressor",  # asset handling
+    "simple_history",  # versioning
+    # some additional form fields
     "ckeditor",
     "ckeditor_uploader",
-    "guardian",
+    "djangoql",
+    # for handling global and user preferences
     "dynamic_preferences",
     "dynamic_preferences.users.apps.UserPreferencesConfig",
-    "compressor",
+    # very commonly used model fields
     "django_countries",
     "djmoney",
     "djmoney.contrib.exchange",
+    # task queue system
     "django_celery_results",
     "django_celery_beat",
-    "django_extensions",
+    # search index
     "haystack",
-    "whoosh",
     "celery_haystack",
-    "djangoql",
+    "whoosh",
 ]
 _django_apps = [
-    "django.forms",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.humanize",
-    "django.contrib.sites",
 ]
 
 # apps which are required for bread to work, order is important
@@ -111,12 +113,10 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "bread.middleware.RequireAuthenticationMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
 ]
-SITE_ID = 1
 
 BREAD_PUBLIC_FILES_PREFIX = "public/"
 
