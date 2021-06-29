@@ -34,7 +34,7 @@ class SearchSelect(hg.DIV):
             boundfield.form.instance, elementattributes["fieldname"], ""
         )
 
-        resultcontainerid = f"search-result-{hg.html_id((self))}"
+        resultcontainerid = f"search-result-{widgetattributes['id']}"
         widget_id = widgetattributes["id"]
         tag_id = f"{widget_id}-tag"
         super().__init__(
@@ -53,6 +53,7 @@ class SearchSelect(hg.DIV):
                 resultcontainerid,
                 self._init_js(backend, resultcontainerid, tag_id, widget_id),
                 size="lg",
+                disabled=widgetattributes.get("disabled", False),
             ),
             style="display: flex;",
             **elementattributes,
@@ -65,13 +66,15 @@ class SearchSelect(hg.DIV):
             let value = $('{backend.result_value_selector}', this).innerHTML;
             $('#{widget_id}').value = value;
             $('#{tag_id}').innerHTML = label;
+            $('#{tag_id}').style = 'visiblity: visible';
             }}"""
 
-        return f"""htmx.onLoad(function(target) {{
+        return f"""
+        document.addEventListener('click', (evt) => this.innerHTML='');
+        htmx.onLoad(function(target) {{
         $$('#{resultcontainerid} {backend.result_selector}')._
         .addEventListener('click', {on_click});
         }});"""
-
 
 class Search(hg.DIV):
     def __init__(
@@ -80,12 +83,13 @@ class Search(hg.DIV):
         resultcontainerid,
         init_js,
         size,
+        disabled,
     ):
         super().__init__(
             hg.DIV(
                 hg.INPUT(
                     hx_get=backend.url,
-                    hx_trigger="changed, keyup changed delay:500ms",
+                    hx_trigger="changed, click, keyup changed delay:500ms",
                     hx_target=f"#{resultcontainerid}",
                     hx_indicator=f"#{resultcontainerid}-indicator",
                     name=backend.query_parameter,
@@ -107,6 +111,7 @@ class Search(hg.DIV):
                 ),
                 style="width: 100%; position: relative",
             ),
+            style=hg.If(disabled, "display: none")
         )
 
     @staticmethod

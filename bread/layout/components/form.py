@@ -99,7 +99,7 @@ class FormField(FormChild, hg.BaseElement):
         formname="form",
     ):
         if fieldtype is not None and not isinstance(fieldtype, type):
-            raise ValueError(f"argument 'fieldtype' is not a type")
+            raise ValueError("argument 'fieldtype' is not a type")
         self.fieldname = fieldname
         self.fieldtype = fieldtype
         self.widgetattributes = widgetattributes or {}
