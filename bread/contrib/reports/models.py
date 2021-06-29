@@ -1,4 +1,5 @@
 import htmlgenerator as hg
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -7,6 +8,12 @@ from bread import layout
 
 from ...layout.components.datatable import DataTableColumn
 from .fields.queryfield import QuerysetField
+
+
+def available_report_filters(modelfield, request, report):
+    from django.conf import settings
+
+    return tuple((i, i) for i in getattr(settings, "REPORT_FILTERS", {}).keys())
 
 
 class Report(models.Model):
@@ -18,6 +25,15 @@ class Report(models.Model):
     )
     model.verbose_name = _("Model")
     filter = QuerysetField(_("Filter"), modelfieldname="model")
+    custom_queryset = models.CharField(
+        _("Custom Filter"),
+        max_length=255,
+        help_text=_(
+            "Key in 'settings.REPORT_FILTERS' must be a function returning a queryset"
+        ),
+        blank=True,
+    )
+    custom_queryset.lazy_choices = available_report_filters
 
     @property
     def preview(self):
@@ -30,9 +46,33 @@ class Report(models.Model):
         return hg.BaseElement(
             hg.H3(_("Preview")),
             layout.datatable.DataTable.from_queryset(
-                self.filter.queryset[:25], columns=columns, with_toolbar=False
+                self.queryset[:25], columns=columns, with_toolbar=False
             ),
         )
+
+    @property
+    def queryset(self):
+        if self.custom_queryset:
+            # do not check whether the settings exists, an exception can be raised automatically
+            ret = settings.REPORT_FILTERS[self.custom_queryset](
+                self.model.model_class()
+            )
+            if not isinstance(ret, models.QuerySet):
+                raise ValueError(
+                    _(
+                        'settings.REPORT_FILTERS["%s"] did not return a queryset but returned: %s'
+                    )
+                    % (self.custom_queryset, ret)
+                )
+            if ret.model != self.model.model_class():
+                raise ValueError(
+                    _(
+                        'settings.REPORT_FILTERS["%s"] did not return a queryset for %s but for %s'
+                    )
+                    % (self.custom_queryset, self.model.model_class(), ret.model)
+                )
+            return ret
+        return self.filter.queryset
 
     def __str__(self):
         return self.name
