@@ -79,33 +79,26 @@ def generate_copyview(model, attrs=None, labelfield=None, copy_related_fields=()
     return copy
 
 
-def generate_bulkcopyview(
-    model, pk_queryname="selected", attrs=None, labelfield=None, copy_related_fields=()
-):
-    """creates a copy of a list of instances and redirects to the edit view of the newly created instance
-    pk_queryname: name of the HTTP query parameter which carries the pk's of the object to duplicate
+def bulkcopy(request, queryset, attrs=None, labelfield=None, copy_related_fields=()):
+    """creates a copy all instances of a queryset
     attrs: custom field values for the new instance
     labelfield: name of a model field which will be used to create copy-labels (Example, Example (Copy 2), Example (Copy 3), etc)
+    copy_related_fields: related fields which should also be (deep) copied
     """
     attrs = attrs or {}
-
-    def copy(request):
-        created = 0
-        errors = 0
-        for pk in request.GET.getlist(pk_queryname):
-            instance = get_object_or_404(model, pk=pk)
-            if labelfield:
-                attrs[labelfield] = copylabel(getattr(instance, labelfield))
-            try:
-                deepcopy_object(instance, attrs, copy_related_fields)
-                created += 1
-            except Exception as e:
-                messages.error(request, e)
-                errors += 1
-            messages.success(request, _("Created %s copies" % created))
-        return redirect(reverse(model_urlname(model, "browse")))
-
-    return copy
+    created = 0
+    errors = 0
+    for instance in queryset:
+        if labelfield:
+            attrs[labelfield] = copylabel(getattr(instance, labelfield))
+        try:
+            deepcopy_object(instance, attrs, copy_related_fields)
+            created += 1
+        except Exception as e:
+            messages.error(request, e)
+            errors += 1
+    messages.success(request, _("Created %s copies" % created))
+    return redirect(request.path)
 
 
 def deepcopy_object(instance, attrs=None, copy_related_fields=()):
