@@ -91,7 +91,8 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
 
     def get_layout(self):
         qs = self.get_queryset()
-        # re-mapping the Links because the url is not supposed to be a real name
+        # re-mapping the Links because the URL is not supposed to be a real URL but an identifier
+        # for the bulk action
         # TODO: This is a bit ugly but we can reuse the Link type for icon, label and permissions
         bulkactions = [
             Link(
@@ -197,8 +198,6 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
 
 
 # helper function to export a queryset to excel
-
-
 def export(queryset, columns):
     if "__all__" in columns:
         columns = filter_fieldlist(queryset.model, columns)
