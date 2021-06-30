@@ -11,6 +11,8 @@ from bread import formatters
 from bread import layout as _layout
 from bread import menu, views
 from bread.utils import filter_fieldlist, generate_excel, urls, xlsxresponse
+from bread.views.browse import delete
+from bread.views.edit import bulkcopy
 
 from ...layout.components.datatable import DataTableColumn, sortingname_for_column
 from .models import Report
@@ -139,11 +141,16 @@ urlpatterns = [
             columns=["name", "created"],
             rowclickaction="read",
             bulkactions=[
-                menu.Link(
-                    urls.reverse_model(Report, "bulkdelete"),
-                    icon="trash-can",
+                (
+                    menu.Link("delete", label=_("Delete"), icon="trash-can"),
+                    delete,
                 ),
-                menu.Link(urls.reverse_model(Report, "bulkcopy"), icon="copy"),
+                (
+                    menu.Link("copy", label=_("Copy"), icon="copy"),
+                    lambda request, qs: bulkcopy(
+                        request, qs, labelfield="name", copy_related_fields=("columns",)
+                    ),
+                ),
             ],
             rowactions=[
                 menu.Action(
@@ -178,16 +185,6 @@ urlpatterns = [
         ),
         editview=EditView,
         readview=ReadView,
-    ),
-    urls.generate_path(
-        views.BulkDeleteView.as_view(model=Report),
-        urls.model_urlname(Report, "bulkdelete"),
-    ),
-    urls.generate_path(
-        views.generate_bulkcopyview(
-            Report, labelfield="name", copy_related_fields=("columns",)
-        ),
-        urls.model_urlname(Report, "bulkcopy"),
     ),
     urls.generate_path(
         exceldownload,

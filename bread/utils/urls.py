@@ -187,14 +187,6 @@ def default_model_paths(
                 model_urlname(model, "browse"),
             )
         )
-        ret.append(
-            generate_path(
-                browseview.as_view(
-                    model=model, bulkactions=browseview.bulkactions, asexcel=True
-                ),
-                model_urlname(model, "excel"),
-            )
-        )
     if readview is not None:
         if readview is True:
             readview = defaultview["read"]
