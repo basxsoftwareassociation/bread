@@ -63,6 +63,8 @@ def _resultcontainer_onload_js(backend, resultcontainerid, tag_id, widget_id):
     return f"""
     document.addEventListener('click', (evt) => this.innerHTML='');
     htmx.onLoad(function(target) {{
+    // remove existing onlick attribute in case it e.g. redirects to the selected person
+    $$('#{resultcontainerid} {backend.result_selector}')._.setAttribute('onclick', null);
     $$('#{resultcontainerid} {backend.result_selector}')._
     .addEventListener('click', {on_click});
     }});"""
