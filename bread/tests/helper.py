@@ -1,7 +1,8 @@
 from collections import namedtuple
 
-import mechanize
 from django.contrib.auth.models import User
+from hypothesis import given
+from hypothesis.extra.django import TestCase, from_model
 
 from bread.utils.urls import reverse_model
 
@@ -17,16 +18,24 @@ def authenticated(func):
     return wrapper
 
 
-@authenticated
-def generic_bread_test(case, model, **kwargs):
-    """Creates a single object, calls browse, read and edit pages"""
-    p = model(**kwargs)
-    p.save()
-    resp = case.client.get(reverse_model(model, "browse"))
-    case.assertEqual(resp.status_code, 200)
-    resp = case.client.get(reverse_model(model, "read", kwargs={"pk": p.pk}))
-    case.assertEqual(resp.status_code, 200)
-    test_form_page(case, reverse_model(model, "edit", kwargs={"pk": p.pk}))
+def generic_bread_testcase(model, **kwargs):
+    class GenericModelTest(TestCase):
+        @given(from_model(model))
+        def test_generic(self, instance):
+            print("did stuff")
+            assert instance.pk
+            resp = self.client.get(reverse_model(model, "browse"))
+            self.assertEqual(resp.status_code, 200)
+            resp = self.client.get(
+                reverse_model(model, "read", kwargs={"pk": instance.pk})
+            )
+            self.assertEqual(resp.status_code, 200)
+            resp = self.client.get(
+                reverse_model(model, "edit", kwargs={"pk": instance.pk})
+            )
+            self.assertEqual(resp.status_code, 200)
+
+    return GenericModelTest
 
 
 def test_form_page(case, url, fuzzy_count=10):
@@ -63,9 +72,4 @@ def test_form_page(case, url, fuzzy_count=10):
 
 
 def extract_form(url):
-    br = mechanize.Browser()
-    br.open(url)
-    form = br.select_form(name="")
-    print(form)
-
     return [FormField(name="", value="", element="", generators=[])]
