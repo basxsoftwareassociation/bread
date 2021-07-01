@@ -123,11 +123,14 @@ function formset_add(form_prefix, list_container) {
     container_elem.appendChild(placeholder);
     var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
     var newElementStr = $('#empty_' + form_prefix + '_form').innerText.replace(/__prefix__/g, formcount.value)
-    placeholder.outerHTML = newElementStr
+    placeholder.outerHTML = newElementStr;
 
     formcount.value = parseInt(formcount.value) + 1;
     update_add_button(form_prefix);
     updateMultiselect(container_elem);
+
+    $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)', container_elem)._.fire("load");
+    htmx.process(container_elem);
 }
 
 function validate_fields() {

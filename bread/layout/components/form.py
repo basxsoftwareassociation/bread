@@ -98,6 +98,8 @@ class FormField(FormChild, hg.BaseElement):
         widgetattributes=None,
         formname="form",
     ):
+        if fieldtype is not None and not isinstance(fieldtype, type):
+            raise ValueError("argument 'fieldtype' is not a type")
         self.fieldname = fieldname
         self.fieldtype = fieldtype
         self.widgetattributes = widgetattributes or {}
@@ -257,7 +259,7 @@ class FormsetField(hg.Iterator):
         :param str title: Datatable title, automatically generated from form if None
         :param str formname: Name of the surounding django-form object in the context
         :param dict formsetfield_kwargs: Arguments to be passed to the FormSetField constructor
-        :param dict kwargs: Arguments to be passed to the DataTable constructor
+        :param kwargs: Arguments to be passed to the DataTable constructor
         :return: A datatable with inline-editing capabilities
         :rtype: hg.HTMLElement
         """
@@ -371,30 +373,6 @@ def _mapwidget(
     from .text_area import TextArea
     from .text_input import PasswordInput, TextInput
 
-    WIDGET_MAPPING = {
-        forms.TextInput: TextInput,
-        # Attention: NumberInput is not the widget that is used for phone numbers. See below for handling of phone numbers
-        forms.NumberInput: TextInput,
-        forms.EmailInput: EmailInput,
-        forms.URLInput: UrlInput,
-        forms.PasswordInput: PasswordInput,
-        forms.HiddenInput: HiddenInput,
-        forms.DateInput: DatePicker,
-        forms.DateTimeInput: TextInput,  # TODO
-        forms.TimeInput: TextInput,  # TODO HIGH
-        forms.Textarea: TextArea,
-        forms.CheckboxInput: Checkbox,
-        forms.NullBooleanSelect: Select,
-        forms.SelectMultiple: MultiSelect,  # TODO HIGH
-        forms.RadioSelect: TextInput,  # TODO HIGH
-        forms.FileInput: FileUploader,
-        forms.ClearableFileInput: FileUploader,  # TODO HIGH
-        forms.MultipleHiddenInput: TextInput,  # TODO
-        forms.SplitDateTimeWidget: TextInput,  # TODO
-        forms.SplitHiddenDateTimeWidget: TextInput,  # TODO
-        forms.SelectDateWidget: TextInput,  # TODO
-    }
-
     widgetattributes = update_widgetattributes(field, only_initial, widgetattributes)
     elementattributes = {
         "label": field.label,
@@ -405,6 +383,14 @@ def _mapwidget(
         **getattr(field.field, "layout_kwargs", {}),
         **(elementattributes or {}),
     }
+
+    if fieldtype:
+        return fieldtype(
+            fieldname=field.name,
+            widgetattributes=widgetattributes,
+            boundfield=field,
+            **elementattributes,
+        )
 
     if isinstance(field.field.widget, forms.CheckboxInput):
         widgetattributes["checked"] = field.value()
@@ -477,6 +463,30 @@ def _mapwidget(
             ),
             _class="bx--form-item",
         )
+
+    WIDGET_MAPPING = {
+        forms.TextInput: TextInput,
+        # Attention: NumberInput is not the widget that is used for phone numbers. See below for handling of phone numbers
+        forms.NumberInput: TextInput,
+        forms.EmailInput: EmailInput,
+        forms.URLInput: UrlInput,
+        forms.PasswordInput: PasswordInput,
+        forms.HiddenInput: HiddenInput,
+        forms.DateInput: DatePicker,
+        forms.DateTimeInput: TextInput,  # TODO
+        forms.TimeInput: TextInput,  # TODO HIGH
+        forms.Textarea: TextArea,
+        forms.CheckboxInput: Checkbox,
+        forms.NullBooleanSelect: Select,
+        forms.SelectMultiple: MultiSelect,  # TODO HIGH
+        forms.RadioSelect: TextInput,  # TODO HIGH
+        forms.FileInput: FileUploader,
+        forms.ClearableFileInput: FileUploader,  # TODO HIGH
+        forms.MultipleHiddenInput: TextInput,  # TODO
+        forms.SplitDateTimeWidget: TextInput,  # TODO
+        forms.SplitHiddenDateTimeWidget: TextInput,  # TODO
+        forms.SelectDateWidget: TextInput,  # TODO
+    }
 
     fieldtype = (
         fieldtype

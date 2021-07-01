@@ -1,0 +1,70 @@
+@import '@carbon/elements/scss/type/font-face/settings';
+
+/* thai font face */
+
+@font-face {
+font-weight: 300;
+  font-family: 'IBM Plex Sans';
+  font-style: italic;
+  src: local('IBM Plex Sans Light Italic'), local('IBMPlexSans-LightItalic'),
+    url(static('/fonts/IBM-Plex-Sans-Thai-Looped/fonts/complete/woff2/IBMPlexSansThaiLooped-Light.woff2'))
+      format('woff2');
+  font-display: $carbon--font-display;
+  unicode-range: U+0E00-0E7F;
+  
+}
+
+@font-face {
+  font-weight: 400;
+  font-family: 'IBM Plex Sans';
+  font-style: italic;
+  src: local('IBM Plex Sans Italic'), local('IBMPlexSans-Italic'),
+    url(static('/fonts/IBM-Plex-Sans-Thai-Looped/fonts/complete/woff2/IBMPlexSansThaiLooped-Regular.woff2'))
+      format('woff2');
+  font-display: $carbon--font-display;
+  unicode-range: U+0E00-0E7F;
+}
+
+@font-face {
+  font-weight: 600;
+  font-family: 'IBM Plex Sans';
+  font-style: italic;
+  src: local('IBM Plex Sans SemiBold Italic'),
+    local('IBMPlexSans-SemiBoldItalic'),
+    url(static('/fonts/IBM-Plex-Sans-Thai-Looped/fonts/complete/woff2/IBMPlexSansThaiLooped-Bold.woff2'))
+      format('woff2');
+  font-display: $carbon--font-display;
+  unicode-range: U+0E00-0E7F;
+}
+
+@font-face {
+  font-weight: 300;
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  src: local('IBM Plex Sans Light'), local('IBMPlexSans-Light'),
+    url(static('/fonts/IBM-Plex-Sans-Thai-Looped/fonts/complete/woff2/IBMPlexSansThaiLooped-Light.woff2'))
+      format('woff2');
+  font-display: $carbon--font-display;
+  unicode-range: U+0E00-0E7F;
+}
+@font-face {
+  font-weight: 400;
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  src: local('IBM Plex Sans'), local('IBMPlexSans'),
+    url(static('/fonts/IBM-Plex-Sans-Thai-Looped/fonts/complete/woff2/IBMPlexSansThaiLooped-Regular.woff2'))
+      format('woff2');
+  font-display: $carbon--font-display;
+  unicode-range: U+0E00-0E7F;
+}
+
+@font-face {
+  font-weight: 600;
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  src: local('IBM Plex Sans SemiBold'), local('IBMPlexSans-SemiBold'),
+    url(static('/fonts/IBM-Plex-Sans-Thai-Looped/fonts/complete/woff2/IBMPlexSansThaiLooped-Bold.woff2'))
+      format('woff2');
+  font-display: $carbon--font-display;
+  unicode-range: U+0E00-0E7F;
+}

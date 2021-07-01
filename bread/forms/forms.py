@@ -33,10 +33,12 @@ def breadmodelform_factory(  # noqa
     layout,
     instance=None,
     baseformclass=forms.models.ModelForm,
-    cache_querysets=True,
+    baseinlineformclass=None,
+    cache_querysets=False,
 ):
     """Returns a form class which can handle inline-modelform sets and generic foreign keys."""
     formfieldelements = _get_form_fields_from_layout(layout)
+    baseinlineformclass = baseinlineformclass or {}
 
     class BreadModelFormBase(baseformclass):
         field_order = baseformclass.field_order or [
@@ -114,13 +116,15 @@ def breadmodelform_factory(  # noqa
         ):
             attribs[modelfield.name] = FormsetField(
                 _generate_formset_class(
-                    request,
-                    model,
-                    modelfield,
-                    baseformclass,
-                    formfieldelement,
-                    instance,
-                    cache_querysets,
+                    request=request,
+                    model=model,
+                    modelfield=modelfield,
+                    baseinlineformclass=baseinlineformclass.get(
+                        modelfield.name, forms.models.ModelForm
+                    ),
+                    formsetfieldelement=formfieldelement,
+                    instance=instance,
+                    cache_querysets=cache_querysets,
                 ),
                 instance,
                 formfieldelement.formsetinitial,
@@ -156,7 +160,7 @@ def _generate_formset_class(
     request,
     model,
     modelfield,
-    baseformclass,
+    baseinlineformclass,
     formsetfieldelement,
     instance,
     cache_querysets,
@@ -172,7 +176,7 @@ def _generate_formset_class(
         model=modelfield.related_model,
         layout=formfieldelements,
         instance=instance,
-        baseformclass=baseformclass,
+        baseformclass=baseinlineformclass,
         cache_querysets=cache_querysets,
     )
 

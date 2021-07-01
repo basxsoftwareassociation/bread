@@ -10,6 +10,7 @@ $carbon--theme: $carbon--theme--g10;
 @import 'globals/scss/vendor/@carbon/type/scss/styles';
 @import 'choices';
 @import 'carbon-tokens';
+@import 'thai-fonts';
 
 
 .bx--content {
@@ -232,6 +233,9 @@ fieldset[readonly=true] :disabled {
             }
 
             .bx--select-input {
+                border-bottom: none;
+            }
+            .bx--search-input {
                 border-bottom: none;
             }
         }

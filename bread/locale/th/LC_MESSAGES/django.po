@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-29 10:59+0700\n"
-"PO-Revision-Date: 2021-05-29 09:05+0000\n"
+"POT-Creation-Date: 2021-06-19 12:29+0700\n"
+"PO-Revision-Date: 2021-06-19 07:43+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
 "th/>\n"
@@ -17,61 +17,90 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.7-dev\n"
+"X-Generator: Weblate 4.7\n"
 
-#: bread/contrib/reports/fields/queryfield.py:110
+#: bread/contrib/reports/fields/queryfield.py:109
 #, python-format
 msgid "Invalid model '%s' selected"
 msgstr "เลือกโมเดล '%s'ที่ไม่ถูกต้อง"
 
-#: bread/contrib/reports/models.py:13
+#: bread/contrib/reports/models.py:20
 msgid "Created"
 msgstr "สร้าง"
 
-#: bread/contrib/reports/models.py:14 bread/contrib/reports/models.py:53
+#: bread/contrib/reports/models.py:21 bread/contrib/reports/models.py:93
 msgid "Name"
 msgstr "ชื่อ"
 
-#: bread/contrib/reports/models.py:19
+#: bread/contrib/reports/models.py:26
 msgid "Model"
 msgstr "โมเดล"
 
-#: bread/contrib/reports/models.py:20
+#: bread/contrib/reports/models.py:27
 msgid "Filter"
 msgstr "ค้นหา"
 
-#: bread/contrib/reports/models.py:31
+#: bread/contrib/reports/models.py:29
+msgid "Custom Filter"
+msgstr "ตัวกรองแบบกำหนดเอง"
+
+#: bread/contrib/reports/models.py:32
+msgid ""
+"Key in 'settings.REPORT_FILTERS' must be a function returning a queryset"
+msgstr ""
+"คีย์ใน 'settings.REPORT_FILTERS' ต้องเป็นฟังก์ชันที่ส่งคืนชุดข้อความค้นหา"
+
+#: bread/contrib/reports/models.py:47
 msgid "Preview"
 msgstr "มุมมอง"
 
-#: bread/contrib/reports/models.py:41
+#: bread/contrib/reports/models.py:63
+#, python-format
+msgid ""
+"settings.REPORT_FILTERS[\"%s\"] did not return a queryset but returned: %s"
+msgstr ""
+"คีย์ใน 'settings.REPORT_FILTERS'[\"%s\"] "
+"ต้องเป็นฟังก์ชันที่ส่งคืนชุดข้อความค้นหา %s"
+
+#: bread/contrib/reports/models.py:70
+#, python-format
+msgid ""
+"settings.REPORT_FILTERS[\"%s\"] did not return a queryset for %s but for %s"
+msgstr ""
+"ตั้งค่า.REPORT_FILTERS[\"%s\"] ไม่ได้ส่งคืนชุดการสืบค้นสำหรับ %s แต่สำหรับ %s"
+
+#: bread/contrib/reports/models.py:81
 msgid "Report"
 msgstr "รายงาน"
 
-#: bread/contrib/reports/models.py:42 bread/contrib/reports/urls.py:128
-#: bread/contrib/reports/urls.py:129
+#: bread/contrib/reports/models.py:82 bread/contrib/reports/urls.py:205
+#: bread/contrib/reports/urls.py:206
 msgid "Reports"
 msgstr "รายงาน"
 
-#: bread/contrib/reports/models.py:52 bread/contrib/reports/models.py:59
+#: bread/contrib/reports/models.py:92 bread/contrib/reports/models.py:99
 msgid "Column"
 msgstr "ช่อง"
 
-#: bread/contrib/reports/models.py:55
+#: bread/contrib/reports/models.py:95
 msgid "Aggregation"
 msgstr "สูตรรวม"
 
-#: bread/contrib/reports/models.py:60 bread/contrib/reports/urls.py:34
+#: bread/contrib/reports/models.py:100
 msgid "Columns"
 msgstr "ช่อง"
 
-#: bread/contrib/reports/urls.py:27
+#: bread/contrib/reports/urls.py:28
 msgid "Base model"
 msgstr "โมเดลพื้นฐาน"
 
-#: bread/contrib/reports/urls.py:97
+#: bread/contrib/reports/urls.py:103 bread/contrib/reports/urls.py:169
 msgid "Excel"
 msgstr "Excel"
+
+#: bread/contrib/reports/urls.py:156
+msgid "Edit"
+msgstr "แก้ไข"
 
 #: bread/layout/components/button.py:67
 msgid "Print"
@@ -89,7 +118,7 @@ msgstr " เลือกรายการ"
 msgid "Table Action Bar"
 msgstr "แถบงาน"
 
-#: bread/layout/components/datatable.py:399 bread/views/add.py:39
+#: bread/layout/components/datatable.py:421 bread/views/add.py:39
 #: bread/views/add.py:46
 #, python-format
 msgid "Add %s"
@@ -111,11 +140,15 @@ msgstr "เกิดข้อผิดพลาด"
 msgid "Form error: "
 msgstr "เกิดข้อผิดพลาด"
 
-#: bread/layout/components/form.py:208 bread/layout/components/form.py:228
+#: bread/layout/components/form.py:212 bread/layout/components/form.py:232
 msgid "Add"
 msgstr "เพิ่ม"
 
-#: bread/layout/components/form.py:307
+#: bread/layout/components/form.py:277
+msgid "Order"
+msgstr "คำสั่ง"
+
+#: bread/layout/components/form.py:320
 msgid "Delete"
 msgstr "ลบ"
 
@@ -123,20 +156,20 @@ msgstr "ลบ"
 msgid "Time stamp"
 msgstr "บันทึกเวลา"
 
-#: bread/layout/components/pagination.py:66
+#: bread/layout/components/pagination.py:27
 msgid "Items per page"
 msgstr "รายการต่อหน้า"
 
-#: bread/layout/components/pagination.py:114
-#: bread/layout/components/pagination.py:161
+#: bread/layout/components/pagination.py:75
+#: bread/layout/components/pagination.py:122
 msgid "of"
 msgstr "ของ"
 
-#: bread/layout/components/pagination.py:123
+#: bread/layout/components/pagination.py:84
 msgid "items"
 msgstr "รายการ"
 
-#: bread/layout/components/pagination.py:165
+#: bread/layout/components/pagination.py:126
 msgid "pages"
 msgstr "หน้า"
 
@@ -149,13 +182,15 @@ msgid "Search"
 msgstr "ค้นหา"
 
 #: bread/layout/components/search.py:29 bread/layout/components/search.py:30
+#: bread/layout/components/search_select.py:143
+#: bread/layout/components/search_select.py:144
 msgid "Clear search input"
 msgstr "ล้างข้อมูลการค้นหา"
 
 #: bread/layout/components/shell_header.py:71
 #: bread/layout/components/shell_header.py:72
 #: bread/templates/bread/components/header.html:31
-#: bread/templates/bread/components/header.html:32 bread/views/system.py:38
+#: bread/templates/bread/components/header.html:32 bread/views/system.py:40
 msgid "Logout"
 msgstr "ลงชื่อออก"
 
@@ -167,7 +202,7 @@ msgstr "ปิด"
 msgid "Remove"
 msgstr "ลบออก"
 
-#: bread/layout/components/text_input.py:81
+#: bread/layout/components/text_input.py:93
 msgid "Show password"
 msgstr "เห็นรหัสผ่าน"
 
@@ -192,22 +227,27 @@ msgstr "อัพเดทค่าที่กำหนด"
 msgid "Added %s"
 msgstr "เพิ่ม %s"
 
-#: bread/views/delete.py:46
+#: bread/views/delete.py:47
+#, python-format
+msgid "Restored %(modelname)s %(objectname)s"
+msgstr "คืนค่า %(modelname)s %(objectname)s"
+
+#: bread/views/delete.py:49 bread/views/delete.py:53
 #, python-format
 msgid "Deleted %(modelname)s %(objectname)s"
 msgstr "ลบ %(modelname)s %(objectname)s"
 
-#: bread/views/delete.py:90
+#: bread/views/delete.py:100
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่สามารถทำการลบได้%s"
 
-#: bread/views/delete.py:101
+#: bread/views/delete.py:111
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s ไม่ควรลบเพราะ: %s"
 
-#: bread/views/delete.py:106
+#: bread/views/delete.py:116
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "ลบ %(count)s %(modelname)s"
@@ -227,9 +267,13 @@ msgctxt "this is a copy"
 msgid "Copy"
 msgstr "คัดลอก"
 
-#: bread/views/system.py:16 bread/views/system.py:18
+#: bread/views/system.py:18 bread/views/system.py:20
 msgid "Login"
 msgstr "ลงชื่อเข้าใช้"
+
+#: bread/views/system.py:87
+msgid "System information"
+msgstr "ข้อมูลระบบ"
 
 #: bread/views/wizard.py:50
 msgid "Back"

@@ -70,6 +70,7 @@ class CustomFormMixin:
                             [
                                 f"<em>{form.fields[field].label}</em>: {', '.join(msg if isinstance(msg, list) else [msg])}"
                                 for field, msg in form.errors.items()
+                                if field != "__all__"
                             ]
                         )
                     ),

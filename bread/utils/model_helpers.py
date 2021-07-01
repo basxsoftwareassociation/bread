@@ -84,7 +84,7 @@ def filter_fieldlist(model, fieldlist, for_form=False):
         fieldlist = ["__all__"]
     return [
         f
-        for f in _expand_ALL_constant(model, fieldlist)
+        for f in expand_ALL_constant(model, fieldlist)
         if not _is_internal_field(model, f)
         and (not for_form or _can_use_in_form(model, f))
     ]
@@ -112,7 +112,7 @@ def get_modelfields(model, fieldlist, for_form=False):
     return fields
 
 
-def _expand_ALL_constant(model, fieldnames):
+def expand_ALL_constant(model, fieldnames):
     """Replaces the constant ``__all__`` with all concrete fields of the model"""
     if "__all__" in fieldnames:
         concrete_fields = []
