@@ -45,6 +45,7 @@ class SearchSelect(hg.DIV):
                 ),
                 size="lg",
                 disabled=widgetattributes.get("disabled", False),
+                widgetattributes={"id": f"search__{widget_id}"},
             ),
             style="display: flex;",
             **elementattributes,
