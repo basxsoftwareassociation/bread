@@ -9,6 +9,7 @@ from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
 from bread.utils.urls import link_with_urlparameters, reverse_model
 
 from ..base import aslink_attributes, fieldlabel, objectaction
+from . import search
 from .button import Button
 from .icon import Icon
 from .overflow_menu import OverflowMenu
@@ -227,11 +228,13 @@ class DataTable(hg.TABLE):
                 ),
                 hg.DIV(
                     hg.DIV(
-                        Search(widgetattributes={"autofocus": True}).withajaxurl(
-                            url=searchurl,
-                            query_urlparameter=query_urlparameter,
+                        Search(
+                            widgetattributes={"autofocus": True},
+                            backend=search.SearchBackendConfig(
+                                url=searchurl, query_parameter=query_urlparameter
+                            ),
                             resultcontainerid=resultcontainerid,
-                            resultcontainer=False,
+                            show_result_container=False,
                         ),
                         _class="bx--toolbar-search-container-persistent",
                     )
