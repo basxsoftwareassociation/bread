@@ -30,14 +30,21 @@ class ActivityBase(models.Model):
 
     @classmethod
     def build_internal_diagram(cls):
+        """
+        Translates the simple dict-style mapping graph to a full and valid
+        activity diagram with Nodes. This will also "upgrade" django model fields
+        to be Node-compatible
+        """
         cls._GENERATED_DIAGRAM = {}
         for source, target in cls.DIAGRAM.items():
             # automatically generte initial nodes for nodes without incoming edges
             if source not in cls.DIAGRAM.values():
                 cls._GENERATED_DIAGRAM[Initial()] = source
+
             # automatically generte flow final nodes for nodes who have None as target
             if target is None:
                 target = FlowFinal()
+
             # automatically generate Activity final nodes for nodes without outgoing edges
             elif not isinstance(target, dict) and target not in cls.DIAGRAM:
                 target = ActivityFinal()
@@ -52,16 +59,18 @@ class ActivityBase(models.Model):
                     mergenode = Merge()
                     cls._GENERATED_DIAGRAM[mergenode] = target
                 cls._GENERATED_DIAGRAM[source] = mergenode
+
             # generate fork nodes
             elif isinstance(target, tuple):
                 cls._GENERATED_DIAGRAM[source] = Fork()
                 for node in target:
                     cls._GENERATED_DIAGRAM[cls._GENERATED_DIAGRAM[source]] = node
+            # check decision nodes
             elif isinstance(target, dict):
-                assert hasattr(
+                assert isinstance(source, DecisionBase) and hasattr(
                     source, "choices"
-                ), f"Node {source} needs to be a Django field with attribute 'choices'"
-                cls._GENERATED_DIAGRAM[DecisionBase()] = target
+                ), f"Node {source} needs to be a {DecisionBase}"
+                cls._GENERATED_DIAGRAM[source] = target
             else:
                 cls._GENERATED_DIAGRAM[source] = target
 
@@ -71,29 +80,31 @@ class ActivityBase(models.Model):
         assert any(
             isinstance(i, ActivityFinal) for i in cls._GENERATED_DIAGRAM.values()
         )
-        for node, target in cls._GENERATED_DIAGRAM.items():
+        for source, target in cls._GENERATED_DIAGRAM.items():
             if isinstance(target, dict):
                 assert isinstance(
-                    node, DecisionBase
-                ), f"Node {node} has a dict value but no 'choices' attributes"
-                node.decision_labels = tuple(target.keys())
+                    source, DecisionBase
+                ), f"Node {source} has a dict value but no 'choices' attributes"
+                source.decision_labels = tuple(target.keys())
                 target = tuple(target.values())
             assert isinstance(
-                node, Node
-            ), f"Node {node} is not of instance Node but {type(node)}"
+                source, (Node, models.Field)
+            ), f"Node {source} is not of instance Node but {type(source)}"
             if not isinstance(target, tuple):
                 target = (target,)
-            node.outputs += target
+            source.outputs += target
             for t in target:
-                assert isinstance(t, Node), f"{t} is not of instance Node but {type(t)}"
-                t.inputs += (node,)
-        for node, target in cls._GENERATED_DIAGRAM.items():
-            node.verify()
-            if isinstance(node, DecisionBase):
+                assert isinstance(
+                    t, (Node, models.Field)
+                ), f"Node {t} is not of instance Node but {type(t)}"
+                t.inputs += (source,)
+        for source, target in cls._GENERATED_DIAGRAM.items():
+            source._node_verify()
+            if isinstance(source, DecisionBase):
                 target = tuple(target.values())
             if not isinstance(target, tuple):
                 target = (target,)
-            [t.verify() for t in target]
+            [t._node_verify() for t in target]
 
     @classmethod
     def as_dot(cls, attrs=None):
@@ -107,24 +118,24 @@ class ActivityBase(models.Model):
         ]
         nodes = set()
         edges = []
-        for node, target in cls._GENERATED_DIAGRAM.items():
-            nodes.add(node.as_dot())
+        for source, target in cls._GENERATED_DIAGRAM.items():
+            nodes.add(source.as_dot())
             if isinstance(target, dict):
                 target = tuple(target.values())
             if not isinstance(target, tuple):
                 target = (target,)
             for i, t in enumerate(target):
                 nodes.add(t.as_dot())
-                if isinstance(node, DecisionBase):
+                if isinstance(source, DecisionBase):
                     edges.append(
                         (
-                            node,
+                            source,
                             t,
-                            f'xlabel = "[{node.decision_labels[i]}]"',
+                            f'xlabel = "[{source.decision_labels[i]}]"',
                         )
                     )
                 else:
-                    edges.append((node, t))
+                    edges.append((source, t))
 
         dot.extend(n for n in nodes)
         dot.extend(
@@ -168,15 +179,14 @@ class ActivityBase(models.Model):
             'graph[bgcolor="#ffffff00", ranksep=5]',
             "edge[arrowhead=open]",
         ]
-        helpnodes = (
-            ("Start node", Initial()),
-            ("End node, will finish activity", ActivityFinal()),
-            ("End node, will finish branch but no activity", FlowFinal()),
-            # ("Decision node", GenericDecision(lambda s, a: None, label=" ")),
-            ("Action node", Action(lambda s, a: None, label=" ")),
-        )
-
-        dot.extend(n.as_dot({"xlabel": '"' + label + '"'}) for label, n in helpnodes)
+        # helpnodes = (
+        # ("Start node", Initial()),
+        # ("End node, will finish activity", ActivityFinal()),
+        # ("End node, will finish branch but no activity", FlowFinal()),
+        # ("Decision node", GenericDecision(lambda s, a: None, label=" ")),
+        # ("Action node", Action(lambda s, a: None, verbose_name=" ")),  # TODO!!! FIX
+        # )
+        # dot.extend(n.as_dot({"xlabel": '"' + label + '"'}) for label, n in helpnodes)
         dot.append("}")
         return "\n".join(dot)
 
@@ -222,15 +232,18 @@ class Node:
     Instead subclass ActionBase and DecisionBase.
     """
 
-    def __init__(self, label=None):
+    def __init__(self, verbose_name=None):
         self.inputs = ()
         self.outputs = ()
-        self.label = label
+        self.verbose_name = verbose_name
 
-    def verify(self):
+    def _node_verify(self):
         assert isinstance(self.inputs, tuple)
         assert isinstance(self.outputs, tuple)
-        assert all(isinstance(i, Node) for i in self.inputs + self.outputs)
+        for node in self.inputs + self.outputs:
+            assert isinstance(node, models.Field) and hasattr(
+                node, "choices"
+            ), f"Node {node} needs to be a Django field with attribute 'choices'"
 
     def done(self, activity):
         """Returns True if this node can be considered done. This method should never have side effects (changing the database)"""
@@ -251,10 +264,7 @@ class Node:
         return f"{id(self)}[{attrs}]"
 
     def __str__(self):
-        return str(self.label or self.__class__.__name__)
-
-
-# Action node and Decision node, need to be sublassed
+        return str(self.verbose_name or self.__class__.__name__)
 
 
 class Action(models.BooleanField, Node):
@@ -262,19 +272,24 @@ class Action(models.BooleanField, Node):
     Represents an action node in an Activity Diagram.
     Should be subclassed with an implementation for ``done()`` and optionally one for ``do()``
     Changes should only happen through the ``do()`` method or user actions.
+    Cannot be null, default is always False
     """
 
-    def __init__(self, *args, action, **kwargs):
-        self.action = action
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        kwargs["default"] = False
+        kwargs["null"] = False
+        super().__init__(*args, **kwargs)  # MRO says we call BooleanField.__init__
+        self.inputs = ()
+        self.outputs = ()
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        del kwargs["max_length"]
-        return name, path, args, self.action, kwargs
+        del kwargs["default"]
+        del kwargs["null"]
+        return name, path, args, kwargs
 
-    def verify(self):
-        super().verify()
+    def _node_verify(self):
+        super()._node_verify()
         assert (
             len(self.inputs) == 1 and len(self.outputs) == 1
         ), f"{self} can only have one input and one output"
@@ -282,39 +297,63 @@ class Action(models.BooleanField, Node):
     def dot_attrs(self):
         return {"shape": "box", "style": "rounded"}
 
+    def pre_save(self, model_instance, add):
+        value = super().pre_save()
+        if not value:
+            value = self.action(model_instance)
+            setattr(model_instance, self.attname, value)
+        return value
 
-class DecisionBase(Node):
-    """
-    Represents an decision node in an Activity Diagram.
-    Should be subclassed to implemented the "decide" method
-    """
+    def action(self, instance):
+        """
+        Should run automated actions and return True if the action was successfull
+        """
+        return False
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.decision_labels = ()
 
-    def verify(self):
-        super().verify()
+class DecisionBase(models.CharField, Node):
+    def __init__(self, *args, choices=None, **kwargs):
+        kwargs["default"] = None
+        kwargs["null"] = True
+        assert choices is not None
+        super().__init__(*args, **kwargs)  # MRO says we call BooleanField.__init__
+        self.inputs = ()
+        self.outputs = ()
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        del kwargs["default"]
+        del kwargs["null"]
+        return name, path, args, kwargs
+
+    def _node_verify(self):
+        super()._node_verify()
         assert len(self.inputs) == 1 and len(self.outputs) == 2
-        assert len(self.decision_labels) == len(self.outputs)
-
-    def decide(self, activity):
-        """
-        Should return a string of one of the ``decision_labels`` keys.
-        The execution flow of the diagram will follw the output with the according key.
-        """
-        raise NotImplementedError()
+        assert len(self.choices) == len(self.outputs)
 
     def dot_attrs(self):
         return {"shape": "diamond"}
+
+    def pre_save(self, model_instance, add):
+        value = super().pre_save()
+        if value is None:
+            value = self.action(model_instance)
+            setattr(model_instance, self.attname, value)
+        return value
+
+    def action(self, instance):
+        """
+        Should run automated decisions and return the according value if a decision has been made
+        """
+        return None
 
 
 # Fixed Activity Diagram nodes which should in general not be subclassed
 
 
 class Merge(Node):
-    def verify(self):
-        super().verify()
+    def _node_verify(self):
+        super()._node_verify()
         assert len(self.inputs) >= 1 and len(self.outputs) == 1
 
     def done(self, activity):
@@ -325,8 +364,8 @@ class Merge(Node):
 
 
 class Initial(Node):
-    def verify(self):
-        super().verify()
+    def _node_verify(self):
+        super()._node_verify()
         assert len(self.inputs) == 0 and len(self.outputs) == 1
 
     def dot_attrs(self):
@@ -342,8 +381,8 @@ class Initial(Node):
 
 
 class FlowFinal(Node):
-    def verify(self):
-        super().verify()
+    def _node_verify(self):
+        super()._node_verify()
         assert len(self.inputs) == 1 and len(self.outputs) == 0
 
     def dot_attrs(self):
@@ -357,8 +396,8 @@ class FlowFinal(Node):
 
 
 class ActivityFinal(Node):
-    def verify(self):
-        super().verify()
+    def _node_verify(self):
+        super()._node_verify()
         assert len(self.inputs) == 1 and len(self.outputs) == 0
 
     def dot_attrs(self):
@@ -374,8 +413,8 @@ class ActivityFinal(Node):
 
 
 class Fork(Node):
-    def verify(self):
-        super().verify()
+    def _node_verify(self):
+        super()._node_verify()
         assert len(self.inputs) == 1 and len(self.outputs) >= 1
 
     def dot_attrs(self):
@@ -390,8 +429,8 @@ class Fork(Node):
 
 
 class Join(Node):
-    def verify(self):
-        super().verify()
+    def _node_verify(self):
+        super()._node_verify()
         assert len(self.inputs) >= 1 and len(self.outputs) == 1
 
     def dot_attrs(self):
