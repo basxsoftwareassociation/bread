@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-06-19 12:29+0700\n"
-"PO-Revision-Date: 2021-06-17 19:32+0000\n"
+"PO-Revision-Date: 2021-06-23 11:32+0000\n"
 "Last-Translator: Nathan <bonnemainsnathan@gmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/basxconnect/bread/"
 "fr/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.7\n"
+"X-Generator: Weblate 4.7.1-dev\n"
 
 #: bread/contrib/reports/fields/queryfield.py:109
 #, python-format
@@ -41,10 +41,8 @@ msgid "Filter"
 msgstr "Filtrer"
 
 #: bread/contrib/reports/models.py:29
-#, fuzzy
-#| msgid "Filter"
 msgid "Custom Filter"
-msgstr "Filtrer"
+msgstr "Filtre personnalisé"
 
 #: bread/contrib/reports/models.py:32
 msgid ""
@@ -98,7 +96,7 @@ msgstr "Excel"
 
 #: bread/contrib/reports/urls.py:156
 msgid "Edit"
-msgstr ""
+msgstr "Modifier"
 
 #: bread/layout/components/button.py:67
 msgid "Print"
@@ -270,10 +268,8 @@ msgid "Login"
 msgstr "Se connecter"
 
 #: bread/views/system.py:87
-#, fuzzy
-#| msgid "System Settings"
 msgid "System information"
-msgstr "Paramètres du système"
+msgstr "Informations système"
 
 #: bread/views/wizard.py:50
 msgid "Back"

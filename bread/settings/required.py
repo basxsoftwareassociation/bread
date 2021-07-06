@@ -1,5 +1,3 @@
-import os
-
 _third_party_apps = [
     "django_extensions",  # for developer friendliness
     "guardian",  # per-object permissions
@@ -77,8 +75,6 @@ CKEDITOR_CONFIGS = {
         ],
     },
 }
-# required to compile sass theme
-COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 COMPRESS_OFFLINE_CONTEXT = "bread.context_processors.compress_offline_context"
 COMPRESS_FILTERS = {
     "css": [
@@ -87,7 +83,6 @@ COMPRESS_FILTERS = {
     ],
     "js": ["compressor.filters.jsmin.JSMinFilter"],
 }
-LIBSASS_OUTPUT_STYLE = "compressed"
 
 # not sure why we need this
 LOGIN_REDIRECT_URL = "/"
@@ -95,7 +90,7 @@ LOGOUT_REDIRECT_URL = "/"
 # named urlpattern to redirect to if login is required
 LOGIN_URL = "login"
 
-# required for compressor (which is the base of the sass compiler)
+# required for compressor
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
@@ -170,14 +165,5 @@ HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
 
 # This one should only be activated in production or in dev environments with celery ready to run
 # HAYSTACK_SIGNAL_PROCESSOR = "celery_haystack.signals.CelerySignalProcessor"
-
-# necessary because of some sass imports in the carbon vendor packages
-ADDITIONAL_CARBON = "static/design/carbon_design/scss/globals/scss/vendor"
-LIBSASS_ADDITIONAL_INCLUDE_PATHS = [
-    ADDITIONAL_CARBON,  # search path when collectstatic has been called, used in production
-    os.path.join(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ADDITIONAL_CARBON
-    ),  # search path in bread-package
-]
 
 SIMPLE_HISTORY_FILEFIELD_TO_CHARFIELD = True
