@@ -4,19 +4,16 @@
     {% with PLATFORMNAME|default:"bread" as PLATFORMNAME %}
     <head>
         <meta charset="utf-8" />
-            <title>{{ pagetitle|default:PLATFORMNAME|striptags }} | {{ PLATFORMNAME|striptags }}</title>
         <meta name="description" content="{% block page_description %}{% endblock%}" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <title>{{ pagetitle|default:PLATFORMNAME|striptags }} | {{ PLATFORMNAME|striptags }}</title>
         {% block favicon %}<link rel="shortcut icon" href="{% static "logo.png" %}"/>{% endblock %}
 
-        {% if OVERRIDE_STYLESHEET %}
-            <link rel="stylesheet" type="text/css" href="{{ OVERRIDE_STYLESHEET }}" media="all"/>
-        {% else %}
-            {% compress css %}
-                <link rel="stylesheet" type="text/x-scss" href="{% static "design/carbon_design/scss/styles.scss" %}"  media="all"/>
-                <link rel="stylesheet" type="text/css" href="{% static "djangoql/css/completion.css" %}" />
-            {% endcompress %}
-        {% endif %}
+        {% compress css %}
+        <link rel="stylesheet" type="text/css" href="{% if debug %}{% static "css/bread-main.css" %}{% else %}{% static "css/bread-main.min.css" %}{% endif %}"  media="all"/>
+            <link rel="stylesheet" type="text/css" href="{% static "djangoql/css/completion.css" %}" />
+        {% endcompress %}
     </head>
 
     <body>
