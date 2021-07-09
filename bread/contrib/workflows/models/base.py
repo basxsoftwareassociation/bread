@@ -5,15 +5,17 @@ import htmlgenerator as hg
 from django.db import models
 
 
-class ActivityBase(models.Model):
+class WorkflowBase(models.Model):
     """
-    This class represents a single UML Activity Diagram.
-    In order to persist state for an instance of an activity Django models can be used.
+    This class represents a workflow in the form of a UML Activity Diagram. In order to
+    make the purpose of the system more clear the word "Workflow" is used in all places
+    instead of "Activity".
+    In order to persist state for an instance of a workflow Django models can be used.
     The diagram itself is defined in a class-variable of type dict named ``DIAGRAM``.
     The keys of ``DIAGRAM`` represent source nodes and the values the target nodes.
     Keys always need to be of type :py:class:`bread.contrib.acitivities.models.Node`.
     Values must be of type :py:class:`bread.contrib.acitivities.models.Node`.
-    Exceptions are entries with a Fork node as key and entries with a DecisionBase node as key.
+    Exceptions are entries with a Fork node as key and entries with a Decision node as key.
     They require tuple(:py:class:`bread.contrib.acitivities.models.Node`) and of type dict{str: :py:class:`bread.contrib.acitivities.models.Node`} as values.
     """
 
@@ -21,12 +23,86 @@ class ActivityBase(models.Model):
     completed = models.DateTimeField(null=True, editable=False)
     cancelled = models.DateTimeField(null=True, editable=False)
 
-    def __init_subclass__(cls, **kwargs):
-        super().__init_subclass__(**kwargs)
+    @classmethod
+    def workflowdiagram(cls):  # noqa
+        if hasattr(cls, "_GENERATED_DIAGRAM"):
+            return cls._GENERATED_DIAGRAM
         assert hasattr(cls, "DIAGRAM")
         assert isinstance(cls.DIAGRAM, dict)
-        cls.build_internal_diagram()
-        cls.build_graph()
+        graph = []  # [(source, target, choice)]
+        allnodes = set(sum((i[:2] for i in graph), []))
+
+        # some type checking
+        for node in allnodes:
+            assert isinstance(
+                node, (Node, dict, tuple, type(None))
+            ), f"Node {node} if not of type {Node}"
+
+        # flatten the DIAGRAM definition
+        for source, target in cls.DIAGRAM.items():
+            if isinstance(target, tuple):
+                graph.extend((source, node, None) for node in target)
+            elif isinstance(target, dict):
+                assert all(
+                    t is not None for t in target.keys()
+                ), "None is not an allowed key for choices"
+                graph.extend((source, node, choice) for choice, node in target.items())
+            else:
+                graph.append((source, target, None))
+
+        # insert initial and final nodes, mostly for activity diagram compliance
+        for source, target, choice in list(graph):
+            if source not in set(i[1] for i in graph):
+                graph.append((Initial(), source, None))
+            if target not in set(i[0] for i in graph):
+                graph.append((target, WorkflowFinal(), None))
+            if target is None:
+                graph.append((target, FlowFinal(), None))
+
+        # insert merge nodes
+        removed_edges = []
+        new_edges = []
+        for source, target, _ in graph:  # check if source needs to be a merge node
+            inputs = [[s, choice] for s, t, choice in graph if t == source]
+            if len(inputs) > 1:
+                mergenode = Merge()
+                new_edges.append((mergenode, source, None))
+                for inputnode, choice in inputs:
+                    new_edges.append((inputnode, mergenode, choice))
+                    removed_edges.append((inputnode, source, choice))
+        for edge in removed_edges:
+            graph.remove(edge)
+        graph.extend(new_edges)
+
+        # insert fork nodes
+        removed_edges = []
+        new_edges = []
+        for source, target, _ in graph:  # check if target needs to be a fork node
+            outputs = [
+                [s, choice] for s, t, choice in graph if s == target and choice is None
+            ]
+            if len(outputs) > 1:
+                forknode = Fork()
+                new_edges.append((target, forknode, None))
+                for outputnode, choice in outputs:
+                    new_edges.append((forknode, outputnode, choice))
+                    removed_edges.append((target, outputnode, choice))
+        for edge in removed_edges:
+            graph.remove(edge)
+        graph.extend(new_edges)
+
+        # set inputs and outputs per node and verify
+        allnodes = set(sum((i[:2] for i in graph), ()))
+        for node in allnodes:
+            node.inputs = tuple(
+                [source for source, target, choice in graph if target == node]
+            )
+            node.outputs = tuple(
+                [target for source, target, choice in graph if source == node]
+            )
+            node._node_verify()
+        cls._GENERATED_DIAGRAM = graph
+        return cls._GENERATED_DIAGRAM
 
     @classmethod
     def build_internal_diagram(cls):
@@ -36,21 +112,28 @@ class ActivityBase(models.Model):
         to be Node-compatible
         """
         cls._GENERATED_DIAGRAM = {}
+        all_targets = sum(  # equals all targets
+            (list(i.values()) for i in cls.DIAGRAM.values() if isinstance(i, dict)),
+            list(cls.DIAGRAM.values()),
+        )
         for source, target in cls.DIAGRAM.items():
             # automatically generte initial nodes for nodes without incoming edges
-            if source not in cls.DIAGRAM.values():
+            # considers also values which have a dict by extracting the dict values
+            # (decision nodes)
+            if source not in all_targets:
                 cls._GENERATED_DIAGRAM[Initial()] = source
 
             # automatically generte flow final nodes for nodes who have None as target
             if target is None:
                 target = FlowFinal()
 
-            # automatically generate Activity final nodes for nodes without outgoing edges
+            # automatically generate Workflow final nodes for nodes without outgoing edges
             elif not isinstance(target, dict) and target not in cls.DIAGRAM:
-                target = ActivityFinal()
+                target = WorkflowFinal()
 
             # automatically generte merge nodes
-            if list(cls.DIAGRAM.values()).count(target) > 1:
+            if list(all_targets).count(target) > 1:
+                # check if we already inserted a merge node
                 try:
                     mergenode = list(cls._GENERATED_DIAGRAM.keys())[
                         list(cls._GENERATED_DIAGRAM.values()).index(target)
@@ -60,6 +143,22 @@ class ActivityBase(models.Model):
                     cls._GENERATED_DIAGRAM[mergenode] = target
                 cls._GENERATED_DIAGRAM[source] = mergenode
 
+            # automatically generte merge nodes for decisions
+            if isinstance(target, dict):
+                for decisiontarget in target.values():
+                    if list(all_targets).count(decisiontarget) > 1:
+                        # check if we already inserted a merge node
+                        try:
+                            mergenode = list(cls._GENERATED_DIAGRAM.keys())[
+                                list(cls._GENERATED_DIAGRAM.values()).index(
+                                    decisiontarget
+                                )
+                            ]
+                        except ValueError:
+                            mergenode = Merge()
+                            cls._GENERATED_DIAGRAM[mergenode] = decisiontarget
+                        cls._GENERATED_DIAGRAM[source] = mergenode
+
             # generate fork nodes
             elif isinstance(target, tuple):
                 cls._GENERATED_DIAGRAM[source] = Fork()
@@ -67,23 +166,27 @@ class ActivityBase(models.Model):
                     cls._GENERATED_DIAGRAM[cls._GENERATED_DIAGRAM[source]] = node
             # check decision nodes
             elif isinstance(target, dict):
-                assert isinstance(source, DecisionBase) and hasattr(
+                assert isinstance(source, Decision) and hasattr(
                     source, "choices"
-                ), f"Node {source} needs to be a {DecisionBase}"
+                ), f"Node {source} needs to be a {Decision}"
                 cls._GENERATED_DIAGRAM[source] = target
             else:
                 cls._GENERATED_DIAGRAM[source] = target
+        for k, v in cls._GENERATED_DIAGRAM.items():
+            print(k, v)
 
     @classmethod
-    def build_graph(cls):
-        assert any(isinstance(i, Initial) for i in cls._GENERATED_DIAGRAM.keys())
+    def build_graph1(cls):
         assert any(
-            isinstance(i, ActivityFinal) for i in cls._GENERATED_DIAGRAM.values()
-        )
+            isinstance(i, Initial) for i in cls._GENERATED_DIAGRAM.keys()
+        ), "No workflow entry point"
+        assert any(
+            isinstance(i, WorkflowFinal) for i in cls._GENERATED_DIAGRAM.values()
+        ), "No workflow end point"
         for source, target in cls._GENERATED_DIAGRAM.items():
             if isinstance(target, dict):
                 assert isinstance(
-                    source, DecisionBase
+                    source, Decision
                 ), f"Node {source} has a dict value but no 'choices' attributes"
                 source.decision_labels = tuple(target.keys())
                 target = tuple(target.values())
@@ -100,7 +203,7 @@ class ActivityBase(models.Model):
                 t.inputs += (source,)
         for source, target in cls._GENERATED_DIAGRAM.items():
             source._node_verify()
-            if isinstance(source, DecisionBase):
+            if isinstance(source, Decision):
                 target = tuple(target.values())
             if not isinstance(target, tuple):
                 target = (target,)
@@ -118,24 +221,16 @@ class ActivityBase(models.Model):
         ]
         nodes = set()
         edges = []
-        for source, target in cls._GENERATED_DIAGRAM.items():
+        for source, target, choice in cls.workflowdiagram():
             nodes.add(source.as_dot())
-            if isinstance(target, dict):
-                target = tuple(target.values())
-            if not isinstance(target, tuple):
-                target = (target,)
-            for i, t in enumerate(target):
-                nodes.add(t.as_dot())
-                if isinstance(source, DecisionBase):
-                    edges.append(
-                        (
-                            source,
-                            t,
-                            f'xlabel = "[{source.decision_labels[i]}]"',
-                        )
-                    )
-                else:
-                    edges.append((source, t))
+            nodes.add(target.as_dot())
+            edges.append(
+                (
+                    source,
+                    target,
+                    f'taillabel = "[{choice}]" labeldistance = 3.0' if choice else "",
+                )
+            )
 
         dot.extend(n for n in nodes)
         dot.extend(
@@ -160,7 +255,7 @@ class ActivityBase(models.Model):
             return hg.render(
                 hg.DIV(
                     hg.DIV(
-                        "Activity diagram could not be generated, the error message was:"
+                        "Workflow diagram could not be generated, the error message was:"
                     ),
                     hg.DIV(hg.CODE(e)),
                     hg.DIV(hg.CODE(e.stderr.decode())),
@@ -181,7 +276,7 @@ class ActivityBase(models.Model):
         ]
         # helpnodes = (
         # ("Start node", Initial()),
-        # ("End node, will finish activity", ActivityFinal()),
+        # ("End node, will finish activity", WorkflowFinal()),
         # ("End node, will finish branch but no activity", FlowFinal()),
         # ("Decision node", GenericDecision(lambda s, a: None, label=" ")),
         # ("Action node", Action(lambda s, a: None, verbose_name=" ")),  # TODO!!! FIX
@@ -205,7 +300,7 @@ class ActivityBase(models.Model):
             return hg.render(
                 hg.DIV(
                     hg.DIV(
-                        "Activity diagram could not be generated, the error message was:"
+                        "Workflow diagram could not be generated, the error message was:"
                     ),
                     hg.DIV(hg.CODE(e)),
                     hg.DIV(hg.CODE(e.stderr.decode())),
@@ -217,8 +312,8 @@ class ActivityBase(models.Model):
     @property
     def done(self):
         return any(
-            isinstance(i, ActivityFinal) and i.done(self)
-            for i in self._GENERATED_DIAGRAM.values()
+            isinstance(i, WorkflowFinal) and i.done(self)
+            for i in self.workflowdiagram().values()
         )
 
     class Meta:
@@ -227,9 +322,9 @@ class ActivityBase(models.Model):
 
 class Node:
     """
-    The base class for all nodes in an Activity Diagram.
+    The base class for all nodes in an Workflow Diagram.
     Should normally not need to be directly subclassed.
-    Instead subclass ActionBase and DecisionBase.
+    Instead subclass Actionand Decision.
     """
 
     def __init__(self, verbose_name=None):
@@ -238,12 +333,17 @@ class Node:
         self.verbose_name = verbose_name
 
     def _node_verify(self):
+        ALLOWED_NODES_TYPES = (Node, models.CharField, models.BooleanField)
         assert isinstance(self.inputs, tuple)
         assert isinstance(self.outputs, tuple)
         for node in self.inputs + self.outputs:
-            assert isinstance(node, models.Field) and hasattr(
-                node, "choices"
-            ), f"Node {node} needs to be a Django field with attribute 'choices'"
+            assert isinstance(
+                node, ALLOWED_NODES_TYPES
+            ), f"Nodes in the workflow must be of type {ALLOWED_NODES_TYPES}"
+            if isinstance(node, models.CharField):
+                assert hasattr(
+                    node, "choices"
+                ), f"Node {node} needs to have attribute 'choices'"
 
     def done(self, activity):
         """Returns True if this node can be considered done. This method should never have side effects (changing the database)"""
@@ -269,7 +369,7 @@ class Node:
 
 class Action(models.BooleanField, Node):
     """
-    Represents an action node in an Activity Diagram.
+    Represents an action node in an Workflow Diagram.
     Should be subclassed with an implementation for ``done()`` and optionally one for ``do()``
     Changes should only happen through the ``do()`` method or user actions.
     Cannot be null, default is always False
@@ -284,8 +384,10 @@ class Action(models.BooleanField, Node):
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        del kwargs["default"]
-        del kwargs["null"]
+        if "default" in kwargs:
+            del kwargs["default"]
+        if "null" in kwargs:
+            del kwargs["null"]
         return name, path, args, kwargs
 
     def _node_verify(self):
@@ -310,20 +412,30 @@ class Action(models.BooleanField, Node):
         """
         return False
 
+    def __str__(self):
+        return str(self.verbose_name or self.__class__.__name__)
 
-class DecisionBase(models.CharField, Node):
+
+class Decision(models.CharField, Node):
     def __init__(self, *args, choices=None, **kwargs):
         kwargs["default"] = None
         kwargs["null"] = True
+        kwargs["max_length"] = 255
         assert choices is not None
-        super().__init__(*args, **kwargs)  # MRO says we call BooleanField.__init__
+        super().__init__(
+            *args, choices=choices, **kwargs
+        )  # MRO says we call BooleanField.__init__
         self.inputs = ()
         self.outputs = ()
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        del kwargs["default"]
-        del kwargs["null"]
+        if "default" in kwargs:
+            del kwargs["default"]
+        if "null" in kwargs:
+            del kwargs["null"]
+        if "max_length" in kwargs:
+            del kwargs["max_length"]
         return name, path, args, kwargs
 
     def _node_verify(self):
@@ -332,23 +444,31 @@ class DecisionBase(models.CharField, Node):
         assert len(self.choices) == len(self.outputs)
 
     def dot_attrs(self):
-        return {"shape": "diamond"}
+        return {
+            "shape": "diamond",
+            "label": '""',
+            "tooltip": '"' + str(self) + '"',
+            "xlabel": '"' + str(self) + '"',
+        }
 
     def pre_save(self, model_instance, add):
         value = super().pre_save()
         if value is None:
-            value = self.action(model_instance)
+            value = self.decide(model_instance)
             setattr(model_instance, self.attname, value)
         return value
 
-    def action(self, instance):
+    def decide(self, instance):
         """
         Should run automated decisions and return the according value if a decision has been made
         """
         return None
 
+    def __str__(self):
+        return str(self.verbose_name or self.__class__.__name__)
 
-# Fixed Activity Diagram nodes which should in general not be subclassed
+
+# Fixed Workflow Diagram nodes which should in general not be subclassed
 
 
 class Merge(Node):
@@ -395,7 +515,7 @@ class FlowFinal(Node):
         }
 
 
-class ActivityFinal(Node):
+class WorkflowFinal(Node):
     def _node_verify(self):
         super()._node_verify()
         assert len(self.inputs) == 1 and len(self.outputs) == 0
