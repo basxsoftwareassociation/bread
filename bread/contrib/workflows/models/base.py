@@ -11,8 +11,8 @@ class WorkflowBase(models.Model):
     make the purpose of the system more clear the word "Workflow" is used in all places
     instead of "Activity".
     In order to persist state for an instance of a workflow Django models can be used.
-    The diagram itself is defined in a class-variable of type dict named ``DIAGRAM``.
-    The keys of ``DIAGRAM`` represent source nodes and the values the target nodes.
+    The diagram itself is defined in a class-variable of type dict named ``WORKFLOW``.
+    The keys of ``WORKFLOW`` represent source nodes and the values the target nodes.
     Keys always need to be of type :py:class:`bread.contrib.acitivities.models.Node`.
     Values must be of type :py:class:`bread.contrib.acitivities.models.Node`.
     Exceptions are entries with a Fork node as key and entries with a Decision node as key.
@@ -25,21 +25,23 @@ class WorkflowBase(models.Model):
 
     @classmethod
     def workflowdiagram(cls):  # noqa
+        def allnodes(graph):
+            return set(sum((list(i[:2]) for i in graph), []))
+
         if hasattr(cls, "_GENERATED_DIAGRAM"):
             return cls._GENERATED_DIAGRAM
-        assert hasattr(cls, "DIAGRAM")
-        assert isinstance(cls.DIAGRAM, dict)
+        assert hasattr(cls, "WORKFLOW")
+        assert isinstance(cls.WORKFLOW, dict)
         graph = []  # [(source, target, choice)]
-        allnodes = set(sum((i[:2] for i in graph), []))
 
         # some type checking
-        for node in allnodes:
+        for node in allnodes(graph):
             assert isinstance(
                 node, (Node, dict, tuple, type(None))
             ), f"Node {node} if not of type {Node}"
 
-        # flatten the DIAGRAM definition
-        for source, target in cls.DIAGRAM.items():
+        # flatten the WORKFLOW definition
+        for source, target in cls.WORKFLOW.items():
             if isinstance(target, tuple):
                 graph.extend((source, node, None) for node in target)
             elif isinstance(target, dict):
@@ -62,14 +64,14 @@ class WorkflowBase(models.Model):
         # insert merge nodes
         removed_edges = []
         new_edges = []
-        for source, target, _ in graph:  # check if source needs to be a merge node
-            inputs = [[s, choice] for s, t, choice in graph if t == source]
+        for node in allnodes(graph):
+            inputs = [[s, choice] for s, t, choice in graph if t == node]
             if len(inputs) > 1:
                 mergenode = Merge()
-                new_edges.append((mergenode, source, None))
+                new_edges.append((mergenode, node, None))
                 for inputnode, choice in inputs:
                     new_edges.append((inputnode, mergenode, choice))
-                    removed_edges.append((inputnode, source, choice))
+                    removed_edges.append((inputnode, node, choice))
         for edge in removed_edges:
             graph.remove(edge)
         graph.extend(new_edges)
@@ -77,23 +79,22 @@ class WorkflowBase(models.Model):
         # insert fork nodes
         removed_edges = []
         new_edges = []
-        for source, target, _ in graph:  # check if target needs to be a fork node
+        for node in allnodes(graph):  # check if node needs to be a fork node
             outputs = [
-                [s, choice] for s, t, choice in graph if s == target and choice is None
+                [s, choice] for s, t, choice in graph if s == node and choice is None
             ]
             if len(outputs) > 1:
                 forknode = Fork()
-                new_edges.append((target, forknode, None))
+                new_edges.append((node, forknode, None))
                 for outputnode, choice in outputs:
                     new_edges.append((forknode, outputnode, choice))
-                    removed_edges.append((target, outputnode, choice))
+                    removed_edges.append((node, outputnode, choice))
         for edge in removed_edges:
             graph.remove(edge)
         graph.extend(new_edges)
 
         # set inputs and outputs per node and verify
-        allnodes = set(sum((i[:2] for i in graph), ()))
-        for node in allnodes:
+        for node in allnodes(graph):
             node.inputs = tuple(
                 [source for source, target, choice in graph if target == node]
             )
@@ -103,111 +104,6 @@ class WorkflowBase(models.Model):
             node._node_verify()
         cls._GENERATED_DIAGRAM = graph
         return cls._GENERATED_DIAGRAM
-
-    @classmethod
-    def build_internal_diagram(cls):
-        """
-        Translates the simple dict-style mapping graph to a full and valid
-        activity diagram with Nodes. This will also "upgrade" django model fields
-        to be Node-compatible
-        """
-        cls._GENERATED_DIAGRAM = {}
-        all_targets = sum(  # equals all targets
-            (list(i.values()) for i in cls.DIAGRAM.values() if isinstance(i, dict)),
-            list(cls.DIAGRAM.values()),
-        )
-        for source, target in cls.DIAGRAM.items():
-            # automatically generte initial nodes for nodes without incoming edges
-            # considers also values which have a dict by extracting the dict values
-            # (decision nodes)
-            if source not in all_targets:
-                cls._GENERATED_DIAGRAM[Initial()] = source
-
-            # automatically generte flow final nodes for nodes who have None as target
-            if target is None:
-                target = FlowFinal()
-
-            # automatically generate Workflow final nodes for nodes without outgoing edges
-            elif not isinstance(target, dict) and target not in cls.DIAGRAM:
-                target = WorkflowFinal()
-
-            # automatically generte merge nodes
-            if list(all_targets).count(target) > 1:
-                # check if we already inserted a merge node
-                try:
-                    mergenode = list(cls._GENERATED_DIAGRAM.keys())[
-                        list(cls._GENERATED_DIAGRAM.values()).index(target)
-                    ]
-                except ValueError:
-                    mergenode = Merge()
-                    cls._GENERATED_DIAGRAM[mergenode] = target
-                cls._GENERATED_DIAGRAM[source] = mergenode
-
-            # automatically generte merge nodes for decisions
-            if isinstance(target, dict):
-                for decisiontarget in target.values():
-                    if list(all_targets).count(decisiontarget) > 1:
-                        # check if we already inserted a merge node
-                        try:
-                            mergenode = list(cls._GENERATED_DIAGRAM.keys())[
-                                list(cls._GENERATED_DIAGRAM.values()).index(
-                                    decisiontarget
-                                )
-                            ]
-                        except ValueError:
-                            mergenode = Merge()
-                            cls._GENERATED_DIAGRAM[mergenode] = decisiontarget
-                        cls._GENERATED_DIAGRAM[source] = mergenode
-
-            # generate fork nodes
-            elif isinstance(target, tuple):
-                cls._GENERATED_DIAGRAM[source] = Fork()
-                for node in target:
-                    cls._GENERATED_DIAGRAM[cls._GENERATED_DIAGRAM[source]] = node
-            # check decision nodes
-            elif isinstance(target, dict):
-                assert isinstance(source, Decision) and hasattr(
-                    source, "choices"
-                ), f"Node {source} needs to be a {Decision}"
-                cls._GENERATED_DIAGRAM[source] = target
-            else:
-                cls._GENERATED_DIAGRAM[source] = target
-        for k, v in cls._GENERATED_DIAGRAM.items():
-            print(k, v)
-
-    @classmethod
-    def build_graph1(cls):
-        assert any(
-            isinstance(i, Initial) for i in cls._GENERATED_DIAGRAM.keys()
-        ), "No workflow entry point"
-        assert any(
-            isinstance(i, WorkflowFinal) for i in cls._GENERATED_DIAGRAM.values()
-        ), "No workflow end point"
-        for source, target in cls._GENERATED_DIAGRAM.items():
-            if isinstance(target, dict):
-                assert isinstance(
-                    source, Decision
-                ), f"Node {source} has a dict value but no 'choices' attributes"
-                source.decision_labels = tuple(target.keys())
-                target = tuple(target.values())
-            assert isinstance(
-                source, (Node, models.Field)
-            ), f"Node {source} is not of instance Node but {type(source)}"
-            if not isinstance(target, tuple):
-                target = (target,)
-            source.outputs += target
-            for t in target:
-                assert isinstance(
-                    t, (Node, models.Field)
-                ), f"Node {t} is not of instance Node but {type(t)}"
-                t.inputs += (source,)
-        for source, target in cls._GENERATED_DIAGRAM.items():
-            source._node_verify()
-            if isinstance(source, Decision):
-                target = tuple(target.values())
-            if not isinstance(target, tuple):
-                target = (target,)
-            [t._node_verify() for t in target]
 
     @classmethod
     def as_dot(cls, attrs=None):
@@ -440,7 +336,9 @@ class Decision(models.CharField, Node):
 
     def _node_verify(self):
         super()._node_verify()
-        assert len(self.inputs) == 1 and len(self.outputs) == 2
+        print(self)
+        assert len(self.inputs) == 1
+        assert len(self.outputs) > 1
         assert len(self.choices) == len(self.outputs)
 
     def dot_attrs(self):
@@ -449,6 +347,9 @@ class Decision(models.CharField, Node):
             "label": '""',
             "tooltip": '"' + str(self) + '"',
             "xlabel": '"' + str(self) + '"',
+            "fixedsize": "TRUE",
+            "width": 0.5,
+            "height": 0.5,
         }
 
     def pre_save(self, model_instance, add):
@@ -465,7 +366,7 @@ class Decision(models.CharField, Node):
         return None
 
     def __str__(self):
-        return str(self.verbose_name or self.__class__.__name__)
+        return str(self.verbose_name or self.__class__.__name__) + "?"
 
 
 # Fixed Workflow Diagram nodes which should in general not be subclassed
@@ -480,7 +381,13 @@ class Merge(Node):
         return any(i.done(activity) for i in self.inputs)
 
     def dot_attrs(self):
-        return {"shape": "diamond", "label": '""'}
+        return {
+            "shape": "diamond",
+            "label": '""',
+            "fixedsize": "TRUE",
+            "width": 0.5,
+            "height": 0.5,
+        }
 
 
 class Initial(Node):
