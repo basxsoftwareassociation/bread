@@ -16,6 +16,12 @@ class Modal(hg.DIV):
         size: one of ["xs", "sm", "md", "lg"]
         buttons: buttons displayed on bottom of modal, last button has default focus
                  the attribute "data_modal_close" can be set on an button in order to make it a cancel button
+
+        In order to open the modal just pass self.openerattributes as kwargs to another html element, e.g. a button
+
+            modal = modal.Modal("My Modal", "Hello world")
+            button.Button("Model", **modal.openerattributes)
+
         """
         if size not in Modal.SIZES:
             raise ValueError(
