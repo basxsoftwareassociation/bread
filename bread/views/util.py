@@ -3,6 +3,7 @@ import urllib
 import htmlgenerator as hg
 from django import forms
 from django.contrib import messages
+from django.http import HttpResponse
 from django.utils.html import mark_safe
 
 from .. import layout as breadlayout  # prevent name clashing
@@ -76,6 +77,17 @@ class CustomFormMixin:
                     ),
                 )
         return form
+
+    def form_valid(self, *args, **kwargs):
+        ret = super().form_valid(*args, **kwargs)
+        if self.ajax_urlparameter in self.request.GET:
+            ret = HttpResponse("OK")
+            # This header will be processed by htmx
+            # in order to reload the whole page automatically
+            # (instead of doing the redirect which is required for
+            # normal POST submission responses
+            ret["HX-Refresh"] = "true"
+        return ret
 
     def get_success_url(self):
         if self.request.GET.get("next"):

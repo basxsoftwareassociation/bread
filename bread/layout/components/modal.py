@@ -111,9 +111,8 @@ class Modal(hg.DIV):
             **attributes,
         )
         if submitlabel:
-            buttons[1].attributes[
-                "onclick"
-            ] = f"document.querySelector('#{modal.id} .bx--modal-content form').submit()"
+            buttons[1].attributes["hx_post"] = url
+            buttons[1].attributes["hx_target"] = f"#{modal.id} .bx--modal-content"
 
         modal.openerattributes["hx_get"] = url
         modal.openerattributes["hx_target"] = f"#{modal.id} .bx--modal-content"
