@@ -106,11 +106,6 @@ class BreadView:
             "ajax_urlparameter", getattr(self, "ajax_urlparameter")
         )
 
-    def dispatch(self, *args, **kwargs):
-        ret = super().dispatch(*args, **kwargs)
-        print(self.request.GET)
-        return ret
-
     def _get_layout_cached(self):
         """Used for caching layouts, only bread-internal"""
         if self._layout_cached is None:
