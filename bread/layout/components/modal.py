@@ -85,7 +85,13 @@ class Modal(hg.DIV):
     def with_ajax_content(
         cls, heading, url, label="", size="md", submitlabel=None, id=None, **attributes
     ):
-        """url: string or htmlgenerator.Lazy"""
+        """
+        Same arguments as Modal() except ``url`` replaces ``content`` and ``submitlabel`` replaces ``buttons``
+
+        url: string or htmlgenerator.Lazy
+        submitlabel: string or an htmlgenerator element which will be displayed on the submit button.
+                     A value of None means no submit button should be displayed.
+        """
         buttons = (Button(_("Cancel"), buttontype="ghost", data_modal_close=True),)
         if submitlabel:
             buttons += (
