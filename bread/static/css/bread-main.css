@@ -15448,7 +15448,6 @@ fieldset[readonly=true] :disabled {
 .full-width-white-background {
   background-color: white;
   position: relative;
-  transform: translateZ(0);
   justify-content: flex-end; }
   .full-width-white-background::before {
     content: '';
