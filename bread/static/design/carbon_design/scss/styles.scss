@@ -191,8 +191,6 @@ fieldset[readonly=true] :disabled {
         @include tabs;
         @include text-area;
         @include content-switcher;
-        @include data-table-core;
-        @include data-table-v2-action;
         @include form;
         @include date-picker;
 
@@ -216,24 +214,38 @@ fieldset[readonly=true] :disabled {
 
         // having form elements inside datatables is our own idea, so we need some custom styling
         .bx--data-table {
-            .bx--text-area:disabled, .bx--text-area:hover:disabled{
-                border-bottom: none;
-            }
+            @include carbon--theme($carbon--theme--g10) {
+                @include button;
+                @include search;
+                @include select;
+                @include text-input;
+                @include multiselect;
+                @include tabs;
+                @include text-area;
+                @include content-switcher;
+                @include form;
+                @include date-picker;
 
-            .bx--select-input:disabled, .bx--select-input:hover:disabled{
-                border-bottom: none;
-            }
+                .bx--text-area:disabled, .bx--text-area:hover:disabled{
+                    border-bottom: none;
+                }
 
-            .bx--date-picker__input {
-                border-bottom: none;
-            }
+                .bx--select-input:disabled, .bx--select-input:hover:disabled{
+                    border-bottom: none;
+                }
 
-            .bx--select-input {
-                border-bottom: none;
-            }
-            .bx--search-input {
-                border-bottom: none;
+                .bx--date-picker__input {
+                    border-bottom: none;
+                }
+
+                .bx--select-input {
+                    border-bottom: none;
+                }
+                .bx--search-input {
+                    border-bottom: none;
+                }
             }
         }
     }
 }
+
