@@ -177,7 +177,6 @@ fieldset[readonly=true] :disabled {
 // full-width background banner exactly as seen in the Carbon Design tutorial for React
 .full-width-white-background {
     @include full-width-white-background-mixin;
-    transform: translateZ(0);
     justify-content: flex-end;
 }
 
