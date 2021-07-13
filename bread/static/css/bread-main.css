@@ -2393,7 +2393,7 @@ body {
   .bx--btn--primary:focus {
     border-color: #0f62fe;
     box-shadow: inset 0 0 0 1px #0f62fe, inset 0 0 0 2px #f4f4f4; }
-  .bx--btn--primary:disabled:hover, .bx--btn--primary:disabled:focus, .bx--btn--primary.bx--btn--disabled:hover, .bx--btn--primary.bx--btn--disabled:focus {
+  .bx--btn--primary:disabled:hover, .bx--btn--primary:disabled:focus, .bx--btn--primary:hover.bx--btn--disabled, .bx--btn--primary:focus.bx--btn--disabled {
     color: #8d8d8d;
     text-decoration: none;
     background-color: #c6c6c6;
@@ -2418,7 +2418,7 @@ body {
   .bx--btn--secondary:focus {
     border-color: #0f62fe;
     box-shadow: inset 0 0 0 1px #0f62fe, inset 0 0 0 2px #f4f4f4; }
-  .bx--btn--secondary:disabled:hover, .bx--btn--secondary:disabled:focus, .bx--btn--secondary.bx--btn--disabled:hover, .bx--btn--secondary.bx--btn--disabled:focus {
+  .bx--btn--secondary:disabled:hover, .bx--btn--secondary:disabled:focus, .bx--btn--secondary:hover.bx--btn--disabled, .bx--btn--secondary:focus.bx--btn--disabled {
     color: #8d8d8d;
     text-decoration: none;
     background-color: #c6c6c6;
@@ -2443,7 +2443,7 @@ body {
   .bx--btn--tertiary:focus {
     border-color: #0f62fe;
     box-shadow: inset 0 0 0 1px #0f62fe, inset 0 0 0 2px #f4f4f4; }
-  .bx--btn--tertiary:disabled:hover, .bx--btn--tertiary:disabled:focus, .bx--btn--tertiary.bx--btn--disabled:hover, .bx--btn--tertiary.bx--btn--disabled:focus {
+  .bx--btn--tertiary:disabled:hover, .bx--btn--tertiary:disabled:focus, .bx--btn--tertiary:hover.bx--btn--disabled, .bx--btn--tertiary:focus.bx--btn--disabled {
     color: #8d8d8d;
     text-decoration: none;
     background-color: #c6c6c6;
@@ -2478,7 +2478,7 @@ body {
   .bx--btn--ghost:focus {
     border-color: #0f62fe;
     box-shadow: inset 0 0 0 1px #0f62fe, inset 0 0 0 2px #f4f4f4; }
-  .bx--btn--ghost:disabled:hover, .bx--btn--ghost:disabled:focus, .bx--btn--ghost.bx--btn--disabled:hover, .bx--btn--ghost.bx--btn--disabled:focus {
+  .bx--btn--ghost:disabled:hover, .bx--btn--ghost:disabled:focus, .bx--btn--ghost:hover.bx--btn--disabled, .bx--btn--ghost:focus.bx--btn--disabled {
     color: #8d8d8d;
     text-decoration: none;
     background-color: #c6c6c6;
@@ -2602,8 +2602,8 @@ body {
     clip: auto; }
   .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--visible .bx--assistive-text,
   .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--visible + .bx--assistive-text, .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--visible.bx--tooltip--a11y::before, .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:hover .bx--assistive-text,
-  .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:hover + .bx--assistive-text, .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--a11y:hover::before, .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:focus .bx--assistive-text,
-  .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:focus + .bx--assistive-text, .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--a11y:focus::before {
+  .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:hover + .bx--assistive-text, .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:hover.bx--tooltip--a11y::before, .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:focus .bx--assistive-text,
+  .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:focus + .bx--assistive-text, .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:focus.bx--tooltip--a11y::before {
     animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
   .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--hidden .bx--assistive-text, .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--hidden + .bx--assistive-text {
     margin: -1px;
@@ -2724,8 +2724,8 @@ svg {
     clip: auto; }
   .bx--btn--icon-only--top.bx--tooltip--visible .bx--assistive-text,
   .bx--btn--icon-only--top.bx--tooltip--visible + .bx--assistive-text, .bx--btn--icon-only--top.bx--tooltip--visible.bx--tooltip--a11y::before, .bx--btn--icon-only--top:hover .bx--assistive-text,
-  .bx--btn--icon-only--top:hover + .bx--assistive-text, .bx--btn--icon-only--top.bx--tooltip--a11y:hover::before, .bx--btn--icon-only--top:focus .bx--assistive-text,
-  .bx--btn--icon-only--top:focus + .bx--assistive-text, .bx--btn--icon-only--top.bx--tooltip--a11y:focus::before {
+  .bx--btn--icon-only--top:hover + .bx--assistive-text, .bx--btn--icon-only--top:hover.bx--tooltip--a11y::before, .bx--btn--icon-only--top:focus .bx--assistive-text,
+  .bx--btn--icon-only--top:focus + .bx--assistive-text, .bx--btn--icon-only--top:focus.bx--tooltip--a11y::before {
     animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
   .bx--btn--icon-only--top.bx--tooltip--hidden .bx--assistive-text, .bx--btn--icon-only--top.bx--tooltip--hidden + .bx--assistive-text {
     margin: -1px;
@@ -2823,7 +2823,7 @@ path,
   .bx--btn--danger:focus {
     border-color: #0f62fe;
     box-shadow: inset 0 0 0 1px #0f62fe, inset 0 0 0 2px #f4f4f4; }
-  .bx--btn--danger:disabled:hover, .bx--btn--danger:disabled:focus, .bx--btn--danger.bx--btn--disabled:hover, .bx--btn--danger.bx--btn--disabled:focus {
+  .bx--btn--danger:disabled:hover, .bx--btn--danger:disabled:focus, .bx--btn--danger:hover.bx--btn--disabled, .bx--btn--danger:focus.bx--btn--disabled {
     color: #8d8d8d;
     text-decoration: none;
     background-color: #c6c6c6;
@@ -3562,9 +3562,9 @@ input:not(output):not([data-invalid]):-moz-ui-invalid {
 .bx--checkbox:focus + .bx--checkbox-label::before,
 .bx--checkbox-label__focus::before,
 .bx--checkbox:checked:focus + .bx--checkbox-label::before,
-.bx--checkbox-label.bx--checkbox-label__focus[data-contained-checkbox-state='true']::before,
+.bx--checkbox-label[data-contained-checkbox-state='true'].bx--checkbox-label__focus::before,
 .bx--checkbox:indeterminate:focus + .bx--checkbox-label::before,
-.bx--checkbox-label.bx--checkbox-label__focus[data-contained-checkbox-state='mixed']::before {
+.bx--checkbox-label[data-contained-checkbox-state='mixed'].bx--checkbox-label__focus::before {
   box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #0f62fe; }
 
 .bx--checkbox:disabled + .bx--checkbox-label,
@@ -3656,7 +3656,7 @@ input:not(output):not([data-invalid]):-moz-ui-invalid {
 .bx--list-box--expanded:hover {
   background-color: #ffffff; }
 
-.bx--list-box--expanded.bx--list-box--light:hover:hover {
+.bx--list-box--expanded:hover.bx--list-box--light:hover {
   background-color: #f4f4f4; }
 
 .bx--list-box .bx--text-input {
@@ -3673,7 +3673,7 @@ input:not(output):not([data-invalid]):-moz-ui-invalid {
   padding-right: 4rem;
   border-bottom: 0; }
 
-.bx--list-box.bx--list-box--inline[data-invalid]
+.bx--list-box[data-invalid].bx--list-box--inline
 .bx--list-box__field {
   padding-right: 3.5rem; }
 
@@ -3728,7 +3728,7 @@ input:not(output):not([data-invalid]):-moz-ui-invalid {
 .bx--list-box__field {
   padding-right: 3rem; }
 
-.bx--list-box--disabled.bx--list-box.bx--list-box--inline[data-invalid]
+.bx--list-box--disabled.bx--list-box[data-invalid].bx--list-box--inline
 .bx--list-box__field {
   padding-right: 2rem; }
 
@@ -5239,8 +5239,8 @@ input:not(output):not([data-invalid]):-moz-ui-invalid {
       clip: auto; }
     .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--visible .bx--assistive-text,
     .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--visible + .bx--assistive-text, .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--visible.bx--tooltip--a11y::before, .bx--text-input__field-wrapper .bx--text-input--password__visibility:hover .bx--assistive-text,
-    .bx--text-input__field-wrapper .bx--text-input--password__visibility:hover + .bx--assistive-text, .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--a11y:hover::before, .bx--text-input__field-wrapper .bx--text-input--password__visibility:focus .bx--assistive-text,
-    .bx--text-input__field-wrapper .bx--text-input--password__visibility:focus + .bx--assistive-text, .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--a11y:focus::before {
+    .bx--text-input__field-wrapper .bx--text-input--password__visibility:hover + .bx--assistive-text, .bx--text-input__field-wrapper .bx--text-input--password__visibility:hover.bx--tooltip--a11y::before, .bx--text-input__field-wrapper .bx--text-input--password__visibility:focus .bx--assistive-text,
+    .bx--text-input__field-wrapper .bx--text-input--password__visibility:focus + .bx--assistive-text, .bx--text-input__field-wrapper .bx--text-input--password__visibility:focus.bx--tooltip--a11y::before {
       animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
     .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--hidden .bx--assistive-text, .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--hidden + .bx--assistive-text {
       margin: -1px;
@@ -6008,7 +6008,7 @@ input[type='number'] {
 .bx--toolbar-action:hover:not([disabled]) {
   background: #e5e5e5; }
 
-.bx--toolbar-action[aria-expanded='true']:hover {
+.bx--toolbar-action:hover[aria-expanded='true'] {
   background: #ffffff; }
 
 .bx--toolbar-action[disabled] {
@@ -6022,8 +6022,8 @@ input[type='number'] {
 .bx--toolbar-action:active:not([disabled]) {
   outline: 2px solid #0f62fe;
   outline-offset: -2px; }
-  .bx--toolbar-action.bx--toolbar-search-container-expandable:focus:not([disabled]),
-  .bx--toolbar-action.bx--toolbar-search-container-expandable:active:not([disabled]) {
+  .bx--toolbar-action:focus:not([disabled]).bx--toolbar-search-container-expandable,
+  .bx--toolbar-action:active:not([disabled]).bx--toolbar-search-container-expandable {
     outline: none; }
 
 .bx--toolbar-action ~ .bx--btn {
@@ -6532,7 +6532,7 @@ td {
 
 .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:nth-child(odd)
+tr:nth-child(odd).bx--data-table--selected
 td,
 tr.bx--data-table--selected td {
   color: #161616;
@@ -6542,18 +6542,18 @@ tr.bx--data-table--selected td {
 
 .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:first-of-type:nth-child(odd)
+tr:first-of-type:nth-child(odd).bx--data-table--selected
 td,
 tr.bx--data-table--selected:first-of-type td {
   border-top: 1px solid #c6c6c6; }
 
 .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:last-of-type:nth-child(odd)
+tr:last-of-type:nth-child(odd).bx--data-table--selected
 td,
 .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:last-of-type:nth-child(even)
+tr:last-of-type:nth-child(even).bx--data-table--selected
 td,
 tr.bx--data-table--selected:last-of-type td {
   border-top: 1px solid #e0e0e0;
@@ -6561,19 +6561,19 @@ tr.bx--data-table--selected:last-of-type td {
 
 .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:nth-child(even)
+tr:nth-child(even).bx--data-table--selected
 td {
   border-bottom: 1px solid #c6c6c6; }
 
 .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:nth-child(even):hover
+tr:nth-child(even).bx--data-table--selected:hover
 td {
   border-bottom: 1px solid #cacaca; }
 
 .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:nth-child(odd):hover
+tr:nth-child(odd).bx--data-table--selected:hover
 td,
 .bx--data-table tbody .bx--data-table--selected:hover td {
   color: #161616;
@@ -10351,8 +10351,8 @@ path[opacity='0'] {
     clip: auto; }
   .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top.bx--tooltip--visible .bx--assistive-text,
   .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top.bx--tooltip--visible + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top.bx--tooltip--visible.bx--tooltip--a11y::before, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top:hover .bx--assistive-text,
-  .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top:hover + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top.bx--tooltip--a11y:hover::before, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top:focus .bx--assistive-text,
-  .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top:focus + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top.bx--tooltip--a11y:focus::before {
+  .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top:hover + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top:hover.bx--tooltip--a11y::before, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top:focus .bx--assistive-text,
+  .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top:focus + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top:focus.bx--tooltip--a11y::before {
     animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
   .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top.bx--tooltip--hidden .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--top.bx--tooltip--hidden + .bx--assistive-text {
     margin: -1px;
@@ -10519,8 +10519,8 @@ path[opacity='0'] {
     clip: auto; }
   .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom.bx--tooltip--visible .bx--assistive-text,
   .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom.bx--tooltip--visible + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom.bx--tooltip--visible.bx--tooltip--a11y::before, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom:hover .bx--assistive-text,
-  .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom:hover + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom.bx--tooltip--a11y:hover::before, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom:focus .bx--assistive-text,
-  .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom:focus + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom.bx--tooltip--a11y:focus::before {
+  .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom:hover + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom:hover.bx--tooltip--a11y::before, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom:focus .bx--assistive-text,
+  .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom:focus + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom:focus.bx--tooltip--a11y::before {
     animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
   .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom.bx--tooltip--hidden .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip__trigger--definition.bx--tooltip--bottom.bx--tooltip--hidden + .bx--assistive-text {
     margin: -1px;
@@ -10842,8 +10842,8 @@ path[opacity='0'] {
     clip: auto; }
   .bx--tooltip__trigger.bx--tooltip--top.bx--tooltip--visible .bx--assistive-text,
   .bx--tooltip__trigger.bx--tooltip--top.bx--tooltip--visible + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--top.bx--tooltip--visible.bx--tooltip--a11y::before, .bx--tooltip__trigger.bx--tooltip--top:hover .bx--assistive-text,
-  .bx--tooltip__trigger.bx--tooltip--top:hover + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--top.bx--tooltip--a11y:hover::before, .bx--tooltip__trigger.bx--tooltip--top:focus .bx--assistive-text,
-  .bx--tooltip__trigger.bx--tooltip--top:focus + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--top.bx--tooltip--a11y:focus::before {
+  .bx--tooltip__trigger.bx--tooltip--top:hover + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--top:hover.bx--tooltip--a11y::before, .bx--tooltip__trigger.bx--tooltip--top:focus .bx--assistive-text,
+  .bx--tooltip__trigger.bx--tooltip--top:focus + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--top:focus.bx--tooltip--a11y::before {
     animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
   .bx--tooltip__trigger.bx--tooltip--top.bx--tooltip--hidden .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--top.bx--tooltip--hidden + .bx--assistive-text {
     margin: -1px;
@@ -11014,8 +11014,8 @@ path[opacity='0'] {
     clip: auto; }
   .bx--tooltip__trigger.bx--tooltip--right.bx--tooltip--visible .bx--assistive-text,
   .bx--tooltip__trigger.bx--tooltip--right.bx--tooltip--visible + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--right.bx--tooltip--visible.bx--tooltip--a11y::before, .bx--tooltip__trigger.bx--tooltip--right:hover .bx--assistive-text,
-  .bx--tooltip__trigger.bx--tooltip--right:hover + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--right.bx--tooltip--a11y:hover::before, .bx--tooltip__trigger.bx--tooltip--right:focus .bx--assistive-text,
-  .bx--tooltip__trigger.bx--tooltip--right:focus + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--right.bx--tooltip--a11y:focus::before {
+  .bx--tooltip__trigger.bx--tooltip--right:hover + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--right:hover.bx--tooltip--a11y::before, .bx--tooltip__trigger.bx--tooltip--right:focus .bx--assistive-text,
+  .bx--tooltip__trigger.bx--tooltip--right:focus + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--right:focus.bx--tooltip--a11y::before {
     animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
   .bx--tooltip__trigger.bx--tooltip--right.bx--tooltip--hidden .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--right.bx--tooltip--hidden + .bx--assistive-text {
     margin: -1px;
@@ -11181,8 +11181,8 @@ path[opacity='0'] {
     clip: auto; }
   .bx--tooltip__trigger.bx--tooltip--bottom.bx--tooltip--visible .bx--assistive-text,
   .bx--tooltip__trigger.bx--tooltip--bottom.bx--tooltip--visible + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--bottom.bx--tooltip--visible.bx--tooltip--a11y::before, .bx--tooltip__trigger.bx--tooltip--bottom:hover .bx--assistive-text,
-  .bx--tooltip__trigger.bx--tooltip--bottom:hover + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--bottom.bx--tooltip--a11y:hover::before, .bx--tooltip__trigger.bx--tooltip--bottom:focus .bx--assistive-text,
-  .bx--tooltip__trigger.bx--tooltip--bottom:focus + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--bottom.bx--tooltip--a11y:focus::before {
+  .bx--tooltip__trigger.bx--tooltip--bottom:hover + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--bottom:hover.bx--tooltip--a11y::before, .bx--tooltip__trigger.bx--tooltip--bottom:focus .bx--assistive-text,
+  .bx--tooltip__trigger.bx--tooltip--bottom:focus + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--bottom:focus.bx--tooltip--a11y::before {
     animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
   .bx--tooltip__trigger.bx--tooltip--bottom.bx--tooltip--hidden .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--bottom.bx--tooltip--hidden + .bx--assistive-text {
     margin: -1px;
@@ -11351,8 +11351,8 @@ path[opacity='0'] {
     clip: auto; }
   .bx--tooltip__trigger.bx--tooltip--left.bx--tooltip--visible .bx--assistive-text,
   .bx--tooltip__trigger.bx--tooltip--left.bx--tooltip--visible + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--left.bx--tooltip--visible.bx--tooltip--a11y::before, .bx--tooltip__trigger.bx--tooltip--left:hover .bx--assistive-text,
-  .bx--tooltip__trigger.bx--tooltip--left:hover + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--left.bx--tooltip--a11y:hover::before, .bx--tooltip__trigger.bx--tooltip--left:focus .bx--assistive-text,
-  .bx--tooltip__trigger.bx--tooltip--left:focus + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--left.bx--tooltip--a11y:focus::before {
+  .bx--tooltip__trigger.bx--tooltip--left:hover + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--left:hover.bx--tooltip--a11y::before, .bx--tooltip__trigger.bx--tooltip--left:focus .bx--assistive-text,
+  .bx--tooltip__trigger.bx--tooltip--left:focus + .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--left:focus.bx--tooltip--a11y::before {
     animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
   .bx--tooltip__trigger.bx--tooltip--left.bx--tooltip--hidden .bx--assistive-text, .bx--tooltip__trigger.bx--tooltip--left.bx--tooltip--hidden + .bx--assistive-text {
     margin: -1px;
@@ -12024,13 +12024,13 @@ span.bx--pagination__text {
   fill: #161616; }
 
 .bx--pagination__button:focus,
-.bx--btn--ghost.bx--pagination__button:focus {
+.bx--btn--ghost:focus.bx--pagination__button {
   outline: 2px solid #0f62fe;
   outline-offset: -2px;
   border-left: 0; }
 
 .bx--pagination__button:hover,
-.bx--btn--ghost.bx--pagination__button:hover {
+.bx--btn--ghost:hover.bx--pagination__button {
   background: #e5e5e5; }
 
 .bx--pagination__button--no-index,
@@ -12040,8 +12040,8 @@ span.bx--pagination__text {
 
 .bx--pagination__button:disabled:hover,
 .bx--pagination__button--no-index:hover,
-.bx--btn--ghost.bx--pagination__button:disabled:hover,
-.bx--btn--ghost.bx--pagination__button--no-index:hover {
+.bx--btn--ghost:disabled:hover.bx--pagination__button,
+.bx--btn--ghost:hover.bx--pagination__button--no-index {
   background: #ffffff;
   border-color: #e0e0e0;
   cursor: not-allowed;
@@ -14649,7 +14649,7 @@ a.bx--navigation-link:focus {
   margin-top: -2.5px;
   pointer-events: none; }
 
-.choices.is-open[data-type*='select-one']:after {
+.choices[data-type*='select-one'].is-open:after {
   border-color: transparent transparent #333333 transparent;
   margin-top: -7.5px; }
 
@@ -15349,12 +15349,6 @@ a.bx--navigation-link:focus {
 .bx--content {
   transform: none; }
 
-.bx--side-nav {
-  border-right: 1px solid #e0e0e0; }
-
-.bx--header {
-  border-bottom: 1px solid #393939; }
-
 @media print {
   html, body {
     background-color: white !important; }
@@ -15453,12 +15447,18 @@ fieldset[readonly=true] :disabled {
   .full-width-white-background::before {
     content: '';
     position: absolute;
-    left: -3.5rem;
     top: 0;
-    right: -3.5rem;
     bottom: 0;
     background: white;
     z-index: -1; }
+
+.tabs-lg .bx--tabs__nav-link {
+  height: 3rem;
+  padding: .5rem 1rem;
+  line-height: calc(3rem - (.5rem * 2)); }
+
+.tabs-lg {
+  min-height: 3rem; }
 
 .theme-white .bx--btn-set {
   display: flex; }
@@ -15542,7 +15542,7 @@ fieldset[readonly=true] :disabled {
   .theme-white .bx--btn--primary:focus {
     border-color: #0f62fe;
     box-shadow: inset 0 0 0 1px #0f62fe, inset 0 0 0 2px #ffffff; }
-  .theme-white .bx--btn--primary:disabled:hover, .theme-white .bx--btn--primary:disabled:focus, .theme-white .bx--btn--primary.bx--btn--disabled:hover, .theme-white .bx--btn--primary.bx--btn--disabled:focus {
+  .theme-white .bx--btn--primary:disabled:hover, .theme-white .bx--btn--primary:disabled:focus, .theme-white .bx--btn--primary:hover.bx--btn--disabled, .theme-white .bx--btn--primary:focus.bx--btn--disabled {
     color: #8d8d8d;
     text-decoration: none;
     background-color: #c6c6c6;
@@ -15567,7 +15567,7 @@ fieldset[readonly=true] :disabled {
   .theme-white .bx--btn--secondary:focus {
     border-color: #0f62fe;
     box-shadow: inset 0 0 0 1px #0f62fe, inset 0 0 0 2px #ffffff; }
-  .theme-white .bx--btn--secondary:disabled:hover, .theme-white .bx--btn--secondary:disabled:focus, .theme-white .bx--btn--secondary.bx--btn--disabled:hover, .theme-white .bx--btn--secondary.bx--btn--disabled:focus {
+  .theme-white .bx--btn--secondary:disabled:hover, .theme-white .bx--btn--secondary:disabled:focus, .theme-white .bx--btn--secondary:hover.bx--btn--disabled, .theme-white .bx--btn--secondary:focus.bx--btn--disabled {
     color: #8d8d8d;
     text-decoration: none;
     background-color: #c6c6c6;
@@ -15592,7 +15592,7 @@ fieldset[readonly=true] :disabled {
   .theme-white .bx--btn--tertiary:focus {
     border-color: #0f62fe;
     box-shadow: inset 0 0 0 1px #0f62fe, inset 0 0 0 2px #ffffff; }
-  .theme-white .bx--btn--tertiary:disabled:hover, .theme-white .bx--btn--tertiary:disabled:focus, .theme-white .bx--btn--tertiary.bx--btn--disabled:hover, .theme-white .bx--btn--tertiary.bx--btn--disabled:focus {
+  .theme-white .bx--btn--tertiary:disabled:hover, .theme-white .bx--btn--tertiary:disabled:focus, .theme-white .bx--btn--tertiary:hover.bx--btn--disabled, .theme-white .bx--btn--tertiary:focus.bx--btn--disabled {
     color: #8d8d8d;
     text-decoration: none;
     background-color: #c6c6c6;
@@ -15627,7 +15627,7 @@ fieldset[readonly=true] :disabled {
   .theme-white .bx--btn--ghost:focus {
     border-color: #0f62fe;
     box-shadow: inset 0 0 0 1px #0f62fe, inset 0 0 0 2px #ffffff; }
-  .theme-white .bx--btn--ghost:disabled:hover, .theme-white .bx--btn--ghost:disabled:focus, .theme-white .bx--btn--ghost.bx--btn--disabled:hover, .theme-white .bx--btn--ghost.bx--btn--disabled:focus {
+  .theme-white .bx--btn--ghost:disabled:hover, .theme-white .bx--btn--ghost:disabled:focus, .theme-white .bx--btn--ghost:hover.bx--btn--disabled, .theme-white .bx--btn--ghost:focus.bx--btn--disabled {
     color: #8d8d8d;
     text-decoration: none;
     background-color: #c6c6c6;
@@ -15751,8 +15751,8 @@ fieldset[readonly=true] :disabled {
     clip: auto; }
   .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--visible .bx--assistive-text,
   .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--visible + .bx--assistive-text, .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--visible.bx--tooltip--a11y::before, .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:hover .bx--assistive-text,
-  .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:hover + .bx--assistive-text, .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--a11y:hover::before, .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:focus .bx--assistive-text,
-  .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:focus + .bx--assistive-text, .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--a11y:focus::before {
+  .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:hover + .bx--assistive-text, .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:hover.bx--tooltip--a11y::before, .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:focus .bx--assistive-text,
+  .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:focus + .bx--assistive-text, .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger:focus.bx--tooltip--a11y::before {
     animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
   .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--hidden .bx--assistive-text, .theme-white .bx--btn.bx--btn--icon-only.bx--tooltip__trigger.bx--tooltip--hidden + .bx--assistive-text {
     margin: -1px;
@@ -15873,8 +15873,8 @@ svg {
     clip: auto; }
   .theme-white .bx--btn--icon-only--top.bx--tooltip--visible .bx--assistive-text,
   .theme-white .bx--btn--icon-only--top.bx--tooltip--visible + .bx--assistive-text, .theme-white .bx--btn--icon-only--top.bx--tooltip--visible.bx--tooltip--a11y::before, .theme-white .bx--btn--icon-only--top:hover .bx--assistive-text,
-  .theme-white .bx--btn--icon-only--top:hover + .bx--assistive-text, .theme-white .bx--btn--icon-only--top.bx--tooltip--a11y:hover::before, .theme-white .bx--btn--icon-only--top:focus .bx--assistive-text,
-  .theme-white .bx--btn--icon-only--top:focus + .bx--assistive-text, .theme-white .bx--btn--icon-only--top.bx--tooltip--a11y:focus::before {
+  .theme-white .bx--btn--icon-only--top:hover + .bx--assistive-text, .theme-white .bx--btn--icon-only--top:hover.bx--tooltip--a11y::before, .theme-white .bx--btn--icon-only--top:focus .bx--assistive-text,
+  .theme-white .bx--btn--icon-only--top:focus + .bx--assistive-text, .theme-white .bx--btn--icon-only--top:focus.bx--tooltip--a11y::before {
     animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
   .theme-white .bx--btn--icon-only--top.bx--tooltip--hidden .bx--assistive-text, .theme-white .bx--btn--icon-only--top.bx--tooltip--hidden + .bx--assistive-text {
     margin: -1px;
@@ -15972,7 +15972,7 @@ path,
   .theme-white .bx--btn--danger:focus {
     border-color: #0f62fe;
     box-shadow: inset 0 0 0 1px #0f62fe, inset 0 0 0 2px #ffffff; }
-  .theme-white .bx--btn--danger:disabled:hover, .theme-white .bx--btn--danger:disabled:focus, .theme-white .bx--btn--danger.bx--btn--disabled:hover, .theme-white .bx--btn--danger.bx--btn--disabled:focus {
+  .theme-white .bx--btn--danger:disabled:hover, .theme-white .bx--btn--danger:disabled:focus, .theme-white .bx--btn--danger:hover.bx--btn--disabled, .theme-white .bx--btn--danger:focus.bx--btn--disabled {
     color: #8d8d8d;
     text-decoration: none;
     background-color: #c6c6c6;
@@ -16578,8 +16578,8 @@ path,
       clip: auto; }
     .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--visible .bx--assistive-text,
     .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--visible + .bx--assistive-text, .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--visible.bx--tooltip--a11y::before, .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility:hover .bx--assistive-text,
-    .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility:hover + .bx--assistive-text, .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--a11y:hover::before, .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility:focus .bx--assistive-text,
-    .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility:focus + .bx--assistive-text, .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--a11y:focus::before {
+    .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility:hover + .bx--assistive-text, .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility:hover.bx--tooltip--a11y::before, .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility:focus .bx--assistive-text,
+    .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility:focus + .bx--assistive-text, .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility:focus.bx--tooltip--a11y::before {
       animation: tooltip-fade 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
     .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--hidden .bx--assistive-text, .theme-white .bx--text-input__field-wrapper .bx--text-input--password__visibility.bx--tooltip--hidden + .bx--assistive-text {
       margin: -1px;
@@ -17577,7 +17577,7 @@ td {
 
 .theme-white .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:nth-child(odd)
+tr:nth-child(odd).bx--data-table--selected
 td,
 .theme-white tr.bx--data-table--selected td {
   color: #161616;
@@ -17587,18 +17587,18 @@ td,
 
 .theme-white .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:first-of-type:nth-child(odd)
+tr:first-of-type:nth-child(odd).bx--data-table--selected
 td,
 .theme-white tr.bx--data-table--selected:first-of-type td {
   border-top: 1px solid #c6c6c6; }
 
 .theme-white .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:last-of-type:nth-child(odd)
+tr:last-of-type:nth-child(odd).bx--data-table--selected
 td,
 .theme-white .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:last-of-type:nth-child(even)
+tr:last-of-type:nth-child(even).bx--data-table--selected
 td,
 .theme-white tr.bx--data-table--selected:last-of-type td {
   border-top: 1px solid #e0e0e0;
@@ -17606,19 +17606,19 @@ td,
 
 .theme-white .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:nth-child(even)
+tr:nth-child(even).bx--data-table--selected
 td {
   border-bottom: 1px solid #c6c6c6; }
 
 .theme-white .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:nth-child(even):hover
+tr:nth-child(even).bx--data-table--selected:hover
 td {
   border-bottom: 1px solid #cacaca; }
 
 .theme-white .bx--data-table--zebra
 tbody
-tr.bx--data-table--selected:nth-child(odd):hover
+tr:nth-child(odd).bx--data-table--selected:hover
 td,
 .theme-white .bx--data-table tbody .bx--data-table--selected:hover td {
   color: #161616;
@@ -18034,7 +18034,7 @@ td {
 .theme-white .bx--toolbar-action:hover:not([disabled]) {
   background: #e5e5e5; }
 
-.theme-white .bx--toolbar-action[aria-expanded='true']:hover {
+.theme-white .bx--toolbar-action:hover[aria-expanded='true'] {
   background: #f4f4f4; }
 
 .theme-white .bx--toolbar-action[disabled] {
@@ -18048,8 +18048,8 @@ td {
 .theme-white .bx--toolbar-action:active:not([disabled]) {
   outline: 2px solid #0f62fe;
   outline-offset: -2px; }
-  .theme-white .bx--toolbar-action.bx--toolbar-search-container-expandable:focus:not([disabled]),
-  .theme-white .bx--toolbar-action.bx--toolbar-search-container-expandable:active:not([disabled]) {
+  .theme-white .bx--toolbar-action:focus:not([disabled]).bx--toolbar-search-container-expandable,
+  .theme-white .bx--toolbar-action:active:not([disabled]).bx--toolbar-search-container-expandable {
     outline: none; }
 
 .theme-white .bx--toolbar-action ~ .bx--btn {

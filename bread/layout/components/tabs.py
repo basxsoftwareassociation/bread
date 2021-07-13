@@ -47,11 +47,18 @@ class Tabs(hg.DIV):
         *tabs,
         container=False,
         tabpanel_attributes=None,
+        labelcontainer_attributes=None,
         **attributes,
     ):
         tabpanel_attributes = collections.defaultdict(str, tabpanel_attributes or {})
+        labelcontainer_attributes = collections.defaultdict(
+            str, labelcontainer_attributes or {}
+        )
 
         self.tablabels = hg.UL(_class="bx--tabs__nav bx--tabs__nav--hidden")
+        labelcontainer_attributes["class"] += "bx--tabs" + (
+            " bx--tabs--container" if container else ""
+        )
         self.labelcontainer = hg.DIV(
             hg.DIV(
                 hg.A(
@@ -65,7 +72,7 @@ class Tabs(hg.DIV):
             ),
             self.tablabels,
             data_tabs=True,
-            _class="bx--tabs" + (" bx--tabs--container" if container else ""),
+            **labelcontainer_attributes,
         )
         tabpanel_attributes["_class"] += " bx--tab-content"
         self.tabpanels = hg.DIV(**tabpanel_attributes)

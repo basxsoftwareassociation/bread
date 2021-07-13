@@ -19,18 +19,6 @@ $carbon--theme: $carbon--theme--g10;
     transform: none;
 }
 
-.bx--side-nav {
-    // this border is not in the vanilla CSS of the carbon design, but it seems to be rather standard since
-    // even the carbon design website has it.
-    border-right: 1px solid #e0e0e0;
-}
-
-.bx--header {
-    // this border is not in the vanilla CSS of the carbon design, but it seems to be rather standard since
-    // even the carbon design website has it.
-    border-bottom: 1px solid #393939;
-}
-
 // get nicer prints
 @media print
 {
@@ -165,9 +153,7 @@ fieldset[readonly=true] :disabled {
   &::before {
     content: '';
     position: absolute;
-    left: -($carbon--spacing-09 + $carbon--spacing-03);
     top: 0;
-    right: -($carbon--spacing-09 + $carbon--spacing-03);
     bottom: 0;
     background: white;
     z-index: -1;
@@ -179,6 +165,16 @@ fieldset[readonly=true] :disabled {
     @include full-width-white-background-mixin;
     transform: translateZ(0);
     justify-content: flex-end;
+}
+
+.tabs-lg .bx--tabs__nav-link {
+    height: 3rem;
+    padding: .5rem 1rem;
+    line-height: calc(3rem - (.5rem * 2));
+}
+
+.tabs-lg {
+    min-height: 3rem;
 }
 
 
