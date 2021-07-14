@@ -145,28 +145,6 @@ fieldset[readonly=true] :disabled {
     display: none;
 }
 
-
-// full-width background banner exactly as seen in the Carbon Design tutorial for React
-@mixin full-width-white-background-mixin() {
-  background-color: white;
-  position: relative;
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    background: white;
-    z-index: -1;
-  }
-}
-
-// full-width background banner exactly as seen in the Carbon Design tutorial for React
-.full-width-white-background {
-    @include full-width-white-background-mixin;
-    transform: translateZ(0);
-    justify-content: flex-end;
-}
-
 .tabs-lg .bx--tabs__nav-link {
     height: 3rem;
     padding: .5rem 1rem;
@@ -212,40 +190,27 @@ fieldset[readonly=true] :disabled {
             background-color: $ui-01;
         }
 
-        // having form elements inside datatables is our own idea, so we need some custom styling
-        .bx--data-table {
-            @include carbon--theme($carbon--theme--g10) {
-                @include button;
-                @include search;
-                @include select;
-                @include text-input;
-                @include multiselect;
-                @include tabs;
-                @include text-area;
-                @include content-switcher;
-                @include form;
-                @include date-picker;
+    }
+}
+// having form elements inside datatables is our own idea, so we need some custom styling
+.bx--data-table {
+    .bx--text-area:disabled, .bx--text-area:hover:disabled{
+        border-bottom: none;
+    }
 
-                .bx--text-area:disabled, .bx--text-area:hover:disabled{
-                    border-bottom: none;
-                }
+    .bx--select-input:disabled, .bx--select-input:hover:disabled{
+        border-bottom: none;
+    }
 
-                .bx--select-input:disabled, .bx--select-input:hover:disabled{
-                    border-bottom: none;
-                }
+    .bx--date-picker__input {
+        border-bottom: none;
+    }
 
-                .bx--date-picker__input {
-                    border-bottom: none;
-                }
-
-                .bx--select-input {
-                    border-bottom: none;
-                }
-                .bx--search-input {
-                    border-bottom: none;
-                }
-            }
-        }
+    .bx--select-input {
+        border-bottom: none;
+    }
+    .bx--search-input {
+        border-bottom: none;
     }
 }
 
@@ -254,16 +219,16 @@ fieldset[readonly=true] :disabled {
         border-left: 1px solid #e0e0e0;
     }
 
-    .tile-col {
+    .tile {
         border-top: 1px solid #e0e0e0;
         padding-top: 1rem;
         padding-bottom: 1rem;
+        background-color: white;
     }
 
-    .tile-row {
+    .bx--data-table-container {
+        padding-top: 0;
         border-top: 1px solid #e0e0e0;
-        padding-top: 1rem;
-        padding-bottom: 1rem;
     }
 }
 
