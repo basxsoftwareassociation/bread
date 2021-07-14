@@ -249,3 +249,21 @@ fieldset[readonly=true] :disabled {
     }
 }
 
+.tile-container {
+    .tile-col:nth-of-type(2n) {
+        border-left: 1px solid #e0e0e0;
+    }
+
+    .tile-col {
+        border-top: 1px solid #e0e0e0;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .tile-row {
+        border-top: 1px solid #e0e0e0;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+}
+
