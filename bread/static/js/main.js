@@ -175,20 +175,3 @@ function submitbulkaction(table, actionurl, method="GET") {
     document.body.appendChild(form);
     form.submit();
 }
-
-function hasCookie(name) {
-    if (document.cookie
-      .split('; ')
-      .find(row => row.startsWith(name + '=')))
-        return true;
-    return false
-}
-
-function getCookie(name) {
-    if (!hasCookie(name))
-        return null;
-    return document.cookie
-      .split('; ')
-      .find(row => row.startsWith(name + '='))
-      .split('=')[1];
-}

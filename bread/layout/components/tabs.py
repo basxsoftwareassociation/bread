@@ -16,7 +16,7 @@ class TabLabel(hg.LI):
                 aria_controls=panelid,
                 aria_selected="true" if selected else "false",
                 role="tab",
-                onclick="document.cookie = 'selected_tab=' + this.id",
+                onclick="window.localStorage.setItem('selected_tab', this.id)",
             ),
             _class="bx--tabs__nav-item"
             + (" bx--tabs__nav-item--selected" if selected else ""),
@@ -66,7 +66,7 @@ class Tabs(hg.DIV):
             self.tablabels,
             data_tabs=True,
             _class="bx--tabs" + (" bx--tabs--container" if container else ""),
-            onload="if(hasCookie('selected_tab')) $('#' + getCookie('selected_tab')).click();",
+            onload="if(window.localStorage.getItem('selected_tab')) $('#' + window.localStorage.getItem('selected_tab')).click();",
         )
         tabpanel_attributes["_class"] += " bx--tab-content"
         self.tabpanels = hg.DIV(**tabpanel_attributes)
