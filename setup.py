@@ -52,7 +52,7 @@ setup(
         "WeasyPrint",  # creating PDFs
         "django-ckeditor",
     ],
-    extras_require={"testing": ["mechanize"]},
+    extras_require={"testing": ["hypothesis[django]"]},
     packages=find_packages(),
     setup_requires=["setuptools_scm"],
     zip_safe=False,

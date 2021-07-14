@@ -23,7 +23,6 @@ class EditView(
 ):
     """TODO: documentation"""
 
-    template_name = "bread/base.html"
     accept_global_perms = True
     fields = None
     urlparams = (("pk", int),)
