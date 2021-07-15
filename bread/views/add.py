@@ -17,7 +17,6 @@ class AddView(
 ):
     """TODO: documentation"""
 
-    template_name = "bread/base.html"
     accept_global_perms = True
 
     def get_success_message(self, cleaned_data):

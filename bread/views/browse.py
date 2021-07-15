@@ -27,7 +27,6 @@ from .util import BreadView
 class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     """TODO: documentation"""
 
-    template_name = "bread/base.html"
     orderingurlparameter = "ordering"
     itemsperpage_urlparameter = "itemsperpage"
     objectids_urlparameter = "_selected"  # see bread/static/js/main.js:submitbulkaction and bread/layout/components/datatable.py

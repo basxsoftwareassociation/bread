@@ -1,6 +1,7 @@
 import collections
 
 import htmlgenerator as hg
+from django.utils.text import slugify
 
 
 class TabLabel(hg.LI):
@@ -15,6 +16,7 @@ class TabLabel(hg.LI):
                 aria_controls=panelid,
                 aria_selected="true" if selected else "false",
                 role="tab",
+                onclick="window.localStorage.setItem('selected_tab', this.id)",
             ),
             _class="bx--tabs__nav-item"
             + (" bx--tabs__nav-item--selected" if selected else ""),
@@ -40,8 +42,6 @@ Tab = collections.namedtuple("Tab", "label content")
 
 
 class Tabs(hg.DIV):
-    # TODO: Select current tab via URL fragment
-    # https://github.com/basxsoftwareassociation/bread/issues/39
     def __init__(
         self,
         *tabs,
@@ -66,16 +66,14 @@ class Tabs(hg.DIV):
             self.tablabels,
             data_tabs=True,
             _class="bx--tabs" + (" bx--tabs--container" if container else ""),
+            onload="if(window.localStorage.getItem('selected_tab')) $('#' + window.localStorage.getItem('selected_tab')).click();",
         )
         tabpanel_attributes["_class"] += " bx--tab-content"
         self.tabpanels = hg.DIV(**tabpanel_attributes)
 
-        tabid_template = f"tab-{hg.html_id(self)}-label-%s"
-        panelid_template = f"tab-{hg.html_id(self)}-panel-%s"
-
         for i, (label, content) in enumerate(tabs):
-            tabid = tabid_template % i
-            panelid = panelid_template % i
+            tabid = f"tab-{slugify(label)}-{i}"
+            panelid = f"panel-{slugify(label)}-{i}"
             self.tablabels.append(TabLabel(label, tabid, panelid, i == 0))
             self.tabpanels.append(TabPanel(content, panelid, tabid, i == 0))
         super().__init__(
