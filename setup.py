@@ -41,7 +41,7 @@ setup(
         "openpyxl",  # working with excel files
         "djangoql",
         # required for task scheduling
-        "celery <5.0,>=4.4",
+        "celery",
         "django-celery-results",
         "django-celery-beat",
         # required for search engine
