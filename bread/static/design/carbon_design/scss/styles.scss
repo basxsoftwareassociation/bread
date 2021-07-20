@@ -19,18 +19,6 @@ $carbon--theme: $carbon--theme--g10;
     transform: none;
 }
 
-.bx--side-nav {
-    // this border is not in the vanilla CSS of the carbon design, but it seems to be rather standard since
-    // even the carbon design website has it.
-    border-right: 1px solid #e0e0e0;
-}
-
-.bx--header {
-    // this border is not in the vanilla CSS of the carbon design, but it seems to be rather standard since
-    // even the carbon design website has it.
-    border-bottom: 1px solid #393939;
-}
-
 // get nicer prints
 @media print
 {
@@ -157,27 +145,14 @@ fieldset[readonly=true] :disabled {
     display: none;
 }
 
-
-// full-width background banner exactly as seen in the Carbon Design tutorial for React
-@mixin full-width-white-background-mixin() {
-  background-color: white;
-  position: relative;
-  &::before {
-    content: '';
-    position: absolute;
-    left: -($carbon--spacing-09 + $carbon--spacing-03);
-    top: 0;
-    right: -($carbon--spacing-09 + $carbon--spacing-03);
-    bottom: 0;
-    background: white;
-    z-index: -1;
-  }
+.tabs-lg .bx--tabs__nav-link {
+    height: 3rem;
+    padding: .5rem 1rem;
+    line-height: calc(3rem - (.5rem * 2));
 }
 
-// full-width background banner exactly as seen in the Carbon Design tutorial for React
-.full-width-white-background {
-    @include full-width-white-background-mixin;
-    justify-content: flex-end;
+.tabs-lg {
+    min-height: 3rem;
 }
 
 
@@ -194,8 +169,6 @@ fieldset[readonly=true] :disabled {
         @include tabs;
         @include text-area;
         @include content-switcher;
-        @include data-table-core;
-        @include data-table-v2-action;
         @include form;
         @include date-picker;
 
@@ -217,26 +190,45 @@ fieldset[readonly=true] :disabled {
             background-color: $ui-01;
         }
 
-        // having form elements inside datatables is our own idea, so we need some custom styling
-        .bx--data-table {
-            .bx--text-area:disabled, .bx--text-area:hover:disabled{
-                border-bottom: none;
-            }
-
-            .bx--select-input:disabled, .bx--select-input:hover:disabled{
-                border-bottom: none;
-            }
-
-            .bx--date-picker__input {
-                border-bottom: none;
-            }
-
-            .bx--select-input {
-                border-bottom: none;
-            }
-            .bx--search-input {
-                border-bottom: none;
-            }
-        }
     }
 }
+// having form elements inside datatables is our own idea, so we need some custom styling
+.bx--data-table {
+    .bx--text-area:disabled, .bx--text-area:hover:disabled{
+        border-bottom: none;
+    }
+
+    .bx--select-input:disabled, .bx--select-input:hover:disabled{
+        border-bottom: none;
+    }
+
+    .bx--date-picker__input {
+        border-bottom: none;
+    }
+
+    .bx--select-input {
+        border-bottom: none;
+    }
+    .bx--search-input {
+        border-bottom: none;
+    }
+}
+
+.tile-container {
+    .tile-col:nth-of-type(2n) {
+        border-left: 1px solid #e0e0e0;
+    }
+
+    .tile {
+        border-top: 1px solid #e0e0e0;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        background-color: white;
+    }
+
+    .bx--data-table-container {
+        padding-top: 0;
+        border-top: 1px solid #e0e0e0;
+    }
+}
+

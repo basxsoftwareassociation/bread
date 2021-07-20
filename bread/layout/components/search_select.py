@@ -32,7 +32,7 @@ class SearchSelect(hg.DIV):
                 id=tag_id,
                 style=hg.If(
                     widgetattributes["value"] == "",
-                    hg.BaseElement("visibility: hidden"),
+                    hg.BaseElement("display: none;"),
                 ),
                 onclick="return false;",
             ),
@@ -58,7 +58,7 @@ def _resultcontainer_onload_js(backend, resultcontainerid, tag_id, widget_id):
         let value = $('{backend.result_value_selector}', this).innerHTML;
         $('#{widget_id}').value = value;
         $('#{tag_id}').innerHTML = label;
-        $('#{tag_id}').style = 'visiblity: visible';
+        $('#{tag_id}').style = 'display: inline-block;';
         }}"""
 
     return f"""
