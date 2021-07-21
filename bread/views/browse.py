@@ -275,10 +275,10 @@ def restore(request, queryset, softdeletefield, required_permissions=None):
         try:
             if not request.user.has_perm(required_permissions, instance):
                 # we throw an exception here because the user not supposed to
-                # see the option to delete an object anyway, if he does not have the permssions
+                # see the option to restore an object anyway, if he does not have the permssions
                 # the queryset should already be filtered
                 raise Exception(
-                    _("Your user has not the permissions to delete %s") % instance
+                    _("Your user has not the permissions to restore %s") % instance
                 )
             if getattr(instance, softdeletefield, False):
                 setattr(instance, softdeletefield, False)
