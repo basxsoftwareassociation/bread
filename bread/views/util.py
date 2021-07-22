@@ -2,14 +2,25 @@ import urllib
 
 import htmlgenerator as hg
 from django import forms
+from django.conf import settings
 from django.contrib import messages
-from django.http import HttpResponse
-from django.utils.html import mark_safe
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.http import HttpResponse, StreamingHttpResponse
+from django.template.context import _builtin_context_processors
+from django.utils.html import mark_safe, strip_tags
+from django.utils.module_loading import import_string
+from django.utils.translation import get_language
 
-from .. import layout as breadlayout  # prevent name clashing
+from .. import layout  # prevent name clashing
+from .. import layout as breadlayout
 from ..forms.forms import breadmodelform_factory
 from ..layout.components.form import FormField
 from ..utils import filter_fieldlist, reverse_model
+
+CONTEXT_PROCESSORS = tuple(
+    import_string(path)
+    for path in _builtin_context_processors + tuple(settings.CONTEXT_PROCESSORS)
+)
 
 
 class CustomFormMixin:
@@ -130,8 +141,91 @@ class BreadView:
             raise RuntimeError(f"'layout' of view {self} is None")
         return self.layout
 
-    def get_template_names(self):
-        # TODO: use only htmlgenerator instead of django templates
-        if self.ajax_urlparameter in self.request.GET:
-            return "bread/base_ajax.html"
-        return "bread/base.html"
+    def render_to_response(self, context, **response_kwargs):
+        response_kwargs.setdefault("content_type", self.content_type)
+
+        context = dict(context)
+        for processor in CONTEXT_PROCESSORS:
+            context.update(processor(self.request))
+
+        ret = self._get_layout_cached()
+        if self.ajax_urlparameter not in self.request.GET:
+            ret = default_ui_shell(ret)
+        return StreamingHttpResponse(
+            ret.render(self.get_context_data(**context)), **response_kwargs
+        )
+
+
+def default_ui_shell(pagecontent):
+    from bread import menu
+
+    static = staticfiles_storage.url
+
+    return hg.HTML(
+        hg.HEAD(
+            hg.META(charset="utf-8"),
+            hg.META(name="viewport", content="width=device-width, initial-scale=1"),
+            hg.TITLE(
+                hg.F(
+                    lambda c, e: strip_tags(c.get("pagetitle", c.get("PLATFORMNAME")))
+                    + " | "
+                    + strip_tags(c.get("PLATFORMNAME"))
+                )
+            ),
+            hg.LINK(rel="shortcut icon", href=static("logo.png")),
+            hg.LINK(
+                rel="stylesheet",
+                type="text/css",
+                href=static("css/bread-main.css"),
+                media="all",
+            ),
+            hg.LINK(
+                rel="stylesheet",
+                type="text/css",
+                href=static("djangoql/css/completion.css"),
+            ),
+        ),
+        hg.BODY(
+            layout.shell_header.ShellHeader(
+                hg.C("PLATFORMNAME"),
+                hg.C("COMPANYNAME"),
+            ),
+            hg.If(
+                hg.C("request.user.is_authenticated"),
+                layout.sidenav.SideNav(menu.main),
+            ),
+            hg.DIV(
+                hg.Iterator(
+                    hg.C("messages"),
+                    "message",
+                    layout.notification.ToastNotification(
+                        message=hg.C("message.tags.capitalize"),
+                        details=hg.C("message.message"),
+                        kind=hg.C("message.level_tag"),
+                        hidetimestamp=True,
+                        style=hg.BaseElement(
+                            "opacity: 0; animation: ",
+                            hg.F(lambda c, e: 4 + 3 * c["message_index"]),
+                            "s ease-in-out notification",
+                        ),
+                        onload=hg.BaseElement(
+                            "setTimeout(() => this.style.display = 'None', ",
+                            hg.F(lambda c, e: (4 + 3 * c["message_index"]) * 1000),
+                            ")",
+                        ),
+                    ),
+                ),
+                style="position: fixed; right: 0; z-index: 999",
+            ),
+            hg.DIV(pagecontent, _class="bx--content"),
+            hg.SCRIPT(src=static("js/main.js")),
+            hg.SCRIPT(src=static("js/bliss.min.js")),
+            hg.SCRIPT(src=static("js/htmx.min.js")),
+            hg.SCRIPT(src=static("design/carbon_design/js/carbon-components.js")),
+            hg.SCRIPT(src=static("djangoql/js/completion.js")),
+            hg.SCRIPT("CarbonComponents.watch(document);"),
+        ),
+        doctype=True,
+        _class="no-js",
+        lang=get_language(),
+    )

@@ -13,7 +13,7 @@ class SideNav(hg.ASIDE):
     def __init__(self, menu: Menu, **kwargs):
         kwargs["_class"] = hg.BaseElement(
             kwargs.get("_class", ""),
-            " bx--side-nav bx--side-nav--rail",
+            " bx--side-nav bx--side-nav--rail bx--side-nav--expanded",
         )
         kwargs["onload"] = hg.BaseElement(
             kwargs.get("onload", ""),

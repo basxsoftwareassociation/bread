@@ -1,7 +1,6 @@
 _third_party_apps = [
     "django_extensions",  # for developer friendliness
     "guardian",  # per-object permissions
-    "compressor",  # asset handling
     "simple_history",  # versioning
     # some additional form fields
     "ckeditor",
@@ -75,14 +74,6 @@ CKEDITOR_CONFIGS = {
         ],
     },
 }
-COMPRESS_OFFLINE_CONTEXT = "bread.context_processors.compress_offline_context"
-COMPRESS_FILTERS = {
-    "css": [
-        "compressor.filters.css_default.CssAbsoluteFilter",
-        "compressor.filters.cssmin.CSSCompressorFilter",
-    ],
-    "js": ["compressor.filters.jsmin.JSMinFilter"],
-}
 
 # not sure why we need this
 LOGIN_REDIRECT_URL = "/"
@@ -90,11 +81,9 @@ LOGOUT_REDIRECT_URL = "/"
 # named urlpattern to redirect to if login is required
 LOGIN_URL = "login"
 
-# required for compressor
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "compressor.finders.CompressorFinder",
 ]
 
 # celery related settings
@@ -116,21 +105,21 @@ MIDDLEWARE = [
 
 BREAD_PUBLIC_FILES_PREFIX = "public/"
 
+CONTEXT_PROCESSORS = [
+    "django.template.context_processors.debug",
+    "django.template.context_processors.request",
+    "django.contrib.auth.context_processors.auth",
+    "django.contrib.messages.context_processors.messages",
+    "dynamic_preferences.processors.global_preferences",
+    "bread.context_processors.bread_context",
+]
+
 # from default django config
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-                "dynamic_preferences.processors.global_preferences",
-                "bread.context_processors.bread_context",
-            ]
-        },
+        "OPTIONS": {"context_processors": CONTEXT_PROCESSORS},
     }
 ]
 
