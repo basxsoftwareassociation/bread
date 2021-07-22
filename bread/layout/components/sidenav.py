@@ -24,7 +24,11 @@ class SideNav(hg.ASIDE):
             hg.NAV(
                 hg.UL(
                     hg.Iterator(
-                        sorted(menu._registry.values()),
+                        hg.F(
+                            lambda c, e: sorted(
+                                hg.resolve_lazy(menu, c, e)._registry.values()
+                            )
+                        ),
                         "menugroup",
                         hg.LI(
                             hg.If(

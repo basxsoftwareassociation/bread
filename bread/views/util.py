@@ -151,8 +151,12 @@ class BreadView:
         ret = self._get_layout_cached()
         if self.ajax_urlparameter not in self.request.GET:
             ret = default_ui_shell(ret)
+        return HttpResponse(
+            hg.render(ret, self.get_context_data(**context)), **response_kwargs
+        )
         return StreamingHttpResponse(
-            ret.render(self.get_context_data(**context)), **response_kwargs
+            ret.render(self.get_context_data(**context)),
+            **response_kwargs,
         )
 
 
