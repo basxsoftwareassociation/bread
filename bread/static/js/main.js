@@ -2,8 +2,12 @@
 // support onload after page loaded for all elements
 document.addEventListener(
     "DOMContentLoaded",
-    (e) => { $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load"); initAllChoices()}
+    bread_init_page
 );
+
+function bread_init_page() {
+    $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load")
+}
 
 function updateMultiselect(e) {
     let elem = $('.bx--list-box__selection', e);
@@ -30,19 +34,6 @@ function clearMultiselect(e) {
         i.removeAttribute("aria-checked");
     }
     updateMultiselect(e);
-}
-
-function initAllChoices(element=$("body")) {
-    // this initializes the old choices widget from ChoicesJS which do no longer really use
-    // Remove this in the next JS refactoring
-    return;
-    for(let e of $$("fieldset[disabled] select[multiple]", element)) {
-        makeChoices(e).disable();
-    }
-
-    for(let e of $$(":not(fieldset[disabled]) select[multiple]", element)) {
-        makeChoices(e);
-    }
 }
 
 function makeChoices(selectElem) {

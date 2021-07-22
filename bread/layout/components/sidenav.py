@@ -13,11 +13,11 @@ class SideNav(hg.ASIDE):
     def __init__(self, menu: Menu, **kwargs):
         kwargs["_class"] = hg.BaseElement(
             kwargs.get("_class", ""),
-            " bx--side-nav bx--side-nav--rail bx--side-nav--expanded",
+            " bx--side-nav bx--side-nav--rail",
         )
         kwargs["onload"] = hg.BaseElement(
             kwargs.get("onload", ""),
-            "; if (window.localStorage.getItem('bread--sidenav--hidden') == 'true') this.classList.remove('bx--side-nav--expanded')",
+            "; if (window.localStorage.getItem('bread--sidenav--hidden') == 'true') {this.classList.remove('bx--side-nav--expanded')} else {this.classList.add('bx--side-nav--expanded')}",
         )
         kwargs["data_side_nav"] = True
         super().__init__(
@@ -134,7 +134,7 @@ class SideNav(hg.ASIDE):
                         ),
                         _class="bx--side-nav__toggle",
                         role="button",
-                        onclick="window.localStorage.setItem('bread--sidenav--hidden', !(window.localStorage.getItem('bread--sidenav--hidden') == 'true'));",
+                        onclick="window.localStorage.setItem('bread--sidenav--hidden', window.localStorage.getItem('bread--sidenav--hidden') != 'true');",
                     ),
                     _class="bx--side-nav__footer",
                 ),

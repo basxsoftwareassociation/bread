@@ -11,32 +11,25 @@ class ShellHeader(hg.HEADER):
         from django.contrib.staticfiles.storage import staticfiles_storage
 
         super().__init__(
-            hg.If(
-                hg.F(
-                    lambda c, e: c["request"].user.is_authenticated
-                    and hasattr(c["request"].user, "preferences")
-                    and c["request"].user.preferences.get(
-                        "user_interface__navigation_menu_extended", True
-                    )
+            hg.A(
+                hg.SPAN(platform, _class="bx--header__name--prefix"),
+                hg.SPAN(company, style="position: absolute; left: 18rem"),
+                _class="bx--header__name",
+                style="font-weight: 400",  # override carbon design
+                href="/",
+                onload="if(window.localStorage.getItem('bread--sidenav--hidden') == 'true') {this.style.display = 'none'} else {this.style.display = 'inherit'}",
+            ),
+            hg.A(
+                hg.IMG(
+                    src=staticfiles_storage.url("logo.png"),
+                    _class="bx--header__name--prefix",
+                    style="width: 1.7rem; height; 1.7rem",
                 ),
-                hg.A(
-                    hg.SPAN(platform, _class="bx--header__name--prefix"),
-                    hg.SPAN(company, style="position: absolute; left: 17rem"),
-                    _class="bx--header__name",
-                    style="font-weight: 400",  # override carbon design
-                    href="/",
-                ),
-                hg.A(
-                    hg.IMG(
-                        src=staticfiles_storage.url("logo.png"),
-                        _class="bx--header__name--prefix",
-                        style="width: 1.7rem; height; 1.7rem",
-                    ),
-                    hg.SPAN(company, style="position: absolute; left: 4rem"),
-                    _class="bx--header__name",
-                    style="font-weight: 400",  # override carbon design
-                    href="/",
-                ),
+                hg.SPAN(company, style="position: absolute; left: 5rem"),
+                _class="bx--header__name",
+                style="font-weight: 400;",  # override carbon design
+                href="/",
+                onload="if(window.localStorage.getItem('bread--sidenav--hidden') != 'true') {this.style.display = 'none'} else {this.style.display = 'inherit'}",
             ),
             hg.DIV(
                 hg.If(
@@ -78,6 +71,5 @@ class ShellHeader(hg.HEADER):
             ),
             _class="bx--header",
             role="banner",
-            aria_label="{{ branding.platform }}",
             data_header=True,
         )

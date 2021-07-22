@@ -17,21 +17,7 @@
     </head>
 
     <body>
-        {% render_layout headerlayout %}
-
-        {% if user.is_authenticated %}
-            {% render_layout sidenav %} 
-            {#  {% include "bread/components/side-nav.html" %} #}
-        {% endif %}
-
-        <div style="position: fixed; right: 0; z-index: 999">
-            {% display_messages messages %}
-        </div>
-
-        <div class="bx--content">
-            {% render_layout layout %}
-        </div>
-
+        {% render_layout page %}
 
         {% compress js %}
         <script src="{% static "js/main.js" %}"></script>
