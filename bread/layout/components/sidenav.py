@@ -1,6 +1,6 @@
 import htmlgenerator as hg
 
-from bread.menu import Group, Menu
+from bread.menu import Menu
 
 from .icon import Icon
 
@@ -13,13 +13,11 @@ class SideNav(hg.ASIDE):
     def __init__(self, menu: Menu, **kwargs):
         kwargs["_class"] = hg.BaseElement(
             kwargs.get("_class", ""),
-            " bx--side-nav bx--side-nav--rail",
-            hg.If(
-                hg.C(
-                    "request.user.preferences.user_interface__navigation_menu_extended"
-                ),
-                " bx--side-nav--expanded",
-            ),
+            " bx--side-nav bx--side-nav--rail bx--side-nav--expanded",
+        )
+        kwargs["onload"] = hg.BaseElement(
+            kwargs.get("onload", ""),
+            "; if (window.localStorage.getItem('bread--sidenav--hidden') == 'true') this.classList.remove('bx--side-nav--expanded')",
         )
         kwargs["data_side_nav"] = True
         super().__init__(
@@ -30,7 +28,7 @@ class SideNav(hg.ASIDE):
                         "menugroup",
                         hg.LI(
                             hg.If(
-                                hg.F(lambda c, e: isinstance(c["menugroup"], Group)),
+                                hg.F(lambda c, e: len(c["menugroup"].items) > 1),
                                 hg.BaseElement(
                                     hg.BUTTON(
                                         hg.DIV(
@@ -42,7 +40,7 @@ class SideNav(hg.ASIDE):
                                             _class="bx--side-nav__submenu-title",
                                         ),
                                         hg.DIV(
-                                            Icon("chevron-down", size=16),
+                                            Icon("chevron--down", size=16),
                                             _class="bx--side-nav__icon bx--side-nav__submenu-chevron",
                                         ),
                                         _class="bx--side-nav__submenu",
@@ -84,11 +82,13 @@ class SideNav(hg.ASIDE):
                                 ),
                                 hg.A(
                                     hg.DIV(
-                                        Icon(hg.C("menugroup.link.icon"), size=16),
+                                        Icon(
+                                            hg.C("menugroup.items.0.link.icon"), size=16
+                                        ),
                                         _class="bx--side-nav__icon",
                                     ),
                                     hg.SPAN(
-                                        hg.C("menugroup.link.label"),
+                                        hg.C("menugroup.items.0.link.label"),
                                         _class="bx--side-nav__link-text",
                                     ),
                                     _class=hg.BaseElement(
@@ -98,7 +98,7 @@ class SideNav(hg.ASIDE):
                                             " bx--side-nav__link--current",
                                         ),
                                     ),
-                                    href=hg.C("menugroup.link.url"),
+                                    href=hg.C("menugroup.items.0.link.url"),
                                 ),
                             ),
                             _class=hg.BaseElement(
@@ -111,76 +111,35 @@ class SideNav(hg.ASIDE):
                     ),
                     _class="bx--side-nav__items",
                 ),
+                hg.FOOTER(
+                    hg.BUTTON(
+                        hg.DIV(
+                            Icon(
+                                "close",
+                                size=20,
+                                _class="bx--side-nav__icon--collapse bx--side-nav-collapse-icon",
+                                aria_hidden="true",
+                            ),
+                            Icon(
+                                "chevron--right",
+                                size=20,
+                                _class="bx--side-nav__icon--expand bx--side-nav-expand-icon",
+                                aria_hidden="true",
+                            ),
+                            _class="bx--side-nav__icon",
+                        ),
+                        hg.SPAN(
+                            "Toggle the expansion state of the navigation",
+                            _class="bx--assistive-text",
+                        ),
+                        _class="bx--side-nav__toggle",
+                        role="button",
+                        onclick="window.localStorage.setItem('bread--sidenav--hidden', !(window.localStorage.getItem('bread--sidenav--hidden') == 'true'));",
+                    ),
+                    _class="bx--side-nav__footer",
+                ),
                 _class="bx--side-nav__navigation",
                 role="navigation",
             ),
-            **kwargs
+            **kwargs,
         )
-
-
-"""
-<aside class="bx--side-nav bx--side-nav--rail{% if request.user.preferences.user_interface__navigation_menu_extended %} bx--side-nav--expanded{% endif %}" data-side-nav>
-    <nav class="bx--side-nav__navigation" role="navigation" aria-label="Side navigation">
-        <ul class="bx--side-nav__items">
-            {% for menugroup, icon, group_active, items in menu %}
-
-            <li class="bx--side-nav__item{% if group_active %} bx--side-nav__item--active{% else %}{% endif %}">
-                {% if items|length == 1 %}
-                    <a class="bx--side-nav__link{% if items.0.1 %} bx--side-nav__link--current{% endif %}" href="{{ items.0.2 }}">
-                        {% if icon %}<div class="bx--side-nav__icon">{% carbon_icon icon 32 %}</div>{% endif %}
-                        <span class="bx--side-nav__link-text">{{ items.0.0.link.label }}</span>
-                    </a>
-                {% else %}
-                    <button class="bx--side-nav__submenu" type="button" aria-haspopup="true" aria-expanded="{{ group_active|yesno:"true,false" }}">
-                        {% if icon %}<div class="bx--side-nav__icon">{% carbon_icon icon 32 %}</div>{% endif %}
-                            <span class="bx--side-nav__submenu-title">{{ menugroup }}</span>
-                            <div class="bx--side-nav__icon bx--side-nav__submenu-chevron">
-                                {% carbon_icon "chevron--down" 32 %}
-                            </div>
-                        </button>
-                        <ul class="bx--side-nav__menu">
-                            {% for item, active, itemurl in items %}
-                                <li class="bx--side-nav__menu-item{% if active %} bx--side-nav__menu-item--current{% endif %}" role="none">
-                                    <a class="bx--side-nav__link{% if active %} bx--side-nav__link--current{% endif %}" href="{{ itemurl }}">
-                                        <span class="bx--side-nav__link-text">{{ item.link.label }}</span>
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-
-        <footer class="bx--side-nav__footer">
-                <button
-                    class="bx--side-nav__toggle"
-                    role="button"
-                    title="Close the side navigation menu"
-                    hx-post="{% url "preferences:user" %}"
-
-                    hx-include="#navigation-settings-form input"
-                    hx-select="body body" {# do not select anything #}
-                    hx-swap="afterbegin"
-                >
-                    <div class="bx--side-nav__icon">
-                      {% carbon_icon "close" 20 class="bx--side-nav__icon--collapse bx--side-nav-collapse-icon" aria_hidden="true" %}
-                      {% carbon_icon "chevron--right" 20 class="bx--side-nav__icon--expand bx--side-nav-expand-icon" aria_hidden="true" %}
-                    </div>
-                    <span class="bx--assistive-text">
-                      Toggle the expansion state of the navigation
-                    </span>
-                </button>
-                <div id="navigation-settings-form" style="display: none">
-                    {% csrf_token %}
-                    <input
-                        type="checkbox"
-                        name="user_interface__navigation_menu_extended"
-                        id="id_user_interface__navigation_menu_extended"
-                        {% if not request.user.preferences.user_interface__navigation_menu_extended %}checked{% endif %}
-                    >
-                </div>
-        </footer>
-    </nav>
-</aside>
-"""

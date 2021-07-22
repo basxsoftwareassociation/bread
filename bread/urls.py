@@ -35,7 +35,6 @@ class UserPreferencesView(
     get_form_class = user_get_form_class
 
     def get_success_message(self, data):
-        data.pop("user_interface__navigation_menu_extended")
         if data:
             return _("Preferences updated")
         return None
