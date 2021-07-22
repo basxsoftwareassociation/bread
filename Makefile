@@ -9,3 +9,11 @@ locale:
 checks:
 	black --check bread
 	flake8 bread
+
+css:
+	sassc -I bread/static/design/carbon_design/scss/globals/scss/vendor/ bread/static/design/carbon_design/scss/styles.scss > bread/static/css/bread-main.css
+	sassc -s compressed -I bread/static/design/carbon_design/scss/globals/scss/vendor/ bread/static/design/carbon_design/scss/styles.scss > bread/static/css/bread-main.min.css
+
+watch_css:
+	find bread/static/design/carbon_design/scss -name '*.scss' | entr sassc -I bread/static/design/carbon_design/scss/globals/scss/vendor/ bread/static/design/carbon_design/scss/styles.scss > bread/static/css/bread-main.css
+

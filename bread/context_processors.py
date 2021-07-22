@@ -8,7 +8,6 @@ def bread_context(request):
     from bread import menu
 
     ret = {
-        "OVERRIDE_STYLESHEET": getattr(settings, "OVERRIDE_STYLESHEET", None),
         "headerlayout": layout.shell_header.ShellHeader(
             hg.C("PLATFORMNAME"),
             "",

@@ -6,7 +6,10 @@ document.addEventListener(
 );
 
 function updateMultiselect(e) {
-    $('.bx--list-box__selection', e).firstChild.textContent = $$('fieldset input[type=checkbox][checked]', e).length;
+    let elem = $('.bx--list-box__selection', e);
+    if (elem) {
+        elem.firstChild.textContent = $$('fieldset input[type=checkbox][checked]', e).length;
+    }
 }
 
 function filterOptions(e) {
@@ -112,15 +115,22 @@ function update_add_button(form_prefix) {
 }
 
 function formset_add(form_prefix, list_container) {
+    let container_elem = $(list_container);
+
+    // some magic to add a new form element, copied from template empty_XXX_form
+    // DOMParser.parseFromString does not work because it create a valid DOM document but we work with DOM elements
+    let placeholder = document.createElement("DIV");
+    container_elem.appendChild(placeholder);
     var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
-    var newElementStr = $('#empty_' + form_prefix + '_form').innerHTML.replace(/__prefix__/g, formcount.value)
-    var newElements = new DOMParser().parseFromString(newElementStr, "text/html").getElementsByTagName("body")[0].children;
-    for(let element of newElements) {
-        $(list_container).appendChild(element);
-    }
+    var newElementStr = $('#empty_' + form_prefix + '_form').innerText.replace(/__prefix__/g, formcount.value)
+    placeholder.outerHTML = newElementStr;
+
     formcount.value = parseInt(formcount.value) + 1;
     update_add_button(form_prefix);
-    updateMultiselect(list_container);
+    updateMultiselect(container_elem);
+
+    $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)', container_elem)._.fire("load");
+    htmx.process(container_elem);
 }
 
 function validate_fields() {
@@ -143,12 +153,25 @@ function submitbulkaction(table, actionurl, method="GET") {
     let form = document.createElement("form");
     form.method = method;
     form.action = actionurl;
+
+    // make sure query parameters of the URL are passed as well (necessary for filters)
+    let url = new URL(actionurl, new URL(document.baseURI).origin);
+    for (const [key, value] of url.searchParams) {
+        let input = document.createElement("input");
+        input.name = key;
+        input.type = "hidden";
+        input.value = value;
+        form.appendChild(input);
+    }
+
     for(let checkbox of table.querySelectorAll('input[type=checkbox][data-event=select]')) {
         form.appendChild(checkbox.cloneNode(true));
     }
+
     for(let checkbox of table.querySelectorAll('input[type=checkbox][data-event=select-all]')) {
         form.appendChild(checkbox.cloneNode(true));
     }
+
     document.body.appendChild(form);
     form.submit();
 }

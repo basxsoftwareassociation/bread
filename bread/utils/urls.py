@@ -17,21 +17,18 @@ from django.utils.text import format_lazy
 from .model_helpers import get_concrete_instance
 
 
-class slug:
-    pass
-
-
-class path:
-    pass
-
-
-PATH_CONVERTERS_MAP = {
-    str: "str",
-    int: "int",
-    uuid.UUID: "uuid",
-    slug: "slug",
-    path: "path",
-}
+def reverse(*args, query: dict = None, **kwargs):
+    """Extended version of the django function ``reverse`` by just adding support
+    for an additional parameter ``query`` which can contain query parameters and
+    will be encoded automatically.
+    """
+    if query is not None:
+        return format_lazy(
+            "{}?{}",
+            django_reverse(*args, **kwargs),
+            urlencode(query),
+        )
+    return django_reverse(*args, **kwargs)
 
 
 def model_urlname(model, action):
@@ -39,15 +36,16 @@ def model_urlname(model, action):
     return f"{model._meta.label_lower}.{action}"
 
 
-def reverse(*args, **kwargs):
-    query = kwargs.pop("query", {})
-    if query:
-        return format_lazy(
-            "{}?{}",
-            django_reverse(*args, **kwargs),
-            urlencode(query),
-        )
-    return django_reverse(*args, **kwargs)
+def reverse_model(model, action, *args, **kwargs):
+    """This works similar to the bread function ``reverse`` but simply takes a model
+    or an object and an operation name ("browse", "read", "edit", etc) to construct a URL.
+    Also, in case the object is part of a django multi-table inheritance, the most-concrete
+    object will be used for reversing.
+    """
+    # make sure we get the most concrete instance in case the model parameter is an object
+    if isinstance(model, models.Model):
+        model = get_concrete_instance(model)
+    return reverse(model_urlname(model, action), *args, **kwargs)
 
 
 def link_with_urlparameters(request, **kwargs):
@@ -58,13 +56,6 @@ def link_with_urlparameters(request, **kwargs):
         if value in (None, ""):
             del urlparams[parametername]
     return request.path + (f"?{urlparams.urlencode()}" if urlparams else "")
-
-
-def reverse_model(model, action, *args, **kwargs):
-    # make sure we get the most concrete instance in case the model parameter is an object
-    if isinstance(model, models.Model):
-        model = get_concrete_instance(model)
-    return reverse(model_urlname(model, action), *args, **kwargs)
 
 
 def aslayout(view):
@@ -79,13 +70,43 @@ def aslayout(view):
     return wrapper
 
 
-def generate_path(view, urlname=None, check_function=None):
+# TODO:
+def autopath(*args, **kwargs):
+    """This function can be used to automatically generate a URL for a view.
+    In many situations for internal database applications we are not too conserned
+    about the exact name and value of a certain URL but rather a consistent naming
+    scheme. So instead of having to write the default django way
+
+        path("myapp/persons/edit/<pk:int>", viewfunction, "edit_person")
+
+    we can just write
+
+        autopath(viewfunction)
+
+    And get a path object with automatically constructed URL-path and URL-name.
+    The name of the path (which is e.g. required for calling ``reverse``) can either
+    be found in ``./manage.py show_urls`` or be passed directly as argument ``urlname``.
+
+    """
+    return generate_path(*args, **kwargs, _DISABLE_WARNING=True)
+
+
+def generate_path(view, urlname=None, check_function=None, _DISABLE_WARNING=False):
+    if not _DISABLE_WARNING:
+        import warnings
+
+        warnings.warn(
+            "'generate_path' is deprecated, use the compatible function 'autopath' instead",
+            UserWarning,
+            stacklevel=2,
+        )
+
     def default_check(user):
         return user.is_authenticated and user.is_active
 
     check_function = check_function or default_check
-    pathcomponents = [viewbasepath(view, urlname)]
-    for param, paramtype in get_view_params(view):
+    pathcomponents = [_viewbasepath(view, urlname)]
+    for param, paramtype in _get_view_params(view):
         if paramtype is not None:
             if paramtype in PATH_CONVERTERS_MAP:
                 pathcomponents.append(f"<{PATH_CONVERTERS_MAP.get(paramtype)}:{param}>")
@@ -100,11 +121,11 @@ def generate_path(view, urlname=None, check_function=None):
     return djangopath(
         "/".join(pathcomponents),
         user_passes_test(check_function)(view),
-        name=urlname or viewname(view),
+        name=urlname or _viewname(view),
     )
 
 
-def get_view_params(view):
+def _get_view_params(view):
     if hasattr(view, "view_class"):
         yield from getattr(view.view_class, "urlparams", ()) or ()
     else:
@@ -117,9 +138,9 @@ def get_view_params(view):
                 yield param.name, None
 
 
-def viewbasepath(view, name=None):
+def _viewbasepath(view, name=None):
     path = (
-        (name or viewname(view))
+        (name or _viewname(view))
         .replace(".", "/")
         .replace("bread/", "")
         .replace("views/", "")
@@ -129,19 +150,26 @@ def viewbasepath(view, name=None):
     return path
 
 
-def viewname(view):
+def _viewname(view):
     return f"{view.__module__.lower()}.{view.__name__.lower()}"
 
 
-def can_access_media(request, path):
-    return request.user.is_staff or path.startswith(settings.BREAD_PUBLIC_FILES_PREFIX)
+def _can_access_media(request, path):
+    return request.user.is_staff or path.startswith(
+        getattr(settings, "BREAD_PUBLIC_FILES_PREFIX", "static/")
+    )
 
 
 def protectedMedia(request, path):
     """
-    Protect media files
+    Use to protect media files when nginx is serving the files. Usage:
+
+        urlpatterns += [
+            path(f"{settings.MEDIA_URL[1:]}<path:path>", protectedMedia, name="media")
+        ]
+
     """
-    if can_access_media(request, path):
+    if _can_access_media(request, path):
         if settings.DEBUG:
             from django.views.static import serve
 
@@ -163,7 +191,15 @@ def default_model_paths(
     addview=True,
     deleteview=True,
     copyview=True,
+    **kwargs,
 ):
+    """Shortcut to automatically generate a set of urls and views for a model.
+    By default the browse-, read-, edit-, add-, delete- and copy-views from bread
+    are used. These default views can be overriden by passing custom view classes.
+    Additional views can be passed via kwargs where as the parameter name is the
+    machine-readable name of the view and the value of the parameter is the according
+    view class or function.
+    """
     from ..views.add import AddView
     from ..views.browse import BrowseView
     from ..views.delete import DeleteView
@@ -182,48 +218,58 @@ def default_model_paths(
         if browseview is True:
             browseview = defaultview["browse"]
         ret.append(
-            generate_path(
-                browseview.as_view(model=model, bulkactions=browseview.bulkactions),
+            autopath(
+                browseview.as_view(model=model),
                 model_urlname(model, "browse"),
-            )
-        )
-        ret.append(
-            generate_path(
-                browseview.as_view(
-                    model=model, bulkactions=browseview.bulkactions, asexcel=True
-                ),
-                model_urlname(model, "excel"),
             )
         )
     if readview is not None:
         if readview is True:
             readview = defaultview["read"]
         ret.append(
-            generate_path(readview.as_view(model=model), model_urlname(model, "read"))
+            autopath(readview.as_view(model=model), model_urlname(model, "read"))
         )
     if editview is not None:
         if editview is True:
             editview = defaultview["edit"]
         ret.append(
-            generate_path(editview.as_view(model=model), model_urlname(model, "edit"))
+            autopath(editview.as_view(model=model), model_urlname(model, "edit"))
         )
     if addview is not None:
         if addview is True:
             addview = defaultview["add"]
-        ret.append(
-            generate_path(addview.as_view(model=model), model_urlname(model, "add"))
-        )
+        ret.append(autopath(addview.as_view(model=model), model_urlname(model, "add")))
     if deleteview is not None:
         if deleteview is True:
             deleteview = defaultview["delete"]
         ret.append(
-            generate_path(
-                deleteview.as_view(model=model), model_urlname(model, "delete")
-            )
+            autopath(deleteview.as_view(model=model), model_urlname(model, "delete"))
         )
     if copyview is not None:
         if copyview is True:
             copyview = generate_copyview(model)
-        ret.append(generate_path(copyview, model_urlname(model, "copy")))
+        ret.append(autopath(copyview, model_urlname(model, "copy")))
 
+    for viewname, viewclass in kwargs.items():
+        ret.append(
+            autopath(editview.as_view(model=model), model_urlname(model, viewname))
+        )
     return ret
+
+
+# Helpers for the autopath function
+class slug:
+    pass
+
+
+class path:
+    pass
+
+
+PATH_CONVERTERS_MAP = {
+    str: "str",
+    int: "int",
+    uuid.UUID: "uuid",
+    slug: "slug",
+    path: "path",
+}

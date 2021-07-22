@@ -8,6 +8,8 @@ from ..formatters import format_value
 
 def fieldlabel(model, accessor):
     label = resolve_modellookup(model, accessor)[-1]
+    if isinstance(label, property):
+        return getattr(label, "verbose_name", None) or label.fget.__name__
     return getattr(label, "verbose_name", None) or label
 
 

@@ -4,7 +4,7 @@ import htmlgenerator
 class Grid(htmlgenerator.DIV):
     MODES = ("narrow", "condensed", "full-width")
 
-    def __init__(self, *children, gridmode=None, gutter=True, **attributes):
+    def __init__(self, *children, gridmode="full-width", gutter=True, **attributes):
         attributes["_class"] = attributes.get("_class", "") + " bx--grid"
         if gridmode is not None:
             if gridmode not in Grid.MODES:
@@ -24,16 +24,12 @@ class Row(htmlgenerator.DIV):
 
 
 class Col(htmlgenerator.DIV):
-    def __init__(self, *children, breakpoint=None, width=None, **attributes):
+    def __init__(self, *children, breakpoint="lg", width=None, **attributes):
         """
         breakpoint: Can be one of "sm", "md", "lg", "xlg", "max"
         """
         colclass = "bx--col"
-        if breakpoint is not None or width is not None:
-            if width is None:
-                raise ValueError("When breakpoint is given, width is also required")
-            if breakpoint is None:
-                raise ValueError("When width is given, breakpoint is also required")
+        if width is not None:
             colclass += f"-{breakpoint}-{width}"
         attributes["_class"] = attributes.get("_class", "") + f" {colclass}"
         super().__init__(*children, **attributes)

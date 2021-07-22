@@ -1,5 +1,6 @@
 from . import components  # noqa
 from .base import *  # noqa
+from .components import *  # noqa
 from .components import button  # noqa
 from .components import checkbox  # noqa
 from .components import content_switcher  # noqa
@@ -15,6 +16,8 @@ from .components import notification  # noqa
 from .components import overflow_menu  # noqa
 from .components import progress_indicator  # noqa
 from .components import search  # noqa
+from .components import search_select  # noqa
+from .components import select  # noqa
 from .components import shell_header  # noqa
 from .components import sidenav  # noqa
 from .components import tabs  # noqa

@@ -77,7 +77,6 @@ class QuerysetField(models.TextField):
         ret.layout_kwargs = {
             "modelfieldname": self.modelfieldname,
             "rows": 1,
-            "model": self.model,
             "name": self.name,
         }
         return ret
@@ -114,11 +113,15 @@ class QuerysetField(models.TextField):
 
 
 class QuerySetFormWidget(layout.text_area.TextArea):
-    def __init__(self, *args, modelfieldname, model, name, **kwargs):
+    def __init__(self, *args, modelfieldname, name, **kwargs):
         super().__init__(*args, **kwargs)
-        self.modelfieldname = modelfieldname
-        self.model = model
         self.name = name
+        self.boundfield = kwargs.get("boundfield", None)
+        self.model = None
+        if "boundfield" in kwargs:
+            self.model = getattr(
+                self.boundfield.form.instance, modelfieldname
+            ).model_class()
 
     def render(self, context):
         if self.model:

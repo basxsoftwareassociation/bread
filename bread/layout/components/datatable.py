@@ -1,3 +1,5 @@
+from typing import Any, Iterable, List, NamedTuple, Optional, Union
+
 import htmlgenerator as hg
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -7,6 +9,7 @@ from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
 from bread.utils.urls import link_with_urlparameters, reverse_model
 
 from ..base import aslink_attributes, fieldlabel, objectaction
+from . import search
 from .button import Button
 from .icon import Icon
 from .overflow_menu import OverflowMenu
@@ -14,119 +17,81 @@ from .pagination import Pagination
 from .search import Search
 
 
-def sortingclass_for_column(orderingurlparameter, columnname):
-    def extracturlparameter(context, element):
-        value = context["request"].GET.get(orderingurlparameter, "")
-        if not value:
-            return ""
-        if value == columnname:
-            return "bx--table-sort--active"
-        if value == "-" + columnname:
-            return "bx--table-sort--active bx--table-sort--ascending"
-        return ""
+class DataTableColumn(NamedTuple):
+    header: Any
+    cell: Any
+    sortingname: Optional[str] = None
+    enable_row_click: bool = True
 
-    return hg.F(extracturlparameter)
-
-
-def sortingname_for_column(model, column):
-    components = []
-    for field in resolve_modellookup(model, column):
-        if hasattr(field, "sorting_name"):
-            components.append(field.sorting_name)
-        elif isinstance(field, models.Field):
-            components.append(field.name)
-        else:
-            return None
-    return "__".join(components)
-
-
-def sortinglink_for_column(orderingurlparameter, columnname):
-    ORDERING_VALUES = {
-        None: columnname,
-        columnname: "-" + columnname,
-        "-" + columnname: None,
-    }
-
-    def extractsortinglink(context, element):
-        currentordering = context["request"].GET.get(orderingurlparameter, None)
-        nextordering = ORDERING_VALUES.get(currentordering, columnname)
-        return link_with_urlparameters(
-            context["request"], **{orderingurlparameter: nextordering}
+    @staticmethod
+    def from_modelfield(
+        col, model, prevent_automatic_sortingnames=False, rowvariable="row"
+    ) -> "DataTableColumn":
+        return DataTableColumn(
+            fieldlabel(model, col),
+            hg.C(f"{rowvariable}.{col}"),
+            sortingname_for_column(model, col)
+            if not prevent_automatic_sortingnames
+            else None,
         )
 
-    return aslink_attributes(hg.F(extractsortinglink))
+    def as_header_cell(self, orderingurlparameter="ordering"):
+        headcontent = hg.SPAN(self.header, _class="bx--table-header-label")
+        if self.sortingname:
+            headcontent = hg.BUTTON(
+                headcontent,
+                Icon("arrow--down", _class="bx--table-sort__icon", size=16),
+                Icon(
+                    "arrows--vertical",
+                    _class="bx--table-sort__icon-unsorted",
+                    size=16,
+                ),
+                _class=hg.BaseElement(
+                    "bx--table-sort ",
+                    sortingclass_for_column(orderingurlparameter, self.sortingname),
+                ),
+                data_event="sort",
+                title=self.header,
+                **sortinglink_for_column(orderingurlparameter, self.sortingname),
+            )
+        return hg.TH(headcontent, **getattr(self.header, "td_attributes", {}))
 
 
-class DataTable(hg.BaseElement):
+class DataTable(hg.TABLE):
     SPACINGS = ["default", "compact", "short", "tall"]
 
     def __init__(
         self,
-        columns,
-        row_iterator,
-        rowvariable="row",
-        spacing="default",
-        orderingurlparameter="ordering",
-        zebra=False,
+        columns: List[DataTableColumn],
+        row_iterator: Union[hg.Lazy, Iterable, hg.Iterator],
+        orderingurlparameter: str = "ordering",
+        rowvariable: str = "row",
+        spacing: str = "default",
+        zebra: bool = False,
+        **kwargs: dict,
     ):
-        """columns: tuple(header_expression, row_expression, sortingname)
-        row_iterator: python iterator of htmlgenerator.Lazy object which returns an iterator
-        rowvariable: name of the current object passed to childrens context
-        if the header_expression/row_expression has an attribute td_attributes it will be used as attributes for the TH/TD elements (necessary because sometimes the content requires additional classes on the parent element)
-        sortingname: value for the URL parameter 'orderingurlparameter', None if sorting is not allowed
-        spacing: one of "default", "compact", "short", "tall"
-        zebra: alternate row colors
+        """A carbon DataTable element
+
+        :param columns: Column definitions
+        :param row_iterator: Iterator which yields row objects. If this is a hg.Iterator instance it will be used for the table body, otherwise a default Iterator will be used to render the column cells. This can also be htmlgenerator.Lazy object which returns a Python iterator when beeing evaluated.
+        :param rowvariable: Name of the current object passed to childrens context
+        :param orderingurlparameter: The name of the GET query parameter which is used to set the table ordering
+        :param spacing: One of "default", "compact", "short", "tall", according to the carbon styles
+        :param zebra: If True alternate row colors
+        :param kwargs: HTML element attributes
         """
-        if spacing not in DataTable.SPACINGS:
-            raise ValueError(
-                f"argument 'spacin' is {spacing} but needs to be one of {DataTable.SPACINGS}"
+
+        self.head = DataTable.headrow(columns, orderingurlparameter)
+        if isinstance(row_iterator, hg.Iterator):
+            self.iterator = row_iterator
+        else:
+            self.iterator = hg.Iterator(
+                row_iterator, rowvariable, DataTable.row(columns)
             )
-        classes = ["bx--data-table bx--data-table--sort"]
-        if spacing != "default":
-            classes.append(f" bx--data-table--{spacing}")
-        if zebra:
-            classes.append(" bx--data-table--zebra")
-
-        self.head = hg.TR()
-        for header, cell, sortingname in columns:
-            headcontent = hg.SPAN(header, _class="bx--table-header-label")
-            if sortingname:
-                headcontent = hg.BUTTON(
-                    headcontent,
-                    Icon("arrow--down", _class="bx--table-sort__icon", size=16),
-                    Icon(
-                        "arrows--vertical",
-                        _class="bx--table-sort__icon-unsorted",
-                        size=16,
-                    ),
-                    _class=hg.BaseElement(
-                        "bx--table-sort ",
-                        sortingclass_for_column(orderingurlparameter, sortingname),
-                    ),
-                    data_event="sort",
-                    title=header,
-                    **sortinglink_for_column(orderingurlparameter, sortingname),
-                )
-
-            self.head.append(hg.TH(headcontent, **getattr(header, "td_attributes", {})))
-
-        self.iterator = hg.Iterator(
-            row_iterator,
-            rowvariable,
-            hg.TR(
-                *[
-                    hg.TD(cell, **getattr(cell, "td_attributes", {}))
-                    for header, cell, _ in columns
-                ]
-            ),
+        kwargs["_class"] = kwargs.get("_class", "") + " ".join(
+            DataTable.tableclasses(spacing, zebra)
         )
-        super().__init__(
-            hg.TABLE(
-                hg.THEAD(self.head),
-                hg.TBODY(self.iterator),
-                _class=" ".join(classes),
-            )
-        )
+        super().__init__(hg.THEAD(self.head), hg.TBODY(self.iterator), **kwargs)
 
     def with_toolbar(
         self,
@@ -140,6 +105,7 @@ class DataTable(hg.BaseElement):
         paginator=None,
         page_urlparameter="page",
         itemsperpage_urlparameter="itemsperpage",
+        checkbox_for_bulkaction_name="_selected",
         settingspanel=None,
     ):
         """
@@ -186,7 +152,7 @@ class DataTable(hg.BaseElement):
                         id=checkboxallid,
                         _class="bx--checkbox",
                         type="checkbox",
-                        name="selected",
+                        name=checkbox_for_bulkaction_name,
                         value="all",
                     ),
                     hg.LABEL(
@@ -208,7 +174,7 @@ class DataTable(hg.BaseElement):
                         ),
                         _class="bx--checkbox",
                         type="checkbox",
-                        name="selected",
+                        name=checkbox_for_bulkaction_name,
                         value=hg.If(
                             hg.F(
                                 lambda c, e: hasattr(
@@ -262,11 +228,13 @@ class DataTable(hg.BaseElement):
                 ),
                 hg.DIV(
                     hg.DIV(
-                        Search(widgetattributes={"autofocus": True}).withajaxurl(
-                            url=searchurl,
-                            query_urlparameter=query_urlparameter,
+                        Search(
+                            widgetattributes={"autofocus": True},
+                            backend=search.SearchBackendConfig(
+                                url=searchurl, query_parameter=query_urlparameter
+                            ),
                             resultcontainerid=resultcontainerid,
-                            resultcontainer=False,
+                            show_result_container=False,
                         ),
                         _class="bx--toolbar-search-container-persistent",
                     )
@@ -326,33 +294,66 @@ class DataTable(hg.BaseElement):
     def from_model(
         model,
         queryset=None,
-        columns=["__all__"],
+        columns: Union[List[str], List[DataTableColumn]] = None,
         rowactions=None,
         rowactions_dropdown=False,
         bulkactions=(),
         title=None,
         addurl=None,
-        backurl=None,
+        backurl: Union[hg.Lazy, str] = None,
         searchurl=None,
         query_urlparameter=None,
         rowclickaction=None,
-        preven_automatic_sortingnames=False,
+        prevent_automatic_sortingnames=False,
         with_toolbar=True,
         pagination_options=(),
         paginator=None,
         page_urlparameter="page",
         itemsperpage_urlparameter="itemsperpage",
+        checkbox_for_bulkaction_name="_selected",
         settingspanel=None,
+        rowvariable="row",
         **kwargs,
     ):
-        """TODO: Write Docs!!!!"""
-        if title is None:
-            title = pretty_modelname(model, plural=True)
-        rowvariable = kwargs.get("rowvariable", "row")
+        """TODO: Write Docs!!!!
+        Yeah yeah, on it already...
 
-        backquery = {"next": backurl} if backurl else {}
+        :param str backurl: sets the "next" parameter for the add-url and row-click actions.
+                            In most cases this can be used to return to the current page
+                            (default behaviour), stying on the according new page (use "#"
+                            as value) or direct to a certain other page. Maybe this parameter
+                            is unnecessary powerfull because there are other ways to set
+                            these behaviours. However, the option of staying on the new page
+                            coming back to the current page should somehow be kept available,
+                            it is used very often.
+        :param hg.BaseElement settingspanel: A panel which will be opened when clicking on the
+                                             "Settings" button of the datatable, usefull e.g.
+                                             for showing filter options. Currently only one
+                                             button and one panel are supported. More buttons
+                                             and panels could be interesting but may to over-
+                                             engineered because it is a rare case and it is not
+                                             difficutl to add another button by modifying the
+                                             datatable after creation.
+        """
+        for col in columns:
+            if not (isinstance(col, DataTableColumn) or isinstance(col, str)):
+                raise ValueError(
+                    f"Argument 'columns' needs to be of a List[str] or a List[DataTableColumn], but found {col}"
+                )
+
+        title = title or pretty_modelname(model, plural=True)
+
         if addurl is None:
-            addurl = reverse_model(model, "add", query=backquery)
+            addurl = hg.F(
+                lambda c, e: reverse_model(
+                    model,
+                    "add",
+                    query={
+                        "next": hg.resolve_lazy(backurl, c, e)
+                        or c["request"].get_full_path()
+                    },
+                )
+            )
 
         if rowactions_dropdown:
             objectactions_menu = OverflowMenu(
@@ -361,59 +362,57 @@ class DataTable(hg.BaseElement):
                 item_attributes={"_class": "bx--table-row--menu-option"},
             )
         else:
-            objectactions_menu = hg.Iterator(
-                rowactions,
-                "action",
-                hg.F(
-                    lambda c, e: Button.fromaction(
-                        c["action"],
-                        notext=True,
-                        small=True,
-                        buttontype="ghost",
-                        _class="bx--overflow-menu",
-                    )
+            objectactions_menu = hg.DIV(
+                hg.Iterator(
+                    rowactions,
+                    "action",
+                    hg.F(
+                        lambda c, e: Button.fromaction(
+                            c["action"],
+                            notext=True,
+                            small=True,
+                            buttontype="ghost",
+                            _class="bx--overflow-menu",
+                        )
+                    ),
                 ),
+                style="display: flex",
             )
 
         action_menu_header = hg.BaseElement()
         action_menu_header.td_attributes = {"_class": "bx--table-column-menu"}
         queryset = model.objects.all() if queryset is None else queryset
-        if "__all__" in columns:
-            columns = filter_fieldlist(model, columns)
-        columndefinitions = []
-        for column in columns:
-            if not (
-                (isinstance(column, tuple) and len(column) in [3, 4])
-                or isinstance(column, str)
-            ):
-                raise ValueError(
-                    f"Argument 'columns' needs to be of a list with items of type str or tuple (headvalue, cellvalue, sort-name, enable-row-click=True), but found {column}"
-                )
+        columns = columns or filter_fieldlist(model, ["__all__"])
+        column_definitions: List[DataTableColumn] = []
+        for col in columns:
             # convert simple string (modelfield) to column definition
-            if isinstance(column, str):
-                column = (
-                    fieldlabel(model, column),
-                    hg.C(f"{rowvariable}.{column}"),
-                    sortingname_for_column(model, column)
-                    if not preven_automatic_sortingnames
-                    else None,
+            if isinstance(col, str):
+                col = DataTableColumn.from_modelfield(
+                    col, model, prevent_automatic_sortingnames, rowvariable
                 )
-            # add the default parameter for enable-row-click
-            column += (True,)
 
-            if rowclickaction and column[3]:
-                column[1].td_attributes = aslink_attributes(
+            if rowclickaction and col.enable_row_click:
+                col.cell.td_attributes = aslink_attributes(
                     hg.F(
                         lambda c, e: objectaction(
-                            c[rowvariable], rowclickaction, query=backquery
+                            c[rowvariable],
+                            rowclickaction,
+                            query={
+                                "next": hg.resolve_lazy(backurl, c, e)
+                                or c["request"].get_full_path()
+                            },
                         )
                     )
                 )
-            columndefinitions.append(column[:3])
+            column_definitions.append(col)
 
         table = DataTable(
-            columndefinitions
-            + ([(action_menu_header, objectactions_menu, None)] if rowactions else []),
+            column_definitions
+            + (
+                [DataTableColumn(action_menu_header, objectactions_menu)]
+                if rowactions
+                else []
+            ),
             # querysets are cached, the call to all will make sure a new query is used in every request
             hg.F(lambda c, e: queryset),
             **kwargs,
@@ -424,7 +423,7 @@ class DataTable(hg.BaseElement):
                 primary_button=Button(
                     _("Add %s") % pretty_modelname(model),
                     icon=Icon("add", size=20),
-                    onclick=f"document.location = '{addurl}'",
+                    onclick=hg.BaseElement("document.location = '", addurl, "'"),
                 ),
                 searchurl=searchurl,
                 bulkactions=bulkactions,
@@ -433,6 +432,7 @@ class DataTable(hg.BaseElement):
                 query_urlparameter=query_urlparameter,
                 paginator=paginator,
                 itemsperpage_urlparameter=itemsperpage_urlparameter,
+                checkbox_for_bulkaction_name=checkbox_for_bulkaction_name,
                 settingspanel=settingspanel,
             )
         return table
@@ -448,3 +448,76 @@ class DataTable(hg.BaseElement):
             queryset=queryset,
             **kwargs,
         )
+
+    # A few helper classes to make the composition in the __init__ method easier
+
+    @staticmethod
+    def headrow(columns, orderingurlparameter):
+        """Returns the head-row element based on the specified columns"""
+        return hg.TR(*[c.as_header_cell(orderingurlparameter) for c in columns])
+
+    @staticmethod
+    def row(columns):
+        """Returns a row element based on the specified columns"""
+        return hg.TR(
+            *[
+                hg.TD(col.cell, **getattr(col.cell, "td_attributes", {}))
+                for col in columns
+            ]
+        )
+
+    @staticmethod
+    def tableclasses(spacing, zebra):
+        if spacing not in DataTable.SPACINGS:
+            raise ValueError(
+                f"argument 'spacin' is {spacing} but needs to be one of {DataTable.SPACINGS}"
+            )
+        classes = ["bx--data-table bx--data-table--sort"]
+        if spacing != "default":
+            classes.append(f" bx--data-table--{spacing}")
+        if zebra:
+            classes.append(" bx--data-table--zebra")
+        return classes
+
+
+def sortingclass_for_column(orderingurlparameter, columnname):
+    def extracturlparameter(context, element):
+        value = context["request"].GET.get(orderingurlparameter, "")
+        if not value:
+            return ""
+        if value == columnname:
+            return "bx--table-sort--active"
+        if value == "-" + columnname:
+            return "bx--table-sort--active bx--table-sort--ascending"
+        return ""
+
+    return hg.F(extracturlparameter)
+
+
+def sortingname_for_column(model, column):
+    components = []
+    for field in resolve_modellookup(model, column):
+        if hasattr(field, "sorting_name"):
+            components.append(field.sorting_name)
+        elif isinstance(field, models.Field):
+            components.append(field.name)
+        else:
+            return None
+    return "__".join(components)
+
+
+def sortinglink_for_column(orderingurlparameter, columnname):
+    ORDERING_VALUES = {
+        None: columnname,
+        columnname: "-" + columnname,
+        "-" + columnname: None,
+    }
+
+    def extractsortinglink(context, element):
+        currentordering = context["request"].GET.get(orderingurlparameter, None)
+        nextordering = ORDERING_VALUES.get(currentordering, columnname)
+        return link_with_urlparameters(
+            context["request"], **{orderingurlparameter: nextordering}
+        )
+
+    return aslink_attributes(hg.F(extractsortinglink))

@@ -1,3 +1,4 @@
+import htmlgenerator as hg
 from django.apps import apps
 from django.utils.text import format_lazy
 
@@ -79,19 +80,17 @@ class Link(Action):
         self.url = url
 
     @staticmethod
-    def from_objectaction(object, actionname, label, icon=None, *args, **kwargs):
-        from . import layout
+    def from_objectaction(object, actionname, label, icon=None, pk_argname="pk"):
         from .utils.urls import reverse_model
 
         return Action(
-            layout.F(
+            hg.F(
                 lambda c, e: format_lazy(
                     "document.location = '{}'",
                     reverse_model(
-                        layout.resolve_lazy(object, c, e),
+                        hg.resolve_lazy(object, c, e),
                         actionname,
-                        *args,
-                        **{**kwargs, "pk": layout.resolve_lazy(object, c, e).pk},
+                        kwargs={pk_argname: hg.resolve_lazy(object, c, e).pk},
                     ),
                 )
             ),

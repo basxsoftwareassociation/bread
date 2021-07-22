@@ -1,8 +1,10 @@
 import htmlgenerator as hg
+from django import forms
 from django.http import HttpResponseNotAllowed
 
 from .. import layout as _layout  # prevent name clashing
 from ..forms.fields import FormsetField
+from ..forms.forms import breadmodelform_factory
 from .edit import EditView
 
 
@@ -10,13 +12,22 @@ from .edit import EditView
 class ReadView(EditView):
     """TODO: documentation"""
 
-    template_name = "bread/base.html"
     accept_global_perms = True
     fields = None
     urlparams = (("pk", int),)
 
     def post(self, *args, **kwargs):
         return HttpResponseNotAllowed(["GET"])
+
+    def get_form_class(self, form=forms.models.ModelForm):
+        return breadmodelform_factory(
+            request=self.request,
+            model=self.model,
+            layout=self._get_layout_cached(),
+            instance=self.object,
+            baseformclass=form,
+            cache_querysets=False,
+        )
 
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
@@ -27,18 +38,19 @@ class ReadView(EditView):
                     subfield.disabled = True
         return form
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["layout"] = layoutasreadonly(context["layout"])
-        return context
+    def get_layout(self):
+        return layoutasreadonly(super().get_layout())
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
 
 
 def layoutasreadonly(layout):
+    if getattr(layout, "readonly", False):
+        return layout
     layout.wrap(
-        lambda element, ancestors: isinstance(element, _layout.form.Form),
+        lambda element, ancestors: isinstance(element, _layout.form.Form)
+        and element.standalone,
         hg.FIELDSET(readonly="true"),
     )
 
@@ -49,9 +61,12 @@ def layoutasreadonly(layout):
         and (
             isinstance(
                 element,
-                (_layout.form.InlineDeleteButton, _layout.form.FormsetAddButton),
+                hg.BUTTON,
             )
             or getattr(element, "attributes", {}).get("type") == "submit"
         )
     )
+    for form in layout.filter(lambda element, ancestors: isinstance(element, hg.FORM)):
+        form.attributes["onsubmit"] = "return false;"
+    layout.readonly = True
     return layout
