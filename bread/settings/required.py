@@ -1,10 +1,24 @@
+"""
+These are sane default settings, some of which are required to
+run a bread application properly out-of-the-box, however all
+settings can be overwritten in the project-specific settings module
+
+It is recommended to include these settings via
+``from bread.settings.required import *`` inside the project
+settings file. The ``BREAD_DEPENDENCIES`` variable should be
+appended to the ``INSTALLED_APPS`` setting.
+"""
+
+########################## Django settings ###############################
+#
+# Mostly for dependencies and sane defaults
+#
+
 _third_party_apps = [
-    "django_extensions",  # for developer friendliness
+    "django_extensions",  # for developer friendliness, adding management commands
     "guardian",  # per-object permissions
     "simple_history",  # versioning
     # some additional form fields
-    "ckeditor",
-    "ckeditor_uploader",
     "djangoql",
     # for handling global and user preferences
     "dynamic_preferences",
@@ -38,57 +52,10 @@ AUTHENTICATION_BACKENDS = (
     "guardian.backends.ObjectPermissionBackend",
 )
 
-# required for CK editor to work properly
-CKEDITOR_UPLOAD_PATH = "ckeditor/"
-CKEDITOR_CONFIGS = {
-    "default": {
-        "toolbar": "full",
-        "extraPlugins": ",".join(["placeholder"]),
-        "width": "100%",
-    },
-    "richtext-plugin": {
-        "toolbar": "Custom",
-        "format_tags": "h1;h2;h3;p;pre",
-        "toolbar_Custom": [
-            [
-                "Format",
-                "RemoveFormat",
-                "-",
-                "Bold",
-                "Italic",
-                "Subscript",
-                "Superscript",
-                "-",
-                "NumberedList",
-                "BulletedList",
-                "-",
-                "Anchor",
-                "Link",
-                "Unlink",
-                "-",
-                "HorizontalRule",
-                "SpecialChar",
-                "-",
-                "Source",
-            ]
-        ],
-    },
-}
-
-# not sure why we need this
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
-# named urlpattern to redirect to if login is required
-LOGIN_URL = "login"
-
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
-
-# celery related settings
-CELERY_RESULT_BACKEND = "django-db"
-CELERY_CACHE_BACKEND = "django-cache"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -103,23 +70,21 @@ MIDDLEWARE = [
     "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
-BREAD_PUBLIC_FILES_PREFIX = "public/"
 
-CONTEXT_PROCESSORS = [
-    "django.template.context_processors.debug",
-    "django.template.context_processors.request",
-    "django.contrib.auth.context_processors.auth",
-    "django.contrib.messages.context_processors.messages",
-    "dynamic_preferences.processors.global_preferences",
-    "bread.context_processors.bread_context",
-]
-
-# from default django config
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "APP_DIRS": True,
-        "OPTIONS": {"context_processors": CONTEXT_PROCESSORS},
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "dynamic_preferences.processors.global_preferences",
+                "bread.context_processors.bread_context",
+            ]
+        },
     }
 ]
 
@@ -131,6 +96,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+LOGIN_REDIRECT_URL = "/"
+
+LOGOUT_REDIRECT_URL = "/"
+
+LOGIN_URL = "login"
 
 LANGUAGE_CODE = "en-us"
 
@@ -144,15 +115,33 @@ USE_TZ = True
 
 USE_THOUSAND_SEPARATOR = True
 
+########################## celery settings ###############################
+
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_CACHE_BACKEND = "django-cache"
+
+########################## haystack settings ###############################
+
+HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
+
+# The following should only be activated in production or in dev environments
+# with a running celery instance (and an according rabbitmq server)
+# HAYSTACK_SIGNAL_PROCESSOR = "celery_haystack.signals.CelerySignalProcessor"
+
+########################## simple_history settings ###############################
+
+SIMPLE_HISTORY_FILEFIELD_TO_CHARFIELD = True
+
+########################## BREAD customization settings ###############################
+
 DEFAULT_PAGINATION_CHOICES = [
     25,
     50,
     100,
 ]  # Defines what the default options for pagination are
 
-HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
+DEFAULT_PAGE_LAYOUT = "bread.layout.default_page_layout"
 
-# This one should only be activated in production or in dev environments with celery ready to run
-# HAYSTACK_SIGNAL_PROCESSOR = "celery_haystack.signals.CelerySignalProcessor"
-
-SIMPLE_HISTORY_FILEFIELD_TO_CHARFIELD = True
+BREAD_PUBLIC_FILES_PREFIX = (
+    "public/"  # request starting with this path will not require login
+)

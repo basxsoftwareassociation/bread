@@ -25,3 +25,4 @@ from .components import tag  # noqa
 from .components import text_area  # noqa
 from .components import text_input  # noqa
 from .components import toggle  # noqa
+from .skeleton import *  # noqa
