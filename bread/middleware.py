@@ -7,6 +7,9 @@ class RequireAuthenticationMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        request.session["bread-cookies"] = {
+            k: v for k, v in request.COOKIES.items() if k.startswith("bread-")
+        }
         response = self.get_response(request)
         return response
 

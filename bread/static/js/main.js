@@ -2,11 +2,11 @@
 // support onload after page loaded for all elements
 document.addEventListener(
     "DOMContentLoaded",
-    bread_init_page
+    () => bread_load_elements()
 );
 
-function bread_init_page() {
-    $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load")
+function bread_load_elements(context=null) {
+    $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)', context)._.fire("load")
 }
 
 function updateMultiselect(e) {
@@ -120,7 +120,7 @@ function formset_add(form_prefix, list_container) {
     update_add_button(form_prefix);
     updateMultiselect(container_elem);
 
-    $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)', container_elem)._.fire("load");
+    bread_load_elements(container_elem)
     htmx.process(container_elem);
 }
 
@@ -165,4 +165,17 @@ function submitbulkaction(table, actionurl, method="GET") {
 
     document.body.appendChild(form);
     form.submit();
+}
+
+// helper functions to set and get namespace cookies
+function setBreadCookie(key, value) {
+    document.cookie = "bread-" + key + "=" + encodeURIComponent(value);
+}
+
+function getBreadCookie(key, _default=null) {
+    var ret = document.cookie.split('; ').find(row => row.startsWith("bread-" + key + '='))
+    if(!ret)
+        return _default;
+    ret = ret.split('=')[1];
+    return ret ? decodeURIComponent(ret) : _default;
 }

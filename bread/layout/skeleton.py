@@ -53,16 +53,6 @@ def default_page_layout(menu, *content):
                         details=hg.C("message.message"),
                         kind=hg.C("message.level_tag"),
                         hidetimestamp=True,
-                        style=hg.BaseElement(
-                            "opacity: 0; animation: ",
-                            hg.F(lambda c, e: 4 + 3 * c["message_index"]),
-                            "s ease-in-out notification",
-                        ),
-                        onload=hg.BaseElement(
-                            "setTimeout(() => this.style.display = 'None', ",
-                            hg.F(lambda c, e: (4 + 3 * c["message_index"]) * 1000),
-                            ")",
-                        ),
                     ),
                 ),
                 style="position: fixed; right: 0; z-index: 999",

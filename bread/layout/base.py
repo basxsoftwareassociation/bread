@@ -1,9 +1,27 @@
+import urllib
+
 import htmlgenerator as hg
 
 from bread.utils import pretty_modelname, resolve_modellookup
 from bread.utils.urls import reverse_model
 
 from ..formatters import format_value
+
+
+class CheckBreadCookieValue(hg.Lazy):
+    def __init__(self, cookiename, value):
+        self.cookiename = cookiename
+        self.value = value
+
+    def resolve(self, context, element):
+        return (
+            urllib.parse.unquote(
+                context["request"]
+                .session.get("bread-cookies", {})
+                .get(f"bread-{self.cookiename}")
+            )
+            == self.value
+        )
 
 
 def fieldlabel(model, accessor):

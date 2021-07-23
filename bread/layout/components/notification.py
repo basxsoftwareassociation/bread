@@ -48,7 +48,7 @@ class InlineNotification(hg.DIV):
         children = [
             hg.DIV(
                 Icon(
-                    hg.F(lambda c, e: KIND_ICON_MAPPING[hg.resolve_lookup(kind)]),
+                    hg.F(lambda c, e: KIND_ICON_MAPPING[hg.resolve_lazy(kind, c, e)]),
                     size=20,
                     _class="bx--inline-notification__icon",
                 ),
@@ -95,21 +95,36 @@ class ToastNotification(hg.DIV):
         lowcontrast=False,
         hideclosebutton=False,
         hidetimestamp=False,
+        autoremove=4.0,
         **attributes,
     ):
         """
         kind: can be one of "error" "info", "info-square", "success", "warning", "warning-alt"
+        autoremove: remove notification after ``autoremove`` seconds
         """
         self.hidetimestamp = hidetimestamp
 
         attributes["data-notification"] = True
         attributes["_class"] = hg.BaseElement(
             attributes.get("_class", ""),
-            " bx--inline-notification bx--inline-notification--",
+            " bx--toast-notification bx--toast-notification--",
             kind,
-            hg.If(lowcontrast, " bx--inline-notification--low-contrast"),
+            hg.If(lowcontrast, " bx--toast-notification--low-contrast"),
         )
         attributes["role"] = "alert"
+
+        attributes["style"] = hg.BaseElement(
+            attributes.get("style", ""),
+            ";opacity: 0; animation: ",
+            hg.F(lambda c, e: autoremove + 3 * c["message_index"]),
+            "s ease-in-out notification",
+        )
+        attributes["onload"] = hg.BaseElement(
+            attributes.get("onload", ""),
+            ";setTimeout(() => this.style.display = 'None', ",
+            hg.F(lambda c, e: (autoremove + 3 * c["message_index"]) * 1000),
+            ")",
+        )
 
         timestampelem = (
             [hg.P(_("Time stamp"), " ", _class="bx--toast-notification__caption")]
@@ -118,7 +133,7 @@ class ToastNotification(hg.DIV):
         )
         children = [
             Icon(
-                hg.F(lambda c, e: KIND_ICON_MAPPING[hg.resolve_lookup(kind)]),
+                hg.F(lambda c, e: KIND_ICON_MAPPING[hg.resolve_lazy(kind, c, e)]),
                 size=20,
                 _class="bx--toast-notification__icon",
             ),
