@@ -9,14 +9,6 @@ from bread.utils.urls import reverse_model
 
 from ..formatters import format_value
 
-CONTEXT_PROCESSORS = tuple(
-    import_string(path)
-    for path in _builtin_context_processors
-    + tuple(
-        (settings.TEMPLATES + [{}])[0].get("OPTIONS", {}).get("context_processors", [])
-    )
-)
-
 
 class HasBreadCookieValue(hg.Lazy):
     def __init__(self, cookiename, value):
@@ -76,10 +68,23 @@ FC = FormattedContextValue
 
 
 def render(request, layout, context=None, **response_kwargs):
+    if render.CONTEXT_PROCESSORS is None:
+        render.CONTEXT_PROCESSORS = tuple(
+            import_string(path)
+            for path in _builtin_context_processors
+            + tuple(
+                (settings.TEMPLATES + [{}])[0]
+                .get("OPTIONS", {})
+                .get("context_processors", [])
+            )
+        )
     response_kwargs.setdefault("content_type", "text/html")
     defaultcontext = {}
-    for processor in CONTEXT_PROCESSORS:
+    for processor in render.CONTEXT_PROCESSORS:
         defaultcontext.update(processor(request))
     return HttpResponse(
         layout.render({**defaultcontext, **(context or {})}), **response_kwargs
     )
+
+
+render.CONTEXT_PROCESSORS = None
