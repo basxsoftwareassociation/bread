@@ -8,7 +8,7 @@ from dynamic_preferences.users import views as user_preferences_views
 from dynamic_preferences.users.registries import user_preferences_registry
 
 from .forms.forms import PreferencesForm, UserPreferencesForm
-from .views import system
+from .views import auth, system
 
 
 # preferences views need a bit of weird treatment, I think we coudl make this code much shorter
@@ -84,7 +84,27 @@ external_urlpatterns = [
 
 urlpatterns = [
     path("auth/", include("django.contrib.auth.urls")),
-    path("accounts/login/", system.BreadLoginView.as_view(), name="login"),
-    path("accounts/logout/", system.BreadLogoutView.as_view(), name="logout"),
+    path("accounts/login/", auth.BreadLoginView.as_view(), name="login"),
+    path("accounts/logout/", auth.BreadLogoutView.as_view(), name="logout"),
+    path(
+        "accounts/password_reset/",
+        auth.BreadPasswordResetView.as_view(),
+        name="password_reset",
+    ),
+    path(
+        "accounts/password_reset/done/",
+        auth.BreadPasswordResetDoneView.as_view(),
+        name="password_reset_done",
+    ),
+    path(
+        "accounts/reset/<uidb64>/<token>/",
+        auth.BreadPasswordResetConfirmView.as_view(),
+        name="password_reset_confirm",
+    ),
+    path(
+        "accounts/reset/done/",
+        auth.BreadPasswordResetCompleteView.as_view(),
+        name="password_reset_complete",
+    ),
     path("systeminformation", system.systeminformation, name="systeminformation"),
 ] + external_urlpatterns

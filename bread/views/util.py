@@ -131,6 +131,9 @@ class BreadView:
         if isinstance(self.page_layout, str):
             self.page_layout = import_string(self.page_layout)
 
+    def get_page_layout(self, menu, content_layout):
+        return self.page_layout(menu, content_layout)
+
     def get_layout(self):
         """Returns the layout for this view, returns the ``layout`` attribute by default.
         Either set the ``layout`` attribute or override this method."""
@@ -142,7 +145,7 @@ class BreadView:
         response_kwargs.setdefault("content_type", self.content_type)
         ret = self._get_layout_cached()
         if self.ajax_urlparameter not in self.request.GET:
-            ret = self.page_layout(menu.main, ret)
+            ret = self.get_page_layout(menu.main, ret)
 
         return breadlayout.render(
             self.request, ret, self.get_context_data(**context), **response_kwargs

@@ -34,7 +34,7 @@ class TextInput(hg.DIV):
         widgetattributes = widgetattributes or {}
         widgetattributes["_class"] = hg.BaseElement(
             widgetattributes.get("_class", ""),
-            "bx--text-input",
+            " bx--text-input",
             hg.If(light, " bx--text-input--light"),
             hg.If(errors, " bx--text-input--invalid"),
         )
