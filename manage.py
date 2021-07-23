@@ -28,6 +28,7 @@ settings.configure(
         "guardian.backends.ObjectPermissionBackend",
     ),
     SECRET_KEY="SECRET_KEY_FOR_TESTING",
+    STATIC_URL="static/",
 )
 
 django.setup()

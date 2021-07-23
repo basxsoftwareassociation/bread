@@ -12,7 +12,9 @@ from ..formatters import format_value
 CONTEXT_PROCESSORS = tuple(
     import_string(path)
     for path in _builtin_context_processors
-    + tuple(settings.TEMPLATES[0]["OPTIONS"]["context_processors"])
+    + tuple(
+        (settings.TEMPLATES + [{}])[0].get("OPTIONS", {}).get("context_processors", [])
+    )
 )
 
 

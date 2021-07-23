@@ -14,7 +14,6 @@ from django.utils.http import urlencode
 from django.utils.module_loading import import_string
 from django.utils.text import format_lazy
 
-from .. import layout, menu
 from .model_helpers import get_concrete_instance
 
 
@@ -64,6 +63,7 @@ def aslayout(view):
 
     @wraps(view)
     def wrapper(request, *args, **kwargs):
+        from .. import layout, menu  # needs to be imported here to avoid cyclic imports
 
         return layout.render(
             request,
