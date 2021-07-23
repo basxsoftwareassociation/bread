@@ -3,7 +3,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import models
-from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
@@ -151,11 +150,13 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                     % self.request.GET[self.bulkaction_urlparameter],
                 )
             else:
-                result = bulkactions[self.request.GET[self.bulkaction_urlparameter]](
+                bulkactions[self.request.GET[self.bulkaction_urlparameter]](
                     self.request, self.get_queryset()
                 )
-                if isinstance(result, HttpResponse):
-                    return result
+                params = self.request.GET.copy()
+                del params[self.bulkaction_urlparameter]
+                del params[self.objectids_urlparameter]
+                return redirect(self.request.path + "?" + params.urlencode())
         return super().get(*args, **kwargs)
 
     def get_paginate_by(self, queryset):
@@ -240,11 +241,13 @@ def delete(request, queryset, softdeletefield=None, required_permissions=None):
                     _("Your user has not the permissions to delete %s") % instance
                 )
             if softdeletefield:
-                setattr(instance, softdeletefield, True)
-                instance.save()
+                if not getattr(instance, softdeletefield):
+                    setattr(instance, softdeletefield, True)
+                    instance.save()
+                    deleted += 1
             else:
                 instance.delete()
-            deleted += 1
+                deleted += 1
         except Exception as e:
             messages.error(
                 request,
@@ -259,4 +262,39 @@ def delete(request, queryset, softdeletefield=None, required_permissions=None):
             "modelname": pretty_modelname(queryset.model, plural=deleted > 1),
         },
     )
-    return HttpResponseRedirect(redirect_to=request.path)
+
+
+def restore(request, queryset, softdeletefield, required_permissions=None):
+    if required_permissions is None:
+        required_permissions = [
+            f"{queryset.model._meta.app_label}.change_{queryset.model.__name__.lower()}"
+        ]
+
+    restored = 0
+    for instance in queryset:
+        try:
+            if not request.user.has_perm(required_permissions, instance):
+                # we throw an exception here because the user not supposed to
+                # see the option to restore an object anyway, if he does not have the permssions
+                # the queryset should already be filtered
+                raise Exception(
+                    _("Your user has not the permissions to restore %s") % instance
+                )
+            if getattr(instance, softdeletefield, False):
+                setattr(instance, softdeletefield, False)
+                instance.save()
+                restored += 1
+        except Exception as e:
+            messages.error(
+                request,
+                _("%s could not be restored: %s") % (object, e),
+            )
+
+    messages.success(
+        request,
+        _("Restored %(count)s %(modelname)s")
+        % {
+            "count": restored,
+            "modelname": pretty_modelname(queryset.model, plural=restored > 1),
+        },
+    )
