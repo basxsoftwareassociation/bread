@@ -6,7 +6,6 @@ from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponse
-from django.template.context import _builtin_context_processors
 from django.utils.html import mark_safe
 from django.utils.module_loading import import_string
 
@@ -14,12 +13,6 @@ from .. import layout as breadlayout
 from .. import menu
 from ..forms.forms import breadmodelform_factory
 from ..utils import filter_fieldlist, reverse_model
-
-CONTEXT_PROCESSORS = tuple(
-    import_string(path)
-    for path in _builtin_context_processors
-    + tuple(settings.TEMPLATES[0]["OPTIONS"]["context_processors"])
-)
 
 
 class CustomFormMixin:
@@ -147,14 +140,12 @@ class BreadView:
 
     def render_to_response(self, context, **response_kwargs):
         response_kwargs.setdefault("content_type", self.content_type)
-        context = dict(context)
-        for processor in CONTEXT_PROCESSORS:
-            context.update(processor(self.request))
         ret = self._get_layout_cached()
         if self.ajax_urlparameter not in self.request.GET:
             ret = self.page_layout(menu.main, ret)
-        return HttpResponse(
-            ret.render(self.get_context_data(**context)), **response_kwargs
+
+        return breadlayout.render(
+            self.request, ret, self.get_context_data(**context), **response_kwargs
         )
 
     def _get_layout_cached(self):
