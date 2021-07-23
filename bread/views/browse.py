@@ -150,13 +150,15 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                     % self.request.GET[self.bulkaction_urlparameter],
                 )
             else:
-                bulkactions[self.request.GET[self.bulkaction_urlparameter]](
+                ret = bulkactions[self.request.GET[self.bulkaction_urlparameter]](
                     self.request, self.get_queryset()
                 )
                 params = self.request.GET.copy()
                 del params[self.bulkaction_urlparameter]
                 del params[self.objectids_urlparameter]
-                return redirect(self.request.path + "?" + params.urlencode())
+                if ret is None:
+                    return redirect(self.request.path + "?" + params.urlencode())
+                return ret
         return super().get(*args, **kwargs)
 
     def get_paginate_by(self, queryset):
