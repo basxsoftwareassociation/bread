@@ -1,3 +1,5 @@
+import urllib
+
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -7,9 +9,11 @@ class RequireAuthenticationMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        request.session["bread-cookies"] = {
-            k: v for k, v in request.COOKIES.items() if k.startswith("bread-")
-        }
+        if "bread-cookies" not in request.session:
+            request.session["bread-cookies"] = {}
+        for k, v in request.COOKIES.items():
+            if k.startswith("bread-"):
+                request.session["bread-cookies"][k] = urllib.parse.unquote(v)
         response = self.get_response(request)
         return response
 

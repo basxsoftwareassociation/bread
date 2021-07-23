@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from bread.utils import reverse
 
+from .. import HasBreadCookieValue
 from .icon import Icon
 
 
@@ -11,25 +12,26 @@ class ShellHeader(hg.HEADER):
         from django.contrib.staticfiles.storage import staticfiles_storage
 
         super().__init__(
-            hg.A(
-                hg.SPAN(platform, _class="bx--header__name--prefix"),
-                hg.SPAN(company, style="position: absolute; left: 18rem"),
-                _class="bx--header__name",
-                style="font-weight: 400",  # override carbon design
-                href="/",
-                onload="if(window.localStorage.getItem('bread--sidenav--hidden') == 'true') {this.style.display = 'none'} else {this.style.display = 'inherit'}",
-            ),
-            hg.A(
-                hg.IMG(
-                    src=staticfiles_storage.url("logo.png"),
-                    _class="bx--header__name--prefix",
-                    style="width: 1.7rem; height; 1.7rem",
+            hg.If(
+                HasBreadCookieValue("sidenav-hidden", "true"),
+                hg.A(
+                    hg.IMG(
+                        src=staticfiles_storage.url("logo.png"),
+                        _class="bx--header__name--prefix",
+                        style="width: 1.7rem; height; 1.7rem",
+                    ),
+                    hg.SPAN(company, style="position: absolute; left: 5rem"),
+                    _class="bx--header__name",
+                    style="font-weight: 400;",  # override carbon design
+                    href="/",
                 ),
-                hg.SPAN(company, style="position: absolute; left: 5rem"),
-                _class="bx--header__name",
-                style="font-weight: 400;",  # override carbon design
-                href="/",
-                onload="if(window.localStorage.getItem('bread--sidenav--hidden') != 'true') {this.style.display = 'none'} else {this.style.display = 'inherit'}",
+                hg.A(
+                    hg.SPAN(platform, _class="bx--header__name--prefix"),
+                    hg.SPAN(company, style="position: absolute; left: 18rem"),
+                    _class="bx--header__name",
+                    style="font-weight: 400",  # override carbon design
+                    href="/",
+                ),
             ),
             hg.DIV(
                 hg.If(

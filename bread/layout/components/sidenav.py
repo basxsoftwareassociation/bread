@@ -2,7 +2,7 @@ import htmlgenerator as hg
 
 from bread.menu import Menu
 
-from .. import CheckBreadCookieValue
+from .. import HasBreadCookieValue
 from .icon import Icon
 
 
@@ -16,7 +16,7 @@ class SideNav(hg.ASIDE):
             kwargs.get("_class", ""),
             " bx--side-nav bx--side-nav--rail",
             hg.If(
-                CheckBreadCookieValue("sidenav-hidden", "true"),
+                HasBreadCookieValue("sidenav-hidden", "true"),
                 "",
                 " bx--side-nav--expanded",
             ),

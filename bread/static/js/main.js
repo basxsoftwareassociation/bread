@@ -167,9 +167,9 @@ function submitbulkaction(table, actionurl, method="GET") {
     form.submit();
 }
 
-// helper functions to set and get namespace cookies
+// helper functions to set and get bread-namespaced cookies
 function setBreadCookie(key, value) {
-    document.cookie = "bread-" + key + "=" + encodeURIComponent(value);
+    document.cookie = "bread-" + key + "=" + encodeURIComponent(value) + "; path=/";
 }
 
 function getBreadCookie(key, _default=null) {

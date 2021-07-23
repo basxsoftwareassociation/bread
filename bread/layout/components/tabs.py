@@ -3,7 +3,7 @@ import collections
 import htmlgenerator as hg
 from django.utils.text import slugify
 
-from .. import CheckBreadCookieValue
+from .. import HasBreadCookieValue
 
 
 class TabLabel(hg.LI):
@@ -86,7 +86,7 @@ class Tabs(hg.DIV):
             panelid = f"panel-{slugify(label)}-{i}"
             self.tablabels.append(
                 TabLabel(
-                    label, tabid, panelid, CheckBreadCookieValue("selected-tab", tabid)
+                    label, tabid, panelid, HasBreadCookieValue("selected-tab", tabid)
                 )
             )
             self.tabpanels.append(
@@ -94,7 +94,7 @@ class Tabs(hg.DIV):
                     content,
                     panelid,
                     tabid,
-                    CheckBreadCookieValue("selected-tab", tabid),
+                    HasBreadCookieValue("selected-tab", tabid),
                 )
             )
         super().__init__(

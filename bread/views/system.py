@@ -6,19 +6,20 @@ from django.shortcuts import redirect, render
 from django.utils.translation import gettext_lazy as _
 
 from .. import layout
+from .util import BreadView
 
 
-class BreadLoginView(LoginView):
-    template_name = "bread/base.html"
-
+class BreadLoginView(BreadView, LoginView):
     def get_context_data(self, *args, **kwargs):
         return {
             **super().get_context_data(*args, **kwargs),
-            "layout": layout.form.Form.from_fieldnames(
-                hg.C("form"), ["username", "password"], submit_label=_("Login")
-            ),
             "pagetitle": _("Login"),
         }
+
+    def get_layout(self):
+        return layout.form.Form.from_fieldnames(
+            hg.C("form"), ["username", "password"], submit_label=_("Login")
+        )
 
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
@@ -26,9 +27,7 @@ class BreadLoginView(LoginView):
         return form
 
 
-class BreadLogoutView(LogoutView):
-    template_name = "bread/base.html"
-
+class BreadLogoutView(BreadView, LogoutView):
     def get(self, *args, **kwargs):
         super().get(*args, **kwargs)
         return redirect("login")
@@ -36,9 +35,11 @@ class BreadLogoutView(LogoutView):
     def get_context_data(self, *args, **kwargs):
         return {
             **super().get_context_data(*args, **kwargs),
-            "layout": hg.DIV("Logged out"),
             "pagetitle": _("Logout"),
         }
+
+    def get_layout(self):
+        return hg.DIV(_("Logged out"))
 
 
 def systeminformation(request):
