@@ -11,15 +11,18 @@ from ..formatters import format_value
 
 
 class HasBreadCookieValue(hg.Lazy):
-    def __init__(self, cookiename, value):
+    def __init__(self, cookiename, value, default=None):
         self.cookiename = cookiename
         self.value = value
+        self.default = default
 
     def resolve(self, context, element):
-        return (
-            context["request"].session["bread-cookies"].get(f"bread-{self.cookiename}")
-            == self.value
-        )
+        if f"bread-{self.cookiename}" in context["request"].session["bread-cookies"]:
+            return (
+                context["request"].session["bread-cookies"][f"bread-{self.cookiename}"]
+                == self.value
+            )
+        return self.default == self.value
 
 
 def fieldlabel(model, accessor):

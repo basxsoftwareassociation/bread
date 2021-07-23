@@ -81,12 +81,18 @@ class Tabs(hg.DIV):
         tabpanel_attributes["_class"] += " bx--tab-content"
         self.tabpanels = hg.DIV(**tabpanel_attributes)
 
+        firsttab = None
         for i, (label, content) in enumerate(tabs):
             tabid = f"tab-{slugify(label)}-{i}"
             panelid = f"panel-{slugify(label)}-{i}"
+            if firsttab is None:
+                firsttab = tabid
             self.tablabels.append(
                 TabLabel(
-                    label, tabid, panelid, HasBreadCookieValue("selected-tab", tabid)
+                    label,
+                    tabid,
+                    panelid,
+                    HasBreadCookieValue("selected-tab", tabid, firsttab),
                 )
             )
             self.tabpanels.append(
@@ -94,7 +100,7 @@ class Tabs(hg.DIV):
                     content,
                     panelid,
                     tabid,
-                    HasBreadCookieValue("selected-tab", tabid),
+                    HasBreadCookieValue("selected-tab", tabid, firsttab),
                 )
             )
         super().__init__(
