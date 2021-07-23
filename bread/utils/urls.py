@@ -8,10 +8,10 @@ from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
 from django.db import models
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.urls import path as djangopath
 from django.urls import reverse_lazy as django_reverse
 from django.utils.http import urlencode
+from django.utils.module_loading import import_string
 from django.utils.text import format_lazy
 
 from .model_helpers import get_concrete_instance
@@ -59,12 +59,17 @@ def link_with_urlparameters(request, **kwargs):
 
 
 def aslayout(view):
-    """Helper function to let views return an element tree from htmlgenerator"""
+    """Helper function which wraps functions who return a layout to be full django views"""
 
     @wraps(view)
     def wrapper(request, *args, **kwargs):
-        return render(
-            request, "bread/base.html", {"layout": view(request, *args, **kwargs)}
+        from .. import layout, menu  # needs to be imported here to avoid cyclic imports
+
+        return layout.render(
+            request,
+            import_string(settings.DEFAULT_PAGE_LAYOUT)(
+                menu.main, view(request, *args, **kwargs)
+            ),
         )
 
     return wrapper

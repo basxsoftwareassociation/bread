@@ -1,4 +1,5 @@
 from .add import *  # noqa
+from .auth import *  # noqa
 from .browse import *  # noqa
 from .delete import *  # noqa
 from .edit import *  # noqa

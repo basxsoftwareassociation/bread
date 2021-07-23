@@ -199,7 +199,9 @@ urlpatterns = [
 
 menu.registeritem(
     menu.Item(
-        menu.Link(urls.reverse_model(Report, "browse"), label=_("Reports")),
+        menu.Link(
+            urls.reverse_model(Report, "browse"), label=_("Reports"), icon="download"
+        ),
         menu.Group(_("Reports"), icon="download"),
     )
 )

@@ -1,6 +1,6 @@
 import datetime
 
-import htmlgenerator
+import htmlgenerator as hg
 from django.utils.translation import gettext as _
 
 from .button import Button
@@ -16,7 +16,7 @@ KIND_ICON_MAPPING = {
 }
 
 
-class InlineNotification(htmlgenerator.DIV):
+class InlineNotification(hg.DIV):
     def __init__(
         self,
         message,
@@ -31,36 +31,30 @@ class InlineNotification(htmlgenerator.DIV):
         action: typle with (action_name, javascript_onclick), e.g. ("Open Google", "windows.location='https://google.com'")
         kind: can be one of "error" "info", "info-square", "success", "warning", "warning-alt"
         """
-        if kind not in KIND_ICON_MAPPING:
-            raise ValueError(
-                f"kind '{kind}' does not exists, must be one of {KIND_ICON_MAPPING.keys()}"
-            )
         if action is not None and (len(action) != 2):
             raise ValueError(
                 "action must be a tuple with: (action_name, javascript_onclick)"
             )
 
         attributes["data-notification"] = True
-        attributes["_class"] = (
-            attributes.get("_class", "")
-            + f" bx--inline-notification bx--inline-notification--{kind}"
+        attributes["_class"] = hg.BaseElement(
+            attributes.get("_class", ""),
+            " bx--inline-notification bx--inline-notification--",
+            kind,
+            hg.If(lowcontrast, " bx--inline-notification--low-contrast"),
         )
-        if lowcontrast:
-            attributes["_class"] += "  bx--inline-notification--low-contrast"
         attributes["role"] = "alert"
 
         children = [
-            htmlgenerator.DIV(
+            hg.DIV(
                 Icon(
-                    KIND_ICON_MAPPING[kind],
+                    hg.F(lambda c, e: KIND_ICON_MAPPING[hg.resolve_lazy(kind, c, e)]),
                     size=20,
                     _class="bx--inline-notification__icon",
                 ),
-                htmlgenerator.DIV(
-                    htmlgenerator.P(message, _class="bx--inline-notification__title"),
-                    htmlgenerator.P(
-                        details, _class="bx--inline-notification__subtitle"
-                    ),
+                hg.DIV(
+                    hg.P(message, _class="bx--inline-notification__title"),
+                    hg.P(details, _class="bx--inline-notification__subtitle"),
                     _class="bx--inline-notification__text-wrapper",
                 ),
                 _class="bx--inline-notification__details",
@@ -76,21 +70,23 @@ class InlineNotification(htmlgenerator.DIV):
                     _class="bx--inline-notification__action-button",
                 )
             )
-        if not hideclosebutton:
-            children.append(
-                htmlgenerator.BUTTON(
+        children.append(
+            hg.If(
+                hideclosebutton,
+                hg.BUTTON(
                     Icon(
                         "close", size=20, _class="bx--inline-notification__close-icon"
                     ),
                     data_notification_btn=True,
                     _class="bx--inline-notification__close-button",
                     aria_label="close",
-                )
+                ),
             )
+        )
         super().__init__(*children, **attributes)
 
 
-class ToastNotification(htmlgenerator.DIV):
+class ToastNotification(hg.DIV):
     def __init__(
         self,
         message,
@@ -99,57 +95,66 @@ class ToastNotification(htmlgenerator.DIV):
         lowcontrast=False,
         hideclosebutton=False,
         hidetimestamp=False,
+        autoremove=4.0,
         **attributes,
     ):
         """
         kind: can be one of "error" "info", "info-square", "success", "warning", "warning-alt"
+        autoremove: remove notification after ``autoremove`` seconds
         """
-        if kind not in KIND_ICON_MAPPING:
-            raise ValueError(
-                f"kind '{kind}' does not exists, must be one of {KIND_ICON_MAPPING.keys()}"
-            )
         self.hidetimestamp = hidetimestamp
 
         attributes["data-notification"] = True
-        attributes["_class"] = (
-            attributes.get("_class", "")
-            + f" bx--toast-notification bx--toast-notification--{kind}"
+        attributes["_class"] = hg.BaseElement(
+            attributes.get("_class", ""),
+            " bx--toast-notification bx--toast-notification--",
+            kind,
+            hg.If(lowcontrast, " bx--toast-notification--low-contrast"),
         )
-        if lowcontrast:
-            attributes["_class"] += "  bx--toast-notification--low-contrast"
         attributes["role"] = "alert"
 
+        attributes["style"] = hg.BaseElement(
+            attributes.get("style", ""),
+            ";opacity: 0; animation: ",
+            hg.F(lambda c, e: autoremove + 3 * c["message_index"]),
+            "s ease-in-out notification",
+        )
+        attributes["onload"] = hg.BaseElement(
+            attributes.get("onload", ""),
+            ";setTimeout(() => this.style.display = 'None', ",
+            hg.F(lambda c, e: (autoremove + 3 * c["message_index"]) * 1000),
+            ")",
+        )
+
         timestampelem = (
-            [
-                htmlgenerator.P(
-                    _("Time stamp"), " ", _class="bx--toast-notification__caption"
-                )
-            ]
+            [hg.P(_("Time stamp"), " ", _class="bx--toast-notification__caption")]
             if not hidetimestamp
             else []
         )
         children = [
             Icon(
-                KIND_ICON_MAPPING[kind],
+                hg.F(lambda c, e: KIND_ICON_MAPPING[hg.resolve_lazy(kind, c, e)]),
                 size=20,
                 _class="bx--toast-notification__icon",
             ),
-            htmlgenerator.DIV(
-                htmlgenerator.DIV(message, _class="bx--toast-notification__title"),
-                htmlgenerator.DIV(details, _class="bx--toast-notification__subtitle"),
+            hg.DIV(
+                hg.DIV(message, _class="bx--toast-notification__title"),
+                hg.DIV(details, _class="bx--toast-notification__subtitle"),
                 *timestampelem,
                 _class="bx--toast-notification__details",
             ),
         ]
-        if not hideclosebutton:
-            children.append(
-                htmlgenerator.BUTTON(
+        children.append(
+            hg.If(
+                hideclosebutton,
+                hg.BUTTON(
                     Icon("close", size=20, _class="bx--toast-notification__close-icon"),
                     data_notification_btn=True,
                     _class="bx--toast-notification__close-button",
                     aria_label="close",
-                )
+                ),
             )
+        )
         super().__init__(*children, **attributes)
 
     def render(self, context):
