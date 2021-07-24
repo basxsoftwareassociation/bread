@@ -1,4 +1,5 @@
 import htmlgenerator as hg
+from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.utils.html import strip_tags
 from django.utils.translation import get_language
@@ -26,7 +27,11 @@ def default_page_layout(menu, *content):
             hg.LINK(
                 rel="stylesheet",
                 type="text/css",
-                href=_static("css/bread-main.css"),
+                href=hg.If(
+                    settings.DEBUG,
+                    _static("css/bread-main.css"),  # generate with "make css"
+                    _static("css/bread-main.min.css"),  # generate with "make css"
+                ),
                 media="all",
             ),
             hg.LINK(
@@ -58,11 +63,19 @@ def default_page_layout(menu, *content):
                 style="position: fixed; right: 0; z-index: 999",
             ),
             hg.DIV(*content, _class="bx--content"),
-            hg.SCRIPT(src=_static("js/main.js")),
-            hg.SCRIPT(src=_static("js/bliss.min.js")),
-            hg.SCRIPT(src=_static("js/htmx.min.js")),
-            hg.SCRIPT(src=_static("design/carbon_design/js/carbon-components.js")),
-            hg.SCRIPT(src=_static("djangoql/js/completion.js")),
+            hg.If(
+                settings.DEBUG,
+                hg.BaseElement(
+                    hg.SCRIPT(src=_static("js/main.js")),
+                    hg.SCRIPT(src=_static("js/bliss.min.js")),
+                    hg.SCRIPT(src=_static("js/htmx.min.js")),
+                    hg.SCRIPT(
+                        src=_static("design/carbon_design/js/carbon-components.js")
+                    ),
+                    hg.SCRIPT(src=_static("djangoql/js/completion.js")),
+                ),
+                hg.SCRIPT(src=_static("js/bread.min.js")),  # generate with "make js"
+            ),
             hg.SCRIPT("CarbonComponents.watch(document);"),
         ),
         doctype=True,

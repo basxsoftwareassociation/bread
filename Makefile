@@ -14,6 +14,9 @@ css:
 	sassc -I bread/static/design/carbon_design/scss/globals/scss/vendor/ bread/static/design/carbon_design/scss/styles.scss > bread/static/css/bread-main.css
 	sassc -s compressed -I bread/static/design/carbon_design/scss/globals/scss/vendor/ bread/static/design/carbon_design/scss/styles.scss > bread/static/css/bread-main.min.css
 
+js:
+	uglifyjs bread/static/js/* bread/static/design/carbon_design/js/carbon-components.js > bread/static/js/bread.min.js
+
 watch_css:
 	find bread/static/design/carbon_design/scss -name '*.scss' | entr sassc -I bread/static/design/carbon_design/scss/globals/scss/vendor/ bread/static/design/carbon_design/scss/styles.scss > bread/static/css/bread-main.css
 

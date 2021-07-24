@@ -30,8 +30,6 @@ setup(
         "Django",
         "python-dateutil",
         "htmlgenerator",  # replacement for django templates
-        "django-compressor",  # compress html assets
-        "csscompressor",  # needed for better css compression
         "django-extensions",  # bunch of usefull management commands and functions
         "django-guardian",  # object level permissions
         "django-dynamic-preferences",  # easy handling of preferences
