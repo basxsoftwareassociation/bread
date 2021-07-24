@@ -34,11 +34,6 @@ def default_page_layout(menu, *content):
                 ),
                 media="all",
             ),
-            hg.LINK(
-                rel="stylesheet",
-                type="text/css",
-                href=_static("djangoql/css/completion.css"),
-            ),
         ),
         hg.BODY(
             ShellHeader(
@@ -67,12 +62,11 @@ def default_page_layout(menu, *content):
                 settings.DEBUG,
                 hg.BaseElement(
                     hg.SCRIPT(src=_static("js/main.js")),
-                    hg.SCRIPT(src=_static("js/bliss.min.js")),
-                    hg.SCRIPT(src=_static("js/htmx.min.js")),
+                    hg.SCRIPT(src=_static("js/bliss.js")),
+                    hg.SCRIPT(src=_static("js/htmx.js")),
                     hg.SCRIPT(
                         src=_static("design/carbon_design/js/carbon-components.js")
                     ),
-                    hg.SCRIPT(src=_static("djangoql/js/completion.js")),
                 ),
                 hg.SCRIPT(src=_static("js/bread.min.js")),  # generate with "make js"
             ),

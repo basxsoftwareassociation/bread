@@ -1,6 +1,7 @@
 import datetime
 
 import htmlgenerator as hg
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.urls import path
@@ -22,6 +23,12 @@ class EditView(views.EditView):
     def get_layout(self):
         F = _layout.form.FormField
         ret = hg.BaseElement(
+            hg.LINK(
+                rel="stylesheet",
+                type="text/css",
+                href=staticfiles_storage.url("djangoql/css/completion.css"),
+            ),
+            hg.SCRIPT(src=staticfiles_storage.url("djangoql/js/completion.js")),
             hg.H3(self.object),
             _layout.form.Form.wrap_with_form(
                 hg.C("form"),
