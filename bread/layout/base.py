@@ -85,14 +85,9 @@ def render(request, layout, context=None, **response_kwargs):
     defaultcontext = {}
     for processor in render.CONTEXT_PROCESSORS:
         defaultcontext.update(processor(request))
-    import time
-
-    t0 = time.time()
-    ret = HttpResponse(
+    return HttpResponse(
         layout.render({**defaultcontext, **(context or {})}), **response_kwargs
     )
-    print(time.time() - t0)
-    return ret
 
 
 render.CONTEXT_PROCESSORS = None
