@@ -147,9 +147,7 @@ class BreadView:
         if self.ajax_urlparameter not in self.request.GET:
             ret = self.get_page_layout(menu.main, ret)
 
-        return breadlayout.render(
-            self.request, ret, self.get_context_data(**context), **response_kwargs
-        )
+        return breadlayout.render(self.request, ret, context, **response_kwargs)
 
     def _get_layout_cached(self):
         """Used for caching layouts, only bread-internal"""
