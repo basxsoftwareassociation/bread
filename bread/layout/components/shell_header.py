@@ -23,7 +23,7 @@ class ShellHeader(hg.HEADER):
                     hg.SPAN(company, style="position: absolute; left: 5rem"),
                     _class="bx--header__name",
                     style="font-weight: 400;",  # override carbon design
-                    href=hg.F(lambda c, e: c["request"].build_absolute_uri("/")),
+                    href=hg.F(lambda c, e: c["request"].META["SCRIPT_NAME"] or "/"),
                 ),
                 hg.A(
                     hg.IMG(
@@ -35,7 +35,7 @@ class ShellHeader(hg.HEADER):
                     hg.SPAN(company, style="position: absolute; left: 18rem"),
                     _class="bx--header__name",
                     style="font-weight: 400",  # override carbon design
-                    href=hg.F(lambda c, e: c["request"].build_absolute_uri("/")),
+                    href=hg.F(lambda c, e: c["request"].META["SCRIPT_NAME"] or "/"),
                 ),
             ),
             hg.DIV(
