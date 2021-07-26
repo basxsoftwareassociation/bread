@@ -5,8 +5,8 @@ document.addEventListener(
     () => bread_load_elements()
 );
 
-function bread_load_elements(context=null) {
-    $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)', context)._.fire("load")
+function bread_load_elements() {
+    $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load")
 }
 
 function updateMultiselect(e) {
@@ -120,7 +120,7 @@ function formset_add(form_prefix, list_container) {
     update_add_button(form_prefix);
     updateMultiselect(container_elem);
 
-    bread_load_elements(container_elem)
+    bread_load_elements();
     htmx.process(container_elem);
 }
 
