@@ -257,7 +257,7 @@ def default_model_paths(
 
     for viewname, viewclass in kwargs.items():
         ret.append(
-            autopath(editview.as_view(model=model), model_urlname(model, viewname))
+            autopath(viewclass.as_view(model=model), model_urlname(model, viewname))
         )
     return ret
 
