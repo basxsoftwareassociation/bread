@@ -232,3 +232,8 @@ fieldset[readonly=true] :disabled {
     }
 }
 
+
+// better alignment of header icon when sidenav collapsed 
+a.bx--header__name {
+    padding: 0 .5rem 0 .5rem;
+}

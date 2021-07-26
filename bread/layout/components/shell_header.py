@@ -26,6 +26,11 @@ class ShellHeader(hg.HEADER):
                     href=hg.F(lambda c, e: c["request"].build_absolute_uri("/")),
                 ),
                 hg.A(
+                    hg.IMG(
+                        src=staticfiles_storage.url("logo.png"),
+                        _class="bx--header__name--prefix",
+                        style="width: 1.7rem; height; 1.7rem; margin-right: 0.5rem",
+                    ),
                     hg.SPAN(platform, _class="bx--header__name--prefix"),
                     hg.SPAN(company, style="position: absolute; left: 18rem"),
                     _class="bx--header__name",
