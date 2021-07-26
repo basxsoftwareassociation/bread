@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-26 17:11+0700\n"
-"PO-Revision-Date: 2021-06-19 07:43+0000\n"
+"PO-Revision-Date: 2021-07-26 13:10+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
 "th/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.7\n"
+"X-Generator: Weblate 4.7.2-dev\n"
 
 #: bread/contrib/reports/fields/queryfield.py:109
 #, python-format
@@ -101,9 +101,6 @@ msgid "Delete"
 msgstr "ลบ"
 
 #: bread/contrib/reports/urls.py:156
-#, fuzzy
-#| msgctxt "this is a copy"
-#| msgid "Copy"
 msgid "Copy"
 msgstr "คัดลอก"
 
@@ -230,73 +227,68 @@ msgid "Login"
 msgstr "ลงชื่อเข้าใช้"
 
 #: bread/views/auth.py:65 bread/views/auth.py:122
-#, fuzzy
-#| msgid "Show password"
 msgid "Lost password?"
-msgstr "เห็นรหัสผ่าน"
+msgstr "ลืมรหัสผ่าน?"
 
 #: bread/views/auth.py:107
 msgid "Logged out"
-msgstr ""
+msgstr "ออกจากระบบ"
 
 #: bread/views/auth.py:114 bread/views/auth.py:146
 msgid "Password reset"
-msgstr ""
+msgstr "ตั้งค่ารหัสใหม่"
 
 #: bread/views/auth.py:137
-#, fuzzy
-#| msgid "Show password"
 msgid "Reset password"
-msgstr "เห็นรหัสผ่าน"
+msgstr "ตั้งค่ารหัสผ่านใหม่"
 
 #: bread/views/auth.py:153
 msgid "Email instructions sent"
-msgstr ""
+msgstr "ส่งคำแนะนำการใช้งานทางอีเมลแล้ว"
 
 #: bread/views/auth.py:155
 msgid ""
 "If the email address provided exists, you will shortly receive an email "
 "containing recovery instructions."
 msgstr ""
+"หากคุณเคยให้ที่อยู่อีเมล ไว้ คุณจะได้รับอีเมลพร้อมคำแนะนำในการกู้คืนในไม่ช้า"
 
 #: bread/views/auth.py:163 bread/views/auth.py:212 bread/views/auth.py:236
 msgid "Back to Login"
-msgstr ""
+msgstr "กลับเข้าสู่ระบบ"
 
 #: bread/views/auth.py:171
-#, fuzzy
-#| msgid "Show password"
 msgid "Change Password"
-msgstr "เห็นรหัสผ่าน"
+msgstr "เปลี่ยนรหัสผ่าน"
 
 #: bread/views/auth.py:197 bread/views/auth.py:221
-#, fuzzy
-#| msgid "Show password"
 msgid "Change password"
-msgstr "เห็นรหัสผ่าน"
+msgstr "เปลี่ยนรหัสผ่าน"
 
 #: bread/views/auth.py:203
 msgid "Invalid password reset link"
-msgstr ""
+msgstr "ลิงค์รีเซ็ตรหัสผ่านไม่ถูกต้อง"
 
 #: bread/views/auth.py:205
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used. Please request a new password reset."
 msgstr ""
+"ลิงก์รีเซ็ตรหัสผ่านไม่ถูกต้อง อาจเป็นเพราะเคยมีการใช้งานแล้ว "
+"โปรดขอรีเซ็ตรหัสผ่านใหม่"
 
 #: bread/views/auth.py:228
 msgid "Password successfully changed"
-msgstr ""
+msgstr "เปลี่ยนรหัสผ่านสำเร็จ"
 
 #: bread/views/auth.py:229
 msgid "Please login again"
-msgstr ""
+msgstr "กรุณาเข้าสู่ระบบอีกครั้ง"
 
 #: bread/views/browse.py:149
 #, python-format
 msgid "Acton '%s' is not configured for this view"
-msgstr ""
+msgstr "ไม่ได้กำหนดค่า Acton '%s' สำหรับมุมมองนี้"
 
 #: bread/views/browse.py:243
 #, python-format
@@ -314,22 +306,19 @@ msgid "Deleted %(count)s %(modelname)s"
 msgstr "ลบ %(count)s %(modelname)s"
 
 #: bread/views/browse.py:283
-#, fuzzy, python-format
-#| msgid "Your user has not the permissions to delete %s"
+#, python-format
 msgid "Your user has not the permissions to restore %s"
-msgstr "ชื่อผู้ใช้ของคุณไม่สามารถทำการลบได้%s"
+msgstr "ชื่อผู้ใช้ของคุณไม่มีสิทธิ์กู้คืน%s"
 
 #: bread/views/browse.py:292
-#, fuzzy, python-format
-#| msgid "%s could not be deleted: %s"
+#, python-format
 msgid "%s could not be restored: %s"
-msgstr "%s ไม่ควรลบเพราะ: %s"
+msgstr "%s ไม่ควรกู้คืนเพราะ: %s"
 
 #: bread/views/browse.py:297
-#, fuzzy, python-format
-#| msgid "Deleted %(count)s %(modelname)s"
+#, python-format
 msgid "Restored %(count)s %(modelname)s"
-msgstr "ลบ %(count)s %(modelname)s"
+msgstr "กู้คืน %(count)s %(modelname)s"
 
 #: bread/views/delete.py:47
 #, python-format
