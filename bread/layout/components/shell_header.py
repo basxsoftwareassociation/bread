@@ -23,14 +23,14 @@ class ShellHeader(hg.HEADER):
                     hg.SPAN(company, style="position: absolute; left: 5rem"),
                     _class="bx--header__name",
                     style="font-weight: 400;",  # override carbon design
-                    href="/",
+                    href=hg.F(lambda c, e: c["request"].build_absolute_uri("/")),
                 ),
                 hg.A(
                     hg.SPAN(platform, _class="bx--header__name--prefix"),
                     hg.SPAN(company, style="position: absolute; left: 18rem"),
                     _class="bx--header__name",
                     style="font-weight: 400",  # override carbon design
-                    href="/",
+                    href=hg.F(lambda c, e: c["request"].build_absolute_uri("/")),
                 ),
             ),
             hg.DIV(
