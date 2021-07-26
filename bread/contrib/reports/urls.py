@@ -193,7 +193,7 @@ urlpatterns = [
         editview=EditView,
         readview=ReadView,
     ),
-    urls.generate_path(
+    urls.autopath(
         exceldownload,
         urls.model_urlname(Report, "excel"),
     ),
