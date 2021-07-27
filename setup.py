@@ -43,9 +43,8 @@ setup(
         "django-celery-results",
         "django-celery-beat",
         # required for search engine
-        "django-haystack",
+        "celery-haystack-ng",
         "whoosh",
-        "celery-haystack",
         # TODO: review whether we can or should remove these
         "WeasyPrint",  # creating PDFs
         "django-ckeditor",
