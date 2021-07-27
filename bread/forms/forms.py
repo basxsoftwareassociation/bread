@@ -97,6 +97,7 @@ def breadmodelform_factory(  # noqa
                                 forminstance,
                                 f"set_{self.cleaned_data[fieldname].model._meta.model_name}_order",
                             )(order)
+                forminstance.save()  # call save a second time to make related objects available in save method
 
             return forminstance
 
