@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-23 18:35+0700\n"
+"POT-Creation-Date: 2021-07-26 17:11+0700\n"
 "PO-Revision-Date: 2021-06-23 11:32+0000\n"
 "Last-Translator: Nathan <bonnemainsnathan@gmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -69,8 +69,8 @@ msgstr ""
 msgid "Report"
 msgstr "Rapport"
 
-#: bread/contrib/reports/models.py:84 bread/contrib/reports/urls.py:203
-#: bread/contrib/reports/urls.py:205
+#: bread/contrib/reports/models.py:84 bread/contrib/reports/urls.py:210
+#: bread/contrib/reports/urls.py:212
 msgid "Reports"
 msgstr "Rapports"
 
@@ -86,28 +86,28 @@ msgstr "Agrégation"
 msgid "Columns"
 msgstr "Colonnes"
 
-#: bread/contrib/reports/urls.py:30
+#: bread/contrib/reports/urls.py:37
 msgid "Base model"
 msgstr "Modèle de base"
 
-#: bread/contrib/reports/urls.py:105 bread/contrib/reports/urls.py:176
+#: bread/contrib/reports/urls.py:112 bread/contrib/reports/urls.py:183
 #: bread/views/browse.py:80
 msgid "Excel"
 msgstr "Excel"
 
-#: bread/contrib/reports/urls.py:145 bread/layout/components/form.py:320
+#: bread/contrib/reports/urls.py:152 bread/layout/components/form.py:320
 #: bread/views/browse.py:84
 msgid "Delete"
 msgstr "Supprimer"
 
-#: bread/contrib/reports/urls.py:149
+#: bread/contrib/reports/urls.py:156
 #, fuzzy
 #| msgctxt "this is a copy"
 #| msgid "Copy"
 msgid "Copy"
 msgstr "Copier"
 
-#: bread/contrib/reports/urls.py:163
+#: bread/contrib/reports/urls.py:170
 msgid "Edit"
 msgstr "Modifier"
 
