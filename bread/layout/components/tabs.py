@@ -3,6 +3,8 @@ import collections
 import htmlgenerator as hg
 from django.utils.text import slugify
 
+from .. import HasBreadCookieValue
+
 
 class TabLabel(hg.LI):
     def __init__(self, label, tabid, panelid, selected):
@@ -14,15 +16,17 @@ class TabLabel(hg.LI):
                 _class="bx--tabs__nav-link",
                 href="javascript:void(0)",
                 aria_controls=panelid,
-                aria_selected="true" if selected else "false",
+                aria_selected=hg.If(selected, "true", "false"),
                 role="tab",
-                onclick="window.localStorage.setItem('selected_tab', this.id)",
             ),
-            _class="bx--tabs__nav-item"
-            + (" bx--tabs__nav-item--selected" if selected else ""),
+            _class=hg.BaseElement(
+                "bx--tabs__nav-item",
+                hg.If(selected, " bx--tabs__nav-item--selected"),
+            ),
             data_target="#" + panelid,
-            aria_selected="true" if selected else "false",
+            aria_selected=hg.If(selected, "true", "false"),
             role="tab",
+            onclick=hg.BaseElement("setBreadCookie('selected-tab', '", tabid, "')"),
         )
 
 
@@ -33,8 +37,8 @@ class TabPanel(hg.DIV):
             id=panelid,
             aria_labelledby=tabid,
             role="tabpanel",
-            aria_hidden="false" if selected else "true",
-            hidden=not selected,
+            aria_hidden=hg.If(selected, "false", "true"),
+            hidden=hg.If(selected, False, True),
         )
 
 
@@ -47,11 +51,18 @@ class Tabs(hg.DIV):
         *tabs,
         container=False,
         tabpanel_attributes=None,
+        labelcontainer_attributes=None,
         **attributes,
     ):
         tabpanel_attributes = collections.defaultdict(str, tabpanel_attributes or {})
+        labelcontainer_attributes = collections.defaultdict(
+            str, labelcontainer_attributes or {}
+        )
 
         self.tablabels = hg.UL(_class="bx--tabs__nav bx--tabs__nav--hidden")
+        labelcontainer_attributes["_class"] += "bx--tabs" + (
+            " bx--tabs--container" if container else ""
+        )
         self.labelcontainer = hg.DIV(
             hg.DIV(
                 hg.A(
@@ -65,17 +76,33 @@ class Tabs(hg.DIV):
             ),
             self.tablabels,
             data_tabs=True,
-            _class="bx--tabs" + (" bx--tabs--container" if container else ""),
-            onload="if(window.localStorage.getItem('selected_tab')) $('#' + window.localStorage.getItem('selected_tab')).click();",
+            **labelcontainer_attributes,
         )
         tabpanel_attributes["_class"] += " bx--tab-content"
         self.tabpanels = hg.DIV(**tabpanel_attributes)
 
+        firsttab = None
         for i, (label, content) in enumerate(tabs):
             tabid = f"tab-{slugify(label)}-{i}"
             panelid = f"panel-{slugify(label)}-{i}"
-            self.tablabels.append(TabLabel(label, tabid, panelid, i == 0))
-            self.tabpanels.append(TabPanel(content, panelid, tabid, i == 0))
+            if firsttab is None:
+                firsttab = tabid
+            self.tablabels.append(
+                TabLabel(
+                    label,
+                    tabid,
+                    panelid,
+                    HasBreadCookieValue("selected-tab", tabid, firsttab),
+                )
+            )
+            self.tabpanels.append(
+                TabPanel(
+                    content,
+                    panelid,
+                    tabid,
+                    HasBreadCookieValue("selected-tab", tabid, firsttab),
+                )
+            )
         super().__init__(
             self.labelcontainer,
             self.tabpanels,

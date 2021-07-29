@@ -52,11 +52,13 @@ class Report(models.Model):
 
     @property
     def queryset(self):
-        if self.custom_queryset:
+        if self.custom_queryset and self.custom_queryset in getattr(
+            settings, "REPORT_FILTERS", {}
+        ):
             # do not check whether the settings exists, an exception can be raised automatically
-            ret = settings.REPORT_FILTERS[self.custom_queryset](
-                self.model.model_class()
-            )
+            ret = getattr(settings, "REPORT_FILTERS", {}).get(
+                self.custom_queryset, lambda model: model.objects.none()
+            )(self.model.model_class())
             if not isinstance(ret, models.QuerySet):
                 raise ValueError(
                     _(

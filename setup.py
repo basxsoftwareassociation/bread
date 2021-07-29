@@ -30,8 +30,6 @@ setup(
         "Django",
         "python-dateutil",
         "htmlgenerator",  # replacement for django templates
-        "django-compressor",  # compress html assets
-        "csscompressor",  # needed for better css compression
         "django-extensions",  # bunch of usefull management commands and functions
         "django-guardian",  # object level permissions
         "django-dynamic-preferences",  # easy handling of preferences
@@ -41,13 +39,12 @@ setup(
         "openpyxl",  # working with excel files
         "djangoql",
         # required for task scheduling
-        "celery <5.0,>=4.4",
+        "celery",
         "django-celery-results",
         "django-celery-beat",
         # required for search engine
-        "django-haystack",
+        "celery-haystack-ng",
         "whoosh",
-        "celery-haystack",
         # TODO: review whether we can or should remove these
         "WeasyPrint",  # creating PDFs
         "django-ckeditor",

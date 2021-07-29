@@ -3,8 +3,6 @@ import numbers
 from collections.abc import Iterable
 
 import htmlgenerator as hg
-from ckeditor.fields import RichTextField
-from ckeditor_uploader.fields import RichTextUploadingField
 from dateutil import tz
 from django.conf import settings
 from django.core.exceptions import FieldDoesNotExist
@@ -227,8 +225,6 @@ MODELFIELD_FORMATING_HELPERS = {
     models.TextField: as_text,
     models.TimeField: as_time,
     models.DateTimeField: as_datetime,
-    RichTextField: as_richtext,
-    RichTextUploadingField: as_richtext,
     CountryField: as_countries,
 }
 

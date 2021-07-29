@@ -8,7 +8,7 @@ class Group:
         self, label, icon=None, permissions=[], order=None, sort_alphabetically=False
     ):
         self.label = label
-        self.icon = icon
+        self.icon = icon or "folder"
         self.permissions = permissions
         self._order = order
         self.items = []
@@ -105,6 +105,7 @@ class Item:
             raise ValueError(
                 f"argument 'link' must be of type Link but is of type {type(link)}"
             )
+        link.icon = link.icon or "folder"
         self.link = link
         self.group = group
         self._order = order
@@ -133,13 +134,24 @@ class Menu:
         self._registry = {}
 
     def registeritem(self, menuitem):
-        group = menuitem.group
-        if not isinstance(group, Group):
-            group = Group(label=group)
-            menuitem.group = group
-        if group.label not in self._registry:
-            self._registry[group.label] = group
-        self._registry[group.label].items.append(menuitem)
+        """
+        If menuitem.group is None this will be a top-level menu item.
+        Otherwise the group will be created (if a group with the same label does not exists yet) and the menuitem appended to the group
+        """
+        if menuitem.group is None:
+            if menuitem.link.label in self._registry:
+                raise ValueError(
+                    f"Top-level menu item {menuitem} already exists in menu"
+                )
+            self._registry[menuitem.link.label] = menuitem
+        else:
+            group = menuitem.group
+            if isinstance(group, str):
+                group = Group(label=group)
+                menuitem.group = group
+            if group.label not in self._registry:
+                self._registry[group.label] = group
+            self._registry[group.label].items.append(menuitem)
 
 
 def registeritem(item):
