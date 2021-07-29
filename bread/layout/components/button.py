@@ -14,11 +14,8 @@ class Button(htmlgenerator.BUTTON):
         icon=None,
         notext=False,
         small=False,
-        islink=False,
         **attributes,
     ):
-        if islink:
-            self.tag = "a"
         attributes["type"] = attributes.get("type", "button")
         attributes["tabindex"] = attributes.get("tabindex", "0")
         attributes["_class"] = (

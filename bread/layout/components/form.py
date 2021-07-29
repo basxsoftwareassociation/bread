@@ -117,7 +117,7 @@ class FormField(FormChild, hg.BaseElement):
             self.widgetattributes,
         )
         if self.hidelabel:
-            element._replace(
+            element.replace(
                 lambda e, ancestors: isinstance(e, hg.LABEL), None, all=True
             )
         return element.render(context)
