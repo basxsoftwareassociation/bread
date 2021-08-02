@@ -31,14 +31,14 @@ class Node:
 
     def _node_verify(self):
         ALLOWED_NODES_TYPES = (Node, models.CharField, models.BooleanField)
-        assert isinstance(self.inputs, tuple)
-        assert isinstance(self.outputs, tuple)
+        assert isinstance(self.inputs, tuple)  # nosec because only for API validation
+        assert isinstance(self.outputs, tuple)  # nosec because only for API validation
         for node, choice in self.inputs + self.outputs:
-            assert isinstance(
+            assert isinstance(  # nosec because only for API validation
                 node, ALLOWED_NODES_TYPES
             ), f"Nodes in the workflow must be of type {ALLOWED_NODES_TYPES}"
             if isinstance(node, models.CharField):
-                assert hasattr(
+                assert hasattr(  # nosec because only for API validation
                     node, "choices"
                 ), f"Node {node} needs to have attribute 'choices'"
 
@@ -96,7 +96,7 @@ class Action(models.BooleanField, Node):
 
     def _node_verify(self):
         super()._node_verify()
-        assert (
+        assert (  # nosec because only for API validation
             len(self.inputs) == 1 and len(self.outputs) == 1
         ), f"{self} can only have one input and one output"
 
@@ -110,7 +110,7 @@ class Decision(models.CharField, Node):
         kwargs["null"] = True
         kwargs["blank"] = True
         kwargs["max_length"] = 255
-        assert choices is not None
+        assert choices is not None  # nosec because only for API validation
         super().__init__(
             *args, choices=choices, **kwargs
         )  # MRO says we call BooleanField.__init__
@@ -145,9 +145,11 @@ class Decision(models.CharField, Node):
 
     def _node_verify(self):
         super()._node_verify()
-        assert len(self.inputs) == 1
-        assert len(self.outputs) > 1
-        assert len(self.choices) == len(self.outputs)
+        assert len(self.inputs) == 1  # nosec because only for API validation
+        assert len(self.outputs) > 1  # nosec because only for API validation
+        assert len(self.choices) == len(  # nosec because only for API validation
+            self.outputs
+        )
 
     def dot_attrs(self):
         return {
@@ -167,7 +169,9 @@ class Decision(models.CharField, Node):
 class Merge(Node):
     def _node_verify(self):
         super()._node_verify()
-        assert len(self.inputs) >= 1 and len(self.outputs) == 1
+        assert (  # nosec because only for API validation
+            len(self.inputs) >= 1 and len(self.outputs) == 1
+        )
 
     def dot_attrs(self):
         return {
@@ -185,7 +189,9 @@ class Initial(Node):
 
     def _node_verify(self):
         super()._node_verify()
-        assert len(self.inputs) == 0 and len(self.outputs) == 1
+        assert (  # nosec because only for API validation
+            len(self.inputs) == 0 and len(self.outputs) == 1
+        )
 
     def dot_attrs(self):
         return {
@@ -202,7 +208,9 @@ class Initial(Node):
 class FlowFinal(Node):
     def _node_verify(self):
         super()._node_verify()
-        assert len(self.inputs) == 1 and len(self.outputs) == 0
+        assert (  # nosec because only for API validation
+            len(self.inputs) == 1 and len(self.outputs) == 0
+        )
 
     def dot_attrs(self):
         return {
@@ -217,7 +225,9 @@ class FlowFinal(Node):
 class WorkflowFinal(Node):
     def _node_verify(self):
         super()._node_verify()
-        assert len(self.inputs) == 1 and len(self.outputs) == 0
+        assert (  # nosec because only for API validation
+            len(self.inputs) == 1 and len(self.outputs) == 0
+        )
 
     def dot_attrs(self):
         return {
@@ -234,7 +244,9 @@ class WorkflowFinal(Node):
 class Fork(Node):
     def _node_verify(self):
         super()._node_verify()
-        assert len(self.inputs) == 1 and len(self.outputs) >= 1
+        assert (  # nosec because only for API validation
+            len(self.inputs) == 1 and len(self.outputs) >= 1
+        )
 
     def dot_attrs(self):
         return {
@@ -255,7 +267,9 @@ class Join(Node):
 
     def _node_verify(self):
         super()._node_verify()
-        assert len(self.inputs) >= 1 and len(self.outputs) == 1
+        assert (  # nosec because only for API validation
+            len(self.inputs) >= 1 and len(self.outputs) == 1
+        )
 
     def dot_attrs(self):
         return {

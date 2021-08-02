@@ -1,5 +1,5 @@
 import re
-import subprocess
+import subprocess  # nosec because all dealt with
 
 import htmlgenerator as hg
 from django.db import models
@@ -50,13 +50,15 @@ class WorkflowBase(models.Model):
             def allnodes(graph):
                 return set(sum((list(i[:2]) for i in graph), []))
 
-            assert hasattr(cls, "WORKFLOW")
-            assert isinstance(cls.WORKFLOW, dict)
+            assert hasattr(cls, "WORKFLOW")  # nosec because only for API validation
+            assert isinstance(  # nosec because only for API validation
+                cls.WORKFLOW, dict
+            )
             graph = []  # [(source, target, choice)]
 
             # some type checking
             for node in allnodes(graph):
-                assert isinstance(
+                assert isinstance(  # nosec because only for API validation
                     node, (Node, dict, tuple, type(None))
                 ), f"Node {node} if not of type {Node}"
 
@@ -65,7 +67,7 @@ class WorkflowBase(models.Model):
                 if isinstance(target, tuple):
                     graph.extend((source, node, None) for node in target)
                 elif isinstance(target, dict):
-                    assert all(
+                    assert all(  # nosec because only for API validation
                         t is not None for t in target.keys()
                     ), "None is not an allowed key for choices"
                     graph.extend(
@@ -302,7 +304,7 @@ class WorkflowBase(models.Model):
 
 def dot2svg(dot: str):
     try:
-        process = subprocess.run(
+        process = subprocess.run(  # nosec because fixed arguments and we take the risk of relative path
             ["dot", "-Tsvg"],
             input=dot.encode(),
             capture_output=True,
