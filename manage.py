@@ -15,7 +15,7 @@ INSTALLED_APPS = [
     "bread.contrib.workflows",
 ]
 
-settings.configure(
+settings.configure(  # nosec because this is only for local development
     DEBUG=True,
     USE_TZ=True,
     USE_I18N=True,
@@ -27,7 +27,7 @@ settings.configure(
         "django.contrib.auth.backends.ModelBackend",
         "guardian.backends.ObjectPermissionBackend",
     ),
-    SECRET_KEY="SECRET_KEY_FOR_TESTING",  # nosec because this is only for local development
+    SECRET_KEY="SECRET_KEY_FOR_TESTING",
     STATIC_URL="static/",
 )
 
