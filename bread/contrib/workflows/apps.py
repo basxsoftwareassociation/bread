@@ -1,27 +1,16 @@
-from celery import shared_task
+from celery.decorators import periodic_task
 from django.apps import AppConfig
+
+from . import settings
 
 
 class WorkflowsConfig(AppConfig):
     name = "bread.contrib.workflows"
 
     def ready(self):
-        from django.utils import timezone
-        from django_celery_beat.models import MINUTES, IntervalSchedule, PeriodicTask
-
-        interval, _ = IntervalSchedule.objects.get_or_create(every=1, period=MINUTES)
-        if not PeriodicTask.objects.filter(
-            task="bread.contrib.workflows.apps.update_workflows"
-        ).exists():
-            PeriodicTask.objects.create(
-                name="bread.contrib.workflows.apps.update_workflows",
-                task="bread.contrib.workflows.apps.update_workflows",
-                interval=interval,
-                start_time=timezone.now(),
-            )
+        periodic_task(run_every=settings.WORKFLOW_BEAT)(update_workflows)
 
 
-@shared_task
 def update_workflows():
     from .models import WorkflowBase
 
