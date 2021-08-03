@@ -79,7 +79,7 @@ class Action(models.BooleanField, Node):
         """
         Should run automated actions and return True if the action was successfull
         The default just returns the value of the field which is makes this a manual action which will be confirmed through checking the checkbox for this field.
-        This method can be called multiple times and should therefore be idempotent
+        This method can be called multiple times and should therefore be idempotent, but only if done does not return True
         """
         return getattr(instance, self.name)
 

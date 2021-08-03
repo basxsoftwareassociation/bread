@@ -289,12 +289,14 @@ class WorkflowBase(models.Model):
                             actionresult = node.action(self)
                             if actionresult != getattr(self, node.name):
                                 state_changed = True
+                                setattr(self, node.name, actionresult)
                     if isinstance(node, Decision):
                         if any(n.done(self) for n, c in node.inputs):
                             node.decide(self)
                             decision = node.decide(self)
                             if decision != getattr(self, node.name):
                                 state_changed = True
+                                setattr(self, node.name, decision)
                 for outputnode, choice in node.outputs:
                     nodequeue.insert(0, outputnode)
 

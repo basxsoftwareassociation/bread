@@ -1,7 +1,7 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
-from bread import layout, views
+from bread import layout, utils, views
 
 
 class WorkflowBrowseView(views.BrowseView):
@@ -21,7 +21,7 @@ class WorkflowBrowseView(views.BrowseView):
                 **workflow_diagram.openerattributes,
                 small=True,
                 style="float: right",
-                buttontype="tertiary"
+                buttontype="tertiary",
             ),
         )
         ret.append(workflow_diagram)
@@ -36,10 +36,39 @@ class WorkflowEditView(views.EditView):
         return hg.DIV(
             hg.DIV(
                 layout.form.Form.wrap_with_form(hg.C("form"), fields),
-                style="flex-grow: 1",
+                style="padding: 1rem",
             ),
-            hg.DIV(self.object.as_svg(), style="width: 40%"),
+            hg.DIV(self.object.as_svg(), style="width: 40%; border: 1px solid gray"),
             style="display: flex",
+        )
+
+
+class WorkflowReadView(views.ReadView):
+    def get_layout(self):
+        fields = hg.BaseElement(
+            *[
+                layout.form.FormField(f)
+                for f in utils.filter_fieldlist(self.model, ["__all__"], for_form=True)
+            ]
+        )
+
+        return hg.DIV(
+            layout.button.Button(
+                "Edit",
+                **layout.aslink_attributes(layout.objectaction(self.object, "edit")),
+            ),
+            views.layoutasreadonly(
+                hg.DIV(
+                    hg.DIV(
+                        layout.form.Form.wrap_with_form(hg.C("form"), fields),
+                        style="padding: 1rem",
+                    ),
+                    hg.DIV(
+                        self.object.as_svg(), style="width: 40%; border: 1px solid gray"
+                    ),
+                    style="display: flex;",
+                )
+            ),
         )
 
 
