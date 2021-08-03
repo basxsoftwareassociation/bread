@@ -102,9 +102,12 @@ td .bx--form-item {
 }
 
 // prevent disabled fields form becoming unreadable
-fieldset[readonly=true] :disabled {
+fieldset[readonly] {
     color: initial !important;
     cursor: auto !important;
+    .bx--label--disabled {
+        color: initial !important;
+    }
 }
 
 @keyframes notification {
