@@ -22,10 +22,17 @@ class DataTableColumn(NamedTuple):
     cell: Any
     sortingname: Optional[str] = None
     enable_row_click: bool = True
+    th_attributes: hg.F = None
+    td_attributes: hg.F = None
 
     @staticmethod
     def from_modelfield(
-        col, model, prevent_automatic_sortingnames=False, rowvariable="row"
+        col,
+        model,
+        prevent_automatic_sortingnames=False,
+        rowvariable="row",
+        th_attributes=None,
+        td_attributes=None,
     ) -> "DataTableColumn":
         return DataTableColumn(
             fieldlabel(model, col),
@@ -33,6 +40,8 @@ class DataTableColumn(NamedTuple):
             sortingname_for_column(model, col)
             if not prevent_automatic_sortingnames
             else None,
+            th_attributes=th_attributes,
+            td_attributes=td_attributes,
         )
 
     def as_header_cell(self, orderingurlparameter="ordering"):
@@ -54,7 +63,7 @@ class DataTableColumn(NamedTuple):
                 title=self.header,
                 **sortinglink_for_column(orderingurlparameter, self.sortingname),
             )
-        return hg.TH(headcontent, **getattr(self.header, "td_attributes", {}))
+        return hg.TH(headcontent, lazy_attributes=self.th_attributes)
 
 
 class DataTable(hg.TABLE):
@@ -379,37 +388,47 @@ class DataTable(hg.TABLE):
                 style="display: flex",
             )
 
-        action_menu_header = hg.BaseElement()
-        action_menu_header.td_attributes = {"_class": "bx--table-column-menu"}
         queryset = model.objects.all() if queryset is None else queryset
         columns = columns or filter_fieldlist(model, ["__all__"])
         column_definitions: List[DataTableColumn] = []
         for col in columns:
+            td_attributes = None
+            if rowclickaction and getattr(col, "enable_row_click", True):
+                td_attributes = hg.F(
+                    lambda c, e: aslink_attributes(
+                        objectaction(c[rowvariable], rowclickaction)
+                    )
+                )
             # convert simple string (modelfield) to column definition
             if isinstance(col, str):
                 col = DataTableColumn.from_modelfield(
-                    col, model, prevent_automatic_sortingnames, rowvariable
+                    col,
+                    model,
+                    prevent_automatic_sortingnames,
+                    rowvariable,
+                    td_attributes=td_attributes,
                 )
+            else:
+                if td_attributes:
+                    col = col._replace(td_attributes=td_attributes)
 
-            if rowclickaction and col.enable_row_click:
-                col.cell.td_attributes = aslink_attributes(
-                    hg.F(
-                        lambda c, e: objectaction(
-                            c[rowvariable],
-                            rowclickaction,
-                            query={
-                                "next": hg.resolve_lazy(backurl, c, e)
-                                or c["request"].get_full_path()
-                            },
-                        )
-                    )
-                )
             column_definitions.append(col)
 
         table = DataTable(
             column_definitions
             + (
-                [DataTableColumn(action_menu_header, objectactions_menu)]
+                [
+                    DataTableColumn(
+                        "",
+                        objectactions_menu,
+                        td_attributes=hg.F(
+                            lambda c, e: {"_class": "bx--table-column-menu"}
+                        ),
+                        th_attributes=hg.F(
+                            lambda c, e: {"_class": "bx--table-column-menu"}
+                        ),
+                    )
+                ]
                 if rowactions
                 else []
             ),
@@ -460,10 +479,7 @@ class DataTable(hg.TABLE):
     def row(columns):
         """Returns a row element based on the specified columns"""
         return hg.TR(
-            *[
-                hg.TD(col.cell, **getattr(col.cell, "td_attributes", {}))
-                for col in columns
-            ]
+            *[hg.TD(col.cell, lazy_attributes=col.td_attributes) for col in columns]
         )
 
     @staticmethod

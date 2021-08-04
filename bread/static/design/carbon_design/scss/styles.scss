@@ -102,9 +102,12 @@ td .bx--form-item {
 }
 
 // prevent disabled fields form becoming unreadable
-fieldset[readonly=true] :disabled {
+fieldset[readonly] {
     color: initial !important;
     cursor: auto !important;
+    .bx--label--disabled {
+        color: initial !important;
+    }
 }
 
 @keyframes notification {
@@ -231,3 +234,8 @@ fieldset[readonly=true] :disabled {
     }
 }
 
+
+// better alignment of header icon when sidenav collapsed 
+a.bx--header__name {
+    padding: 0 .5rem 0 .5rem;
+}

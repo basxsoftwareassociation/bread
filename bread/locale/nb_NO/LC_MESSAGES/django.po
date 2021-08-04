@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-19 12:29+0700\n"
+"POT-Creation-Date: 2021-07-26 17:11+0700\n"
 "PO-Revision-Date: 2021-05-15 05:32+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
@@ -28,7 +28,7 @@ msgstr ""
 msgid "Created"
 msgstr "Opprettet"
 
-#: bread/contrib/reports/models.py:21 bread/contrib/reports/models.py:93
+#: bread/contrib/reports/models.py:21 bread/contrib/reports/models.py:95
 msgid "Name"
 msgstr "Navn"
 
@@ -55,48 +55,61 @@ msgstr ""
 msgid "Preview"
 msgstr "Forhåndsvis"
 
-#: bread/contrib/reports/models.py:63
+#: bread/contrib/reports/models.py:65
 #, python-format
 msgid ""
 "settings.REPORT_FILTERS[\"%s\"] did not return a queryset but returned: %s"
 msgstr ""
 
-#: bread/contrib/reports/models.py:70
+#: bread/contrib/reports/models.py:72
 #, python-format
 msgid ""
 "settings.REPORT_FILTERS[\"%s\"] did not return a queryset for %s but for %s"
 msgstr ""
 
-#: bread/contrib/reports/models.py:81
+#: bread/contrib/reports/models.py:83
 msgid "Report"
 msgstr "Rapport"
 
-#: bread/contrib/reports/models.py:82 bread/contrib/reports/urls.py:205
-#: bread/contrib/reports/urls.py:206
+#: bread/contrib/reports/models.py:84 bread/contrib/reports/urls.py:210
+#: bread/contrib/reports/urls.py:212
 msgid "Reports"
 msgstr "Rapporter"
 
-#: bread/contrib/reports/models.py:92 bread/contrib/reports/models.py:99
+#: bread/contrib/reports/models.py:94 bread/contrib/reports/models.py:101
 msgid "Column"
 msgstr "Kolonne"
 
-#: bread/contrib/reports/models.py:95
+#: bread/contrib/reports/models.py:97
 msgid "Aggregation"
 msgstr ""
 
-#: bread/contrib/reports/models.py:100
+#: bread/contrib/reports/models.py:102
 msgid "Columns"
 msgstr "Kolonner"
 
-#: bread/contrib/reports/urls.py:28
+#: bread/contrib/reports/urls.py:37
 msgid "Base model"
 msgstr "Grunnmodell"
 
-#: bread/contrib/reports/urls.py:103 bread/contrib/reports/urls.py:169
+#: bread/contrib/reports/urls.py:112 bread/contrib/reports/urls.py:183
+#: bread/views/browse.py:80
 msgid "Excel"
 msgstr ""
 
+#: bread/contrib/reports/urls.py:152 bread/layout/components/form.py:320
+#: bread/views/browse.py:84
+msgid "Delete"
+msgstr "Slett"
+
 #: bread/contrib/reports/urls.py:156
+#, fuzzy
+#| msgctxt "this is a copy"
+#| msgid "Copy"
+msgid "Copy"
+msgstr "Kopier"
+
+#: bread/contrib/reports/urls.py:170
 msgid "Edit"
 msgstr ""
 
@@ -104,20 +117,21 @@ msgstr ""
 msgid "Print"
 msgstr "Skriv ut"
 
-#: bread/layout/components/datatable.py:209
+#: bread/layout/components/datatable.py:210 bread/layout/components/modal.py:95
+#: bread/views/auth.py:28
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: bread/layout/components/datatable.py:220
+#: bread/layout/components/datatable.py:221
 msgid " items selected"
 msgstr " elementer valgt"
 
-#: bread/layout/components/datatable.py:226
+#: bread/layout/components/datatable.py:227
 msgid "Table Action Bar"
 msgstr ""
 
-#: bread/layout/components/datatable.py:421 bread/views/add.py:39
-#: bread/views/add.py:46
+#: bread/layout/components/datatable.py:424 bread/views/add.py:38
+#: bread/views/add.py:45
 #, python-format
 msgid "Add %s"
 msgstr "Legg til %s"
@@ -146,11 +160,7 @@ msgstr "Legg til"
 msgid "Order"
 msgstr ""
 
-#: bread/layout/components/form.py:320
-msgid "Delete"
-msgstr "Slett"
-
-#: bread/layout/components/notification.py:125
+#: bread/layout/components/notification.py:130
 #, fuzzy
 msgid "Time stamp"
 msgstr "Tidsstempel"
@@ -176,25 +186,21 @@ msgstr "sider"
 msgid "Optional"
 msgstr ""
 
-#: bread/layout/components/search.py:18 bread/layout/components/search.py:23
+#: bread/layout/components/search.py:42 bread/layout/components/search.py:57
 msgid "Search"
 msgstr "Søk"
 
-#: bread/layout/components/search.py:29 bread/layout/components/search.py:30
-#: bread/layout/components/search_select.py:143
-#: bread/layout/components/search_select.py:144
+#: bread/layout/components/search.py:104 bread/layout/components/search.py:105
 msgid "Clear search input"
 msgstr ""
 
-#: bread/layout/components/shell_header.py:71
-#: bread/layout/components/shell_header.py:72
-#: bread/templates/bread/components/header.html:31
-#: bread/templates/bread/components/header.html:32 bread/views/system.py:40
+#: bread/layout/components/shell_header.py:66
+#: bread/layout/components/shell_header.py:67 bread/views/auth.py:103
 #, fuzzy
 msgid "Logout"
 msgstr "Logg ut"
 
-#: bread/layout/components/shell_header.py:73
+#: bread/layout/components/shell_header.py:68
 msgid "Close"
 msgstr ""
 
@@ -214,18 +220,121 @@ msgstr "På"
 msgid "Off"
 msgstr "Av"
 
-#: bread/templates/admin/base_site.html:3
-msgid "System Settings"
-msgstr "Systeminnstillinger"
-
-#: bread/urls.py:40
+#: bread/urls.py:39
 msgid "Preferences updated"
 msgstr ""
 
-#: bread/views/add.py:24
+#: bread/views/add.py:23
 #, python-format
 msgid "Added %s"
 msgstr "%s tillagt"
+
+#: bread/views/auth.py:57 bread/views/auth.py:86
+#, fuzzy
+msgid "Login"
+msgstr "Logg inn"
+
+#: bread/views/auth.py:65 bread/views/auth.py:122
+#, fuzzy
+#| msgid "Show password"
+msgid "Lost password?"
+msgstr "Vis passord"
+
+#: bread/views/auth.py:107
+msgid "Logged out"
+msgstr ""
+
+#: bread/views/auth.py:114 bread/views/auth.py:146
+msgid "Password reset"
+msgstr ""
+
+#: bread/views/auth.py:137
+#, fuzzy
+#| msgid "Show password"
+msgid "Reset password"
+msgstr "Vis passord"
+
+#: bread/views/auth.py:153
+msgid "Email instructions sent"
+msgstr ""
+
+#: bread/views/auth.py:155
+msgid ""
+"If the email address provided exists, you will shortly receive an email "
+"containing recovery instructions."
+msgstr ""
+
+#: bread/views/auth.py:163 bread/views/auth.py:212 bread/views/auth.py:236
+msgid "Back to Login"
+msgstr ""
+
+#: bread/views/auth.py:171
+#, fuzzy
+#| msgid "Show password"
+msgid "Change Password"
+msgstr "Vis passord"
+
+#: bread/views/auth.py:197 bread/views/auth.py:221
+#, fuzzy
+#| msgid "Show password"
+msgid "Change password"
+msgstr "Vis passord"
+
+#: bread/views/auth.py:203
+msgid "Invalid password reset link"
+msgstr ""
+
+#: bread/views/auth.py:205
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used. Please request a new password reset."
+msgstr ""
+
+#: bread/views/auth.py:228
+msgid "Password successfully changed"
+msgstr ""
+
+#: bread/views/auth.py:229
+msgid "Please login again"
+msgstr ""
+
+#: bread/views/browse.py:149
+#, python-format
+msgid "Acton '%s' is not configured for this view"
+msgstr ""
+
+#: bread/views/browse.py:243
+#, python-format
+msgid "Your user has not the permissions to delete %s"
+msgstr "Din bruker har ikke tilgang til å slette %s"
+
+#: bread/views/browse.py:256
+#, python-format
+msgid "%s could not be deleted: %s"
+msgstr "%s kunne ikke slettes: %s"
+
+#: bread/views/browse.py:261
+#, python-format
+msgid "Deleted %(count)s %(modelname)s"
+msgstr "%(count)s %(modelname)s slettet"
+
+#: bread/views/browse.py:283
+#, fuzzy, python-format
+#| msgid "Your user has not the permissions to delete %s"
+msgid "Your user has not the permissions to restore %s"
+msgstr "Din bruker har ikke tilgang til å slette %s"
+
+#: bread/views/browse.py:292
+#, fuzzy, python-format
+#| msgid "%s could not be deleted: %s"
+msgid "%s could not be restored: %s"
+msgstr "%s kunne ikke slettes: %s"
+
+#: bread/views/browse.py:297
+#, fuzzy, python-format
+#| msgid "Deleted %(count)s %(modelname)s"
+msgid "Restored %(count)s %(modelname)s"
+msgstr "%(count)s %(modelname)s slettet"
 
 #: bread/views/delete.py:47
 #, fuzzy, python-format
@@ -237,46 +346,20 @@ msgstr "Slettet %(modelname)s %(objectname)s"
 msgid "Deleted %(modelname)s %(objectname)s"
 msgstr "Slettet %(modelname)s %(objectname)s"
 
-#: bread/views/delete.py:100
-#, python-format
-msgid "Your user has not the permissions to delete %s"
-msgstr "Din bruker har ikke tilgang til å slette %s"
-
-#: bread/views/delete.py:111
-#, python-format
-msgid "%s could not be deleted: %s"
-msgstr "%s kunne ikke slettes: %s"
-
-#: bread/views/delete.py:116
-#, python-format
-msgid "Deleted %(count)s %(modelname)s"
-msgstr "%(count)s %(modelname)s slettet"
-
-#: bread/views/edit.py:76
+#: bread/views/edit.py:75
 #, python-format
 msgid "Created copy %s"
 msgstr "Opprettet kopi %s"
 
-#: bread/views/edit.py:105
+#: bread/views/edit.py:99
 #, python-format
 msgid "Created %s copies"
 msgstr "Opprettet %s kopier"
 
-#: bread/views/edit.py:150
+#: bread/views/edit.py:142
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "Kopier"
-
-#: bread/views/system.py:18 bread/views/system.py:20
-#, fuzzy
-msgid "Login"
-msgstr "Logg inn"
-
-#: bread/views/system.py:87
-#, fuzzy
-#| msgid "System Settings"
-msgid "System information"
-msgstr "Systeminnstillinger"
 
 #: bread/views/wizard.py:50
 msgid "Back"
@@ -290,6 +373,14 @@ msgstr "Fullført"
 #: bread/views/wizard.py:64
 msgid "Continue"
 msgstr "Fortsett"
+
+#~ msgid "System Settings"
+#~ msgstr "Systeminnstillinger"
+
+#, fuzzy
+#~| msgid "System Settings"
+#~ msgid "System information"
+#~ msgstr "Systeminnstillinger"
 
 #~ msgid "New report: "
 #~ msgstr "Ny rapport: "

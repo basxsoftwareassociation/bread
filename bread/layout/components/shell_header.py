@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from bread.utils import reverse
 
+from .. import HasBreadCookieValue
 from .icon import Icon
 
 
@@ -12,30 +13,29 @@ class ShellHeader(hg.HEADER):
 
         super().__init__(
             hg.If(
-                hg.F(
-                    lambda c, e: c["request"].user.is_authenticated
-                    and hasattr(c["request"].user, "preferences")
-                    and c["request"].user.preferences.get(
-                        "user_interface__navigation_menu_extended", True
-                    )
-                ),
-                hg.A(
-                    hg.SPAN(platform, _class="bx--header__name--prefix"),
-                    hg.SPAN(company, style="position: absolute; left: 17rem"),
-                    _class="bx--header__name",
-                    style="font-weight: 400",  # override carbon design
-                    href="/",
-                ),
+                HasBreadCookieValue("sidenav-hidden", "true"),
                 hg.A(
                     hg.IMG(
                         src=staticfiles_storage.url("logo.png"),
                         _class="bx--header__name--prefix",
                         style="width: 1.7rem; height; 1.7rem",
                     ),
-                    hg.SPAN(company, style="position: absolute; left: 4rem"),
+                    hg.SPAN(company, style="position: absolute; left: 5rem"),
+                    _class="bx--header__name",
+                    style="font-weight: 400;",  # override carbon design
+                    href=hg.F(lambda c, e: c["request"].META["SCRIPT_NAME"] or "/"),
+                ),
+                hg.A(
+                    hg.IMG(
+                        src=staticfiles_storage.url("logo.png"),
+                        _class="bx--header__name--prefix",
+                        style="width: 1.7rem; height; 1.7rem; margin-right: 0.5rem",
+                    ),
+                    hg.SPAN(platform, _class="bx--header__name--prefix"),
+                    hg.SPAN(company, style="position: absolute; left: 18rem"),
                     _class="bx--header__name",
                     style="font-weight: 400",  # override carbon design
-                    href="/",
+                    href=hg.F(lambda c, e: c["request"].META["SCRIPT_NAME"] or "/"),
                 ),
             ),
             hg.DIV(
@@ -78,6 +78,5 @@ class ShellHeader(hg.HEADER):
             ),
             _class="bx--header",
             role="banner",
-            aria_label="{{ branding.platform }}",
             data_header=True,
         )

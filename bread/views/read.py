@@ -46,8 +46,6 @@ class ReadView(EditView):
 
 
 def layoutasreadonly(layout):
-    if getattr(layout, "readonly", False):
-        return layout
     layout.wrap(
         lambda element, ancestors: isinstance(element, _layout.form.Form)
         and element.standalone,
@@ -68,5 +66,4 @@ def layoutasreadonly(layout):
     )
     for form in layout.filter(lambda element, ancestors: isinstance(element, hg.FORM)):
         form.attributes["onsubmit"] = "return false;"
-    layout.readonly = True
     return layout

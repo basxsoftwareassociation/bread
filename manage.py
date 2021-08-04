@@ -12,10 +12,10 @@ INSTALLED_APPS = [
     "guardian",
     "bread",
     "bread.contrib.reports",
-    "bread.contrib.activities",
+    "bread.contrib.workflows",
 ]
 
-settings.configure(
+settings.configure(  # nosec because this is only for local development
     DEBUG=True,
     USE_TZ=True,
     USE_I18N=True,
@@ -28,6 +28,7 @@ settings.configure(
         "guardian.backends.ObjectPermissionBackend",
     ),
     SECRET_KEY="SECRET_KEY_FOR_TESTING",
+    STATIC_URL="static/",
 )
 
 django.setup()
