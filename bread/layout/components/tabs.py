@@ -60,7 +60,7 @@ class Tabs(hg.DIV):
         )
 
         self.tablabels = hg.UL(_class="bx--tabs__nav bx--tabs__nav--hidden")
-        labelcontainer_attributes["_class"] += "bx--tabs" + (
+        labelcontainer_attributes["_class"] += " bx--tabs" + (
             " bx--tabs--container" if container else ""
         )
         self.labelcontainer = hg.DIV(
