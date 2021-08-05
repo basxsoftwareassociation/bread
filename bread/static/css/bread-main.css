@@ -17652,7 +17652,7 @@ svg {
 
 .tile-container .tile {
   border-top: 1px solid #e0e0e0;
-  padding: 1rem 3rem;
+  padding: 4rem 0;
   background-color: white; }
 
 .tile-container .bx--data-table-container {
