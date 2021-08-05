@@ -5,7 +5,6 @@ from collections.abc import Iterable
 import htmlgenerator as hg
 from dateutil import tz
 from django.conf import settings
-from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.urls import NoReverseMatch
 from django.utils.functional import Promise
@@ -17,34 +16,6 @@ import bread.settings as app_settings
 from . import layout
 from .models import AccessConcreteInstanceMixin
 from .utils.urls import reverse_model
-
-
-def render_field(instance, fieldname):
-    if fieldname == "self":
-        return as_object_link(instance, str(instance))
-
-    while models.constants.LOOKUP_SEP in fieldname:
-        accessor, fieldname = fieldname.split(models.constants.LOOKUP_SEP, 1)
-        instance = getattr(instance, accessor, None)
-        if isinstance(instance, models.Manager):
-            rendered_fields = [render_field(o, fieldname) for o in instance.all()]
-            return format_html(
-                "<ul>{}</ul>", format_html_join("\n", "<li>{}</li>", rendered_fields)
-            )
-    fieldtype = None
-    try:
-        fieldtype = instance._meta.get_field(fieldname)
-    except FieldDoesNotExist:
-        pass
-    if hasattr(instance, f"get_{fieldname}_display") and not isinstance(
-        fieldtype, CountryField
-    ):
-        value = getattr(instance, f"get_{fieldname}_display")()
-    else:
-        value = getattr(instance, fieldname, None)
-    if callable(value) and not isinstance(value, models.Manager):
-        value = value()
-    return format_value(value, fieldtype)
 
 
 def format_value(value, fieldtype=None):
