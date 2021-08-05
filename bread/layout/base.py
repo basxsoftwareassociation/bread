@@ -67,6 +67,26 @@ class FormattedContextValue(hg.ContextValue):
         return format_value(value)
 
 
+class ObjectFieldLabel(hg.Lazy):
+    def __init__(self, fieldname):
+        self.fieldname = fieldname
+
+    def resolve(self, context, element):
+        return context["object"]._meta.get_field(self.fieldname).verbose_name
+
+
+class ObjectFieldValue(hg.Lazy):
+    def __init__(self, fieldname):
+        self.fieldname = fieldname
+
+    def resolve(self, context, element):
+        return (
+            getattr(context["object"], f"get_{self.fieldname}_display")()
+            if hasattr(context["object"], f"get_{self.fieldname}_display")
+            else getattr(context["object"], self.fieldname)
+        )
+
+
 FC = FormattedContextValue
 
 
