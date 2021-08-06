@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-26 17:11+0700\n"
+"POT-Creation-Date: 2021-08-06 11:17+0200\n"
 "PO-Revision-Date: 2021-05-15 05:32+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
@@ -93,12 +93,12 @@ msgid "Base model"
 msgstr "Grunnmodell"
 
 #: bread/contrib/reports/urls.py:112 bread/contrib/reports/urls.py:183
-#: bread/views/browse.py:80
+#: bread/views/browse.py:82
 msgid "Excel"
 msgstr ""
 
 #: bread/contrib/reports/urls.py:152 bread/layout/components/form.py:320
-#: bread/views/browse.py:84
+#: bread/views/browse.py:86
 msgid "Delete"
 msgstr "Slett"
 
@@ -113,24 +113,32 @@ msgstr "Kopier"
 msgid "Edit"
 msgstr ""
 
-#: bread/layout/components/button.py:67
+#: bread/contrib/workflows/views.py:12
+msgid "Workflow Diagram"
+msgstr ""
+
+#: bread/contrib/workflows/views.py:20
+msgid "Explain Workflow"
+msgstr ""
+
+#: bread/layout/components/button.py:64
 msgid "Print"
 msgstr "Skriv ut"
 
-#: bread/layout/components/datatable.py:210 bread/layout/components/modal.py:95
+#: bread/layout/components/datatable.py:219 bread/layout/components/modal.py:95
 #: bread/views/auth.py:28
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: bread/layout/components/datatable.py:221
+#: bread/layout/components/datatable.py:230
 msgid " items selected"
 msgstr " elementer valgt"
 
-#: bread/layout/components/datatable.py:227
+#: bread/layout/components/datatable.py:236
 msgid "Table Action Bar"
 msgstr ""
 
-#: bread/layout/components/datatable.py:424 bread/views/add.py:38
+#: bread/layout/components/datatable.py:443 bread/views/add.py:38
 #: bread/views/add.py:45
 #, python-format
 msgid "Add %s"
@@ -194,13 +202,13 @@ msgstr "Søk"
 msgid "Clear search input"
 msgstr ""
 
-#: bread/layout/components/shell_header.py:66
-#: bread/layout/components/shell_header.py:67 bread/views/auth.py:103
+#: bread/layout/components/shell_header.py:71
+#: bread/layout/components/shell_header.py:72 bread/views/auth.py:103
 #, fuzzy
 msgid "Logout"
 msgstr "Logg ut"
 
-#: bread/layout/components/shell_header.py:68
+#: bread/layout/components/shell_header.py:73
 msgid "Close"
 msgstr ""
 
@@ -298,39 +306,39 @@ msgstr ""
 msgid "Please login again"
 msgstr ""
 
-#: bread/views/browse.py:149
+#: bread/views/browse.py:152
 #, python-format
 msgid "Acton '%s' is not configured for this view"
 msgstr ""
 
-#: bread/views/browse.py:243
+#: bread/views/browse.py:246
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "Din bruker har ikke tilgang til å slette %s"
 
-#: bread/views/browse.py:256
+#: bread/views/browse.py:259
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s kunne ikke slettes: %s"
 
-#: bread/views/browse.py:261
+#: bread/views/browse.py:264
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s %(modelname)s slettet"
 
-#: bread/views/browse.py:283
+#: bread/views/browse.py:286
 #, fuzzy, python-format
 #| msgid "Your user has not the permissions to delete %s"
 msgid "Your user has not the permissions to restore %s"
 msgstr "Din bruker har ikke tilgang til å slette %s"
 
-#: bread/views/browse.py:292
+#: bread/views/browse.py:295
 #, fuzzy, python-format
 #| msgid "%s could not be deleted: %s"
 msgid "%s could not be restored: %s"
 msgstr "%s kunne ikke slettes: %s"
 
-#: bread/views/browse.py:297
+#: bread/views/browse.py:300
 #, fuzzy, python-format
 #| msgid "Deleted %(count)s %(modelname)s"
 msgid "Restored %(count)s %(modelname)s"
@@ -361,6 +369,12 @@ msgctxt "this is a copy"
 msgid "Copy"
 msgstr "Kopier"
 
+#: bread/views/system.py:31
+#, fuzzy
+#| msgid "System Settings"
+msgid "System information"
+msgstr "Systeminnstillinger"
+
 #: bread/views/wizard.py:50
 msgid "Back"
 msgstr "Tilbake"
@@ -375,11 +389,6 @@ msgid "Continue"
 msgstr "Fortsett"
 
 #~ msgid "System Settings"
-#~ msgstr "Systeminnstillinger"
-
-#, fuzzy
-#~| msgid "System Settings"
-#~ msgid "System information"
 #~ msgstr "Systeminnstillinger"
 
 #~ msgid "New report: "
