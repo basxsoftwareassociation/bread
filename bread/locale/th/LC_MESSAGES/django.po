@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-26 17:11+0700\n"
+"POT-Creation-Date: 2021-08-06 11:17+0200\n"
 "PO-Revision-Date: 2021-07-26 13:10+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -91,12 +91,12 @@ msgid "Base model"
 msgstr "โมเดลพื้นฐาน"
 
 #: bread/contrib/reports/urls.py:112 bread/contrib/reports/urls.py:183
-#: bread/views/browse.py:80
+#: bread/views/browse.py:82
 msgid "Excel"
 msgstr "Excel"
 
 #: bread/contrib/reports/urls.py:152 bread/layout/components/form.py:320
-#: bread/views/browse.py:84
+#: bread/views/browse.py:86
 msgid "Delete"
 msgstr "ลบ"
 
@@ -108,24 +108,32 @@ msgstr "คัดลอก"
 msgid "Edit"
 msgstr "แก้ไข"
 
-#: bread/layout/components/button.py:67
+#: bread/contrib/workflows/views.py:12
+msgid "Workflow Diagram"
+msgstr ""
+
+#: bread/contrib/workflows/views.py:20
+msgid "Explain Workflow"
+msgstr ""
+
+#: bread/layout/components/button.py:64
 msgid "Print"
 msgstr "พิมพ์"
 
-#: bread/layout/components/datatable.py:210 bread/layout/components/modal.py:95
+#: bread/layout/components/datatable.py:219 bread/layout/components/modal.py:95
 #: bread/views/auth.py:28
 msgid "Cancel"
 msgstr "ยกเลิก"
 
-#: bread/layout/components/datatable.py:221
+#: bread/layout/components/datatable.py:230
 msgid " items selected"
 msgstr " เลือกรายการ"
 
-#: bread/layout/components/datatable.py:227
+#: bread/layout/components/datatable.py:236
 msgid "Table Action Bar"
 msgstr "แถบงาน"
 
-#: bread/layout/components/datatable.py:424 bread/views/add.py:38
+#: bread/layout/components/datatable.py:443 bread/views/add.py:38
 #: bread/views/add.py:45
 #, python-format
 msgid "Add %s"
@@ -188,12 +196,12 @@ msgstr "ค้นหา"
 msgid "Clear search input"
 msgstr "ล้างข้อมูลการค้นหา"
 
-#: bread/layout/components/shell_header.py:66
-#: bread/layout/components/shell_header.py:67 bread/views/auth.py:103
+#: bread/layout/components/shell_header.py:71
+#: bread/layout/components/shell_header.py:72 bread/views/auth.py:103
 msgid "Logout"
 msgstr "ลงชื่อออก"
 
-#: bread/layout/components/shell_header.py:68
+#: bread/layout/components/shell_header.py:73
 msgid "Close"
 msgstr "ปิด"
 
@@ -250,8 +258,7 @@ msgstr "ส่งคำแนะนำการใช้งานทางอี
 msgid ""
 "If the email address provided exists, you will shortly receive an email "
 "containing recovery instructions."
-msgstr ""
-"หากคุณเคยให้ที่อยู่อีเมล ไว้ คุณจะได้รับอีเมลพร้อมคำแนะนำในการกู้คืนในไม่ช้า"
+msgstr "หากคุณเคยให้ที่อยู่อีเมล ไว้ คุณจะได้รับอีเมลพร้อมคำแนะนำในการกู้คืนในไม่ช้า"
 
 #: bread/views/auth.py:163 bread/views/auth.py:212 bread/views/auth.py:236
 msgid "Back to Login"
@@ -273,9 +280,7 @@ msgstr "ลิงค์รีเซ็ตรหัสผ่านไม่ถู
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used. Please request a new password reset."
-msgstr ""
-"ลิงก์รีเซ็ตรหัสผ่านไม่ถูกต้อง อาจเป็นเพราะเคยมีการใช้งานแล้ว "
-"โปรดขอรีเซ็ตรหัสผ่านใหม่"
+msgstr "ลิงก์รีเซ็ตรหัสผ่านไม่ถูกต้อง อาจเป็นเพราะเคยมีการใช้งานแล้ว โปรดขอรีเซ็ตรหัสผ่านใหม่"
 
 #: bread/views/auth.py:228
 msgid "Password successfully changed"
@@ -285,37 +290,37 @@ msgstr "เปลี่ยนรหัสผ่านสำเร็จ"
 msgid "Please login again"
 msgstr "กรุณาเข้าสู่ระบบอีกครั้ง"
 
-#: bread/views/browse.py:149
+#: bread/views/browse.py:152
 #, python-format
 msgid "Acton '%s' is not configured for this view"
 msgstr "ไม่ได้กำหนดค่า Acton '%s' สำหรับมุมมองนี้"
 
-#: bread/views/browse.py:243
+#: bread/views/browse.py:246
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่สามารถทำการลบได้%s"
 
-#: bread/views/browse.py:256
+#: bread/views/browse.py:259
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s ไม่ควรลบเพราะ: %s"
 
-#: bread/views/browse.py:261
+#: bread/views/browse.py:264
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "ลบ %(count)s %(modelname)s"
 
-#: bread/views/browse.py:283
+#: bread/views/browse.py:286
 #, python-format
 msgid "Your user has not the permissions to restore %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่มีสิทธิ์กู้คืน%s"
 
-#: bread/views/browse.py:292
+#: bread/views/browse.py:295
 #, python-format
 msgid "%s could not be restored: %s"
 msgstr "%s ไม่ควรกู้คืนเพราะ: %s"
 
-#: bread/views/browse.py:297
+#: bread/views/browse.py:300
 #, python-format
 msgid "Restored %(count)s %(modelname)s"
 msgstr "กู้คืน %(count)s %(modelname)s"
@@ -345,6 +350,10 @@ msgctxt "this is a copy"
 msgid "Copy"
 msgstr "คัดลอก"
 
+#: bread/views/system.py:31
+msgid "System information"
+msgstr "ข้อมูลระบบ"
+
 #: bread/views/wizard.py:50
 msgid "Back"
 msgstr "กลับ"
@@ -359,9 +368,6 @@ msgstr "ต่อไป"
 
 #~ msgid "System Settings"
 #~ msgstr "ตั้งค่าระบบ"
-
-#~ msgid "System information"
-#~ msgstr "ข้อมูลระบบ"
 
 #~ msgid "New report: "
 #~ msgstr "รายงานใหม่ "
