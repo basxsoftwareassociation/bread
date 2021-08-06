@@ -17652,8 +17652,10 @@ svg {
 
 .tile-container .tile {
   border-top: 1px solid #e0e0e0;
-  padding: 4rem 0;
+  padding: 4rem;
   background-color: white; }
+  .tile-container .tile h4 {
+    margin-top: 0; }
 
 .tile-container .bx--data-table-container {
   padding-top: 0;
