@@ -72,7 +72,7 @@ class ObjectFieldLabel(hg.Lazy):
         self.fieldname = fieldname
 
     def resolve(self, context, element):
-        return context["object"]._meta.get_field(self.fieldname).verbose_name
+        return fieldlabel(context["object"]._meta.model, self.fieldname)
 
 
 class ObjectFieldValue(hg.Lazy):
