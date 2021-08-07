@@ -75,7 +75,8 @@ class ObjectFieldLabel(hg.Lazy):
         return fieldlabel(context["object"]._meta.model, self.fieldname)
 
 
-# TODO compare with formatters.format_value and refactor
+# TODO compare with formatters.format_value and refactor according to discussion:
+# https://github.com/basxsoftwareassociation/bread/pull/66/files#r684120073
 class ObjectFieldValue(hg.Lazy):
     def __init__(self, fieldname):
         self.fieldname = fieldname
