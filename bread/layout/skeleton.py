@@ -18,7 +18,7 @@ def default_page_layout(menu, *content):
             hg.META(name="viewport", content="width=device-width, initial-scale=1"),
             hg.TITLE(
                 hg.F(
-                    lambda c, e: strip_tags(c.get("pagetitle", c.get("PLATFORMNAME")))
+                    lambda c: strip_tags(c.get("pagetitle", c.get("PLATFORMNAME")))
                     + " | "
                     + strip_tags(c.get("PLATFORMNAME"))
                 )

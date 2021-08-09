@@ -12,6 +12,7 @@ from bread import formatters
 from bread import layout as _layout
 from bread import menu, views
 from bread.utils import filter_fieldlist, generate_excel, urls, xlsxresponse
+from bread.utils.links import Link
 from bread.views.browse import delete
 from bread.views.edit import bulkcopy
 
@@ -106,11 +107,10 @@ class ReadView(views.ReadView):
             title=self.object.name,
             helper_text=f"{self.object.queryset.count()} {self.object.model.model_class()._meta.verbose_name_plural}",
             primary_button=_layout.button.Button.fromaction(
-                menu.Link.from_objectaction(
-                    self.object,
-                    "excel",
+                Link(
+                    urls.reverse_model(self.object, "excel", {"pk": object.pk}),
                     label=_("Excel"),
-                    icon="download",
+                    iconname="download",
                 )
             ),
         )
@@ -148,13 +148,14 @@ urlpatterns = [
             columns=["name", "created"],
             rowclickaction="read",
             bulkactions=[
-                (
-                    menu.Link("delete", label=_("Delete"), icon="trash-can"),
-                    delete,
+                views.browse.BulkAction(
+                    "delete", label=_("Delete"), iconname="trash-can", action=delete
                 ),
-                (
-                    menu.Link("copy", label=_("Copy"), icon="copy"),
-                    lambda request, qs: bulkcopy(
+                views.browse.BulkAction(
+                    "copy",
+                    label=_("Copy"),
+                    iconname="copy",
+                    action=lambda request, qs: bulkcopy(
                         request, qs, labelfield="name", copy_related_fields=("columns",)
                     ),
                 ),
@@ -163,23 +164,23 @@ urlpatterns = [
                 menu.Action(
                     js=hg.BaseElement(
                         "document.location = '",
-                        hg.F(lambda c, e: _layout.objectaction(c["row"], "edit")),
+                        hg.F(lambda c: _layout.objectaction(c["row"], "edit")),
                         "'",
                     ),
-                    icon="edit",
+                    iconname="edit",
                     label=_("Edit"),
                 ),
                 menu.Action(
                     js=hg.BaseElement(
                         "document.location = '",
                         hg.F(
-                            lambda c, e: urls.reverse_model(
+                            lambda c: urls.reverse_model(
                                 Report, "excel", kwargs={"pk": c["row"].pk}
                             )
                         ),
                         "'",
                     ),
-                    icon="download",
+                    iconname="download",
                     label=_("Excel"),
                 ),
             ],
@@ -206,9 +207,11 @@ urlpatterns = [
 
 menu.registeritem(
     menu.Item(
-        menu.Link(
-            urls.reverse_model(Report, "browse"), label=_("Reports"), icon="download"
+        Link(
+            urls.reverse_model(Report, "browse"),
+            label=_("Reports"),
+            iconname="download",
         ),
-        menu.Group(_("Reports"), icon="download"),
+        menu.Group(_("Reports"), iconname="download"),
     )
 )

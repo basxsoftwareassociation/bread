@@ -7,7 +7,7 @@ from .icon import Icon
 
 
 def isactive(itemaccessor):
-    return hg.F(lambda c, e: c[itemaccessor].active(c["request"]))
+    return hg.F(lambda c: c[itemaccessor].active(c["request"]))
 
 
 class SideNav(hg.ASIDE):
@@ -27,18 +27,18 @@ class SideNav(hg.ASIDE):
                 hg.UL(
                     hg.Iterator(
                         hg.F(
-                            lambda c, e: sorted(
-                                hg.resolve_lazy(menu, c, e)._registry.values()
+                            lambda c: sorted(
+                                hg.resolve_lazy(menu, c)._registry.values()
                             )
                         ),
                         "menugroup",
                         hg.LI(
                             hg.If(
-                                hg.F(lambda c, e: len(c["menugroup"].items) > 1),
+                                hg.F(lambda c: len(c["menugroup"].items) > 1),
                                 hg.BaseElement(
                                     hg.BUTTON(
                                         hg.DIV(
-                                            Icon(hg.C("menugroup.icon"), size=16),
+                                            Icon(hg.C("menugroup.iconname"), size=16),
                                             _class="bx--side-nav__icon",
                                         ),
                                         hg.SPAN(
@@ -71,7 +71,7 @@ class SideNav(hg.ASIDE):
                                                             " bx--side-nav__link--current",
                                                         ),
                                                     ),
-                                                    href=hg.C("menuitem.link.url"),
+                                                    href=hg.C("menuitem.link.href"),
                                                 ),
                                                 _class=hg.BaseElement(
                                                     "bx--side-nav__menu-item",
@@ -89,7 +89,8 @@ class SideNav(hg.ASIDE):
                                 hg.A(
                                     hg.DIV(
                                         Icon(
-                                            hg.C("menugroup.items.0.link.icon"), size=16
+                                            hg.C("menugroup.items.0.link.iconname"),
+                                            size=16,
                                         ),
                                         _class="bx--side-nav__icon",
                                     ),
@@ -104,7 +105,7 @@ class SideNav(hg.ASIDE):
                                             " bx--side-nav__link--current",
                                         ),
                                     ),
-                                    href=hg.C("menugroup.items.0.link.url"),
+                                    href=hg.C("menugroup.items.0.link.href"),
                                 ),
                             ),
                             _class=hg.BaseElement(

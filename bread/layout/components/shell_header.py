@@ -23,7 +23,7 @@ class ShellHeader(hg.HEADER):
                     hg.SPAN(company, style="position: absolute; left: 5rem"),
                     _class="bx--header__name",
                     style="font-weight: 400;",  # override carbon design
-                    href=hg.F(lambda c, e: c["request"].META["SCRIPT_NAME"] or "/"),
+                    href=hg.F(lambda c: c["request"].META["SCRIPT_NAME"] or "/"),
                 ),
                 hg.A(
                     hg.IMG(
@@ -35,12 +35,12 @@ class ShellHeader(hg.HEADER):
                     hg.SPAN(company, style="position: absolute; left: 18rem"),
                     _class="bx--header__name",
                     style="font-weight: 400",  # override carbon design
-                    href=hg.F(lambda c, e: c["request"].META["SCRIPT_NAME"] or "/"),
+                    href=hg.F(lambda c: c["request"].META["SCRIPT_NAME"] or "/"),
                 ),
             ),
             hg.DIV(
                 hg.If(
-                    hg.F(lambda c, e: c["request"].user.is_authenticated),
+                    hg.F(lambda c: c["request"].user.is_authenticated),
                     hg.A(
                         hg.SPAN(
                             hg.C("request.user.get_username"),
@@ -53,7 +53,7 @@ class ShellHeader(hg.HEADER):
                     ),
                 ),
                 hg.If(
-                    hg.F(lambda c, e: c["request"].user.is_authenticated),
+                    hg.F(lambda c: c["request"].user.is_authenticated),
                     hg.BUTTON(
                         Icon(
                             "logout",

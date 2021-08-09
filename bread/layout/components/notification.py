@@ -48,7 +48,7 @@ class InlineNotification(hg.DIV):
         children = [
             hg.DIV(
                 Icon(
-                    hg.F(lambda c, e: KIND_ICON_MAPPING[hg.resolve_lazy(kind, c, e)]),
+                    hg.F(lambda c: KIND_ICON_MAPPING[hg.resolve_lazy(kind, c)]),
                     size=20,
                     _class="bx--inline-notification__icon",
                 ),
@@ -116,13 +116,13 @@ class ToastNotification(hg.DIV):
         attributes["style"] = hg.BaseElement(
             attributes.get("style", ""),
             ";opacity: 0; animation: ",
-            hg.F(lambda c, e: autoremove + 3 * c["message_index"]),
+            hg.F(lambda c: autoremove + 3 * c["message_index"]),
             "s ease-in-out notification",
         )
         attributes["onload"] = hg.BaseElement(
             attributes.get("onload", ""),
             ";setTimeout(() => this.style.display = 'None', ",
-            hg.F(lambda c, e: (autoremove + 3 * c["message_index"]) * 1000),
+            hg.F(lambda c: (autoremove + 3 * c["message_index"]) * 1000),
             ")",
         )
 
@@ -133,7 +133,7 @@ class ToastNotification(hg.DIV):
         )
         children = [
             Icon(
-                hg.F(lambda c, e: KIND_ICON_MAPPING[hg.resolve_lazy(kind, c, e)]),
+                hg.F(lambda c: KIND_ICON_MAPPING[hg.resolve_lazy(kind, c)]),
                 size=20,
                 _class="bx--toast-notification__icon",
             ),

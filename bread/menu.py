@@ -1,14 +1,19 @@
-import htmlgenerator as hg
 from django.apps import apps
-from django.utils.text import format_lazy
+
+from .utils.links import Link
 
 
 class Group:
     def __init__(
-        self, label, icon=None, permissions=[], order=None, sort_alphabetically=False
+        self,
+        label,
+        iconname=None,
+        permissions=[],
+        order=None,
+        sort_alphabetically=False,
     ):
         self.label = label
-        self.icon = icon or "folder"
+        self.iconname = iconname or "folder"
         self.permissions = permissions
         self._order = order
         self.items = []
@@ -44,7 +49,7 @@ class Group:
         )
 
     def active(self, request):
-        return any((item.active(request) for item in self.items))
+        return any(item.active(request) for item in self.items)
 
 
 def try_call(var, *args, **kwargs):
@@ -57,10 +62,10 @@ class Action:
     The function takes the current request as the only argument.
     """
 
-    def __init__(self, js, label="", icon=None, permissions=[]):
+    def __init__(self, js, label="", iconname=None, permissions=[]):
         self.js = js
         self.label = label
-        self.icon = icon
+        self.iconname = iconname
         self._permissions = permissions
 
     def has_permission(self, request, obj=None):
@@ -72,40 +77,12 @@ class Action:
         )
 
 
-class Link(Action):
-    def __init__(self, url, label="", icon=None, permissions=[]):
-        super().__init__(
-            format_lazy("document.location = '{}'", url), label, icon, permissions
-        )
-        self.url = url
-
-    @staticmethod
-    def from_objectaction(object, actionname, label, icon=None, pk_argname="pk"):
-        from .utils.urls import reverse_model
-
-        return Action(
-            hg.F(
-                lambda c, e: format_lazy(
-                    "document.location = '{}'",
-                    reverse_model(
-                        hg.resolve_lazy(object, c, e),
-                        actionname,
-                        kwargs={pk_argname: hg.resolve_lazy(object, c, e).pk},
-                    ),
-                )
-            ),
-            label=label,
-            icon=icon,
-        )
-
-
 class Item:
     def __init__(self, link, group, order=None):
         if not isinstance(link, Link):
             raise ValueError(
-                f"argument 'link' must be of type Link but is of type {type(link)}"
+                f"argument 'link' must be of type {Link} but is of type {type(link)}"
             )
-        link.icon = link.icon or "folder"
         self.link = link
         self.group = group
         self._order = order
@@ -125,7 +102,7 @@ class Item:
         return self.link.has_permission(request)
 
     def active(self, request):
-        path = str(self.link.url)
+        path = str(self.link.href)
         return request.path.startswith(path) and path != "/"
 
 

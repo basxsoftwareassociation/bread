@@ -65,6 +65,6 @@ class ProgressIndicator(hg.UL):
         super().__init__(**kwargs)
 
     def render(self, context):
-        steps = hg.resolve_lazy(self.steps, self, context)
+        steps = hg.resolve_lazy(self.steps, context)
         self.extend((ProgressStep(label, status) for label, status in steps))
         return super().render(context)

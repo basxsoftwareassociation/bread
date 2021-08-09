@@ -24,10 +24,8 @@ class MultiSelect(hg.DIV):
 
         """
 
-        def countselected(context, element):
-            options = [
-                o for og in hg.resolve_lazy(optgroups, context, element) for o in og[1]
-            ]
+        def countselected(context):
+            options = [o for og in hg.resolve_lazy(optgroups, context) for o in og[1]]
             return len([o for o in options if o and o["selected"]])
 
         searchfieldid = hg.html_id(self)

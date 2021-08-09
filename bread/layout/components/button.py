@@ -43,7 +43,7 @@ class Button(htmlgenerator.BUTTON):
     @staticmethod
     def fromaction(action, **kwargs):
         buttonargs = {
-            "icon": action.icon,
+            "icon": action.iconname,
             "notext": not action.label,
             "onclick": action.js,
         }

@@ -26,10 +26,10 @@ class OverflowMenu(hg.DIV):
         )
 
         menuid = hg.F(
-            lambda c, e: OverflowMenu.MENUID_TEMPLATE % hg.html_id(c.get("row", self))
+            lambda c: OverflowMenu.MENUID_TEMPLATE % hg.html_id(c.get("row", self))
         )
         triggerid = hg.F(
-            lambda c, e: (OverflowMenu.MENUID_TEMPLATE % hg.html_id(c.get("row", self)))
+            lambda c: (OverflowMenu.MENUID_TEMPLATE % hg.html_id(c.get("row", self)))
             + "-trigger"
         )
 

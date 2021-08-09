@@ -4,8 +4,9 @@ import htmlgenerator as hg
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from bread.menu import Action, Link
+from bread.menu import Action
 from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
+from bread.utils.links import Link
 from bread.utils.urls import link_with_urlparameters, reverse_model
 
 from ..base import aslink_attributes, fieldlabel, objectaction
@@ -139,12 +140,12 @@ class DataTable(hg.TABLE):
                 action = Action(
                     js=hg.BaseElement(
                         "submitbulkaction(this.closest('[data-table]'), '",
-                        action.url,
+                        action.href,
                         f"', method='{getattr(action, 'method', 'GET')}')",
                     ),
                     label=action.label,
-                    icon=action.icon,
-                    permissions=action._permissions,
+                    iconname=action.iconname,
+                    permissions=action.permissions,
                 )
                 bulkactionlist.append(Button.fromaction(action))
             elif isinstance(action, Action):
@@ -186,9 +187,7 @@ class DataTable(hg.TABLE):
                         name=checkbox_for_bulkaction_name,
                         value=hg.If(
                             hg.F(
-                                lambda c, e: hasattr(
-                                    c[self.iterator.loopvariable], "pk"
-                                )
+                                lambda c: hasattr(c[self.iterator.loopvariable], "pk")
                             ),
                             hg.C(f"{self.iterator.loopvariable}.pk"),
                             hg.C(f"{self.iterator.loopvariable}_index"),
@@ -354,11 +353,11 @@ class DataTable(hg.TABLE):
 
         if addurl is None:
             addurl = hg.F(
-                lambda c, e: reverse_model(
+                lambda c: reverse_model(
                     model,
                     "add",
                     query={
-                        "next": hg.resolve_lazy(backurl, c, e)
+                        "next": hg.resolve_lazy(backurl, c)
                         or c["request"].get_full_path()
                     },
                 )
@@ -376,7 +375,7 @@ class DataTable(hg.TABLE):
                     rowactions,
                     "action",
                     hg.F(
-                        lambda c, e: Button.fromaction(
+                        lambda c: Button.fromaction(
                             c["action"],
                             notext=True,
                             small=True,
@@ -395,7 +394,7 @@ class DataTable(hg.TABLE):
             td_attributes = None
             if rowclickaction and getattr(col, "enable_row_click", True):
                 td_attributes = hg.F(
-                    lambda c, e: aslink_attributes(
+                    lambda c: aslink_attributes(
                         objectaction(c[rowvariable], rowclickaction)
                     )
                 )
@@ -422,10 +421,10 @@ class DataTable(hg.TABLE):
                         "",
                         objectactions_menu,
                         td_attributes=hg.F(
-                            lambda c, e: {"_class": "bx--table-column-menu"}
+                            lambda c: {"_class": "bx--table-column-menu"}
                         ),
                         th_attributes=hg.F(
-                            lambda c, e: {"_class": "bx--table-column-menu"}
+                            lambda c: {"_class": "bx--table-column-menu"}
                         ),
                     )
                 ]
@@ -433,7 +432,7 @@ class DataTable(hg.TABLE):
                 else []
             ),
             # querysets are cached, the call to all will make sure a new query is used in every request
-            hg.F(lambda c, e: queryset),
+            hg.F(lambda c: queryset),
             **kwargs,
         )
         if with_toolbar:
@@ -497,7 +496,7 @@ class DataTable(hg.TABLE):
 
 
 def sortingclass_for_column(orderingurlparameter, columnname):
-    def extracturlparameter(context, element):
+    def extracturlparameter(context):
         value = context["request"].GET.get(orderingurlparameter, "")
         if not value:
             return ""
@@ -529,7 +528,7 @@ def sortinglink_for_column(orderingurlparameter, columnname):
         "-" + columnname: None,
     }
 
-    def extractsortinglink(context, element):
+    def extractsortinglink(context):
         currentordering = context["request"].GET.get(orderingurlparameter, None)
         nextordering = ORDERING_VALUES.get(currentordering, columnname)
         return link_with_urlparameters(

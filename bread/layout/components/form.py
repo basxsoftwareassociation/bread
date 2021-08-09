@@ -61,7 +61,7 @@ class Form(hg.FORM):
         )
 
     def render(self, context):
-        form = hg.resolve_lazy(self.form, context, self)
+        form = hg.resolve_lazy(self.form, context)
         for formfield in self.formfieldelements():
             formfield.form = form
         for error in form.non_field_errors():
@@ -109,7 +109,7 @@ class FormField(FormChild, hg.BaseElement):
         self.formname = formname  # in the future we should only depend on the formname to extract the form from the context
 
     def render(self, context):
-        form = self.form or hg.resolve_lazy(context[self.formname], context, self)
+        form = self.form or hg.resolve_lazy(context[self.formname], context)
         element = _mapwidget(
             form[self.fieldname],
             self.fieldtype,
@@ -150,7 +150,7 @@ class FormsetField(hg.Iterator):
         # These should be internal, hidden fields (can we test this somehow?)
         self.content.append(
             hg.F(
-                lambda c, e: hg.BaseElement(
+                lambda c: hg.BaseElement(
                     *[
                         FormField(field, formname="formset_form")
                         for field in c[self.formname][
@@ -175,7 +175,7 @@ class FormsetField(hg.Iterator):
         return hg.BaseElement(
             # management forms, for housekeeping of inline forms
             hg.F(
-                lambda c, e: Form.from_django_form(
+                lambda c: Form.from_django_form(
                     c[self.formname][self.fieldname].formset.management_form,
                     standalone=False,
                 )

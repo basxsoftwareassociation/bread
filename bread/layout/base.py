@@ -16,7 +16,7 @@ class HasBreadCookieValue(hg.Lazy):
         self.value = value
         self.default = default
 
-    def resolve(self, context, element):
+    def resolve(self, context):
         if f"bread-{self.cookiename}" in context["request"].session["bread-cookies"]:
             return (
                 context["request"].session["bread-cookies"][f"bread-{self.cookiename}"]

@@ -41,7 +41,7 @@ class Pagination(hg.DIV):
                                     ),
                                     "attrs": {
                                         "selected": hg.F(
-                                            lambda c, e, i=i: c["request"].GET.get(
+                                            lambda c, i=i: c["request"].GET.get(
                                                 itemsperpage_urlparameter
                                             )
                                             == str(i)
@@ -89,7 +89,7 @@ class Pagination(hg.DIV):
             hg.DIV(
                 Select(
                     hg.F(
-                        lambda c, e: [
+                        lambda c: [
                             (
                                 None,
                                 [
@@ -98,14 +98,14 @@ class Pagination(hg.DIV):
                                         "value": linktopage(page_urlparameter, i),
                                         "attrs": {
                                             "selected": hg.F(
-                                                lambda c, e, i=i: c["request"].GET.get(
+                                                lambda c, i=i: c["request"].GET.get(
                                                     page_urlparameter, "1"
                                                 )
                                                 == str(i)
                                             ),
                                         },
                                     }
-                                    for i in hg.resolve_lazy(paginator, c, e).page_range
+                                    for i in hg.resolve_lazy(paginator, c).page_range
                                 ],
                             )
                         ]
@@ -133,7 +133,7 @@ class Pagination(hg.DIV):
                     tabindex="0",
                     type="button",
                     disabled=hg.F(
-                        lambda c, e: not paginator.get_page(
+                        lambda c: not paginator.get_page(
                             int(c["request"].GET.get(page_urlparameter, "1"))
                         ).has_previous()
                     ),
@@ -152,7 +152,7 @@ class Pagination(hg.DIV):
                     tabindex="0",
                     type="button",
                     disabled=hg.F(
-                        lambda c, e: not paginator.get_page(
+                        lambda c: not paginator.get_page(
                             int(c["request"].GET.get(page_urlparameter, "1"))
                         ).has_next()
                     ),
@@ -173,8 +173,8 @@ class Pagination(hg.DIV):
 
 def linktopage(page_urlparameter, page):
     return hg.F(
-        lambda c, e: link_with_urlparameters(
-            c["request"], **{page_urlparameter: hg.resolve_lazy(page, c, e)}
+        lambda c: link_with_urlparameters(
+            c["request"], **{page_urlparameter: hg.resolve_lazy(page, c)}
         )
     )
 
@@ -182,11 +182,11 @@ def linktopage(page_urlparameter, page):
 def linktorelativepage(page_urlparameter, direction, maxnum):
     """direction: number of pages to jump, e.g. -1 or 1"""
     return hg.F(
-        lambda c, e: link_with_urlparameters(
+        lambda c: link_with_urlparameters(
             c["request"],
             **{
                 page_urlparameter: int(c["request"].GET.get(page_urlparameter, "1"))
-                + hg.resolve_lazy(direction, c, e)
+                + hg.resolve_lazy(direction, c)
             },
         )
     )
@@ -194,7 +194,7 @@ def linktorelativepage(page_urlparameter, direction, maxnum):
 
 def linkwithitemsperpage(itemsperpage_urlparameter, itemsperpage, page_urlparameter):
     return hg.F(
-        lambda c, e: link_with_urlparameters(
+        lambda c: link_with_urlparameters(
             c["request"],
             **{itemsperpage_urlparameter: itemsperpage, page_urlparameter: None},
         )
@@ -202,7 +202,7 @@ def linkwithitemsperpage(itemsperpage_urlparameter, itemsperpage, page_urlparame
 
 
 def get_page(paginator, page_urlparameter):
-    def wrapper(context, element):
+    def wrapper(context):
         return paginator.get_page(
             int(context["request"].GET.get(page_urlparameter, "1"))
         )

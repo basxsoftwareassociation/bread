@@ -36,7 +36,7 @@ class Icon(hg.SVG):
         super().__init__(**attributes)
 
     def render(self, context):
-        name = hg.resolve_lazy(self.name, context, self)
+        name = hg.resolve_lazy(self.name, context)
         if cache.get(name) is None:
             path = finders.find(
                 os.path.join("design/carbon_design/icons/flat/raw_32/", f"{name}.svg")

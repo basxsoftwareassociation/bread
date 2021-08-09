@@ -1,8 +1,11 @@
+from typing import Callable, NamedTuple, Optional
+
 import htmlgenerator as hg
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import models
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
@@ -13,14 +16,30 @@ from bread.utils import expand_ALL_constant, filter_fieldlist
 
 from .. import layout as _layout  # prevent name clashing
 from ..layout.base import fieldlabel
-from ..menu import Link
 from ..utils import (
     generate_excel,
     link_with_urlparameters,
     pretty_modelname,
     xlsxresponse,
 )
+from ..utils.links import Link
 from .util import BreadView
+
+
+class BulkAction(NamedTuple):
+    name: str
+    label: str
+    action: Callable[[HttpRequest, models.query.QuerySet], Optional[HttpResponse]]
+    iconname: str = "fade"
+    permissions: list[str] = []
+
+    def has_permission(self, request, obj=None):
+        return all(
+            [
+                request.user.has_perm(perm, obj) or request.user.has_perm(perm)
+                for perm in self.permissions
+            ]
+        )
 
 
 class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
@@ -38,7 +57,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     # bulkactions: List[(Link, function(request, queryset))]
     # - link.js should be a slug and not a URL
     # - if the function returns a HttpResponse, the response is returned instead of the browse view result
-    bulkactions = []
+    bulkactions = ()
     rowactions = ()  # list of links
     backurl = None
     addurl = None
@@ -77,16 +96,17 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         self.bulkactions = (
             kwargs.get("bulkactions")
             or self.bulkactions
-            or [
-                (
-                    Link("excel", label=_("Excel"), icon="download"),
-                    lambda request, qs: export(qs, self.columns),
+            or (
+                BulkAction(
+                    "excel",
+                    label=_("Excel"),
+                    iconname="download",
+                    action=lambda request, qs: export(qs, self.columns),
                 ),
-                (
-                    Link("delete", label=_("Delete"), icon="trash-can"),
-                    delete,
+                BulkAction(
+                    "delete", label=_("Delete"), iconname="trash-can", action=delete
                 ),
-            ]
+            )
         )
 
     def get_layout(self):
@@ -97,12 +117,12 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         bulkactions = [
             Link(
                 link_with_urlparameters(
-                    self.request, **{self.bulkaction_urlparameter: action.url}
+                    self.request, **{self.bulkaction_urlparameter: action.name}
                 ),
                 label=action.label,
-                icon=action.icon,
+                iconname=action.iconname,
             )
-            for action, _ in self.bulkactions
+            for action in self.bulkactions
             if action.has_permission(self.request)
         ]
         return _layout.datatable.DataTable.from_model(
@@ -142,8 +162,8 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             return redirect(self.request.path)
         if self.bulkaction_urlparameter in self.request.GET:
             bulkactions = {
-                action.url: actionfunction
-                for action, actionfunction in self.bulkactions
+                action.name: action.action
+                for action in self.bulkactions
                 if action.has_permission(self.request)
             }
             if self.request.GET[self.bulkaction_urlparameter] not in bulkactions:
