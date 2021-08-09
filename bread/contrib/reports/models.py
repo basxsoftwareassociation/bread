@@ -42,11 +42,14 @@ class Report(models.Model):
             columns.append(
                 DataTableColumn(column.name, layout.FC(f"row.{column.column}"))
             )
+        qs = self.queryset
+        if qs is None:
+            return hg.BaseElement("Model does no longer exists!")
 
         return hg.BaseElement(
             hg.H3(_("Preview")),
             layout.datatable.DataTable.from_queryset(
-                self.queryset[:25], columns=columns, with_toolbar=False
+                qs[:25], columns=columns, with_toolbar=False
             ),
         )
 

@@ -1,14 +1,14 @@
 from typing import NamedTuple, Union
 
-from htmlgenerator import Lazy, resolve_lazy
+import htmlgenerator as hg
 
 from .urls import model_urlname
 from .urls import reverse as urlreverse
 
 
-class LazyHref(Lazy):
+class LazyHref(hg.Lazy):
     """An element which will resolve lazy. The ``args`` and ``kwargs`` arguments will
-    be passed to ``bread.utils.urls.resolve_lazy``. Every item in ``args`` will be resolved
+    be passed to ``bread.utils.urls.reverse``. Every item in ``args`` will be resolved
     and every value in ``kwargs`` will be resolved.
 
     Example usage:
@@ -23,8 +23,8 @@ class LazyHref(Lazy):
 
     def resolve(self, context: dict):
         return urlreverse(
-            *[resolve_lazy(a, context) for a in self.args],
-            **{k: resolve_lazy(v, context) for k, v in self.kwargs.items()}
+            *[hg.resolve_lazy(a, context) for a in self.args],
+            **{k: hg.resolve_lazy(v, context) for k, v in self.kwargs.items()}
         )
 
 
@@ -39,7 +39,7 @@ class ModelHref(LazyHref):
     Example usage:
 
         assert "/person/browse" == ModelHref(models.Person, "browse")
-        assert "/person/edit/1" == ModelHref(models.Person, "edit", pk=F("object.pk"))
+        assert "/person/edit/1" == ModelHref(models.Person, "edit", kwargs={"pk": F("object.pk")})
 
     """
 

@@ -1,10 +1,12 @@
-import htmlgenerator
+import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
+
+from bread.utils.links import Link
 
 from .icon import Icon
 
 
-class Button(htmlgenerator.BUTTON):
+class Button(hg.BUTTON):
     """buttontype: "primary", "secondary", "tertiary", "danger", "ghost" """
 
     def __init__(
@@ -29,7 +31,7 @@ class Button(htmlgenerator.BUTTON):
                 attributes[
                     "_class"
                 ] += " bx--btn--icon-only bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-center"
-                children = (htmlgenerator.SPAN(*children, _class="bx--assistive-text"),)
+                children = (hg.SPAN(*children, _class="bx--assistive-text"),)
 
         if icon is not None:
             if isinstance(icon, str):
@@ -45,13 +47,18 @@ class Button(htmlgenerator.BUTTON):
         buttonargs = {
             "icon": action.iconname,
             "notext": not action.label,
-            "onclick": action.js,
         }
+        if isinstance(action, Link):
+            buttonargs["onclick"] = hg.F(
+                lambda c: f"document.location = '{hg.resolve_lazy(action.href, c)}'"
+            )
+        else:
+            buttonargs["onclick"] = action.js
         buttonargs.update(kwargs)
         return Button(*([action.label] if action.label else []), **buttonargs)
 
 
-class ButtonSet(htmlgenerator.htmltags.DIV):
+class ButtonSet(hg.htmltags.DIV):
     def __init__(self, *buttons, **attributes):
         attributes["_class"] = attributes.get("_class", "") + " bx--btn-set"
         super().__init__(*buttons, **attributes)

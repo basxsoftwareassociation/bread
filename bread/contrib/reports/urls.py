@@ -66,6 +66,13 @@ class ReadView(views.ReadView):
 
         # ordering, copied from bread.views.browse.BrowseView.get_queryset
         qs = self.object.queryset
+        if not qs:
+            return _layout.notification.InlineNotification(
+                "Error",
+                f"Model '{self.object.model}' does no longer exist.",
+                kind="error",
+            )
+
         order = self.request.GET.get("ordering")
         if order:
             if order.endswith("__int"):
@@ -108,7 +115,9 @@ class ReadView(views.ReadView):
             helper_text=f"{self.object.queryset.count()} {self.object.model.model_class()._meta.verbose_name_plural}",
             primary_button=_layout.button.Button.fromaction(
                 Link(
-                    urls.reverse_model(self.object, "excel", {"pk": self.object.pk}),
+                    urls.reverse_model(
+                        self.object, "excel", kwargs={"pk": self.object.pk}
+                    ),
                     label=_("Excel"),
                     iconname="download",
                 )

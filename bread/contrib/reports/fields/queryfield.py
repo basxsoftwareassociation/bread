@@ -37,7 +37,7 @@ class QuerySetDescriptor:
         model = getattr(instance, self.field.modelfieldname, None)
         if model and model.model_class():
             return parsequeryexpression(model.model_class().objects, value)
-        return value
+        return QueryValue(None, value)
 
     def __set__(self, instance, value):
         instance.__dict__[self.field.name] = self.field.get_clean_value(value)
