@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-06 11:17+0200\n"
-"PO-Revision-Date: 2021-07-26 13:10+0000\n"
+"PO-Revision-Date: 2021-08-09 03:59+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
 "th/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.7.2-dev\n"
+"X-Generator: Weblate 4.8-dev\n"
 
 #: bread/contrib/reports/fields/queryfield.py:109
 #, python-format
@@ -110,11 +110,11 @@ msgstr "แก้ไข"
 
 #: bread/contrib/workflows/views.py:12
 msgid "Workflow Diagram"
-msgstr ""
+msgstr "ผังแสดงลำดับขั้นตอนการทำงาน"
 
 #: bread/contrib/workflows/views.py:20
 msgid "Explain Workflow"
-msgstr ""
+msgstr "อธิบายผังขั้นตอนการทำงาน"
 
 #: bread/layout/components/button.py:64
 msgid "Print"
