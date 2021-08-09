@@ -108,7 +108,7 @@ class ReadView(views.ReadView):
             helper_text=f"{self.object.queryset.count()} {self.object.model.model_class()._meta.verbose_name_plural}",
             primary_button=_layout.button.Button.fromaction(
                 Link(
-                    urls.reverse_model(self.object, "excel", {"pk": object.pk}),
+                    urls.reverse_model(self.object, "excel", {"pk": self.object.pk}),
                     label=_("Excel"),
                     iconname="download",
                 )
