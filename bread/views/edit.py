@@ -118,7 +118,7 @@ def deepcopy_object(instance, attrs=None, copy_related_fields=()):
     instance.id = None
     instance._state.adding = True
     for k, v in (attrs or {}).items():
-        setattr(instance, k, v)
+        setattr(instance, k, v() if callable(v) else v)
     instance.save()
     for field, queryset in many2manyfields.items():
         getattr(instance, field).set(queryset)
