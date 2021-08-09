@@ -57,14 +57,36 @@ def aslink_attributes(href):
 
 
 class ModelName(hg.ContextValue):
-    def resolve(self, context, element):
-        return pretty_modelname(super().resolve(context, element))
+    def resolve(self, context):
+        return pretty_modelname(super().resolve(context))
 
 
 class FormattedContextValue(hg.ContextValue):
-    def resolve(self, context, element):
-        value = super().resolve(context, element)
+    def resolve(self, context):
+        value = super().resolve(context)
         return format_value(value)
+
+
+class ObjectFieldLabel(hg.Lazy):
+    def __init__(self, fieldname):
+        self.fieldname = fieldname
+
+    def resolve(self, context):
+        return fieldlabel(context["object"]._meta.model, self.fieldname)
+
+
+# TODO compare with formatters.format_value and refactor according to discussion:
+# https://github.com/basxsoftwareassociation/bread/pull/66/files#r684120073
+class ObjectFieldValue(hg.Lazy):
+    def __init__(self, fieldname):
+        self.fieldname = fieldname
+
+    def resolve(self, context):
+        return (
+            getattr(context["object"], f"get_{self.fieldname}_display")()
+            if hasattr(context["object"], f"get_{self.fieldname}_display")
+            else getattr(context["object"], self.fieldname)
+        )
 
 
 FC = FormattedContextValue
