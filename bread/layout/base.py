@@ -63,8 +63,7 @@ class ModelName(hg.ContextValue):
 
 class FormattedContextValue(hg.ContextValue):
     def resolve(self, context):
-        value = super().resolve(context)
-        return format_value(value)
+        return str(format_value(super().resolve(context)))
 
 
 class ObjectFieldLabel(hg.Lazy):
