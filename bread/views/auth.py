@@ -36,7 +36,7 @@ def auth_page(content, submitname, show_cancelbutton=False):
                 layout.button.Button(
                     submitname, type="submit", form="authform", style="width: 50%"
                 ),
-                style="margin: 1rem -1rem -1rem -1rem; display: flex",
+                style="margin: 1rem -1rem -1rem -1rem; display: flex; height: 64px",
             ),
             style="margin: auto; width: 25rem",
             _class="bx--tile",
