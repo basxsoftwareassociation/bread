@@ -1,3 +1,5 @@
+import warnings
+
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
@@ -44,6 +46,9 @@ class Button(hg.BUTTON):
 
     @staticmethod
     def fromaction(action, **kwargs):
+        warnings.warn(
+            "Button.fromaction is going to be deprecated in the future. Try to use bread.utils.links.Link where possible"
+        )
         buttonargs = {
             "icon": action.iconname,
             "notext": not action.label,
@@ -56,6 +61,19 @@ class Button(hg.BUTTON):
             buttonargs["onclick"] = action.js
         buttonargs.update(kwargs)
         return Button(*([action.label] if action.label else []), **buttonargs)
+
+    @staticmethod
+    def fromlink(link, **kwargs):
+        buttonargs = {
+            "icon": link.iconname,
+            "notext": not link.label,
+        }
+        return Button(
+            *([link.label] if link.label else []), **{**buttonargs, **kwargs}
+        ).as_href(link.href)
+
+    def as_href(self, href):
+        return hg.A(*self, **{**self.attributes, "href": href})
 
 
 class ButtonSet(hg.htmltags.DIV):

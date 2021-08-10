@@ -1,6 +1,7 @@
 from typing import NamedTuple, Union
 
 import htmlgenerator as hg
+from django.db import models
 
 from .urls import model_urlname
 from .urls import reverse as urlreverse
@@ -44,6 +45,10 @@ class ModelHref(LazyHref):
     """
 
     def __init__(self, model, name, *args, **kwargs):
+        if isinstance(model, models.Model) and "pk" not in kwargs.get("kwargs", {}):
+            if "kwargs" not in kwargs:
+                kwargs["kwargs"] = {}
+            kwargs["kwargs"]["pk"] = model.pk
         super().__init__(model_urlname(model, name), *args, **kwargs)
 
 

@@ -12,7 +12,7 @@ from bread import formatters
 from bread import layout as _layout
 from bread import menu, views
 from bread.utils import filter_fieldlist, generate_excel, urls, xlsxresponse
-from bread.utils.links import Link
+from bread.utils.links import Link, ModelHref
 from bread.views.browse import delete
 from bread.views.edit import bulkcopy
 
@@ -113,15 +113,9 @@ class ReadView(views.ReadView):
         ).with_toolbar(
             title=self.object.name,
             helper_text=f"{self.object.queryset.count()} {self.object.model.model_class()._meta.verbose_name_plural}",
-            primary_button=_layout.button.Button.fromaction(
-                Link(
-                    urls.reverse_model(
-                        self.object, "excel", kwargs={"pk": self.object.pk}
-                    ),
-                    label=_("Excel"),
-                    iconname="download",
-                )
-            ),
+            primary_button=_layout.button.Button(
+                label=_("Excel"), icon="download"
+            ).as_href(ModelHref(self.object, "excel")),
         )
 
 
