@@ -66,25 +66,37 @@ class FormattedContextValue(hg.ContextValue):
         return str(format_value(super().resolve(context)))
 
 
-class ObjectFieldLabel(hg.Lazy):
-    def __init__(self, fieldname):
+# notes on changes (this may be removed py wipascal):
+# By inheriting from ContextValue we can use the parameter
+# "object_contextname" to query any object from the context which
+# is "dot-accessible". E.g we could use ObjectFieldValue("primary_email_address", "row")
+# or ObjectFieldValue("email", "row.primary_email_address")
+# in the second example we "extract the email-address object from the context and
+# use the field "email" of that object.
+#
+# The object can then be obtained from the context by calling super().resolve(context)
+
+
+class ObjectFieldLabel(hg.ContextValue):
+    def __init__(self, fieldname, object_contextname="object"):
+        super().__init__(object_contextname)
         self.fieldname = fieldname
 
     def resolve(self, context):
-        return fieldlabel(context["object"]._meta.model, self.fieldname)
+        return fieldlabel(super().resolve(context)._meta.model, self.fieldname)
 
 
-# TODO compare with formatters.format_value and refactor according to discussion:
-# https://github.com/basxsoftwareassociation/bread/pull/66/files#r684120073
-class ObjectFieldValue(hg.Lazy):
-    def __init__(self, fieldname):
+class ObjectFieldValue(hg.ContextValue):
+    def __init__(self, fieldname, object_contextname="object"):
+        super().__init__(object_contextname)
         self.fieldname = fieldname
 
     def resolve(self, context):
+        object = super().resolve(context)
         return (
-            getattr(context["object"], f"get_{self.fieldname}_display")()
-            if hasattr(context["object"], f"get_{self.fieldname}_display")
-            else getattr(context["object"], self.fieldname)
+            getattr(object, f"get_{self.fieldname}_display")()
+            if hasattr(object, f"get_{self.fieldname}_display")
+            else getattr(object, self.fieldname)
         )
 
 
