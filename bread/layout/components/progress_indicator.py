@@ -17,12 +17,12 @@ class ProgressStep(hg.LI):
     ):
         if status not in ProgressStep.STATUS:
             raise ValueError(f"{status} must be one of {ProgressStep.STATUS}")
-        kwargs["class"] = (
-            kwargs.get("class", "") + f" bx--progress-step bx--progress-step--{status}"
+        kwargs["_class"] = (
+            kwargs.get("_class", "") + f" bx--progress-step bx--progress-step--{status}"
         )
         if disabled:
             kwargs["aria_disabled"] = "true"
-            kwargs["class"] += "  bx--progress-step--disabled"
+            kwargs["_class"] += "  bx--progress-step--disabled"
         elements = [
             Icon(ProgressStep.STATUS[status], size=16),
             hg.P(label, tabindex=0, _class="bx--progress-label"),
@@ -56,8 +56,8 @@ class ProgressIndicator(hg.UL):
         """steps: lazy object or iterator of tuples in the form (step_name, step_status)"""
         kwargs["data_progress"] = True
         kwargs["data_progress_current"] = True
-        kwargs["class"] = (
-            kwargs.get("class", "")
+        kwargs["_class"] = (
+            kwargs.get("_class", "")
             + " bx--progress"
             + (" bx--progress--vertical" if vertical else "")
         )
