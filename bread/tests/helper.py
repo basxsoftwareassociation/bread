@@ -21,8 +21,7 @@ def generic_bread_testcase(model, **kwargs):
             self.client = Client()
             authenticate(self.client)
 
-        @given(from_model(model))
-        @settings(deadline=None)
+        @given(from_model(model, **kwargs))
         def test_generic(self, instance):
             self.assertIsNotNone(instance.pk)
             resp = self.client.get(reverse_model(model, "browse"), follow=True)
@@ -44,7 +43,7 @@ def generic_bread_testcase(model, **kwargs):
             self.assertEqual(resp.status_code, 200)
             # TODO: implement add form, use hypothesis
 
-        @given(from_model(model))
+        @given(from_model(model, **kwargs))
         @settings(deadline=None)
         def test_forms(self, instance):
             self.assertIsNotNone(instance.pk)
