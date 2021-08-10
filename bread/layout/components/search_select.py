@@ -1,7 +1,6 @@
 import htmlgenerator as hg
 
-from bread.layout.components import search
-
+from .search import Search
 from .tag import Tag
 
 
@@ -37,7 +36,7 @@ class SearchSelect(hg.DIV):
                 onclick="return false;",
             ),
             hg.INPUT(_type="hidden", **widgetattributes),  # the actual form field
-            search.Search(
+            Search(
                 backend=backend,
                 resultcontainerid=resultcontainerid,
                 resultcontainer_onload_js=_resultcontainer_onload_js(

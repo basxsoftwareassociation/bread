@@ -1,4 +1,4 @@
-from bread.layout.components.text_input import TextInput
+from .text_input import TextInput
 
 
 class EmailInput(TextInput):
