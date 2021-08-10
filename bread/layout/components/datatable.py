@@ -9,7 +9,7 @@ from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
 from bread.utils.links import Link
 from bread.utils.urls import link_with_urlparameters, reverse_model
 
-from ..base import aslink_attributes, fieldlabel, objectaction
+from ..base import ObjectFieldLabel, ObjectFieldValue, aslink_attributes, objectaction
 from . import search
 from .button import Button
 from .icon import Icon
@@ -36,8 +36,8 @@ class DataTableColumn(NamedTuple):
         td_attributes=None,
     ) -> "DataTableColumn":
         return DataTableColumn(
-            fieldlabel(model, col),
-            hg.C(f"{rowvariable}.{col}"),
+            ObjectFieldLabel(col, model),
+            ObjectFieldValue(col, "row"),
             sortingname_for_column(model, col)
             if not prevent_automatic_sortingnames
             else None,

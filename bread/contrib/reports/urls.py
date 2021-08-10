@@ -3,6 +3,7 @@ import datetime
 import htmlgenerator as hg
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db import models
+from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404
 from django.urls import path
 from django.utils.translation import gettext_lazy as _
@@ -121,6 +122,8 @@ class ReadView(views.ReadView):
 
 def exceldownload(request, pk: int):
     report = get_object_or_404(Report, pk=pk)
+    if report.model.model_class() is None:
+        return HttpResponseNotFound()
 
     columns = {
         column.name: lambda row, c=column.column: formatters.format_value(

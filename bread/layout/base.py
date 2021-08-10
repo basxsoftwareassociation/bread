@@ -86,18 +86,47 @@ class ObjectFieldLabel(hg.ContextValue):
         return fieldlabel(super().resolve(context)._meta.model, self.fieldname)
 
 
+# notes on changes (this may be removed py wipascal):
+# The additional complexity comes from a use case where
+# we want to display a value which spans one or multiple relationships
+# E.g. if we have a table of persons and the object context-name is
+# "row" and we want to display the country, we would want to specifiy the field
+# as "primary_postal_address.country". This is what is already mentioned in the
+# first note above, but we make use of hg.resolve_lookup instead of fieldlabel (
+# because resolve_lookup is much more generic, while fieldlabel only works with
+# django models and has therefore a bit more information when doing the lookup).
+
+# If "primary_postal_address.country" would have a "get_country_display" method,
+# then we want to call that method as "primary_postal_address.get_country_display".
+# this is why we do the slightly ugly string-splitting
+
+# Note that we might also want to access a non-django-field value like
+# "primary_postal_address.country.name" which works with the implementation below
+
+# I think it is good if we have a standard way to display database values and field
+# labels, so I am all for replacing the existing methods with a consistent one.
+# The amount of "magic" or "genericnes" that I would like to have here is because
+# it makes prototyping much faster. The dot-lookup-anything idea comes from
+# traditional html-template systems like the django template language, hg.resolve_lookup
+# is copied and adjust from the django template system.
+
+
 class ObjectFieldValue(hg.ContextValue):
-    def __init__(self, fieldname, object_contextname="object"):
+    def __init__(self, fieldname, object_contextname="object", formatter=None):
         super().__init__(object_contextname)
         self.fieldname = fieldname
+        self.formatter = formatter
 
     def resolve(self, context):
         object = super().resolve(context)
-        return (
-            getattr(object, f"get_{self.fieldname}_display")()
-            if hasattr(object, f"get_{self.fieldname}_display")
-            else getattr(object, self.fieldname)
+        parts = self.fieldname.split(".")
+        # test if the value has a matching get_FIELDNAME_display function
+        value = hg.resolve_lookup(
+            object, f"{'.'.join(parts[:-1])}.get_{parts[-1]}_display"
         )
+        if value is None:
+            value = hg.resolve_lookup(object, self.fieldname)
+        return self.formatter(value) if self.formatter else value
 
 
 FC = FormattedContextValue

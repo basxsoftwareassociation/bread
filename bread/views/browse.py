@@ -15,7 +15,6 @@ from guardian.mixins import PermissionListMixin
 from bread.utils import expand_ALL_constant, filter_fieldlist
 
 from .. import layout as _layout  # prevent name clashing
-from ..layout.base import fieldlabel
 from ..utils import (
     generate_excel,
     link_with_urlparameters,
@@ -237,12 +236,15 @@ def export(queryset, columns):
             )
         if isinstance(column, str):
             column = _layout.datatable.DataTableColumn(
-                fieldlabel(queryset.model, column), hg.C(f"row.{column}")
+                _layout.ObjectFieldLabel(column, "model"),
+                _layout.ObjectFieldValue(column, "row"),
             )
 
-        columndefinitions[column.header] = lambda row, column=column: hg.render(
-            hg.BaseElement(column.cell), {"row": row}
-        )
+            columndefinitions[
+                hg.render(hg.BaseElement(column.header), {"model": queryset.model})
+            ] = lambda row, column=column: hg.render(
+                hg.BaseElement(column.cell), {"row": row}
+            )
 
     workbook = generate_excel(queryset, columndefinitions)
     workbook.title = pretty_modelname(queryset.model)
