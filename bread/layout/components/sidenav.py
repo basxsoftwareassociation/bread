@@ -52,7 +52,9 @@ class SideNav(hg.ASIDE):
                                         _class="bx--side-nav__submenu",
                                         type="button",
                                         aria_haspopup="true",
-                                        aria_expanded=isactive("menugroup"),
+                                        aria_expanded=hg.If(
+                                            isactive("menugroup"), "true"
+                                        ),
                                     ),
                                     hg.UL(
                                         hg.Iterator(
