@@ -12,6 +12,7 @@ from .nodes import (
     FlowFinal,
     Fork,
     Initial,
+    Join,
     Merge,
     Node,
     WorkflowFinal,
@@ -50,10 +51,12 @@ class WorkflowBase(models.Model):
             def allnodes(graph):
                 return set(sum((list(i[:2]) for i in graph), []))
 
-            assert hasattr(cls, "WORKFLOW")  # nosec because only for API validation
+            assert hasattr(
+                cls, "WORKFLOW"
+            ), f"class {cls} needs to have an attribute 'WORKFLOW' with the workflowdefinition"  # nosec because only for API validation
             assert isinstance(  # nosec because only for API validation
                 cls.WORKFLOW, dict
-            )
+            ), f"{cls}.WORKFLOW needs to be of type {type(dict)}"
             graph = []  # [(source, target, choice)]
 
             # some type checking
@@ -78,9 +81,13 @@ class WorkflowBase(models.Model):
 
             # insert initial and final nodes, mostly for activity diagram compliance
             for source, target, choice in list(graph):
-                if source not in set(i[1] for i in graph):
+                if source not in set(i[1] for i in graph) and not isinstance(
+                    source, Initial
+                ):
                     graph.append((Initial(), source, None))
-                if target not in set(i[0] for i in graph):
+                if target not in set(i[0] for i in graph) and not isinstance(
+                    target, WorkflowFinal
+                ):
                     graph.append((target, WorkflowFinal(), None))
                 if target is None:
                     graph.append((target, FlowFinal(), None))
@@ -90,7 +97,7 @@ class WorkflowBase(models.Model):
             new_edges = []
             for node in allnodes(graph):
                 inputs = [[s, choice] for s, t, choice in graph if t == node]
-                if len(inputs) > 1:
+                if len(inputs) > 1 and not isinstance(node, (Join, Merge)):
                     mergenode = Merge()
                     new_edges.append((mergenode, node, None))
                     for inputnode, choice in inputs:
@@ -105,7 +112,7 @@ class WorkflowBase(models.Model):
             new_edges = []
             for node in allnodes(graph):  # check if node needs to be a fork node
                 outputs = [
-                    [s, choice]
+                    [t, choice]
                     for s, t, choice in graph
                     if s == node and choice is None
                 ]
@@ -141,10 +148,10 @@ class WorkflowBase(models.Model):
 
     @classmethod
     def workflow_as_dot(cls, attrs=None):
-        default_attrs = {}
+        default_attrs = {"splines": "ortho"}
         default_attrs.update(attrs or {})
         dot = [
-            f'digraph "{cls._meta.verbose_name}" {{',
+            f'digraph "{cls._meta.verbose_name}" {{n',
             *[f"{k}={v}" for k, v in default_attrs.items()],
             'graph[bgcolor="#ffffff00" ranksep=1]',
             "edge[arrowhead=open]",
@@ -201,10 +208,10 @@ class WorkflowBase(models.Model):
                 return "orange"
             return "black"
 
-        default_attrs = {}
+        default_attrs = {"splines": "ortho", "overlap": "true"}
         default_attrs.update(attrs or {})
         dot = [
-            f'digraph "{self._meta.verbose_name}" {{',
+            f'digraph "{self._meta.verbose_name}" {{\nranksep=2',
             *[f"{k}={v}" for k, v in default_attrs.items()],
             'graph[bgcolor="#ffffff00" ranksep=1]',
             "edge[arrowhead=open]",
@@ -234,6 +241,8 @@ class WorkflowBase(models.Model):
                     target,
                     f'taillabel = "[{choice}]" labeldistance = 3.0' if choice else "",
                     f"color={edgecolor(source, target, choice, self)}",
+                    *(("headport=n",) if isinstance(target, Join) else ()),
+                    *(("tailport=s",) if isinstance(target, Fork) else ()),
                 )
             )
 

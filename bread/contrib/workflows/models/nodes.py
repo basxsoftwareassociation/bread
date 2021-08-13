@@ -50,6 +50,7 @@ class Node:
             f"{k}={v}"
             for k, v in {
                 "label": f'"{self}"',
+                "tooltip": f'"{getattr(self, "help_text", self)}"',
                 **self.dot_attrs(),
                 **(attrs or {}),
             }.items()
@@ -155,7 +156,6 @@ class Decision(models.CharField, Node):
         return {
             "shape": "diamond",
             "label": '""',
-            "tooltip": '"' + str(self) + '"',
             "xlabel": '"' + str(self) + '"',
             "fixedsize": "TRUE",
             "width": 0.5,
