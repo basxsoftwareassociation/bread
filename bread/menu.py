@@ -56,27 +56,6 @@ def try_call(var, *args, **kwargs):
     return var(*args, **kwargs) if callable(var) else var
 
 
-class Action:
-    """Represents a user-clickable action
-    js, label, icon and permissions can be str, lazy string or a callable function.
-    The function takes the current request as the only argument.
-    """
-
-    def __init__(self, js, label="", iconname=None, permissions=[]):
-        self.js = js
-        self.label = label
-        self.iconname = iconname
-        self._permissions = permissions
-
-    def has_permission(self, request, obj=None):
-        return all(
-            [
-                request.user.has_perm(perm, obj) or request.user.has_perm(perm)
-                for perm in try_call(self._permissions, request)
-            ]
-        )
-
-
 class Item:
     def __init__(self, link, group, order=None):
         if not isinstance(link, Link):
@@ -138,3 +117,43 @@ def registeritem(item):
 
 # global main menu
 main = Menu()
+
+# TODO: I think we should rethink this concept of Action
+# Thoughts:
+# Partly we replaced the original Link class (inheriting from ACtion)
+# with the new bread.utils.links.Link class in order to have real
+# support for html a href links. (The old menu.Link class here was using
+# javascript with "document.location = ..." which is a really unclean
+# solution for "real" links)
+# What we still need is a concept of UI-actions that cannot be represented with
+# a href link but require a javascript action.
+# This Action class fullfills that purpose somewhat but it should at least go
+# into another module and we need to add support to e.g. buttons to "attach"
+# an action or create a button out of an action...
+# Maybe this class is even completely obsolete. Everything here can be done with
+# bread.layout.button.Button(label, icon=iconname, onclick=js)
+# Be aware: This class is used in quite a few places, including datatables
+# Refactoring this (out) is not trivial. But I think worthwhile, because having an easy
+# and consisten way of adding custom "actions" or behaviour to the UI is a very frequent
+# task.
+
+
+class Action:
+    """Represents a user-clickable action
+    js, label, icon and permissions can be str, lazy string or a callable function.
+    The function takes the current request as the only argument.
+    """
+
+    def __init__(self, js, label="", iconname=None, permissions=[]):
+        self.js = js
+        self.label = label
+        self.iconname = iconname
+        self._permissions = permissions
+
+    def has_permission(self, request, obj=None):
+        return all(
+            [
+                request.user.has_perm(perm, obj) or request.user.has_perm(perm)
+                for perm in try_call(self._permissions, request)
+            ]
+        )
