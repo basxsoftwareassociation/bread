@@ -4,7 +4,6 @@ import htmlgenerator as hg
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from bread.menu import Action
 from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
 from bread.utils.links import Link
 from bread.utils.urls import link_with_urlparameters, reverse_model
@@ -110,7 +109,7 @@ class DataTable(hg.TABLE):
         primary_button=None,
         searchurl=None,
         query_urlparameter=None,
-        bulkactions=(),
+        bulkactions: List[Link] = (),
         pagination_options=(),
         paginator=None,
         page_urlparameter="page",
@@ -125,7 +124,7 @@ class DataTable(hg.TABLE):
         primary_button: bread.layout.button.Button instance
         searchurl: url to which values entered in the searchfield should be submitted
         query_urlparameter: name of the query field for the searchurl which contains the entered text
-        bulkactions: List of bread.menu.Action or bread.menu.Link instances bread.menu.Link will send a post or a get (depending on its "method" attribute) to the target url the sent data will be a form with the selected checkboxes as fields if the head-checkbox has been selected only that field will be selected
+        bulkactions: List of bread.utils.links.Link instances. Will send a post or a get (depending on its "method" attribute) to the target url the sent data will be a form with the selected checkboxes as fields if the head-checkbox has been selected only that field will be selected
         """
         checkboxallid = f"datatable-check-{hg.html_id(self)}"
         header = [hg.H4(title, _class="bx--data-table-header__title")]
@@ -135,23 +134,18 @@ class DataTable(hg.TABLE):
             )
         resultcontainerid = f"datatable-search-{hg.html_id(self)}"
         bulkactionlist = []
-        for action in bulkactions:
-            if isinstance(action, Link):
-                action = Action(
-                    js=hg.BaseElement(
+        for link in bulkactions:
+            bulkactionlist.append(
+                Button(
+                    link.label,
+                    iconname=link.iconname,
+                    onclick=hg.BaseElement(
                         "submitbulkaction(this.closest('[data-table]'), '",
-                        action.href,
-                        f"', method='{getattr(action, 'method', 'GET')}')",
+                        link.href,
+                        "', method='GET')",
                     ),
-                    label=action.label,
-                    iconname=action.iconname,
-                    permissions=action.permissions,
-                )
-                bulkactionlist.append(Button.fromaction(action))
-            elif isinstance(action, Action):
-                bulkactionlist.append(Button.fromaction(action))
-            else:
-                RuntimeError(f"bulkaction needs to be {Action} or {Link}")
+                ),
+            )
 
         if bulkactions:
             self.head.insert(
@@ -303,9 +297,9 @@ class DataTable(hg.TABLE):
         model,
         queryset=None,
         columns: Union[List[str], List[DataTableColumn]] = None,
-        rowactions=None,
+        rowactions: List[Link] = (),
         rowactions_dropdown=False,
-        bulkactions=(),
+        bulkactions: List[Link] = (),
         title=None,
         addurl=None,
         backurl: Union[hg.Lazy, str] = None,
@@ -375,7 +369,7 @@ class DataTable(hg.TABLE):
                     rowactions,
                     "action",
                     hg.F(
-                        lambda c: Button.fromaction(
+                        lambda c: Button.fromlink(
                             c["action"],
                             notext=True,
                             small=True,
@@ -421,7 +415,11 @@ class DataTable(hg.TABLE):
                         "",
                         objectactions_menu,
                         td_attributes=hg.F(
-                            lambda c: {"_class": "bx--table-column-menu"}
+                            lambda c: {
+                                "_class": "bx--table-column-menu"
+                                if rowactions_dropdown
+                                else ""
+                            }
                         ),
                         th_attributes=hg.F(
                             lambda c: {"_class": "bx--table-column-menu"}
