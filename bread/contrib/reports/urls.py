@@ -167,25 +167,13 @@ urlpatterns = [
                 ),
             ],
             rowactions=[
-                menu.Action(
-                    js=hg.BaseElement(
-                        "document.location = '",
-                        hg.F(lambda c: _layout.objectaction(c["row"], "edit")),
-                        "'",
-                    ),
+                Link(
+                    href=ModelHref(Report, "edit", kwargs={"pk": hg.C("row.pk")}),
                     iconname="edit",
                     label=_("Edit"),
                 ),
-                menu.Action(
-                    js=hg.BaseElement(
-                        "document.location = '",
-                        hg.F(
-                            lambda c: urls.reverse_model(
-                                Report, "excel", kwargs={"pk": c["row"].pk}
-                            )
-                        ),
-                        "'",
-                    ),
+                Link(
+                    href=ModelHref(Report, "excel", kwargs={"pk": hg.C("row.pk")}),
                     iconname="download",
                     label=_("Excel"),
                 ),
