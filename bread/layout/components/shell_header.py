@@ -64,13 +64,6 @@ class ShellHeader(hg.HEADER):
         )
 
 
-def company_position(searchbar):
-    if searchbar:
-        return "50%"
-    else:
-        return "5rem"
-
-
 def logo():
     from django.contrib.staticfiles.storage import staticfiles_storage
 
@@ -98,7 +91,7 @@ def variable_size_header_part(platform, company, searchbar, searchbar_position):
         hg.A(
             hg.SPAN(
                 company,
-                style=f"position: absolute; left: {company_position(searchbar)}",
+                style=f"position: absolute; left: {hg.If(searchbar, hg.BaseElement('50 %'), hg.BaseElement('5rem'))}",
             ),
             _class="bx--header__name",
             style="font-weight: 400",  # override carbon design
