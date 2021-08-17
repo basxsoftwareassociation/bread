@@ -1,4 +1,4 @@
-from typing import Callable, NamedTuple, Optional
+from typing import Callable, List, NamedTuple, Optional
 
 import htmlgenerator as hg
 from django.conf import settings
@@ -30,7 +30,7 @@ class BulkAction(NamedTuple):
     label: str
     action: Callable[[HttpRequest, models.query.QuerySet], Optional[HttpResponse]]
     iconname: str = "fade"
-    permissions: list[str] = []
+    permissions: List[str] = []
 
     def has_permission(self, request, obj=None):
         return all(
@@ -240,11 +240,11 @@ def export(queryset, columns):
                 _layout.ObjectFieldValue(column, "row"),
             )
 
-            columndefinitions[
-                hg.render(hg.BaseElement(column.header), {"model": queryset.model})
-            ] = lambda row, column=column: hg.render(
-                hg.BaseElement(column.cell), {"row": row}
-            )
+        columndefinitions[
+            hg.render(hg.BaseElement(column.header), {"model": queryset.model})
+        ] = lambda row, column=column: hg.render(
+            hg.BaseElement(column.cell), {"row": row}
+        )
 
     workbook = generate_excel(queryset, columndefinitions)
     workbook.title = pretty_modelname(queryset.model)

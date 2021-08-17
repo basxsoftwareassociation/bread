@@ -24,3 +24,11 @@ bread.layout.base module
    :members:
    :undoc-members:
    :show-inheritance:
+
+bread.layout.skeleton module
+----------------------------
+
+.. automodule:: bread.layout.skeleton
+   :members:
+   :undoc-members:
+   :show-inheritance:
