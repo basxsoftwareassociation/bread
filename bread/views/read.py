@@ -57,9 +57,12 @@ def layoutasreadonly(layout):
             [isinstance(a, _layout.form.Form) for a in ancestors]
         )
         and (
-            isinstance(
-                element,
-                hg.BUTTON,
+            (
+                isinstance(
+                    element,
+                    hg.BUTTON,
+                )
+                and "bx--tag" not in element.attributes.get("_class", "")
             )
             or getattr(element, "attributes", {}).get("type") == "submit"
         )
