@@ -138,7 +138,7 @@ class DataTable(hg.TABLE):
             bulkactionlist.append(
                 Button(
                     link.label,
-                    iconname=link.iconname,
+                    icon=link.iconname,
                     onclick=hg.BaseElement(
                         "submitbulkaction(this.closest('[data-table]'), '",
                         link.href,
