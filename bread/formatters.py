@@ -14,7 +14,7 @@ from django_countries.fields import CountryField
 import bread.settings as app_settings
 
 from . import layout
-from .models import AccessConcreteInstanceMixin
+from .utils.model_helpers import get_concrete_instance
 from .utils.urls import reverse_model
 
 
@@ -176,13 +176,9 @@ def as_object_link(obj, label=None):
     if hasattr(obj, "get_absolute_url"):
         return format_html('<a href="{}">{}</a>', obj.get_absolute_url(), obj)
 
-    if (
-        isinstance(obj, AccessConcreteInstanceMixin) and obj != obj.concrete
-    ):  # prevent endless recursion
-        return as_object_link(obj.concrete)
     return format_html(
         '<a href="{}">{}</a>',
-        reverse_model(obj, "read"),
+        reverse_model(get_concrete_instance(obj), "read"),
         label or obj.__str__(),
     )
 
