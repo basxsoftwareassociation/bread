@@ -34,6 +34,9 @@ class Search(hg.DIV):
         kwargs["_class"] = kwargs.get("_class", "") + f" bx--search bx--search--{size}"
         kwargs["data_search"] = True
         kwargs["role"] = "search"
+        width = kwargs.get("width", None)
+        if width:
+            kwargs["style"] = kwargs.get("style", "") + f"width:{width};"
 
         widgetattributes = {
             "id": "search__" + hg.html_id(self),
@@ -63,20 +66,20 @@ class Search(hg.DIV):
             ),
             hg.If(
                 backend is not None and show_result_container,
-                _result_container(resultcontainerid, resultcontainer_onload_js),
+                _result_container(resultcontainerid, resultcontainer_onload_js, width),
             ),
             style=hg.If(disabled, hg.BaseElement("display: none")),
         )
 
 
-def _result_container(_id, onload_js):
+def _result_container(_id, onload_js, width="100%"):
     return hg.DIV(
         hg.DIV(
             id=_id,
             _style="width: 100%; position: absolute; z-index: 999",
             **({"onload": onload_js} if onload_js else {}),
         ),
-        style="width: 100%; position: relative",
+        style=f"width: {width}; position: relative",
     )
 
 
