@@ -14,11 +14,37 @@ import os
 import sys
 
 import django
+from django.conf import settings
 
 sys.path.insert(0, os.path.abspath("../.."))
 import sphinx_rtd_theme  # noqa
 
-os.environ["DJANGO_SETTINGS_MODULE"] = "bread.settings.testing"
+INSTALLED_APPS = [
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sites",
+    "guardian",
+    "bread",
+    "bread.contrib.reports",
+    "bread.contrib.workflows",
+]
+
+settings.configure(  # nosec because this is only for local development
+    DEBUG=True,
+    USE_TZ=True,
+    USE_I18N=True,
+    DATABASES={"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}},
+    MIDDLEWARE_CLASSES=(),
+    SITE_ID=1,
+    INSTALLED_APPS=INSTALLED_APPS,
+    AUTHENTICATION_BACKENDS=(
+        "django.contrib.auth.backends.ModelBackend",
+        "guardian.backends.ObjectPermissionBackend",
+    ),
+    SECRET_KEY="SECRET_KEY_FOR_TESTING",
+    STATIC_URL="static/",
+)
+
 django.setup()
 
 # -- Project information -----------------------------------------------------

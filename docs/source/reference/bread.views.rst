@@ -17,6 +17,14 @@ bread.views.add module
    :undoc-members:
    :show-inheritance:
 
+bread.views.auth module
+-----------------------
+
+.. automodule:: bread.views.auth
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 bread.views.browse module
 -------------------------
 

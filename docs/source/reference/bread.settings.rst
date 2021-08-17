@@ -16,11 +16,3 @@ bread.settings.required module
    :members:
    :undoc-members:
    :show-inheritance:
-
-bread.settings.testing module
------------------------------
-
-.. automodule:: bread.settings.testing
-   :members:
-   :undoc-members:
-   :show-inheritance:

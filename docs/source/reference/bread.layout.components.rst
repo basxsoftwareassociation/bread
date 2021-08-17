@@ -57,6 +57,14 @@ bread.layout.components.datetimeformatstring module
    :undoc-members:
    :show-inheritance:
 
+bread.layout.components.email\_input module
+-------------------------------------------
+
+.. automodule:: bread.layout.components.email_input
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 bread.layout.components.file\_uploader module
 ---------------------------------------------
 
@@ -145,6 +153,14 @@ bread.layout.components.pagination module
    :undoc-members:
    :show-inheritance:
 
+bread.layout.components.phone\_number\_input module
+---------------------------------------------------
+
+.. automodule:: bread.layout.components.phone_number_input
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 bread.layout.components.progress\_indicator module
 --------------------------------------------------
 
@@ -161,6 +177,14 @@ bread.layout.components.search module
    :undoc-members:
    :show-inheritance:
 
+bread.layout.components.search\_select module
+---------------------------------------------
+
+.. automodule:: bread.layout.components.search_select
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 bread.layout.components.select module
 -------------------------------------
 
@@ -173,6 +197,14 @@ bread.layout.components.shell\_header module
 --------------------------------------------
 
 .. automodule:: bread.layout.components.shell_header
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bread.layout.components.sidenav module
+--------------------------------------
+
+.. automodule:: bread.layout.components.sidenav
    :members:
    :undoc-members:
    :show-inheritance:
@@ -213,6 +245,14 @@ bread.layout.components.toggle module
 -------------------------------------
 
 .. automodule:: bread.layout.components.toggle
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bread.layout.components.url\_input module
+-----------------------------------------
+
+.. automodule:: bread.layout.components.url_input
    :members:
    :undoc-members:
    :show-inheritance:

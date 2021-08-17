@@ -17,6 +17,14 @@ bread.utils.export module
    :undoc-members:
    :show-inheritance:
 
+bread.utils.links module
+------------------------
+
+.. automodule:: bread.utils.links
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 bread.utils.model\_helpers module
 ---------------------------------
 

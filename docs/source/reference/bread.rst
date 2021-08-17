@@ -16,7 +16,6 @@ Subpackages
    bread.forms
    bread.layout
    bread.settings
-   bread.templatetags
    bread.utils
    bread.views
 
@@ -27,14 +26,6 @@ bread.context\_processors module
 --------------------------------
 
 .. automodule:: bread.context_processors
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-bread.dynamic\_preferences\_registry module
--------------------------------------------
-
-.. automodule:: bread.dynamic_preferences_registry
    :members:
    :undoc-members:
    :show-inheritance:
