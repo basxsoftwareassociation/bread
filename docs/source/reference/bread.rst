@@ -54,22 +54,6 @@ bread.middleware module
    :undoc-members:
    :show-inheritance:
 
-bread.models module
--------------------
-
-.. automodule:: bread.models
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-bread.signals module
---------------------
-
-.. automodule:: bread.signals
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 bread.urls module
 -----------------
 
