@@ -240,11 +240,11 @@ def export(queryset, columns):
                 _layout.ObjectFieldValue(column, "row"),
             )
 
-            columndefinitions[
-                hg.render(hg.BaseElement(column.header), {"model": queryset.model})
-            ] = lambda row, column=column: hg.render(
-                hg.BaseElement(column.cell), {"row": row}
-            )
+        columndefinitions[
+            hg.render(hg.BaseElement(column.header), {"model": queryset.model})
+        ] = lambda row, column=column: hg.render(
+            hg.BaseElement(column.cell), {"row": row}
+        )
 
     workbook = generate_excel(queryset, columndefinitions)
     workbook.title = pretty_modelname(queryset.model)
