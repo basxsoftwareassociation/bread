@@ -195,6 +195,14 @@ fieldset[readonly] {
 
     }
 }
+
+.theme-gray-100 {
+    @include carbon--theme($carbon--theme--g100) {
+        // for the search in the header
+        @include search;
+    }
+}
+
 // having form elements inside datatables is our own idea, so we need some custom styling
 .bx--data-table {
     .bx--text-area:disabled, .bx--text-area:hover:disabled{

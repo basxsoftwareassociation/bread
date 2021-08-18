@@ -8,34 +8,16 @@ from .icon import Icon
 
 
 class ShellHeader(hg.HEADER):
-    def __init__(self, platform, company, actions=(), *args, **kwargs):
-        from django.contrib.staticfiles.storage import staticfiles_storage
-
+    def __init__(self, platform, company, searchbar, actions=(), *args, **kwargs):
         super().__init__(
             hg.If(
                 HasBreadCookieValue("sidenav-hidden", "true"),
-                hg.A(
-                    hg.IMG(
-                        src=staticfiles_storage.url("logo.png"),
-                        _class="bx--header__name--prefix",
-                        style="width: 1.7rem; height; 1.7rem",
-                    ),
-                    hg.SPAN(company, style="position: absolute; left: 5rem"),
-                    _class="bx--header__name",
-                    style="font-weight: 400;",  # override carbon design
-                    href=hg.F(lambda c: c["request"].META["SCRIPT_NAME"] or "/"),
-                ),
-                hg.A(
-                    hg.IMG(
-                        src=staticfiles_storage.url("logo.png"),
-                        _class="bx--header__name--prefix",
-                        style="width: 1.7rem; height; 1.7rem; margin-right: 0.5rem",
-                    ),
+                variable_size_header_part(hg.BaseElement(), company, searchbar, "5rem"),
+                variable_size_header_part(
                     hg.SPAN(platform, _class="bx--header__name--prefix"),
-                    hg.SPAN(company, style="position: absolute; left: 18rem"),
-                    _class="bx--header__name",
-                    style="font-weight: 400",  # override carbon design
-                    href=hg.F(lambda c: c["request"].META["SCRIPT_NAME"] or "/"),
+                    company,
+                    searchbar,
+                    "18rem",
                 ),
             ),
             hg.DIV(
@@ -80,3 +62,46 @@ class ShellHeader(hg.HEADER):
             role="banner",
             data_header=True,
         )
+
+
+def logo():
+    from django.contrib.staticfiles.storage import staticfiles_storage
+
+    return hg.IMG(
+        src=staticfiles_storage.url("logo.png"),
+        _class="bx--header__name--prefix",
+        style="width: 1.7rem; height; 1.7rem; margin-right: 0.5rem",
+    )
+
+
+def variable_size_header_part(platform, company, searchbar, searchbar_position):
+    return hg.BaseElement(
+        hg.A(
+            logo(),
+            platform,
+            _class="bx--header__name",
+            style="font-weight: 400",  # override carbon design
+            href=hg.F(lambda c: c["request"].META["SCRIPT_NAME"] or "/"),
+        ),
+        hg.If(
+            searchbar,
+            hg.SPAN(
+                searchbar,
+                style=f"position: absolute; left: {searchbar_position}",
+                _class="theme-gray-100",
+            ),
+            "",
+        ),
+        hg.A(
+            hg.SPAN(
+                company,
+                style=hg.format(
+                    "position: absolute; left: {}",
+                    hg.If(searchbar, "50%", searchbar_position),
+                ),
+            ),
+            _class="bx--header__name",
+            style="font-weight: 400",  # override carbon design
+            href=hg.F(lambda c: c["request"].META["SCRIPT_NAME"] or "/"),
+        ),
+    )
