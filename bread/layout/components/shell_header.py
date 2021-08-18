@@ -83,15 +83,22 @@ def variable_size_header_part(platform, company, searchbar, searchbar_position):
             style="font-weight: 400",  # override carbon design
             href=hg.F(lambda c: c["request"].META["SCRIPT_NAME"] or "/"),
         ),
-        hg.SPAN(
-            searchbar or hg.BaseElement(),
-            style=f"position: absolute; left: {searchbar_position}",
-            _class="theme-gray-100",
+        hg.If(
+            searchbar,
+            hg.SPAN(
+                searchbar,
+                style=f"position: absolute; left: {searchbar_position}",
+                _class="theme-gray-100",
+            ),
+            "",
         ),
         hg.A(
             hg.SPAN(
                 company,
-                style=f"position: absolute; left: {hg.If(searchbar, hg.BaseElement('50 %'), hg.BaseElement('5rem'))}",
+                style=hg.format(
+                    "position: absolute; left: {}",
+                    hg.If(searchbar, "50%", searchbar_position),
+                ),
             ),
             _class="bx--header__name",
             style="font-weight: 400",  # override carbon design
