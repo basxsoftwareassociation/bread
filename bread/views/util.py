@@ -45,9 +45,17 @@ class CustomFormMixin:
                 ret.append(breadlayout.form.FormField(field))
             else:
                 ret.append(field)
+
         return hg.BaseElement(
             hg.H3(self.object),
-            breadlayout.form.Form.wrap_with_form(hg.C("form"), ret),
+            breadlayout.form.Form.wrap_with_form(
+                hg.C("form"),
+                ret,
+                standalone=(
+                    hasattr(self, "ajax_urlparameter")
+                    and self.ajax_urlparameter not in self.request.GET
+                ),
+            ),
         )
 
     def get_form(self, form_class=None):
