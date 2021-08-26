@@ -37,4 +37,3 @@ Installation
 ```bash
 pip install basx-bread
 ```
-
