@@ -41,7 +41,7 @@ def default_page_layout(menu, *content):
                 hg.C("COMPANYNAME"),
                 searchbar=hg.If(
                     hg.C("request.user.is_authenticated"),
-                    hg.F(lambda c: c.get("SEARCHBAR", "")),
+                    hg.C("SEARCHBAR", ""),
                     "",
                 ),
             ),
