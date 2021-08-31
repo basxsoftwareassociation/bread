@@ -5,6 +5,8 @@ document.addEventListener(
     () => bread_load_elements()
 );
 
+htmx.onLoad(function(content) { bread_load_elements(); })
+
 function bread_load_elements() {
     $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load")
 }

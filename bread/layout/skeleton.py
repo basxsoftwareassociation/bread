@@ -62,9 +62,9 @@ def default_page_layout(menu, *content):
             hg.If(
                 settings.DEBUG,
                 hg.BaseElement(
-                    hg.SCRIPT(src=_static("js/main.js")),
                     hg.SCRIPT(src=_static("js/bliss.js")),
                     hg.SCRIPT(src=_static("js/htmx.js")),
+                    hg.SCRIPT(src=_static("js/main.js")),
                     hg.SCRIPT(
                         src=_static("design/carbon_design/js/carbon-components.js")
                     ),
