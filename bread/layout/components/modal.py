@@ -102,7 +102,7 @@ class Modal(hg.DIV):
             label="",
             buttons=buttons,
             size="md",
-            id=None,
+            id=id,
             **attributes,
         )
         if submitlabel:
