@@ -1,4 +1,5 @@
 from django.apps import apps
+from django.utils.functional import Promise
 
 from .utils.links import Link
 
@@ -102,7 +103,7 @@ class Menu:
             self._registry[menuitem.link.label] = menuitem
         else:
             group = menuitem.group
-            if isinstance(group, str):
+            if isinstance(group, (str, Promise)):
                 group = Group(label=group)
                 menuitem.group = group
             if group.label not in self._registry:
