@@ -39,7 +39,11 @@ def default_page_layout(menu, *content):
             ShellHeader(
                 hg.C("PLATFORMNAME"),
                 hg.C("COMPANYNAME"),
-                searchbar=hg.F(lambda c: c.get("SEARCHBAR", "")),
+                searchbar=hg.If(
+                    hg.C("request.user.is_authenticated"),
+                    hg.F(lambda c: c.get("SEARCHBAR", "")),
+                    "",
+                ),
             ),
             hg.If(
                 hg.C("request.user.is_authenticated"),
