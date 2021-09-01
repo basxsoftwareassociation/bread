@@ -302,7 +302,6 @@ class DataTable(hg.TABLE):
         bulkactions: List[Link] = (),
         title=None,
         primary_button: Optional[Button] = None,
-        backurl: Union[hg.Lazy, str] = None,
         searchurl=None,
         query_urlparameter=None,
         rowclickaction=None,
@@ -320,14 +319,6 @@ class DataTable(hg.TABLE):
         """TODO: Write Docs!!!!
         Yeah yeah, on it already...
 
-        :param str backurl: sets the "next" parameter for the add-url and row-click actions.
-                            In most cases this can be used to return to the current page
-                            (default behaviour), stying on the according new page (use "#"
-                            as value) or direct to a certain other page. Maybe this parameter
-                            is unnecessary powerfull because there are other ways to set
-                            these behaviours. However, the option of staying on the new page
-                            coming back to the current page should somehow be kept available,
-                            it is used very often.
         :param hg.BaseElement settingspanel: A panel which will be opened when clicking on the
                                              "Settings" button of the datatable, usefull e.g.
                                              for showing filter options. Currently only one
