@@ -36,7 +36,7 @@ class DataTableColumn(NamedTuple):
     ) -> "DataTableColumn":
         return DataTableColumn(
             ObjectFieldLabel(col, model),
-            ObjectFieldValue(col, "row"),
+            ObjectFieldValue(col, rowvariable),
             sortingname_for_column(model, col)
             if not prevent_automatic_sortingnames
             else None,
