@@ -46,8 +46,13 @@ class CustomFormMixin:
             else:
                 ret.append(field)
 
+        if self.ajax_urlparameter in self.request.GET:
+            return hg.BaseElement(
+                hg.H3(self.object), breadlayout.form.Form(hg.C("form"), ret)
+            )
+        # wrap with form will add a submit button
         return hg.BaseElement(
-            hg.H3(self.object), breadlayout.form.Form(hg.C("form"), ret)
+            hg.H3(self.object), breadlayout.form.Form.wrap_with_form(hg.C("form"), ret)
         )
 
     def get_form(self, form_class=None):
@@ -68,7 +73,7 @@ class CustomFormMixin:
                         attrs=form.fields[fieldelement.fieldname].widget.attrs
                     )
         else:
-            if form.errors:
+            if form.errors and self.ajax_urlparameter not in self.request.GET:
                 messages.error(
                     self.request,
                     mark_safe(
