@@ -5,8 +5,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
-from bread.utils.links import Link
-from bread.utils.urls import link_with_urlparameters, reverse_model
+from bread.utils.links import Link, ModelHref
+from bread.utils.urls import link_with_urlparameters
 
 from ..base import ObjectFieldLabel, ObjectFieldValue, aslink_attributes, objectaction
 from . import search
@@ -301,7 +301,7 @@ class DataTable(hg.TABLE):
         rowactions_dropdown=False,
         bulkactions: List[Link] = (),
         title=None,
-        addurl=None,
+        primary_button: Optional[Button] = None,
         backurl: Union[hg.Lazy, str] = None,
         searchurl=None,
         query_urlparameter=None,
@@ -345,16 +345,13 @@ class DataTable(hg.TABLE):
 
         title = title or pretty_modelname(model, plural=True)
 
-        if addurl is None:
-            addurl = hg.F(
-                lambda c: reverse_model(
-                    model,
-                    "add",
-                    query={
-                        "next": hg.resolve_lazy(backurl, c)
-                        or c["request"].get_full_path()
-                    },
-                )
+        if primary_button is None:
+            primary_button = Button.fromlink(
+                Link(
+                    href=ModelHref(model, "add"),
+                    label=_("Add %s") % pretty_modelname(model),
+                ),
+                icon=Icon("add", size=20),
             )
 
         if rowactions_dropdown:
@@ -436,11 +433,7 @@ class DataTable(hg.TABLE):
         if with_toolbar:
             table = table.with_toolbar(
                 title,
-                primary_button=Button(
-                    _("Add %s") % pretty_modelname(model),
-                    icon=Icon("add", size=20),
-                    onclick=hg.BaseElement("document.location = '", addurl, "'"),
-                ),
+                primary_button=primary_button,
                 searchurl=searchurl,
                 bulkactions=bulkactions,
                 pagination_options=pagination_options,

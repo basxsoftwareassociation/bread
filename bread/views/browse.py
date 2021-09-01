@@ -59,7 +59,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     bulkactions = ()
     rowactions = ()  # list of links
     backurl = None
-    addurl = None
+    primary_button = None
 
     def __init__(self, *args, **kwargs):
         self.orderingurlparameter = (
@@ -89,7 +89,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         )
         self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
         self.backurl = kwargs.get("backurl") or self.backurl
-        self.addurl = kwargs.get("addurl") or self.addurl
+        self.primary_button = kwargs.get("primary_button") or self.primary_button
         super().__init__(*args, **kwargs)
         # set some default bulkactions
         self.bulkactions = (
@@ -140,7 +140,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             checkbox_for_bulkaction_name=self.objectids_urlparameter,
             settingspanel=self.get_settingspanel(),
             backurl=self.backurl,
-            addurl=self.addurl,
+            primary_button=self.primary_button,
         )
 
     def get_context_data(self, *args, **kwargs):
