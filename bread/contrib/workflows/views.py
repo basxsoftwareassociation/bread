@@ -33,13 +33,18 @@ class WorkflowEditView(views.EditView):
         fields = hg.BaseElement(
             *[layout.form.FormField(f) for f in self.object.active_fields()]
         )
-        return hg.DIV(
+        return hg.BaseElement(
+            hg.H1(self.object, style="margin-bottom: 2rem"),
             hg.DIV(
-                layout.form.Form.wrap_with_form(hg.C("form"), fields),
-                style="padding: 1rem",
+                hg.DIV(
+                    layout.form.Form.wrap_with_form(hg.C("form"), fields),
+                    style="padding: 1rem",
+                ),
+                hg.DIV(
+                    self.object.as_svg(), style="width: 40%; border: 1px solid gray"
+                ),
+                style="display: flex",
             ),
-            hg.DIV(self.object.as_svg(), style="width: 40%; border: 1px solid gray"),
-            style="display: flex",
         )
 
 
@@ -52,22 +57,28 @@ class WorkflowReadView(views.ReadView):
             ]
         )
 
-        return hg.DIV(
-            layout.button.Button(
-                "Edit",
-                **layout.aslink_attributes(layout.objectaction(self.object, "edit")),
-            ),
-            views.layoutasreadonly(
-                hg.DIV(
-                    hg.DIV(
-                        layout.form.Form.wrap_with_form(hg.C("form"), fields),
-                        style="padding: 1rem",
+        return hg.BaseElement(
+            hg.H1(self.object, style="margin-bottom: 2rem"),
+            hg.DIV(
+                layout.button.Button(
+                    "Edit",
+                    **layout.aslink_attributes(
+                        layout.objectaction(self.object, "edit")
                     ),
+                ),
+                views.layoutasreadonly(
                     hg.DIV(
-                        self.object.as_svg(), style="width: 40%; border: 1px solid gray"
-                    ),
-                    style="display: flex;",
-                )
+                        hg.DIV(
+                            layout.form.Form.wrap_with_form(hg.C("form"), fields),
+                            style="padding: 1rem",
+                        ),
+                        hg.DIV(
+                            self.object.as_svg(),
+                            style="width: 40%; border: 1px solid gray",
+                        ),
+                        style="display: flex;",
+                    )
+                ),
             ),
         )
 
