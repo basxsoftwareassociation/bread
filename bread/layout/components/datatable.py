@@ -5,8 +5,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
-from bread.utils.links import Link
-from bread.utils.urls import link_with_urlparameters, reverse_model
+from bread.utils.links import Link, ModelHref
+from bread.utils.urls import link_with_urlparameters
 
 from ..base import ObjectFieldLabel, ObjectFieldValue, aslink_attributes, objectaction
 from . import search
@@ -301,8 +301,7 @@ class DataTable(hg.TABLE):
         rowactions_dropdown=False,
         bulkactions: List[Link] = (),
         title=None,
-        addurl=None,
-        backurl: Union[hg.Lazy, str] = None,
+        primary_button: Optional[Button] = None,
         searchurl=None,
         query_urlparameter=None,
         rowclickaction=None,
@@ -320,14 +319,6 @@ class DataTable(hg.TABLE):
         """TODO: Write Docs!!!!
         Yeah yeah, on it already...
 
-        :param str backurl: sets the "next" parameter for the add-url and row-click actions.
-                            In most cases this can be used to return to the current page
-                            (default behaviour), stying on the according new page (use "#"
-                            as value) or direct to a certain other page. Maybe this parameter
-                            is unnecessary powerfull because there are other ways to set
-                            these behaviours. However, the option of staying on the new page
-                            coming back to the current page should somehow be kept available,
-                            it is used very often.
         :param hg.BaseElement settingspanel: A panel which will be opened when clicking on the
                                              "Settings" button of the datatable, usefull e.g.
                                              for showing filter options. Currently only one
@@ -345,16 +336,13 @@ class DataTable(hg.TABLE):
 
         title = title or pretty_modelname(model, plural=True)
 
-        if addurl is None:
-            addurl = hg.F(
-                lambda c: reverse_model(
-                    model,
-                    "add",
-                    query={
-                        "next": hg.resolve_lazy(backurl, c)
-                        or c["request"].get_full_path()
-                    },
-                )
+        if primary_button is None:
+            primary_button = Button.fromlink(
+                Link(
+                    href=ModelHref(model, "add"),
+                    label=_("Add %s") % pretty_modelname(model),
+                ),
+                icon=Icon("add", size=20),
             )
 
         if rowactions_dropdown:
@@ -436,11 +424,7 @@ class DataTable(hg.TABLE):
         if with_toolbar:
             table = table.with_toolbar(
                 title,
-                primary_button=Button(
-                    _("Add %s") % pretty_modelname(model),
-                    icon=Icon("add", size=20),
-                    onclick=hg.BaseElement("document.location = '", addurl, "'"),
-                ),
+                primary_button=primary_button,
                 searchurl=searchurl,
                 bulkactions=bulkactions,
                 pagination_options=pagination_options,
