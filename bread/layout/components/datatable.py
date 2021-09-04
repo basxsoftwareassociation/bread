@@ -8,7 +8,7 @@ from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
 from bread.utils.links import Link, ModelHref
 from bread.utils.urls import link_with_urlparameters
 
-from ..base import ObjectFieldLabel, ObjectFieldValue, aslink_attributes, objectaction
+from ..base import ObjectFieldLabel, ObjectFieldValue, aslink_attributes
 from . import search
 from .button import Button
 from .icon import Icon
@@ -375,11 +375,13 @@ class DataTable(hg.TABLE):
         for col in columns:
             td_attributes = None
             if rowclickaction and getattr(col, "enable_row_click", True):
-                td_attributes = hg.F(
-                    lambda c: aslink_attributes(
-                        objectaction(c[rowvariable], rowclickaction)
-                    )
-                )
+                assert isinstance(
+                    rowclickaction, Link
+                ), "rowclickaction must be of type Link"
+                td_attributes = {
+                    **aslink_attributes(rowclickaction.href),
+                    **(rowclickaction.attributes or {}),
+                }
             # convert simple string (modelfield) to column definition
             if isinstance(col, str):
                 col = DataTableColumn.from_modelfield(

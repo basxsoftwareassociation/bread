@@ -5,7 +5,7 @@ from bread import layout, utils, views
 
 
 class WorkflowBrowseView(views.BrowseView):
-    rowclickaction = "edit"
+    rowclickaction = views.BrowseView.gen_rowclickaction("edit")
 
     def get_layout(self):
         workflow_diagram = layout.modal.Modal(

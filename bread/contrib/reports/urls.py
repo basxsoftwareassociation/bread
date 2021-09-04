@@ -152,7 +152,7 @@ urlpatterns = [
         Report,
         browseview=views.BrowseView._with(
             columns=["name", "created"],
-            rowclickaction="read",
+            rowclickaction=views.BrowseView.gen_rowclickaction("read"),
             bulkactions=[
                 views.browse.BulkAction(
                     "delete", label=_("Delete"), iconname="trash-can", action=delete

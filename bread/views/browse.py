@@ -16,12 +16,14 @@ from bread.utils import expand_ALL_constant, filter_fieldlist
 
 from .. import layout as _layout  # prevent name clashing
 from ..utils import (
+    Link,
+    ModelHref,
     generate_excel,
+    get_concrete_instance,
     link_with_urlparameters,
     pretty_modelname,
     xlsxresponse,
 )
-from ..utils.links import Link
 from .util import BreadView
 
 
@@ -52,7 +54,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     columns = ["__all__"]
     searchurl = None
     query_urlparameter = "q"
-    rowclickaction = None
+    rowclickaction: Optional[Link] = None
     # bulkactions: List[(Link, function(request, queryset))]
     # - link.js should be a slug and not a URL
     # - if the function returns a HttpResponse, the response is returned instead of the browse view result
@@ -130,6 +132,8 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             columns=self.columns,
             bulkactions=bulkactions,
             rowactions=self.rowactions,
+            rowactions_dropdown=len(self.rowactions)
+            > 2,  # recommendation from carbon design
             searchurl=self.searchurl,
             query_urlparameter=self.query_urlparameter,
             rowclickaction=self.rowclickaction,
@@ -219,6 +223,18 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                     else models.functions.Lower(order)
                 )
         return qs
+
+    @staticmethod
+    def gen_rowclickaction(modelaction):
+        return Link(
+            label="",
+            href=ModelHref(
+                hg.F(lambda c: get_concrete_instance(c["row"])),
+                modelaction,
+                kwargs={"pk": hg.C("row.pk")},
+            ),
+            iconname=None,
+        )
 
 
 # helper function to export a queryset to excel
