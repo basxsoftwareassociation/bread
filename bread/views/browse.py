@@ -47,13 +47,12 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     """TODO: documentation"""
 
     orderingurlparameter = "ordering"
-    itemsperpage_urlparameter = "itemsperpage"
     objectids_urlparameter = "_selected"  # see bread/static/js/main.js:submitbulkaction and bread/layout/components/datatable.py
     bulkaction_urlparameter = "_bulkaction"
-    pagination_choices = ()
+    items_per_page_options = None
+    itemsperpage_urlparameter = "itemsperpage"
     columns = ["__all__"]
-    searchurl = None
-    query_urlparameter = "q"
+    search_backend = None
     rowclickaction: Optional[Link] = None
     # bulkactions: List[(Link, function(request, queryset))]
     # - link.js should be a slug and not a URL
@@ -76,19 +75,16 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         self.bulkaction_urlparameter = (
             kwargs.get("bulkaction_urlparameter") or self.bulkaction_urlparameter
         )
-        self.pagination_choices = (
-            kwargs.get("pagination_choices")
-            or self.pagination_choices
+        self.items_per_page_options = (
+            kwargs.get("items_per_page_options")
+            or self.items_per_page_options
             or getattr(settings, "DEFAULT_PAGINATION_CHOICES", [25, 100, 500])
         )
         self.rowactions = kwargs.get("rowactions") or self.rowactions
         self.columns = expand_ALL_constant(
             kwargs["model"], kwargs.get("columns") or self.columns
         )
-        self.searchurl = kwargs.get("searchurl") or self.searchurl
-        self.query_urlparameter = (
-            kwargs.get("query_urlparameter") or self.query_urlparameter
-        )
+        self.search_backend = kwargs.get("search_backend") or self.search_backend
         self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
         self.backurl = kwargs.get("backurl") or self.backurl
         self.primary_button = kwargs.get("primary_button") or self.primary_button
@@ -134,13 +130,14 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             rowactions=self.rowactions,
             rowactions_dropdown=len(self.rowactions)
             > 2,  # recommendation from carbon design
-            searchurl=self.searchurl,
-            query_urlparameter=self.query_urlparameter,
+            search_backend=self.search_backend,
             rowclickaction=self.rowclickaction,
-            pagination_options=self.pagination_choices,
-            page_urlparameter=self.page_kwarg,
-            paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
-            itemsperpage_urlparameter=self.itemsperpage_urlparameter,
+            pagination_config=_layout.pagination.PaginationConfig(
+                items_per_page_options=self.items_per_page_options,
+                page_urlparameter=self.page_kwarg,
+                paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
+                itemsperpage_urlparameter=self.itemsperpage_urlparameter,
+            ),
             checkbox_for_bulkaction_name=self.objectids_urlparameter,
             settingspanel=self.get_settingspanel(),
             backurl=self.backurl,
@@ -189,17 +186,22 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
 
     def get_paginate_by(self, queryset):
         return self.request.GET.get(
-            self.itemsperpage_urlparameter, self.pagination_choices[0]
+            self.itemsperpage_urlparameter, self.items_per_page_options[0]
         )
 
     def get_queryset(self):
         """Prefetch related tables to speed up queries. Also order result by get-parameters."""
         qs = super().get_queryset()
-        if self.query_urlparameter in self.request.GET:
+        if (
+            self.search_backend
+            and self.search_backend.query_parameter in self.request.GET
+        ):
             qs = apply_search(
                 qs,
                 "("
-                + ") and (".join(self.request.GET.getlist(self.query_urlparameter))
+                + ") and (".join(
+                    self.request.GET.getlist(self.search_backend.query_parameter)
+                )
                 + ")",
             )
 

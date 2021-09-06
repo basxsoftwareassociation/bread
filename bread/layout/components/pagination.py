@@ -1,4 +1,8 @@
+from typing import Iterator, NamedTuple
+
 import htmlgenerator as hg
+from django.conf import settings
+from django.core.paginator import Paginator
 from django.utils.translation import gettext_lazy as _
 
 from bread.utils.urls import link_with_urlparameters
@@ -6,6 +10,19 @@ from bread.utils.urls import link_with_urlparameters
 from ..base import aslink_attributes
 from .icon import Icon
 from .select import Select
+
+
+class PaginationConfig(NamedTuple):
+    paginator: Paginator
+    items_per_page_options: Iterator = getattr(
+        settings, "DEFAULT_PAGINATION_CHOICES", [25, 50, 100]
+    )
+    page_urlparameter: str = (
+        "page"  # URL parameter which holds value for current page selection
+    )
+    itemsperpage_urlparameter: str = (
+        "itemsperpage"  # URL parameter which selects items per page
+    )
 
 
 class Pagination(hg.DIV):
@@ -168,6 +185,15 @@ class Pagination(hg.DIV):
                 _class="bx--pagination__right",
             ),
             **kwargs,
+        )
+
+    @classmethod
+    def from_config(cls, pagination_config):
+        return cls(
+            paginator=pagination_config.paginator,
+            items_per_page_options=pagination_config.items_per_page_options,
+            page_urlparameter=pagination_config.page_urlparameter,
+            itemsperpage_urlparameter=pagination_config.itemsperpage_urlparameter,
         )
 
 
