@@ -228,6 +228,11 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
 
     @staticmethod
     def gen_rowclickaction(modelaction):
+        """
+        Shortcut to get a Link to a model view.
+        The default models views in bread are "read", "edit", "delete".
+        :param modelaction: A model view whose name has been generated with ``bread.utils.urls.model_urlname``
+        """
         return Link(
             label="",
             href=ModelHref(
