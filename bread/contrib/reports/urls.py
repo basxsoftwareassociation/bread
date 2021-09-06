@@ -21,8 +21,79 @@ from ...layout.components.datatable import DataTableColumn, sortingname_for_colu
 from .models import Report
 
 
+def get_attribute_description(obj, attr, modelfields):
+    if attr.startswith("_"):
+        return None
+    if callable(getattr(obj, attr, None)):
+        return None
+
+    if attr in modelfields:
+        if hasattr(modelfields[attr], "related_model") and getattr(
+            modelfields[attr], "related_model"
+        ):
+            return (
+                attr,
+                f"{type(modelfields[attr]).__name__} -> {modelfields[attr].related_model._meta.verbose_name}",
+                getattr(modelfields[attr], "verbose_name", None),
+            )
+        else:
+            return (
+                attr,
+                type(modelfields[attr]).__name__,
+                modelfields[attr].verbose_name,
+            )
+    if hasattr(getattr(obj, attr, None), "related") and getattr(
+        getattr(obj, attr, None), "related"
+    ):
+        return (
+            attr,
+            f"{type(getattr(obj, attr, None)).__name__} -> {getattr(obj, attr, None).related.related_model._meta.verbose_name}",
+            getattr(getattr(obj, attr, None), "verbose_name", None),
+        )
+    return (
+        attr,
+        type(getattr(obj, attr, None)).__name__,
+        getattr(getattr(obj, attr, None), "verbose_name", None),
+    )
+
+
+def get_attribute_description_modal(obj):
+    columns = []
+    fields = {f.name: f for f in obj._meta.get_fields()}
+    for i in set(dir(obj) + list(vars(obj))):
+        try:
+            desc = get_attribute_description(obj, i, fields)
+            if desc is not None:
+                columns.append(desc)
+        except Exception as e:
+            columns.append((i, _("Unknown"), e))
+    return _layout.modal.Modal(
+        _("Available columns"),
+        hg.DIV(
+            _layout.datatable.DataTable(
+                columns=[
+                    _layout.datatable.DataTableColumn(_("Column name"), hg.C("row.0")),
+                    _layout.datatable.DataTableColumn(
+                        _("Description"), hg.F(lambda c: c["row"][2])
+                    ),
+                    _layout.datatable.DataTableColumn(
+                        _("Type"), hg.F(lambda c: c["row"][1])
+                    ),
+                ],
+                row_iterator=sorted(columns),
+            )
+        ),
+    )
+
+
 class EditView(views.EditView):
     def get_layout(self):
+        modelclass = self.object.model.model_class()
+        if modelclass is None:
+            column_helper = None
+        else:
+            column_helper = get_attribute_description_modal(modelclass)
+
         F = _layout.form.FormField
         ret = hg.BaseElement(
             hg.LINK(
@@ -52,6 +123,14 @@ class EditView(views.EditView):
                             "can_order": True,
                         },
                     ),
+                    _layout.button.Button(
+                        _("Available columns"),
+                        buttontype="tertiary",
+                        **column_helper.openerattributes,
+                    )
+                    if column_helper
+                    else None,
+                    column_helper,
                 ),
             ),
             hg.C("object.preview"),
