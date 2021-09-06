@@ -11,7 +11,7 @@ Welcome to |project|'s documentation!
 |project| is a framework which helps building Django based database applications.
 |project| itself does not assume anything about the data model of your application.
 Instead it tries to provide common abstractions, shortcus and APIs which can be used
-within any django project. While in some regards similar to :py:mod:`django:django.contrib.admin`
+within any Django project. While in some regards similar to :py:mod:`django:django.contrib.admin`
 |project| focuses much more on building a complete database system instead of a backend
 administration tool for websites. Therefore |project| is *not* API compatible with 
 :py:mod:`django:django.contrib.admin`, unlike some other projects
@@ -31,6 +31,7 @@ most of the official carbon components.
    guide
    concepts
    recepies
+   tutorial
 
 .. toctree::
    :maxdepth: 3
