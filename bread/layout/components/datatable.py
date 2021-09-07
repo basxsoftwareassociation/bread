@@ -8,13 +8,12 @@ from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
 from bread.utils.links import Link, ModelHref
 from bread.utils.urls import link_with_urlparameters
 
-from ..base import ObjectFieldLabel, ObjectFieldValue, aslink_attributes, objectaction
-from . import search
+from ..base import ObjectFieldLabel, ObjectFieldValue, aslink_attributes
 from .button import Button
 from .icon import Icon
 from .overflow_menu import OverflowMenu
-from .pagination import Pagination
-from .search import Search
+from .pagination import Pagination, PaginationConfig
+from .search import Search, SearchBackendConfig
 
 
 class DataTableColumn(NamedTuple):
@@ -104,31 +103,26 @@ class DataTable(hg.TABLE):
 
     def with_toolbar(
         self,
-        title,
-        helper_text=None,
-        primary_button=None,
-        searchurl=None,
-        query_urlparameter=None,
+        title: Any,
+        helper_text: Any = None,
+        primary_button: Optional[Button] = None,
+        search_backend: Optional[SearchBackendConfig] = None,
         bulkactions: List[Link] = (),
-        pagination_options=(),
-        paginator=None,
-        page_urlparameter="page",
-        itemsperpage_urlparameter="itemsperpage",
+        pagination_config: Optional[PaginationConfig] = None,
         checkbox_for_bulkaction_name="_selected",
-        settingspanel=None,
+        settingspanel: Any = None,
     ):
         """
         wrap this datatable with title and toolbar
         title: table title
         helper_text: sub title
         primary_button: bread.layout.button.Button instance
-        searchurl: url to which values entered in the searchfield should be submitted
-        query_urlparameter: name of the query field for the searchurl which contains the entered text
+        search_backend: search endpoint
         bulkactions: List of bread.utils.links.Link instances. Will send a post or a get (depending on its "method" attribute) to the target url the sent data will be a form with the selected checkboxes as fields if the head-checkbox has been selected only that field will be selected
         """
         checkboxallid = f"datatable-check-{hg.html_id(self)}"
         header = [hg.H4(title, _class="bx--data-table-header__title")]
-        if helper_text:
+        if helper_text is not None:
             header.append(
                 hg.P(helper_text, _class="bx--data-table-header__description")
             )
@@ -232,24 +226,22 @@ class DataTable(hg.TABLE):
                     hg.DIV(
                         Search(
                             widgetattributes={"autofocus": True},
-                            backend=search.SearchBackendConfig(
-                                url=searchurl, query_parameter=query_urlparameter
-                            ),
+                            backend=search_backend,
                             resultcontainerid=resultcontainerid,
                             show_result_container=False,
                         ),
                         _class="bx--toolbar-search-container-persistent",
                     )
-                    if searchurl
-                    else "",
+                    if search_backend
+                    else None,
                     Button(
                         icon="settings--adjust",
                         buttontype="ghost",
                         onclick="this.parentElement.parentElement.parentElement.querySelector('.settingscontainer').style.display = this.parentElement.parentElement.parentElement.querySelector('.settingscontainer').style.display == 'block' ? 'none' : 'block'; event.stopPropagation()",
                     )
                     if settingspanel
-                    else "",
-                    primary_button or "",
+                    else None,
+                    primary_button or None,
                     _class="bx--toolbar-content",
                 ),
                 _class="bx--table-toolbar",
@@ -276,18 +268,7 @@ class DataTable(hg.TABLE):
                 onclick="event.stopPropagation()",
             ),
             self,
-            *(
-                [
-                    Pagination(
-                        paginator,
-                        pagination_options,
-                        page_urlparameter=page_urlparameter,
-                        itemsperpage_urlparameter=itemsperpage_urlparameter,
-                    )
-                ]
-                if paginator
-                else []
-            ),
+            Pagination.from_config(pagination_config) if pagination_config else None,
             _class="bx--data-table-container",
             data_table=True,
         )
@@ -296,37 +277,36 @@ class DataTable(hg.TABLE):
     def from_model(
         model,
         queryset=None,
-        columns: Union[List[str], List[DataTableColumn]] = None,
+        # column behaviour
+        columns: List[Union[str, DataTableColumn]] = None,
+        prevent_automatic_sortingnames=False,
+        # row behaviour
+        rowvariable="row",
         rowactions: List[Link] = (),
         rowactions_dropdown=False,
+        rowclickaction=None,
+        # bulkaction behaviour
         bulkactions: List[Link] = (),
+        checkbox_for_bulkaction_name="_selected",
+        # toolbar configuration
         title=None,
         primary_button: Optional[Button] = None,
-        searchurl=None,
-        query_urlparameter=None,
-        rowclickaction=None,
-        prevent_automatic_sortingnames=False,
-        with_toolbar=True,
-        pagination_options=(),
-        paginator=None,
-        page_urlparameter="page",
-        itemsperpage_urlparameter="itemsperpage",
-        checkbox_for_bulkaction_name="_selected",
-        settingspanel=None,
-        rowvariable="row",
+        settingspanel: Any = None,
+        search_backend: Optional[SearchBackendConfig] = None,
+        pagination_config: Optional[PaginationConfig] = None,
         **kwargs,
     ):
         """TODO: Write Docs!!!!
         Yeah yeah, on it already...
 
-        :param hg.BaseElement settingspanel: A panel which will be opened when clicking on the
-                                             "Settings" button of the datatable, usefull e.g.
-                                             for showing filter options. Currently only one
-                                             button and one panel are supported. More buttons
-                                             and panels could be interesting but may to over-
-                                             engineered because it is a rare case and it is not
-                                             difficutl to add another button by modifying the
-                                             datatable after creation.
+        :param settingspanel: A panel which will be opened when clicking on the
+                              "Settings" button of the datatable, usefull e.g.
+                              for showing filter options. Currently only one
+                              button and one panel are supported. More buttons
+                              and panels could be interesting but may to over-
+                              engineered because it is a rare case and it is not
+                              difficutl to add another button by modifying the
+                              datatable after creation.
         """
         for col in columns:
             if not (isinstance(col, DataTableColumn) or isinstance(col, str)):
@@ -375,11 +355,13 @@ class DataTable(hg.TABLE):
         for col in columns:
             td_attributes = None
             if rowclickaction and getattr(col, "enable_row_click", True):
-                td_attributes = hg.F(
-                    lambda c: aslink_attributes(
-                        objectaction(c[rowvariable], rowclickaction)
-                    )
-                )
+                assert isinstance(
+                    rowclickaction, Link
+                ), "rowclickaction must be of type Link"
+                td_attributes = {
+                    **aslink_attributes(rowclickaction.href),
+                    **(rowclickaction.attributes or {}),
+                }
             # convert simple string (modelfield) to column definition
             if isinstance(col, str):
                 col = DataTableColumn.from_modelfield(
@@ -395,7 +377,7 @@ class DataTable(hg.TABLE):
 
             column_definitions.append(col)
 
-        table = DataTable(
+        return DataTable(
             column_definitions
             + (
                 [
@@ -420,29 +402,26 @@ class DataTable(hg.TABLE):
             # querysets are cached, the call to all will make sure a new query is used in every request
             hg.F(lambda c: queryset),
             **kwargs,
+        ).with_toolbar(
+            title,
+            helper_text=hg.format(
+                "{} {}",
+                hg.F(lambda c: len(hg.resolve_lazy(queryset, c))),
+                model._meta.verbose_name_plural,
+            ),
+            primary_button=primary_button,
+            search_backend=search_backend,
+            bulkactions=bulkactions,
+            pagination_config=pagination_config,
+            checkbox_for_bulkaction_name=checkbox_for_bulkaction_name,
+            settingspanel=settingspanel,
         )
-        if with_toolbar:
-            table = table.with_toolbar(
-                title,
-                primary_button=primary_button,
-                searchurl=searchurl,
-                bulkactions=bulkactions,
-                pagination_options=pagination_options,
-                page_urlparameter=page_urlparameter,
-                query_urlparameter=query_urlparameter,
-                paginator=paginator,
-                itemsperpage_urlparameter=itemsperpage_urlparameter,
-                checkbox_for_bulkaction_name=checkbox_for_bulkaction_name,
-                settingspanel=settingspanel,
-            )
-        return table
 
     @staticmethod
     def from_queryset(
         queryset,
         **kwargs,
     ):
-        """TODO: Write Docs!!!!"""
         return DataTable.from_model(
             queryset.model,
             queryset=queryset,

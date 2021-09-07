@@ -3,6 +3,25 @@ import htmlgenerator as hg
 from .icon import Icon
 
 
+def asoverflowbutton(context):
+    link = context["link"]
+    return hg.A(
+        hg.DIV(
+            hg.If(
+                link.iconname,
+                Icon(link.iconname, size=16),
+            ),
+            link.label,
+            _class="bx--overflow-menu-options__option-content",
+        ),
+        _class="bx--overflow-menu-options__btn",
+        role="menuitem",
+        title=link.label,
+        href=link.href,
+        **link.attributes,
+    )
+
+
 class OverflowMenu(hg.DIV):
     """Implements https://www.carbondesignsystem.com/components/overflow-menu/usage"""
 
@@ -10,7 +29,7 @@ class OverflowMenu(hg.DIV):
 
     def __init__(
         self,
-        actions,
+        links,
         menuiconname="overflow-menu--vertical",
         menuname=None,
         direction="bottom",
@@ -18,7 +37,6 @@ class OverflowMenu(hg.DIV):
         item_attributes={},
         **attributes,
     ):
-        """actions: an iterable which contains bread.menu.Action objects where the onclick value is what will be passed to the onclick attribute of the menu-item (and therefore should be javascript, e.g. "window.location.href='/home'")."""
         attributes["data-overflow-menu"] = True
         attributes["_class"] = attributes.get("_class", "") + " bx--overflow-menu"
         item_attributes["_class"] = (
@@ -51,24 +69,10 @@ class OverflowMenu(hg.DIV):
             hg.DIV(
                 hg.UL(
                     hg.Iterator(
-                        actions,
-                        "action",
+                        links,
+                        "link",
                         hg.LI(
-                            hg.BUTTON(
-                                hg.DIV(
-                                    hg.If(
-                                        hg.C("action.icon"),
-                                        Icon(hg.C("action.icon"), size=16),
-                                    ),
-                                    hg.C("action.label"),
-                                    _class="bx--overflow-menu-options__option-content",
-                                ),
-                                _class="bx--overflow-menu-options__btn",
-                                role="menuitem",
-                                type="button",
-                                title=hg.C("action.label"),
-                                onclick=hg.C("action.js"),
-                            ),
+                            hg.F(asoverflowbutton),
                             **item_attributes,
                         ),
                     ),

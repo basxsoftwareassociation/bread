@@ -14,6 +14,7 @@ from .components import modal  # noqa
 from .components import multiselect  # noqa
 from .components import notification  # noqa
 from .components import overflow_menu  # noqa
+from .components import pagination  # noqa
 from .components import progress_indicator  # noqa
 from .components import search  # noqa
 from .components import search_select  # noqa
