@@ -133,13 +133,14 @@ def breadmodelform_factory(  # noqa
     patched_formclass = type(
         f"{model.__name__}BreadModelForm", (BreadModelFormBase,), attribs
     )
+    modelfields = {f.name for f in model._meta.get_fields()}
     ret = forms.modelform_factory(
         model,
         form=patched_formclass,
         fields=[
             f.fieldname
             for f in formfieldelements
-            if isinstance(f, _layout.form.FormField)
+            if isinstance(f, _layout.form.FormField) and f.fieldname in modelfields
         ],
         formfield_callback=lambda field: _formfield_callback_with_request(
             field, request, model, instance, cache_querysets
