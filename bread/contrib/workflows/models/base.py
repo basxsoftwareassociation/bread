@@ -273,12 +273,12 @@ class WorkflowBase(models.Model):
             self.save()
 
     def save(self, *args, **kwargs):
-        self.update_workflow_state()
+        self.update_workflow_state(runactions=True)
         if not self.completed and not self.cancelled and self.done:
             self.completed = timezone.now()
         super().save(*args, **kwargs)
 
-    def update_workflow_state(self):
+    def update_workflow_state(self, runactions=False):
         # don't do anything on the workflow after it has been cancelled
         if self.cancelled:
             return
@@ -294,7 +294,11 @@ class WorkflowBase(models.Model):
                 node = nodequeue.pop()
                 if not node.done(self):
                     if isinstance(node, Action):
-                        if any(n.done(self) for n, c in node.inputs):
+                        if (
+                            node.hasincoming(self)
+                            and not getattr(self, node.name)
+                            and runactions
+                        ):
                             actionresult = node.action(self)
                             if actionresult != getattr(self, node.name):
                                 state_changed = True

@@ -9,8 +9,8 @@ from .urls import reverse as urlreverse
 
 class LazyHref(hg.Lazy):
     """An element which will resolve lazy. The ``args`` and ``kwargs`` arguments will
-    be passed to ``bread.utils.urls.reverse``. Every item in ``args`` will be resolved
-    and every value in ``kwargs`` will be resolved.
+    be passed to ``bread.utils.urls.reverse``. Every (lazy) item in ``args`` will be
+    resolved and every value in ``kwargs`` will be resolved.
 
     Example usage:
 
@@ -59,7 +59,13 @@ class ModelHref(LazyHref):
             if "kwargs" not in kwargs:
                 kwargs["kwargs"] = {}
             kwargs["kwargs"]["pk"] = model.pk
-        super().__init__(model_urlname(model, name), *args, **kwargs)
+
+        if isinstance(model, hg.Lazy):
+            url = hg.F(lambda c: model_urlname(hg.resolve_lazy(model, c), name))
+        else:
+            url = model_urlname(model, name)
+
+        super().__init__(url, *args, **kwargs)
 
 
 def try_call(var, *args, **kwargs):
@@ -71,6 +77,7 @@ class Link(NamedTuple):
     label: str
     iconname: str = "fade"
     permissions: List[str] = []
+    attributes: dict = {}
 
     def has_permission(self, request, obj=None):
         return all(
