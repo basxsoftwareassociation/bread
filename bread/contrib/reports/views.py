@@ -178,7 +178,7 @@ def get_attribute_description_modal(obj):
                     )
                 )
                 desc = (
-                    hg.SPAN(desc[0], style="font-weight: 700"),
+                    desc[0],
                     desc[1],
                     desc[2],
                     hg.BaseElement(
@@ -201,10 +201,13 @@ def get_attribute_description_modal(obj):
     return layout.modal.Modal(
         _("Available columns"),
         hg.DIV(
-            "Bold text marks valid column names",
+            hg.DIV(_("Bold text marks valid column names")),
             layout.datatable.DataTable(
                 columns=[
-                    layout.datatable.DataTableColumn(_("Column name"), hg.C("row.0")),
+                    layout.datatable.DataTableColumn(
+                        _("Column name"),
+                        hg.SPAN(hg.C("row.0"), style="font-weight: 700"),
+                    ),
                     layout.datatable.DataTableColumn(
                         _("Description"), hg.F(lambda c: c["row"][2])
                     ),

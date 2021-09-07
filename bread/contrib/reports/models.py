@@ -49,7 +49,7 @@ class Report(models.Model):
         return hg.BaseElement(
             hg.H3(_("Preview")),
             layout.datatable.DataTable.from_queryset(
-                qs[:25], columns=columns, with_toolbar=False
+                qs[:25], columns=columns, primary_button=""
             ),
         )
 
