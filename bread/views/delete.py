@@ -7,6 +7,7 @@ an argument "admin" which is an instance of the according BreadAdmin class
 import urllib
 
 from django.contrib import messages
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import RedirectView
@@ -59,7 +60,15 @@ class DeleteView(BreadView, PermissionRequiredMixin, RedirectView):
                 "modelname": pretty_modelname(self.model),
             },
         )
-        return super().get(*args, **kwargs)
+        ret = super().get(*args, **kwargs)
+        if self.ajax_urlparameter in self.request.GET:
+            ret = HttpResponse("OK")
+            # This header will be processed by htmx
+            # in order to reload the whole page automatically
+            # (instead of doing the redirect which is required for
+            # normal POST submission responses
+            ret["HX-Refresh"] = "true"
+        return ret
 
     def get_redirect_url(self, *args, **kwargs):
         if self.request.GET.get("next"):
