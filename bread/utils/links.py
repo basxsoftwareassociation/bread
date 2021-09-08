@@ -47,8 +47,8 @@ class ModelHref(LazyHref):
 
     Example usage:
 
-        assert "/person/browse" == ModelHref(models.Person, "browse")
-        assert "/person/edit/1" == ModelHref(models.Person, "edit", kwargs={"pk": C("object.pk")})
+        assert "/person/browse" == ModelHref(models.Person, "browse").resolve(context)
+        assert "/person/edit/1" == ModelHref(models.Person, "edit", kwargs={"pk": C("object.pk")}).resolve(context)
 
     """
 
