@@ -65,8 +65,6 @@ class DeleteView(BreadView, PermissionRequiredMixin, RedirectView):
             ret = HttpResponse("OK")
             # This header will be processed by htmx
             # in order to reload the whole page automatically
-            # (instead of doing the redirect which is required for
-            # normal POST submission responses
             ret["HX-Refresh"] = "true"
         return ret
 
