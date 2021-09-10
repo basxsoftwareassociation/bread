@@ -29,7 +29,7 @@ class ShellHeader(hg.HEADER):
                             _class="bx--header__name--prefix",
                         ),
                         _class="bx--header__name",
-                        href="#",
+                        href=reverse("userprofile"),
                         title=hg.C("request.user.get_username"),
                         style="padding: 0; margin-right: 1rem",
                     ),

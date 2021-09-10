@@ -28,7 +28,9 @@ class EditView(
     urlparams = (("pk", int),)
 
     def __init__(self, *args, **kwargs):
-        all = filter_fieldlist(kwargs.get("model"), ["__all__"], for_form=True)
+        all = filter_fieldlist(
+            kwargs.get("model", getattr(self, "model")), ["__all__"], for_form=True
+        )
         self.fields = kwargs.get("fields", getattr(self, "fields", None))
         self.fields = all if self.fields is None else self.fields
         super().__init__(*args, **kwargs)

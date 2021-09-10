@@ -81,6 +81,13 @@ class Modal(hg.DIV):
             **attributes,
         )
 
+    def attach_to_trigger(self, trigger: hg.BaseElement):
+        """
+        Attaches this modal to a trigger element and returns a wrapper element
+        """
+        trigger.attributes.update(self.openerattributes)
+        return hg.BaseElement(trigger, self)
+
     @classmethod
     def with_ajax_content(
         cls, heading, url, label="", size="md", submitlabel=None, id=None, **attributes
@@ -94,7 +101,7 @@ class Modal(hg.DIV):
         """
         buttons = (Button(_("Cancel"), buttontype="ghost", data_modal_close=True),)
         if submitlabel:
-            buttons += (Button(submitlabel, type="submit", form=""),)
+            buttons += (Button(submitlabel, type="submit"),)
 
         modal = cls(
             heading,
