@@ -9,6 +9,8 @@ from bread.utils.urls import reverse_model
 
 from ..formatters import format_value
 
+DEVMODE_KEY = "DEVMODE"
+
 
 class HasBreadCookieValue(hg.Lazy):
     def __init__(self, cookiename, value, default=None):
@@ -23,6 +25,13 @@ class HasBreadCookieValue(hg.Lazy):
                 == self.value
             )
         return self.default == self.value
+
+
+class DevModeOnly(hg.BaseElement):
+    def render(self, context):
+        if context["request"].session.get(DEVMODE_KEY, False):
+            return super().render(context)
+        return ""
 
 
 def fieldlabel(model, accessor):

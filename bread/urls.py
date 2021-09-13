@@ -7,6 +7,8 @@ from dynamic_preferences.registries import global_preferences_registry
 from dynamic_preferences.users import views as user_preferences_views
 from dynamic_preferences.users.registries import user_preferences_registry
 
+from bread.utils import autopath
+
 from .forms.forms import PreferencesForm, UserPreferencesForm
 from .views import auth, system, userprofile
 
@@ -87,26 +89,15 @@ urlpatterns = [
     path("accounts/login/", auth.BreadLoginView.as_view(), name="login"),
     path("accounts/logout/", auth.BreadLogoutView.as_view(), name="logout"),
     path("accounts/user/", userprofile.UserProfileView.as_view(), name="userprofile"),
-    path(
-        "accounts/user/personal",
-        userprofile.EditPersonalDataView.as_view(),
-        name="userprofile.personal",
+    autopath(
+        userprofile.EditPersonalDataView.as_view(), urlname="userprofile.personal"
     ),
-    path(
-        "accounts/user/login",
-        userprofile.EditLoginView.as_view(),
-        name="userprofile.login",
+    autopath(userprofile.EditLoginView.as_view(), urlname="userprofile.login"),
+    autopath(userprofile.password_reset, urlname="userprofile.password_reset"),
+    autopath(
+        userprofile.EditPermissionsView.as_view(), urlname="userprofile.permissions"
     ),
-    path(
-        "accounts/user/login/password_reset",
-        userprofile.password_reset,
-        name="userprofile.password_reset",
-    ),
-    path(
-        "accounts/user/permissions",
-        userprofile.EditPermissionsView.as_view(),
-        name="userprofile.permissions",
-    ),
+    autopath(userprofile.set_devmode, urlname="devmode"),
     path(
         "accounts/password_reset/",
         auth.BreadPasswordResetView.as_view(),

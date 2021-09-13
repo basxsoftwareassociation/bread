@@ -1,9 +1,10 @@
 import htmlgenerator as hg
 from django import forms
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordResetForm
 from django.core.exceptions import ValidationError
-from django.http import HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 
@@ -81,6 +82,7 @@ class UserProfileView(ReadView):
                             ),
                             width=7,
                         ),
+                        style="margin-bottom: 2rem; margin-top: 2rem",
                     ),
                     R(
                         C(
@@ -92,9 +94,9 @@ class UserProfileView(ReadView):
                         ),
                         C(
                             hg.H4(_("Permissions")),
-                            profile_field("is_active"),
-                            profile_field("is_superuser"),
-                            profile_field("is_staff"),
+                            profile_field_checkbox("is_active"),
+                            profile_field_checkbox("is_superuser"),
+                            profile_field_checkbox("is_staff"),
                             layout.modal.Modal.with_ajax_content(
                                 _("Permissions"),
                                 reverse(
@@ -112,6 +114,35 @@ class UserProfileView(ReadView):
                             ),
                             width=7,
                         ),
+                        C(
+                            hg.DIV(
+                                layout.toggle.Toggle(
+                                    _("Developer Mode"),
+                                    _("Disabled"),
+                                    _("Enabled"),
+                                    help_text=hg.SPAN(
+                                        _(
+                                            "Warning: This is a dangerous option!",
+                                        ),
+                                        hg.BR(),
+                                        _(
+                                            "Enable it only if you know what you are doing!",
+                                        ),
+                                        style="color: red",
+                                    ),
+                                    widgetattributes={
+                                        "checked": hg.C(
+                                            f"request.session.{layout.DEVMODE_KEY}"
+                                        ),
+                                    },
+                                    onclick=f"fetch('{reverse('devmode', kwargs={'enable': not self.request.session.get(layout.DEVMODE_KEY, False)})}').then((resp) => {{}}).then(() => location.reload(true)); return false;",
+                                ),
+                                style="align-self: flex-end",
+                            ),
+                            layout.DevModeOnly("ok"),
+                            width=7,
+                            style="display: flex; justify-content: flex-end",
+                        ),
                     ),
                 ),
                 _class="bx--tile",
@@ -122,6 +153,7 @@ class UserProfileView(ReadView):
 class EditPersonalDataView(EditView):
     model = get_user_model()
     fields = ["first_name", "last_name"]
+    urlparams = {}
 
     def get_object(self):
         return self.request.user
@@ -130,6 +162,7 @@ class EditPersonalDataView(EditView):
 class EditLoginView(EditView):
     model = get_user_model()
     fields = ["username", "email"]
+    urlparams = {}
 
     def get_form_class(self, *args, **kwargs):
         class EditLoginForm(super().get_form_class(*args, **kwargs)):
@@ -168,17 +201,10 @@ class EditLoginView(EditView):
         return self.request.user
 
 
-def password_reset(request):
-    """Automatically sends a password-reset email to the currently logged in user"""
-    form = PasswordResetForm(data={"email": request.user.email})
-    form.is_valid()
-    form.save(request=request)
-    return redirect("password_reset_done")
-
-
 class EditPermissionsView(EditView):
     model = get_user_model()
     fields = ["is_active", "is_superuser", "is_staff"]
+    urlparams = {}
 
     def check_permissions(self, request):
         if not request.user.is_superuser:
@@ -210,3 +236,30 @@ def profile_field(fieldname, password=False):
         C(fieldvalue),
         style="margin-bottom: 2rem",
     )
+
+
+def profile_field_checkbox(fieldname):
+    return layout.checkbox.Checkbox(
+        layout.ObjectFieldLabel(fieldname),
+        disabled=True,
+        widgetattributes={"checked": hg.C(f"object.{fieldname}")},
+    )
+
+
+def password_reset(request):
+    """Automatically sends a password-reset email to the currently logged in user"""
+    form = PasswordResetForm(data={"email": request.user.email})
+    form.is_valid()
+    form.save(request=request)
+    return redirect("password_reset_done")
+
+
+def set_devmode(request, enable: str):
+    request.session[layout.DEVMODE_KEY] = enable.lower() in ["true", "1"]
+    messages.success(
+        request,
+        _("Enabled developer mode")
+        if request.session[layout.DEVMODE_KEY]
+        else _("Disabled developer mode"),
+    )
+    return HttpResponse("OK")
