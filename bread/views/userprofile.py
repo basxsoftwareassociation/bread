@@ -66,8 +66,8 @@ class UserProfileView(ReadView):
                         C(
                             hg.H4(_("Login"), style="margin-bottom: 3rem"),
                             profile_field("username"),
-                            profile_field("password", password=True),
                             profile_field("email"),
+                            profile_field_password("password"),
                             layout.modal.Modal.with_ajax_content(
                                 _("Login"),
                                 reverse("userprofile.login", query={"asajax": True}),
@@ -214,17 +214,7 @@ class EditPermissionsView(EditView):
         return self.request.user
 
 
-def profile_field(fieldname, password=False):
-    fieldvalue = layout.ObjectFieldValue(fieldname) if not password else "●●●●●●●●●●●●"
-    if password:
-        fieldvalue = hg.BaseElement(
-            fieldvalue,
-            hg.A(
-                _("Request reset"),
-                href=reverse("userprofile.password_reset"),
-                style="float: right",
-            ),
-        )
+def profile_field(fieldname):
     return R(
         C(
             hg.SPAN(
@@ -233,9 +223,24 @@ def profile_field(fieldname, password=False):
             ),
             width=4,
         ),
-        C(fieldvalue),
+        C(layout.ObjectFieldValue(fieldname)),
         style="margin-bottom: 2rem",
     )
+
+
+def profile_field_password(fieldname):
+    ret = profile_field(fieldname)
+    ret[1] = C(
+        hg.BaseElement(
+            "●●●●●●●●●●●●",
+            hg.A(
+                _("Request reset"),
+                href=reverse("userprofile.password_reset"),
+                style="float: right",
+            ),
+        )
+    )
+    return ret
 
 
 def profile_field_checkbox(fieldname):
