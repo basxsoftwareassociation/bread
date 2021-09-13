@@ -6,6 +6,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponse
+from django.urls import NoReverseMatch
 from django.utils.html import mark_safe
 from django.utils.module_loading import import_string
 
@@ -47,9 +48,8 @@ class CustomFormMixin:
                 ret.append(field)
 
         if self.ajax_urlparameter in self.request.GET:
-            return hg.BaseElement(
-                hg.H3(self.object), breadlayout.form.Form(hg.C("form"), ret)
-            )
+            return breadlayout.form.Form(hg.C("form"), ret)
+
         # wrap with form will add a submit button
         return hg.BaseElement(
             hg.H3(self.object), breadlayout.form.Form.wrap_with_form(hg.C("form"), ret)
@@ -102,7 +102,13 @@ class CustomFormMixin:
     def get_success_url(self):
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
-        return reverse_model(self.model, "read", kwargs={"pk": self.object.pk})
+
+        try:
+            ret = str(reverse_model(self.model, "read", kwargs={"pk": self.object.pk}))
+        except NoReverseMatch:
+            ret = self.request.get_full_path()
+
+        return ret
 
 
 class BreadView:

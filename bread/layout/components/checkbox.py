@@ -21,6 +21,8 @@ class Checkbox(hg.DIV):
             widgetattributes.get("_class", "") + " bx--checkbox"
         )
         widgetattributes["type"] = "checkbox"
+        if disabled:
+            widgetattributes["disabled"] = True
         self.input = hg.INPUT(**widgetattributes)
         self.label = hg.LABEL(
             self.input,
@@ -30,9 +32,9 @@ class Checkbox(hg.DIV):
                 "bx--checkbox-label",
                 hg.If(disabled, " bx--label--disabled"),
             ),
-            data_contained_checkbox_state="true"
-            if widgetattributes.get("checked", False)
-            else "false",
+            data_contained_checkbox_state=hg.If(
+                hg.F(lambda c: widgetattributes.get("checked", False)), "true", "false"
+            ),
         )
         super().__init__(
             self.label,

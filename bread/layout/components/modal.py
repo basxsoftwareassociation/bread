@@ -94,7 +94,7 @@ class Modal(hg.DIV):
         """
         buttons = (Button(_("Cancel"), buttontype="ghost", data_modal_close=True),)
         if submitlabel:
-            buttons += (Button(submitlabel, type="submit", form=""),)
+            buttons += (Button(submitlabel, type="submit"),)
 
         modal = cls(
             heading,
@@ -113,3 +113,9 @@ class Modal(hg.DIV):
         modal.openerattributes["hx_get"] = url
         modal.openerattributes["hx_target"] = f"#{modal.id} .bx--modal-content"
         return modal
+
+
+def modal_with_trigger(modal: Modal, triggerclass: hg.HTMLElement, *args, **kwargs):
+    return hg.BaseElement(
+        triggerclass(*args, **{**kwargs, **modal.openerattributes}), modal
+    )

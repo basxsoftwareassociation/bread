@@ -9,6 +9,8 @@ from bread.utils.urls import reverse_model
 
 from ..formatters import format_value
 
+DEVMODE_KEY = "DEVMODE"
+
 
 class HasBreadCookieValue(hg.Lazy):
     def __init__(self, cookiename, value, default=None):
@@ -17,12 +19,21 @@ class HasBreadCookieValue(hg.Lazy):
         self.default = default
 
     def resolve(self, context):
-        if f"bread-{self.cookiename}" in context["request"].session["bread-cookies"]:
+        if f"bread-{self.cookiename}" in context["request"].session.get(
+            "bread-cookies", {}
+        ):
             return (
                 context["request"].session["bread-cookies"][f"bread-{self.cookiename}"]
                 == self.value
             )
         return self.default == self.value
+
+
+class DevModeOnly(hg.BaseElement):
+    def render(self, context):
+        if context["request"].session.get(DEVMODE_KEY, False):
+            return super().render(context)
+        return ""
 
 
 def fieldlabel(model, accessor):
@@ -66,53 +77,28 @@ class FormattedContextValue(hg.ContextValue):
         return str(format_value(super().resolve(context)))
 
 
-# notes on changes (this may be removed py wipascal):
-# By inheriting from ContextValue we can use the parameter
-# "object_contextname" to query any object from the context which
-# is "dot-accessible". E.g we could use ObjectFieldValue("primary_email_address", "row")
-# or ObjectFieldValue("email", "row.primary_email_address")
-# in the second example we "extract the email-address object from the context and
-# use the field "email" of that object.
-#
-# The object can then be obtained from the context by calling super().resolve(context)
-
-
 class ObjectFieldLabel(hg.ContextValue):
-    def __init__(self, fieldname, object_contextname="object"):
+    def __init__(self, fieldname, object_contextname="object", title=True):
+        """
+        :param fieldname: Name of the model field whose value will be rendered
+        :param object_contextname: Name of the context object which provides the field value
+        """
         super().__init__(object_contextname)
         self.fieldname = fieldname
+        self.title = title
 
     def resolve(self, context):
-        return fieldlabel(super().resolve(context)._meta.model, self.fieldname)
-
-
-# notes on changes (this may be removed py wipascal):
-# The additional complexity comes from a use case where
-# we want to display a value which spans one or multiple relationships
-# E.g. if we have a table of persons and the object context-name is
-# "row" and we want to display the country, we would want to specifiy the field
-# as "primary_postal_address.country". This is what is already mentioned in the
-# first note above, but we make use of hg.resolve_lookup instead of fieldlabel (
-# because resolve_lookup is much more generic, while fieldlabel only works with
-# django models and has therefore a bit more information when doing the lookup).
-
-# If "primary_postal_address.country" would have a "get_country_display" method,
-# then we want to call that method as "primary_postal_address.get_country_display".
-# this is why we do the slightly ugly string-splitting
-
-# Note that we might also want to access a non-django-field value like
-# "primary_postal_address.country.name" which works with the implementation below
-
-# I think it is good if we have a standard way to display database values and field
-# labels, so I am all for replacing the existing methods with a consistent one.
-# The amount of "magic" or "genericnes" that I would like to have here is because
-# it makes prototyping much faster. The dot-lookup-anything idea comes from
-# traditional html-template systems like the django template language, hg.resolve_lookup
-# is copied and adjust from the django template system.
+        ret = fieldlabel(super().resolve(context)._meta.model, self.fieldname)
+        return ret.title() if self.title else ret
 
 
 class ObjectFieldValue(hg.ContextValue):
     def __init__(self, fieldname, object_contextname="object", formatter=None):
+        """
+        :param fieldname: Name of the model field whose value will be rendered
+        :param object_contextname: Name of the context object which provides the field value
+        :param formatter: function which takes the field value as a single argument and returns a formatted version
+        """
         super().__init__(object_contextname)
         self.fieldname = fieldname
         self.formatter = formatter
