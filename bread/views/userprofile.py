@@ -42,17 +42,19 @@ class UserProfileView(ReadView):
                             ),
                             profile_field("first_name"),
                             profile_field("last_name"),
-                            layout.modal.Modal.with_ajax_content(
-                                _("Personal Information"),
-                                reverse("userprofile.personal", query={"asajax": True}),
-                                submitlabel=_("Save"),
-                            ).attach_to_trigger(
-                                layout.button.Button(
-                                    _("Edit"),
-                                    buttontype="tertiary",
-                                    icon="edit",
-                                    style="margin-top: 1rem",
-                                )
+                            layout.modal.modal_with_trigger(
+                                layout.modal.Modal.with_ajax_content(
+                                    _("Personal Information"),
+                                    reverse(
+                                        "userprofile.personal", query={"asajax": True}
+                                    ),
+                                    submitlabel=_("Save"),
+                                ),
+                                layout.button.Button,
+                                _("Edit"),
+                                buttontype="tertiary",
+                                icon="edit",
+                                style="margin-top: 1rem",
                             ),
                             width=7,
                         ),
@@ -68,17 +70,19 @@ class UserProfileView(ReadView):
                             profile_field("username"),
                             profile_field("email"),
                             profile_field_password("password"),
-                            layout.modal.Modal.with_ajax_content(
-                                _("Login"),
-                                reverse("userprofile.login", query={"asajax": True}),
-                                submitlabel=_("Save"),
-                            ).attach_to_trigger(
-                                layout.button.Button(
-                                    _("Edit"),
-                                    buttontype="tertiary",
-                                    icon="edit",
-                                    style="margin-top: 1rem",
-                                )
+                            layout.modal.modal_with_trigger(
+                                layout.modal.Modal.with_ajax_content(
+                                    _("Login"),
+                                    reverse(
+                                        "userprofile.login", query={"asajax": True}
+                                    ),
+                                    submitlabel=_("Save"),
+                                ),
+                                layout.button.Button,
+                                _("Edit"),
+                                buttontype="tertiary",
+                                icon="edit",
+                                style="margin-top: 1rem",
                             ),
                             width=7,
                         ),
@@ -97,20 +101,21 @@ class UserProfileView(ReadView):
                             profile_field_checkbox("is_active"),
                             profile_field_checkbox("is_superuser"),
                             profile_field_checkbox("is_staff"),
-                            layout.modal.Modal.with_ajax_content(
-                                _("Permissions"),
-                                reverse(
-                                    "userprofile.permissions", query={"asajax": True}
+                            layout.modal.modal_with_trigger(
+                                layout.modal.Modal.with_ajax_content(
+                                    _("Permissions"),
+                                    reverse(
+                                        "userprofile.permissions",
+                                        query={"asajax": True},
+                                    ),
+                                    submitlabel=_("Save"),
                                 ),
-                                submitlabel=_("Save"),
-                            ).attach_to_trigger(
-                                layout.button.Button(
-                                    _("Edit"),
-                                    buttontype="tertiary",
-                                    icon="edit",
-                                    style="margin-top: 1rem",
-                                    disabled=not self.request.user.is_superuser,
-                                )
+                                layout.button.Button,
+                                _("Edit"),
+                                buttontype="tertiary",
+                                icon="edit",
+                                style="margin-top: 1rem",
+                                disabled=not self.request.user.is_superuser,
                             ),
                             width=7,
                         ),
@@ -139,7 +144,6 @@ class UserProfileView(ReadView):
                                 ),
                                 style="align-self: flex-end",
                             ),
-                            layout.DevModeOnly("ok"),
                             width=7,
                             style="display: flex; justify-content: flex-end",
                         ),

@@ -81,13 +81,6 @@ class Modal(hg.DIV):
             **attributes,
         )
 
-    def attach_to_trigger(self, trigger: hg.BaseElement):
-        """
-        Attaches this modal to a trigger element and returns a wrapper element
-        """
-        trigger.attributes.update(self.openerattributes)
-        return hg.BaseElement(trigger, self)
-
     @classmethod
     def with_ajax_content(
         cls, heading, url, label="", size="md", submitlabel=None, id=None, **attributes
@@ -120,3 +113,9 @@ class Modal(hg.DIV):
         modal.openerattributes["hx_get"] = url
         modal.openerattributes["hx_target"] = f"#{modal.id} .bx--modal-content"
         return modal
+
+
+def modal_with_trigger(modal: Modal, triggerclass: hg.HTMLElement, *args, **kwargs):
+    return hg.BaseElement(
+        triggerclass(*args, **{**kwargs, **modal.openerattributes}), modal
+    )
