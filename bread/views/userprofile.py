@@ -249,9 +249,12 @@ def profile_field_checkbox(fieldname):
 def password_reset(request):
     """Automatically sends a password-reset email to the currently logged in user"""
     form = PasswordResetForm(data={"email": request.user.email})
-    form.is_valid()
-    form.save(request=request)
-    return redirect("password_reset_done")
+    if form.is_valid():
+        form.save(request=request)
+        return redirect("password_reset_done")
+    else:
+        messages.error(request, form.errors)
+        return redirect("userprofile")
 
 
 def set_devmode(request, enable: str):
