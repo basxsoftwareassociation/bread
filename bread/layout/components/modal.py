@@ -1,3 +1,5 @@
+from typing import Callable
+
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
@@ -119,3 +121,9 @@ def modal_with_trigger(modal: Modal, triggerclass: hg.HTMLElement, *args, **kwar
     return hg.BaseElement(
         triggerclass(*args, **{**kwargs, **modal.openerattributes}), modal
     )
+
+
+def modal_with_generated_trigger(
+    modal: Modal, trigger_generator: Callable[[dict], hg.HTMLElement]
+):
+    return hg.BaseElement(trigger_generator(modal.openerattributes), modal)

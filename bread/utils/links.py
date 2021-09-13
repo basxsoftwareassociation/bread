@@ -1,8 +1,10 @@
-from typing import List, NamedTuple, Union
+from dataclasses import dataclass
+from typing import Callable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.db import models
 
+from ..layout.components.modal import Modal
 from .urls import model_urlname
 from .urls import reverse as urlreverse
 
@@ -78,6 +80,7 @@ class Link(NamedTuple):
     iconname: str = "fade"
     permissions: List[str] = []
     attributes: dict = {}
+    modal: Optional[Callable[[], Modal]] = None
 
     def has_permission(self, request, obj=None):
         return all(

@@ -11,6 +11,7 @@ from bread.utils.urls import link_with_urlparameters
 from ..base import ObjectFieldLabel, ObjectFieldValue, aslink_attributes
 from .button import Button
 from .icon import Icon
+from .modal import modal_with_generated_trigger, modal_with_trigger
 from .overflow_menu import OverflowMenu
 from .pagination import Pagination, PaginationConfig
 from .search import Search, SearchBackendConfig
@@ -337,13 +338,14 @@ class DataTable(hg.TABLE):
                     rowactions,
                     "action",
                     hg.F(
-                        lambda c: Button.fromlink(
-                            c["action"],
-                            notext=True,
-                            small=True,
-                            buttontype="ghost",
-                            _class="bx--overflow-menu",
+                        lambda c: modal_with_generated_trigger(
+                            c["action"].modal(),
+                            lambda attributes: row_action_button(
+                                c["action"], **attributes
+                            ),
                         )
+                        if c["action"].modal
+                        else row_action_button(c["action"]),
                     ),
                 ),
                 style="display: flex",
@@ -497,3 +499,14 @@ def sortinglink_for_column(orderingurlparameter, columnname):
         )
 
     return aslink_attributes(hg.F(extractsortinglink))
+
+
+def row_action_button(link: Link, **kwargs):
+    return Button.fromlink(
+        link,
+        notext=True,
+        small=True,
+        buttontype="ghost",
+        _class="bx--overflow-menu",
+        **kwargs,
+    )

@@ -1,10 +1,22 @@
 import htmlgenerator as hg
 
 from .icon import Icon
+from .modal import modal_with_generated_trigger
 
 
-def asoverflowbutton(context):
+def overflow_button_wrapper(context):
     link = context["link"]
+    if link.modal:
+        # TODO Pascal Wiesmann: for some reason this does not work yet. the popup opens only after the overflow button
+        # is clicked for the second time.
+        return modal_with_generated_trigger(
+            link.modal(), lambda attributes: overflow_button(link, **attributes)
+        )
+    else:
+        return overflow_button(link)
+
+
+def overflow_button(link, **kwargs):
     return hg.A(
         hg.DIV(
             hg.If(
@@ -19,6 +31,7 @@ def asoverflowbutton(context):
         title=link.label,
         href=link.href,
         **link.attributes,
+        **kwargs,
     )
 
 
@@ -72,7 +85,7 @@ class OverflowMenu(hg.DIV):
                         links,
                         "link",
                         hg.LI(
-                            hg.F(asoverflowbutton),
+                            hg.F(overflow_button_wrapper),
                             **item_attributes,
                         ),
                     ),
