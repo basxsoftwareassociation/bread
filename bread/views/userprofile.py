@@ -147,6 +147,7 @@ class UserProfileView(ReadView):
                             width=7,
                             style="display: flex; justify-content: flex-end",
                         ),
+                        style="margin-bottom: 2rem; margin-top: 2rem",
                     ),
                 ),
                 _class="bx--tile",
