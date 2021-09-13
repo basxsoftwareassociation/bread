@@ -119,6 +119,7 @@ class UserProfileView(ReadView):
                             ),
                             width=7,
                         ),
+                        C(width=1),
                         C(
                             hg.DIV(
                                 layout.toggle.Toggle(
@@ -141,6 +142,7 @@ class UserProfileView(ReadView):
                                         ),
                                     },
                                     onclick=f"fetch('{reverse('devmode', kwargs={'enable': not self.request.session.get(layout.DEVMODE_KEY, False)})}').then((resp) => {{}}).then(() => location.reload(true)); return false;",
+                                    style="margin-bottom: 0",
                                 ),
                                 style="align-self: flex-end",
                             ),
