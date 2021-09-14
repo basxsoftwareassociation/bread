@@ -33,8 +33,8 @@ class Modal(hg.DIV):
         if buttons and "data_modal_primary_focus" not in buttons[-1].attributes:
             buttons[-1].attributes["data_modal_primary_focus"] = True
         attributes["_class"] = attributes.get("_class", "") + " bx--modal"
-        self.id = id or hg.html_id(self, prefix="modal-")
-        self.openerattributes = {"data_modal_target": f"#{self.id}"}
+        self.id = hg.html_id(self, prefix="modal-") if id is None else id
+        self.openerattributes = {"data_modal_target": hg.format("#{}", id)}
         self.contentcontainer = hg.DIV(
             *content, _class="bx--modal-content", tabindex="0"
         )
@@ -107,11 +107,17 @@ class Modal(hg.DIV):
         )
         if submitlabel:
             buttons[1].attributes["hx_post"] = url
-            buttons[1].attributes["hx_target"] = f"#{modal.id} .bx--modal-content"
-            buttons[1].attributes["hx_include"] = f"#{modal.id} .bx--modal-content"
+            buttons[1].attributes["hx_target"] = hg.format(
+                "#{} .bx--modal-content", modal.id
+            )
+            buttons[1].attributes["hx_include"] = hg.format(
+                "#{} .bx--modal-content", modal.id
+            )
 
         modal.openerattributes["hx_get"] = url
-        modal.openerattributes["hx_target"] = f"#{modal.id} .bx--modal-content"
+        modal.openerattributes["hx_target"] = hg.format(
+            "#{} .bx--modal-content", modal.id
+        )
         return modal
 
 
