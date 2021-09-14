@@ -35,8 +35,6 @@ class Modal(hg.DIV):
         attributes["_class"] = attributes.get("_class", "") + " bx--modal"
         self.id = hg.html_id(self, prefix="modal-") if id is None else id
         self.openerattributes = {"data_modal_target": hg.format("#{}", self.id)}
-
-        breakpoint()
         self.contentcontainer = hg.DIV(
             *content, _class="bx--modal-content", tabindex="0"
         )
