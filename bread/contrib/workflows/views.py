@@ -1,11 +1,18 @@
 import htmlgenerator as hg
-from django.utils.translation import gettext_lazy as _
-
 from bread import layout, utils, views
+from django.utils.translation import gettext_lazy as _
 
 
 class WorkflowBrowseView(views.BrowseView):
     rowclickaction = views.BrowseView.gen_rowclickaction("edit")
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .exclude(completed__isnull=False)
+            .exclude(cancelled__isnull=False)
+        )
 
     def get_layout(self):
         workflow_diagram = layout.modal.Modal(
