@@ -89,7 +89,7 @@ class ObjectFieldLabel(hg.ContextValue):
 
     def resolve(self, context):
         ret = fieldlabel(super().resolve(context)._meta.model, self.fieldname)
-        return ret.title() if self.title else ret
+        return ret.title() if self.title and isinstance(ret, str) else ret
 
 
 class ObjectFieldValue(hg.ContextValue):
