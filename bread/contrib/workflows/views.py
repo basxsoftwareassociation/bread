@@ -1,6 +1,7 @@
 import htmlgenerator as hg
-from bread import layout, utils, views
 from django.utils.translation import gettext_lazy as _
+
+from bread import layout, utils, views
 
 
 class WorkflowBrowseView(views.BrowseView):
