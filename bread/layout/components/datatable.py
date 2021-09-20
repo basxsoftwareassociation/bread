@@ -346,7 +346,7 @@ class DataTable(hg.TABLE):
                         )
                     ),
                 ),
-                style="display: flex",
+                style="display: flex; justify-content: flex-end;",
             )
 
         queryset = model.objects.all() if queryset is None else queryset

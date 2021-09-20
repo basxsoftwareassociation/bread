@@ -121,7 +121,7 @@ class Modal(hg.DIV):
         return modal
 
 
-def modal_with_trigger(modal: Modal, triggerclass: hg.HTMLElement, *args, **kwargs):
+def modal_with_trigger(modal: Modal, triggerclass: type, *args, **kwargs):
     return hg.BaseElement(
         triggerclass(*args, **{**kwargs, **modal.openerattributes}), modal
     )
