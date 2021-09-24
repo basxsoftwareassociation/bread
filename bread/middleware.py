@@ -1,5 +1,6 @@
 import urllib
 
+from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -25,9 +26,15 @@ class RequireAuthenticationMiddleware:
             "password_reset_confirm",
             "password_reset_complete",
         )
-        if not (
-            request.user.is_authenticated
-            or request.resolver_match.url_name in whitelisted_urlnames
-        ):
-            return HttpResponseRedirect(reverse("login") + "?next=" + request.path)
-        return None
+        if request.user.is_authenticated:
+            return None
+        if request.resolver_match.url_name in whitelisted_urlnames:
+            return None
+        if "Authorization" in request.headers:
+            user = authenticate(request)
+            if user is not None:
+                login(request, user)
+                request.user = user
+                return None
+
+        return HttpResponseRedirect(reverse("login") + "?next=" + request.path)
