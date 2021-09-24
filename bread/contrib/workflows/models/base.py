@@ -273,9 +273,12 @@ class WorkflowBase(models.Model):
             self.save()
 
     def save(self, *args, **kwargs):
-        self.update_workflow_state(runactions=True)
+        if self.pk is not None:
+            self.update_workflow_state(runactions=True)
         if not self.completed and not self.cancelled and self.done:
             self.completed = timezone.now()
+        super().save(*args, **kwargs)
+        self.update_workflow_state(runactions=True)
         super().save(*args, **kwargs)
 
     def update_workflow_state(self, runactions=False):
@@ -305,7 +308,6 @@ class WorkflowBase(models.Model):
                                 setattr(self, node.name, actionresult)
                     if isinstance(node, Decision):
                         if any(n.done(self) for n, c in node.inputs):
-                            node.decide(self)
                             decision = node.decide(self)
                             if decision != getattr(self, node.name):
                                 state_changed = True
