@@ -38,9 +38,13 @@ class DevModeOnly(hg.BaseElement):
 
 def fieldlabel(model, accessor):
     label = resolve_modellookup(model, accessor)[-1]
+    if hasattr(label, "verbose_name"):
+        return label.verbose_name
     if isinstance(label, property):
-        return getattr(label, "verbose_name", None) or label.fget.__name__
-    return getattr(label, "verbose_name", None) or label
+        return label.fget.__name__.replace("_", " ")
+    if callable(label):
+        return label.__name__.replace("_", " ")
+    return label
 
 
 def objectaction(object, action, *args, **kwargs):
