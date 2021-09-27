@@ -168,7 +168,7 @@ class BreadPasswordResetConfirmView(BreadView, PasswordResetConfirmView):
     def get_context_data(self, *args, **kwargs):
         return {
             **super().get_context_data(*args, **kwargs),
-            "pagetitle": _("Change Password"),
+            "pagetitle": _("Change password"),
         }
 
     def get_layout(self):

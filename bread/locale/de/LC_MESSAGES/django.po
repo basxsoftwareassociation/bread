@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-06 11:17+0200\n"
+"POT-Creation-Date: 2021-09-27 09:56+0700\n"
 "PO-Revision-Date: 2021-09-21 12:39+0000\n"
 "Last-Translator: Beat Schnyder <schnyder@basx.ch>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -28,7 +28,7 @@ msgstr "Ungültiges Model '%s' ausgewählt"
 msgid "Created"
 msgstr "Erstellt"
 
-#: bread/contrib/reports/models.py:21 bread/contrib/reports/models.py:95
+#: bread/contrib/reports/models.py:21 bread/contrib/reports/models.py:98
 msgid "Name"
 msgstr "Name"
 
@@ -51,11 +51,11 @@ msgstr ""
 "Der Schlüssel in 'settings.REPORT_FILTERS' muss eine Funktion sein welche "
 "ein QuerySet zurückgibt"
 
-#: bread/contrib/reports/models.py:47
+#: bread/contrib/reports/models.py:50
 msgid "Preview"
 msgstr "Vorschau"
 
-#: bread/contrib/reports/models.py:65
+#: bread/contrib/reports/models.py:68
 #, python-format
 msgid ""
 "settings.REPORT_FILTERS[\"%s\"] did not return a queryset but returned: %s"
@@ -63,7 +63,7 @@ msgstr ""
 "settings.REPORT_FILTERS[\"%s\"] hat nicht ein QuerySet zurückgegeben "
 "sondern: %s"
 
-#: bread/contrib/reports/models.py:72
+#: bread/contrib/reports/models.py:75
 #, python-format
 msgid ""
 "settings.REPORT_FILTERS[\"%s\"] did not return a queryset for %s but for %s"
@@ -71,78 +71,108 @@ msgstr ""
 "settings.REPORT_FILTERS[\"%s\"] hat nicht ein Queryset für %s sondern für %s "
 "zurückgegeben"
 
-#: bread/contrib/reports/models.py:83
+#: bread/contrib/reports/models.py:86
 msgid "Report"
 msgstr "Bericht"
 
-#: bread/contrib/reports/models.py:84 bread/contrib/reports/urls.py:210
-#: bread/contrib/reports/urls.py:212
+#: bread/contrib/reports/models.py:87 bread/contrib/reports/urls.py:71
+#: bread/contrib/reports/urls.py:74
 msgid "Reports"
 msgstr "Berichte"
 
-#: bread/contrib/reports/models.py:94 bread/contrib/reports/models.py:101
+#: bread/contrib/reports/models.py:97 bread/contrib/reports/models.py:104
 msgid "Column"
 msgstr "Spalte"
 
-#: bread/contrib/reports/models.py:97
+#: bread/contrib/reports/models.py:100
 msgid "Aggregation"
 msgstr "Aggregation"
 
-#: bread/contrib/reports/models.py:102
+#: bread/contrib/reports/models.py:105
 msgid "Columns"
 msgstr "Spalten"
 
-#: bread/contrib/reports/urls.py:37
-msgid "Base model"
-msgstr "Basis Model"
-
-#: bread/contrib/reports/urls.py:112 bread/contrib/reports/urls.py:183
-#: bread/views/browse.py:82
-msgid "Excel"
-msgstr "Excel"
-
-#: bread/contrib/reports/urls.py:152 bread/layout/components/form.py:320
-#: bread/views/browse.py:86
+#: bread/contrib/reports/urls.py:23 bread/layout/components/form.py:320
+#: bread/views/browse.py:104
 msgid "Delete"
 msgstr "Löschen"
 
-#: bread/contrib/reports/urls.py:156
-#, fuzzy
-#| msgctxt "this is a copy"
-#| msgid "Copy"
+#: bread/contrib/reports/urls.py:27
 msgid "Copy"
-msgstr "Kopie"
+msgstr "Kopieren"
 
-#: bread/contrib/reports/urls.py:170
+#: bread/contrib/reports/urls.py:38 bread/views/userprofile.py:54
+#: bread/views/userprofile.py:82 bread/views/userprofile.py:114
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: bread/contrib/workflows/views.py:12
+#: bread/contrib/reports/urls.py:43 bread/contrib/reports/views.py:131
+#: bread/views/browse.py:99
+msgid "Excel"
+msgstr "Excel"
+
+#: bread/contrib/reports/views.py:45
+msgid "Base model"
+msgstr "Basis Model"
+
+#: bread/contrib/reports/views.py:62
+msgid "Help"
+msgstr "Hilfe"
+
+#: bread/contrib/reports/views.py:200
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: bread/contrib/reports/views.py:202
+msgid "Available columns"
+msgstr "Verfügabre Spalten"
+
+#: bread/contrib/reports/views.py:204
+msgid "Bold text marks valid column names"
+msgstr "Fetter Text sind gültige Spaltenname"
+
+#: bread/contrib/reports/views.py:208
+msgid "Column name"
+msgstr "Spaltenname"
+
+#: bread/contrib/reports/views.py:212
+msgid "Description"
+msgstr "Beschreibung"
+
+#: bread/contrib/reports/views.py:215
+msgid "Type"
+msgstr "Typ"
+
+#: bread/contrib/reports/views.py:218
+msgid "Extended columns"
+msgstr "Erweiterte Spalten"
+
+#: bread/contrib/workflows/views.py:20
 msgid "Workflow Diagram"
 msgstr "Workflow Diagramm"
 
-#: bread/contrib/workflows/views.py:20
+#: bread/contrib/workflows/views.py:28
 msgid "Explain Workflow"
 msgstr "Erkläre Workflow"
 
-#: bread/layout/components/button.py:64
+#: bread/layout/components/button.py:68
 msgid "Print"
 msgstr "Drucken"
 
-#: bread/layout/components/datatable.py:219 bread/layout/components/modal.py:95
+#: bread/layout/components/datatable.py:206 bread/layout/components/modal.py:95
 #: bread/views/auth.py:28
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: bread/layout/components/datatable.py:230
+#: bread/layout/components/datatable.py:217
 msgid " items selected"
 msgstr " Einträge ausgewählt"
 
-#: bread/layout/components/datatable.py:236
+#: bread/layout/components/datatable.py:223
 msgid "Table Action Bar"
 msgstr "Tabellen Aktionsbar"
 
-#: bread/layout/components/datatable.py:443 bread/views/add.py:38
+#: bread/layout/components/datatable.py:323 bread/views/add.py:38
 #: bread/views/add.py:45
 #, python-format
 msgid "Add %s"
@@ -152,7 +182,8 @@ msgstr "%s erstellen"
 msgid "Select file"
 msgstr "Datei auswählen"
 
-#: bread/layout/components/form.py:30
+#: bread/layout/components/form.py:30 bread/views/userprofile.py:51
+#: bread/views/userprofile.py:79 bread/views/userprofile.py:111
 msgid "Save"
 msgstr "Speichern"
 
@@ -176,20 +207,20 @@ msgstr "Reihenfolge"
 msgid "Time stamp"
 msgstr "Zeitpunkt"
 
-#: bread/layout/components/pagination.py:27
+#: bread/layout/components/pagination.py:44
 msgid "Items per page"
 msgstr "Einträge pro Seite"
 
-#: bread/layout/components/pagination.py:75
-#: bread/layout/components/pagination.py:122
+#: bread/layout/components/pagination.py:92
+#: bread/layout/components/pagination.py:139
 msgid "of"
 msgstr "von"
 
-#: bread/layout/components/pagination.py:84
+#: bread/layout/components/pagination.py:101
 msgid "items"
 msgstr "Einträgen"
 
-#: bread/layout/components/pagination.py:126
+#: bread/layout/components/pagination.py:143
 msgid "pages"
 msgstr "Seiten"
 
@@ -197,20 +228,20 @@ msgstr "Seiten"
 msgid "Optional"
 msgstr "Optional"
 
-#: bread/layout/components/search.py:42 bread/layout/components/search.py:57
+#: bread/layout/components/search.py:47 bread/layout/components/search.py:62
 msgid "Search"
 msgstr "Suchen"
 
-#: bread/layout/components/search.py:104 bread/layout/components/search.py:105
+#: bread/layout/components/search.py:109 bread/layout/components/search.py:110
 msgid "Clear search input"
 msgstr "Suchtext löschen"
 
-#: bread/layout/components/shell_header.py:71
-#: bread/layout/components/shell_header.py:72 bread/views/auth.py:103
+#: bread/layout/components/shell_header.py:53
+#: bread/layout/components/shell_header.py:54 bread/views/auth.py:103
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: bread/layout/components/shell_header.py:73
+#: bread/layout/components/shell_header.py:55
 msgid "Close"
 msgstr "Schliessen"
 
@@ -223,14 +254,14 @@ msgid "Show password"
 msgstr "Zeige Passwort"
 
 #: bread/layout/components/toggle.py:11
-msgid "On"
-msgstr "An"
-
-#: bread/layout/components/toggle.py:12
 msgid "Off"
 msgstr "Aus"
 
-#: bread/urls.py:39
+#: bread/layout/components/toggle.py:12
+msgid "On"
+msgstr "An"
+
+#: bread/urls.py:41
 msgid "Preferences updated"
 msgstr "Einstellungen wurden gespeichert"
 
@@ -239,140 +270,191 @@ msgstr "Einstellungen wurden gespeichert"
 msgid "Added %s"
 msgstr "%s erstellt"
 
-#: bread/views/auth.py:57 bread/views/auth.py:86
+#: bread/views/auth.py:57 bread/views/auth.py:86 bread/views/userprofile.py:69
+#: bread/views/userprofile.py:75
 msgid "Login"
 msgstr "Einloggen"
 
 #: bread/views/auth.py:65 bread/views/auth.py:122
-#, fuzzy
-#| msgid "Show password"
 msgid "Lost password?"
-msgstr "Zeige Passwort"
+msgstr "Passwort vergessen?"
 
 #: bread/views/auth.py:107
 msgid "Logged out"
-msgstr ""
+msgstr "Ausgeloggt"
 
 #: bread/views/auth.py:114 bread/views/auth.py:146
 msgid "Password reset"
-msgstr ""
+msgstr "Passwort zurücksetzen"
 
 #: bread/views/auth.py:137
-#, fuzzy
-#| msgid "Show password"
 msgid "Reset password"
-msgstr "Zeige Passwort"
+msgstr "Passwort zurücksetzen"
 
 #: bread/views/auth.py:153
 msgid "Email instructions sent"
-msgstr ""
+msgstr "Email Instruktionen verschickt"
 
 #: bread/views/auth.py:155
 msgid ""
 "If the email address provided exists, you will shortly receive an email "
 "containing recovery instructions."
 msgstr ""
+"Falls die angegebene Email-Adresse existiert werden Sie in kürze eine Email "
+"mit Wiederherstellunges-Anweisungen erhalten."
 
 #: bread/views/auth.py:163 bread/views/auth.py:212 bread/views/auth.py:236
 msgid "Back to Login"
-msgstr ""
+msgstr "Zurück zum Login"
 
-#: bread/views/auth.py:171
-#, fuzzy
-#| msgid "Show password"
-msgid "Change Password"
-msgstr "Zeige Passwort"
-
-#: bread/views/auth.py:197 bread/views/auth.py:221
-#, fuzzy
-#| msgid "Show password"
+#: bread/views/auth.py:171 bread/views/auth.py:197 bread/views/auth.py:221
 msgid "Change password"
-msgstr "Zeige Passwort"
+msgstr "Passwort ändern"
 
 #: bread/views/auth.py:203
 msgid "Invalid password reset link"
-msgstr ""
+msgstr "Ungültiger Passwort-Reset Link"
 
 #: bread/views/auth.py:205
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used. Please request a new password reset."
 msgstr ""
+"Der Passwort-Reset Link ist ungültig, möglicherweise weil er schon benutzt "
+"wurde. Bitte fordern Sie einen neuen Passwort-Reset Link an."
 
 #: bread/views/auth.py:228
 msgid "Password successfully changed"
-msgstr ""
+msgstr "Passwort erfolgreich geändert."
 
 #: bread/views/auth.py:229
 msgid "Please login again"
-msgstr ""
+msgstr "Bitte loggen Sie sich wieder ein"
 
-#: bread/views/browse.py:152
+#: bread/views/browse.py:172
 #, python-format
-msgid "Acton '%s' is not configured for this view"
-msgstr ""
+msgid "Action '%s' is not configured for this view"
+msgstr "Aktion '%s' ist nicht konfiguriert für diese View"
 
-#: bread/views/browse.py:246
+#: bread/views/browse.py:291
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "Benutzer hat nicht die benötigten Berechtigungnen um '%s' zu löschen"
 
-#: bread/views/browse.py:259
+#: bread/views/browse.py:304
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s konnte nicht gelöscht werden: %s"
 
-#: bread/views/browse.py:264
+#: bread/views/browse.py:309
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s %(modelname)s gelöscht"
 
-#: bread/views/browse.py:286
-#, fuzzy, python-format
-#| msgid "Your user has not the permissions to delete %s"
+#: bread/views/browse.py:331
+#, python-format
 msgid "Your user has not the permissions to restore %s"
-msgstr "Benutzer hat nicht die benötigten Berechtigungnen um '%s' zu löschen"
+msgstr ""
+"Ihr Benutzer hat nicht die benötigten Berechtigungnen um '%s' "
+"wiederherzustellen"
 
-#: bread/views/browse.py:295
-#, fuzzy, python-format
-#| msgid "%s could not be deleted: %s"
+#: bread/views/browse.py:340
+#, python-format
 msgid "%s could not be restored: %s"
-msgstr "%s konnte nicht gelöscht werden: %s"
+msgstr "%s konnte nicht wiederhergestellt werden: %s"
 
-#: bread/views/browse.py:300
-#, fuzzy, python-format
-#| msgid "Deleted %(count)s %(modelname)s"
+#: bread/views/browse.py:345
+#, python-format
 msgid "Restored %(count)s %(modelname)s"
-msgstr "%(count)s %(modelname)s gelöscht"
+msgstr "%(count)s %(modelname)s wiederhergestellt"
 
-#: bread/views/delete.py:47
+#: bread/views/delete.py:48
 #, python-format
 msgid "Restored %(modelname)s %(objectname)s"
 msgstr "%(modelname)s %(objectname)s wurde wiederhergestellt"
 
-#: bread/views/delete.py:49 bread/views/delete.py:53
+#: bread/views/delete.py:50 bread/views/delete.py:54
 #, python-format
 msgid "Deleted %(modelname)s %(objectname)s"
 msgstr "%(modelname)s %(objectname)s wurde gelöscht"
 
-#: bread/views/edit.py:75
+#: bread/views/edit.py:77
 #, python-format
 msgid "Created copy %s"
 msgstr "Kopie von %s erstellt"
 
-#: bread/views/edit.py:99
+#: bread/views/edit.py:101
 #, python-format
 msgid "Created %s copies"
 msgstr "%s Kopien erstellt"
 
-#: bread/views/edit.py:142
+#: bread/views/edit.py:144
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "Kopie"
 
 #: bread/views/system.py:31
 msgid "System information"
-msgstr "Systemeinformationen"
+msgstr "Systeminformationen"
+
+#: bread/views/userprofile.py:28
+msgid "Manage Profile"
+msgstr "Profil verwalten"
+
+#: bread/views/userprofile.py:41 bread/views/userprofile.py:47
+msgid "Personal Information"
+msgstr "Persönliche Angaben"
+
+#: bread/views/userprofile.py:100 bread/views/userprofile.py:106
+msgid "Permissions"
+msgstr "Berechtigungen"
+
+#: bread/views/userprofile.py:126
+msgid "Developer Mode"
+msgstr "Entwickler Modus"
+
+#: bread/views/userprofile.py:127
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+#: bread/views/userprofile.py:128
+msgid "Enabled"
+msgstr "Aktiviert"
+
+#: bread/views/userprofile.py:131
+msgid "Warning: This is a dangerous option!"
+msgstr "Warnung: Dies ist eine gefährliche Option."
+
+#: bread/views/userprofile.py:135
+msgid "Enable it only if you know what you are doing!"
+msgstr "Schalten Sie diese nur ein, wenn Sie wissen was Sie machen."
+
+#: bread/views/userprofile.py:178
+msgid "Confirm changes with current password"
+msgstr "Änderungen mit dem aktuellen Passwort bestätigen."
+
+#: bread/views/userprofile.py:182
+msgid "Please enter your current password to confirm these changes"
+msgstr ""
+"Bitte geben Sie ihr aktuelles Passwort ein um die Änderungen zu bestätigen."
+
+#: bread/views/userprofile.py:191
+msgid "Your current password was entered incorrectly. Please enter it again."
+msgstr ""
+"Ihr aktuelles Passwort wurde nicht korrekt eingegeben. Bitte geben Sie es "
+"nochmals ein."
+
+#: bread/views/userprofile.py:244
+msgid "Request reset"
+msgstr "Zurücksetzen"
+
+#: bread/views/userprofile.py:276
+msgid "Enabled developer mode"
+msgstr "Entwickler-Modus aktiviert"
+
+#: bread/views/userprofile.py:278
+msgid "Disabled developer mode"
+msgstr "Entwickler-Modus deaktiviert"
 
 #: bread/views/wizard.py:50
 msgid "Back"
@@ -385,6 +467,3 @@ msgstr "Fertigstellen"
 #: bread/views/wizard.py:64
 msgid "Continue"
 msgstr "Weiter"
-
-#~ msgid "System Settings"
-#~ msgstr "Systemeinstellungen"

@@ -169,7 +169,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             if self.request.GET[self.bulkaction_urlparameter] not in bulkactions:
                 messages.error(
                     self.request,
-                    _("Acton '%s' is not configured for this view")
+                    _("Action '%s' is not configured for this view")
                     % self.request.GET[self.bulkaction_urlparameter],
                 )
             else:
