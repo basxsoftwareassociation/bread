@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-27 09:56+0700\n"
-"PO-Revision-Date: 2021-08-09 03:59+0000\n"
+"PO-Revision-Date: 2021-09-28 05:38+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
 "th/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.8-dev\n"
+"X-Generator: Weblate 4.9-dev\n"
 
 #: bread/contrib/reports/fields/queryfield.py:109
 #, python-format
@@ -111,37 +111,35 @@ msgstr "โมเดลพื้นฐาน"
 
 #: bread/contrib/reports/views.py:62
 msgid "Help"
-msgstr ""
+msgstr "ช่วยเหลือ"
 
 #: bread/contrib/reports/views.py:200
 msgid "Unknown"
-msgstr ""
+msgstr "ไม่รู้จัก"
 
 #: bread/contrib/reports/views.py:202
 msgid "Available columns"
-msgstr ""
+msgstr "คอลัมน์ที่มีอยู่"
 
 #: bread/contrib/reports/views.py:204
 msgid "Bold text marks valid column names"
-msgstr ""
+msgstr "ใช้ข้อความตัวหนาระบุชื่อคอลัมน์ที่ถูกต้อง"
 
 #: bread/contrib/reports/views.py:208
-#, fuzzy
-#| msgid "Column"
 msgid "Column name"
-msgstr "ช่อง"
+msgstr "ชื่อคอลัมน์"
 
 #: bread/contrib/reports/views.py:212
 msgid "Description"
-msgstr ""
+msgstr "คำอธิบาย"
 
 #: bread/contrib/reports/views.py:215
 msgid "Type"
-msgstr ""
+msgstr "ประเภท"
 
 #: bread/contrib/reports/views.py:218
 msgid "Extended columns"
-msgstr ""
+msgstr "ขยายคอลัมน์"
 
 #: bread/contrib/workflows/views.py:20
 msgid "Workflow Diagram"
@@ -189,7 +187,7 @@ msgstr "เกิดข้อผิดพลาด"
 
 #: bread/layout/components/form.py:74
 msgid "Form error: "
-msgstr "เกิดข้อผิดพลาด"
+msgstr "แบบฟอร์มผิดพลาด: "
 
 #: bread/layout/components/form.py:212 bread/layout/components/form.py:232
 msgid "Add"
@@ -324,10 +322,9 @@ msgid "Please login again"
 msgstr "กรุณาเข้าสู่ระบบอีกครั้ง"
 
 #: bread/views/browse.py:172
-#, fuzzy, python-format
-#| msgid "Acton '%s' is not configured for this view"
+#, python-format
 msgid "Action '%s' is not configured for this view"
-msgstr "ไม่ได้กำหนดค่า Acton '%s' สำหรับมุมมองนี้"
+msgstr "ไม่ได้กำหนดค่าการกระทำ '%s' สำหรับมุมมองนี้"
 
 #: bread/views/browse.py:291
 #, python-format
@@ -390,61 +387,59 @@ msgstr "ข้อมูลระบบ"
 
 #: bread/views/userprofile.py:28
 msgid "Manage Profile"
-msgstr ""
+msgstr "จัดการบัญชีผู้ใช้"
 
 #: bread/views/userprofile.py:41 bread/views/userprofile.py:47
-#, fuzzy
-#| msgid "System information"
 msgid "Personal Information"
-msgstr "ข้อมูลระบบ"
+msgstr "ข้อมูลส่วนบุคคล"
 
 #: bread/views/userprofile.py:100 bread/views/userprofile.py:106
 msgid "Permissions"
-msgstr ""
+msgstr "กำหนดสิทธิ์การเข้าถึง"
 
 #: bread/views/userprofile.py:126
 msgid "Developer Mode"
-msgstr ""
+msgstr "โหมดสำหรับนักพัฒนา"
 
 #: bread/views/userprofile.py:127
 msgid "Disabled"
-msgstr ""
+msgstr "ปิดการใช้งาน"
 
 #: bread/views/userprofile.py:128
 msgid "Enabled"
-msgstr ""
+msgstr "เปิดใช้งาน"
 
 #: bread/views/userprofile.py:131
 msgid "Warning: This is a dangerous option!"
-msgstr ""
+msgstr "คำเตือน: นี่เป็นตัวเลือกที่อันตราย!"
 
 #: bread/views/userprofile.py:135
 msgid "Enable it only if you know what you are doing!"
-msgstr ""
+msgstr "เปิดใช้งานก็ต่อเมื่อคุณรู้ว่าคุณกำลังจะทำอะไร!"
 
 #: bread/views/userprofile.py:178
 msgid "Confirm changes with current password"
-msgstr ""
+msgstr "ยืนยันการเปลี่ยนแปลงด้วยรหัสผ่านปัจจุบัน"
 
 #: bread/views/userprofile.py:182
 msgid "Please enter your current password to confirm these changes"
-msgstr ""
+msgstr "โปรดป้อนรหัสผ่านปัจจุบันของคุณเพื่อยืนยันการเปลี่ยนแปลง"
 
 #: bread/views/userprofile.py:191
 msgid "Your current password was entered incorrectly. Please enter it again."
-msgstr ""
+msgstr "รหัสผ่านปัจจุบันของคุณไม่ถูกต้อง โปรดลองอีกครั้ง"
 
 #: bread/views/userprofile.py:244
 msgid "Request reset"
-msgstr ""
+msgstr "คำขอตั้งค่าใหม่"
 
 #: bread/views/userprofile.py:276
 msgid "Enabled developer mode"
-msgstr ""
+msgstr "เปิดใช้งานโหมดนักพัฒนา"
 
 #: bread/views/userprofile.py:278
 msgid "Disabled developer mode"
-msgstr ""
+msgstr "ปิดใช้งานโหมดนักพัฒนา"
 
 #: bread/views/wizard.py:50
 msgid "Back"
