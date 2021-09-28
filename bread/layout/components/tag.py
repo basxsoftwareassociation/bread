@@ -6,6 +6,9 @@ from .icon import Icon
 
 class Tag(hg.BUTTON):
     def __init__(self, *label, can_delete=False, tag_color=None, **kwargs):
+        kwargs.setdefault(
+            "type", "button"
+        )  # prevents this from trying to submit a form when inside a FORM element
         kwargs["_class"] = (
             kwargs.get("_class", "")
             + " bx--tag"
