@@ -38,7 +38,7 @@ class QuerySetDescriptor:
         if model and model.model_class():
             try:
                 return parsequeryexpression(model.model_class().objects, value)
-            except DjangoQLError:
+            except ValidationError:
                 pass
         return QueryValue(None, value)
 
