@@ -45,6 +45,7 @@ class Search(hg.DIV):
             "_class": "bx--search-input",
             "type": "text",
             "placeholder": placeholder or _("Search"),
+            "autocomplete": "off",
             **(widgetattributes or {}),
         }
         if backend:
