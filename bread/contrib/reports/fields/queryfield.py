@@ -1,6 +1,7 @@
 import json
 
 import htmlgenerator as hg
+from bread import layout
 from django.core import checks
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db import models
@@ -11,8 +12,6 @@ from djangoql.exceptions import DjangoQLError
 from djangoql.queryset import apply_search
 from djangoql.schema import DjangoQLSchema
 from djangoql.serializers import DjangoQLSchemaSerializer
-
-from bread import layout
 
 
 class QueryValue:
@@ -36,7 +35,10 @@ class QuerySetDescriptor:
         value = instance.__dict__[self.field.name]
         model = getattr(instance, self.field.modelfieldname, None)
         if model and model.model_class():
-            return parsequeryexpression(model.model_class().objects, value)
+            try:
+                return parsequeryexpression(model.model_class().objects, value)
+            except DjangoQLError:
+                pass
         return QueryValue(None, value)
 
     def __set__(self, instance, value):
