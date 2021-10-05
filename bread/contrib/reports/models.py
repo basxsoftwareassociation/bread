@@ -76,7 +76,7 @@ class Report(models.Model):
                     )
                     % (self.custom_queryset, self.model.model_class(), ret.model)
                 )
-            return ret
+            return parsequeryexpression(ret, self.filter.raw).queryset
         return self.filter.queryset
 
     def __str__(self):
