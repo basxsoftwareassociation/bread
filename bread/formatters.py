@@ -41,7 +41,7 @@ def format_value(value, fieldtype=None):
     if isinstance(value, datetime.datetime):
         return as_datetime(value)
     if isinstance(value, numbers.Number):
-        return f"{value:f}".rstrip("0").rstrip(".")
+        return f"{float(value):f}".rstrip("0").rstrip(".")
     if isinstance(value, models.fields.files.ImageFieldFile):
         return as_image(value)
     if isinstance(value, models.fields.files.FieldFile):
