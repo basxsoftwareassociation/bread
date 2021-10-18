@@ -1,4 +1,4 @@
-from typing import Callable, List, NamedTuple, Optional
+from typing import Callable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.conf import settings
@@ -14,7 +14,7 @@ from guardian.mixins import PermissionListMixin
 
 from bread.utils import expand_ALL_constant, filter_fieldlist
 
-from .. import layout as _layout  # prevent name clashing
+from .. import layout
 from ..utils import (
     Link,
     ModelHref,
@@ -46,21 +46,24 @@ class BulkAction(NamedTuple):
 class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     """TODO: documentation"""
 
-    orderingurlparameter = "ordering"
-    objectids_urlparameter = "_selected"  # see bread/static/js/main.js:submitbulkaction and bread/layout/components/datatable.py
-    bulkaction_urlparameter = "_bulkaction"
-    items_per_page_options = None
-    itemsperpage_urlparameter = "itemsperpage"
-    columns = ["__all__"]
+    orderingurlparameter: str = "ordering"
+    objectids_urlparameter: str = "_selected"  # see bread/static/js/main.js:submitbulkaction and bread/layout/components/datatable.py
+    bulkaction_urlparameter: str = "_bulkaction"
+    items_per_page_options: tuple[int] = None
+    itemsperpage_urlparameter: str = "itemsperpage"
+    columns: tuple[Union[str, layout.datatable.DataTableColumn]] = ["__all__"]
     search_backend = None
     rowclickaction: Optional[Link] = None
     # bulkactions: List[(Link, function(request, queryset))]
     # - link.js should be a slug and not a URL
     # - if the function returns a HttpResponse, the response is returned instead of the browse view result
-    bulkactions = ()
+    bulkactions: tuple[
+        Link, Callable[[HttpRequest, models.QuerySet], Union[None, HttpResponse]]
+    ] = ()
     rowactions = ()  # list of links
     backurl = None
     primary_button = None
+    viewstate_sessionkey: str = None  # if set will be used to save the state of the url parameters and restore them on the next call
 
     def __init__(self, *args, **kwargs):
         self.orderingurlparameter = (
@@ -88,6 +91,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
         self.backurl = kwargs.get("backurl") or self.backurl
         self.primary_button = kwargs.get("primary_button") or self.primary_button
+        self.viewstate_sessionkey = (
+            kwargs.get("viewstate_sessionkey") or self.viewstate_sessionkey
+        )
         super().__init__(*args, **kwargs)
         # set some default bulkactions
         self.bulkactions = (
@@ -122,7 +128,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             for action in self.bulkactions
             if action.has_permission(self.request)
         ]
-        return _layout.datatable.DataTable.from_model(
+        return layout.datatable.DataTable.from_model(
             self.model,
             hg.C("object_list"),
             columns=self.columns,
@@ -132,7 +138,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             > 2,  # recommendation from carbon design
             search_backend=self.search_backend,
             rowclickaction=self.rowclickaction,
-            pagination_config=_layout.pagination.PaginationConfig(
+            pagination_config=layout.pagination.PaginationConfig(
                 items_per_page_options=self.items_per_page_options,
                 page_urlparameter=self.page_kwarg,
                 paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
@@ -159,6 +165,12 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
 
     def get(self, *args, **kwargs):
         if "reset" in self.request.GET:
+            # reset clear state and reset filters and sorting
+            if (
+                self.viewstate_sessionkey
+                and self.viewstate_sessionkey in self.request.session
+            ):
+                del self.request.session[self.viewstate_sessionkey]
             return redirect(self.request.path)
         if self.bulkaction_urlparameter in self.request.GET:
             bulkactions = {
@@ -182,6 +194,21 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 if ret is None:
                     return redirect(self.request.path + "?" + params.urlencode())
                 return ret
+        # for normal GET requests save query if saving state is enabled or reload last state
+        if self.viewstate_sessionkey:
+            if (
+                not self.request.GET
+                and self.viewstate_sessionkey in self.request.session
+            ):
+                return redirect(
+                    self.request.path
+                    + "?"
+                    + self.request.session[self.viewstate_sessionkey]
+                )
+            self.request.session[
+                self.viewstate_sessionkey
+            ] = self.request.GET.urlencode()
+
         return super().get(*args, **kwargs)
 
     def get_paginate_by(self, queryset):
@@ -251,16 +278,16 @@ def export(queryset, columns):
     columndefinitions = {}
     for column in columns:
         if not (
-            isinstance(column, _layout.datatable.DataTableColumn)
+            isinstance(column, layout.datatable.DataTableColumn)
             or isinstance(column, str)
         ):
             raise ValueError(
                 f"Argument 'columns' needs to be of a list with items of type str or DataTableColumn, but found {column}"
             )
         if isinstance(column, str):
-            column = _layout.datatable.DataTableColumn(
-                _layout.ObjectFieldLabel(column, "model"),
-                _layout.ObjectFieldValue(column, "row"),
+            column = layout.datatable.DataTableColumn(
+                layout.ObjectFieldLabel(column, "model"),
+                layout.ObjectFieldValue(column, "row"),
             )
 
         columndefinitions[
