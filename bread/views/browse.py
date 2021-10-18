@@ -196,9 +196,8 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 return ret
         # for normal GET requests save query if saving state is enabled or reload last state
         if self.viewstate_sessionkey:
-            if (
-                not self.request.GET
-                and self.viewstate_sessionkey in self.request.session
+            if not self.request.GET and self.request.session.get(
+                self.viewstate_sessionkey, None
             ):
                 return redirect(
                     self.request.path
