@@ -25,7 +25,7 @@ pip install basx-bread
 Quickstart
 ----------
 
-The following are the require step to get a new projet up and running.
+The following are the required step to get a new project quickly up and running.
 For seasoned Django users there should be nothing new for the most parts.
 In that case only the section *Registering the UI* might be worth reading.
 
@@ -63,7 +63,7 @@ The code below assumes there exists a single model inside ```mymodels/models.py`
 The root URL list in ```myproject/urls.py``` needs to be extended with an item ```path("myapp", include("mymodels.urls"))```.
 
 
-### Run
+### Running the application
 
 Finally run the following commands to initialize the database and start the development server.
 
