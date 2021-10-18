@@ -71,7 +71,8 @@ Finally run the following commands to initialize the database and start the deve
     python manage.py makemigrations
     python manage.py migrate
     python manage.py createsuperuser
+    python manage.py runserver
 ```
 
-
+The application can now be accessed via http://127.0.0.1:8000.
 
