@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-19 10:12+0700\n"
-"PO-Revision-Date: 2021-09-28 05:38+0000\n"
+"PO-Revision-Date: 2021-10-20 03:36+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
 "th/>\n"
@@ -151,12 +151,12 @@ msgstr "อธิบายผังขั้นตอนการทำงาน
 
 #: bread/dynamic_preferences_registry.py:6
 msgid "General"
-msgstr ""
+msgstr "ทั่วไป"
 
 #: bread/dynamic_preferences_registry.py:14 bread/views/userprofile.py:50
 #: bread/views/userprofile.py:190
 msgid "Preferred Language"
-msgstr ""
+msgstr "เลือกใช้ภาษา"
 
 #: bread/layout/components/button.py:68
 msgid "Print"
@@ -428,7 +428,7 @@ msgstr "เปิดใช้งานก็ต่อเมื่อคุณร
 
 #: bread/views/userprofile.py:192
 msgid "<from browser>"
-msgstr ""
+msgstr "<จากบราวเซอร์>"
 
 #: bread/views/userprofile.py:224
 msgid "Confirm changes with current password"
