@@ -3,6 +3,7 @@ import urllib
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.utils.translation import LANGUAGE_SESSION_KEY, activate, get_language
 
 
 class RequireAuthenticationMiddleware:
@@ -15,8 +16,14 @@ class RequireAuthenticationMiddleware:
         for k, v in request.COOKIES.items():
             if k.startswith("bread-"):
                 request.session["bread-cookies"][k] = urllib.parse.unquote(v)
-        response = self.get_response(request)
-        return response
+
+        if request.user:
+            lang = request.user.preferences.get("general__preferred_language")
+            if lang and lang != get_language():
+                activate(lang)
+                request.session[LANGUAGE_SESSION_KEY] = lang
+
+        return self.get_response(request)
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         whitelisted_urlnames = (

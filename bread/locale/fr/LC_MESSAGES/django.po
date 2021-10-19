@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-27 09:56+0700\n"
+"POT-Creation-Date: 2021-10-19 10:12+0700\n"
 "PO-Revision-Date: 2021-06-23 11:32+0000\n"
 "Last-Translator: Nathan <bonnemainsnathan@gmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.7.1-dev\n"
 
-#: bread/contrib/reports/fields/queryfield.py:109
+#: bread/contrib/reports/fields/queryfield.py:112
 #, python-format
 msgid "Invalid model '%s' selected"
 msgstr "Modèle « %s » sélectionné invalide"
@@ -87,7 +87,7 @@ msgid "Columns"
 msgstr "Colonnes"
 
 #: bread/contrib/reports/urls.py:23 bread/layout/components/form.py:320
-#: bread/views/browse.py:104
+#: bread/views/browse.py:110
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -98,13 +98,13 @@ msgstr "Supprimer"
 msgid "Copy"
 msgstr "Copier"
 
-#: bread/contrib/reports/urls.py:38 bread/views/userprofile.py:54
-#: bread/views/userprofile.py:82 bread/views/userprofile.py:114
+#: bread/contrib/reports/urls.py:38 bread/views/userprofile.py:76
+#: bread/views/userprofile.py:104 bread/views/userprofile.py:136
 msgid "Edit"
 msgstr "Modifier"
 
 #: bread/contrib/reports/urls.py:43 bread/contrib/reports/views.py:131
-#: bread/views/browse.py:99
+#: bread/views/browse.py:105
 msgid "Excel"
 msgstr "Excel"
 
@@ -154,6 +154,15 @@ msgstr ""
 msgid "Explain Workflow"
 msgstr ""
 
+#: bread/dynamic_preferences_registry.py:6
+msgid "General"
+msgstr ""
+
+#: bread/dynamic_preferences_registry.py:14 bread/views/userprofile.py:50
+#: bread/views/userprofile.py:190
+msgid "Preferred Language"
+msgstr ""
+
 #: bread/layout/components/button.py:68
 msgid "Print"
 msgstr "Imprimer"
@@ -181,8 +190,8 @@ msgstr "Ajouter %s"
 msgid "Select file"
 msgstr "Sélectionner un fichier"
 
-#: bread/layout/components/form.py:30 bread/views/userprofile.py:51
-#: bread/views/userprofile.py:79 bread/views/userprofile.py:111
+#: bread/layout/components/form.py:30 bread/views/userprofile.py:73
+#: bread/views/userprofile.py:101 bread/views/userprofile.py:133
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -227,11 +236,11 @@ msgstr "pages"
 msgid "Optional"
 msgstr "Facultatif"
 
-#: bread/layout/components/search.py:47 bread/layout/components/search.py:62
+#: bread/layout/components/search.py:47 bread/layout/components/search.py:63
 msgid "Search"
 msgstr "Rechercher"
 
-#: bread/layout/components/search.py:109 bread/layout/components/search.py:110
+#: bread/layout/components/search.py:110 bread/layout/components/search.py:111
 msgid "Clear search input"
 msgstr "Effacer la recherche"
 
@@ -244,7 +253,7 @@ msgstr "Se déconnecter"
 msgid "Close"
 msgstr "Fermer"
 
-#: bread/layout/components/tag.py:16
+#: bread/layout/components/tag.py:19
 msgid "Remove"
 msgstr "Supprimer"
 
@@ -269,8 +278,8 @@ msgstr "Préférences mises à jour"
 msgid "Added %s"
 msgstr "%s a été ajouté"
 
-#: bread/views/auth.py:57 bread/views/auth.py:86 bread/views/userprofile.py:69
-#: bread/views/userprofile.py:75
+#: bread/views/auth.py:57 bread/views/auth.py:86 bread/views/userprofile.py:91
+#: bread/views/userprofile.py:97
 msgid "Login"
 msgstr "Se connecter"
 
@@ -332,39 +341,39 @@ msgstr ""
 msgid "Please login again"
 msgstr ""
 
-#: bread/views/browse.py:172
+#: bread/views/browse.py:184
 #, python-format
 msgid "Action '%s' is not configured for this view"
 msgstr ""
 
-#: bread/views/browse.py:291
+#: bread/views/browse.py:317
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "Vous n'avez pas l'autorisation de supprimer %s"
 
-#: bread/views/browse.py:304
+#: bread/views/browse.py:330
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s n'a pas pu être supprimé : %s"
 
-#: bread/views/browse.py:309
+#: bread/views/browse.py:335
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s%(modelname)s supprimé(s)"
 
-#: bread/views/browse.py:331
+#: bread/views/browse.py:357
 #, fuzzy, python-format
 #| msgid "Your user has not the permissions to delete %s"
 msgid "Your user has not the permissions to restore %s"
 msgstr "Vous n'avez pas l'autorisation de supprimer %s"
 
-#: bread/views/browse.py:340
+#: bread/views/browse.py:366
 #, fuzzy, python-format
 #| msgid "%s could not be deleted: %s"
 msgid "%s could not be restored: %s"
 msgstr "%s n'a pas pu être supprimé : %s"
 
-#: bread/views/browse.py:345
+#: bread/views/browse.py:371
 #, fuzzy, python-format
 #| msgid "Deleted %(count)s %(modelname)s"
 msgid "Restored %(count)s %(modelname)s"
@@ -399,61 +408,65 @@ msgstr "Copier"
 msgid "System information"
 msgstr "Informations système"
 
-#: bread/views/userprofile.py:28
+#: bread/views/userprofile.py:30
 msgid "Manage Profile"
 msgstr ""
 
-#: bread/views/userprofile.py:41 bread/views/userprofile.py:47
+#: bread/views/userprofile.py:43 bread/views/userprofile.py:69
 #, fuzzy
 #| msgid "System information"
 msgid "Personal Information"
 msgstr "Informations système"
 
-#: bread/views/userprofile.py:100 bread/views/userprofile.py:106
+#: bread/views/userprofile.py:122 bread/views/userprofile.py:128
 msgid "Permissions"
 msgstr ""
 
-#: bread/views/userprofile.py:126
+#: bread/views/userprofile.py:148
 msgid "Developer Mode"
 msgstr ""
 
-#: bread/views/userprofile.py:127
+#: bread/views/userprofile.py:149
 msgid "Disabled"
 msgstr ""
 
-#: bread/views/userprofile.py:128
+#: bread/views/userprofile.py:150
 msgid "Enabled"
 msgstr ""
 
-#: bread/views/userprofile.py:131
+#: bread/views/userprofile.py:153
 msgid "Warning: This is a dangerous option!"
 msgstr ""
 
-#: bread/views/userprofile.py:135
+#: bread/views/userprofile.py:157
 msgid "Enable it only if you know what you are doing!"
 msgstr ""
 
-#: bread/views/userprofile.py:178
+#: bread/views/userprofile.py:192
+msgid "<from browser>"
+msgstr ""
+
+#: bread/views/userprofile.py:224
 msgid "Confirm changes with current password"
 msgstr ""
 
-#: bread/views/userprofile.py:182
+#: bread/views/userprofile.py:228
 msgid "Please enter your current password to confirm these changes"
 msgstr ""
 
-#: bread/views/userprofile.py:191
+#: bread/views/userprofile.py:237
 msgid "Your current password was entered incorrectly. Please enter it again."
 msgstr ""
 
-#: bread/views/userprofile.py:244
+#: bread/views/userprofile.py:290
 msgid "Request reset"
 msgstr ""
 
-#: bread/views/userprofile.py:276
+#: bread/views/userprofile.py:322
 msgid "Enabled developer mode"
 msgstr ""
 
-#: bread/views/userprofile.py:278
+#: bread/views/userprofile.py:324
 msgid "Disabled developer mode"
 msgstr ""
 

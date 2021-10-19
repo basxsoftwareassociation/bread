@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-27 09:56+0700\n"
+"POT-Creation-Date: 2021-10-19 10:12+0700\n"
 "PO-Revision-Date: 2021-09-28 05:38+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.9-dev\n"
 
-#: bread/contrib/reports/fields/queryfield.py:109
+#: bread/contrib/reports/fields/queryfield.py:112
 #, python-format
 msgid "Invalid model '%s' selected"
 msgstr "เลือกโมเดล '%s'ที่ไม่ถูกต้อง"
@@ -87,7 +87,7 @@ msgid "Columns"
 msgstr "ช่อง"
 
 #: bread/contrib/reports/urls.py:23 bread/layout/components/form.py:320
-#: bread/views/browse.py:104
+#: bread/views/browse.py:110
 msgid "Delete"
 msgstr "ลบ"
 
@@ -95,13 +95,13 @@ msgstr "ลบ"
 msgid "Copy"
 msgstr "คัดลอก"
 
-#: bread/contrib/reports/urls.py:38 bread/views/userprofile.py:54
-#: bread/views/userprofile.py:82 bread/views/userprofile.py:114
+#: bread/contrib/reports/urls.py:38 bread/views/userprofile.py:76
+#: bread/views/userprofile.py:104 bread/views/userprofile.py:136
 msgid "Edit"
 msgstr "แก้ไข"
 
 #: bread/contrib/reports/urls.py:43 bread/contrib/reports/views.py:131
-#: bread/views/browse.py:99
+#: bread/views/browse.py:105
 msgid "Excel"
 msgstr "Excel"
 
@@ -149,6 +149,15 @@ msgstr "ผังแสดงลำดับขั้นตอนการทำ
 msgid "Explain Workflow"
 msgstr "อธิบายผังขั้นตอนการทำงาน"
 
+#: bread/dynamic_preferences_registry.py:6
+msgid "General"
+msgstr ""
+
+#: bread/dynamic_preferences_registry.py:14 bread/views/userprofile.py:50
+#: bread/views/userprofile.py:190
+msgid "Preferred Language"
+msgstr ""
+
 #: bread/layout/components/button.py:68
 msgid "Print"
 msgstr "พิมพ์"
@@ -176,8 +185,8 @@ msgstr "เพิ่ม %s"
 msgid "Select file"
 msgstr "เลือกไฟล์"
 
-#: bread/layout/components/form.py:30 bread/views/userprofile.py:51
-#: bread/views/userprofile.py:79 bread/views/userprofile.py:111
+#: bread/layout/components/form.py:30 bread/views/userprofile.py:73
+#: bread/views/userprofile.py:101 bread/views/userprofile.py:133
 msgid "Save"
 msgstr "บันทึก"
 
@@ -222,11 +231,11 @@ msgstr "หน้า"
 msgid "Optional"
 msgstr "ตัวเลือกเพิ่มเติม"
 
-#: bread/layout/components/search.py:47 bread/layout/components/search.py:62
+#: bread/layout/components/search.py:47 bread/layout/components/search.py:63
 msgid "Search"
 msgstr "ค้นหา"
 
-#: bread/layout/components/search.py:109 bread/layout/components/search.py:110
+#: bread/layout/components/search.py:110 bread/layout/components/search.py:111
 msgid "Clear search input"
 msgstr "ล้างข้อมูลการค้นหา"
 
@@ -239,7 +248,7 @@ msgstr "ลงชื่อออก"
 msgid "Close"
 msgstr "ปิด"
 
-#: bread/layout/components/tag.py:16
+#: bread/layout/components/tag.py:19
 msgid "Remove"
 msgstr "ลบออก"
 
@@ -264,8 +273,8 @@ msgstr "อัพเดทค่าที่กำหนด"
 msgid "Added %s"
 msgstr "เพิ่ม %s"
 
-#: bread/views/auth.py:57 bread/views/auth.py:86 bread/views/userprofile.py:69
-#: bread/views/userprofile.py:75
+#: bread/views/auth.py:57 bread/views/auth.py:86 bread/views/userprofile.py:91
+#: bread/views/userprofile.py:97
 msgid "Login"
 msgstr "ลงชื่อเข้าใช้"
 
@@ -321,37 +330,37 @@ msgstr "เปลี่ยนรหัสผ่านสำเร็จ"
 msgid "Please login again"
 msgstr "กรุณาเข้าสู่ระบบอีกครั้ง"
 
-#: bread/views/browse.py:172
+#: bread/views/browse.py:184
 #, python-format
 msgid "Action '%s' is not configured for this view"
 msgstr "ไม่ได้กำหนดค่าการกระทำ '%s' สำหรับมุมมองนี้"
 
-#: bread/views/browse.py:291
+#: bread/views/browse.py:317
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่สามารถทำการลบได้%s"
 
-#: bread/views/browse.py:304
+#: bread/views/browse.py:330
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s ไม่ควรลบเพราะ: %s"
 
-#: bread/views/browse.py:309
+#: bread/views/browse.py:335
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "ลบ %(count)s %(modelname)s"
 
-#: bread/views/browse.py:331
+#: bread/views/browse.py:357
 #, python-format
 msgid "Your user has not the permissions to restore %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่มีสิทธิ์กู้คืน%s"
 
-#: bread/views/browse.py:340
+#: bread/views/browse.py:366
 #, python-format
 msgid "%s could not be restored: %s"
 msgstr "%s ไม่ควรกู้คืนเพราะ: %s"
 
-#: bread/views/browse.py:345
+#: bread/views/browse.py:371
 #, python-format
 msgid "Restored %(count)s %(modelname)s"
 msgstr "กู้คืน %(count)s %(modelname)s"
@@ -385,59 +394,63 @@ msgstr "คัดลอก"
 msgid "System information"
 msgstr "ข้อมูลระบบ"
 
-#: bread/views/userprofile.py:28
+#: bread/views/userprofile.py:30
 msgid "Manage Profile"
 msgstr "จัดการบัญชีผู้ใช้"
 
-#: bread/views/userprofile.py:41 bread/views/userprofile.py:47
+#: bread/views/userprofile.py:43 bread/views/userprofile.py:69
 msgid "Personal Information"
 msgstr "ข้อมูลส่วนบุคคล"
 
-#: bread/views/userprofile.py:100 bread/views/userprofile.py:106
+#: bread/views/userprofile.py:122 bread/views/userprofile.py:128
 msgid "Permissions"
 msgstr "กำหนดสิทธิ์การเข้าถึง"
 
-#: bread/views/userprofile.py:126
+#: bread/views/userprofile.py:148
 msgid "Developer Mode"
 msgstr "โหมดสำหรับนักพัฒนา"
 
-#: bread/views/userprofile.py:127
+#: bread/views/userprofile.py:149
 msgid "Disabled"
 msgstr "ปิดการใช้งาน"
 
-#: bread/views/userprofile.py:128
+#: bread/views/userprofile.py:150
 msgid "Enabled"
 msgstr "เปิดใช้งาน"
 
-#: bread/views/userprofile.py:131
+#: bread/views/userprofile.py:153
 msgid "Warning: This is a dangerous option!"
 msgstr "คำเตือน: นี่เป็นตัวเลือกที่อันตราย!"
 
-#: bread/views/userprofile.py:135
+#: bread/views/userprofile.py:157
 msgid "Enable it only if you know what you are doing!"
 msgstr "เปิดใช้งานก็ต่อเมื่อคุณรู้ว่าคุณกำลังจะทำอะไร!"
 
-#: bread/views/userprofile.py:178
+#: bread/views/userprofile.py:192
+msgid "<from browser>"
+msgstr ""
+
+#: bread/views/userprofile.py:224
 msgid "Confirm changes with current password"
 msgstr "ยืนยันการเปลี่ยนแปลงด้วยรหัสผ่านปัจจุบัน"
 
-#: bread/views/userprofile.py:182
+#: bread/views/userprofile.py:228
 msgid "Please enter your current password to confirm these changes"
 msgstr "โปรดป้อนรหัสผ่านปัจจุบันของคุณเพื่อยืนยันการเปลี่ยนแปลง"
 
-#: bread/views/userprofile.py:191
+#: bread/views/userprofile.py:237
 msgid "Your current password was entered incorrectly. Please enter it again."
 msgstr "รหัสผ่านปัจจุบันของคุณไม่ถูกต้อง โปรดลองอีกครั้ง"
 
-#: bread/views/userprofile.py:244
+#: bread/views/userprofile.py:290
 msgid "Request reset"
 msgstr "คำขอตั้งค่าใหม่"
 
-#: bread/views/userprofile.py:276
+#: bread/views/userprofile.py:322
 msgid "Enabled developer mode"
 msgstr "เปิดใช้งานโหมดนักพัฒนา"
 
-#: bread/views/userprofile.py:278
+#: bread/views/userprofile.py:324
 msgid "Disabled developer mode"
 msgstr "ปิดใช้งานโหมดนักพัฒนา"
 

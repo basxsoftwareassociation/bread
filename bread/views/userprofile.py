@@ -1,11 +1,13 @@
 import htmlgenerator as hg
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordResetForm
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect
+from django.utils.translation import get_language, get_language_info
 from django.utils.translation import gettext_lazy as _
 
 from .. import layout
@@ -42,6 +44,26 @@ class UserProfileView(ReadView):
                             ),
                             profile_field("first_name"),
                             profile_field("last_name"),
+                            R(
+                                C(
+                                    hg.SPAN(
+                                        _("Preferred Language"),
+                                        style="font-weight: 700",
+                                    ),
+                                    width=4,
+                                ),
+                                C(
+                                    hg.F(
+                                        lambda c: get_language_info(
+                                            c["request"].user.preferences.get(
+                                                "general__preferred_language"
+                                            )
+                                            or get_language()
+                                        )["name_translated"]
+                                    )
+                                ),
+                                style="margin-bottom: 2rem",
+                            ),
                             layout.modal.modal_with_trigger(
                                 layout.modal.Modal.with_ajax_content(
                                     _("Personal Information"),
@@ -162,8 +184,32 @@ class EditPersonalDataView(EditView):
     fields = ["first_name", "last_name"]
     urlparams = {}
 
+    def get_form_class(self, *args, **kwargs):
+        class CustomForm(super().get_form_class(*args, **kwargs)):
+            preferred_language = forms.ChoiceField(
+                label=_("Preferred Language"),
+                required=False,
+                choices=[("", _("<from browser>"))]
+                + [(code, _(lang)) for code, lang in settings.LANGUAGES],
+                initial=self.request.user.preferences.get("general__preferred_language")
+                or get_language(),
+            )
+
+        return CustomForm
+
+    def get_layout(self):
+        ret = super().get_layout()
+        ret.append(layout.form.FormField("preferred_language"))
+        return ret
+
     def get_object(self):
         return self.request.user
+
+    def form_valid(self, form):
+        self.request.user.preferences[
+            "general__preferred_language"
+        ] = form.cleaned_data["preferred_language"]
+        return super().form_valid(form)
 
 
 class EditLoginView(EditView):
