@@ -17,7 +17,7 @@ class RequireAuthenticationMiddleware:
             if k.startswith("bread-"):
                 request.session["bread-cookies"][k] = urllib.parse.unquote(v)
 
-        if request.user:
+        if request.user and hasattr(request.user, "preferences"):
             lang = request.user.preferences.get("general__preferred_language")
             if lang and lang != get_language():
                 activate(lang)
