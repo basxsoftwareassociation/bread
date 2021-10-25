@@ -6,7 +6,6 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models, transaction
 from django.forms.formsets import DELETION_FIELD_NAME, ORDERING_FIELD_NAME
 from dynamic_preferences.forms import GlobalPreferenceForm
-from dynamic_preferences.users.forms import UserPreferenceForm
 from guardian.shortcuts import get_objects_for_user
 
 from .. import layout as _layout  # prevent name clashing
@@ -258,14 +257,6 @@ class FilterForm(forms.Form):
 
 
 class PreferencesForm(GlobalPreferenceForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.layout = lambda request: _layout.form.Form.from_fieldnames(
-            hg.C("form"), self.fields
-        )
-
-
-class UserPreferencesForm(UserPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.layout = lambda request: _layout.form.Form.from_fieldnames(

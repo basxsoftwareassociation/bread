@@ -42,8 +42,6 @@ def format_value(value, fieldtype=None):
         return as_datetime(value)
     if isinstance(value, numbers.Number):
         return f"{float(value):f}".rstrip("0").rstrip(".")
-    if isinstance(value, models.fields.files.ImageFieldFile):
-        return as_image(value)
     if isinstance(value, models.fields.files.FieldFile):
         return as_download(value)
     if isinstance(value, Iterable) and not isinstance(value, (str, bytes, Promise)):
@@ -125,23 +123,6 @@ def as_download(value):
     )
 
 
-def as_image(value):
-    if not value:
-        return CONSTANTS[None]
-    if not value.storage.exists(value.name):
-        return mark_safe("<small><emph>Image not found</emph></small>")
-    from easy_thumbnails.files import get_thumbnailer
-
-    im = get_thumbnailer(value).get_thumbnail({"size": (100, 100), "quality": 75})
-    return format_html(
-        '<a class="center" href="{}"><img src={} width="{}" height="{}"/></a>',
-        value.url,
-        im.url,
-        im.width,
-        im.height,
-    )
-
-
 def as_audio(value):
     if not value:
         return CONSTANTS[None]
@@ -186,7 +167,6 @@ def as_object_link(obj, label=None):
 MODELFIELD_FORMATING_HELPERS = {
     None: lambda a: a,
     models.EmailField: as_email,
-    models.ImageField: as_image,
     models.FileField: as_download,
     models.URLField: as_url,
     models.TextField: as_text,
