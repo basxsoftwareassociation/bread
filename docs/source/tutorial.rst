@@ -132,11 +132,13 @@ in a single model class. Edit the file ``mytodos/models.py`` to contain the foll
 
 ::
 
+    from django.db import models
+
     class ToDo(models.Model):
         what = models.CharField(max_length=255)
-        due = models.DateTimeField(null=True)
-        done = models.DateTimeField(null=True)
-        creator = models.ForeignKey("contrib.User", on_delete=models.CASCADE, related_name="todos")
+        due = models.DateTimeField(null=True, blank=True)
+        done = models.DateTimeField(null=True, blank=True)
+        creator = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name="todos")
         created = models.DateTimeField(auto_now_add=True)
 
         def __str__(self):
@@ -145,7 +147,7 @@ in a single model class. Edit the file ``mytodos/models.py`` to contain the foll
         class Meta:
             verbose_name = "ToDo"
             verbose_name_plural = "ToDos"
-            orderering = ["due"]
+            ordering = ["due"]
 
 For the excat semantics of the model definition as well as the ``Meta`` configuration please refer to :py:mod:`django:django.db.models`
 
@@ -161,9 +163,35 @@ This is a typical cycle when developing Django models. In the next chapter we ho
 A minimal viable product
 ------------------------
 
-TODO
+In this step we will register the URLs and views and the initial version of the app up and running.
+The most simple CRUD-views can easily be added by creating the file ``mytodos/urls.py`` and add the following shortcut:
 
-- hook up urls, add generated views
+::
+
+    from bread.utils import quickregister
+    from . import models
+
+    urlpatterns = []
+    quickregister(urlpatterns, models.ToDo)
+
+Then we register our URLs in the main project URL-registry at ``todo/urls.py``.
+This is done by making sure the following lines exist inside that file.
+Make sure to replace the line with RedirectView in order to make the list of todos the landing page.
+
+::
+
+    ...
+    from django.urls import path, include
+    ...
+
+    urlpatterns = [
+        path("", RedirectView.as_view(pattern_name="mytodos.todo.browse")),
+        ...
+        path("", include("mytodos.urls"))
+        ...
+    ]
+
+The website should now offer a simple interface to list, create, edit and delete to-do entries.
 
 Tidy things up a bit
 -----------------------
