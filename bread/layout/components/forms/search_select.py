@@ -1,7 +1,7 @@
 import htmlgenerator as hg
 
-from .search import Search
-from .tag import Tag
+from ..search import Search
+from ..tag import Tag
 
 
 class SearchSelect(hg.DIV):

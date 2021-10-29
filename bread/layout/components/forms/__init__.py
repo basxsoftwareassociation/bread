@@ -3,10 +3,9 @@ from django import forms
 from django.utils.html import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from .button import Button
-from .datatable import DataTable, DataTableColumn
+from ..button import Button
+from ..notification import InlineNotification
 from .email_input import EmailInput
-from .notification import InlineNotification
 from .phone_number_input import PhoneNumberInput
 from .url_input import UrlInput
 
@@ -253,6 +252,8 @@ class FormsetField(hg.Iterator):
         formsetfield_kwargs=None,
         **kwargs,
     ):
+        from ..datatable import DataTable, DataTableColumn
+
         """
         :param str fieldname: The fieldname which should be used for an formset, in general a one-to-many or many-to-many field
         :param list fields: A list of strings or objects. Strings are converted to DataTableColumn, objects are passed on as they are

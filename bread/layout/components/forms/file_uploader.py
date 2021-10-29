@@ -1,8 +1,8 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
+from ..icon import Icon
 from .helpers import REQUIRED_LABEL, ErrorList
-from .icon import Icon
 
 # TODO: make delete-field working correctly
 

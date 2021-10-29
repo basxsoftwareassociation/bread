@@ -1,7 +1,7 @@
 import htmlgenerator as hg
 
+from ..icon import Icon
 from .helpers import REQUIRED_LABEL, ErrorList, HelperText, Label
-from .icon import Icon
 
 
 class TextArea(hg.DIV):

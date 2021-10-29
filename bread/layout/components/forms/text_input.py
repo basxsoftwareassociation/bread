@@ -1,9 +1,9 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
-from .button import Button
+from ..button import Button
+from ..icon import Icon
 from .helpers import ErrorListElement, HelpTextElement, LabelElement
-from .icon import Icon
 
 
 class TextInput(hg.DIV):

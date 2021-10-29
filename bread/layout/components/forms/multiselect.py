@@ -1,8 +1,8 @@
 import htmlgenerator as hg
 
+from ..icon import Icon
+from ..tag import Tag
 from .helpers import ErrorListElement, HelpTextElement, LabelElement
-from .icon import Icon
-from .tag import Tag
 
 
 class MultiSelect(hg.DIV):

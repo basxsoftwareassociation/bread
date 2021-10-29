@@ -8,8 +8,8 @@ from django.utils.translation import gettext_lazy as _
 from bread.utils.urls import link_with_urlparameters
 
 from ..base import aslink_attributes
+from .forms.select import Select
 from .icon import Icon
-from .select import Select
 
 
 class PaginationConfig(NamedTuple):

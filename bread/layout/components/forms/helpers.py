@@ -1,6 +1,6 @@
 import htmlgenerator as hg
 
-from . import button
+from .. import button
 
 REQUIRED_LABEL = " *"
 

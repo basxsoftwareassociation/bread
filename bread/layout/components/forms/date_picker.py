@@ -2,9 +2,9 @@ import htmlgenerator as hg
 from _strptime import TimeRE
 from django.utils import formats
 
+from ..icon import Icon
 from .datetimeformatstring import to_php_formatstr
 from .helpers import REQUIRED_LABEL, ErrorList, HelperText, Label
-from .icon import Icon
 
 
 class DatePicker(hg.DIV):
