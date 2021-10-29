@@ -53,8 +53,14 @@ def resolve_modellookup(model, accessor):
                 attrib = attrib._meta.get_field(attribstr)
             except FieldDoesNotExist:
                 attrib = getattr(attrib, attribstr)
+        elif isinstance(attrib, models.fields.reverse_related.ForeignObjectRel):
+            try:
+                attrib = attrib.related_model._meta.get_field(attribstr)
+            except FieldDoesNotExist:
+                attrib = getattr(attrib.related_model, attribstr)
         else:
             try:
+                breakpoint()
                 attrib = attrib[attribstr]
             except (TypeError, AttributeError, KeyError, ValueError, IndexError):
                 attrib = getattr(attrib, attribstr)

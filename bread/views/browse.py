@@ -51,6 +51,8 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     bulkaction_urlparameter: str = "_bulkaction"
     items_per_page_options: tuple[int] = None
     itemsperpage_urlparameter: str = "itemsperpage"
+
+    title: Optional[hg.BaseElement] = None
     columns: tuple[Union[str, layout.datatable.DataTableColumn]] = ["__all__"]
     search_backend = None
     rowclickaction: Optional[Link] = None
@@ -83,6 +85,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             or self.items_per_page_options
             or getattr(settings, "DEFAULT_PAGINATION_CHOICES", [25, 100, 500])
         )
+        self.title = kwargs.get("title") or self.title
         self.rowactions = kwargs.get("rowactions") or self.rowactions
         self.columns = expand_ALL_constant(
             kwargs["model"], kwargs.get("columns") or self.columns
@@ -145,6 +148,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 itemsperpage_urlparameter=self.itemsperpage_urlparameter,
             ),
             checkbox_for_bulkaction_name=self.objectids_urlparameter,
+            title=self.title,
             settingspanel=self.get_settingspanel(),
             backurl=self.backurl,
             primary_button=self.primary_button,
