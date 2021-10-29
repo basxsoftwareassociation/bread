@@ -56,8 +56,8 @@ The code below assumes there exists a single model inside ```mymodels/models.py`
     from bread.utils import quickregister
     from . import models
 
-    urlpatters = []
-    quickregister(urplatterns, models.MyModel)
+    urlpatterns = []
+    quickregister(urlpatterns, models.MyModel)
 ```
 
 The root URL list in ```myproject/urls.py``` needs to be extended with an item ```path("myapp", include("mymodels.urls"))```.
