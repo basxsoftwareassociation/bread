@@ -32,6 +32,10 @@ class LazyHref(hg.Lazy):
             kwargs["kwargs"] = {
                 k: hg.resolve_lazy(v, context) for k, v in kwargs["kwargs"].items()
             }
+        if "query" in kwargs:
+            kwargs["query"] = {
+                k: hg.resolve_lazy(v, context) for k, v in kwargs["query"].items()
+            }
         if "args" in kwargs:
             kwargs["args"] = [hg.resolve_lazy(arg, context) for arg in kwargs["args"]]
         return urlreverse(*[hg.resolve_lazy(a, context) for a in self.args], **kwargs)

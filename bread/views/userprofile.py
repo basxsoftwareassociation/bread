@@ -1,3 +1,5 @@
+import zoneinfo
+
 import htmlgenerator as hg
 from django import forms
 from django.conf import settings
@@ -7,6 +9,7 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect
+from django.utils.timezone import get_current_timezone
 from django.utils.translation import get_language, get_language_info
 from django.utils.translation import gettext_lazy as _
 
@@ -60,6 +63,24 @@ class UserProfileView(ReadView):
                                             )
                                             or get_language()
                                         )["name_translated"]
+                                    )
+                                ),
+                                style="margin-bottom: 2rem",
+                            ),
+                            R(
+                                C(
+                                    hg.SPAN(
+                                        _("Timezone"),
+                                        style="font-weight: 700",
+                                    ),
+                                    width=4,
+                                ),
+                                C(
+                                    hg.F(
+                                        lambda c: c["request"].user.preferences.get(
+                                            "general__timezone"
+                                        )
+                                        or get_current_timezone()
                                     )
                                 ),
                                 style="margin-bottom: 2rem",
@@ -194,12 +215,20 @@ class EditPersonalDataView(EditView):
                 initial=self.request.user.preferences.get("general__preferred_language")
                 or get_language(),
             )
+            timezone = forms.ChoiceField(
+                label=_("Timezone"),
+                required=False,
+                choices=[(tz, _(tz)) for tz in sorted(zoneinfo.available_timezones())],
+                initial=self.request.user.preferences.get("general__timezone")
+                or get_current_timezone(),
+            )
 
         return CustomForm
 
     def get_layout(self):
         ret = super().get_layout()
         ret.append(layout.form.FormField("preferred_language"))
+        ret.append(layout.form.FormField("timezone"))
         return ret
 
     def get_object(self):
@@ -209,6 +238,9 @@ class EditPersonalDataView(EditView):
         self.request.user.preferences[
             "general__preferred_language"
         ] = form.cleaned_data["preferred_language"]
+        self.request.user.preferences["general__timezone"] = form.cleaned_data[
+            "timezone"
+        ]
         return super().form_valid(form)
 
 

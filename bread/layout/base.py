@@ -1,9 +1,12 @@
+import datetime
+
 import htmlgenerator as hg
 from django.conf import settings
 from django.http import HttpResponse
 from django.template.context import _builtin_context_processors
 from django.utils.formats import localize
 from django.utils.module_loading import import_string
+from django.utils.timezone import localtime
 
 from bread.utils import pretty_modelname, resolve_modellookup
 from bread.utils.urls import reverse_model
@@ -117,11 +120,11 @@ class ObjectFieldValue(hg.ContextValue):
         )
         if value is None:
             value = hg.resolve_lookup(object, self.fieldname)
-        return (
-            self.formatter(value)
-            if self.formatter
-            else localize(value, use_l10n=settings.USE_L10N)
-        )
+        if self.formatter:
+            return self.formatter(value)
+        if isinstance(value, datetime.datetime):
+            value = localtime(value)
+        return localize(value, use_l10n=settings.USE_L10N)
 
 
 FC = FormattedContextValue

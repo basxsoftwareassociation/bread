@@ -12,3 +12,11 @@ class PreferredLanguage(StringPreference):
     name = "preferred_language"
     default = ""
     verbose_name = _("Preferred Language")
+
+
+@user_preferences_registry.register
+class Timezone(StringPreference):
+    section = general
+    name = "timezone"
+    default = ""
+    verbose_name = _("Timezone")

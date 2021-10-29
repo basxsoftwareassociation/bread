@@ -1,8 +1,10 @@
 import urllib
+import zoneinfo
 
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import LANGUAGE_SESSION_KEY, activate, get_language
 
 
@@ -22,6 +24,11 @@ class RequireAuthenticationMiddleware:
             if lang and lang != get_language():
                 activate(lang)
                 request.session[LANGUAGE_SESSION_KEY] = lang
+            tz = request.user.preferences.get("general__timezone")
+            if tz:
+                timezone.activate(zoneinfo.ZoneInfo(tz))
+            else:
+                timezone.deactivate()
 
         return self.get_response(request)
 
