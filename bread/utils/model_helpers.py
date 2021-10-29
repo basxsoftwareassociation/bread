@@ -6,7 +6,8 @@ def quickregister(urlpatterns, model, menugroup=None):
     import htmlgenerator as hg
 
     from bread import menu
-    from bread.utils.links import Link, ModelHref, default_model_paths
+    from bread.utils.links import Link, ModelHref
+    from bread.utils.urls import default_model_paths
     from bread.views import BrowseView
 
     urlpatterns.extend(
