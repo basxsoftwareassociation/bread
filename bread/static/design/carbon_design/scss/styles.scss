@@ -148,16 +148,6 @@ fieldset[readonly] {
     display: none;
 }
 
-.tabs-lg .bx--tabs__nav-link {
-    height: 3rem;
-    padding: .5rem 1rem;
-    line-height: calc(3rem - (.5rem * 2));
-}
-
-.tabs-lg {
-    min-height: 3rem;
-}
-
 
 // Sometimes we have elements inside a white box. In this case the elements should be displayed according to the white
 // theme (i.e. gray elements on white background).
