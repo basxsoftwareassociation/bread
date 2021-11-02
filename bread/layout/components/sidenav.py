@@ -27,8 +27,12 @@ class SideNav(hg.ASIDE):
                 hg.UL(
                     hg.Iterator(
                         hg.F(
-                            lambda c: sorted(
-                                hg.resolve_lazy(menu, c)._registry.values()
+                            lambda c: (
+                                i
+                                for i in sorted(
+                                    hg.resolve_lazy(menu, c)._registry.values()
+                                )
+                                if i.has_permission(c["request"])
                             )
                         ),
                         "menugroup",
@@ -58,7 +62,15 @@ class SideNav(hg.ASIDE):
                                     ),
                                     hg.UL(
                                         hg.Iterator(
-                                            hg.C("menugroup.items"),
+                                            hg.F(
+                                                lambda c: (
+                                                    i
+                                                    for i in sorted(
+                                                        c["menugroup"].items
+                                                    )
+                                                    if i.has_permission(c["request"])
+                                                )
+                                            ),
                                             "menuitem",
                                             hg.LI(
                                                 hg.A(
