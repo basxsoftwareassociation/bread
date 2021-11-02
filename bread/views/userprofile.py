@@ -1,4 +1,7 @@
-import zoneinfo
+try:
+    import zoneinfo
+except ImportError:
+    from backports import zoneinfo
 
 import htmlgenerator as hg
 from django import forms

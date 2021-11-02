@@ -1,4 +1,4 @@
-from typing import Callable, List, NamedTuple, Optional, Union
+from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 
 import htmlgenerator as hg
 from django.conf import settings
@@ -49,17 +49,17 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     orderingurlparameter: str = "ordering"
     objectids_urlparameter: str = "_selected"  # see bread/static/js/main.js:submitbulkaction and bread/layout/components/datatable.py
     bulkaction_urlparameter: str = "_bulkaction"
-    items_per_page_options: tuple[int] = None
+    items_per_page_options: Tuple[int] = None
     itemsperpage_urlparameter: str = "itemsperpage"
 
     title: Optional[hg.BaseElement] = None
-    columns: tuple[Union[str, layout.datatable.DataTableColumn]] = ["__all__"]
+    columns: Tuple[Union[str, layout.datatable.DataTableColumn]] = ["__all__"]
     search_backend = None
     rowclickaction: Optional[Link] = None
     # bulkactions: List[(Link, function(request, queryset))]
     # - link.js should be a slug and not a URL
     # - if the function returns a HttpResponse, the response is returned instead of the browse view result
-    bulkactions: tuple[
+    bulkactions: Tuple[
         Link, Callable[[HttpRequest, models.QuerySet], Union[None, HttpResponse]]
     ] = ()
     rowactions = ()  # list of links
