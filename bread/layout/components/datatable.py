@@ -406,7 +406,11 @@ class DataTable(hg.TABLE):
             title,
             helper_text=hg.format(
                 "{} {}",
-                hg.F(lambda c: len(hg.resolve_lazy(queryset, c))),
+                hg.F(
+                    lambda c: len(hg.resolve_lazy(queryset, c))
+                    if pagination_config is None
+                    else hg.getattr_lazy(pagination_config.paginator, "count")
+                ),
                 model._meta.verbose_name_plural,
             ),
             primary_button=primary_button,
