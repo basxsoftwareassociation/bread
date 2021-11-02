@@ -48,6 +48,7 @@ setup(
         # TODO: review whether we can or should remove these
         "WeasyPrint",  # creating PDFs
         "django-ckeditor",
+        "backports.zoneinfo",
     ],
     extras_require={"testing": ["hypothesis[django]"]},
     packages=find_packages(),

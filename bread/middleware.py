@@ -1,5 +1,9 @@
 import urllib
-import zoneinfo
+
+try:
+    import zoneinfo
+except ImportError:
+    from backports import zoneinfo
 
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
