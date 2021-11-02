@@ -321,6 +321,9 @@ class DataTable(hg.TABLE):
                 Link(
                     href=ModelHref(model, "add"),
                     label=_("Add %s") % pretty_modelname(model),
+                    permissions=[
+                        f"{model._meta.app_label}.add_{model._meta.model_name}"
+                    ],
                 ),
                 icon=Icon("add", size=20),
             )

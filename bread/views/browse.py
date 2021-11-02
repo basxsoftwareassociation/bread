@@ -108,9 +108,18 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                     label=_("Excel"),
                     iconname="download",
                     action=lambda request, qs: export(qs, self.columns),
+                    permissions=[
+                        f"{self.model._meta.app_label}.view_{self.model._meta.model_name}"
+                    ],
                 ),
                 BulkAction(
-                    "delete", label=_("Delete"), iconname="trash-can", action=delete
+                    "delete",
+                    label=_("Delete"),
+                    iconname="trash-can",
+                    action=delete,
+                    permissions=[
+                        f"{self.model._meta.app_label}.add_{self.model._meta.model_name}"
+                    ],
                 ),
             )
         )
