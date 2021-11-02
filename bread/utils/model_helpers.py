@@ -232,6 +232,9 @@ def resolve_relationship(model, accessor_str):
     return ret
 
 
+# TODO: this should be deprecated or completely removed if possible
+# it generates a load of single database queries whereas we can in most cases
+# fetch with one query when using bread.utils.inheritancemanager.InheritanceManager
 def get_concrete_instance(instance):
     """Returns the the most concrete instance of the model-instance"""
     for field in instance._meta.get_fields():

@@ -19,7 +19,6 @@ from ..utils import (
     Link,
     ModelHref,
     generate_excel,
-    get_concrete_instance,
     link_with_urlparameters,
     pretty_modelname,
     xlsxresponse,
@@ -266,7 +265,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         return Link(
             label="",
             href=ModelHref(
-                hg.F(lambda c: get_concrete_instance(c["row"])),
+                hg.C("row"),
                 modelaction,
                 kwargs={"pk": hg.C("row.pk")},
             ),

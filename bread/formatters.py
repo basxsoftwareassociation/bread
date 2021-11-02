@@ -6,7 +6,6 @@ import htmlgenerator as hg
 from dateutil import tz
 from django.conf import settings
 from django.db import models
-from django.urls import NoReverseMatch
 from django.utils.functional import Promise
 from django.utils.html import format_html, format_html_join, linebreaks, mark_safe
 from django_countries.fields import CountryField
@@ -14,8 +13,6 @@ from django_countries.fields import CountryField
 import bread.settings as app_settings
 
 from . import layout
-from .utils.model_helpers import get_concrete_instance
-from .utils.urls import reverse_model
 
 
 def format_value(value, fieldtype=None):
@@ -46,11 +43,6 @@ def format_value(value, fieldtype=None):
         return as_download(value)
     if isinstance(value, Iterable) and not isinstance(value, (str, bytes, Promise)):
         return as_list(value)
-    if isinstance(value, models.Model):
-        try:
-            return as_object_link(value)
-        except NoReverseMatch:
-            return value
     return value
 
 
@@ -150,17 +142,6 @@ def as_video(value):
         </video>
     """,
         value.url,
-    )
-
-
-def as_object_link(obj, label=None):
-    if hasattr(obj, "get_absolute_url"):
-        return format_html('<a href="{}">{}</a>', obj.get_absolute_url(), obj)
-
-    return format_html(
-        '<a href="{}">{}</a>',
-        reverse_model(get_concrete_instance(obj), "read"),
-        label or obj.__str__(),
     )
 
 
