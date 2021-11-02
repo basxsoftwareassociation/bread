@@ -116,7 +116,8 @@ class ObjectFieldValue(hg.ContextValue):
         parts = self.fieldname.split(".")
         # test if the value has a matching get_FIELDNAME_display function
         value = hg.resolve_lookup(
-            object, f"{'.'.join(parts[:-1])}.get_{parts[-1]}_display"
+            object,
+            f"{''.join([part + '.' for part in parts[:-1]])}get_{parts[-1]}_display",
         )
         if value is None:
             value = hg.resolve_lookup(object, self.fieldname)
