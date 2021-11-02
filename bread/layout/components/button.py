@@ -18,8 +18,15 @@ class Button(hg.BUTTON):
     ):
         attributes["type"] = attributes.get("type", "button")
         attributes["tabindex"] = attributes.get("tabindex", "0")
-        attributes["_class"] = (
-            attributes.get("_class", "") + f" bx--btn bx--btn--{buttontype}"
+        attributes["_class"] = hg.BaseElement(
+            attributes.get("_class", ""),
+            f" bx--btn bx--btn--{buttontype}",
+            hg.If(
+                hg.F(
+                    lambda c: hg.resolve_lazy(self.attributes.get("disabled", False), c)
+                ),
+                " bx--btn--disabled",
+            ),
         )
         if small:
             attributes["_class"] += " bx--btn--sm "
@@ -45,6 +52,7 @@ class Button(hg.BUTTON):
         buttonargs = {
             "icon": link.iconname,
             "notext": not link.label,
+            "disabled": hg.F(lambda c: not link.has_permission(c["request"])),
         }
         return Button(
             *([link.label] if link.label else []),

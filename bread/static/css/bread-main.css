@@ -15349,6 +15349,9 @@ a.bx--navigation-link:focus {
 .bx--content {
   transform: none; }
 
+a:disabled, a.bx--btn--disabled {
+  pointer-events: none; }
+
 @media print {
   html, body {
     background-color: white !important; }

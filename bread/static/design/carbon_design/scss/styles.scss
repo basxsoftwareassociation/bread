@@ -19,6 +19,12 @@ $carbon--theme: $carbon--theme--g10;
     transform: none;
 }
 
+// since we sometimes display links as button we need to disable
+// pointer events to prevent opening the link
+a[disabled], a.bx--btn--disabled {
+    pointer-events: none;
+}
+
 // get nicer prints
 @media print
 {
