@@ -202,6 +202,10 @@ class UserProfileView(ReadView):
             ),
         )
 
+    def get_required_permissions(self, request):
+        """This method overrides the old one from ReadView because this view should be accessible to all users."""
+        return []
+
 
 class EditPersonalDataView(EditView):
     model = get_user_model()
