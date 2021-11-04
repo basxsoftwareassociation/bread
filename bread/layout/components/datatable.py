@@ -29,6 +29,7 @@ class DataTable(hg.TABLE):
         zebra: bool = False,
         **kwargs: dict,
     ):
+        # TODO: add some simple examples of how to use
         """A carbon DataTable element
 
         :param columns: Column definitions
