@@ -1,5 +1,6 @@
 import datetime
 import numbers
+import os
 from collections.abc import Iterable
 
 import htmlgenerator as hg
@@ -101,13 +102,16 @@ def as_download(value):
         hg.render(
             hg.BaseElement(
                 hg.A(
-                    layout.icon.Icon("launch", size=16),
+                    layout.icon.Icon(
+                        "launch",
+                        size=16,
+                        style="vertical-align: middle; margin-right: 0.25rem;",
+                    ),
+                    hg.SPAN(os.path.basename(value.name)),
                     newtab=True,
                     href=value.url,
                     style="margin-right: 0.5rem; margin-left: 0.5rem",
-                ),
-                hg.A(
-                    layout.icon.Icon("download", size=16), download=True, href=value.url
+                    onclick="event.stopPropagation();",
                 ),
             ),
             {},
