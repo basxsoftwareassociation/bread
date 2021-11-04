@@ -16,61 +16,12 @@ from .pagination import Pagination, PaginationConfig
 from .search import Search, SearchBackendConfig
 
 
-class DataTableColumn(NamedTuple):
-    header: Any
-    cell: Any
-    sortingname: Optional[str] = None
-    enable_row_click: bool = True
-    th_attributes: hg.F = None
-    td_attributes: hg.F = None
-
-    @staticmethod
-    def from_modelfield(
-        col,
-        model,
-        prevent_automatic_sortingnames=False,
-        rowvariable="row",
-        th_attributes=None,
-        td_attributes=None,
-    ) -> "DataTableColumn":
-        return DataTableColumn(
-            ObjectFieldLabel(col, model),
-            ObjectFieldValue(col, rowvariable),
-            sortingname_for_column(model, col)
-            if not prevent_automatic_sortingnames
-            else None,
-            th_attributes=th_attributes,
-            td_attributes=td_attributes,
-        )
-
-    def as_header_cell(self, orderingurlparameter="ordering"):
-        headcontent = hg.SPAN(self.header, _class="bx--table-header-label")
-        if self.sortingname:
-            headcontent = hg.BUTTON(
-                headcontent,
-                Icon("arrow--down", _class="bx--table-sort__icon", size=16),
-                Icon(
-                    "arrows--vertical",
-                    _class="bx--table-sort__icon-unsorted",
-                    size=16,
-                ),
-                _class=hg.BaseElement(
-                    "bx--table-sort ",
-                    sortingclass_for_column(orderingurlparameter, self.sortingname),
-                ),
-                data_event="sort",
-                title=self.header,
-                **sortinglink_for_column(orderingurlparameter, self.sortingname),
-            )
-        return hg.TH(headcontent, lazy_attributes=self.th_attributes)
-
-
 class DataTable(hg.TABLE):
     SPACINGS = ["default", "compact", "short", "tall"]
 
     def __init__(
         self,
-        columns: List[DataTableColumn],
+        columns: List["DataTableColumn"],
         row_iterator: Union[hg.Lazy, Iterable, hg.Iterator],
         orderingurlparameter: str = "ordering",
         rowvariable: str = "row",
@@ -278,7 +229,7 @@ class DataTable(hg.TABLE):
         model,
         queryset=None,
         # column behaviour
-        columns: List[Union[str, DataTableColumn]] = None,
+        columns: List[Union[str, "DataTableColumn"]] = None,
         prevent_automatic_sortingnames=False,
         # row behaviour
         rowvariable="row",
@@ -461,6 +412,55 @@ class DataTable(hg.TABLE):
         if zebra:
             classes.append(" bx--data-table--zebra")
         return classes
+
+
+class DataTableColumn(NamedTuple):
+    header: Any
+    cell: Any
+    sortingname: Optional[str] = None
+    enable_row_click: bool = True
+    th_attributes: hg.F = None
+    td_attributes: hg.F = None
+
+    @staticmethod
+    def from_modelfield(
+        col,
+        model,
+        prevent_automatic_sortingnames=False,
+        rowvariable="row",
+        th_attributes=None,
+        td_attributes=None,
+    ) -> "DataTableColumn":
+        return DataTableColumn(
+            ObjectFieldLabel(col, model),
+            ObjectFieldValue(col, rowvariable),
+            sortingname_for_column(model, col)
+            if not prevent_automatic_sortingnames
+            else None,
+            th_attributes=th_attributes,
+            td_attributes=td_attributes,
+        )
+
+    def as_header_cell(self, orderingurlparameter="ordering"):
+        headcontent = hg.SPAN(self.header, _class="bx--table-header-label")
+        if self.sortingname:
+            headcontent = hg.BUTTON(
+                headcontent,
+                Icon("arrow--down", _class="bx--table-sort__icon", size=16),
+                Icon(
+                    "arrows--vertical",
+                    _class="bx--table-sort__icon-unsorted",
+                    size=16,
+                ),
+                _class=hg.BaseElement(
+                    "bx--table-sort ",
+                    sortingclass_for_column(orderingurlparameter, self.sortingname),
+                ),
+                data_event="sort",
+                title=self.header,
+                **sortinglink_for_column(orderingurlparameter, self.sortingname),
+            )
+        return hg.TH(headcontent, lazy_attributes=self.th_attributes)
 
 
 def sortingclass_for_column(orderingurlparameter, columnname):
