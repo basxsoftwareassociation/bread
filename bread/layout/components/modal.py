@@ -107,6 +107,7 @@ class Modal(hg.DIV):
         )
         if submitlabel:
             buttons[1].attributes["hx_post"] = url
+            buttons[1].attributes["hx_encoding"] = "multipart/form-data"
             buttons[1].attributes["hx_target"] = hg.format(
                 "#{} .bx--modal-content", modal.id
             )
