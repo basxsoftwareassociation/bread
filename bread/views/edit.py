@@ -46,7 +46,7 @@ class EditView(
         }
 
     def get_success_message(self, cleaned_data):
-        return f"Saved {self.object}"
+        return _("Saved %s" % self.object)
 
     # prevent browser caching edit views
     @never_cache

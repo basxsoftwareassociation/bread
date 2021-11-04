@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.utils.html import strip_tags
 from django.utils.translation import get_language
+from django.utils.translation import gettext_lazy as _
 
 from .components.notification import ToastNotification
 from .components.shell_header import ShellHeader
@@ -54,7 +55,7 @@ def default_page_layout(menu, *content):
                     hg.C("messages"),
                     "message",
                     ToastNotification(
-                        message=hg.C("message.tags.capitalize"),
+                        message=hg.F(lambda c: _(c["message"].tags.capitalize())),
                         details=hg.C("message.message"),
                         kind=hg.C("message.level_tag"),
                         hidetimestamp=True,

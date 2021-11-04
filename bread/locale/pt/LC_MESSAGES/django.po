@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-19 10:12+0700\n"
+"POT-Creation-Date: 2021-11-04 15:00+0700\n"
 "PO-Revision-Date: 2021-05-08 20:32+0000\n"
 "Last-Translator: ssantos <ssantos@web.de>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/basxconnect/"
@@ -88,8 +88,8 @@ msgstr "Agregação"
 msgid "Columns"
 msgstr "Colunas"
 
-#: bread/contrib/reports/urls.py:23 bread/layout/components/form.py:320
-#: bread/views/browse.py:110
+#: bread/contrib/reports/urls.py:23
+#: bread/layout/components/forms/__init__.py:321 bread/views/browse.py:116
 msgid "Delete"
 msgstr "Apagar"
 
@@ -100,13 +100,13 @@ msgstr "Apagar"
 msgid "Copy"
 msgstr "Copiar"
 
-#: bread/contrib/reports/urls.py:38 bread/views/userprofile.py:76
-#: bread/views/userprofile.py:104 bread/views/userprofile.py:136
+#: bread/contrib/reports/urls.py:38 bread/views/userprofile.py:100
+#: bread/views/userprofile.py:128 bread/views/userprofile.py:160
 msgid "Edit"
 msgstr ""
 
 #: bread/contrib/reports/urls.py:43 bread/contrib/reports/views.py:131
-#: bread/views/browse.py:105
+#: bread/views/browse.py:107
 msgid "Excel"
 msgstr "Excel"
 
@@ -160,12 +160,17 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: bread/dynamic_preferences_registry.py:14 bread/views/userprofile.py:50
-#: bread/views/userprofile.py:190
+#: bread/dynamic_preferences_registry.py:14 bread/views/userprofile.py:56
+#: bread/views/userprofile.py:218
 msgid "Preferred Language"
 msgstr ""
 
-#: bread/layout/components/button.py:68
+#: bread/dynamic_preferences_registry.py:22 bread/views/userprofile.py:76
+#: bread/views/userprofile.py:226
+msgid "Timezone"
+msgstr ""
+
+#: bread/layout/components/button.py:76
 msgid "Print"
 msgstr "Imprimir"
 
@@ -188,30 +193,43 @@ msgstr "Barra de Acção da Tabela"
 msgid "Add %s"
 msgstr "Adicionar %s"
 
-#: bread/layout/components/file_uploader.py:30
-msgid "Select file"
-msgstr "Seleccione ficheiro"
-
-#: bread/layout/components/form.py:30 bread/views/userprofile.py:73
-#: bread/views/userprofile.py:101 bread/views/userprofile.py:133
+#: bread/layout/components/forms/__init__.py:29 bread/views/userprofile.py:97
+#: bread/views/userprofile.py:125 bread/views/userprofile.py:157
 msgid "Save"
 msgstr "Guardar"
 
-#: bread/layout/components/form.py:68
+#: bread/layout/components/forms/__init__.py:67
 msgid "Form error"
 msgstr "Erro no formulário"
 
-#: bread/layout/components/form.py:74
+#: bread/layout/components/forms/__init__.py:73
 msgid "Form error: "
 msgstr "Erro no formulário: "
 
-#: bread/layout/components/form.py:212 bread/layout/components/form.py:232
+#: bread/layout/components/forms/__init__.py:211
+#: bread/layout/components/forms/__init__.py:231
 msgid "Add"
 msgstr "Adicione"
 
-#: bread/layout/components/form.py:277
+#: bread/layout/components/forms/__init__.py:278
 msgid "Order"
 msgstr ""
+
+#: bread/layout/components/forms/file_uploader.py:30
+msgid "Select file"
+msgstr "Seleccione ficheiro"
+
+#: bread/layout/components/forms/text_input.py:93
+msgid "Show password"
+msgstr "Mostrar senha"
+
+#: bread/layout/components/forms/toggle.py:11
+msgid "Off"
+msgstr "Desligado"
+
+#: bread/layout/components/forms/toggle.py:12
+msgid "On"
+msgstr "Em"
 
 #: bread/layout/components/notification.py:130
 msgid "Time stamp"
@@ -259,29 +277,13 @@ msgstr "Fechar"
 msgid "Remove"
 msgstr "Remover"
 
-#: bread/layout/components/text_input.py:93
-msgid "Show password"
-msgstr "Mostrar senha"
-
-#: bread/layout/components/toggle.py:11
-msgid "Off"
-msgstr "Desligado"
-
-#: bread/layout/components/toggle.py:12
-msgid "On"
-msgstr "Em"
-
-#: bread/urls.py:41
-msgid "Preferences updated"
-msgstr ""
-
 #: bread/views/add.py:23
 #, python-format
 msgid "Added %s"
 msgstr "Adicionado %s"
 
-#: bread/views/auth.py:57 bread/views/auth.py:86 bread/views/userprofile.py:91
-#: bread/views/userprofile.py:97
+#: bread/views/auth.py:57 bread/views/auth.py:86 bread/views/userprofile.py:115
+#: bread/views/userprofile.py:121
 msgid "Login"
 msgstr "Entrar"
 
@@ -343,39 +345,39 @@ msgstr ""
 msgid "Please login again"
 msgstr ""
 
-#: bread/views/browse.py:184
+#: bread/views/browse.py:196
 #, python-format
 msgid "Action '%s' is not configured for this view"
 msgstr ""
 
-#: bread/views/browse.py:317
+#: bread/views/browse.py:329
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "O seu utilizador não tem as permissões para eliminar %s"
 
-#: bread/views/browse.py:330
+#: bread/views/browse.py:342
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s não pôde ser apagado: %s"
 
-#: bread/views/browse.py:335
+#: bread/views/browse.py:347
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "Apagado %(count)s %(modelname)s"
 
-#: bread/views/browse.py:357
+#: bread/views/browse.py:369
 #, fuzzy, python-format
 #| msgid "Your user has not the permissions to delete %s"
 msgid "Your user has not the permissions to restore %s"
 msgstr "O seu utilizador não tem as permissões para eliminar %s"
 
-#: bread/views/browse.py:366
+#: bread/views/browse.py:378
 #, fuzzy, python-format
 #| msgid "%s could not be deleted: %s"
 msgid "%s could not be restored: %s"
 msgstr "%s não pôde ser apagado: %s"
 
-#: bread/views/browse.py:371
+#: bread/views/browse.py:383
 #, fuzzy, python-format
 #| msgid "Deleted %(count)s %(modelname)s"
 msgid "Restored %(count)s %(modelname)s"
@@ -391,6 +393,12 @@ msgstr "Apagado %(modelname)s %(objectname)s"
 #, python-format
 msgid "Deleted %(modelname)s %(objectname)s"
 msgstr "Apagado %(modelname)s %(objectname)s"
+
+#: bread/views/edit.py:49
+#, fuzzy, python-format
+#| msgid "Save"
+msgid "Saved %s"
+msgstr "Guardar"
 
 #: bread/views/edit.py:77
 #, python-format
@@ -413,65 +421,65 @@ msgstr "Copiar"
 msgid "System information"
 msgstr "Configurações do sistema"
 
-#: bread/views/userprofile.py:30
+#: bread/views/userprofile.py:36
 msgid "Manage Profile"
 msgstr ""
 
-#: bread/views/userprofile.py:43 bread/views/userprofile.py:69
+#: bread/views/userprofile.py:49 bread/views/userprofile.py:93
 #, fuzzy
 #| msgid "System Settings"
 msgid "Personal Information"
 msgstr "Configurações do sistema"
 
-#: bread/views/userprofile.py:122 bread/views/userprofile.py:128
+#: bread/views/userprofile.py:146 bread/views/userprofile.py:152
 msgid "Permissions"
 msgstr ""
 
-#: bread/views/userprofile.py:148
+#: bread/views/userprofile.py:172
 msgid "Developer Mode"
 msgstr ""
 
-#: bread/views/userprofile.py:149
+#: bread/views/userprofile.py:173
 msgid "Disabled"
 msgstr ""
 
-#: bread/views/userprofile.py:150
+#: bread/views/userprofile.py:174
 msgid "Enabled"
 msgstr ""
 
-#: bread/views/userprofile.py:153
+#: bread/views/userprofile.py:177
 msgid "Warning: This is a dangerous option!"
 msgstr ""
 
-#: bread/views/userprofile.py:157
+#: bread/views/userprofile.py:181
 msgid "Enable it only if you know what you are doing!"
 msgstr ""
 
-#: bread/views/userprofile.py:192
+#: bread/views/userprofile.py:220
 msgid "<from browser>"
 msgstr ""
 
-#: bread/views/userprofile.py:224
+#: bread/views/userprofile.py:263
 msgid "Confirm changes with current password"
 msgstr ""
 
-#: bread/views/userprofile.py:228
+#: bread/views/userprofile.py:267
 msgid "Please enter your current password to confirm these changes"
 msgstr ""
 
-#: bread/views/userprofile.py:237
+#: bread/views/userprofile.py:276
 msgid "Your current password was entered incorrectly. Please enter it again."
 msgstr ""
 
-#: bread/views/userprofile.py:290
+#: bread/views/userprofile.py:329
 msgid "Request reset"
 msgstr ""
 
-#: bread/views/userprofile.py:322
+#: bread/views/userprofile.py:361
 msgid "Enabled developer mode"
 msgstr ""
 
-#: bread/views/userprofile.py:324
+#: bread/views/userprofile.py:363
 msgid "Disabled developer mode"
 msgstr ""
 
