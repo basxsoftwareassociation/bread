@@ -39,5 +39,4 @@ jobs:
       run: safety check || true
 
     - name: Test with pytest
-      run: |
-        ./manage.py test
+      run: ./manage.py test
