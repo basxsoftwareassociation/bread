@@ -211,7 +211,12 @@ class InheritanceQuerySet(InheritanceQuerySetMixin, QuerySet):
                 + ")"
             )
 
-        return self.select_subclasses(*models).extra(where=[" OR ".join(where_queries)])
+        # the following line triggers a bandit SQL-injection error
+        # however, the generated SQL does not consider any user input
+        # and is generated soley from values from model._meta
+        return self.select_subclasses(*models).extra(  # nosec
+            where=[" OR ".join(where_queries)]
+        )
 
 
 class InheritanceManagerMixin:
