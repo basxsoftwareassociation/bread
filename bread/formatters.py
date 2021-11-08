@@ -27,8 +27,6 @@ def format_value(value):
         return CONSTANTS[value]
     if isinstance(value, datetime.timedelta):
         return as_duration(value)
-    if isinstance(value, datetime.datetime):
-        return as_datetime(value)
     if isinstance(value, numbers.Number):
         return f"{float(value):f}".rstrip("0").rstrip(".")
     if isinstance(value, models.fields.files.FieldFile):
@@ -69,13 +67,6 @@ def as_time(value):
 
 def as_duration(value):
     return str(value - datetime.timedelta(microseconds=value.microseconds))
-
-
-def as_datetime(value):
-    if value.tzinfo:
-        value = value.astimezone(tz.gettz(settings.TIME_ZONE))
-
-    return value.isoformat(sep=" ", timespec="seconds").rsplit("+", 1)[0]
 
 
 def as_countries(value):
