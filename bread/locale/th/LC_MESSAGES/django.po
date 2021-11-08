@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-04 15:00+0700\n"
-"PO-Revision-Date: 2021-10-20 03:36+0000\n"
+"PO-Revision-Date: 2021-11-07 16:52+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
 "th/>\n"
@@ -161,7 +161,7 @@ msgstr "เลือกใช้ภาษา"
 #: bread/dynamic_preferences_registry.py:22 bread/views/userprofile.py:76
 #: bread/views/userprofile.py:226
 msgid "Timezone"
-msgstr ""
+msgstr "เขตเวลา"
 
 #: bread/layout/components/button.py:76
 msgid "Print"
@@ -378,10 +378,9 @@ msgid "Deleted %(modelname)s %(objectname)s"
 msgstr "ลบ %(modelname)s %(objectname)s"
 
 #: bread/views/edit.py:49
-#, fuzzy, python-format
-#| msgid "Save"
+#, python-format
 msgid "Saved %s"
-msgstr "บันทึก"
+msgstr "บันทึก %s"
 
 #: bread/views/edit.py:77
 #, python-format
