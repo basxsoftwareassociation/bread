@@ -9,41 +9,36 @@ from django.conf import settings
 from django.db import models
 from django.utils.functional import Promise
 from django.utils.html import format_html, format_html_join, linebreaks, mark_safe
-from django_countries.fields import CountryField
 
 import bread.settings as app_settings
 
 from . import layout
 
 
-def format_value(value, fieldtype=None):
+def format_value(value):
     """Renders a python value in a nice way in HTML. If a field-definition has an attribute "renderer" set, that function will be used to render the value"""
-    if hasattr(fieldtype, "renderer"):
-        return fieldtype.renderer(value)
-
     if isinstance(value, bool) or value is None:
         return CONSTANTS[value]
 
-    # make referencing fields iterable (normaly RelatedManagers)
     if isinstance(value, models.Manager):
         value = value.all()
-
-    # If there is a hint passed via fieldtype, use the accoring conversion function first (identity otherwise)
-    # This is mostly helpfull for string-based fields like URLS, emails etc.
-    value = MODELFIELD_FORMATING_HELPERS.get(fieldtype.__class__, lambda a: a)(value)
 
     if isinstance(value, bool) or value is None:
         return CONSTANTS[value]
     if isinstance(value, datetime.timedelta):
         return as_duration(value)
-    if isinstance(value, datetime.datetime):
-        return as_datetime(value)
     if isinstance(value, numbers.Number):
         return f"{float(value):f}".rstrip("0").rstrip(".")
     if isinstance(value, models.fields.files.FieldFile):
         return as_download(value)
     if isinstance(value, Iterable) and not isinstance(value, (str, bytes, Promise)):
         return as_list(value)
+    if isinstance(value, str):
+        if "\n" in value:
+            return as_text(value)
+        if is_email_simple(value):
+            return as_email(value)
+
     return value
 
 
@@ -72,13 +67,6 @@ def as_time(value):
 
 def as_duration(value):
     return str(value - datetime.timedelta(microseconds=value.microseconds))
-
-
-def as_datetime(value):
-    if value.tzinfo:
-        value = value.astimezone(tz.gettz(settings.TIME_ZONE))
-
-    return value.isoformat(sep=" ", timespec="seconds").rsplit("+", 1)[0]
 
 
 def as_countries(value):
@@ -149,19 +137,26 @@ def as_video(value):
     )
 
 
-MODELFIELD_FORMATING_HELPERS = {
-    None: lambda a: a,
-    models.EmailField: as_email,
-    models.FileField: as_download,
-    models.URLField: as_url,
-    models.TextField: as_text,
-    models.TimeField: as_time,
-    models.DateTimeField: as_datetime,
-    CountryField: as_countries,
-}
-
 CONSTANTS = {
     None: getattr(settings, "HTML_NONE", app_settings.HTML_NONE),
     True: getattr(settings, "HTML_TRUE", app_settings.HTML_TRUE),
     False: getattr(settings, "HTML_FALSE", app_settings.HTML_FALSE),
 }
+
+
+# copied from https://github.com/django/django/blob/1f9874d4ca3e7376036646aedf6ac3060f22fd69/django/utils/html.py
+# because older versions only have this as a local function available
+def is_email_simple(value):
+    """Return True if value looks like an email address."""
+    # An @ must be in the middle of the value.
+    if "@" not in value or value.startswith("@") or value.endswith("@"):
+        return False
+    try:
+        p1, p2 = value.split("@")
+    except ValueError:
+        # value contains more than one @.
+        return False
+    # Dot must be in p2 (e.g. example.com)
+    if "." not in p2 or p2.startswith("."):
+        return False
+    return True

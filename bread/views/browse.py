@@ -42,6 +42,25 @@ class BulkAction(NamedTuple):
         )
 
 
+def default_bulkactions(model, columns=["__all__"]):
+    return (
+        BulkAction(
+            "excel",
+            label=_("Excel"),
+            iconname="download",
+            action=lambda request, qs: export(qs, columns),
+            permissions=[f"{model._meta.app_label}.view_{model._meta.model_name}"],
+        ),
+        BulkAction(
+            "delete",
+            label=_("Delete"),
+            iconname="trash-can",
+            action=delete,
+            permissions=[f"{model._meta.app_label}.add_{model._meta.model_name}"],
+        ),
+    )
+
+
 class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     """TODO: documentation"""
 
@@ -97,30 +116,10 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             kwargs.get("viewstate_sessionkey") or self.viewstate_sessionkey
         )
         super().__init__(*args, **kwargs)
-        # set some default bulkactions
         self.bulkactions = (
             kwargs.get("bulkactions")
             or self.bulkactions
-            or (
-                BulkAction(
-                    "excel",
-                    label=_("Excel"),
-                    iconname="download",
-                    action=lambda request, qs: export(qs, self.columns),
-                    permissions=[
-                        f"{self.model._meta.app_label}.view_{self.model._meta.model_name}"
-                    ],
-                ),
-                BulkAction(
-                    "delete",
-                    label=_("Delete"),
-                    iconname="trash-can",
-                    action=delete,
-                    permissions=[
-                        f"{self.model._meta.app_label}.add_{self.model._meta.model_name}"
-                    ],
-                ),
-            )
+            or default_bulkactions(self.model, self.columns)
         )
 
     def get_layout(self):

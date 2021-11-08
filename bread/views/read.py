@@ -1,11 +1,16 @@
 import htmlgenerator as hg
 from django import forms
 from django.http import HttpResponseNotAllowed
+from django.views.generic import DetailView as DjangoReadView
+from guardian.mixins import PermissionRequiredMixin
 
 from .. import layout as _layout  # prevent name clashing
+from ..formatters import format_value
 from ..forms.fields import FormsetField
 from ..forms.forms import breadmodelform_factory
+from ..utils import expand_ALL_constant
 from .edit import EditView
+from .util import BreadView
 
 
 # Read view is the same as the edit view but form elements are disabled
@@ -40,6 +45,48 @@ class ReadView(EditView):
 
     def get_layout(self):
         return layoutasreadonly(super().get_layout())
+
+    def get_required_permissions(self, request):
+        return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
+
+
+class TableReadView(
+    BreadView,
+    PermissionRequiredMixin,
+    DjangoReadView,
+):
+
+    accept_global_perms = True
+    fields = ["__all__"]
+    urlparams = (("pk", int),)
+
+    def __init__(self, *args, **kwargs):
+        self.fields = expand_ALL_constant(
+            kwargs["model"], kwargs.get("fields") or self.fields
+        )
+        super().__init__(*args, **kwargs)
+
+    def get_layout(self):
+        return hg.BaseElement(
+            hg.H3(self.object),
+            _layout.datatable.DataTable(
+                columns=[
+                    _layout.datatable.DataTableColumn(header="", cell=hg.C("row.0")),
+                    _layout.datatable.DataTableColumn(header="", cell=hg.C("row.1")),
+                ],
+                row_iterator=(
+                    (
+                        field
+                        if isinstance(field, tuple)
+                        else (
+                            _layout.ObjectFieldLabel(field),
+                            _layout.ObjectFieldValue(field, formatter=format_value),
+                        )
+                    )
+                    for field in self.fields
+                ),
+            ),
+        )
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]

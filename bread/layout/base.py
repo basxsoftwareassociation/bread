@@ -117,11 +117,12 @@ class ObjectFieldValue(hg.ContextValue):
         )
         if value is None:
             value = hg.resolve_lookup(object, self.fieldname)
-        if self.formatter:
-            return self.formatter(value)
         if isinstance(value, datetime.datetime):
             value = localtime(value)
-        return localize(value, use_l10n=settings.USE_L10N)
+        value = localize(value, use_l10n=settings.USE_L10N)
+        if self.formatter:
+            return self.formatter(value)
+        return value
 
 
 FC = FormattedContextValue
