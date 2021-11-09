@@ -113,18 +113,22 @@ class ObjectFieldValue(hg.ContextValue):
 
     def resolve(self, context):
         object = super().resolve(context)
-        parts = self.fieldname.split(".")
-        # test if the value has a matching get_FIELDNAME_display function
-        value = hg.resolve_lookup(
-            object, f"{'.'.join(parts[:-1])}.get_{parts[-1]}_display".lstrip(".")
-        )
-        if value is None:
-            value = hg.resolve_lookup(object, self.fieldname)
-        if self.formatter:
-            return self.formatter(value)
-        if isinstance(value, datetime.datetime):
-            value = localtime(value)
-        return localize(value, use_l10n=settings.USE_L10N)
+        return format_object_field_value(object, self.fieldname, self.formatter)
+
+
+def format_object_field_value(object, fieldname, formatter=None):
+    parts = fieldname.split(".")
+    # test if the value has a matching get_FIELDNAME_display function
+    value = hg.resolve_lookup(
+        object, f"{'.'.join(parts[:-1])}.get_{parts[-1]}_display".lstrip(".")
+    )
+    if value is None:
+        value = hg.resolve_lookup(object, fieldname)
+    if formatter:
+        return formatter(value)
+    if isinstance(value, datetime.datetime):
+        value = localtime(value)
+    return localize(value, use_l10n=settings.USE_L10N)
 
 
 FC = FormattedContextValue
