@@ -68,7 +68,7 @@ class DataTable(hg.TABLE):
     )
     ```
 
-    For readability, I recommend using comprehension.
+    For readability, we recommend using comprehensions:
 
     ```python
     headers = ["Country", "Continent", "Population"]
