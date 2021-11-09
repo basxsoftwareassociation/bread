@@ -16,61 +16,94 @@ from .pagination import Pagination, PaginationConfig
 from .search import Search, SearchBackendConfig
 
 
-class DataTableColumn(NamedTuple):
-    header: Any
-    cell: Any
-    sortingname: Optional[str] = None
-    enable_row_click: bool = True
-    th_attributes: hg.F = None
-    td_attributes: hg.F = None
-
-    @staticmethod
-    def from_modelfield(
-        col,
-        model,
-        prevent_automatic_sortingnames=False,
-        rowvariable="row",
-        th_attributes=None,
-        td_attributes=None,
-    ) -> "DataTableColumn":
-        return DataTableColumn(
-            ObjectFieldLabel(col, model),
-            ObjectFieldValue(col, rowvariable),
-            sortingname_for_column(model, col)
-            if not prevent_automatic_sortingnames
-            else None,
-            th_attributes=th_attributes,
-            td_attributes=td_attributes,
-        )
-
-    def as_header_cell(self, orderingurlparameter="ordering"):
-        headcontent = hg.SPAN(self.header, _class="bx--table-header-label")
-        if self.sortingname:
-            headcontent = hg.BUTTON(
-                headcontent,
-                Icon("arrow--down", _class="bx--table-sort__icon", size=16),
-                Icon(
-                    "arrows--vertical",
-                    _class="bx--table-sort__icon-unsorted",
-                    size=16,
-                ),
-                _class=hg.BaseElement(
-                    "bx--table-sort ",
-                    sortingclass_for_column(orderingurlparameter, self.sortingname),
-                ),
-                data_event="sort",
-                title=self.header,
-                **sortinglink_for_column(orderingurlparameter, self.sortingname),
-            )
-        return hg.TH(headcontent, lazy_attributes=self.th_attributes)
-
-
 class DataTable(hg.TABLE):
+    """
+    A class for displaying a carbon DataTable.
+
+    To give you a simple example, let's say we want to show the table below.
+
+    +-------------+-----------+------------+
+    |   Country   | Continent | Population |
+    +-------------+-----------+------------|
+    | Switzerland |   Europe  |  8,500,000 |
+    |   Germany   |   Europe  | 83,000,000 |
+    |  Thailand   |    Asia   | 70,000,000 |
+    +-------------+-----------+------------+
+
+    You may do it this way
+
+    ```python
+    datatable = DataTable(
+        columns=[
+            DataTableColumn(
+                header="Country",
+                cell=hg.DIV(hg.C("row.Country")),    # what will be inside each cell of the specific column.
+            ),
+            DataTableColumn(
+                header="Continent",
+                cell=hg.DIV(hg.C("row.Continent")),  # what will be inside each cell of the specific column.
+            ),
+            DataTableColumn(
+                header="Population",
+                cell=hg.DIV(hg.C("row.Population")),       # what will be inside each cell of the specific column.
+            ),
+        ],
+        row_iterator=[
+            {
+                "Country": "Switzerland",
+                "Continent": "Europe",
+                "Population": 8_500_000,
+            },
+            {
+                "Country": "Germany",
+                "Continent": "Europe",
+                "Population": 83_000_000,
+            },
+            {
+                "Country": "Thailand",
+                "Continent": "Asia",
+                "Population": 70_000_000,
+            },
+        ],
+    )
+    ```
+
+    For readability, we recommend using comprehensions:
+
+    ```python
+    headers = ["Country", "Continent", "Population"]
+    rows = [
+        ["Switzerland", "Europe", 8_500_000],
+        ["Germany", "Europe", 83_000_000],
+        ["Thailand", "Asia", 70_000_000],
+    ]
+
+    datatable = DataTable(
+        columns=[
+            DataTableColumn(
+                header=header,
+                cell=hg.DIV(hg.C(f"row.{header}"))
+            )
+            for header in headers
+        ],
+        row_iterator=[
+            {
+                header: content
+                for header, content in zip(headers, row)
+            }
+            for row in rows
+        ]
+    )
+    ```
+
+    There are more ways of using DataTable, which may be added later.
+    """
+
     SPACINGS = ["default", "compact", "short", "tall"]
 
     def __init__(
         self,
-        columns: List[DataTableColumn],
+        columns: List["DataTableColumn"],
         row_iterator: Union[hg.Lazy, Iterable, hg.Iterator],
         orderingurlparameter: str = "ordering",
         rowvariable: str = "row",
@@ -278,7 +311,7 @@ class DataTable(hg.TABLE):
         model,
         queryset=None,
         # column behaviour
-        columns: List[Union[str, DataTableColumn]] = None,
+        columns: List[Union[str, "DataTableColumn"]] = None,
         prevent_automatic_sortingnames=False,
         # row behaviour
         rowvariable="row",
@@ -461,6 +494,55 @@ class DataTable(hg.TABLE):
         if zebra:
             classes.append(" bx--data-table--zebra")
         return classes
+
+
+class DataTableColumn(NamedTuple):
+    header: Any
+    cell: Any
+    sortingname: Optional[str] = None
+    enable_row_click: bool = True
+    th_attributes: hg.F = None
+    td_attributes: hg.F = None
+
+    @staticmethod
+    def from_modelfield(
+        col,
+        model,
+        prevent_automatic_sortingnames=False,
+        rowvariable="row",
+        th_attributes=None,
+        td_attributes=None,
+    ) -> "DataTableColumn":
+        return DataTableColumn(
+            ObjectFieldLabel(col, model),
+            ObjectFieldValue(col, rowvariable),
+            sortingname_for_column(model, col)
+            if not prevent_automatic_sortingnames
+            else None,
+            th_attributes=th_attributes,
+            td_attributes=td_attributes,
+        )
+
+    def as_header_cell(self, orderingurlparameter="ordering"):
+        headcontent = hg.SPAN(self.header, _class="bx--table-header-label")
+        if self.sortingname:
+            headcontent = hg.BUTTON(
+                headcontent,
+                Icon("arrow--down", _class="bx--table-sort__icon", size=16),
+                Icon(
+                    "arrows--vertical",
+                    _class="bx--table-sort__icon-unsorted",
+                    size=16,
+                ),
+                _class=hg.BaseElement(
+                    "bx--table-sort ",
+                    sortingclass_for_column(orderingurlparameter, self.sortingname),
+                ),
+                data_event="sort",
+                title=self.header,
+                **sortinglink_for_column(orderingurlparameter, self.sortingname),
+            )
+        return hg.TH(headcontent, lazy_attributes=self.th_attributes)
 
 
 def sortingclass_for_column(orderingurlparameter, columnname):

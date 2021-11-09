@@ -40,17 +40,6 @@ class DevModeOnly(hg.BaseElement):
         return ""
 
 
-def fieldlabel(model, accessor):
-    label = resolve_modellookup(model, accessor)[-1]
-    if hasattr(label, "verbose_name"):
-        return label.verbose_name
-    if isinstance(label, property):
-        return label.fget.__name__.replace("_", " ")
-    if callable(label):
-        return label.__name__.replace("_", " ")
-    return label
-
-
 def objectaction(object, action, *args, **kwargs):
     kwargs["kwargs"] = {"pk": object.pk}
     return str(
@@ -96,8 +85,16 @@ class ObjectFieldLabel(hg.ContextValue):
         self.title = title
 
     def resolve(self, context):
-        ret = fieldlabel(super().resolve(context)._meta.model, self.fieldname)
-        return ret.title() if self.title and isinstance(ret, str) else ret
+        label = resolve_modellookup(
+            super().resolve(context)._meta.model, self.fieldname
+        )[-1]
+        if hasattr(label, "verbose_name"):
+            return label.verbose_name
+        if isinstance(label, property):
+            return label.fget.__name__.replace("_", " ")
+        if callable(label):
+            return label.__name__.replace("_", " ")
+        return label.title() if self.title and isinstance(label, str) else label
 
 
 class ObjectFieldValue(hg.ContextValue):
@@ -124,11 +121,12 @@ def format_object_field_value(object, fieldname, formatter=None):
     )
     if value is None:
         value = hg.resolve_lookup(object, fieldname)
-    if formatter:
-        return formatter(value)
     if isinstance(value, datetime.datetime):
         value = localtime(value)
-    return localize(value, use_l10n=settings.USE_L10N)
+    value = localize(value, use_l10n=settings.USE_L10N)
+    if formatter:
+        return formatter(value)
+    return value
 
 
 FC = FormattedContextValue

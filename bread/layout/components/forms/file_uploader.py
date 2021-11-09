@@ -34,9 +34,15 @@ class FileUploader(hg.DIV):
         )
         self.input = hg.INPUT(
             **widgetattributes,
-            onload="""document.addEventListener('change', (e) => {
-                this.parentElement.querySelector('[data-file-container]').innerHTML = ''; var widget = new CarbonComponents.FileUploader(this.parentElement); widget._displayFilenames(); widget.setState('edit');
-            })""",
+            # hack to get vanilla carbon design file uploader working
+            onload="""
+document.addEventListener('change', (e) => {
+    this.parentElement.querySelector('[data-file-container]').innerHTML = '';
+    var widget = new CarbonComponents.FileUploader(this.parentElement);
+    widget._displayFilenames();
+    widget.setState('edit');
+});
+""",
         )
         self.container = hg.DIV(data_file_container=True, _class="bx--file-container")
         self.wrapper = hg.DIV(
