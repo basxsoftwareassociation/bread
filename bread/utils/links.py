@@ -52,7 +52,7 @@ class ModelHref(LazyHref):
     Example usage:
 
         assert "/person/browse" == ModelHref(models.Person, "browse").resolve(context)
-        assert "/person/edit/1" == ModelHref(models.Person, "edit", kwargs={"pk": C("object.pk")}).resolve(context)
+        assert "/person/edit/1" == ModelHref(models.Person, "edit", kwargs={"pk": hg.C("object.pk")}).resolve(context)
 
     """
 
