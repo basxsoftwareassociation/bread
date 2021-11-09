@@ -17,6 +17,88 @@ from .search import Search, SearchBackendConfig
 
 
 class DataTable(hg.TABLE):
+    """
+    A class for displaying a carbon DataTable.
+
+    To give you a simple example, let's say we want to show the table below.
+
+    +-------------+-----------+------------+
+    |   Country   | Continent | Population |
+    +-------------+-----------+------------|
+    | Switzerland |   Europe  |  8,500,000 |
+    |   Germany   |   Europe  | 83,000,000 |
+    |  Thailand   |    Asia   | 70,000,000 |
+    +-------------+-----------+------------+
+
+    You may do it this way
+
+    ```python
+    datatable = DataTable(
+        columns=[
+            DataTableColumn(
+                header="Country",
+                cell=hg.DIV(hg.C("row.Country")),    # what will be inside each cell of the specific column.
+            ),
+            DataTableColumn(
+                header="Continent",
+                cell=hg.DIV(hg.C("row.Continent")),  # what will be inside each cell of the specific column.
+            ),
+            DataTableColumn(
+                header="Population",
+                cell=hg.DIV(hg.C("row.Population")),       # what will be inside each cell of the specific column.
+            ),
+        ],
+        row_iterator=[
+            {
+                "Country": "Switzerland",
+                "Continent": "Europe",
+                "Population": 8_500_000,
+            },
+            {
+                "Country": "Germany",
+                "Continent": "Europe",
+                "Population": 83_000_000,
+            },
+            {
+                "Country": "Thailand",
+                "Continent": "Asia",
+                "Population": 70_000_000,
+            },
+        ],
+    )
+    ```
+
+    For readability, we recommend using comprehensions:
+
+    ```python
+    headers = ["Country", "Continent", "Population"]
+    rows = [
+        ["Switzerland", "Europe", 8_500_000],
+        ["Germany", "Europe", 83_000_000],
+        ["Thailand", "Asia", 70_000_000],
+    ]
+
+    datatable = DataTable(
+        columns=[
+            DataTableColumn(
+                header=header,
+                cell=hg.DIV(hg.C(f"row.{header}"))
+            )
+            for header in headers
+        ],
+        row_iterator=[
+            {
+                header: content
+                for header, content in zip(headers, row)
+            }
+            for row in rows
+        ]
+    )
+    ```
+
+    There are more ways of using DataTable, which may be added later.
+    """
+
     SPACINGS = ["default", "compact", "short", "tall"]
 
     def __init__(
@@ -29,7 +111,6 @@ class DataTable(hg.TABLE):
         zebra: bool = False,
         **kwargs: dict,
     ):
-        # TODO: add some simple examples of how to use
         """A carbon DataTable element
 
         :param columns: Column definitions
