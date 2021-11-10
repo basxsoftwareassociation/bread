@@ -79,20 +79,20 @@ def maintenance_database_optimization(request):
     if request.method == "POST":
         form = OptimizeForm(request.POST)
 
-        connection.cursor().execute("VACUUM;")
-        # get the previous size
-        post_body = {key: val[0] for key, val in dict(form.data).items()}
-        previous_size = float(post_body["previous"])
-        current_db_size = os.stat(database_path).st_size / 1000
+        if form.is_valid():
+            connection.cursor().execute("VACUUM;")
+            # get the previous size
+            previous_size = form.cleaned_data["previous"]
+            current_db_size = os.stat(database_path).st_size / 1000
 
-        # try adding some message here.
-        messages.info(
-            request,
-            _(
-                "The database size has been minimized from %.2f kB to %.2f kB."
-                % (previous_size, current_db_size)
-            ),
-        )
+            # try adding some message here.
+            messages.info(
+                request,
+                _(
+                    "The database size has been minimized from %.2f kB to %.2f kB."
+                    % (previous_size, current_db_size)
+                ),
+            )
     else:
         form = OptimizeForm()
 
