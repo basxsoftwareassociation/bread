@@ -111,8 +111,8 @@ class ObjectFieldValue(hg.Lazy):
     def resolve(self, context):
         object = self.object
         if isinstance(self.object, str):
-            object = hg.resolve_modellookup(context, self.object)
-        object = hg.resolve_lazy(object)
+            object = resolve_modellookup(context, self.object)
+        object = hg.resolve_lazy(object, context)
 
         parts = self.fieldname.split(".")
         # test if the value has a matching get_FIELDNAME_display function
