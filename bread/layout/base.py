@@ -98,35 +98,40 @@ class ObjectFieldLabel(hg.ContextValue):
 
 
 class ObjectFieldValue(hg.ContextValue):
-    def __init__(self, fieldname, object_contextname="object", formatter=None):
+    def __init__(
+        self, fieldname, object_contextname="object", object_getter=None, formatter=None
+    ):
         """
         :param fieldname: Name of the model field whose value will be rendered
         :param object_contextname: Name of the context object which provides the field value
+        :param object_getter: Alternatively to object_contextname, a lambda can be provided which retrieves the object
+                              from the context
         :param formatter: function which takes the field value as a single argument and returns a formatted version
         """
         super().__init__(object_contextname)
         self.fieldname = fieldname
         self.formatter = formatter
+        self.object_getter = object_getter
 
     def resolve(self, context):
-        object = super().resolve(context)
-        return format_object_field_value(object, self.fieldname, self.formatter)
+        if self.object_getter:
+            object = self.object_getter(context)
+        else:
+            object = super().resolve(context)
 
-
-def format_object_field_value(object, fieldname, formatter=None):
-    parts = fieldname.split(".")
-    # test if the value has a matching get_FIELDNAME_display function
-    value = hg.resolve_lookup(
-        object, f"{'.'.join(parts[:-1])}.get_{parts[-1]}_display".lstrip(".")
-    )
-    if value is None:
-        value = hg.resolve_lookup(object, fieldname)
-    if isinstance(value, datetime.datetime):
-        value = localtime(value)
-    value = localize(value, use_l10n=settings.USE_L10N)
-    if formatter:
-        return formatter(value)
-    return value
+        parts = self.fieldname.split(".")
+        # test if the value has a matching get_FIELDNAME_display function
+        value = hg.resolve_lookup(
+            object, f"{'.'.join(parts[:-1])}.get_{parts[-1]}_display".lstrip(".")
+        )
+        if value is None:
+            value = hg.resolve_lookup(object, self.fieldname)
+        if isinstance(value, datetime.datetime):
+            value = localtime(value)
+        value = localize(value, use_l10n=settings.USE_L10N)
+        if self.formatter:
+            value = self.formatter(value)
+        return value
 
 
 FC = FormattedContextValue
