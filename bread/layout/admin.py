@@ -3,12 +3,16 @@ import os
 import htmlgenerator as hg
 import pkg_resources
 import requests
+from django import forms
+from django.conf import settings
+from django.contrib import messages
 from django.db import connection
 from django.utils.translation import gettext_lazy as _
 
 from bread import layout
 from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
+from bread.layout.components.forms import Form, FormField
 
 PYPI_API = "https://pypi.python.org/pypi/{}/json"
 PACKAGE_NAMES = ("basx-bread", "basxconnect", "htmlgenerator")
@@ -61,34 +65,42 @@ def maintainance_package_layout(request):
 
 
 def maintenance_database_optimization(request):
-    # get the database's size (in kilobytes)
-    # TODO: Add a button that runs the command
-    current_db_size = os.stat(os.getcwd() + "/db.sqlite3").st_size / 1000
-    previous_size = 0
+    database_path = settings.DATABASES["default"]["NAME"]
+    current_db_size = os.stat(database_path).st_size / 1000
 
-    optimize_btn = hg.FORM(
-        layout.form.CsrfToken(),
-        Button("Optimize", type="submit"),
-        hg.INPUT(type="hidden", name="previous-size", value=current_db_size),
-        method="POST",
-    )
+    class OptimizeForm(forms.Form):
+        previous = forms.DecimalField(
+            widget=forms.HiddenInput,
+            initial=current_db_size,
+        )
+
+    form: OptimizeForm
 
     if request.method == "POST":
-        cursor = connection.cursor()
-        cursor.execute("VACUUM;")
-        current_db_size = os.stat(os.getcwd() + "/db.sqlite3").st_size / 1000
-        previous_size = request.body.decode("utf-8")
-        previous_size = float(previous_size[previous_size.find("previous-size") + 14 :])
+        form = OptimizeForm(request.POST)
+
+        connection.cursor().execute("VACUUM;")
+        # get the previous size
+        post_body = {key: val[0] for key, val in dict(form.data).items()}
+        previous_size = float(post_body["previous"])
+        current_db_size = os.stat(database_path).st_size / 1000
+
+        # try adding some message here.
+        messages.info(
+            request,
+            _(
+                "The database size has been minimized from %.2f kB to %.2f kB."
+                % (previous_size, current_db_size)
+            ),
+        )
+    else:
+        form = OptimizeForm()
+
+    optimize_btn = Form(
+        form, FormField("previous"), Button(_("Optimize"), type="submit")
+    )
 
     return hg.BaseElement(
-        hg.If(
-            request.method == "POST",
-            hg.H5(f"Previous Size: {previous_size : .2f} KB"),
-            hg.H5(f"Current Size: {current_db_size : .2f} KB"),
-        ),
-        hg.If(
-            request.method == "POST",
-            hg.H5(f"Minimized Size: {current_db_size : .2f} KB"),
-        ),
+        hg.H5(f"Current Size: {current_db_size : .2f} kB"),
         optimize_btn,
     )

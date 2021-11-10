@@ -83,4 +83,7 @@ urlpatterns = [
     ),
     path("systeminformation", system.systeminformation, name="systeminformation"),
     path("admin/maintenance", admin.maintenancesettings, name="breadadmin.maintenance"),
+    path(
+        "admin/backgroundjobs", admin.backgroundjobs, name="breadadmin.backgroundjobs"
+    ),
 ] + external_urlpatterns

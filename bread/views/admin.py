@@ -34,3 +34,8 @@ def maintenancesettings(request):
     )
 
     return ret
+
+
+@aslayout
+def backgroundjobs(request):
+    return hg.H3("Coming Soon")
