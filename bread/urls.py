@@ -6,7 +6,7 @@ from dynamic_preferences.registries import global_preferences_registry
 from bread.utils import autopath
 
 from .forms.forms import PreferencesForm
-from .views import auth, system, userprofile
+from .views import admin, auth, system, userprofile
 
 PreferencesView = type(
     "PreferencesView",
@@ -82,4 +82,8 @@ urlpatterns = [
         name="password_reset_complete",
     ),
     path("systeminformation", system.systeminformation, name="systeminformation"),
+    path("admin/maintenance", admin.maintenancesettings, name="breadadmin.maintenance"),
+    path(
+        "admin/backgroundjobs", admin.backgroundjobs, name="breadadmin.backgroundjobs"
+    ),
 ] + external_urlpatterns

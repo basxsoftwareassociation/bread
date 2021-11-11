@@ -1,6 +1,9 @@
 from django.apps import apps
 from django.utils.functional import Promise
+from django.utils.translation import gettext_lazy as _
 
+from .layout import DEVMODE_KEY
+from .utils import reverse
 from .utils.links import Link
 
 
@@ -111,6 +114,18 @@ class Menu:
             self._registry[group.label].items.append(menuitem)
 
 
+class DevGroup(Group):
+    def has_permission(self, request):
+        return super().has_permission(request) and request.session.get(
+            DEVMODE_KEY, False
+        )
+
+
+class SuperUserItem(Item):
+    def has_permission(self, request):
+        return super().has_permission(request) and request.user.is_superuser
+
+
 def registeritem(item):
     main.registeritem(item)
     return item
@@ -118,3 +133,37 @@ def registeritem(item):
 
 # global main menu
 main = Menu()
+
+# The Administration items are registered by default.
+admingroup = DevGroup(_("Administration"), iconname="network--3--reference", order=500)
+registeritem(
+    Item(
+        Link(
+            reverse("breadadmin.backgroundjobs"),
+            _("Background Jobs"),
+        ),
+        admingroup,
+    )
+)
+
+registeritem(SuperUserItem(Link(reverse("admin:index"), _("Django Admin")), admingroup))
+
+registeritem(
+    SuperUserItem(
+        Link(
+            reverse("breadadmin.maintenance"),
+            _("Maintenance"),
+        ),
+        admingroup,
+    )
+)
+
+registeritem(
+    Item(
+        Link(
+            reverse("systeminformation"),
+            _("System Information"),
+        ),
+        admingroup,
+    )
+)
