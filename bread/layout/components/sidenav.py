@@ -1,6 +1,6 @@
 import htmlgenerator as hg
 
-from bread.menu import Menu
+import bread
 
 from .. import HasBreadCookieValue
 from .icon import Icon
@@ -11,7 +11,7 @@ def isactive(itemaccessor):
 
 
 class SideNav(hg.ASIDE):
-    def __init__(self, menu: Menu, **kwargs):
+    def __init__(self, menu: "bread.menu.Menu", **kwargs):
         kwargs["_class"] = hg.BaseElement(
             kwargs.get("_class", ""),
             " bx--side-nav bx--side-nav--rail",

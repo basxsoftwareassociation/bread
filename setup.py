@@ -49,6 +49,7 @@ setup(
         "WeasyPrint",  # creating PDFs
         "django-ckeditor",
         "backports.zoneinfo",
+        "requests",
     ],
     extras_require={"testing": ["hypothesis[django]"]},
     packages=find_packages(),
