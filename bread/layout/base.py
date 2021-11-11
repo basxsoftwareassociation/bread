@@ -79,15 +79,19 @@ class ObjectFieldLabel(hg.ContextValue):
         """
         :param fieldname: Name of the model field whose value will be rendered
         :param object_contextname: Name of the context object which provides the field value
+                                   or a Lazy which produces the object itself
         """
         super().__init__(object_contextname)
         self.fieldname = fieldname
         self.title = title
+        self.object = object_contextname
 
     def resolve(self, context):
-        label = resolve_modellookup(
-            super().resolve(context)._meta.model, self.fieldname
-        )[-1]
+        object = self.object
+        if isinstance(self.object, str):
+            object = resolve_modellookup(context, self.object)[0]
+        object = hg.resolve_lazy(object, context)
+        label = resolve_modellookup(object._meta.model, self.fieldname)[-1]
         if hasattr(label, "verbose_name"):
             return label.verbose_name
         if isinstance(label, property):
@@ -102,6 +106,7 @@ class ObjectFieldValue(hg.Lazy):
         """
         :param fieldname: Name of the model field whose value will be rendered
         :param object_contextname: Name of the context object which provides the field value
+                                   or a Lazy which produces the object itself
         :param formatter: function which takes the field value as a single argument and returns a formatted version
         """
         self.object = object_contextname
@@ -111,7 +116,7 @@ class ObjectFieldValue(hg.Lazy):
     def resolve(self, context):
         object = self.object
         if isinstance(self.object, str):
-            object = resolve_modellookup(context, self.object)
+            object = resolve_modellookup(context, self.object)[0]
         object = hg.resolve_lazy(object, context)
 
         parts = self.fieldname.split(".")
