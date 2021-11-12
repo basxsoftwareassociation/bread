@@ -1,9 +1,10 @@
+import django_celery_results.models
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import include, path
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.registries import global_preferences_registry
 
-from bread.utils import autopath
+from bread.utils import autopath, default_model_paths
 
 from .forms.forms import PreferencesForm
 from .views import admin, auth, system, userprofile
@@ -13,7 +14,6 @@ PreferencesView = type(
     (SuccessMessageMixin, preferences_views.PreferenceFormView),
     {"success_message": "Preferences updated"},
 )
-
 
 external_urlpatterns = [
     path("ckeditor/", include("ckeditor_uploader.urls")),
@@ -45,7 +45,6 @@ external_urlpatterns = [
         ),
     ),
 ]
-
 
 urlpatterns = [
     path("auth/", include("django.contrib.auth.urls")),
@@ -83,7 +82,8 @@ urlpatterns = [
     ),
     path("systeminformation", system.systeminformation, name="systeminformation"),
     path("admin/maintenance", admin.maintenancesettings, name="breadadmin.maintenance"),
-    path(
-        "admin/backgroundjobs", admin.backgroundjobs, name="breadadmin.backgroundjobs"
+    *default_model_paths(
+        django_celery_results.models.TaskResult,
+        browseview=admin.TaskResultBrowseView,
     ),
 ] + external_urlpatterns
