@@ -2,6 +2,7 @@ import datetime
 
 import htmlgenerator as hg
 from django.conf import settings
+from django.db import models
 from django.db.models import ManyToOneRel
 from django.http import HttpResponse
 from django.template.context import _builtin_context_processors
@@ -134,7 +135,7 @@ class ObjectFieldValue(hg.Lazy):
         value = localize(value, use_l10n=settings.USE_L10N)
         if self.formatter:
             value = self.formatter(value)
-        if hasattr(value, "all"):
+        if isinstance(value, models.Manager):
             value = ", ".join(value.all())
         return value
 
