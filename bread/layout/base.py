@@ -2,6 +2,8 @@ import datetime
 
 import htmlgenerator as hg
 from django.conf import settings
+from django.db import models
+from django.db.models import ManyToOneRel
 from django.http import HttpResponse
 from django.template.context import _builtin_context_processors
 from django.utils.formats import localize
@@ -79,37 +81,48 @@ class ObjectFieldLabel(hg.ContextValue):
         """
         :param fieldname: Name of the model field whose value will be rendered
         :param object_contextname: Name of the context object which provides the field value
+                                   or a Lazy which produces the object itself
         """
         super().__init__(object_contextname)
         self.fieldname = fieldname
         self.title = title
+        self.object = object_contextname
 
     def resolve(self, context):
-        label = resolve_modellookup(
-            super().resolve(context)._meta.model, self.fieldname
-        )[-1]
+        object = self.object
+        if isinstance(self.object, str):
+            object = resolve_modellookup(context, self.object)[0]
+        object = hg.resolve_lazy(object, context)
+        label = resolve_modellookup(object._meta.model, self.fieldname)[-1]
         if hasattr(label, "verbose_name"):
             return label.verbose_name
         if isinstance(label, property):
             return label.fget.__name__.replace("_", " ")
         if callable(label):
             return label.__name__.replace("_", " ")
+        if isinstance(label, ManyToOneRel):
+            return label.name.replace("_", " ").capitalize()
         return label.title() if self.title and isinstance(label, str) else label
 
 
-class ObjectFieldValue(hg.ContextValue):
+class ObjectFieldValue(hg.Lazy):
     def __init__(self, fieldname, object_contextname="object", formatter=None):
         """
         :param fieldname: Name of the model field whose value will be rendered
         :param object_contextname: Name of the context object which provides the field value
+                                   or a Lazy which produces the object itself
         :param formatter: function which takes the field value as a single argument and returns a formatted version
         """
-        super().__init__(object_contextname)
+        self.object = object_contextname
         self.fieldname = fieldname
         self.formatter = formatter
 
     def resolve(self, context):
-        object = super().resolve(context)
+        object = self.object
+        if isinstance(self.object, str):
+            object = resolve_modellookup(context, self.object)[0]
+        object = hg.resolve_lazy(object, context)
+
         parts = self.fieldname.split(".")
         # test if the value has a matching get_FIELDNAME_display function
         value = hg.resolve_lookup(
@@ -121,7 +134,9 @@ class ObjectFieldValue(hg.ContextValue):
             value = localtime(value)
         value = localize(value, use_l10n=settings.USE_L10N)
         if self.formatter:
-            return self.formatter(value)
+            value = self.formatter(value)
+        if isinstance(value, models.Manager):
+            value = ", ".join(value.all())
         return value
 
 
