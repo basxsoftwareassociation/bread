@@ -99,7 +99,6 @@ def resolve_modellookup(model, accessor):
                 attrib = getattr(attrib.related_model, attribstr)
         else:
             try:
-                breakpoint()
                 attrib = attrib[attribstr]
             except (TypeError, AttributeError, KeyError, ValueError, IndexError):
                 attrib = getattr(attrib, attribstr)
