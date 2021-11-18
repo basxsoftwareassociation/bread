@@ -1,3 +1,6 @@
+import secrets
+import traceback
+
 import django.urls
 from django.contrib.admindocs.views import simplify_regex
 from django.template import TemplateDoesNotExist
@@ -16,18 +19,20 @@ class TestAnonymousVisible(TestCase):
         simplify_regex(x[1])
         for x in show_urls.Command().extract_views_from_urlpatterns(ROOT_URLPATTERNS)
     }
-    MODEL_OPERATIONS_REQUIRING_PK = (
+    MODEL_OPERATIONS_REQUIRING_PK = {
         "copy",
         "delete",
         "edit",
-        "excel",
         "read",
-    )
+    }
+
+    # (model_objects, url, additional_operations)
     BREAD_MODELS_URLPATTERNS = (
-        (Report.objects.all(), "/reports/reports/report/"),
-        (TaskResult.objects.all(), "/bread/django_celery_results/taskresult/"),
+        (Report.objects.all(), "/reports/reports/report/", {"excel"}),
+        (TaskResult.objects.all(), "/bread/django_celery_results/taskresult/", set()),
     )
     EXCEPTED_URLPATTERNS = {
+        "/admin/login/",
         "/bread/accounts/login/",
         "/bread/accounts/password_reset/",
         "/bread/accounts/password_reset/done/",
@@ -37,49 +42,29 @@ class TestAnonymousVisible(TestCase):
         "/bread/auth/reset/<uidb64>/<token>/",  # password reset
         "/bread/auth/password_reset/done/",
         "/bread/auth/reset/done/",
-        # TODO: figure out the way to manage these views.
+        # TODO: figure out the way to manage this view.
         "/bread/preferences/global/<slug:section>",
-        *(
-            x
-            for x in ALL_URL_NAMES
-            if not x.startswith("/bread")
-            and not x.startswith("/media")
-            and not x.startswith("/reports")
-        ),
     }
 
     def test_visible(self):
         # add the uncompiled url to exception
         excepted_urlpatterns = self.EXCEPTED_URLPATTERNS.copy()
-        for model_object, url in self.BREAD_MODELS_URLPATTERNS:
-            for operation in self.MODEL_OPERATIONS_REQUIRING_PK:
-                excepted_urlpatterns.add("".join((url, operation, "/<int:pk>")))
-                print("Added", "".join((url, operation, "/<int:pk>")), "to exception.")
+        url_intpk = {x for x in self.ALL_URL_NAMES if "<int:pk>" in x}
 
         # update the exceptions for some pages that can be visible to the public
         # and those pages with dynamic url regex
         # and those out of the bread's scope (e.g., basxconnect)
-        url_names = self.ALL_URL_NAMES - excepted_urlpatterns
+        url_names = self.ALL_URL_NAMES - excepted_urlpatterns - url_intpk
 
         # manually add a list of urls with a dynamic subdirectory.
         # (e.g., <int:pk>)
-        for model_object, url in self.BREAD_MODELS_URLPATTERNS:
-            for record in model_object:
-                for operation in self.MODEL_OPERATIONS_REQUIRING_PK:
-                    url_names.add("".join((url, operation, "/", record.pk)))
-                    print(
-                        "Added",
-                        "".join((url, operation, "/", record.pk)),
-                        "to url_names.",
-                    )
+        for url in url_intpk:
+            url_names.add(url.replace("<int:pk>", str(secrets.randbelow(100))))
 
         # try fetching each url and see the response
         c = Client()
 
-        print(*url_names, sep="\n")
-
         for url in url_names:
-            # TODO: Find a better way to check this, if needed.
             try:
                 response = c.get(url)
                 # if the status code is 4,
@@ -97,14 +82,17 @@ class TestAnonymousVisible(TestCase):
                     and response.headers["Location"].startswith(
                         "/bread/accounts/login/"
                     ),
-                    "This page %s is visible to anonymous users, with the status code %d"
+                    "This page %s may be visible to anonymous users, with the status code %d"
                     % (url, response.status_code),
                 )
 
-                print("Checked %s\nHeader: %s" % (url, response.headers))
+            except TemplateDoesNotExist as e:
+                if hasattr(e, "message"):
+                    print("The template for", url, "at", e.message, "does not exist.")
+                else:
+                    print("The template for", url, "does not exist.")
 
-            except TemplateDoesNotExist:
-                print("The template for %s does not exist." % url)
+                traceback.print_exc()
 
         print(
             "Public Visibility Test for Bread completed. No confidential pages appears publicly."
