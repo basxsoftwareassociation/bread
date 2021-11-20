@@ -42,108 +42,15 @@ class WorkflowBase(models.Model):
         self.update_workflow_state()
 
     @classmethod
-    def workflowdiagram(cls):  # noqa
-        """Method which does the magic of converting a graph from simple dict format to
-        full fledged activity diagram and do quite a bit of verification. Requires an attribute ``WORKFLOW`` of type ``dict``"""
+    def workflowdiagram(cls):
+        """
+        Method which does the magic of converting a graph from simple dict format to
+        full fledged activity diagram and do quite a bit of verification. Requires an
+        attribute ``WORKFLOW`` of type ``dict``
+        """
 
         if not hasattr(cls, "_GENERATED_DIAGRAM"):
-
-            def allnodes(graph):
-                return set(sum((list(i[:2]) for i in graph), []))
-
-            assert hasattr(
-                cls, "WORKFLOW"
-            ), f"class {cls} needs to have an attribute 'WORKFLOW' with the workflowdefinition"  # nosec because only for API validation
-            assert isinstance(  # nosec because only for API validation
-                cls.WORKFLOW, dict
-            ), f"{cls}.WORKFLOW needs to be of type {type(dict)}"
-            graph = []  # [(source, target, choice)]
-
-            # some type checking
-            for node in allnodes(graph):
-                assert isinstance(  # nosec because only for API validation
-                    node, (Node, dict, tuple, type(None))
-                ), f"Node {node} if not of type {Node}"
-
-            # flatten the WORKFLOW definition
-            for source, target in cls.WORKFLOW.items():
-                if isinstance(target, tuple):
-                    graph.extend((source, node, None) for node in target)
-                elif isinstance(target, dict):
-                    assert all(  # nosec because only for API validation
-                        t is not None for t in target.keys()
-                    ), "None is not an allowed key for choices"
-                    graph.extend(
-                        (source, node, choice) for choice, node in target.items()
-                    )
-                else:
-                    graph.append((source, target, None))
-
-            # insert initial and final nodes, mostly for activity diagram compliance
-            for source, target, choice in list(graph):
-                if source not in set(i[1] for i in graph) and not isinstance(
-                    source, Initial
-                ):
-                    graph.append((Initial(), source, None))
-                if target not in set(i[0] for i in graph) and not isinstance(
-                    target, WorkflowFinal
-                ):
-                    graph.append((target, WorkflowFinal(), None))
-                if target is None:
-                    graph.append((target, FlowFinal(), None))
-
-            # insert merge nodes
-            removed_edges = []
-            new_edges = []
-            for node in allnodes(graph):
-                inputs = [[s, choice] for s, t, choice in graph if t == node]
-                if len(inputs) > 1 and not isinstance(node, (Join, Merge)):
-                    mergenode = Merge()
-                    new_edges.append((mergenode, node, None))
-                    for inputnode, choice in inputs:
-                        new_edges.append((inputnode, mergenode, choice))
-                        removed_edges.append((inputnode, node, choice))
-            for edge in removed_edges:
-                graph.remove(edge)
-            graph.extend(new_edges)
-
-            # insert fork nodes
-            removed_edges = []
-            new_edges = []
-            for node in allnodes(graph):  # check if node needs to be a fork node
-                outputs = [
-                    [t, choice]
-                    for s, t, choice in graph
-                    if s == node and choice is None
-                ]
-                if len(outputs) > 1:
-                    forknode = Fork()
-                    new_edges.append((node, forknode, None))
-                    for outputnode, choice in outputs:
-                        new_edges.append((forknode, outputnode, choice))
-                        removed_edges.append((node, outputnode, choice))
-            for edge in removed_edges:
-                graph.remove(edge)
-            graph.extend(new_edges)
-
-            # set inputs and outputs per node and verify all nodes
-            for node in allnodes(graph):
-                node.inputs = tuple(
-                    [
-                        (source, choice)
-                        for source, target, choice in graph
-                        if target == node
-                    ]
-                )
-                node.outputs = tuple(
-                    [
-                        (target, choice)
-                        for source, target, choice in graph
-                        if source == node
-                    ]
-                )
-                node._node_verify()
-            cls._GENERATED_DIAGRAM = graph
+            cls._GENERATED_DIAGRAM = generate_workflowdiagram(cls)
         return cls._GENERATED_DIAGRAM
 
     @classmethod
@@ -345,3 +252,91 @@ def dot2svg(dot: str):
                 {},
             )
         )
+
+
+def generate_workflowdiagram(model):  # noqa
+    """Method which does the magic of converting a graph from simple dict format to
+    full fledged activity diagram and do quite a bit of verification. Requires an attribute ``WORKFLOW`` of type ``dict``"""
+
+    def allnodes(graph):
+        return set(sum((list(i[:2]) for i in graph), []))
+
+    assert hasattr(
+        model, "WORKFLOW"
+    ), f"class {model} needs to have an attribute 'WORKFLOW' with the workflowdefinition"  # nosec because only for API validation
+    assert isinstance(  # nosec because only for API validation
+        model.WORKFLOW, dict
+    ), f"{model}.WORKFLOW needs to be of type {type(dict)}"
+    graph = []  # [(source, target, choice)]
+
+    # some type checking
+    for node in allnodes(graph):
+        assert isinstance(  # nosec because only for API validation
+            node, (Node, dict, tuple, type(None))
+        ), f"Node {node} if not of type {Node}"
+
+    # flatten the WORKFLOW definition
+    for source, target in model.WORKFLOW.items():
+        if isinstance(target, tuple):
+            graph.extend((source, node, None) for node in target)
+        elif isinstance(target, dict):
+            assert all(  # nosec because only for API validation
+                t is not None for t in target.keys()
+            ), "None is not an allowed key for choices"
+            graph.extend((source, node, choice) for choice, node in target.items())
+        else:
+            graph.append((source, target, None))
+
+    # insert initial and final nodes, mostly for activity diagram compliance
+    for source, target, choice in list(graph):
+        if source not in set(i[1] for i in graph) and not isinstance(source, Initial):
+            graph.append((Initial(), source, None))
+        if target not in set(i[0] for i in graph) and not isinstance(
+            target, WorkflowFinal
+        ):
+            graph.append((target, WorkflowFinal(), None))
+        if target is None:
+            graph.append((target, FlowFinal(), None))
+
+    # insert merge nodes
+    removed_edges = []
+    new_edges = []
+    for node in allnodes(graph):
+        inputs = [[s, choice] for s, t, choice in graph if t == node]
+        if len(inputs) > 1 and not isinstance(node, (Join, Merge)):
+            mergenode = Merge()
+            new_edges.append((mergenode, node, None))
+            for inputnode, choice in inputs:
+                new_edges.append((inputnode, mergenode, choice))
+                removed_edges.append((inputnode, node, choice))
+    for edge in removed_edges:
+        graph.remove(edge)
+    graph.extend(new_edges)
+
+    # insert fork nodes
+    removed_edges = []
+    new_edges = []
+    for node in allnodes(graph):  # check if node needs to be a fork node
+        outputs = [
+            [t, choice] for s, t, choice in graph if s == node and choice is None
+        ]
+        if len(outputs) > 1:
+            forknode = Fork()
+            new_edges.append((node, forknode, None))
+            for outputnode, choice in outputs:
+                new_edges.append((forknode, outputnode, choice))
+                removed_edges.append((node, outputnode, choice))
+    for edge in removed_edges:
+        graph.remove(edge)
+    graph.extend(new_edges)
+
+    # set inputs and outputs per node and verify all nodes
+    for node in allnodes(graph):
+        node.inputs = tuple(
+            [(source, choice) for source, target, choice in graph if target == node]
+        )
+        node.outputs = tuple(
+            [(target, choice) for source, target, choice in graph if source == node]
+        )
+        node._node_verify()
+    return graph
