@@ -15,8 +15,6 @@ _static = staticfiles_storage.url
 def default_page_layout(menu, *content):
     return hg.HTML(
         hg.HEAD(
-            hg.META(charset="utf-8"),
-            hg.META(name="viewport", content="width=device-width, initial-scale=1"),
             hg.TITLE(
                 hg.F(
                     lambda c: strip_tags(c.get("pagetitle", c.get("PLATFORMNAME")))
