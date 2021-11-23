@@ -5,10 +5,8 @@ import django.urls
 from django.contrib.admindocs.views import simplify_regex
 from django.template import TemplateDoesNotExist
 from django.test import Client, TestCase
-from django_celery_results.models import TaskResult
+from django.urls import reverse_lazy as reverse
 from django_extensions.management.commands import show_urls
-
-from bread.contrib.reports.models import Report
 
 ROOT_URLPATTERNS = django.urls.get_resolver(None).url_patterns
 
@@ -19,34 +17,28 @@ class TestAnonymousVisible(TestCase):
         simplify_regex(x[1])
         for x in show_urls.Command().extract_views_from_urlpatterns(ROOT_URLPATTERNS)
     }
-    MODEL_OPERATIONS_REQUIRING_PK = {
-        "copy",
-        "delete",
-        "edit",
-        "read",
-    }
-
-    # (model_objects, url, additional_operations)
-    BREAD_MODELS_URLPATTERNS = (
-        (Report.objects.all(), "/reports/reports/report/", {"excel"}),
-        (TaskResult.objects.all(), "/bread/django_celery_results/taskresult/", set()),
-    )
     EXCEPTED_URLPATTERNS = {
-        "/admin/login/",
-        "/bread/accounts/login/",
-        "/bread/accounts/password_reset/",
-        "/bread/accounts/password_reset/done/",
-        "/bread/accounts/reset/<uidb64>/<token>/",
-        "/bread/accounts/reset/done/",
-        "/bread/auth/password_reset/",
-        "/bread/auth/reset/<uidb64>/<token>/",  # password reset
-        "/bread/auth/password_reset/done/",
-        "/bread/auth/reset/done/",
+        reverse("admin:login"),
+        reverse("django_auth:password_reset"),
+        reverse("django_auth:password_reset_done"),
+        reverse("django_auth:password_reset_complete"),
+        reverse(
+            "django_auth:password_reset_confirm",
+            args=["(?P<uidb64>[^/]+)", "(?P<token>[^/]+)"],
+        ),
+        reverse("login"),
+        reverse("password_reset"),
+        reverse("password_reset_done"),
+        reverse("password_reset_complete"),
+        reverse("password_reset_confirm", args=["<uidb64>", "<token>"]),
         # TODO: figure out the way to manage this view.
         "/bread/preferences/global/<slug:section>",
     }
 
     def test_visible(self):
+
+        print(*self.EXCEPTED_URLPATTERNS, sep="\n")
+
         # add the uncompiled url to exception
         excepted_urlpatterns = self.EXCEPTED_URLPATTERNS.copy()
         url_intpk = {x for x in self.ALL_URL_NAMES if "<int:pk>" in x}
@@ -70,7 +62,7 @@ class TestAnonymousVisible(TestCase):
                 # if the status code is 4,
                 # there's some errors loading that pages
                 self.assertTrue(
-                    response.status_code // 100 != 4,
+                    not 400 <= response.status_code <= 499,
                     "This page %s failed to load, with status code %d."
                     % (url, response.status_code),
                 )
@@ -78,7 +70,7 @@ class TestAnonymousVisible(TestCase):
                 # it's likely invisible to anonymous users, as the page
                 # redirects to the login page.
                 self.assertTrue(
-                    response.status_code // 100 == 3
+                    300 <= response.status_code <= 399
                     and response.headers["Location"].startswith(
                         "/bread/accounts/login/"
                     ),
@@ -86,7 +78,7 @@ class TestAnonymousVisible(TestCase):
                     % (url, response.status_code),
                 )
 
-                print(url, "checked")
+                # print(url, "checked")
 
             except TemplateDoesNotExist as e:
                 if hasattr(e, "message"):
@@ -95,7 +87,3 @@ class TestAnonymousVisible(TestCase):
                     print("The template for", url, "does not exist.")
 
                 traceback.print_exc()
-
-        print(
-            "Public Visibility Test for Bread completed. No confidential pages appears publicly."
-        )
