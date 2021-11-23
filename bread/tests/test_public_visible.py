@@ -54,7 +54,7 @@ class TestAnonymousVisible(TestCase):
                         # the line above can be avoid by bandit because
                         # it isn't for security purposes.
                     elif t == "uuid":
-                        args[i] = uuid.uuid4()
+                        args[i] = str(uuid.uuid4())
                     else:
                         args[i] = "".join(random.sample(ALPHANUMERIC_STR, k=10))
 
