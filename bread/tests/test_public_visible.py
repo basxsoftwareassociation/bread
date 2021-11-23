@@ -1,14 +1,16 @@
-import secrets
+import random
 import traceback
 
 import django.urls
 from django.contrib.admindocs.views import simplify_regex
+from django.http import HttpResponseRedirect
 from django.template import TemplateDoesNotExist
 from django.test import Client, TestCase
 from django.urls import reverse_lazy as reverse
 from django_extensions.management.commands import show_urls
 
 ROOT_URLPATTERNS = django.urls.get_resolver(None).url_patterns
+ALPHANUMERIC_STR = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
 
 class TestAnonymousVisible(TestCase):
@@ -19,39 +21,45 @@ class TestAnonymousVisible(TestCase):
     }
     EXCEPTED_URLPATTERNS = {
         reverse("admin:login"),
-        reverse("django_auth:password_reset"),
-        reverse("django_auth:password_reset_done"),
-        reverse("django_auth:password_reset_complete"),
-        reverse(
-            "django_auth:password_reset_confirm",
-            args=["(?P<uidb64>[^/]+)", "(?P<token>[^/]+)"],
-        ),
         reverse("login"),
         reverse("password_reset"),
         reverse("password_reset_done"),
         reverse("password_reset_complete"),
-        reverse("password_reset_confirm", args=["<uidb64>", "<token>"]),
-        # TODO: figure out the way to manage this view.
-        "/bread/preferences/global/<slug:section>",
+        "/bread/accounts/reset/<uidb64>/<token>/",
     }
 
     def test_visible(self):
 
-        print(*self.EXCEPTED_URLPATTERNS, sep="\n")
-
-        # add the uncompiled url to exception
-        excepted_urlpatterns = self.EXCEPTED_URLPATTERNS.copy()
-        url_intpk = {x for x in self.ALL_URL_NAMES if "<int:pk>" in x}
-
         # update the exceptions for some pages that can be visible to the public
         # and those pages with dynamic url regex
         # and those out of the bread's scope (e.g., basxconnect)
-        url_names = self.ALL_URL_NAMES - excepted_urlpatterns - url_intpk
+        url_names = self.ALL_URL_NAMES - self.EXCEPTED_URLPATTERNS
 
-        # manually add a list of urls with a dynamic subdirectory.
-        # (e.g., <int:pk>)
-        for url in url_intpk:
-            url_names.add(url.replace("<int:pk>", str(secrets.randbelow(100))))
+        # this tricky way works because '<' will always be encoded
+        # if being requested, except for Django url patterns.
+        url_with_args = {x for x in url_names if "<" in x}
+
+        for url in url_with_args:
+            args = [x for x in url.split("/")]
+            for i in range(len(args)):
+                if "<" not in args[i]:
+                    continue
+
+                if ":" in args[i]:  # the first one will specify its type
+                    t = args[i][1 : args[i].find(":")]
+
+                    if t == "int":
+                        args[i] = str(random.randint(1, 100))
+                    else:
+                        args[i] = "".join(random.sample(ALPHANUMERIC_STR, k=10))
+
+                else:
+                    args[i] = "".join(random.sample(ALPHANUMERIC_STR, k=10))
+
+            url_names.add("/".join(args))
+
+        # remove url with unsubstituted arguments
+        url_names -= url_with_args
 
         # try fetching each url and see the response
         c = Client()
@@ -71,14 +79,11 @@ class TestAnonymousVisible(TestCase):
                 # redirects to the login page.
                 self.assertTrue(
                     300 <= response.status_code <= 399
-                    and response.headers["Location"].startswith(
-                        "/bread/accounts/login/"
-                    ),
+                    and isinstance(response, HttpResponseRedirect)
+                    and response.url.startswith(str(reverse("login"))),
                     "This page %s may be visible to anonymous users, with the status code %d"
                     % (url, response.status_code),
                 )
-
-                # print(url, "checked")
 
             except TemplateDoesNotExist as e:
                 if hasattr(e, "message"):
