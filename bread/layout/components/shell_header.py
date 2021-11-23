@@ -59,7 +59,6 @@ class ShellHeader(hg.HEADER):
                 _class="bx--header__global",
             ),
             _class="bx--header",
-            role="banner",
             data_header=True,
         )
 
@@ -70,7 +69,7 @@ def logo():
     return hg.IMG(
         src=staticfiles_storage.url("logo.png"),
         _class="bx--header__name--prefix",
-        style="width: 1.7rem; height; 1.7rem; margin-right: 0.5rem",
+        style="width: 1.7rem; height: 1.7rem; margin-right: 0.5rem",
     )
 
 

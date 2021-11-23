@@ -98,7 +98,10 @@ class Modal(hg.DIV):
 
         modal = cls(
             heading,
-            hg.CENTER(Loading(), style="opacity: 0.5; background-color: #EEE"),
+            hg.DIV(
+                Loading(),
+                style="opacity: 0.5; background-color: #EEE; text-align: center;",
+            ),
             label="",
             buttons=buttons,
             size="md",

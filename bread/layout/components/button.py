@@ -63,7 +63,7 @@ class Button(hg.BUTTON):
         return hg.A(*self, **{**self.attributes, "href": href})
 
 
-class ButtonSet(hg.htmltags.DIV):
+class ButtonSet(hg.DIV):
     def __init__(self, *buttons, **attributes):
         attributes["_class"] = attributes.get("_class", "") + " bx--btn-set"
         super().__init__(*buttons, **attributes)
