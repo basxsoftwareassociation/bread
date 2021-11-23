@@ -86,6 +86,8 @@ class TestAnonymousVisible(TestCase):
                     % (url, response.status_code),
                 )
 
+                print(url, "checked")
+
             except TemplateDoesNotExist as e:
                 if hasattr(e, "message"):
                     print("The template for", url, "at", e.message, "does not exist.")

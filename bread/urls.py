@@ -47,10 +47,21 @@ external_urlpatterns = [
 ]
 
 urlpatterns = [
-    path("auth/", include("django.contrib.auth.urls")),
-    path("accounts/login/", auth.BreadLoginView.as_view(), name="login"),
-    path("accounts/logout/", auth.BreadLogoutView.as_view(), name="logout"),
-    path("accounts/user/", userprofile.UserProfileView.as_view(), name="userprofile"),
+    path(
+        "accounts/login/",
+        auth.BreadLoginView.as_view(),
+        name="login",
+    ),
+    path(
+        "accounts/logout/",
+        auth.BreadLogoutView.as_view(),
+        name="logout",
+    ),
+    path(
+        "accounts/user/",
+        userprofile.UserProfileView.as_view(),
+        name="userprofile",
+    ),
     autopath(
         userprofile.EditPersonalDataView.as_view(), urlname="userprofile.personal"
     ),
