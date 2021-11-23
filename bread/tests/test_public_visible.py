@@ -1,4 +1,5 @@
 import random
+import string
 import traceback
 import uuid
 
@@ -11,7 +12,7 @@ from django.urls import reverse_lazy as reverse
 from django_extensions.management.commands import show_urls
 
 ROOT_URLPATTERNS = django.urls.get_resolver(None).url_patterns
-ALPHANUMERIC_STR = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+ALPHANUMERIC_STR = "".join((string.ascii_letters, string.digits))
 
 
 class TestAnonymousVisible(TestCase):
