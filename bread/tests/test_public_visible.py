@@ -1,5 +1,6 @@
 import random
 import traceback
+import uuid
 
 import django.urls
 from django.contrib.admindocs.views import simplify_regex
@@ -50,8 +51,10 @@ class TestAnonymousVisible(TestCase):
 
                     if t == "int":
                         args[i] = str(random.randint(1, 100))  # nosec
-                        # the line above can be omitted because it isn't for
-                        # security purposes.
+                        # the line above can be avoid by bandit because
+                        # it isn't for security purposes.
+                    elif t == "uuid":
+                        args[i] = uuid.uuid4()
                     else:
                         args[i] = "".join(random.sample(ALPHANUMERIC_STR, k=10))
 
