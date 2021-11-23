@@ -49,7 +49,9 @@ class TestAnonymousVisible(TestCase):
                     t = args[i][1 : args[i].find(":")]
 
                     if t == "int":
-                        args[i] = str(random.randint(1, 100))
+                        args[i] = str(random.randint(1, 100))  # nosec
+                        # the line above can be omitted because it isn't for
+                        # security purposes.
                     else:
                         args[i] = "".join(random.sample(ALPHANUMERIC_STR, k=10))
 
