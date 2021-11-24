@@ -139,7 +139,7 @@ admingroup = DevGroup(_("Administration"), iconname="network--3--reference", ord
 registeritem(
     Item(
         Link(
-            reverse("breadadmin.backgroundjobs"),
+            reverse("django_celery_results.taskresult.browse"),
             _("Background Jobs"),
         ),
         admingroup,

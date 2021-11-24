@@ -45,7 +45,7 @@ class DataTable(hg.TABLE):
             ),
             DataTableColumn(
                 header="Population",
-                cell=hg.DIV(hg.C("row.Population")),       # what will be inside each cell of the specific column.
+                cell=hg.DIV(hg.C("row.Population")), # what will be inside each cell of the specific column.
             ),
         ],
         row_iterator=[
