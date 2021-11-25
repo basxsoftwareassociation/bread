@@ -1,6 +1,8 @@
 import datetime
 
 import htmlgenerator as hg
+from bread.utils import pretty_modelname, resolve_modellookup
+from bread.utils.urls import reverse_model
 from django.conf import settings
 from django.db import models
 from django.db.models import ManyToOneRel
@@ -9,9 +11,6 @@ from django.template.context import _builtin_context_processors
 from django.utils.formats import localize
 from django.utils.module_loading import import_string
 from django.utils.timezone import localtime
-
-from bread.utils import pretty_modelname, resolve_modellookup
-from bread.utils.urls import reverse_model
 
 from ..formatters import format_value
 

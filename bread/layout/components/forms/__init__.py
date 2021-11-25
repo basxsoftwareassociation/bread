@@ -346,7 +346,8 @@ class HiddenInput(FormChild, hg.INPUT):
         self.fieldname = fieldname
         super().__init__(type="hidden", **{**widgetattributes, **attributes})
 
-        self.attributes["id"] = boundfield.auto_id
+        if boundfield is not None:
+            self.attributes["id"] = boundfield.auto_id
         if boundfield is not None:
             self.attributes["name"] = boundfield.html_name
             if boundfield.value() is not None:
