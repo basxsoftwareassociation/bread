@@ -1,7 +1,10 @@
 import htmlgenerator as hg
 from django import forms
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
-from django.contrib.contenttypes.forms import generic_inlineformset_factory
+from django.contrib.contenttypes.forms import (
+    BaseGenericInlineFormSet,
+    generic_inlineformset_factory,
+)
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models, transaction
 from django.forms.formsets import DELETION_FIELD_NAME, ORDERING_FIELD_NAME
@@ -157,6 +160,15 @@ class InlineFormSetWithLimits(forms.BaseInlineFormSet):
         return self._queryset
 
 
+class GenericInlineFormSetWithLimits(BaseGenericInlineFormSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        self._queryset = super().get_queryset()[: self.max_num]
+        return self._queryset
+
+
 def _generate_formset_class(
     request,
     model,
@@ -195,7 +207,7 @@ def _generate_formset_class(
             modelfield.related_model,
             ct_field=modelfield.content_type_field_name,
             fk_field=modelfield.object_id_field_name,
-            formset=InlineFormSetWithLimits,
+            formset=GenericInlineFormSetWithLimits,
             formfield_callback=lambda field: _formfield_callback_with_request(
                 field, request, modelfield.related_model, instance, cache_querysets
             ),
