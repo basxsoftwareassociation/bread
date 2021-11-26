@@ -16,27 +16,31 @@ ALPHANUMERIC_STR = "".join((string.ascii_letters, string.digits))
 
 class TestAnonymousVisible(TestCase):
     # get a list of urlpatterns
-    ALL_URLS = {
-        x[2]: simplify_regex(x[1])  # { urlname: urlpattern }
-        for x in show_urls.Command().extract_views_from_urlpatterns(ROOT_URLPATTERNS)
-    }
-    EXCEPTED_URLPATTERNS = {
-        ALL_URLS["admin:login"],
-        ALL_URLS["login"],
-        ALL_URLS["password_reset"],
-        ALL_URLS["password_reset_done"],
-        ALL_URLS["password_reset_complete"],
-        ALL_URLS["password_reset_confirm"],
-    }
 
     def test_visible(self):
+        ALL_URLS = {
+            x[2]: simplify_regex(x[1])  # { urlname: urlpattern }
+            for x in show_urls.Command().extract_views_from_urlpatterns(
+                ROOT_URLPATTERNS
+            )
+        }
+        EXCEPTED_URLPATTERNS = {
+            ALL_URLS[exclude]
+            for exclude in (
+                "admin:login",
+                "login",
+                "password_reset",
+                "password_reset_done",
+                "password_reset_complete",
+                "password_reset_confirm",
+            )
+            if exclude in ALL_URLS
+        }
 
         # update the exceptions for some pages that can be visible to the public
         # and those pages with dynamic url regex
         # and those out of the bread's scope (e.g., basxconnect)
-        url_names = {
-            self.ALL_URLS[x] for x in self.ALL_URLS
-        } - self.EXCEPTED_URLPATTERNS
+        url_names = {ALL_URLS[x] for x in ALL_URLS} - EXCEPTED_URLPATTERNS
 
         # this tricky way works because '<' will always be encoded
         # if being requested, except for Django url patterns.
@@ -87,7 +91,7 @@ class TestAnonymousVisible(TestCase):
                 self.assertTrue(
                     300 <= response.status_code <= 399
                     and isinstance(response, HttpResponseRedirect)
-                    and response.url.startswith(str(self.ALL_URLS["login"])),
+                    and response.url.startswith(str(ALL_URLS["login"])),
                     "This page %s may be visible to anonymous users, with the status code %d"
                     % (url, response.status_code),
                 )
