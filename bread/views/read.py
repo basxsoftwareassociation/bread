@@ -9,7 +9,7 @@ from .. import layout as _layout  # prevent name clashing
 from ..formatters import format_value
 from ..forms.fields import FormsetField
 from ..forms.forms import breadmodelform_factory
-from ..utils import expand_ALL_constant
+from ..utils import ModelHref, expand_ALL_constant
 from .edit import EditView
 from .util import BreadView
 
@@ -56,7 +56,9 @@ class ReadView(
                 ),
                 style="width: auto",
             ),
-            _layout.button.Button(_("Edit"), style="margin-top: 2rem"),
+            _layout.button.Button(_("Edit"), style="margin-top: 2rem").as_href(
+                ModelHref(self.model, "edit", kwargs={"pk": self.object.pk})
+            ),
         )
 
     def get_context_data(self, *args, **kwargs):
