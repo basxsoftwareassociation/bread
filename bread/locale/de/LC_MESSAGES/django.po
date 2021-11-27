@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-04 15:00+0700\n"
+"POT-Creation-Date: 2021-11-27 10:06+0700\n"
 "PO-Revision-Date: 2021-09-21 12:39+0000\n"
 "Last-Translator: Beat Schnyder <schnyder@basx.ch>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -93,7 +93,7 @@ msgid "Columns"
 msgstr "Spalten"
 
 #: bread/contrib/reports/urls.py:23
-#: bread/layout/components/forms/__init__.py:321 bread/views/browse.py:116
+#: bread/layout/components/forms/__init__.py:321 bread/views/browse.py:56
 msgid "Delete"
 msgstr "Löschen"
 
@@ -101,13 +101,14 @@ msgstr "Löschen"
 msgid "Copy"
 msgstr "Kopieren"
 
-#: bread/contrib/reports/urls.py:38 bread/views/userprofile.py:100
-#: bread/views/userprofile.py:128 bread/views/userprofile.py:160
+#: bread/contrib/reports/urls.py:38 bread/views/read.py:94
+#: bread/views/userprofile.py:100 bread/views/userprofile.py:128
+#: bread/views/userprofile.py:160
 msgid "Edit"
 msgstr "Bearbeiten"
 
 #: bread/contrib/reports/urls.py:43 bread/contrib/reports/views.py:131
-#: bread/views/browse.py:107
+#: bread/views/browse.py:49
 msgid "Excel"
 msgstr "Excel"
 
@@ -169,24 +170,51 @@ msgstr "Bevorzugte Sprache"
 msgid "Timezone"
 msgstr "Zeitzone"
 
+#: bread/layout/admin.py:29
+#, fuzzy
+#| msgid "Table Action Bar"
+msgid "unable to load"
+msgstr "Tabellen Aktionsbar"
+
+#: bread/layout/admin.py:42
+msgid "Package"
+msgstr ""
+
+#: bread/layout/admin.py:46
+msgid "Current"
+msgstr ""
+
+#: bread/layout/admin.py:50
+msgid "Latest"
+msgstr ""
+
+#: bread/layout/admin.py:92
+#, python-format
+msgid "The database size has been minimized from %.2f kB to %.2f kB."
+msgstr ""
+
+#: bread/layout/admin.py:100
+msgid "Optimize"
+msgstr ""
+
 #: bread/layout/components/button.py:76
 msgid "Print"
 msgstr "Drucken"
 
-#: bread/layout/components/datatable.py:206 bread/layout/components/modal.py:95
+#: bread/layout/components/datatable.py:239 bread/layout/components/modal.py:95
 #: bread/views/auth.py:28
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: bread/layout/components/datatable.py:217
+#: bread/layout/components/datatable.py:250
 msgid " items selected"
 msgstr " Einträge ausgewählt"
 
-#: bread/layout/components/datatable.py:223
+#: bread/layout/components/datatable.py:256
 msgid "Table Action Bar"
 msgstr "Tabellen Aktionsbar"
 
-#: bread/layout/components/datatable.py:323 bread/views/add.py:38
+#: bread/layout/components/datatable.py:356 bread/views/add.py:38
 #: bread/views/add.py:45
 #, python-format
 msgid "Add %s"
@@ -276,10 +304,58 @@ msgstr "Schliessen"
 msgid "Remove"
 msgstr "Entfernen"
 
+#: bread/menu.py:138
+msgid "Administration"
+msgstr ""
+
+#: bread/menu.py:143
+msgid "Background Jobs"
+msgstr ""
+
+#: bread/menu.py:149
+msgid "Django Admin"
+msgstr ""
+
+#: bread/menu.py:155 bread/views/admin.py:23
+msgid "Maintenance"
+msgstr ""
+
+#: bread/menu.py:165
+#, fuzzy
+#| msgid "System information"
+msgid "System Information"
+msgstr "Systeminformationen"
+
 #: bread/views/add.py:23
 #, python-format
 msgid "Added %s"
 msgstr "%s erstellt"
+
+#: bread/views/admin.py:29
+#, fuzzy
+#| msgid "pages"
+msgid "Packages"
+msgstr "Seiten"
+
+#: bread/views/admin.py:33
+msgid "Database Optimization"
+msgstr ""
+
+#: bread/views/admin.py:59
+#, fuzzy
+#| msgid "Created"
+msgid "Date Created"
+msgstr "Erstellt"
+
+#: bread/views/admin.py:66
+#, fuzzy
+#| msgid "Complete"
+msgid "Date Completed"
+msgstr "Fertigstellen"
+
+#: bread/views/admin.py:76
+msgid "Metadata"
+msgstr ""
 
 #: bread/views/auth.py:57 bread/views/auth.py:86 bread/views/userprofile.py:115
 #: bread/views/userprofile.py:121
@@ -342,39 +418,39 @@ msgstr "Passwort erfolgreich geändert."
 msgid "Please login again"
 msgstr "Bitte loggen Sie sich wieder ein"
 
-#: bread/views/browse.py:196
+#: bread/views/browse.py:195
 #, python-format
 msgid "Action '%s' is not configured for this view"
 msgstr "Aktion '%s' ist nicht konfiguriert für diese View"
 
-#: bread/views/browse.py:329
+#: bread/views/browse.py:328
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "Benutzer hat nicht die benötigten Berechtigungnen um '%s' zu löschen"
 
-#: bread/views/browse.py:342
+#: bread/views/browse.py:341
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s konnte nicht gelöscht werden: %s"
 
-#: bread/views/browse.py:347
+#: bread/views/browse.py:346
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s %(modelname)s gelöscht"
 
-#: bread/views/browse.py:369
+#: bread/views/browse.py:368
 #, python-format
 msgid "Your user has not the permissions to restore %s"
 msgstr ""
 "Ihr Benutzer hat nicht die benötigten Berechtigungnen um '%s' "
 "wiederherzustellen"
 
-#: bread/views/browse.py:378
+#: bread/views/browse.py:377
 #, python-format
 msgid "%s could not be restored: %s"
 msgstr "%s konnte nicht wiederhergestellt werden: %s"
 
-#: bread/views/browse.py:383
+#: bread/views/browse.py:382
 #, python-format
 msgid "Restored %(count)s %(modelname)s"
 msgstr "%(count)s %(modelname)s wiederhergestellt"
@@ -408,6 +484,14 @@ msgstr "%s Kopien erstellt"
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "Kopie"
+
+#: bread/views/read.py:76
+msgid "lbl_field"
+msgstr "Feld"
+
+#: bread/views/read.py:79
+msgid "lbl_value"
+msgstr "Wert"
 
 #: bread/views/system.py:31
 msgid "System information"

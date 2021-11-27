@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-04 15:00+0700\n"
+"POT-Creation-Date: 2021-11-27 10:06+0700\n"
 "PO-Revision-Date: 2021-11-07 16:52+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -87,7 +87,7 @@ msgid "Columns"
 msgstr "ช่อง"
 
 #: bread/contrib/reports/urls.py:23
-#: bread/layout/components/forms/__init__.py:321 bread/views/browse.py:116
+#: bread/layout/components/forms/__init__.py:321 bread/views/browse.py:56
 msgid "Delete"
 msgstr "ลบ"
 
@@ -95,13 +95,14 @@ msgstr "ลบ"
 msgid "Copy"
 msgstr "คัดลอก"
 
-#: bread/contrib/reports/urls.py:38 bread/views/userprofile.py:100
-#: bread/views/userprofile.py:128 bread/views/userprofile.py:160
+#: bread/contrib/reports/urls.py:38 bread/views/read.py:94
+#: bread/views/userprofile.py:100 bread/views/userprofile.py:128
+#: bread/views/userprofile.py:160
 msgid "Edit"
 msgstr "แก้ไข"
 
 #: bread/contrib/reports/urls.py:43 bread/contrib/reports/views.py:131
-#: bread/views/browse.py:107
+#: bread/views/browse.py:49
 msgid "Excel"
 msgstr "Excel"
 
@@ -163,24 +164,51 @@ msgstr "เลือกใช้ภาษา"
 msgid "Timezone"
 msgstr "เขตเวลา"
 
+#: bread/layout/admin.py:29
+#, fuzzy
+#| msgid "Table Action Bar"
+msgid "unable to load"
+msgstr "แถบงาน"
+
+#: bread/layout/admin.py:42
+msgid "Package"
+msgstr ""
+
+#: bread/layout/admin.py:46
+msgid "Current"
+msgstr ""
+
+#: bread/layout/admin.py:50
+msgid "Latest"
+msgstr ""
+
+#: bread/layout/admin.py:92
+#, python-format
+msgid "The database size has been minimized from %.2f kB to %.2f kB."
+msgstr ""
+
+#: bread/layout/admin.py:100
+msgid "Optimize"
+msgstr ""
+
 #: bread/layout/components/button.py:76
 msgid "Print"
 msgstr "พิมพ์"
 
-#: bread/layout/components/datatable.py:206 bread/layout/components/modal.py:95
+#: bread/layout/components/datatable.py:239 bread/layout/components/modal.py:95
 #: bread/views/auth.py:28
 msgid "Cancel"
 msgstr "ยกเลิก"
 
-#: bread/layout/components/datatable.py:217
+#: bread/layout/components/datatable.py:250
 msgid " items selected"
 msgstr " เลือกรายการ"
 
-#: bread/layout/components/datatable.py:223
+#: bread/layout/components/datatable.py:256
 msgid "Table Action Bar"
 msgstr "แถบงาน"
 
-#: bread/layout/components/datatable.py:323 bread/views/add.py:38
+#: bread/layout/components/datatable.py:356 bread/views/add.py:38
 #: bread/views/add.py:45
 #, python-format
 msgid "Add %s"
@@ -270,10 +298,58 @@ msgstr "ปิด"
 msgid "Remove"
 msgstr "ลบออก"
 
+#: bread/menu.py:138
+msgid "Administration"
+msgstr ""
+
+#: bread/menu.py:143
+msgid "Background Jobs"
+msgstr ""
+
+#: bread/menu.py:149
+msgid "Django Admin"
+msgstr ""
+
+#: bread/menu.py:155 bread/views/admin.py:23
+msgid "Maintenance"
+msgstr ""
+
+#: bread/menu.py:165
+#, fuzzy
+#| msgid "System information"
+msgid "System Information"
+msgstr "ข้อมูลระบบ"
+
 #: bread/views/add.py:23
 #, python-format
 msgid "Added %s"
 msgstr "เพิ่ม %s"
+
+#: bread/views/admin.py:29
+#, fuzzy
+#| msgid "pages"
+msgid "Packages"
+msgstr "หน้า"
+
+#: bread/views/admin.py:33
+msgid "Database Optimization"
+msgstr ""
+
+#: bread/views/admin.py:59
+#, fuzzy
+#| msgid "Created"
+msgid "Date Created"
+msgstr "สร้าง"
+
+#: bread/views/admin.py:66
+#, fuzzy
+#| msgid "Complete"
+msgid "Date Completed"
+msgstr "เรียบร้อย"
+
+#: bread/views/admin.py:76
+msgid "Metadata"
+msgstr ""
 
 #: bread/views/auth.py:57 bread/views/auth.py:86 bread/views/userprofile.py:115
 #: bread/views/userprofile.py:121
@@ -332,37 +408,37 @@ msgstr "เปลี่ยนรหัสผ่านสำเร็จ"
 msgid "Please login again"
 msgstr "กรุณาเข้าสู่ระบบอีกครั้ง"
 
-#: bread/views/browse.py:196
+#: bread/views/browse.py:195
 #, python-format
 msgid "Action '%s' is not configured for this view"
 msgstr "ไม่ได้กำหนดค่าการกระทำ '%s' สำหรับมุมมองนี้"
 
-#: bread/views/browse.py:329
+#: bread/views/browse.py:328
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่สามารถทำการลบได้%s"
 
-#: bread/views/browse.py:342
+#: bread/views/browse.py:341
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s ไม่ควรลบเพราะ: %s"
 
-#: bread/views/browse.py:347
+#: bread/views/browse.py:346
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "ลบ %(count)s %(modelname)s"
 
-#: bread/views/browse.py:369
+#: bread/views/browse.py:368
 #, python-format
 msgid "Your user has not the permissions to restore %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่มีสิทธิ์กู้คืน%s"
 
-#: bread/views/browse.py:378
+#: bread/views/browse.py:377
 #, python-format
 msgid "%s could not be restored: %s"
 msgstr "%s ไม่ควรกู้คืนเพราะ: %s"
 
-#: bread/views/browse.py:383
+#: bread/views/browse.py:382
 #, python-format
 msgid "Restored %(count)s %(modelname)s"
 msgstr "กู้คืน %(count)s %(modelname)s"
@@ -396,6 +472,14 @@ msgstr "สร้าง %s สำเนา"
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "คัดลอก"
+
+#: bread/views/read.py:76
+msgid "lbl_field"
+msgstr ""
+
+#: bread/views/read.py:79
+msgid "lbl_value"
+msgstr ""
 
 #: bread/views/system.py:31
 msgid "System information"

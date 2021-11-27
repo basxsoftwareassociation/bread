@@ -3,22 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-27 10:06+0700\n"
-"PO-Revision-Date: 2021-05-15 05:32+0000\n"
-"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
-"Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
-"basxconnect/bread/nb_NO/>\n"
-"Language: nb_NO\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.7-dev\n"
-
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 #: bread/contrib/reports/fields/queryfield.py:112
 #, python-format
 msgid "Invalid model '%s' selected"
@@ -26,25 +24,23 @@ msgstr ""
 
 #: bread/contrib/reports/models.py:20
 msgid "Created"
-msgstr "Opprettet"
+msgstr ""
 
 #: bread/contrib/reports/models.py:21 bread/contrib/reports/models.py:98
 msgid "Name"
-msgstr "Navn"
+msgstr ""
 
 #: bread/contrib/reports/models.py:26
 msgid "Model"
-msgstr "Modell"
+msgstr ""
 
 #: bread/contrib/reports/models.py:27
-#, fuzzy
 msgid "Filter"
-msgstr "Filtrer"
+msgstr ""
 
 #: bread/contrib/reports/models.py:29
-#, fuzzy
 msgid "Custom Filter"
-msgstr "Filtrer"
+msgstr ""
 
 #: bread/contrib/reports/models.py:32
 msgid ""
@@ -53,7 +49,7 @@ msgstr ""
 
 #: bread/contrib/reports/models.py:50
 msgid "Preview"
-msgstr "Forhåndsvis"
+msgstr ""
 
 #: bread/contrib/reports/models.py:68
 #, python-format
@@ -69,16 +65,16 @@ msgstr ""
 
 #: bread/contrib/reports/models.py:86
 msgid "Report"
-msgstr "Rapport"
+msgstr ""
 
 #: bread/contrib/reports/models.py:87 bread/contrib/reports/urls.py:71
 #: bread/contrib/reports/urls.py:74
 msgid "Reports"
-msgstr "Rapporter"
+msgstr ""
 
 #: bread/contrib/reports/models.py:97 bread/contrib/reports/models.py:104
 msgid "Column"
-msgstr "Kolonne"
+msgstr ""
 
 #: bread/contrib/reports/models.py:100
 msgid "Aggregation"
@@ -86,19 +82,16 @@ msgstr ""
 
 #: bread/contrib/reports/models.py:105
 msgid "Columns"
-msgstr "Kolonner"
+msgstr ""
 
 #: bread/contrib/reports/urls.py:23
 #: bread/layout/components/forms/__init__.py:321 bread/views/browse.py:56
 msgid "Delete"
-msgstr "Slett"
+msgstr ""
 
 #: bread/contrib/reports/urls.py:27
-#, fuzzy
-#| msgctxt "this is a copy"
-#| msgid "Copy"
 msgid "Copy"
-msgstr "Kopier"
+msgstr ""
 
 #: bread/contrib/reports/urls.py:38 bread/views/read.py:94
 #: bread/views/userprofile.py:100 bread/views/userprofile.py:128
@@ -113,7 +106,7 @@ msgstr ""
 
 #: bread/contrib/reports/views.py:45
 msgid "Base model"
-msgstr "Grunnmodell"
+msgstr ""
 
 #: bread/contrib/reports/views.py:62
 msgid "Help"
@@ -132,10 +125,8 @@ msgid "Bold text marks valid column names"
 msgstr ""
 
 #: bread/contrib/reports/views.py:208
-#, fuzzy
-#| msgid "Column"
 msgid "Column name"
-msgstr "Kolonne"
+msgstr ""
 
 #: bread/contrib/reports/views.py:212
 msgid "Description"
@@ -198,16 +189,16 @@ msgstr ""
 
 #: bread/layout/components/button.py:76
 msgid "Print"
-msgstr "Skriv ut"
+msgstr ""
 
 #: bread/layout/components/datatable.py:239 bread/layout/components/modal.py:95
 #: bread/views/auth.py:28
 msgid "Cancel"
-msgstr "Avbryt"
+msgstr ""
 
 #: bread/layout/components/datatable.py:250
 msgid " items selected"
-msgstr " elementer valgt"
+msgstr ""
 
 #: bread/layout/components/datatable.py:256
 msgid "Table Action Bar"
@@ -217,25 +208,25 @@ msgstr ""
 #: bread/views/add.py:45
 #, python-format
 msgid "Add %s"
-msgstr "Legg til %s"
+msgstr ""
 
 #: bread/layout/components/forms/__init__.py:29 bread/views/userprofile.py:97
 #: bread/views/userprofile.py:125 bread/views/userprofile.py:157
 msgid "Save"
-msgstr "Lagre"
+msgstr ""
 
 #: bread/layout/components/forms/__init__.py:67
 msgid "Form error"
-msgstr "Skjemafeil"
+msgstr ""
 
 #: bread/layout/components/forms/__init__.py:73
 msgid "Form error: "
-msgstr "Skjemafeil: "
+msgstr ""
 
 #: bread/layout/components/forms/__init__.py:211
 #: bread/layout/components/forms/__init__.py:231
 msgid "Add"
-msgstr "Legg til"
+msgstr ""
 
 #: bread/layout/components/forms/__init__.py:278
 msgid "Order"
@@ -243,41 +234,40 @@ msgstr ""
 
 #: bread/layout/components/forms/file_uploader.py:30
 msgid "Select file"
-msgstr "Velg fil"
+msgstr ""
 
 #: bread/layout/components/forms/text_input.py:93
 msgid "Show password"
-msgstr "Vis passord"
+msgstr ""
 
 #: bread/layout/components/forms/toggle.py:11
 msgid "Off"
-msgstr "Av"
+msgstr ""
 
 #: bread/layout/components/forms/toggle.py:12
 msgid "On"
-msgstr "På"
+msgstr ""
 
 #: bread/layout/components/notification.py:130
-#, fuzzy
 msgid "Time stamp"
-msgstr "Tidsstempel"
+msgstr ""
 
 #: bread/layout/components/pagination.py:44
 msgid "Items per page"
-msgstr "Elementer per side"
+msgstr ""
 
 #: bread/layout/components/pagination.py:92
 #: bread/layout/components/pagination.py:139
 msgid "of"
-msgstr "av"
+msgstr ""
 
 #: bread/layout/components/pagination.py:101
 msgid "items"
-msgstr "elementer"
+msgstr ""
 
 #: bread/layout/components/pagination.py:143
 msgid "pages"
-msgstr "sider"
+msgstr ""
 
 #: bread/layout/components/progress_indicator.py:33
 msgid "Optional"
@@ -285,7 +275,7 @@ msgstr ""
 
 #: bread/layout/components/search.py:47 bread/layout/components/search.py:63
 msgid "Search"
-msgstr "Søk"
+msgstr ""
 
 #: bread/layout/components/search.py:110 bread/layout/components/search.py:111
 msgid "Clear search input"
@@ -293,9 +283,8 @@ msgstr ""
 
 #: bread/layout/components/shell_header.py:53
 #: bread/layout/components/shell_header.py:54 bread/views/auth.py:103
-#, fuzzy
 msgid "Logout"
-msgstr "Logg ut"
+msgstr ""
 
 #: bread/layout/components/shell_header.py:55
 msgid "Close"
@@ -303,7 +292,7 @@ msgstr ""
 
 #: bread/layout/components/tag.py:19
 msgid "Remove"
-msgstr "Fjern"
+msgstr ""
 
 #: bread/menu.py:138
 msgid "Administration"
@@ -322,36 +311,29 @@ msgid "Maintenance"
 msgstr ""
 
 #: bread/menu.py:165
-#, fuzzy
-#| msgid "System Settings"
 msgid "System Information"
-msgstr "Systeminnstillinger"
+msgstr ""
 
 #: bread/views/add.py:23
 #, python-format
 msgid "Added %s"
-msgstr "%s tillagt"
+msgstr ""
 
 #: bread/views/admin.py:29
-#, fuzzy
-#| msgid "pages"
 msgid "Packages"
-msgstr "sider"
+msgstr ""
 
 #: bread/views/admin.py:33
 msgid "Database Optimization"
 msgstr ""
 
 #: bread/views/admin.py:59
-#, fuzzy
-#| msgid "Created"
 msgid "Date Created"
-msgstr "Opprettet"
+msgstr ""
 
 #: bread/views/admin.py:66
-#, fuzzy
 msgid "Date Completed"
-msgstr "Fullført"
+msgstr ""
 
 #: bread/views/admin.py:76
 msgid "Metadata"
@@ -359,15 +341,12 @@ msgstr ""
 
 #: bread/views/auth.py:57 bread/views/auth.py:86 bread/views/userprofile.py:115
 #: bread/views/userprofile.py:121
-#, fuzzy
 msgid "Login"
-msgstr "Logg inn"
+msgstr ""
 
 #: bread/views/auth.py:65 bread/views/auth.py:122
-#, fuzzy
-#| msgid "Show password"
 msgid "Lost password?"
-msgstr "Vis passord"
+msgstr ""
 
 #: bread/views/auth.py:107
 msgid "Logged out"
@@ -378,10 +357,8 @@ msgid "Password reset"
 msgstr ""
 
 #: bread/views/auth.py:137
-#, fuzzy
-#| msgid "Show password"
 msgid "Reset password"
-msgstr "Vis passord"
+msgstr ""
 
 #: bread/views/auth.py:153
 msgid "Email instructions sent"
@@ -398,10 +375,8 @@ msgid "Back to Login"
 msgstr ""
 
 #: bread/views/auth.py:171 bread/views/auth.py:197 bread/views/auth.py:221
-#, fuzzy
-#| msgid "Show password"
 msgid "Change password"
-msgstr "Vis passord"
+msgstr ""
 
 #: bread/views/auth.py:203
 msgid "Invalid password reset link"
@@ -429,90 +404,82 @@ msgstr ""
 #: bread/views/browse.py:328
 #, python-format
 msgid "Your user has not the permissions to delete %s"
-msgstr "Din bruker har ikke tilgang til å slette %s"
+msgstr ""
 
 #: bread/views/browse.py:341
 #, python-format
 msgid "%s could not be deleted: %s"
-msgstr "%s kunne ikke slettes: %s"
+msgstr ""
 
 #: bread/views/browse.py:346
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
-msgstr "%(count)s %(modelname)s slettet"
+msgstr ""
 
 #: bread/views/browse.py:368
-#, fuzzy, python-format
-#| msgid "Your user has not the permissions to delete %s"
+#, python-format
 msgid "Your user has not the permissions to restore %s"
-msgstr "Din bruker har ikke tilgang til å slette %s"
+msgstr ""
 
 #: bread/views/browse.py:377
-#, fuzzy, python-format
-#| msgid "%s could not be deleted: %s"
+#, python-format
 msgid "%s could not be restored: %s"
-msgstr "%s kunne ikke slettes: %s"
+msgstr ""
 
 #: bread/views/browse.py:382
-#, fuzzy, python-format
-#| msgid "Deleted %(count)s %(modelname)s"
+#, python-format
 msgid "Restored %(count)s %(modelname)s"
-msgstr "%(count)s %(modelname)s slettet"
+msgstr ""
 
 #: bread/views/delete.py:48
-#, fuzzy, python-format
+#, python-format
 msgid "Restored %(modelname)s %(objectname)s"
-msgstr "Slettet %(modelname)s %(objectname)s"
+msgstr ""
 
 #: bread/views/delete.py:50 bread/views/delete.py:54
-#, fuzzy, python-format
+#, python-format
 msgid "Deleted %(modelname)s %(objectname)s"
-msgstr "Slettet %(modelname)s %(objectname)s"
+msgstr ""
 
 #: bread/views/edit.py:49
-#, fuzzy, python-format
-#| msgid "Save"
+#, python-format
 msgid "Saved %s"
-msgstr "Lagre"
+msgstr ""
 
 #: bread/views/edit.py:77
 #, python-format
 msgid "Created copy %s"
-msgstr "Opprettet kopi %s"
+msgstr ""
 
 #: bread/views/edit.py:101
 #, python-format
 msgid "Created %s copies"
-msgstr "Opprettet %s kopier"
+msgstr ""
 
 #: bread/views/edit.py:144
 msgctxt "this is a copy"
 msgid "Copy"
-msgstr "Kopier"
+msgstr ""
 
 #: bread/views/read.py:76
 msgid "lbl_field"
-msgstr ""
+msgstr "Field"
 
 #: bread/views/read.py:79
 msgid "lbl_value"
-msgstr ""
+msgstr "Value"
 
 #: bread/views/system.py:31
-#, fuzzy
-#| msgid "System Settings"
 msgid "System information"
-msgstr "Systeminnstillinger"
+msgstr ""
 
 #: bread/views/userprofile.py:36
 msgid "Manage Profile"
 msgstr ""
 
 #: bread/views/userprofile.py:49 bread/views/userprofile.py:93
-#, fuzzy
-#| msgid "System Settings"
 msgid "Personal Information"
-msgstr "Systeminnstillinger"
+msgstr ""
 
 #: bread/views/userprofile.py:146 bread/views/userprofile.py:152
 msgid "Permissions"
@@ -568,24 +535,12 @@ msgstr ""
 
 #: bread/views/wizard.py:50
 msgid "Back"
-msgstr "Tilbake"
+msgstr ""
 
 #: bread/views/wizard.py:61
-#, fuzzy
 msgid "Complete"
-msgstr "Fullført"
+msgstr ""
 
 #: bread/views/wizard.py:64
 msgid "Continue"
-msgstr "Fortsett"
-
-#, fuzzy
-#~| msgid "Show password"
-#~ msgid "Change Password"
-#~ msgstr "Vis passord"
-
-#~ msgid "System Settings"
-#~ msgstr "Systeminnstillinger"
-
-#~ msgid "New report: "
-#~ msgstr "Ny rapport: "
+msgstr ""
