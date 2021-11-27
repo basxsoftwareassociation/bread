@@ -136,7 +136,7 @@ class ObjectFieldValue(hg.Lazy):
         if self.formatter:
             value = self.formatter(value)
         if isinstance(value, models.Manager):
-            value = ", ".join(value.all())
+            value = ", ".join([str(x) for x in value.all()])
         return value
 
 
