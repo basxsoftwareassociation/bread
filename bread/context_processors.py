@@ -1,4 +1,6 @@
 def bread_context(request):
+    from django.conf import settings
 
-    ret = {}
-    return ret
+    if hasattr(settings, "PLATFORMNAME"):
+        return {"PLATFORMNAME": settings.PLATFORMNAME}
+    return {}

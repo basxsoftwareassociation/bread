@@ -59,6 +59,12 @@ class ReadView(
             _layout.button.Button(_("Edit"), style="margin-top: 2rem"),
         )
 
+    def get_context_data(self, *args, **kwargs):
+        return {
+            **super().get_context_data(*args, **kwargs),
+            "pagetitle": str(self.object),
+        }
+
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
 
