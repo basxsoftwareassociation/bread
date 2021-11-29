@@ -48,32 +48,6 @@ def pretty_modelname(model, plural=False):
     return model._meta.verbose_name
 
 
-def pretty_fieldname(field):
-    from django.contrib.contenttypes.fields import GenericForeignKey
-
-    """Canonical way to pretty print a field name"""
-    if isinstance(field, str):
-        ret = field.replace("_", " ")
-    elif field.is_relation and field.one_to_many:
-        ret = field.target_field.model._meta.verbose_name_plural
-    elif field.is_relation and field.many_to_many and field.auto_created:
-        ret = getattr(
-            field.target_field,
-            "related_name",
-            field.related_model._meta.verbose_name_plural,
-        ).replace("_", " ")
-    elif field.is_relation and field.one_to_one:
-        ret = field.target_field.model._meta.verbose_name
-    elif isinstance(field, GenericForeignKey):
-        ret = field.name.replace("_", " ")
-    else:
-        ret = field.verbose_name
-
-    if ret and ret[0].islower():
-        return ret.capitalize()
-    return str(ret)
-
-
 def resolve_modellookup(model, accessor):
     """Takes a model and an accessor string like 'address.street' and returns a list of the according python objects"""
     attrib = model
