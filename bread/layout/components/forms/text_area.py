@@ -11,7 +11,6 @@ class TextArea(hg.DIV):
         placeholder="",
         rows=None,
         cols=None,
-        light=False,
         widgetattributes={},
         boundfield=None,
         **attributes,
@@ -20,8 +19,7 @@ class TextArea(hg.DIV):
         attributes["_class"] = attributes.get("_class", "") + " bx--form-item"
 
         widgetattributes["_class"] = (
-            widgetattributes.get("_class", "")
-            + f" bx--text-area bx--text-area--v2 {'bx--text-area--light' if light else ''}"
+            widgetattributes.get("_class", "") + " bx--text-area bx--text-area--v2"
         )
         if rows:
             widgetattributes["rows"] = rows

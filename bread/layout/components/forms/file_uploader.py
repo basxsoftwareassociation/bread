@@ -11,7 +11,6 @@ class FileUploader(hg.DIV):
     def __init__(
         self,
         fieldname,
-        light=False,
         widgetattributes={},
         boundfield=None,
         **attributes,

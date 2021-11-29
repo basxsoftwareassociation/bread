@@ -9,7 +9,6 @@ from .helpers import ErrorListElement, HelpTextElement, LabelElement
 class TextInput(hg.DIV):
     def __init__(
         self,
-        light=False,
         widgetattributes=None,
         label=None,
         help_text=None,
@@ -35,7 +34,6 @@ class TextInput(hg.DIV):
         widgetattributes["_class"] = hg.BaseElement(
             widgetattributes.get("_class", ""),
             " bx--text-input",
-            hg.If(light, " bx--text-input--light"),
             hg.If(errors, " bx--text-input--invalid"),
         )
 

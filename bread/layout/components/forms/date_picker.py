@@ -11,7 +11,6 @@ class DatePicker(hg.DIV):
         self,
         fieldname,
         placeholder="",
-        light=False,
         short=False,
         simple=False,
         widgetattributes={},
@@ -57,8 +56,7 @@ class DatePicker(hg.DIV):
                 ),
                 _class="bx--date-picker"
                 + (" bx--date-picker--simple" if simple else "bx--date-picker--single")
-                + (" bx--date-picker--short" if short else "")
-                + (" bx--date-picker--light" if light else ""),
+                + (" bx--date-picker--short" if short else ""),
                 **picker_attribs,
             ),
             **attributes,

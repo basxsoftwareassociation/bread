@@ -347,7 +347,7 @@ class FormsetField(hg.Iterator):
         )
 
 
-class InlineDeleteButton(FormChild, Button):
+class InlineDeleteButton(Button):
     def __init__(self, parentcontainerselector, label=_("Delete"), **kwargs):
         """
         Show a delete button for the current inline form. This element needs to be inside a FormsetField
@@ -386,12 +386,9 @@ class HiddenInput(FormChild, hg.INPUT):
 
 class CsrfToken(FormChild, hg.INPUT):
     def __init__(self):
-        super().__init__(type="hidden")
-
-    def render(self, context):
-        self.attributes["name"] = "csrfmiddlewaretoken"
-        self.attributes["value"] = context["csrf_token"]
-        return super().render(context)
+        super().__init__(
+            type="hidden", name="csrfmiddlewaretoken", value=hg.C("csrf_token")
+        )
 
 
 def _mapwidget(

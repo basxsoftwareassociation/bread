@@ -74,7 +74,7 @@ class ErrorListElement(hg.If):
         super().__init__(
             errors,
             hg.DIV(
-                hg.UL(hg.Iterator(errors or (), "error", hg.C("error"))),
+                hg.UL(hg.Iterator(errors or (), "error", hg.LI(hg.C("error")))),
                 _class="bx--form-requirement",
             ),
         )

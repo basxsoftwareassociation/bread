@@ -14,8 +14,6 @@ class MultiSelect(hg.DIV):
         errors=None,
         disabled=None,
         required=None,
-        # light=False, # TODO?
-        # inline=False, # TODO?
         **attributes,
     ):
         """

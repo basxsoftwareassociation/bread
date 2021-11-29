@@ -8,7 +8,6 @@ class Select(hg.DIV):
     def __init__(
         self,
         optgroups,
-        light=False,
         inline=False,
         widgetattributes=None,
         label=None,
@@ -105,7 +104,6 @@ class Select(hg.DIV):
                 _class,
                 " bx--select",
                 hg.If(inline, " bx--select--inline"),
-                hg.If(light, " bx--select--light"),
                 hg.If(errors, " bx--select--invalid"),
                 hg.If(disabled, " bx--select--disabled"),
             ),
