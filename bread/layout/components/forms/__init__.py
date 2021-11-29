@@ -516,7 +516,7 @@ def _mapwidget(
         forms.Textarea: TextArea,
         forms.CheckboxInput: Checkbox,
         forms.NullBooleanSelect: Select,
-        forms.SelectMultiple: MultiSelect,  # TODO HIGH
+        forms.SelectMultiple: MultiSelect,
         forms.RadioSelect: TextInput,  # TODO HIGH
         forms.FileInput: FileUploader,
         forms.ClearableFileInput: FileUploader,  # TODO HIGH
