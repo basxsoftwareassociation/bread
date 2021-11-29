@@ -33,7 +33,7 @@ class Form(hg.FORM):
             )
         return Form(form, *elements, **kwargs)
 
-    def __init__(self, form, *children, use_csrf=True, standalone=True, **attributes):
+    def __init__(self, form, *children, use_csrf=True, standalone=True, **kwargs):
         """
         form: lazy evaluated value which should resolve to the form object
         children: any child elements, can be formfields or other
@@ -42,16 +42,53 @@ class Form(hg.FORM):
         """
         self.form = form
         self.standalone = standalone
-        defaults = {"method": "POST", "autocomplete": "off"}
-        defaults.update(attributes)
+        attributes = {"method": "POST", "autocomplete": "off"}
+        attributes.update(kwargs)
         if (
-            defaults["method"].upper() == "POST"
+            attributes["method"].upper() == "POST"
             and use_csrf is not False
             and standalone is True
         ):
             children = (CsrfToken(),) + children
 
-        super().__init__(*children, **defaults)
+        if self.standalone and "enctype" not in attributes:
+            # note: We will always use "multipart/form-data" instead of the
+            # default "application/x-www-form-urlencoded" inside bread. We do
+            # this because forms with file uploads require multipart/form-data.
+            # Not distinguishing between two encoding types can save us some issues,
+            # especially when handling files.
+            # The only draw back with this is a slightly larger payload because
+            # multipart-encoding takes a little bit more space
+            attributes["enctype"] = "multipart/form-data"
+
+        super().__init__(
+            # generic errors
+            hg.Iterator(
+                hg.C("form.non_field_errors"),
+                "formerror",
+                InlineNotification(_("Form error"), hg.C("formerror"), kind="error"),
+            ),
+            # errors from hidden fields
+            hg.Iterator(
+                hg.C("form.hidden_fields"),
+                "hiddenfield",
+                hg.Iterator(
+                    hg.C("hiddenfield.errors"),
+                    "hiddenfield_error",
+                    InlineNotification(
+                        _("Hidden field error: "),
+                        hg.format(
+                            "{}: {}",
+                            hg.C("hiddenfield.name"),
+                            hg.C("hiddenfield_error"),
+                        ),
+                        kind="error",
+                    ),
+                ),
+            ),
+            *children,
+            **attributes,
+        )
 
     def formfieldelements(self):
         return self.filter(
@@ -63,19 +100,7 @@ class Form(hg.FORM):
         form = hg.resolve_lazy(self.form, context)
         for formfield in self.formfieldelements():
             formfield.form = form
-        for error in form.non_field_errors():
-            self.insert(0, InlineNotification(_("Form error"), error, kind="error"))
-        for hidden in form.hidden_fields():
-            for error in hidden.errors:
-                self.insert(
-                    0,
-                    InlineNotification(
-                        _("Form error: "), f"{hidden.name}: {error}", kind="error"
-                    ),
-                )
         if self.standalone:
-            if form.is_multipart() and "enctype" not in self.attributes:
-                self.attributes["enctype"] = "multipart/form-data"
             return super().render(context)
         return super().render_children(context)
 
