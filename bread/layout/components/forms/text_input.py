@@ -106,3 +106,18 @@ class PasswordInput(TextInput):
             Icon("view", _class="bx--icon--visibility-on", aria_hidden="true")
         )
         self[1].append(showhidebtn)
+
+
+class PhoneNumberInput(TextInput):
+    def __init__(self, **attributes):
+        super().__init__(icon="phone", **attributes)
+
+
+class UrlInput(TextInput):
+    def __init__(self, **attributes):
+        super().__init__(icon="link", **attributes)
+
+
+class EmailInput(TextInput):
+    def __init__(self, **attributes):
+        super().__init__(icon="email", **attributes)

@@ -5,9 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 from ..button import Button
 from ..notification import InlineNotification
-from .email_input import EmailInput
-from .phone_number_input import PhoneNumberInput
-from .url_input import UrlInput
 
 
 class Form(hg.FORM):
@@ -63,26 +60,34 @@ class Form(hg.FORM):
 
         super().__init__(
             # generic errors
-            hg.Iterator(
-                hg.C("form.non_field_errors"),
-                "formerror",
-                InlineNotification(_("Form error"), hg.C("formerror"), kind="error"),
+            hg.If(
+                hg.C(self.form).non_field_errors(),
+                hg.Iterator(
+                    hg.C(self.form).non_field_errors(),
+                    "formerror",
+                    InlineNotification(
+                        _("Form error"), hg.C("formerror"), kind="error"
+                    ),
+                ),
             ),
             # errors from hidden fields
-            hg.Iterator(
-                hg.C("form.hidden_fields"),
-                "hiddenfield",
+            hg.If(
+                hg.C(self.form).hidden_fields(),
                 hg.Iterator(
-                    hg.C("hiddenfield.errors"),
-                    "hiddenfield_error",
-                    InlineNotification(
-                        _("Hidden field error: "),
-                        hg.format(
-                            "{}: {}",
-                            hg.C("hiddenfield.name"),
-                            hg.C("hiddenfield_error"),
+                    hg.C(self.form).hidden_fields(),
+                    "hiddenfield",
+                    hg.Iterator(
+                        hg.C("hiddenfield").errors,
+                        "hiddenfield_error",
+                        InlineNotification(
+                            _("Hidden field error: "),
+                            hg.format(
+                                "{}: {}",
+                                hg.C("hiddenfield").name,
+                                hg.C("hiddenfield_error"),
+                            ),
+                            kind="error",
                         ),
-                        kind="error",
                     ),
                 ),
             ),
@@ -398,7 +403,13 @@ def _mapwidget(
     from .multiselect import MultiSelect
     from .select import Select
     from .text_area import TextArea
-    from .text_input import PasswordInput, TextInput
+    from .text_input import (
+        EmailInput,
+        PasswordInput,
+        PhoneNumberInput,
+        TextInput,
+        UrlInput,
+    )
 
     widgetattributes = update_widgetattributes(field, only_initial, widgetattributes)
     elementattributes = {
