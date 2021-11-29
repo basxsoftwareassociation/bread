@@ -79,12 +79,10 @@ class Pagination(hg.DIV):
                 ),
                 hg.SPAN(
                     hg.SPAN(
-                        hg.getattr_lazy(
-                            get_page(paginator, page_urlparameter), "start_index"
-                        ),
-                        " - ",
-                        hg.getattr_lazy(
-                            get_page(paginator, page_urlparameter), "end_index"
+                        hg.format(
+                            "{} - {}",
+                            get_page(paginator, page_urlparameter).start_index(),
+                            get_page(paginator, page_urlparameter).end_index(),
                         ),
                         data_displayed_item_range=True,
                     ),
@@ -92,9 +90,7 @@ class Pagination(hg.DIV):
                     _("of"),
                     " ",
                     hg.SPAN(
-                        " ",
-                        hg.getattr_lazy(paginator, "count"),
-                        " ",
+                        hg.format(" {} ", paginator.count),
                         data_total_items=True,
                     ),
                     " ",
@@ -122,7 +118,7 @@ class Pagination(hg.DIV):
                                             ),
                                         },
                                     }
-                                    for i in hg.resolve_lazy(paginator, c).page_range
+                                    for i in paginator.page_range
                                 ],
                             )
                         ]
@@ -138,7 +134,7 @@ class Pagination(hg.DIV):
                 hg.LABEL(
                     _("of"),
                     " ",
-                    hg.getattr_lazy(paginator, "num_pages"),
+                    paginator.num_pages,
                     " ",
                     _("pages"),
                     _class="bx--pagination__text",
@@ -159,7 +155,7 @@ class Pagination(hg.DIV):
                         linktorelativepage(
                             page_urlparameter,
                             -1,
-                            hg.getattr_lazy(paginator, "num_pages"),
+                            paginator.num_pages,
                         )
                     ),
                 ),
@@ -178,7 +174,7 @@ class Pagination(hg.DIV):
                         linktorelativepage(
                             page_urlparameter,
                             1,
-                            hg.getattr_lazy(paginator, "num_pages"),
+                            paginator.num_pages,
                         )
                     ),
                 ),
