@@ -110,6 +110,7 @@ class Modal(hg.DIV):
         )
         if submitlabel:
             buttons[1].attributes["hx_post"] = url
+            # note: we always use multipart forms, avoids some issues, see ./forms/__init__.py:Form.__init__
             buttons[1].attributes["hx_encoding"] = "multipart/form-data"
             buttons[1].attributes["hx_target"] = hg.format(
                 "#{} .bx--modal-content", modal.id
