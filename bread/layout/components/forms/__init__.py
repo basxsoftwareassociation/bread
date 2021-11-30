@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from ..button import Button
 from ..notification import InlineNotification
+from .fields import FormField
 
 
 class Form(hg.FORM):
@@ -92,7 +93,7 @@ class FormChild:
     """Used to mark elements which need the "form" attribute set by the parent form before rendering"""
 
 
-class FormField(FormChild, hg.BaseElement):
+class FormField1(FormChild, hg.BaseElement):
     """Dynamic element which will resolve the field with the given name
     and return the correct HTML, based on the widget of the form field or on the passed argument 'fieldtype'"""
 
@@ -150,7 +151,9 @@ class FormsetField(hg.Iterator):
         # search fields which have explicitly been defined in the content element
         declared_fields = set(
             f.fieldname
-            for f in self.content.filter(lambda e, ancestors: isinstance(e, FormField))
+            for f in self.content.filter(
+                lambda e, ancestors: isinstance(e, FormField) and e.is_djangoformfield
+            )
         )
 
         # append all additional fields of the form which are not rendered explicitly
