@@ -1,7 +1,7 @@
 import htmlgenerator as hg
 
 from ..icon import Icon
-from .helpers import REQUIRED_LABEL, ErrorList, HelperText, Label
+from .helpers import REQUIRED_LABEL, ErrorList, HelpText, Label
 
 
 class TextArea(hg.DIV):
@@ -27,7 +27,7 @@ class TextArea(hg.DIV):
             widgetattributes["cols"] = cols
 
         super().__init__(
-            Label(),
+            Label(boundfield.field.label),
             hg.DIV(
                 hg.TEXTAREA(placeholder=placeholder, **widgetattributes),
                 _class="bx--text-area__wrapper",
@@ -40,18 +40,18 @@ class TextArea(hg.DIV):
         self.input = self[1][0]
 
         if boundfield.field.disabled:
-            self.label.attributes["_class"] += " bx--label--disabled"
+            # self.label.attributes["_class"] += " bx--label--disabled"
             self.input.attributes["disabled"] = True
         if boundfield is not None:
-            self.label.attributes["_for"] = boundfield.id_for_label
-            self.label.append(boundfield.label)
+            # self.label.attributes["_for"] = boundfield.id_for_label
+            # self.label.append(boundfield.label)
             if boundfield.field.required:
                 self.label.append(REQUIRED_LABEL)
 
             self.input.append(self.input.attributes.pop("value", ""))
 
             if boundfield.help_text:
-                self.append(HelperText(boundfield.help_text))
+                self.append(HelpText(boundfield.help_text))
             if boundfield.errors:
                 self[1].attributes["data-invalid"] = True
                 self.input.attributes["_class"] += " bx--text-area--invalid"

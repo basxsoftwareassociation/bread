@@ -142,7 +142,7 @@ def breadmodelform_factory(  # noqa
         fields=[
             f.fieldname
             for f in formfieldelements
-            if isinstance(f, _layout.form.FormField) and f.fieldname in modelfields
+            if isinstance(f, _layout.forms.FormField) and f.fieldname in modelfields
         ],
         formfield_callback=lambda field: _formfield_callback_with_request(
             field, request, model, instance, cache_querysets
@@ -182,7 +182,7 @@ def _generate_formset_class(
 
     formfieldelements = _get_form_fields_from_layout(
         hg.BaseElement(*formsetfieldelement)
-    )  # make sure the _layout.form.FormsetField does not be considered recursively
+    )  # make sure the _layout.forms.FormsetField does not be considered recursively
 
     formclass = breadmodelform_factory(
         request=request,
@@ -260,19 +260,13 @@ def _formfield_callback_with_request(field, request, model, instance, cache_quer
     return ret
 
 
-class FilterForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.layout = lambda request: _layout.form.Form.from_django_form(
-            self, method="GET"
-        )
-
-
 class PreferencesForm(GlobalPreferenceForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.layout = lambda request: _layout.form.Form.from_fieldnames(
-            hg.C("form"), self.fields
+        self.layout = lambda request: _layout.forms.Form(
+            hg.C("form"),
+            *[_layout.forms.FormField(f) for f in self.fields],
+            _layout.forms.helper.Submit(),
         )
 
 
@@ -281,14 +275,14 @@ def _get_form_fields_from_layout(layout):
 
     def walk(element):
         # do not descend into formsets, they need to be gathered separately
-        if isinstance(element, _layout.form.FormsetField):
+        if isinstance(element, _layout.forms.FormsetField):
             yield element
             return
         # do not descend into script tags because we keep formset-empty form templates there
         if isinstance(element, hg.SCRIPT):
             return
         if (
-            isinstance(element, _layout.form.FormField)
+            isinstance(element, _layout.forms.FormField)
             and element.fieldname not in INTERNAL_FIELDS
         ):
             yield element

@@ -34,11 +34,11 @@ def generate_wizard_form(wizardview, wizardtitle, steptitle, formlayout):
             steps,
             style="margin-bottom: 2rem",
         ),
-        layout.form.Form(
+        layout.forms.Form(
             hg.C("wizard.form"),
-            layout.form.Form(
+            layout.forms.Form(
                 hg.C("wizard.management_form"),
-                layout.form.FormField("current_step"),
+                layout.forms.FormField("current_step"),
                 standalone=False,
             ),
             formlayout,

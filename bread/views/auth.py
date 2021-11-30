@@ -59,14 +59,14 @@ class BreadLoginView(BreadView, LoginView):
 
     def get_layout(self):
         return auth_page(
-            layout.form.Form(
+            layout.forms.Form(
                 hg.C("form"),
                 hg.A(
                     _("Lost password?"),
                     href=reverse("password_reset"),
                     style="float: right; font-size: 0.75rem",
                 ),
-                layout.form.FormField(
+                layout.forms.FormField(
                     "username",
                     elementattributes={
                         "style": "width: 100%",
@@ -75,7 +75,7 @@ class BreadLoginView(BreadView, LoginView):
                         "_class": "field-02-background",
                     },
                 ),
-                layout.form.FormField(
+                layout.forms.FormField(
                     "password",
                     widgetattributes={
                         "_class": "field-02-background",
@@ -116,14 +116,14 @@ class BreadPasswordResetView(BreadView, PasswordResetView):
 
     def get_layout(self):
         return auth_page(
-            layout.form.Form(
+            layout.forms.Form(
                 hg.C("form"),
                 hg.A(
                     _("Lost password?"),
                     href=reverse("password_reset"),
                     style="float: right; font-size: 0.75rem",
                 ),
-                layout.form.FormField(
+                layout.forms.FormField(
                     "email",
                     elementattributes={
                         "style": "width: 100%",
@@ -175,9 +175,9 @@ class BreadPasswordResetConfirmView(BreadView, PasswordResetConfirmView):
         return hg.If(
             hg.C("validlink"),
             auth_page(
-                layout.form.Form(
+                layout.forms.Form(
                     hg.C("form"),
-                    layout.form.FormField(
+                    layout.forms.FormField(
                         "new_password1",
                         elementattributes={
                             "style": "width: 100%",
@@ -186,7 +186,7 @@ class BreadPasswordResetConfirmView(BreadView, PasswordResetConfirmView):
                             "_class": "field-02-background",
                         },
                     ),
-                    layout.form.FormField(
+                    layout.forms.FormField(
                         "new_password2",
                         widgetattributes={
                             "_class": "field-02-background",

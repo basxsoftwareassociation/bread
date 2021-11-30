@@ -29,7 +29,7 @@ class EditView(views.EditView):
             )
         column_helper = get_attribute_description_modal(modelclass)
 
-        F = _layout.form.FormField
+        F = _layout.forms.FormField
         ret = hg.BaseElement(
             hg.LINK(
                 rel="stylesheet",
@@ -38,34 +38,33 @@ class EditView(views.EditView):
             ),
             hg.SCRIPT(src=staticfiles_storage.url("djangoql/js/completion.js")),
             hg.H3(self.object),
-            _layout.form.Form.wrap_with_form(
+            _layout.forms.Form(
                 hg.C("form"),
-                hg.BaseElement(
-                    hg.DIV(
-                        _("Base model"),
-                        ": ",
-                        hg.C("object.model"),
-                        style="margin: 2rem 0 2rem 0",
-                    ),
-                    F("name"),
-                    F("filter"),
-                    F("custom_queryset"),
-                    _layout.form.FormsetField.as_datatable(
-                        "columns",
-                        ["column", "name"],
-                        formsetfield_kwargs={
-                            "extra": 1,
-                            "can_order": True,
-                        },
-                    ),
-                    _layout.button.Button(
-                        _("Help"),
-                        buttontype="ghost",
-                        style="margin-top: 1rem",
-                        **column_helper.openerattributes,
-                    ),
-                    column_helper,
+                hg.DIV(
+                    _("Base model"),
+                    ": ",
+                    hg.C("object.model"),
+                    style="margin: 2rem 0 2rem 0",
                 ),
+                F("name"),
+                F("filter"),
+                F("custom_queryset"),
+                _layout.forms.FormsetField.as_datatable(
+                    "columns",
+                    ["column", "name"],
+                    formsetfield_kwargs={
+                        "extra": 1,
+                        "can_order": True,
+                    },
+                ),
+                _layout.button.Button(
+                    _("Help"),
+                    buttontype="ghost",
+                    style="margin-top: 1rem",
+                    **column_helper.openerattributes,
+                ),
+                layout.forms.helpers.Submit(),
+                column_helper,
             ),
             hg.C("object.preview"),
         )

@@ -4,6 +4,7 @@ from .components import *  # noqa
 from .components import button  # noqa
 from .components import content_switcher  # noqa
 from .components import datatable  # noqa
+from .components import forms  # noqa
 from .components import grid  # noqa
 from .components import icon  # noqa
 from .components import loading  # noqa
@@ -17,7 +18,6 @@ from .components import shell_header  # noqa
 from .components import sidenav  # noqa
 from .components import tabs  # noqa
 from .components import tag  # noqa
-from .components import forms as form  # noqa # API BACKWARDS COMPATABILITY
 from .components.forms import checkbox  # noqa
 from .components.forms import helpers  # noqa
 from .components.forms import multiselect  # noqa

@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from ..button import Button
 from ..icon import Icon
-from .helpers import ErrorListElement, HelpTextElement, LabelElement
+from .helpers import ErrorList, HelpText, Label
 
 
 class TextInput(hg.DIV):
@@ -38,7 +38,7 @@ class TextInput(hg.DIV):
         )
 
         super().__init__(
-            LabelElement(
+            Label(
                 label,
                 widgetattributes.get("id"),
                 required=required,
@@ -71,10 +71,8 @@ class TextInput(hg.DIV):
                 ),
                 data_invalid=hg.If(errors, True),
             ),
-            HelpTextElement(
-                help_text, disabled=widgetattributes.get("disabled", False)
-            ),
-            ErrorListElement(errors),
+            HelpText(help_text, disabled=widgetattributes.get("disabled", False)),
+            ErrorList(errors),
             **attributes,
         )
 

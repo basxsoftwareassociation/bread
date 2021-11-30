@@ -1,6 +1,6 @@
 import htmlgenerator as hg
 
-from .helpers import REQUIRED_LABEL, ErrorListElement, HelpTextElement
+from .helpers import REQUIRED_LABEL, ErrorList, HelpText
 
 
 class Checkbox(hg.DIV):
@@ -38,7 +38,7 @@ class Checkbox(hg.DIV):
         )
         super().__init__(
             self.label,
-            HelpTextElement(help_text),
-            ErrorListElement(errors),
+            HelpText(help_text),
+            ErrorList(errors),
             **attributes,
         )

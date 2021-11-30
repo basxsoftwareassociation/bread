@@ -234,8 +234,8 @@ class EditPersonalDataView(EditView):
 
     def get_layout(self):
         ret = super().get_layout()
-        ret.append(layout.form.FormField("preferred_language"))
-        ret.append(layout.form.FormField("timezone"))
+        ret.append(layout.forms.FormField("preferred_language"))
+        ret.append(layout.forms.FormField("timezone"))
         return ret
 
     def get_object(self):
@@ -286,7 +286,7 @@ class EditLoginView(EditView):
 
     def get_layout(self):
         ret = super().get_layout()
-        ret.append(layout.form.FormField("current_password"))
+        ret.append(layout.forms.FormField("current_password"))
         return ret
 
     def get_object(self):

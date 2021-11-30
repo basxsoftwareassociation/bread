@@ -3,7 +3,7 @@ from _strptime import TimeRE
 from django.utils import formats
 
 from ..icon import Icon
-from .helpers import REQUIRED_LABEL, ErrorList, HelperText, Label
+from .helpers import REQUIRED_LABEL, ErrorList, HelpText, Label
 
 
 class DatePicker(hg.DIV):
@@ -50,7 +50,7 @@ class DatePicker(hg.DIV):
         super().__init__(
             hg.DIV(
                 hg.DIV(
-                    Label(),
+                    Label(hg.C("form")[fieldname].label),
                     input,
                     _class="bx--date-picker-container",
                 ),
@@ -68,7 +68,7 @@ class DatePicker(hg.DIV):
         if boundfield is not None:
             if boundfield.field.disabled:
                 self.label.attributes["_class"] += " bx--label--disabled"
-            self.label.attributes["_for"] = boundfield.id_for_label
+            # self.label.attributes["_for"] = boundfield.id_for_label
             self.label.append(boundfield.label)
             if boundfield.field.required:
                 self.label.append(REQUIRED_LABEL)
@@ -87,7 +87,7 @@ class DatePicker(hg.DIV):
                 self.input.attributes["data_date_format"] = dateformat_widget
 
             if boundfield.help_text:
-                self[0][0].append(HelperText(boundfield.help_text))
+                self[0][0].append(HelpText(boundfield.help_text))
             if boundfield.errors:
                 self.input.attributes["data-invalid"] = True
                 self[1].append(

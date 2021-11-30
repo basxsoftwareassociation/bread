@@ -1,7 +1,7 @@
 import htmlgenerator as hg
 
 from ..icon import Icon
-from .helpers import ErrorListElement, HelpTextElement, LabelElement
+from .helpers import ErrorList, HelpText, Label
 
 
 class Select(hg.DIV):
@@ -81,7 +81,7 @@ class Select(hg.DIV):
         )
 
         super().__init__(
-            LabelElement(
+            Label(
                 label,
                 _for=widgetattributes["id"],
                 required=required,
@@ -91,15 +91,13 @@ class Select(hg.DIV):
                 inline,
                 hg.DIV(
                     select_wrapper,
-                    ErrorListElement(errors),
+                    ErrorList(errors),
                     _class="bx--select-input--inline__wrapper",
                 ),
                 select_wrapper,
             ),
-            HelpTextElement(help_text),
-            hg.If(
-                inline, None, ErrorListElement(errors)
-            ),  # not displayed if this is inline
+            HelpText(help_text),
+            hg.If(inline, None, ErrorList(errors)),  # not displayed if this is inline
             _class=hg.BaseElement(
                 _class,
                 " bx--select",

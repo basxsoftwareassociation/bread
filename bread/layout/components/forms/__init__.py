@@ -8,28 +8,6 @@ from ..notification import InlineNotification
 
 
 class Form(hg.FORM):
-    @staticmethod
-    def from_django_form(form, **kwargs):
-        return Form.from_fieldnames(form, form.fields, **kwargs)
-
-    @staticmethod
-    def from_fieldnames(form, fieldnames, **kwargs):
-        return Form.wrap_with_form(
-            form, *[FormField(fieldname) for fieldname in fieldnames], **kwargs
-        )
-
-    @staticmethod
-    def wrap_with_form(form, *elements, submit_label=None, **kwargs):
-        if kwargs.get("standalone", True) is True:
-            elements += (
-                hg.DIV(
-                    Button(submit_label or _("Save"), type="submit"),
-                    _class="bx--form-item",
-                    style="margin-top: 2rem",
-                ),
-            )
-        return Form(form, *elements, **kwargs)
-
     def __init__(self, form, *children, use_csrf=True, standalone=True, **kwargs):
         """
         form: lazy evaluated value which should resolve to the form object
@@ -204,8 +182,14 @@ class FormsetField(hg.Iterator):
         return hg.BaseElement(
             # management forms, for housekeeping of inline forms
             hg.F(
-                lambda c: Form.from_django_form(
+                lambda c: Form(
                     c[self.formname][self.fieldname].formset.management_form,
+                    *[
+                        FormField(f)
+                        for f in c[self.formname][
+                            self.fieldname
+                        ].formset.management_form.fields
+                    ],
                     standalone=False,
                 )
             ),

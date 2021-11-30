@@ -2,7 +2,7 @@ import htmlgenerator as hg
 
 from ..icon import Icon
 from ..tag import Tag
-from .helpers import ErrorListElement, HelpTextElement, LabelElement
+from .helpers import ErrorList, HelpText, Label
 
 
 class MultiSelect(hg.DIV):
@@ -28,7 +28,7 @@ class MultiSelect(hg.DIV):
 
         searchfieldid = hg.html_id(self)
         super().__init__(
-            LabelElement(
+            Label(
                 label,
                 _for=searchfieldid,
                 required=required,
@@ -146,8 +146,8 @@ class MultiSelect(hg.DIV):
                     data_invalid=hg.If(errors, True),
                 ),
             ),
-            HelpTextElement(help_text),
-            ErrorListElement(errors),
+            HelpText(help_text),
+            ErrorList(errors),
             _class="bx--list-box__wrapper",
             onclick="event.stopPropagation()",
             **attributes,
