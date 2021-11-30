@@ -139,7 +139,7 @@ class ObjectFieldValue(hg.Lazy):
         if isinstance(value, models.Manager):
             value = ", ".join([str(x) for x in value.all()])
         if isinstance(value, str):
-            value = linebreaksbr(value, autoescape=False)
+            value = linebreaksbr(value)
         return value
 
 
