@@ -1,7 +1,7 @@
-import htmlgenerator
+import htmlgenerator as hg
 
 
-class Grid(htmlgenerator.DIV):
+class Grid(hg.DIV):
     MODES = ("narrow", "condensed", "full-width")
 
     def __init__(self, *children, gridmode="full-width", gutter=True, **attributes):
@@ -15,15 +15,17 @@ class Grid(htmlgenerator.DIV):
         super().__init__(*children, **attributes)
 
 
-class Row(htmlgenerator.DIV):
+class Row(hg.DIV):
     def __init__(self, *children, gridmode=None, **attributes):
-        attributes["_class"] = attributes.get("_class", "") + " bx--row"
+        attributes["_class"] = hg.BaseElement(attributes.get("_class", ""), " bx--row")
         if gridmode is not None:
-            attributes["_class"] += f" bx--row--{gridmode}"
+            attributes["_class"] = hg.BaseElement(
+                f" bx--row--{gridmode}", attributes["_class"]
+            )
         super().__init__(*children, **attributes)
 
 
-class Col(htmlgenerator.DIV):
+class Col(hg.DIV):
     def __init__(self, *children, breakpoint="lg", width=None, **attributes):
         """
         breakpoint: Can be one of "sm", "md", "lg", "xlg", "max"

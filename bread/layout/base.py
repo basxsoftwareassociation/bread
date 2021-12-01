@@ -6,6 +6,7 @@ from django.db import models
 from django.db.models import ManyToOneRel
 from django.http import HttpResponse
 from django.template.context import _builtin_context_processors
+from django.template.defaultfilters import linebreaksbr
 from django.utils.formats import localize
 from django.utils.module_loading import import_string
 from django.utils.timezone import localtime
@@ -137,6 +138,8 @@ class ObjectFieldValue(hg.Lazy):
             value = self.formatter(value)
         if isinstance(value, models.Manager):
             value = ", ".join([str(x) for x in value.all()])
+        if isinstance(value, str):
+            value = linebreaksbr(value)
         return value
 
 
