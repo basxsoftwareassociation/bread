@@ -64,22 +64,19 @@ class BreadLoginView(BreadView, LoginView):
                 hg.A(
                     _("Lost password?"),
                     href=reverse("password_reset"),
-                    style="float: right; font-size: 0.75rem",
+                    style="display: block; text-align: right; font-size: 0.75rem",
                 ),
                 layout.forms.FormField(
-                    "username",
-                    elementattributes={
-                        "style": "width: 100%",
-                    },
-                    widgetattributes={
-                        "_class": "field-02-background",
-                    },
+                    fieldname="username",
+                    form="form",
+                    inputelement_attrs={"_class": "field-02-background"},
+                    style="width: 100%",
                 ),
                 layout.forms.FormField(
-                    "password",
-                    widgetattributes={
-                        "_class": "field-02-background",
-                    },
+                    fieldname="password",
+                    form="form",
+                    inputelement_attrs={"_class": "field-02-background"},
+                    style="width: 100%",
                 ),
                 id="authform",
             ),
@@ -125,12 +122,10 @@ class BreadPasswordResetView(BreadView, PasswordResetView):
                 ),
                 layout.forms.FormField(
                     "email",
-                    elementattributes={
-                        "style": "width: 100%",
-                    },
-                    widgetattributes={
+                    inputelement_attrs={
                         "_class": "field-02-background",
                     },
+                    style="width: 100%",
                 ),
                 id="authform",
             ),
@@ -179,18 +174,12 @@ class BreadPasswordResetConfirmView(BreadView, PasswordResetConfirmView):
                     hg.C("form"),
                     layout.forms.FormField(
                         "new_password1",
-                        elementattributes={
-                            "style": "width: 100%",
-                        },
-                        widgetattributes={
-                            "_class": "field-02-background",
-                        },
+                        inputelement_attrs={"_class": "field-02-background"},
+                        style="width: 100%",
                     ),
                     layout.forms.FormField(
                         "new_password2",
-                        widgetattributes={
-                            "_class": "field-02-background",
-                        },
+                        inputelement_attrs={"_class": "field-02-background"},
                     ),
                     id="authform",
                 ),
