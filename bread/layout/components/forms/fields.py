@@ -2,132 +2,64 @@ import warnings
 
 import htmlgenerator as hg
 
-from ..icon import Icon
 from .helpers import ErrorList, HelpText, Label
+from .widgets import BaseWidget, HiddenInput, TextInput
 
 
-# A plain, largely unstyled input element
-# It provides the basic structure for fields used
-# in bread forms
-class BaseFormField(hg.DIV):
-    def with_fieldwrapper(self):
-        return hg.DIV(self, _class="bx--form-item")
+class FormFieldMarker(hg.BaseElement):
+    # Internal helper class to mark form fields inside a render tree
+    # so that the fields an be automatically extracted from it in to
+    # generate a django form class
+    def __init__(self, fieldname, field):
+        self.fieldname = fieldname
+        super().__init__(field)
 
 
-class PlainFormField(BaseFormField):
-    def __init__(
-        self,
-        label_element=None,
-        help_text_element=None,
-        error_element=None,
-        inputelement_attrs=None,
-        **attributes,
-    ):
-        inputelement_attrs = inputelement_attrs or {}
-        super().__init__(
-            label_element,
-            hg.INPUT(**inputelement_attrs),
-            help_text_element,
-            error_element,
-            **attributes,
-        )
-
-
-class TextInput(BaseFormField):
-    def __init__(
-        self,
-        label_element=None,
-        help_text_element=None,
-        error_element=None,
-        inputelement_attrs=None,
-        icon=None,
-        **attributes,
-    ):
-        inputelement_attrs = inputelement_attrs or {}
-        attributes["_class"] = attributes.get("_class", "") + " bx--text-input-wrapper"
-
-        if isinstance(inputelement_attrs, hg.Lazy):
-            input = hg.INPUT(
-                type="text",
-                _class=hg.BaseElement(
-                    inputelement_attrs.get("_class"),
-                    " bx--text-input",
-                    hg.If(error_element.condition, " bx--text-input--invalid"),
-                ),
-                lazy_attributes=inputelement_attrs,
-            )
-        else:
-            input = hg.INPUT(
-                type="text",
-                **{
-                    **inputelement_attrs,
-                    "_class": hg.BaseElement(
-                        inputelement_attrs.get("_class", ""),
-                        " bx--text-input",
-                        hg.If(error_element.condition, " bx--text-input--invalid"),
-                    ),
-                },
-            )
-
-        fieldwrapper = hg.DIV(
-            hg.If(
-                error_element.condition,
-                Icon(
-                    "warning--filled",
-                    size=16,
-                    _class="bx--text-input__invalid-icon",
-                ),
-            ),
-            input,
-            hg.If(
-                icon,
-                Icon(
-                    icon,
-                    size=16,
-                    _class="text-input-icon",
-                ),
-            ),
-            _class=(
-                "bx--text-input__field-wrapper"
-                + (" text-input-with-icon" if icon is not None else "")
-            ),
-            data_invalid=hg.If(error_element.condition, True),
-        )
-
-        super().__init__(
-            label_element,
-            fieldwrapper,
-            error_element,
-            help_text_element,
-            **attributes,
-        )
-
-
-# shortcut for most use cases, keeping backwards compatability
 def FormField(
     fieldname=None,
-    form=None,
+    form="_bread_form",
     label=None,
     help_text=None,
     error_list=None,
     inputelement_attrs=None,
-    formfield_class=TextInput,
+    formfield_class=None,
+    with_wrapper=True,
+    show_hidden_initial=False,
     **kwargs,
 ):
-    # todo:
-    # - add support for required attribute
-    # - add support for disabled attribute
-    # can be removed in the future
+    """
+    Function to produce a carbon design based form field widget which is
+    compatible with Django forms and based on htmlgenerator.
+    """
+
+    #
+    hidden = None
+    if show_hidden_initial:
+        hidden = FormField(
+            fieldname=fieldname,
+            form=form,
+            inputelement_attrs=inputelement_attrs,
+            formfield_class=HiddenInput,
+            with_wrapper=False,
+            show_hidden_initial=False,
+            **kwargs,
+        )
 
     inputelement_attrs = inputelement_attrs or {}
+    boundfield = None
+
+    # warnings for deprecated API usage
     if "widgetattributes" in kwargs:
         warnings.warn(
-            "FormField does no longer support the parameter 'widgetattributes'. The parameter 'inputelement_attrs' serves the same purpose'"
+            "FormField does no longer support the parameter 'widgetattributes'. "
+            "The parameter 'inputelement_attrs' serves the same purpose'"
         )
     if "elementattributes" in kwargs:
         warnings.warn(
-            "FormField does no longer support the parameter 'elementattributes'. attributes can now be directly passed as kwargs."
+            "FormField does no longer support the parameter 'elementattributes'. "
+            "attributes can now be directly passed as kwargs."
         )
+
     # check if this field will be used with a django form
     # if yes, derive the according values lazyly from the context
     if fieldname is not None and form is not None:
@@ -137,21 +69,88 @@ def FormField(
         label = label or form[fieldname].label
         help_text = help_text or form.fields[fieldname].help_text
         error_list = error_list or form[fieldname].errors
-        inputelement_attrs = form[fieldname].build_widget_attrs(inputelement_attrs)
 
+        orig_inputattribs = inputelement_attrs
+
+        def buildattribs(context):
+            realform = hg.resolve_lazy(form, context)
+            id = None
+            if realform[fieldname].auto_id and "id" not in orig_inputattribs:
+                id = (
+                    realform[fieldname].html_initial_id
+                    if show_hidden_initial
+                    else realform[fieldname].auto_id
+                )
+            return {
+                "id": id,
+                "name": realform[fieldname].html_initial_name
+                if show_hidden_initial
+                else realform[fieldname].html_name,
+                "value": realform[fieldname].value(),
+                **realform[fieldname].build_widget_attrs({}),
+                **realform[fieldname].field.widget.attrs,
+                **orig_inputattribs,
+            }
+
+        inputelement_attrs = hg.F(buildattribs)
+        labelfor = form[fieldname].id_for_label
+        boundfield = form[fieldname]
+    else:
+        labelfor = inputelement_attrs.get("id")
+
+    # helper elements
     label_element = Label(
         label,
         required=inputelement_attrs.get("required"),
         disabled=inputelement_attrs.get("disabled"),
-        _for=inputelement_attrs.get("id"),
+        _for=labelfor,
     )
     help_text_element = HelpText(help_text, disabled=inputelement_attrs.get("disabled"))
     error_element = ErrorList(error_list)
 
-    return formfield_class(
+    # instantiate field (might create a lazy element when using guess_fieldclass)
+    formfield_class = formfield_class or guess_fieldclass(fieldname, form)
+    ret = formfield_class(
+        boundfield=boundfield,
         label_element=label_element,
         help_text_element=help_text_element,
         error_element=error_element,
         inputelement_attrs=inputelement_attrs,
         **kwargs,
-    ).with_fieldwrapper()
+    )
+    if show_hidden_initial:
+        ret = hg.BaseElement(ret, hidden)
+    if with_wrapper:
+        ret = ret.with_fieldwrapper()
+    return FormFieldMarker(fieldname, ret)
+
+
+def guess_fieldclass(fieldname, form):
+    widget_map = {}
+    field_map = {}
+    for cls in _all_subclasses(BaseWidget):
+        if cls.django_widget not in widget_map:
+            widget_map[cls.django_widget] = []
+        widget_map[cls.django_widget].append(cls)
+        if cls.django_field not in field_map:
+            field_map[cls.django_field] = []
+        field_map[cls.django_field].append(cls)
+
+    def wrapper(context):
+        realform = hg.resolve_lazy(form, context)
+        widgetclass = type(realform[fieldname].field.widget)
+        fieldclass = type(realform[fieldname].field)
+        if widgetclass not in widget_map and fieldclass not in field_map:
+            warnings.warn(
+                f"Form field {type(realform).__name__}.{fieldname} ({fieldclass}) uses widget {widgetclass} but "
+                "bread has no implementation, default to TextInput"
+            )
+        return widget_map.get(widgetclass, field_map.get(fieldclass, [TextInput]))[0]
+
+    return hg.F(wrapper)
+
+
+def _all_subclasses(cls):
+    return set(cls.__subclasses__()).union(
+        [s for c in cls.__subclasses__() for s in _all_subclasses(c)]
+    )

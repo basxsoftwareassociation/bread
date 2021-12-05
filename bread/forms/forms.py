@@ -142,7 +142,8 @@ def breadmodelform_factory(  # noqa
         fields=[
             f.fieldname
             for f in formfieldelements
-            if isinstance(f, _layout.forms.FormField) and f.fieldname in modelfields
+            if isinstance(f, _layout.forms.FormFieldMarker)
+            and f.fieldname in modelfields
         ],
         formfield_callback=lambda field: _formfield_callback_with_request(
             field, request, model, instance, cache_querysets
@@ -282,7 +283,7 @@ def _get_form_fields_from_layout(layout):
         if isinstance(element, hg.SCRIPT):
             return
         if (
-            isinstance(element, _layout.forms.FormField)
+            isinstance(element, _layout.forms.FormFieldMarker)
             and element.fieldname not in INTERNAL_FIELDS
         ):
             yield element

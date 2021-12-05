@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from ..button import Button
 from ..notification import InlineNotification
-from .fields import FormField
+from .fields import BaseWidget, FormField, FormFieldMarker  # noqa
 
 
 class Form(hg.FORM):
@@ -16,7 +16,6 @@ class Form(hg.FORM):
         use_csrf: add a CSRF input, but only for POST submission and standalone forms
         standalone: if true, will add a CSRF token and will render enclosing FORM-element
         """
-        self.form = form
         self.standalone = standalone
         attributes = {"method": "POST", "autocomplete": "off"}
         attributes.update(kwargs)
@@ -40,9 +39,9 @@ class Form(hg.FORM):
         super().__init__(
             # generic errors
             hg.If(
-                hg.C(self.form).non_field_errors(),
+                form.non_field_errors(),
                 hg.Iterator(
-                    hg.C(self.form).non_field_errors(),
+                    form.non_field_errors(),
                     "formerror",
                     InlineNotification(
                         _("Form error"), hg.C("formerror"), kind="error"
@@ -51,9 +50,9 @@ class Form(hg.FORM):
             ),
             # errors from hidden fields
             hg.If(
-                hg.C(self.form).hidden_fields(),
+                form.hidden_fields(),
                 hg.Iterator(
-                    hg.C(self.form).hidden_fields(),
+                    form.hidden_fields(),
                     "hiddenfield",
                     hg.Iterator(
                         hg.C("hiddenfield").errors,
@@ -70,20 +69,11 @@ class Form(hg.FORM):
                     ),
                 ),
             ),
-            *children,
+            hg.WithContext(*children, _bread_form=form),
             **attributes,
         )
 
-    def formfieldelements(self):
-        return self.filter(
-            lambda elem, parents: isinstance(elem, FormChild)
-            and not any((isinstance(p, Form) for p in parents[1:]))
-        )
-
     def render(self, context):
-        form = hg.resolve_lazy(self.form, context)
-        for formfield in self.formfieldelements():
-            formfield.form = form
         if self.standalone:
             return super().render(context)
         return super().render_children(context)
