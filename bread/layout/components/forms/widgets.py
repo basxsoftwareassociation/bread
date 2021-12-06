@@ -1,17 +1,19 @@
 import htmlgenerator as hg
+from _strptime import TimeRE
 from django.forms import widgets
+from django.utils import formats
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.formfields import PhoneNumberField
 
 from ..button import Button
 from ..icon import Icon
+from .helpers import REQUIRED_LABEL, to_php_formatstr
 
 # Missing widget implementations:
 # DateInput
 # DateTimeInput
 # TimeInput
 # Textarea
-# CheckboxInput
 # NullBooleanSelect
 # SelectMultiple
 # RadioSelect
@@ -30,7 +32,6 @@ from ..icon import Icon
 class BaseWidget(hg.DIV):
     # used to mark that this class can be used in place of the according django widget or field
     django_widget = None
-    django_field = None
 
     # default attributes which are used to create the input element in a standard way
     carbon_input_class = ""
@@ -43,6 +44,11 @@ class BaseWidget(hg.DIV):
     # help_text_element,
     # error_element,
     # inputelement_attrs,
+
+    def __init__(self, *args, **kwargs):
+        if "boundfield" in kwargs:
+            del kwargs["boundfield"]
+        super().__init__(*args, **kwargs)
 
     def get_input_element(self, inputelement_attrs, error_element):
         return hg.INPUT(
@@ -67,7 +73,6 @@ class HiddenInput(BaseWidget):
 
     def __init__(
         self,
-        boundfield,
         label_element,
         help_text_element,
         error_element,
@@ -85,7 +90,6 @@ class TextInput(BaseWidget):
 
     def __init__(
         self,
-        boundfield,
         label_element,
         help_text_element,
         error_element,
@@ -134,26 +138,26 @@ class TextInput(BaseWidget):
 class PhoneNumberInput(TextInput):
     input_type = "tel"
     # django_widget = None # TODO: phonenumber_field has not a special widget, how can we detect it?
-    django_field = PhoneNumberField
+    django_widget = PhoneNumberField
 
-    def __init__(self, **attributes):
-        super().__init__(icon="phone", **attributes)
+    def __init__(self, *args, **attributes):
+        super().__init__(*args, icon="phone", **attributes)
 
 
 class UrlInput(TextInput):
     django_widget = widgets.URLInput
     input_type = "url"
 
-    def __init__(self, **attributes):
-        super().__init__(icon="link", **attributes)
+    def __init__(self, *args, **attributes):
+        super().__init__(*args, icon="link", **attributes)
 
 
 class EmailInput(TextInput):
     django_widget = widgets.EmailInput
     input_type = "email"
 
-    def __init__(self, **attributes):
-        super().__init__(icon="email", **attributes)
+    def __init__(self, *args, **attributes):
+        super().__init__(*args, icon="email", **attributes)
 
 
 class NumberInput(TextInput):
@@ -250,7 +254,7 @@ class Select(BaseWidget):
             help_text_element,
             hg.If(inline, None, error_element),  # not displayed if this is inline
             _class=hg.BaseElement(
-                "_class",
+                attributes.get("_class"),
                 " bx--select",
                 hg.If(inline, " bx--select--inline"),
                 hg.If(error_element.condition, " bx--select--invalid"),
@@ -292,15 +296,159 @@ class PasswordInput(TextInput):
             "bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-center"
         )
         super().__init__(
-            label_element,
-            help_text_element,
-            error_element,
+            label_element=label_element,
+            help_text_element=help_text_element,
+            error_element=error_element,
             inputelement_attrs=_combine_lazy_dict(
                 inputelement_attrs, data_toggle_password_visibility=True
             ),
             icon=showhidebtn,
             **attributes,
         )
+
+
+class Checkbox(BaseWidget):
+    django_widget = widgets.CheckboxInput
+    carbon_input_class = "bx--checkbox"
+    input_type = "checkbox"
+
+    def __init__(
+        self,
+        boundfield,
+        label_element,
+        help_text_element,
+        error_element,
+        inputelement_attrs,
+        **attributes,
+    ):
+        attributes["_class"] = hg.BaseElement(
+            attributes.get("_class", ""), " bx--checkbox-wrapper"
+        )
+        inputelement_attrs = _combine_lazy_dict(
+            inputelement_attrs,
+            value=None,
+            checked=hg.F(
+                lambda c: hg.resolve_lazy(boundfield, c).field.widget.check_test(
+                    hg.resolve_lazy(boundfield, c).value()
+                )
+            ),
+        )
+        super().__init__(
+            hg.LABEL(
+                self.get_input_element(inputelement_attrs, error_element),
+                label_element.condition,
+                hg.If(inputelement_attrs.get("required"), REQUIRED_LABEL),
+                _class=hg.BaseElement(
+                    "bx--checkbox-label",
+                    hg.If(inputelement_attrs.get("disabled"), " bx--label--disabled"),
+                ),
+                data_contained_checkbox_state=hg.If(
+                    inputelement_attrs.get("checked"),
+                    "true",
+                    "false",
+                ),
+            ),
+            help_text_element,
+            error_element,
+            **attributes,
+        )
+
+
+class DatePicker(TextInput):
+    django_widget = widgets.DateInput
+    carbon_input_class = "bx--text-input"
+    carbon_input_error_class = "bx--text-input--invalid"
+    input_type = "date"
+
+    def __init__(
+        self,
+        fieldname,
+        placeholder="",
+        short=False,
+        simple=False,
+        widgetattributes={},
+        boundfield=None,
+        **attributes,
+    ):
+        self.fieldname = fieldname
+        picker_attribs = (
+            {}
+            if simple
+            else {"data-date-picker": True, "data-date-picker-type": "single"}
+        )
+        widgetattributes["_class"] = (
+            widgetattributes.get("_class", "") + " bx--date-picker__input"
+        )
+
+        input = hg.INPUT(
+            placeholder=placeholder,
+            type="text",
+            **widgetattributes,
+        )
+        self.input = input
+        if not simple:
+            input.attributes["data-date-picker-input"] = True
+            input = hg.DIV(
+                input,
+                Icon(
+                    "calendar",
+                    size=16,
+                    _class="bx--date-picker__icon",
+                    data_date_picker_icon="true",
+                ),
+                _class="bx--date-picker-input__wrapper",
+            )
+
+        super().__init__(
+            hg.DIV(
+                hg.DIV(
+                    Label(hg.C("form")[fieldname].label),
+                    input,
+                    _class="bx--date-picker-container",
+                ),
+                _class="bx--date-picker"
+                + (" bx--date-picker--simple" if simple else "bx--date-picker--single")
+                + (" bx--date-picker--short" if short else ""),
+                **picker_attribs,
+            ),
+            **attributes,
+        )
+        # for easier reference in the render method:
+        self.label = self[0][0][0]
+
+        if boundfield is not None:
+            if boundfield.field.disabled:
+                self.label.attributes["_class"] += " bx--label--disabled"
+            # self.label.attributes["_for"] = boundfield.id_for_label
+            self.label.append(boundfield.label)
+            if boundfield.field.required:
+                self.label.append(REQUIRED_LABEL)
+
+            dateformat = (
+                boundfield.field.widget.format
+                or formats.get_format(boundfield.field.widget.format_key)[0]
+            )
+            dateformat_widget = to_php_formatstr(
+                boundfield.field.widget.format,
+                boundfield.field.widget.format_key,
+            )
+            if simple:
+                self.input.attributes["pattern"] = TimeRE().compile(dateformat).pattern
+            else:
+                self.input.attributes["data_date_format"] = dateformat_widget
+
+            if boundfield.help_text:
+                self[0][0].append(HelpText(boundfield.help_text))
+            if boundfield.errors:
+                self.input.attributes["data-invalid"] = True
+                self[1].append(
+                    Icon(
+                        "warning--filled",
+                        size=16,
+                        _class="bx--text-input__invalid-icon",
+                    )
+                )
+                self[0][0].append(ErrorList(boundfield.errors))
 
 
 def _append_classes(lazy_attrs, *_classes):
@@ -329,41 +477,3 @@ def _gen_optgroup(boundfield):
         )
 
     return hg.F(wrapper)
-
-
-class Checkbox(BaseWidget):
-    django_widget = widgets.CheckboxInput
-    carbon_input_class = "bx--checkbox"
-    carbon_input_error_class = "bx--text-input--invalid"
-    input_type = "checkbox"
-
-    def __init__(
-        self,
-        label_element,
-        help_text_element,
-        error_element,
-        inputelement_attrs,
-        **attributes,
-    ):
-        attributes["_class"] = (
-            attributes.get("_class", "") + " bx--form-item bx--checkbox-wrapper"
-        )
-        self.input = hg.INPUT(**widgetattributes)
-        self.label = hg.LABEL(
-            self.input,
-            label,
-            hg.If(required, REQUIRED_LABEL),
-            _class=hg.BaseElement(
-                "bx--checkbox-label",
-                hg.If(disabled, " bx--label--disabled"),
-            ),
-            data_contained_checkbox_state=hg.If(
-                hg.F(lambda c: widgetattributes.get("checked", False)), "true", "false"
-            ),
-        )
-        super().__init__(
-            self.label,
-            HelpText(help_text),
-            ErrorList(errors),
-            **attributes,
-        )

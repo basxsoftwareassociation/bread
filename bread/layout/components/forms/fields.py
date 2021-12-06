@@ -127,25 +127,26 @@ def FormField(
 
 def guess_fieldclass(fieldname, form):
     widget_map = {}
-    field_map = {}
     for cls in _all_subclasses(BaseWidget):
         if cls.django_widget not in widget_map:
             widget_map[cls.django_widget] = []
         widget_map[cls.django_widget].append(cls)
-        if cls.django_field not in field_map:
-            field_map[cls.django_field] = []
-        field_map[cls.django_field].append(cls)
 
     def wrapper(context):
         realform = hg.resolve_lazy(form, context)
         widgetclass = type(realform[fieldname].field.widget)
         fieldclass = type(realform[fieldname].field)
-        if widgetclass not in widget_map and fieldclass not in field_map:
+        if widgetclass not in widget_map:
             warnings.warn(
                 f"Form field {type(realform).__name__}.{fieldname} ({fieldclass}) uses widget {widgetclass} but "
                 "bread has no implementation, default to TextInput"
             )
-        return widget_map.get(widgetclass, field_map.get(fieldclass, [TextInput]))[0]
+
+        if fieldclass in widget_map:
+            return widget_map[fieldclass][0]
+        if widgetclass in widget_map:
+            return widget_map[widgetclass][0]
+        return TextInput
 
     return hg.F(wrapper)
 
