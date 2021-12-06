@@ -524,7 +524,7 @@ class DataTableColumn(NamedTuple):
         )
 
     def as_header_cell(self, orderingurlparameter="ordering"):
-        headcontent = hg.SPAN(self.header, _class="bx--table-header-label")
+        headcontent = hg.DIV(self.header, _class="bx--table-header-label")
         if self.sortingname:
             headcontent = hg.BUTTON(
                 headcontent,
