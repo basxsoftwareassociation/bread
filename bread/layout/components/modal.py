@@ -10,7 +10,15 @@ class Modal(hg.DIV):
     SIZES = ["xs", "sm", "md", "lg"]
 
     def __init__(
-        self, heading, *content, label="", size="md", buttons=(), id=None, **attributes
+        self,
+        heading,
+        *content,
+        label="",
+        size="md",
+        buttons=(),
+        id=None,
+        with_form=False,
+        **attributes,
     ):
         """
         heading: Modal title
@@ -36,7 +44,10 @@ class Modal(hg.DIV):
         self.id = hg.html_id(self, prefix="modal-") if id is None else id
         self.openerattributes = {"data_modal_target": hg.format("#{}", self.id)}
         self.contentcontainer = hg.DIV(
-            *content, _class="bx--modal-content", tabindex="0"
+            *content,
+            _class="bx--modal-content"
+            + (" bx--modal-content--with-form" if with_form else ""),
+            tabindex="0",
         )
         super().__init__(
             hg.DIV(
@@ -106,6 +117,7 @@ class Modal(hg.DIV):
             buttons=buttons,
             size="md",
             id=id,
+            with_form=bool(submitlabel),
             **attributes,
         )
         if submitlabel:
