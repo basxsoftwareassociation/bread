@@ -7,19 +7,19 @@ from phonenumber_field.formfields import PhoneNumberField
 
 from ..button import Button
 from ..icon import Icon
-from .helpers import REQUIRED_LABEL, to_php_formatstr
+from .helpers import REQUIRED_LABEL, Label, to_php_formatstr
 
 # Missing widget implementations:
-# DateInput
 # DateTimeInput
 # TimeInput
-# Textarea
 # NullBooleanSelect
 # SelectMultiple
 # RadioSelect
 # CheckboxSelectMultiple
 # FileInput
 # ClearableFileInput
+#
+# less used:
 # MultipleHiddenInput
 # SplitDateTimeWidget
 # SplitHiddenDateTimeWidget
@@ -171,11 +171,11 @@ class Select(BaseWidget):
 
     def __init__(
         self,
-        boundfield,
         label_element,
         help_text_element,
         error_element,
         inputelement_attrs,
+        boundfield=None,
         inline=False,
         optgroups=None,  # for non-django-form select elements use this
         **attributes,
@@ -300,7 +300,7 @@ class PasswordInput(TextInput):
             help_text_element=help_text_element,
             error_element=error_element,
             inputelement_attrs=_combine_lazy_dict(
-                inputelement_attrs, data_toggle_password_visibility=True
+                inputelement_attrs, {"data_toggle_password_visibility": True}
             ),
             icon=showhidebtn,
             **attributes,
@@ -314,29 +314,28 @@ class Checkbox(BaseWidget):
 
     def __init__(
         self,
-        boundfield,
         label_element,
         help_text_element,
         error_element,
         inputelement_attrs,
+        boundfield=None,
         **attributes,
     ):
         attributes["_class"] = hg.BaseElement(
             attributes.get("_class", ""), " bx--checkbox-wrapper"
         )
-        inputelement_attrs = _combine_lazy_dict(
-            inputelement_attrs,
-            value=None,
-            checked=hg.F(
+        attrs = {"value": None}
+        if boundfield:
+            attrs["checked"] = hg.F(
                 lambda c: hg.resolve_lazy(boundfield, c).field.widget.check_test(
                     hg.resolve_lazy(boundfield, c).value()
                 )
-            ),
-        )
+            )
+        inputelement_attrs = _combine_lazy_dict(inputelement_attrs, attrs)
         super().__init__(
             hg.LABEL(
                 self.get_input_element(inputelement_attrs, error_element),
-                label_element.condition,
+                label_element.label,
                 hg.If(inputelement_attrs.get("required"), REQUIRED_LABEL),
                 _class=hg.BaseElement(
                     "bx--checkbox-label",
@@ -354,101 +353,194 @@ class Checkbox(BaseWidget):
         )
 
 
-class DatePicker(TextInput):
-    django_widget = widgets.DateInput
-    carbon_input_class = "bx--text-input"
-    carbon_input_error_class = "bx--text-input--invalid"
-    input_type = "date"
+class CheckboxSelectMultiple(BaseWidget):
+    django_widget = widgets.CheckboxSelectMultiple
+    carbon_input_class = "bx--checkbox"
+    input_type = "checkbox"
 
     def __init__(
         self,
-        fieldname,
-        placeholder="",
-        short=False,
-        simple=False,
-        widgetattributes={},
+        label_element,
+        help_text_element,
+        error_element,
+        inputelement_attrs,
         boundfield=None,
         **attributes,
     ):
-        self.fieldname = fieldname
-        picker_attribs = (
-            {}
-            if simple
-            else {"data-date-picker": True, "data-date-picker-type": "single"}
-        )
-        widgetattributes["_class"] = (
-            widgetattributes.get("_class", "") + " bx--date-picker__input"
+        super().__init__(
+            label_element,
+            hg.FIELDSET(
+                hg.Iterator(
+                    boundfield.subwidgets,
+                    "checkbox",
+                    Checkbox(
+                        label_element=Label(hg.C("checkbox").data["label"]),
+                        help_text_element=None,
+                        error_element=None,
+                        inputelement_attrs=_combine_lazy_dict(
+                            _combine_lazy_dict(
+                                inputelement_attrs,
+                                {
+                                    "name": hg.C("checkbox").data["name"],
+                                    "value": hg.C("checkbox").data["value"],
+                                    "checked": hg.C("checkbox").data["selected"],
+                                },
+                            ),
+                            hg.C("checkbox").data["attrs"],
+                        ),
+                    ),
+                )
+            ),
+            help_text_element,
+            error_element,
+            **attributes,
         )
 
-        input = hg.INPUT(
-            placeholder=placeholder,
-            type="text",
-            **widgetattributes,
+
+class DatePicker(BaseWidget):
+    django_widget = widgets.DateInput
+    carbon_input_class = "bx--date-picker__input"
+    input_type = "text"  # prevent browser style date picker but use carbon design
+
+    def __init__(
+        self,
+        label_element,
+        help_text_element,
+        error_element,
+        inputelement_attrs,
+        boundfield=None,
+        style_short=False,
+        style_simple=False,
+        **attributes,
+    ):
+        if not style_simple:
+            attributes["data-date-picker"] = True
+            attributes["data-date-picker-type"] = "single"
+
+        attributes["_class"] = hg.BaseElement(
+            attributes.get("_class"),
+            " bx--date-picker",
+            hg.If(style_simple, " bx--date-picker--simple", "bx--date-picker--single"),
+            hg.If(style_short, " bx--date-picker--short"),
         )
-        self.input = input
-        if not simple:
-            input.attributes["data-date-picker-input"] = True
-            input = hg.DIV(
-                input,
-                Icon(
-                    "calendar",
-                    size=16,
-                    _class="bx--date-picker__icon",
-                    data_date_picker_icon="true",
-                ),
-                _class="bx--date-picker-input__wrapper",
-            )
 
         super().__init__(
             hg.DIV(
-                hg.DIV(
-                    Label(hg.C("form")[fieldname].label),
-                    input,
-                    _class="bx--date-picker-container",
+                label_element,
+                hg.If(
+                    style_simple,
+                    self.get_input_element(
+                        _combine_lazy_dict(
+                            inputelement_attrs,
+                            {
+                                "data_invalid": hg.If(error_element.condition, True),
+                                "pattern": hg.F(
+                                    lambda c: (
+                                        TimeRE()
+                                        .compile(
+                                            hg.resolve_lazy(
+                                                boundfield, c
+                                            ).field.widget.format
+                                            or formats.get_format(
+                                                hg.resolve_lazy(
+                                                    boundfield, c
+                                                ).field.widget.format_key
+                                            )[0]
+                                        )
+                                        .pattern
+                                    )
+                                ),
+                            },
+                        ),
+                        error_element,
+                    ),
+                    hg.DIV(
+                        self.get_input_element(
+                            _combine_lazy_dict(
+                                inputelement_attrs,
+                                {
+                                    "data_date_picker_input": True,
+                                    "data_invalid": hg.If(
+                                        error_element.condition, True
+                                    ),
+                                    "data_date_format": hg.F(
+                                        lambda c: to_php_formatstr(
+                                            hg.resolve_lazy(
+                                                boundfield, c
+                                            ).field.widget.format,
+                                            hg.resolve_lazy(
+                                                boundfield, c
+                                            ).field.widget.format_key,
+                                        )
+                                    ),
+                                },
+                            ),
+                            error_element,
+                        ),
+                        Icon(
+                            "calendar",
+                            size=16,
+                            _class="bx--date-picker__icon",
+                            data_date_picker_icon="true",
+                        ),
+                        _class="bx--date-picker-input__wrapper",
+                    ),
                 ),
-                _class="bx--date-picker"
-                + (" bx--date-picker--simple" if simple else "bx--date-picker--single")
-                + (" bx--date-picker--short" if short else ""),
-                **picker_attribs,
+                help_text_element,
+                error_element,
+                _class="bx--date-picker-container",
             ),
             **attributes,
         )
-        # for easier reference in the render method:
-        self.label = self[0][0][0]
 
-        if boundfield is not None:
-            if boundfield.field.disabled:
-                self.label.attributes["_class"] += " bx--label--disabled"
-            # self.label.attributes["_for"] = boundfield.id_for_label
-            self.label.append(boundfield.label)
-            if boundfield.field.required:
-                self.label.append(REQUIRED_LABEL)
 
-            dateformat = (
-                boundfield.field.widget.format
-                or formats.get_format(boundfield.field.widget.format_key)[0]
-            )
-            dateformat_widget = to_php_formatstr(
-                boundfield.field.widget.format,
-                boundfield.field.widget.format_key,
-            )
-            if simple:
-                self.input.attributes["pattern"] = TimeRE().compile(dateformat).pattern
-            else:
-                self.input.attributes["data_date_format"] = dateformat_widget
+class Textarea(BaseWidget):
+    django_widget = widgets.Textarea
+    carbon_input_class = "bx--text-area bx--text-area--v2"
+    carbon_input_error_class = "bx--text-area--invalid"
 
-            if boundfield.help_text:
-                self[0][0].append(HelpText(boundfield.help_text))
-            if boundfield.errors:
-                self.input.attributes["data-invalid"] = True
-                self[1].append(
-                    Icon(
-                        "warning--filled",
-                        size=16,
-                        _class="bx--text-input__invalid-icon",
-                    )
-                )
-                self[0][0].append(ErrorList(boundfield.errors))
+    def __init__(
+        self,
+        label_element,
+        help_text_element,
+        error_element,
+        inputelement_attrs,
+        boundfield=None,
+        **attributes,
+    ):
+        attributes["_class"] = attributes.get("_class", "") + " bx--form-item"
+
+        super().__init__(
+            label_element,
+            hg.DIV(
+                hg.TEXTAREA(
+                    boundfield.value(),
+                    hg.If(
+                        error_element.condition,
+                        Icon(
+                            "warning--filled",
+                            size=16,
+                            _class="bx--text-area__invalid-icon",
+                        ),
+                    ),
+                    lazy_attributes=_combine_lazy_dict(
+                        _append_classes(
+                            inputelement_attrs or {},
+                            self.carbon_input_class,
+                            hg.If(
+                                getattr(error_element, "condition", False),
+                                self.carbon_input_error_class,
+                            ),
+                        ),
+                        {"value": None},
+                    ),
+                ),
+                _class="bx--text-area__wrapper",
+            ),
+            help_text_element,
+            error_element,
+            **attributes,
+        )
 
 
 def _append_classes(lazy_attrs, *_classes):
@@ -464,8 +556,13 @@ def _append_classes(lazy_attrs, *_classes):
     return hg.F(wrapper_func)
 
 
-def _combine_lazy_dict(lazy_attrs, **attribs):
-    return hg.F(lambda c: {**(hg.resolve_lazy(lazy_attrs, c) or {}), **attribs})
+def _combine_lazy_dict(attrs1, attrs2):
+    return hg.F(
+        lambda c: {
+            **(hg.resolve_lazy(attrs1, c) or {}),
+            **(hg.resolve_lazy(attrs2, c) or {}),
+        }
+    )
 
 
 def _gen_optgroup(boundfield):

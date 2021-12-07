@@ -19,6 +19,7 @@ class Submit(hg.DIV):
 
 class Label(hg.If):
     def __init__(self, label, _for=None, required=None, disabled=None, **kwargs):
+        self.label = label
         super().__init__(
             label,
             hg.LABEL(
