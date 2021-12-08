@@ -1,5 +1,8 @@
+import os
+
 import htmlgenerator as hg
 from _strptime import TimeRE
+from django.conf import settings
 from django.forms import widgets
 from django.utils import formats
 from django.utils.translation import gettext_lazy as _
@@ -7,7 +10,7 @@ from phonenumber_field.formfields import PhoneNumberField
 
 from ..button import Button
 from ..icon import Icon
-from .helpers import REQUIRED_LABEL, Label, to_php_formatstr
+from .helpers import REQUIRED_LABEL, ErrorList, Label, to_php_formatstr
 
 # Missing widget implementations:
 # DateTimeInput
@@ -15,7 +18,6 @@ from .helpers import REQUIRED_LABEL, Label, to_php_formatstr
 # NullBooleanSelect
 # SelectMultiple
 # RadioSelect
-# CheckboxSelectMultiple
 # FileInput
 # ClearableFileInput
 #
@@ -39,27 +41,30 @@ class BaseWidget(hg.DIV):
     input_type = None
 
     # __init__ should support the following parameters
-    # boundfield,
-    # label_element,
-    # help_text_element,
-    # error_element,
-    # inputelement_attrs,
+    # label_element: bread.layout.components.forms.utils.Label
+    # help_text_element: Optional[Any]
+    # error_element: bread.layout.components.forms.utils.ErrorList
+    # inputelement_attrs: Union[Lazy[dict], dict],
+    # boundfield: Optional[django.forms.BoundField],
 
     def __init__(self, *args, **kwargs):
         if "boundfield" in kwargs:
             del kwargs["boundfield"]
         super().__init__(*args, **kwargs)
 
-    def get_input_element(self, inputelement_attrs, error_element):
+    def get_input_element(self, inputelement_attrs, error_element, **kwargs):
         return hg.INPUT(
             type=self.input_type,
-            lazy_attributes=_append_classes(
-                inputelement_attrs or {},
-                self.carbon_input_class,
-                hg.If(
-                    getattr(error_element, "condition", False),
-                    self.carbon_input_error_class,
+            lazy_attributes=_combine_lazy_dict(
+                _append_classes(
+                    inputelement_attrs or {},
+                    self.carbon_input_class,
+                    hg.If(
+                        getattr(error_element, "condition", False),
+                        self.carbon_input_error_class,
+                    ),
                 ),
+                kwargs,
             ),
         )
 
@@ -218,7 +223,7 @@ class Select(BaseWidget):
                     inputelement_attrs or {},
                     self.carbon_input_class,
                     hg.If(
-                        getattr(error_element, "condition", False),
+                        error_element.condition,
                         self.carbon_input_error_class,
                     ),
                 ),
@@ -324,7 +329,7 @@ class Checkbox(BaseWidget):
         attributes["_class"] = hg.BaseElement(
             attributes.get("_class", ""), " bx--checkbox-wrapper"
         )
-        attrs = {"value": None}
+        attrs = {}
         if boundfield:
             attrs["checked"] = hg.F(
                 lambda c: hg.resolve_lazy(boundfield, c).field.widget.check_test(
@@ -376,7 +381,7 @@ class CheckboxSelectMultiple(BaseWidget):
                     Checkbox(
                         label_element=Label(hg.C("checkbox").data["label"]),
                         help_text_element=None,
-                        error_element=None,
+                        error_element=ErrorList([]),
                         inputelement_attrs=_combine_lazy_dict(
                             _combine_lazy_dict(
                                 inputelement_attrs,
@@ -430,52 +435,38 @@ class DatePicker(BaseWidget):
                 hg.If(
                     style_simple,
                     self.get_input_element(
-                        _combine_lazy_dict(
-                            inputelement_attrs,
-                            {
-                                "data_invalid": hg.If(error_element.condition, True),
-                                "pattern": hg.F(
-                                    lambda c: (
-                                        TimeRE()
-                                        .compile(
-                                            hg.resolve_lazy(
-                                                boundfield, c
-                                            ).field.widget.format
-                                            or formats.get_format(
-                                                hg.resolve_lazy(
-                                                    boundfield, c
-                                                ).field.widget.format_key
-                                            )[0]
-                                        )
-                                        .pattern
-                                    )
-                                ),
-                            },
-                        ),
+                        inputelement_attrs,
                         error_element,
+                        data_invalid=hg.If(error_element.condition, True),
+                        pattern=hg.F(
+                            lambda c: (
+                                TimeRE()
+                                .compile(
+                                    hg.resolve_lazy(boundfield, c).field.widget.format
+                                    or formats.get_format(
+                                        hg.resolve_lazy(
+                                            boundfield, c
+                                        ).field.widget.format_key
+                                    )[0]
+                                )
+                                .pattern
+                            )
+                        ),
                     ),
                     hg.DIV(
                         self.get_input_element(
-                            _combine_lazy_dict(
-                                inputelement_attrs,
-                                {
-                                    "data_date_picker_input": True,
-                                    "data_invalid": hg.If(
-                                        error_element.condition, True
-                                    ),
-                                    "data_date_format": hg.F(
-                                        lambda c: to_php_formatstr(
-                                            hg.resolve_lazy(
-                                                boundfield, c
-                                            ).field.widget.format,
-                                            hg.resolve_lazy(
-                                                boundfield, c
-                                            ).field.widget.format_key,
-                                        )
-                                    ),
-                                },
-                            ),
+                            inputelement_attrs,
                             error_element,
+                            data_date_picker_input=True,
+                            data_invalid=hg.If(error_element.condition, True),
+                            data_date_format=hg.F(
+                                lambda c: to_php_formatstr(
+                                    hg.resolve_lazy(boundfield, c).field.widget.format,
+                                    hg.resolve_lazy(
+                                        boundfield, c
+                                    ).field.widget.format_key,
+                                )
+                            ),
                         ),
                         Icon(
                             "calendar",
@@ -528,7 +519,7 @@ class Textarea(BaseWidget):
                             inputelement_attrs or {},
                             self.carbon_input_class,
                             hg.If(
-                                getattr(error_element, "condition", False),
+                                error_element.condition,
                                 self.carbon_input_error_class,
                             ),
                         ),
@@ -541,6 +532,104 @@ class Textarea(BaseWidget):
             error_element,
             **attributes,
         )
+
+
+class FileInput(hg.BaseWidget):
+    django_widget = widgets.FileInput
+    carbon_input_class = "bx--file-input bx--visually-hidden"
+    input_type = "file"
+    # TODO: make clearable working
+    clearable = False
+
+    def __init__(
+        self,
+        label_element,
+        help_text_element,
+        error_element,
+        inputelement_attrs,
+        **attributes,
+    ):
+        uploadbutton = hg.LABEL(
+            hg.SPAN(_("Select file"), role="button"),
+            tabindex=0,
+            _class="bx--btn bx--btn--primary",
+            data_file_drop_container=True,
+            disabled=inputelement_attrs.get("disabled"),
+            data_invalid=error_element.condition,
+            _for=inputelement_attrs.get("id"),
+        )
+        input = self.get_input_element(
+            inputelement_attrs,
+            error_element,
+            onload="""
+document.addEventListener('change', (e) => {
+    this.parentElement.querySelector('[data-file-container]').innerHTML = '';
+    var widget = new CarbonComponents.FileUploader(this.parentElement);
+    widget._displayFilenames();
+    widget.setState('edit');
+});
+""",
+        )
+        clearbutton = hg.If(
+            self.clearable,
+            hg.SPAN(
+                hg.BUTTON(
+                    Icon("close", size=16),
+                    _class="bx--file-close",
+                    type="button",
+                    aria_label="close",
+                ),
+                data_for=inputelement_attrs.get("id"),
+                _class="bx--file__state-container",
+            ),
+        )
+        super().__init__(
+            hg.STRONG(_class="bx--file--label"),
+            hg.P(_class="bx--label-description"),
+            hg.DIV(
+                uploadbutton,
+                input,
+                hg.DIV(
+                    hg.If(
+                        inputelement_attrs.get("value"),
+                        hg.SPAN(
+                            hg.P(
+                                hg.A(
+                                    hg.F(
+                                        lambda c: os.path.basename(
+                                            hg.resolve_lazy(inputelement_attrs, c).get(
+                                                "value"
+                                            )
+                                        )
+                                    ),
+                                    href=hg.F(
+                                        lambda c: settings.MEDIA_URL
+                                        + hg.resolve_lazy(inputelement_attrs, c).get(
+                                            "value"
+                                        )
+                                    ),
+                                ),
+                                _class="bx--file-filename",
+                            ),
+                            clearbutton,
+                            _class="bx--file__selected-file",
+                        ),
+                    ),
+                    data_file_container=True,
+                    _class="bx--file-container",
+                ),
+                help_text_element,
+                error_element,
+                _class="bx--file",
+                data_file=True,
+            ),
+            **attributes,
+        )
+
+
+class ClearableFileInput(hg.BaseWidget):
+    django_widget = widgets.ClearableFileInput
+    clearable = True
 
 
 def _append_classes(lazy_attrs, *_classes):
