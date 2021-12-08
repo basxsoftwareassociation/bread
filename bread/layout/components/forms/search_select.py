@@ -2,6 +2,7 @@ import htmlgenerator as hg
 
 from ..search import Search
 from ..tag import Tag
+from .helpers import LabelElement
 
 
 class SearchSelect(hg.DIV):
@@ -10,6 +11,9 @@ class SearchSelect(hg.DIV):
         backend,
         boundfield,
         widgetattributes,
+        label=None,
+        required=None,
+        disabled=None,
         **elementattributes,
     ):
         """
@@ -21,11 +25,20 @@ class SearchSelect(hg.DIV):
         current_selection = getattr(
             boundfield.form.instance, elementattributes["fieldname"], ""
         )
+        elementattributes["_class"] = (
+            elementattributes.get("_class", "") + "bx--text-input-wrapper bx--form-item"
+        )
 
         resultcontainerid = f"search-result-{widgetattributes['id']}"
         widget_id = widgetattributes["id"]
         tag_id = f"{widget_id}-tag"
         super().__init__(
+            LabelElement(
+                label,
+                widgetattributes.get("id"),
+                required=required,
+                disabled=disabled,
+            ),
             Tag(
                 current_selection,
                 id=tag_id,
