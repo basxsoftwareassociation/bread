@@ -581,8 +581,12 @@ def sortinglink_for_column(orderingurlparameter, columnname):
     def extractsortinglink(context):
         currentordering = context["request"].GET.get(orderingurlparameter, None)
         nextordering = ORDERING_VALUES.get(currentordering, columnname)
-        return link_with_urlparameters(
+        ret = link_with_urlparameters(
             context["request"], **{orderingurlparameter: nextordering}
         )
+        # workaround to allow reseting session-stored table state
+        if nextordering is None and "?" not in ret:
+            ret = ret + "?reset"
+        return ret
 
     return aslink_attributes(hg.F(extractsortinglink))
