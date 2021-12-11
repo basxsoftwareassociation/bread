@@ -5,14 +5,12 @@ Subtag Registry, either call this module directly from the command line
 (``python regenenerate.py``), or call the ``regenerate`` method.
 
 """
-import codecs
 import os
 import re
+import urllib
+import urllib.request
 
-import urllib2
-
-TEMPLATE = u"""# -*- coding: utf-8 -*-
-from django.utils.translation import ugettext_lazy as _
+TEMPLATE = u"""from django.utils.translation import ugettext_lazy as _
 
 LANGUAGES = (
     %(languages)s
@@ -21,27 +19,20 @@ LANGUAGES = (
 """
 
 
-def regenerate(
-    location="http://www.iana.org/assignments/language-subtag-registry",
-    filename=None,
-    default_encoding="utf-8",
-):
+def regenerate():
     """
     Generate the languages Python module.
     """
     paren = re.compile(r"\([^)]*\)")
+    location = ("http://www.iana.org/assignments/language-subtag-registry",)
 
     # Get the language list.
-    data = urllib2.urlopen(location)  # nosec # because hardcoded string
-    if "content-type" in data.headers and "charset=" in data.headers["content-type"]:
-        encoding = data.headers["content-type"].split("charset=")[-1]
-    else:
-        encoding = default_encoding
-    content = data.read().decode(encoding)
+    with urllib.request.urlopen(location) as f:  # nosec # because hardcoded
+        lines = f.read().decode().splitlines()
     languages = []
     info = {}
     p = None
-    for line in content.splitlines():
+    for line in lines:
         if line == "%%":
             if "Type" in info and info["Type"] == "language":
                 languages.append(info)
@@ -60,19 +51,15 @@ def regenerate(
     )
 
     # Generate and save the file.
-    if not filename:
-        filename = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "languages.py"
-        )
+    filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), "languages.py")
     # TODO: first make a backup of the file if it exists already.
-    f = codecs.open(filename, "w", "utf-8")
-    f.write(
-        TEMPLATE
-        % {
-            "languages": "\n    ".join(languages_lines),
-        }
-    )
-    f.close()
+    with open(filename, "w") as f:
+        f.write(
+            TEMPLATE
+            % {
+                "languages": "\n    ".join(languages_lines),
+            }
+        )
 
 
 if __name__ == "__main__":
