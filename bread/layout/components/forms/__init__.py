@@ -386,7 +386,7 @@ def _mapwidget(
         **(elementattributes or {}),
     }
 
-    if fieldtype:
+    if fieldtype and not isinstance(field.field.widget, forms.HiddenInput):
         return fieldtype(
             fieldname=field.name,
             widgetattributes=widgetattributes,
@@ -491,8 +491,7 @@ def _mapwidget(
     }
 
     fieldtype = (
-        fieldtype
-        or getattr(field.field, "layout", None)
+        getattr(field.field, "layout", None)
         # needs to be above the WIDGET_MAPPING, because the field.field.widget is a forms.TextInput which would match
         or (
             PhoneNumberInput
