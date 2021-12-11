@@ -12,4 +12,10 @@ class LanguageField(CharField):
 
         kwargs.setdefault("max_length", 3)
         kwargs.setdefault("choices", LANGUAGES)
-        super(CharField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        del kwargs["max_length"]
+        del kwargs["choices"]
+        return name, path, args, kwargs
