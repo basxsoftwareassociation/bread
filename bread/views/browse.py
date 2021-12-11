@@ -5,11 +5,13 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import models
+from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
-from djangoql.queryset import apply_search
+from django_countries import countries
+from django_countries.fields import CountryField
 from guardian.mixins import PermissionListMixin
 
 from bread.utils import expand_ALL_constant, filter_fieldlist
@@ -233,14 +235,31 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             self.search_backend
             and self.search_backend.query_parameter in self.request.GET
         ):
-            qs = apply_search(
-                qs,
-                "("
-                + ") and (".join(
-                    self.request.GET.getlist(self.search_backend.query_parameter)
+            # breakpoint()
+            char_text_fields = {
+                f
+                for f in self.model._meta.fields
+                if isinstance(f, models.CharField) or isinstance(f, models.TextField)
+            }
+            char_text_queries = {
+                Q(**{"_".join((f.name, "_contains")): query})
+                for f in char_text_fields
+                for query in self.request.GET.getlist(
+                    self.search_backend.query_parameter
                 )
-                + ")",
-            )
+            }
+
+            queries = {
+                *char_text_queries,
+            }
+
+            qs = Q()
+            for query in queries:
+                qs = qs | query
+
+            print(qs)
+
+            qs = self.model.objects.filter(qs)
 
         selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
         if selectedobjects and "all" not in selectedobjects:
