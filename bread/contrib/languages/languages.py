@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext as _
 
 LANGUAGES = (
     ("aa", _(u"Afar")),
@@ -8214,4 +8214,3 @@ LANGUAGES = (
     ("zza", _(u"Zaza")),
     ("zzj", _(u"Zuojiang Zhuang")),
 )
-

@@ -10,7 +10,7 @@ import re
 import urllib
 import urllib.request
 
-TEMPLATE = u"""from django.utils.translation import ugettext_lazy as _
+TEMPLATE = u"""from django.utils.translation import gettext as _
 
 LANGUAGES = (
     %(languages)s
