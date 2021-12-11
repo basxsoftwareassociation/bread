@@ -24,7 +24,7 @@ def regenerate():
     Generate the languages Python module.
     """
     paren = re.compile(r"\([^)]*\)")
-    location = ("http://www.iana.org/assignments/language-subtag-registry",)
+    location = "http://www.iana.org/assignments/language-subtag-registry"
 
     # Get the language list.
     with urllib.request.urlopen(location) as f:  # nosec # because hardcoded
@@ -34,7 +34,11 @@ def regenerate():
     p = None
     for line in lines:
         if line == "%%":
-            if "Type" in info and info["Type"] == "language":
+            if (
+                "Type" in info
+                and info["Type"] == "language"
+                and info["Description"] != "Private use"
+            ):
                 languages.append(info)
             info = {}
         elif ":" not in line and p:

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _
 
 LANGUAGES = (
@@ -5741,7 +5740,6 @@ LANGUAGES = (
     ("pyx", _(u"Pyu")),
     ("pyy", _(u"Pyen")),
     ("pzn", _(u"Para Naga")),
-    ("qaa..qtz", _(u"Private use")),
     ("qua", _(u"Quapaw")),
     ("qub", _(u"Huallaga Huánuco Quechua")),
     ("quc", _(u"K'iche'")),
@@ -8216,3 +8214,4 @@ LANGUAGES = (
     ("zza", _(u"Zaza")),
     ("zzj", _(u"Zuojiang Zhuang")),
 )
+
