@@ -1,15 +1,10 @@
+import django_countries
 from django.db import models
 from django.db.models import Q
-from django_countries import countries
 from django_countries.fields import CountryField
 
-# redefine the `countries` object to be a dict,
-# with the key as a lowercase country names,
-# and the corresponding values as country codes.
-countries = {name.lower(): code for code, name in countries}
 
-
-def get_char_text_qset(fields, queries):
+def get_char_text_qset(fields, queries, *args, **kwargs):
     char_text_fields = {
         f
         for f in fields
@@ -23,7 +18,8 @@ def get_char_text_qset(fields, queries):
     }
 
 
-def get_country_qset(fields, queries):
+def get_country_qset(fields, queries, *args, **kwargs):
+    countries = kwargs["countries"]  # for convenience of referencing.
     country_fields = {f for f in fields if isinstance(f, CountryField)}
 
     if not country_fields:
@@ -41,24 +37,27 @@ def get_country_qset(fields, queries):
     }
 
 
-def get_queryset(fields, queries):
+def get_field_queryset(fields, queries, *args, **kwargs):
+    if "countries" not in kwargs:
+        kwargs["countries"] = {
+            name.lower(): code for code, name in django_countries.countries
+        }
+
     queryset = {
-        *get_char_text_qset(fields, queries),
-        *get_country_qset(fields, queries),
+        *get_char_text_qset(fields, queries, *args, **kwargs),
+        *get_country_qset(fields, queries, *args, **kwargs),
     }
+
+    qs = Q()
+    for query in queryset:
+        qs |= query
 
     foreignkey_fields = {
         f for f in fields if isinstance(f, models.fields.related.ForeignKey)
     }
     for foreignkey_field in foreignkey_fields:
         foreign_fields = foreignkey_field.related_model._meta.fields
-        queryset |= {
-            *get_char_text_qset(foreign_fields, queries),
-            *get_country_qset(foreign_fields, queries),
-        }
-
-    qs = Q()
-    for query in queryset:
-        qs = qs | query
+        print(foreign_fields)
+        qs |= get_field_queryset(fields, queries, *args, **kwargs)
 
     return qs
