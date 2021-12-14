@@ -41,7 +41,6 @@ setup(
         # required for task scheduling
         "celery",
         "django-celery-results",
-        "django-celery-beat",
         # required for search engine
         "celery-haystack-ng",
         "whoosh",
