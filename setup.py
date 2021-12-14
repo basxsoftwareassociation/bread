@@ -42,6 +42,7 @@ setup(
         "celery",
         "django-celery-results",
         # required for search engine
+        "django-haystack",
         "celery-haystack-ng",
         "whoosh",
         # TODO: review whether we can or should remove these
