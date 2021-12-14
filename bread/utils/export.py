@@ -66,7 +66,7 @@ def generate_excel(rows, columns):
             if isinstance(value, hg.BaseElement):
                 value = hg.render(value, {})
             cleaned = html.unescape(
-                newline_regex.sub(r"\n", strip_tags(str(value or "")))
+                strip_tags(newline_regex.sub(r"\n", str(value or "")))
             )
             cell.value = cleaned
     return workbook

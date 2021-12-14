@@ -43,7 +43,6 @@ setup(
         # required for task scheduling
         "celery",
         "django-celery-results",
-        "django-celery-beat",
         # required for search engine
         "celery-haystack-ng",
         "whoosh",
@@ -53,7 +52,7 @@ setup(
         "backports.zoneinfo; python_version < '3.9'",
         "requests",
     ],
-    extras_require={"testing": ["hypothesis[django]"]},
+    extras_require={"testing": ["hypothesis[django]", "django_dynamic_fixture"]},
     packages=find_packages(),
     setup_requires=["setuptools_scm"],
     zip_safe=False,

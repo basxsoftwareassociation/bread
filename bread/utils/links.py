@@ -1,4 +1,4 @@
-from typing import List, NamedTuple, Union
+from typing import List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.db import models
@@ -79,7 +79,7 @@ def try_call(var, *args, **kwargs):
 class Link(NamedTuple):
     href: Union[str, LazyHref]
     label: str
-    iconname: str = "fade"
+    iconname: Optional[str] = "fade"
     permissions: List[str] = []
     attributes: dict = {}
 

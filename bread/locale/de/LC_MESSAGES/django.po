@@ -126,7 +126,7 @@ msgstr "Unbekannt"
 
 #: bread/contrib/reports/views.py:202
 msgid "Available columns"
-msgstr "Verfügabre Spalten"
+msgstr "Verfügbare Spalten"
 
 #: bread/contrib/reports/views.py:204
 msgid "Bold text marks valid column names"
