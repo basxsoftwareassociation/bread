@@ -534,7 +534,7 @@ class Textarea(BaseWidget):
         )
 
 
-class FileInput(hg.BaseWidget):
+class FileInput(BaseWidget):
     django_widget = widgets.FileInput
     carbon_input_class = "bx--file-input bx--visually-hidden"
     input_type = "file"
@@ -627,7 +627,7 @@ document.addEventListener('change', (e) => {
         )
 
 
-class ClearableFileInput(hg.BaseWidget):
+class ClearableFileInput(BaseWidget):
     django_widget = widgets.ClearableFileInput
     clearable = True
 
