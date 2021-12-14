@@ -233,7 +233,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             and self.search_backend.query_parameter in self.request.GET
         ):
             qs = queryset_from_fields.get_field_queryset(
-                self.model._meta.fields,
+                [*self.model._meta.fields, *self.model._meta.many_to_many],
                 self.request.GET.getlist(self.search_backend.query_parameter),
             )
             qs = self.model.objects.filter(qs)
