@@ -32,7 +32,7 @@ setup(
         "htmlgenerator",  # replacement for django templates
         "django-extensions",  # bunch of usefull management commands and functions
         "django-guardian",  # object level permissions
-        "django-dynamic-preferences",  # easy handling of preferences
+        "django-dynamic-preferences",  # easy handling of preferences #
         "django-countries",
         "django-money[exchange]",
         "django-simple-history",
