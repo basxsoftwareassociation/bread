@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import models
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
 from guardian.mixins import PermissionListMixin
@@ -14,6 +15,7 @@ from guardian.mixins import PermissionListMixin
 from bread.utils import expand_ALL_constant, filter_fieldlist, queryset_from_fields
 
 from .. import layout
+from ..layout.components.search import SearchBackendConfig
 from ..utils import (
     Link,
     ModelHref,
@@ -71,7 +73,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
 
     title: Optional[hg.BaseElement] = None
     columns: Tuple[Union[str, layout.datatable.DataTableColumn]] = ["__all__"]
-    search_backend = None
+    search_backend: SearchBackendConfig = None
     rowclickaction: Optional[Link] = None
     # bulkactions: List[(Link, function(request, queryset))]
     # - link.js should be a slug and not a URL
@@ -107,7 +109,6 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         self.columns = expand_ALL_constant(
             kwargs["model"], kwargs.get("columns") or self.columns
         )
-        self.search_backend = kwargs.get("search_backend") or self.search_backend
         self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
         self.backurl = kwargs.get("backurl") or self.backurl
         self.primary_button = kwargs.get("primary_button") or self.primary_button
@@ -119,6 +120,14 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             kwargs.get("bulkactions")
             or self.bulkactions
             or default_bulkactions(self.model, self.columns)
+        )
+        self.search_backend = kwargs.get(
+            "search_backend"
+        ) or layout.search.SearchBackendConfig(
+            url=reverse_lazy(
+                "bread.views.search.generic_search",
+                kwargs={"model": self.model._meta.model_name},
+            ),
         )
 
     def get_layout(self):

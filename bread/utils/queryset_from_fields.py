@@ -11,6 +11,7 @@ def get_char_text_qset(fields, queries, prefix, **kwargs):
         if isinstance(f, models.fields.CharField)
         or isinstance(f, models.fields.TextField)
     }
+
     return {
         Q(**{prefix + "_".join((f.name, "_contains")): query})
         for f in char_text_fields
@@ -19,7 +20,7 @@ def get_char_text_qset(fields, queries, prefix, **kwargs):
 
 
 def get_country_qset(fields, queries, prefix, **kwargs):
-    countries = kwargs["countries"]  # for convenience of referencing.
+    countries = kwargs["countries"]  # for the convenience of referencing.
     country_fields = {f for f in fields if isinstance(f, CountryField)}
 
     if not country_fields:

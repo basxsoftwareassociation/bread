@@ -13,6 +13,7 @@ appended to the ``INSTALLED_APPS`` setting.
 #
 # Mostly for dependencies and sane defaults
 #
+from django.conf import settings
 
 _third_party_apps = [
     "django_extensions",  # for developer friendliness, adding management commands
@@ -69,7 +70,6 @@ MIDDLEWARE = [
     "bread.middleware.RequireAuthenticationMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
 ]
-
 
 TEMPLATES = [
     {
@@ -145,3 +145,7 @@ DEFAULT_PAGE_LAYOUT = "bread.layout.default_page_layout"
 BREAD_PUBLIC_FILES_PREFIX = (
     "public/"  # request starting with this path will not require login
 )
+
+########################## search settings ###############################
+
+MIN_CHARACTERS_DYNAMIC_SEARCH = getattr(settings, "MIN_CHARACTERS_DYNAMIC_SEARCH", 3)
