@@ -7,7 +7,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import models
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
-from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
 from guardian.mixins import PermissionListMixin
@@ -121,14 +120,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             or self.bulkactions
             or default_bulkactions(self.model, self.columns)
         )
-        self.search_backend = kwargs.get(
-            "search_backend"
-        ) or layout.search.SearchBackendConfig(
-            url=reverse_lazy(
-                "bread.views.search.generic_search",
-                kwargs={"model": self.model._meta.model_name},
-            ),
-        )
+        self.search_backend = kwargs.get("search_backend") or self.search_backend
 
     def get_layout(self):
         qs = self.get_queryset()
