@@ -75,6 +75,12 @@ class Search(hg.DIV):
         )
 
 
+class SearchModel(Search):
+    def __init__(self, model, **kwargs):
+        super().__init__(**kwargs)
+        self.model = model
+
+
 def _result_container(_id, onload_js, width="100%"):
     return hg.DIV(
         hg.DIV(

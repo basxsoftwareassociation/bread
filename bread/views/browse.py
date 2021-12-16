@@ -12,6 +12,7 @@ from django.views.generic import ListView
 from guardian.mixins import PermissionListMixin
 
 from bread.utils import expand_ALL_constant, filter_fieldlist, queryset_from_fields
+from bread.utils.urls import reverse
 
 from .. import layout
 from ..layout.components.search import SearchBackendConfig
@@ -120,7 +121,17 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             or self.bulkactions
             or default_bulkactions(self.model, self.columns)
         )
-        self.search_backend = kwargs.get("search_backend") or self.search_backend
+        self.search_backend = kwargs.get(
+            "search_backend"
+        ) or layout.search.SearchBackendConfig(
+            url=reverse(
+                "bread.views.searchbar.search",
+                kwargs={
+                    "app": self.model._meta.app_label,
+                    "model": self.model._meta.model_name,
+                },
+            )
+        )
 
     def get_layout(self):
         qs = self.get_queryset()
