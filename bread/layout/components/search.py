@@ -61,7 +61,18 @@ class Search(hg.DIV):
         super().__init__(
             hg.DIV(
                 hg.LABEL(_("Search"), _class="bx--label", _for=widgetattributes["id"]),
-                hg.INPUT(**widgetattributes),
+                hg.INPUT(
+                    onkeydown=(
+                        f"""
+                        e => {{
+                            searchBox = document.getElementById('{widgetattributes["id"]}');
+                            if (e.key === 'Enter') {{
+                                document.location = `?q=${{searchBox.value}}
+                        }}
+                        """
+                    ),
+                    **widgetattributes,
+                ),
                 _search_icon(),
                 _close_button(resultcontainerid),
                 hg.If(backend is not None, _loading_indicator(resultcontainerid)),

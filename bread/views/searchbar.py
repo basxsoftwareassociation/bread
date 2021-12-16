@@ -41,7 +41,17 @@ def search(request, app: str, model: str):
         )
         return f"document.location = '{link}'"
 
-    ret = _display_results(query_set, highlight, onclick)
+    def more_results(item):
+        link = "%s?q=%s" % (
+            reverse_model(
+                model,
+                "browse",
+            ),
+            query,
+        )
+        return f"document.location = '{link}'"
+
+    ret = _display_results(query_set, highlight, onclick, more_results)
     return HttpResponse(
         hg.DIV(
             ret,
@@ -51,9 +61,9 @@ def search(request, app: str, model: str):
     )
 
 
-def _display_results(query_set, highlight, onclick):
+def _display_results(query_set, highlight, onclick, more_results):
     if not query_set:
-        return _("No results")
+        return "-----" + _("No results") + "-----"
 
     def _display_as_list_item(item):
         if item is None:
@@ -72,7 +82,6 @@ def _display_results(query_set, highlight, onclick):
                 style="dispay:none;",
             ),
             " ",
-            # mark_safe(highlight.highlight(item.search_index_snippet())),
             style="cursor: pointer; padding: 8px 0;",
             onclick=onclick(item),
             onmouseenter="this.style.backgroundColor = 'lightgray'",
@@ -81,14 +90,27 @@ def _display_results(query_set, highlight, onclick):
         )
 
     result_list = [
-        _display_as_list_item(search_result)
-        for search_result in query_set[:25]
-        # if search_result and search_result.object
+        _display_as_list_item(search_result) for search_result in query_set[:25]
     ]
 
     return hg.UL(
-        hg.LI(_("%s items found") % len(query_set), style="margin-bottom: 20px"),
+        hg.LI(
+            hg.STRONG(
+                " ".join(["-----", _("%s items found") % len(query_set), "-----"])
+            ),
+            style="margin-bottom: 20px; text-indent: 10px",
+        ),
         *result_list,
+        hg.LI(
+            hg.STRONG(_("Click for more results")),
+            style="cursor: pointer; padding: 8px 0;",
+            onclick=more_results(
+                query_set[0]
+            ),  # assume that all queries are from the same model
+            onmouseenter="this.style.backgroundColor = 'lightgray'",
+            onmouseleave="this.style.backgroundColor = 'initial'",
+            _class=ITEM_CLASS,
+        ),
     )
 
 
