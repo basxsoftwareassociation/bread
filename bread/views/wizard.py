@@ -38,7 +38,7 @@ def generate_wizard_form(wizardview, wizardtitle, steptitle, formlayout):
             hg.C("wizard.form"),
             layout.forms.Form(
                 hg.C("wizard.management_form"),
-                layout.forms.FormField("current_step"),
+                layout.forms.FormField("current_step", form="wizard.management_form"),
                 standalone=False,
             ),
             formlayout,

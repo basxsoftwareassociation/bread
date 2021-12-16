@@ -2,7 +2,7 @@ import htmlgenerator as hg
 
 from ..search import Search
 from ..tag import Tag
-from .helpers import LabelElement
+from .helpers import Label as LabelElement
 
 
 class SearchSelect(hg.DIV):

@@ -18,8 +18,6 @@ from .helpers import REQUIRED_LABEL, ErrorList, Label, to_php_formatstr
 # NullBooleanSelect
 # SelectMultiple
 # RadioSelect
-# FileInput
-# ClearableFileInput
 #
 # less used:
 # MultipleHiddenInput
@@ -547,6 +545,7 @@ class FileInput(BaseWidget):
         help_text_element,
         error_element,
         inputelement_attrs,
+        boundfield=None,
         **attributes,
     ):
         uploadbutton = hg.LABEL(
@@ -570,6 +569,33 @@ document.addEventListener('change', (e) => {
 });
 """,
         )
+        # we can only clear the field if it originates form a django field
+        # otherwise it has no use
+        clearbox = None
+        if boundfield:
+            checkbox_name = hg.F(
+                lambda c: hg.resolve_lazy(
+                    boundfield, c
+                ).field.widget.clear_checkbox_name(
+                    hg.resolve_lazy(boundfield, c).html_name
+                )
+            )
+            checkbox_id = hg.F(
+                lambda c: hg.resolve_lazy(boundfield, c).field.widget.clear_checkbox_id(
+                    hg.resolve_lazy(checkbox_name, c)
+                )
+            )
+            clearbox = hg.If(
+                self.clearable,
+                hg.INPUT(
+                    type="checkbox",
+                    name=checkbox_name,
+                    id=checkbox_id,
+                    style="display: none",
+                ),
+            )
+
+        # clearbutton is always used, to allow clearing a just selected field in the browser
         clearbutton = hg.If(
             self.clearable,
             hg.SPAN(
@@ -578,34 +604,57 @@ document.addEventListener('change', (e) => {
                     _class="bx--file-close",
                     type="button",
                     aria_label="close",
+                    onclick=hg.If(
+                        clearbox,
+                        hg.format("$('#{}').checked = 'checked';", checkbox_id),
+                    ),
                 ),
                 data_for=inputelement_attrs.get("id"),
                 _class="bx--file__state-container",
             ),
         )
+
         super().__init__(
             hg.STRONG(_class="bx--file--label"),
             hg.P(_class="bx--label-description"),
             hg.DIV(
                 uploadbutton,
                 input,
+                clearbox,
                 hg.DIV(
                     hg.If(
                         inputelement_attrs.get("value"),
                         hg.SPAN(
                             hg.P(
-                                hg.A(
+                                hg.If(
                                     hg.F(
-                                        lambda c: os.path.basename(
-                                            hg.resolve_lazy(inputelement_attrs, c).get(
-                                                "value"
-                                            )
+                                        lambda c: hasattr(
+                                            hg.resolve_lazy(inputelement_attrs, c)
+                                            .get("value")
+                                            .file,
+                                            "name",
                                         )
                                     ),
-                                    href=hg.F(
-                                        lambda c: settings.MEDIA_URL
-                                        + hg.resolve_lazy(inputelement_attrs, c).get(
-                                            "value"
+                                    hg.A(
+                                        hg.F(
+                                            lambda c: os.path.basename(
+                                                hg.resolve_lazy(inputelement_attrs, c)
+                                                .get("value")
+                                                .name
+                                            )
+                                        ),
+                                        href=hg.F(
+                                            lambda c: settings.MEDIA_URL
+                                            + hg.resolve_lazy(inputelement_attrs, c)
+                                            .get("value")
+                                            .name
+                                        ),
+                                    ),
+                                    hg.F(
+                                        lambda c: os.path.basename(
+                                            hg.resolve_lazy(inputelement_attrs, c)
+                                            .get("value")
+                                            .name
                                         )
                                     ),
                                 ),
@@ -627,7 +676,7 @@ document.addEventListener('change', (e) => {
         )
 
 
-class ClearableFileInput(BaseWidget):
+class ClearableFileInput(FileInput):
     django_widget = widgets.ClearableFileInput
     clearable = True
 

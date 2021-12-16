@@ -371,19 +371,17 @@ class CsrfToken(FormChild, hg.INPUT):
 def _mapwidget(
     field, fieldtype, elementattributes=None, widgetattributes=None, only_initial=False
 ):
-    from .checkbox import Checkbox
-    from .date_picker import DatePicker
-    from .file_uploader import FileUploader
+    from .checkbox import Checkbox  # done
+    from .date_picker import DatePicker  # done
+    from .file_uploader import FileUploader  # done
     from .multiselect import MultiSelect
-    from .select import Select
-    from .text_area import TextArea
-    from .text_input import (
-        EmailInput,
-        PasswordInput,
-        PhoneNumberInput,
-        TextInput,
-        UrlInput,
-    )
+    from .select import Select  # done
+    from .text_area import TextArea  # done
+    from .text_input import EmailInput  # done
+    from .text_input import PasswordInput  # done
+    from .text_input import PhoneNumberInput  # done
+    from .text_input import TextInput  # done
+    from .text_input import UrlInput  # done
 
     widgetattributes = update_widgetattributes(field, only_initial, widgetattributes)
     elementattributes = {
