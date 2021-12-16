@@ -30,7 +30,6 @@ _third_party_apps = [
     "djmoney.contrib.exchange",
     # task queue system
     "django_celery_results",
-    "django_celery_beat",
     # search index
     "haystack",
     "celery_haystack",

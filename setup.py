@@ -32,7 +32,7 @@ setup(
         "htmlgenerator",  # replacement for django templates
         "django-extensions",  # bunch of usefull management commands and functions
         "django-guardian",  # object level permissions
-        "django-dynamic-preferences",  # easy handling of preferences
+        "django-dynamic-preferences",  # easy handling of preferences #
         "django-countries",
         "django-money[exchange]",
         "django-simple-history",
@@ -41,8 +41,8 @@ setup(
         # required for task scheduling
         "celery",
         "django-celery-results",
-        "django-celery-beat",
         # required for search engine
+        "django-haystack",
         "celery-haystack-ng",
         "whoosh",
         # TODO: review whether we can or should remove these
