@@ -1,9 +1,7 @@
 import htmlgenerator as hg
 from django.apps import apps
 from django.http import HttpResponse
-from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from haystack.query import SearchQuerySet
 from haystack.utils import Highlighter
 from htmlgenerator import mark_safe
 
