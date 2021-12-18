@@ -1,6 +1,8 @@
 import warnings
+from typing import List, Optional, Union
 
 import htmlgenerator as hg
+from django import forms
 
 from .helpers import ErrorList, HelpText, Label
 from .widgets import BaseWidget, HiddenInput, TextInput
@@ -9,23 +11,38 @@ from .widgets import BaseWidget, HiddenInput, TextInput
 class FormFieldMarker(hg.BaseElement):
     # Internal helper class to mark form fields inside a render tree
     # so that the fields an be automatically extracted from it in to
-    # generate a django form class
+    # generate a django form class, see bread.forms.forms
     def __init__(self, fieldname, field):
         self.fieldname = fieldname
         super().__init__(field)
 
 
-def FormField(
-    fieldname=None,
-    form="form",
-    label=None,
-    help_text=None,
-    error_list=None,
-    inputelement_attrs=None,
-    formfield_class=None,
-    with_wrapper=True,
-    show_hidden_initial=False,
-    **kwargs,
+def generate_formfield(
+    fieldname: str = None,  # required to derive the widget from a django form field
+    form: Union[
+        forms.Form, hg.Lazy, str
+    ] = "form",  # required to derive the widget from a django form field
+    with_wrapper: bool = True,  # produces a less dense layout, from carbon design
+    show_hidden_initial: bool = False,  # required by some parameters to override django field configuration or use a non-form-bound field
+    # fields
+    # parameters which are normally not required, when using a django form field
+    # but can be filled in to create form fields independently from form fields
+    widgetclass: Optional[
+        BaseWidget
+    ] = None,  # normally be taken from the django form field, will be carbon-ized
+    label: Union[
+        str, hg.BaseElement
+    ] = None,  # normally be taken from the django form field, will be carbon-ized
+    help_text: Union[
+        str, hg.BaseElement
+    ] = None,  # normally be taken from the django form field, will be carbon-ized
+    errors: Optional[
+        List[str]
+    ] = None,  # normally be taken from the django form field, will be carbon-ized
+    inputelement_attrs: Optional[
+        dict
+    ] = None,  # normally be taken from the django form field, will be carbon-ized
+    **attributes,
 ):
     """
     Function to produce a carbon design based form field widget which is
@@ -35,41 +52,43 @@ def FormField(
     #
     hidden = None
     if show_hidden_initial:
-        hidden = FormField(
+        hidden = generate_formfield(
             fieldname=fieldname,
             form=form,
             inputelement_attrs=inputelement_attrs,
-            formfield_class=HiddenInput,
+            widgetclass=HiddenInput,
             with_wrapper=False,
             show_hidden_initial=False,
-            **kwargs,
+            **attributes,
         )
 
     inputelement_attrs = inputelement_attrs or {}
     boundfield = None
 
     # warnings for deprecated API usage
-    if "widgetattributes" in kwargs:
+    if "widgetattributes" in attributes:
         warnings.warn(
             "FormField does no longer support the parameter 'widgetattributes'. "
             "The parameter 'inputelement_attrs' serves the same purpose'"
         )
-    if "elementattributes" in kwargs:
+    if "elementattributes" in attributes:
         warnings.warn(
             "FormField does no longer support the parameter 'elementattributes'. "
             "attributes can now be directly passed as kwargs."
         )
 
-    # check if this field will be used with a django form
-    # if yes, derive the according values lazyly from the context
+    # check if this field will be used with a django form if yes, derive the
+    # according values lazyly from the context
     if fieldname is not None and form is not None:
         if isinstance(form, str):
             form = hg.C(form)
 
         label = label or form[fieldname].label
         help_text = help_text or form.fields[fieldname].help_text
-        error_list = error_list or form[fieldname].errors
+        errors = errors or form[fieldname].errors
 
+        # do this to preserve the original inputelement_attrs in the
+        # buildattribs scope
         orig_inputattribs = inputelement_attrs
 
         def buildattribs(context):
@@ -99,24 +118,24 @@ def FormField(
         labelfor = inputelement_attrs.get("id")
 
     # helper elements
-    label_element = Label(
+    label = Label(
         label,
         required=inputelement_attrs.get("required"),
         disabled=inputelement_attrs.get("disabled"),
         _for=labelfor,
     )
-    help_text_element = HelpText(help_text, disabled=inputelement_attrs.get("disabled"))
-    error_element = ErrorList(error_list)
+    help_text = HelpText(help_text, disabled=inputelement_attrs.get("disabled"))
+    errors = ErrorList(errors)
 
-    # instantiate field (might create a lazy element when using guess_fieldclass)
-    formfield_class = formfield_class or guess_fieldclass(fieldname, form)
-    ret = formfield_class(
-        boundfield=boundfield,
-        label_element=label_element,
-        help_text_element=help_text_element,
-        error_element=error_element,
+    # instantiate field (might create a lazy element when using _guess_widget)
+    widgetclass = widgetclass or _guess_widget(fieldname, form)
+    ret = widgetclass(
+        label=label,
+        help_text=help_text,
+        errors=errors,
         inputelement_attrs=inputelement_attrs,
-        **kwargs,
+        boundfield=boundfield,
+        **attributes,
     )
     if show_hidden_initial:
         ret = hg.BaseElement(ret, hidden)
@@ -125,7 +144,14 @@ def FormField(
     return FormFieldMarker(fieldname, ret)
 
 
-def guess_fieldclass(fieldname, form):
+# Using this alias we can prevent a huge refactoring across multiple repos This
+# is slightly inconsistent with the default naming scheme of python where camel
+# case denotes not a function but a class
+# TODO: maybe refactor Formfield to be formfield
+FormField = generate_formfield
+
+
+def _guess_widget(fieldname, form):
     widget_map = {}
     for cls in _all_subclasses(BaseWidget):
         if cls.django_widget not in widget_map:

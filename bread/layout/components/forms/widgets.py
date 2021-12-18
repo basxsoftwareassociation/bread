@@ -10,20 +10,12 @@ from phonenumber_field.formfields import PhoneNumberField
 
 from ..button import Button
 from ..icon import Icon
+from ..tag import Tag
 from .helpers import REQUIRED_LABEL, ErrorList, Label, to_php_formatstr
 
 # Missing widget implementations:
 # DateTimeInput
-# TimeInput
-# NullBooleanSelect
-# SelectMultiple
 # RadioSelect
-#
-# less used:
-# MultipleHiddenInput
-# SplitDateTimeWidget
-# SplitHiddenDateTimeWidget
-# SelectDateWidget
 
 
 # A plain, largely unstyled input element
@@ -31,26 +23,39 @@ from .helpers import REQUIRED_LABEL, ErrorList, Label, to_php_formatstr
 # in bread forms
 class BaseWidget(hg.DIV):
     # used to mark that this class can be used in place of the according django widget or field
+    # all bread widgets must have this if they should be used automatically to render form fields
     django_widget = None
 
-    # default attributes which are used to create the input element in a standard way
+    # default attributes which are used to create the input element in a standardized way for many inputs
     carbon_input_class = ""
     carbon_input_error_class = ""
     input_type = None
 
-    # __init__ should support the following parameters
-    # label_element: bread.layout.components.forms.utils.Label
-    # help_text_element: Optional[Any]
-    # error_element: bread.layout.components.forms.utils.ErrorList
+    # __init__ of derived classes should support the following parameters
+    # label: bread.layout.components.forms.utils.Label
+    # help_text: Optional[Any]
+    # errors: bread.layout.components.forms.utils.ErrorList
+    #         ``hg.If(errors.condition, ...`` can be used to render parts depending if there are errors
     # inputelement_attrs: Union[Lazy[dict], dict],
     # boundfield: Optional[django.forms.BoundField],
 
     def __init__(self, *args, **kwargs):
-        if "boundfield" in kwargs:
-            del kwargs["boundfield"]
+        # prevent rendering of any of the special kwargs we use in generate_formfield
+        for param in [
+            "label_element",
+            "label",
+            "help_text_element",
+            "error_element",
+            "inputelement_attrs",
+            "boundfield",
+        ]:
+            if param in kwargs:
+                raise Exception(
+                    f"Widget {type(self)} tries to render parameter {param}"
+                )
         super().__init__(*args, **kwargs)
 
-    def get_input_element(self, inputelement_attrs, error_element, **kwargs):
+    def get_input_element(self, inputelement_attrs, errors, **kwargs):
         return hg.INPUT(
             type=self.input_type,
             lazy_attributes=_combine_lazy_dict(
@@ -58,7 +63,7 @@ class BaseWidget(hg.DIV):
                     inputelement_attrs or {},
                     self.carbon_input_class,
                     hg.If(
-                        getattr(error_element, "condition", False),
+                        getattr(errors, "condition", False),
                         self.carbon_input_error_class,
                     ),
                 ),
@@ -76,13 +81,14 @@ class HiddenInput(BaseWidget):
 
     def __init__(
         self,
-        label_element,
-        help_text_element,
-        error_element,
-        inputelement_attrs,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
+        boundfield=None,
         **attributes,
     ):
-        super().__init__(self.get_input_element(inputelement_attrs, error_element))
+        super().__init__(self.get_input_element(inputelement_attrs, errors))
 
 
 class TextInput(BaseWidget):
@@ -93,27 +99,28 @@ class TextInput(BaseWidget):
 
     def __init__(
         self,
-        label_element,
-        help_text_element,
-        error_element,
-        inputelement_attrs,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
+        boundfield=None,
         icon=None,
         **attributes,
     ):
         attributes["_class"] = attributes.get("_class", "") + " bx--text-input-wrapper"
 
         super().__init__(
-            label_element,
+            label,
             hg.DIV(
                 hg.If(
-                    error_element.condition,
+                    errors.condition,
                     Icon(
                         "warning--filled",
                         size=16,
                         _class="bx--text-input__invalid-icon",
                     ),
                 ),
-                self.get_input_element(inputelement_attrs, error_element),
+                self.get_input_element(inputelement_attrs, errors),
                 hg.If(
                     icon,
                     hg.If(
@@ -130,10 +137,10 @@ class TextInput(BaseWidget):
                     "bx--text-input__field-wrapper"
                     + (" text-input-with-icon" if icon is not None else "")
                 ),
-                data_invalid=hg.If(error_element.condition, True),
+                data_invalid=hg.If(errors.condition, True),
             ),
-            error_element,
-            help_text_element,
+            errors,
+            help_text,
             **attributes,
         )
 
@@ -168,16 +175,114 @@ class NumberInput(TextInput):
     input_type = "number"
 
 
+class TimeInput(TextInput):
+    django_widget = widgets.TimeInput
+    input_type = "time"
+
+
+class PasswordInput(TextInput):
+    django_widget = widgets.PasswordInput
+    carbon_input_class = "bx--password-input bx--text-input"
+    carbon_input_error_class = "bx--text-input--invalid"
+    input_type = "password"
+
+    def __init__(
+        self,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
+        boundfield=None,
+        **attributes,
+    ):
+        attributes["data-text-input"] = True
+        attributes["_class"] = (
+            attributes.get("_class", "") + " bx--password-input-wrapper"
+        )
+        showhidebtn = Button(
+            _("Show password"),
+            icon=hg.BaseElement(
+                Icon("view--off", _class="bx--icon--visibility-off", hidden="true"),
+                Icon("view", _class="bx--icon--visibility-on"),
+            ),
+            notext=True,
+        )
+        # override attributes from button
+        showhidebtn.attributes["_class"] = (
+            "bx--text-input--password__visibility__toggle bx--tooltip__trigger "
+            "bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-center"
+        )
+        super().__init__(
+            label=label,
+            help_text=help_text,
+            errors=errors,
+            inputelement_attrs=_combine_lazy_dict(
+                inputelement_attrs, {"data_toggle_password_visibility": True}
+            ),
+            icon=showhidebtn,
+            **attributes,
+        )
+
+
+class Textarea(BaseWidget):
+    django_widget = widgets.Textarea
+    carbon_input_class = "bx--text-area bx--text-area--v2"
+    carbon_input_error_class = "bx--text-area--invalid"
+
+    def __init__(
+        self,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
+        boundfield=None,
+        **attributes,
+    ):
+        attributes["_class"] = attributes.get("_class", "") + " bx--form-item"
+
+        super().__init__(
+            label,
+            hg.DIV(
+                hg.TEXTAREA(
+                    boundfield.value(),
+                    hg.If(
+                        errors.condition,
+                        Icon(
+                            "warning--filled",
+                            size=16,
+                            _class="bx--text-area__invalid-icon",
+                        ),
+                    ),
+                    lazy_attributes=_combine_lazy_dict(
+                        _append_classes(
+                            inputelement_attrs or {},
+                            self.carbon_input_class,
+                            hg.If(
+                                errors.condition,
+                                self.carbon_input_error_class,
+                            ),
+                        ),
+                        {"value": None},
+                    ),
+                ),
+                _class="bx--text-area__wrapper",
+            ),
+            help_text,
+            errors,
+            **attributes,
+        )
+
+
 class Select(BaseWidget):
     django_widget = widgets.Select
     carbon_input_class = "bx--select-input"
 
     def __init__(
         self,
-        label_element,
-        help_text_element,
-        error_element,
-        inputelement_attrs,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
         boundfield=None,
         inline=False,
         optgroups=None,  # for non-django-form select elements use this
@@ -221,7 +326,7 @@ class Select(BaseWidget):
                     inputelement_attrs or {},
                     self.carbon_input_class,
                     hg.If(
-                        error_element.condition,
+                        errors.condition,
                         self.carbon_input_error_class,
                     ),
                 ),
@@ -233,7 +338,7 @@ class Select(BaseWidget):
                 aria_hidden="true",
             ),
             hg.If(
-                error_element.condition,
+                errors.condition,
                 Icon(
                     "warning--filled",
                     size=16,
@@ -241,71 +346,165 @@ class Select(BaseWidget):
                 ),
             ),
             _class="bx--select-input__wrapper",
-            data_invalid=hg.If(error_element.condition, True),
+            data_invalid=hg.If(errors.condition, True),
         )
         super().__init__(
-            label_element,
+            label,
             hg.If(
                 inline,
                 hg.DIV(
                     select_wrapper,
-                    error_element,
+                    errors,
                     _class="bx--select-input--inline__wrapper",
                 ),
                 select_wrapper,
             ),
-            help_text_element,
-            hg.If(inline, None, error_element),  # not displayed if this is inline
+            help_text,
+            hg.If(inline, None, errors),  # not displayed if this is inline
             _class=hg.BaseElement(
                 attributes.get("_class"),
                 " bx--select",
                 hg.If(inline, " bx--select--inline"),
-                hg.If(error_element.condition, " bx--select--invalid"),
+                hg.If(errors.condition, " bx--select--invalid"),
                 hg.If(inputelement_attrs.get("disabled"), " bx--select--disabled"),
             ),
             **attributes,
         )
 
 
-class PasswordInput(TextInput):
-    django_widget = widgets.PasswordInput
-    carbon_input_class = "bx--password-input bx--text-input"
-    carbon_input_error_class = "bx--text-input--invalid"
-    input_type = "password"
+class NullBooleanSelect(Select):
+    django_widget = widgets.NullBooleanSelect
+
+
+class SelectMultiple(BaseWidget):
+    django_widget = widgets.SelectMultiple
 
     def __init__(
         self,
-        label_element,
-        help_text_element,
-        error_element,
-        inputelement_attrs,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
+        boundfield=None,  # for django-form select elements use this
+        optgroups=None,  # for non-django-form select elements use this
         **attributes,
     ):
-        attributes["data-text-input"] = True
-        attributes["_class"] = (
-            attributes.get("_class", "") + " bx--password-input-wrapper"
-        )
-        showhidebtn = Button(
-            _("Show password"),
-            icon=hg.BaseElement(
-                Icon("view--off", _class="bx--icon--visibility-off", hidden="true"),
-                Icon("view", _class="bx--icon--visibility-on"),
-            ),
-            notext=True,
-        )
-        # override attributes from button
-        showhidebtn.attributes["_class"] = (
-            "bx--text-input--password__visibility__toggle bx--tooltip__trigger "
-            "bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-center"
-        )
+        optgroups = optgroups or _gen_optgroup(boundfield)
+
+        def countselected(context):
+            options = [o for og in hg.resolve_lazy(optgroups, context) for o in og[1]]
+            return len([o for o in options if o and o["selected"]])
+
+        searchfieldid = hg.html_id(self)
         super().__init__(
-            label_element=label_element,
-            help_text_element=help_text_element,
-            error_element=error_element,
-            inputelement_attrs=_combine_lazy_dict(
-                inputelement_attrs, {"data_toggle_password_visibility": True}
+            label,
+            hg.If(
+                inputelement_attrs.get("disabled"),
+                hg.DIV(
+                    hg.Iterator(
+                        optgroups,
+                        "optiongroup",
+                        hg.Iterator(
+                            hg.C("optiongroup.1"),
+                            "option",
+                            hg.If(hg.C("option.selected"), Tag(hg.C("option.label"))),
+                        ),
+                    )
+                ),
+                hg.DIV(
+                    hg.DIV(
+                        hg.DIV(
+                            hg.F(countselected),
+                            Icon(
+                                "close",
+                                focusable="false",
+                                size=15,
+                                role="img",
+                                onclick="clearMultiselect(this.parentElement.parentElement.parentElement)",
+                            ),
+                            role="button",
+                            _class="bx--list-box__selection bx--list-box__selection--multi bx--tag--filter",
+                            tabindex="0",
+                            title="Clear all selected items",
+                        ),
+                        hg.INPUT(
+                            id=searchfieldid,
+                            _class="bx--text-input",
+                            placeholder="Filter...",
+                            onclick="this.parentElement.nextElementSibling.style.display = 'block'",
+                            onkeyup="filterOptions(this.parentElement.parentElement)",
+                        ),
+                        hg.DIV(
+                            Icon(
+                                "chevron--down", size=16, role="img", focusable="false"
+                            ),
+                            _class="bx--list-box__menu-icon",
+                            onclick="this.parentElement.nextElementSibling.style.display = this.parentElement.nextElementSibling.style.display == 'none' ? 'block' : 'none';",
+                        ),
+                        role="button",
+                        _class="bx--list-box__field",
+                        tabindex="0",
+                        onload="window.addEventListener('click', (e) => {this.nextElementSibling.style.display = 'none'})",
+                    ),
+                    hg.FIELDSET(
+                        hg.Iterator(
+                            optgroups,
+                            "optgroup",
+                            hg.Iterator(
+                                hg.C("optgroup.1"),
+                                "option",
+                                hg.DIV(
+                                    hg.DIV(
+                                        hg.DIV(
+                                            hg.LABEL(
+                                                hg.INPUT(
+                                                    type="checkbox",
+                                                    readonly=True,
+                                                    _class="bx--checkbox",
+                                                    value=hg.C("option.value"),
+                                                    lazy_attributes=hg.C(
+                                                        "option.attrs"
+                                                    ),
+                                                    onchange="updateMultiselect(this.closest('.bx--multi-select'))",
+                                                    checked=hg.C("option.selected"),
+                                                    name=hg.C("option.name"),
+                                                ),
+                                                hg.SPAN(
+                                                    _class="bx--checkbox-appearance"
+                                                ),
+                                                hg.SPAN(
+                                                    hg.C("option.label"),
+                                                    _class="bx--checkbox-label-text",
+                                                ),
+                                                title=hg.C("option.label"),
+                                                _class="bx--checkbox-label",
+                                            ),
+                                            _class="bx--form-item bx--checkbox-wrapper",
+                                        ),
+                                        _class="bx--list-box__menu-item__option",
+                                    ),
+                                    _class="bx--list-box__menu-item",
+                                ),
+                            ),
+                        ),
+                        _class="bx--list-box__menu",
+                        role="listbox",
+                        style="display: none",
+                    ),
+                    _class=hg.BaseElement(
+                        "bx--multi-select bx--list-box bx--multi-select--selected bx--combo-box bx--multi-select--filterable",
+                        hg.If(
+                            inputelement_attrs.get("disabled"),
+                            " bx--list-box--disabled",
+                        ),
+                    ),
+                    data_invalid=hg.If(errors.condition, True),
+                ),
             ),
-            icon=showhidebtn,
+            help_text,
+            errors,
+            _class="bx--list-box__wrapper",
+            onclick="event.stopPropagation()",
             **attributes,
         )
 
@@ -317,10 +516,10 @@ class Checkbox(BaseWidget):
 
     def __init__(
         self,
-        label_element,
-        help_text_element,
-        error_element,
-        inputelement_attrs,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
         boundfield=None,
         **attributes,
     ):
@@ -335,10 +534,11 @@ class Checkbox(BaseWidget):
                 )
             )
         inputelement_attrs = _combine_lazy_dict(inputelement_attrs, attrs)
+        label = None if label is None else label.label
         super().__init__(
             hg.LABEL(
-                self.get_input_element(inputelement_attrs, error_element),
-                label_element.label,
+                self.get_input_element(inputelement_attrs, errors),
+                label,
                 hg.If(inputelement_attrs.get("required"), REQUIRED_LABEL),
                 _class=hg.BaseElement(
                     "bx--checkbox-label",
@@ -350,8 +550,8 @@ class Checkbox(BaseWidget):
                     "false",
                 ),
             ),
-            help_text_element,
-            error_element,
+            help_text,
+            errors,
             **attributes,
         )
 
@@ -363,23 +563,23 @@ class CheckboxSelectMultiple(BaseWidget):
 
     def __init__(
         self,
-        label_element,
-        help_text_element,
-        error_element,
-        inputelement_attrs,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
         boundfield=None,
         **attributes,
     ):
         super().__init__(
-            label_element,
+            label,
             hg.FIELDSET(
                 hg.Iterator(
                     boundfield.subwidgets,
                     "checkbox",
                     Checkbox(
-                        label_element=Label(hg.C("checkbox").data["label"]),
-                        help_text_element=None,
-                        error_element=ErrorList([]),
+                        label=Label(hg.C("checkbox").data["label"]),
+                        help_text=None,
+                        errors=ErrorList([]),
                         inputelement_attrs=_combine_lazy_dict(
                             _combine_lazy_dict(
                                 inputelement_attrs,
@@ -394,10 +594,14 @@ class CheckboxSelectMultiple(BaseWidget):
                     ),
                 )
             ),
-            help_text_element,
-            error_element,
+            help_text,
+            errors,
             **attributes,
         )
+
+
+class RadioSelect(BaseWidget):
+    pass
 
 
 class DatePicker(BaseWidget):
@@ -407,10 +611,10 @@ class DatePicker(BaseWidget):
 
     def __init__(
         self,
-        label_element,
-        help_text_element,
-        error_element,
-        inputelement_attrs,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
         boundfield=None,
         style_short=False,
         style_simple=False,
@@ -429,13 +633,13 @@ class DatePicker(BaseWidget):
 
         super().__init__(
             hg.DIV(
-                label_element,
+                label,
                 hg.If(
                     style_simple,
                     self.get_input_element(
                         inputelement_attrs,
-                        error_element,
-                        data_invalid=hg.If(error_element.condition, True),
+                        errors,
+                        data_invalid=hg.If(errors.condition, True),
                         pattern=hg.F(
                             lambda c: (
                                 TimeRE()
@@ -454,9 +658,9 @@ class DatePicker(BaseWidget):
                     hg.DIV(
                         self.get_input_element(
                             inputelement_attrs,
-                            error_element,
+                            errors,
                             data_date_picker_input=True,
-                            data_invalid=hg.If(error_element.condition, True),
+                            data_invalid=hg.If(errors.condition, True),
                             data_date_format=hg.F(
                                 lambda c: to_php_formatstr(
                                     hg.resolve_lazy(boundfield, c).field.widget.format,
@@ -475,59 +679,10 @@ class DatePicker(BaseWidget):
                         _class="bx--date-picker-input__wrapper",
                     ),
                 ),
-                help_text_element,
-                error_element,
+                help_text,
+                errors,
                 _class="bx--date-picker-container",
             ),
-            **attributes,
-        )
-
-
-class Textarea(BaseWidget):
-    django_widget = widgets.Textarea
-    carbon_input_class = "bx--text-area bx--text-area--v2"
-    carbon_input_error_class = "bx--text-area--invalid"
-
-    def __init__(
-        self,
-        label_element,
-        help_text_element,
-        error_element,
-        inputelement_attrs,
-        boundfield=None,
-        **attributes,
-    ):
-        attributes["_class"] = attributes.get("_class", "") + " bx--form-item"
-
-        super().__init__(
-            label_element,
-            hg.DIV(
-                hg.TEXTAREA(
-                    boundfield.value(),
-                    hg.If(
-                        error_element.condition,
-                        Icon(
-                            "warning--filled",
-                            size=16,
-                            _class="bx--text-area__invalid-icon",
-                        ),
-                    ),
-                    lazy_attributes=_combine_lazy_dict(
-                        _append_classes(
-                            inputelement_attrs or {},
-                            self.carbon_input_class,
-                            hg.If(
-                                error_element.condition,
-                                self.carbon_input_error_class,
-                            ),
-                        ),
-                        {"value": None},
-                    ),
-                ),
-                _class="bx--text-area__wrapper",
-            ),
-            help_text_element,
-            error_element,
             **attributes,
         )
 
@@ -536,15 +691,14 @@ class FileInput(BaseWidget):
     django_widget = widgets.FileInput
     carbon_input_class = "bx--file-input bx--visually-hidden"
     input_type = "file"
-    # TODO: make clearable working
     clearable = False
 
     def __init__(
         self,
-        label_element,
-        help_text_element,
-        error_element,
-        inputelement_attrs,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
         boundfield=None,
         **attributes,
     ):
@@ -554,12 +708,12 @@ class FileInput(BaseWidget):
             _class="bx--btn bx--btn--primary",
             data_file_drop_container=True,
             disabled=inputelement_attrs.get("disabled"),
-            data_invalid=error_element.condition,
+            data_invalid=errors.condition,
             _for=inputelement_attrs.get("id"),
         )
         input = self.get_input_element(
             inputelement_attrs,
-            error_element,
+            errors,
             onload="""
 document.addEventListener('change', (e) => {
     this.parentElement.querySelector('[data-file-container]').innerHTML = '';
@@ -667,8 +821,8 @@ document.addEventListener('change', (e) => {
                     data_file_container=True,
                     _class="bx--file-container",
                 ),
-                help_text_element,
-                error_element,
+                help_text,
+                errors,
                 _class="bx--file",
                 data_file=True,
             ),
