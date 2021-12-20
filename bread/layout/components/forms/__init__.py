@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from ..button import Button
 from ..notification import InlineNotification
-from .fields import FormField
+from .fields import FormField, FormFieldMarker
 
 
 class Form(hg.FORM):
@@ -93,14 +93,14 @@ class FormsetField(hg.Iterator):
         self.formsetfactory_kwargs = formsetfactory_kwargs  # used in bread.forms.forms._generate_formset_class, maybe refactor this?
         self.formsetinitial = formsetinitial  # used in bread.forms.forms._generate_formset_class, maybe refactor this?
         self.content = content
-        if isinstance(self.content, FormField):
+        if isinstance(self.content, FormFieldMarker):
             self.content = hg.BaseElement(self.content)
 
         # search fields which have explicitly been defined in the content element
         declared_fields = set(
             f.fieldname
             for f in self.content.filter(
-                lambda e, ancestors: isinstance(e, FormField) and e.is_djangoformfield
+                lambda e, ancestors: isinstance(e, FormFieldMarker)
             )
         )
 

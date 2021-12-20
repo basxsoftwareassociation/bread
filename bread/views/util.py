@@ -65,7 +65,7 @@ class CustomFormMixin:
         if self.request.method != "POST":
             for fieldelement in self._get_layout_cached().filter(
                 lambda element, ancestors: isinstance(
-                    element, breadlayout.forms.widgets.BaseWidget
+                    element, breadlayout.forms.fields.FormFieldMarker
                 )
             ):
                 if (

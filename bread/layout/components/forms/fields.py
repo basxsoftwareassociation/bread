@@ -52,7 +52,6 @@ def generate_formfield(
     compatible with Django forms and based on htmlgenerator.
     """
 
-    #
     hidden = None
     if show_hidden_initial:
         hidden = generate_formfield(

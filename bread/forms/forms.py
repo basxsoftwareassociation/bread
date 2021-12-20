@@ -195,9 +195,7 @@ def _generate_formset_class(
     )
 
     base_formset_kwargs = {
-        "fields": [
-            field.fieldname for field in formfieldelements if field.is_djangoformfield
-        ],
+        "fields": [field.fieldname for field in formfieldelements],
         "form": formclass,
         "extra": 0,
         "can_delete": True,
