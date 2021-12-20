@@ -74,16 +74,6 @@ class QuerysetField(models.TextField):
     def get_db_prep_value(self, value, connection, prepared=False):
         return self.get_clean_value(value)
 
-    def formfield(self, **kwargs):
-        ret = super().formfield(**kwargs)
-        ret.layout = QuerySetFormWidget
-        ret.layout_kwargs = {
-            "modelfieldname": self.modelfieldname,
-            "rows": 1,
-            "name": self.name,
-        }
-        return ret
-
     def check(self, **kwargs):
         return [
             *super().check(**kwargs),
@@ -116,15 +106,19 @@ class QuerysetField(models.TextField):
 
 
 class QuerySetFormWidget(layout.forms.widgets.Textarea):
-    def __init__(self, *args, modelfieldname, name, **kwargs):
+    django_widget = QuerysetField
+
+    def __init__(self, *args, **kwargs):
+        print(*args, **kwargs)
+        # def __init__(self, *args, modelfieldname, name, **kwargs):
         super().__init__(*args, **kwargs)
-        self.name = name
-        self.boundfield = kwargs.get("boundfield", None)
-        self.model = None
-        if "boundfield" in kwargs:
-            self.model = getattr(
-                self.boundfield.form.instance, modelfieldname
-            ).model_class()
+        # self.name = name
+        # self.boundfield = kwargs.get("boundfield", None)
+        # self.model = None
+        # if "boundfield" in kwargs:
+        # self.model = getattr(
+        # self.boundfield.form.instance, modelfieldname
+        # ).model_class()
 
     def render(self, context):
         if self.model:
