@@ -87,10 +87,12 @@ def widgetpreview(request):
         },
     )
 
-    return hg.WithContext(
+    return hg.BaseElement(
         hg.H3(_("Widget preview")),
-        *[F(re.sub(r"(?<!^)(?=[A-Z])", "_", w.__name__)) for w in widgets.keys()],
-        form=Form(),
+        layout.forms.Form(
+            Form(),
+            *[F(re.sub(r"(?<!^)(?=[A-Z])", "_", w.__name__)) for w in widgets.keys()]
+        ),
     )
 
 

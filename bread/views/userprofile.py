@@ -336,10 +336,9 @@ def profile_field_password(fieldname):
 
 
 def profile_field_checkbox(fieldname):
-    return layout.checkbox.Checkbox(
-        layout.ObjectFieldLabel(fieldname),
-        disabled=True,
-        widgetattributes={"checked": hg.C(f"object.{fieldname}")},
+    return layout.forms.widgets.Checkbox(
+        label=layout.ObjectFieldLabel(fieldname),
+        inputelement_attrs={"checked": hg.C(f"object.{fieldname}"), "disabled": True},
     )
 
 

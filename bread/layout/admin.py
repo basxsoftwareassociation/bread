@@ -96,11 +96,7 @@ def maintenance_database_optimization(request):
     else:
         form = OptimizeForm()
 
-    optimize_btn = Form(
-        form, FormField("previous"), Button(_("Optimize"), type="submit")
-    )
-
     return hg.BaseElement(
         hg.H5(f"Current Size: {current_db_size : .2f} kB"),
-        optimize_btn,
+        Form(form, FormField("previous"), Button(_("Optimize"), type="submit")),
     )

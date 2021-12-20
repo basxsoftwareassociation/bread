@@ -7,6 +7,9 @@ from django import forms
 from .helpers import ErrorList, HelpText, Label
 from .widgets import BaseWidget, HiddenInput, TextInput
 
+DEFAULT_FORM_CONTEXTNAME = "__bread_form"
+DEFAULT_FORMSET_CONTEXTNAME = "__bread_formset_form"
+
 
 class FormFieldMarker(hg.BaseElement):
     # Internal helper class to mark form fields inside a render tree
@@ -21,8 +24,9 @@ def generate_formfield(
     fieldname: str = None,  # required to derive the widget from a django form field
     form: Union[
         forms.Form, hg.Lazy, str
-    ] = "form",  # required to derive the widget from a django form field
-    with_wrapper: bool = True,  # produces a less dense layout, from carbon design
+    ] = DEFAULT_FORM_CONTEXTNAME,  # required to derive the widget from a django form field
+    no_wrapper: bool = False,  # wrapper produces less dense layout, from carbon styles
+    no_label: bool = False,
     show_hidden_initial: bool = False,  # required in special cases to add an initial value
     #
     #
@@ -59,7 +63,8 @@ def generate_formfield(
             form=form,
             inputelement_attrs=inputelement_attrs,
             widgetclass=HiddenInput,
-            with_wrapper=False,
+            no_wrapper=True,
+            no_label=True,
             show_hidden_initial=False,
             **attributes,
         )
@@ -132,7 +137,7 @@ def generate_formfield(
     # instantiate field (might create a lazy element when using _guess_widget)
     widgetclass = widgetclass or _guess_widget(fieldname, form)
     ret = widgetclass(
-        label=label,
+        label=None if no_label else label,
         help_text=help_text,
         errors=errors,
         inputelement_attrs=inputelement_attrs,
@@ -141,7 +146,7 @@ def generate_formfield(
     )
     if show_hidden_initial:
         ret = hg.BaseElement(ret, hidden)
-    if with_wrapper:
+    if not no_wrapper:
         ret = ret.with_fieldwrapper()
     return FormFieldMarker(fieldname, ret)
 

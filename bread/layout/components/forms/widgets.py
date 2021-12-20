@@ -171,9 +171,45 @@ class EmailInput(TextInput):
         super().__init__(*args, icon="email", **attributes)
 
 
-class NumberInput(TextInput):
+class NumberInput(BaseWidget):
     django_widget = widgets.NumberInput
     input_type = "number"
+
+    def __init__(
+        self,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
+        boundfield=None,
+        **attributes,
+    ):
+        inputelement_attrs = inputelement_attrs or {}
+        super().__init__(
+            label,
+            hg.DIV(
+                self.get_input_element(inputelement_attrs, errors),
+                hg.DIV(
+                    hg.BUTTON(
+                        Icon("caret--up", size=16),
+                        _class="bx--number__control-btn up-icon",
+                        type="button",
+                    ),
+                    hg.BUTTON(
+                        Icon("caret--down", size=16),
+                        _class="bx--number__control-btn down-icon",
+                        type="button",
+                    ),
+                    _class="bx--number__controls",
+                ),
+                _class="bx--number__input-wrapper",
+            ),
+            errors,
+            help_text,
+            data_numberinput=True,
+            data_invalid=hg.If(errors.condition, True),
+            **hg.merge_html_attrs(attributes, {"_class": "bx--number"}),
+        )
 
 
 class TimeInput(TextInput):
@@ -269,7 +305,7 @@ class Textarea(BaseWidget):
             ),
             help_text,
             errors,
-            **hg.merge_html_attrs(attributes, "_class", "bx--form-item"),
+            **attributes,
         )
 
 
@@ -559,7 +595,10 @@ class Checkbox(BaseWidget):
                 )
             )
         inputelement_attrs = _combine_lazy_dict(inputelement_attrs, attrs)
-        label = None if label is None else label.label
+        # labels for checkboxes are treated a bit different, need to use plain value
+        label = hg.F(
+            lambda c, label=label: getattr(hg.resolve_lazy(label, c), "label", label)
+        )
         super().__init__(
             hg.LABEL(
                 self.get_input_element(inputelement_attrs, errors),

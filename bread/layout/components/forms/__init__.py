@@ -5,7 +5,12 @@ from django.utils.translation import gettext_lazy as _
 
 from ..button import Button
 from ..notification import InlineNotification
-from .fields import FormField, FormFieldMarker
+from .fields import (
+    DEFAULT_FORM_CONTEXTNAME,
+    DEFAULT_FORMSET_CONTEXTNAME,
+    FormField,
+    FormFieldMarker,
+)
 
 
 class Form(hg.FORM):
@@ -37,39 +42,42 @@ class Form(hg.FORM):
             attributes["enctype"] = "multipart/form-data"
 
         super().__init__(
-            # generic errors
-            hg.If(
-                form.non_field_errors(),
-                hg.Iterator(
+            hg.WithContext(
+                # generic errors
+                hg.If(
                     form.non_field_errors(),
-                    "formerror",
-                    InlineNotification(
-                        _("Form error"), hg.C("formerror"), kind="error"
-                    ),
-                ),
-            ),
-            # errors from hidden fields
-            hg.If(
-                form.hidden_fields(),
-                hg.Iterator(
-                    form.hidden_fields(),
-                    "hiddenfield",
                     hg.Iterator(
-                        hg.C("hiddenfield").errors,
-                        "hiddenfield_error",
+                        form.non_field_errors(),
+                        "formerror",
                         InlineNotification(
-                            _("Hidden field error: "),
-                            hg.format(
-                                "{}: {}",
-                                hg.C("hiddenfield").name,
-                                hg.C("hiddenfield_error"),
-                            ),
-                            kind="error",
+                            _("Form error"), hg.C("formerror"), kind="error"
                         ),
                     ),
                 ),
+                # errors from hidden fields
+                hg.If(
+                    form.hidden_fields(),
+                    hg.Iterator(
+                        form.hidden_fields(),
+                        "hiddenfield",
+                        hg.Iterator(
+                            hg.C("hiddenfield").errors,
+                            "hiddenfield_error",
+                            InlineNotification(
+                                _("Hidden field error: "),
+                                hg.format(
+                                    "{}: {}",
+                                    hg.C("hiddenfield").name,
+                                    hg.C("hiddenfield_error"),
+                                ),
+                                kind="error",
+                            ),
+                        ),
+                    ),
+                ),
+                *children,
+                **{DEFAULT_FORM_CONTEXTNAME: form},
             ),
-            hg.WithContext(*children, _bread_form=form),
             **attributes,
         )
 
@@ -84,7 +92,7 @@ class FormsetField(hg.Iterator):
         self,
         fieldname,
         content,
-        formname="form",
+        formname,
         formsetinitial=None,
         **formsetfactory_kwargs,
     ):
@@ -110,7 +118,12 @@ class FormsetField(hg.Iterator):
             hg.F(
                 lambda c: hg.BaseElement(
                     *[
-                        FormField(field, formname="formset_form")
+                        FormField(
+                            field,
+                            formname=DEFAULT_FORMSET_CONTEXTNAME,
+                            no_wrapper=True,
+                            no_label=True,
+                        )
                         for field in c[self.formname][
                             self.fieldname
                         ].formset.empty_form.fields
@@ -123,8 +136,10 @@ class FormsetField(hg.Iterator):
 
         super().__init__(
             iterator=hg.C(f"{self.formname}.{self.fieldname}.formset"),
-            loopvariable="formset_form",
-            content=Form(hg.C("formset_form"), self.content, standalone=False),
+            loopvariable=DEFAULT_FORMSET_CONTEXTNAME,
+            content=Form(
+                hg.C(DEFAULT_FORMSET_CONTEXTNAME), self.content, standalone=False
+            ),
         )
 
     @property
@@ -136,7 +151,7 @@ class FormsetField(hg.Iterator):
                 lambda c: Form(
                     c[self.formname][self.fieldname].formset.management_form,
                     *[
-                        FormField(f)
+                        FormField(f, no_wrapper=True, no_label=True)
                         for f in c[self.formname][
                             self.fieldname
                         ].formset.management_form.fields
@@ -151,9 +166,11 @@ class FormsetField(hg.Iterator):
                     hg.C(f"{self.formname}.{self.fieldname}.formset.empty_form"),
                     hg.WithContext(
                         self.content,
-                        formset_form=hg.C(
-                            f"{self.formname}.{self.fieldname}.formset.empty_form"
-                        ),
+                        **{
+                            DEFAULT_FORMSET_CONTEXTNAME: hg.C(
+                                f"{self.formname}.{self.fieldname}.formset.empty_form"
+                            )
+                        },
                     ),
                     standalone=False,
                 ),
@@ -235,7 +252,7 @@ class FormsetField(hg.Iterator):
             if isinstance(f, str):
                 f = DataTableColumn(
                     hg.C(f"{formname}.{fieldname}.formset.form.base_fields.{f}.label"),
-                    FormField(f, hidelabel=True),
+                    FormField(f, no_wrapper=True, no_label=True),
                 )
             columns.append(f)
         columns.append(
@@ -243,7 +260,11 @@ class FormsetField(hg.Iterator):
                 _("Order"),
                 hg.If(
                     hg.C(f"{formname}.{fieldname}.formset.can_order"),
-                    FormField(forms.formsets.ORDERING_FIELD_NAME, hidelabel=True),
+                    FormField(
+                        forms.formsets.ORDERING_FIELD_NAME,
+                        no_wrapper=True,
+                        no_label=True,
+                    ),
                 ),
             )
         )
