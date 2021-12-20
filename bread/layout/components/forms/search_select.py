@@ -4,6 +4,9 @@ from ..search import Search
 from ..tag import Tag
 from .helpers import Label as LabelElement
 
+# TODO: Make this a BaseWidget class
+# (requires some refactoring, should include generlized implementation of possible)
+
 
 class SearchSelect(hg.DIV):
     def __init__(

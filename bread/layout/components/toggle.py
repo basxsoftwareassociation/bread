@@ -1,7 +1,7 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
-from .helpers import REQUIRED_LABEL, ErrorList, HelpText
+from .forms.helpers import REQUIRED_LABEL, ErrorList, HelpText
 
 
 class Toggle(hg.DIV):
