@@ -23,10 +23,13 @@ def generate_formfield(
         forms.Form, hg.Lazy, str
     ] = "form",  # required to derive the widget from a django form field
     with_wrapper: bool = True,  # produces a less dense layout, from carbon design
-    show_hidden_initial: bool = False,  # required by some parameters to override django field configuration or use a non-form-bound field
-    # fields
+    show_hidden_initial: bool = False,  # required in special cases to add an initial value
+    #
+    #
+    # --------------------------------------------------------------------------
     # parameters which are normally not required, when using a django form field
-    # but can be filled in to create form fields independently from form fields
+    # but can be filled in to create form fields independently from form fields or
+    # manually overriding values from the form field
     widgetclass: Optional[
         BaseWidget
     ] = None,  # normally be taken from the django form field, will be carbon-ized
