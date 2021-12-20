@@ -70,6 +70,7 @@ class BaseWidget(hg.DIV):
                 ),
                 kwargs,
             ),
+            data_invalid=hg.If(getattr(errors, "condition", False), True),
         )
 
     def with_fieldwrapper(self):

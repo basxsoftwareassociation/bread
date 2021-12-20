@@ -47,11 +47,7 @@ class SearchSelect(BaseWidget):
                 ),
                 onclick="return false;",
             ),
-            hg.INPUT(
-                _type="hidden", lazy_attributes=inputelement_attrs
-            ),  # the actual form field
-            help_text,
-            errors,
+            self.get_input_element(inputelement_attrs, errors, type="hidden"),
             Search(
                 backend=backend,
                 resultcontainerid=resultcontainerid,
@@ -62,10 +58,9 @@ class SearchSelect(BaseWidget):
                 disabled=inputelement_attrs.get("disabled", False),
                 widgetattributes={"id": hg.format("search__{}", widget_id)},
             ),
-            style="display: flex;",
-            **hg.merge_html_attrs(
-                attributes, {"_class": "bx--text-input-wrapper bx--form-item"}
-            ),
+            help_text,
+            errors,
+            **hg.merge_html_attrs(attributes, {"_class": "bx--text-input-wrapper"}),
         )
 
 
@@ -83,6 +78,7 @@ def _resultcontainer_onload_js(backend, resultcontainerid, tag_id, widget_id):
         widget_id,
         tag_id,
         tag_id,
+        autoescape=False,
     )
 
     return hg.format(
@@ -98,5 +94,5 @@ def _resultcontainer_onload_js(backend, resultcontainerid, tag_id, widget_id):
         backend.result_selector,
         resultcontainerid,
         backend.result_selector,
-        hg.mark_safe(on_click),
+        on_click,
     )
