@@ -115,7 +115,7 @@ class QuerysetField(models.TextField):
         )
 
 
-class QuerySetFormWidget(layout.text_area.TextArea):
+class QuerySetFormWidget(layout.forms.widgets.Textarea):
     def __init__(self, *args, modelfieldname, name, **kwargs):
         super().__init__(*args, **kwargs)
         self.name = name

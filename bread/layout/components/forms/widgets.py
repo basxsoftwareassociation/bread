@@ -35,7 +35,8 @@ class BaseWidget(hg.DIV):
     # label: bread.layout.components.forms.utils.Label
     # help_text: Optional[Any]
     # errors: bread.layout.components.forms.utils.ErrorList
-    #         ``hg.If(errors.condition, ...`` can be used to render parts depending if there are errors
+    #         ``hg.If(getattr(errors, "condition", None), ...`` can be used
+    #         to render parts depending if there are errors
     # inputelement_attrs: Union[Lazy[dict], dict],
     # boundfield: Optional[django.forms.BoundField],
 
@@ -107,8 +108,7 @@ class TextInput(BaseWidget):
         icon=None,
         **attributes,
     ):
-        attributes["_class"] = attributes.get("_class", "") + " bx--text-input-wrapper"
-
+        inputelement_attrs = inputelement_attrs or {}
         super().__init__(
             label,
             hg.DIV(
@@ -141,7 +141,7 @@ class TextInput(BaseWidget):
             ),
             errors,
             help_text,
-            **attributes,
+            **hg.merge_html_attrs(attributes, {"_class": "bx--text-input-wrapper"}),
         )
 
 
@@ -195,10 +195,7 @@ class PasswordInput(TextInput):
         boundfield=None,
         **attributes,
     ):
-        attributes["data-text-input"] = True
-        attributes["_class"] = (
-            attributes.get("_class", "") + " bx--password-input-wrapper"
-        )
+        inputelement_attrs = inputelement_attrs or {}
         showhidebtn = Button(
             _("Show password"),
             icon=hg.BaseElement(
@@ -220,7 +217,10 @@ class PasswordInput(TextInput):
                 inputelement_attrs, {"data_toggle_password_visibility": True}
             ),
             icon=showhidebtn,
-            **attributes,
+            **hg.merge_html_attrs(
+                attributes,
+                {"data_text_input": True, "_class": "bx--password-input-wrapper"},
+            ),
         )
 
 
@@ -238,8 +238,7 @@ class Textarea(BaseWidget):
         boundfield=None,
         **attributes,
     ):
-        attributes["_class"] = attributes.get("_class", "") + " bx--form-item"
-
+        inputelement_attrs = inputelement_attrs or {}
         super().__init__(
             label,
             hg.DIV(
@@ -269,7 +268,7 @@ class Textarea(BaseWidget):
             ),
             help_text,
             errors,
-            **attributes,
+            **hg.merge_html_attrs(attributes, "_class", "bx--form-item"),
         )
 
 
@@ -285,14 +284,20 @@ class Select(BaseWidget):
         inputelement_attrs=None,
         boundfield=None,
         inline=False,
-        optgroups=None,  # for non-django-form select elements use this
+        choices=None,  # for non-django-form select elements use this
         **attributes,
     ):
-
+        inputelement_attrs = inputelement_attrs or {}
         select_wrapper = hg.DIV(
             hg.SELECT(
                 hg.Iterator(
-                    optgroups or _gen_optgroup(boundfield),
+                    _optgroups_from_choices(
+                        choices,
+                        name=inputelement_attrs.get("name"),
+                        value=inputelement_attrs.get("value"),
+                    )
+                    if choices
+                    else _gen_optgroup(boundfield),
                     "optgroup",
                     hg.If(
                         hg.C("optgroup.0"),
@@ -323,10 +328,10 @@ class Select(BaseWidget):
                     ),
                 ),
                 lazy_attributes=_append_classes(
-                    inputelement_attrs or {},
+                    inputelement_attrs,
                     self.carbon_input_class,
                     hg.If(
-                        errors.condition,
+                        getattr(errors, "condition", None),
                         self.carbon_input_error_class,
                     ),
                 ),
@@ -338,7 +343,7 @@ class Select(BaseWidget):
                 aria_hidden="true",
             ),
             hg.If(
-                errors.condition,
+                getattr(errors, "condition", None),
                 Icon(
                     "warning--filled",
                     size=16,
@@ -346,7 +351,7 @@ class Select(BaseWidget):
                 ),
             ),
             _class="bx--select-input__wrapper",
-            data_invalid=hg.If(errors.condition, True),
+            data_invalid=hg.If(getattr(errors, "condition", None), True),
         )
         super().__init__(
             label,
@@ -361,14 +366,22 @@ class Select(BaseWidget):
             ),
             help_text,
             hg.If(inline, None, errors),  # not displayed if this is inline
-            _class=hg.BaseElement(
-                attributes.get("_class"),
-                " bx--select",
-                hg.If(inline, " bx--select--inline"),
-                hg.If(errors.condition, " bx--select--invalid"),
-                hg.If(inputelement_attrs.get("disabled"), " bx--select--disabled"),
+            **hg.merge_html_attrs(
+                attributes,
+                {
+                    "_class": hg.BaseElement(
+                        "bx--select",
+                        hg.If(inline, " bx--select--inline"),
+                        hg.If(
+                            getattr(errors, "condition", None), " bx--select--invalid"
+                        ),
+                        hg.If(
+                            inputelement_attrs.get("disabled"),
+                            " bx--select--disabled",
+                        ),
+                    ),
+                },
             ),
-            **attributes,
         )
 
 
@@ -386,10 +399,19 @@ class SelectMultiple(BaseWidget):
         errors=None,
         inputelement_attrs=None,
         boundfield=None,  # for django-form select elements use this
-        optgroups=None,  # for non-django-form select elements use this
-        **attributes,
+        choices=None,  # for non-django-form select elements use this
+        **attributes,  # for non-django-form select elements use this
     ):
-        optgroups = optgroups or _gen_optgroup(boundfield)
+        inputelement_attrs = inputelement_attrs or {}
+        optgroups = (
+            _optgroups_from_choices(
+                choices,
+                name=inputelement_attrs.get("name"),
+                value=inputelement_attrs.get("value"),
+            )
+            if choices
+            else _gen_optgroup(boundfield)
+        )
 
         def countselected(context):
             options = [o for og in hg.resolve_lazy(optgroups, context) for o in og[1]]
@@ -498,14 +520,18 @@ class SelectMultiple(BaseWidget):
                             " bx--list-box--disabled",
                         ),
                     ),
-                    data_invalid=hg.If(errors.condition, True),
+                    data_invalid=hg.If(getattr(errors, "condition", None), True),
                 ),
             ),
             help_text,
             errors,
-            _class="bx--list-box__wrapper",
-            onclick="event.stopPropagation()",
-            **attributes,
+            **hg.merge_html_attrs(
+                attributes,
+                {
+                    "onclick": "event.stopPropagation()",
+                    "_class": "bx--list-box__wrapper",
+                },
+            ),
         )
 
 
@@ -523,9 +549,7 @@ class Checkbox(BaseWidget):
         boundfield=None,
         **attributes,
     ):
-        attributes["_class"] = hg.BaseElement(
-            attributes.get("_class", ""), " bx--checkbox-wrapper"
-        )
+        inputelement_attrs = inputelement_attrs or {}
         attrs = {}
         if boundfield:
             attrs["checked"] = hg.F(
@@ -552,7 +576,7 @@ class Checkbox(BaseWidget):
             ),
             help_text,
             errors,
-            **attributes,
+            **hg.merge_html_attrs(attributes, {"_class": "bx--checkbox-wrapper"}),
         )
 
 
@@ -570,6 +594,7 @@ class CheckboxSelectMultiple(BaseWidget):
         boundfield=None,
         **attributes,
     ):
+        inputelement_attrs = inputelement_attrs or {}
         super().__init__(
             hg.FIELDSET(
                 label,
@@ -612,9 +637,7 @@ class RadioButton(BaseWidget):
         boundfield=None,
         **attributes,
     ):
-        attributes["_class"] = hg.BaseElement(
-            attributes.get("_class", ""), " bx--radio-button-wrapper"
-        )
+        inputelement_attrs = inputelement_attrs or {}
         attrs = {}
         if boundfield:
             attrs["checked"] = hg.F(
@@ -634,7 +657,7 @@ class RadioButton(BaseWidget):
             ),
             help_text,
             errors,
-            **attributes,
+            **hg.merge_html_attrs(attributes, {"_class": "bx--radio-button-wrapper"}),
         )
 
 
@@ -652,6 +675,7 @@ class RadioSelect(BaseWidget):
         boundfield=None,
         **attributes,
     ):
+        inputelement_attrs = inputelement_attrs or {}
         super().__init__(
             hg.FIELDSET(
                 label,
@@ -699,17 +723,7 @@ class DatePicker(BaseWidget):
         style_simple=False,
         **attributes,
     ):
-        if not style_simple:
-            attributes["data-date-picker"] = True
-            attributes["data-date-picker-type"] = "single"
-
-        attributes["_class"] = hg.BaseElement(
-            attributes.get("_class"),
-            " bx--date-picker",
-            hg.If(style_simple, " bx--date-picker--simple", "bx--date-picker--single"),
-            hg.If(style_short, " bx--date-picker--short"),
-        )
-
+        inputelement_attrs = inputelement_attrs or {}
         super().__init__(
             hg.DIV(
                 label,
@@ -718,7 +732,7 @@ class DatePicker(BaseWidget):
                     self.get_input_element(
                         inputelement_attrs,
                         errors,
-                        data_invalid=hg.If(errors.condition, True),
+                        data_invalid=hg.If(getattr(errors, "condition"), True),
                         pattern=hg.F(
                             lambda c: (
                                 TimeRE()
@@ -739,7 +753,7 @@ class DatePicker(BaseWidget):
                             inputelement_attrs,
                             errors,
                             data_date_picker_input=True,
-                            data_invalid=hg.If(errors.condition, True),
+                            data_invalid=hg.If(getattr(errors, "condition"), True),
                             data_date_format=hg.F(
                                 lambda c: to_php_formatstr(
                                     hg.resolve_lazy(boundfield, c).field.widget.format,
@@ -762,7 +776,22 @@ class DatePicker(BaseWidget):
                 errors,
                 _class="bx--date-picker-container",
             ),
-            **attributes,
+            **hg.merge_html_attrs(
+                attributes,
+                {
+                    "data_date_picker": not style_simple,
+                    "data_date_picker_type": None if style_simple else "single",
+                    "_class": hg.BaseElement(
+                        "bx--date-picker",
+                        hg.If(
+                            style_simple,
+                            " bx--date-picker--simple",
+                            " bx--date-picker--single",
+                        ),
+                        hg.If(style_short, " bx--date-picker--short"),
+                    ),
+                },
+            ),
         )
 
 
@@ -781,13 +810,14 @@ class FileInput(BaseWidget):
         boundfield=None,
         **attributes,
     ):
+        inputelement_attrs = inputelement_attrs or {}
         uploadbutton = hg.LABEL(
             hg.SPAN(_("Select file"), role="button"),
             tabindex=0,
             _class="bx--btn bx--btn--primary",
             data_file_drop_container=True,
             disabled=inputelement_attrs.get("disabled"),
-            data_invalid=errors.condition,
+            data_invalid=getattr(errors, "condition"),
             _for=inputelement_attrs.get("id"),
         )
         input = self.get_input_element(
@@ -945,3 +975,42 @@ def _gen_optgroup(boundfield):
         )
 
     return hg.F(wrapper)
+
+
+# based on https://github.com/django/django/blob/c6c6cd3c5ad9c36795bb120e521590424f034ae4/django/forms/widgets.py#L587
+def _optgroups_from_choices(optchoices, name, value):
+    groups = []
+
+    for index, (option_value, option_label) in enumerate(optchoices):
+        if option_value is None:
+            option_value = ""
+
+        subgroup = []
+        if isinstance(option_label, (list, tuple)):
+            group_name = option_value
+            subindex = 0
+            choices = option_label
+        else:
+            group_name = None
+            subindex = None
+            choices = [(option_value, option_label)]
+        groups.append((group_name, subgroup, index))
+
+        for subvalue, sublabel in choices:
+            selected = hg.F(
+                lambda c, v=subvalue: hg.resolve_lazy(v, c) == hg.resolve_lazy(value, c)
+            )
+            subgroup.append(
+                {
+                    "name": name,
+                    "value": subvalue,
+                    "label": sublabel,
+                    "selected": selected,
+                    "attrs": {
+                        "selected": selected,
+                    },
+                }
+            )
+            if subindex is not None:
+                subindex += 1
+    return groups
