@@ -148,7 +148,6 @@ class TextInput(BaseWidget):
 
 class PhoneNumberInput(TextInput):
     input_type = "tel"
-    # django_widget = None # TODO: phonenumber_field has not a special widget, how can we detect it?
     django_widget = PhoneNumberField
 
     def __init__(self, *args, **attributes):

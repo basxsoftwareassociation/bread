@@ -5,7 +5,7 @@ from django.conf import settings
 from django.test import TestCase
 from django.utils.dateformat import format
 
-from bread.layout.components.forms.date_picker import to_php_formatstr
+from bread.layout.components.forms.widgets import to_php_formatstr
 
 
 class ToPHPFormatstrTest(TestCase):
