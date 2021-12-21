@@ -593,6 +593,7 @@ class Checkbox(BaseWidget):
                     hg.resolve_lazy(boundfield, c).value()
                 )
             )
+            attrs["value"] = None
         inputelement_attrs = _combine_lazy_dict(inputelement_attrs, attrs)
         # labels for checkboxes are treated a bit different, need to use plain value
         label = hg.F(
