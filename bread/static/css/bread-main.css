@@ -3085,6 +3085,7 @@ input[data-invalid]:not(:focus),
   outline-offset: -2px; }
 
 input[data-invalid] ~ .bx--form-requirement,
+[data-invalid] ~ .bx--form-requirement,
 .bx--number[data-invalid] .bx--number__input-wrapper ~ .bx--form-requirement,
 .bx--date-picker-input__wrapper ~ .bx--form-requirement,
 .bx--time-picker--invalid ~ .bx--form-requirement,
@@ -3100,6 +3101,7 @@ input[data-invalid] ~ .bx--form-requirement,
   font-weight: 400; }
 
 input[data-invalid] ~ .bx--form-requirement,
+[data-invalid] ~ .bx--form-requirement,
 .bx--number[data-invalid] .bx--number__input-wrapper ~ .bx--form-requirement,
 .bx--date-picker-input__wrapper ~ .bx--form-requirement,
 .bx--time-picker--invalid ~ .bx--form-requirement,
@@ -17399,6 +17401,7 @@ svg {
   outline-offset: -2px; }
 
 .theme-white input[data-invalid] ~ .bx--form-requirement,
+.theme-white [data-invalid] ~ .bx--form-requirement,
 .theme-white .bx--number[data-invalid] .bx--number__input-wrapper ~ .bx--form-requirement,
 .theme-white .bx--date-picker-input__wrapper ~ .bx--form-requirement,
 .theme-white .bx--time-picker--invalid ~ .bx--form-requirement,
@@ -17414,6 +17417,7 @@ svg {
   font-weight: 400; }
 
 .theme-white input[data-invalid] ~ .bx--form-requirement,
+.theme-white [data-invalid] ~ .bx--form-requirement,
 .theme-white .bx--number[data-invalid] .bx--number__input-wrapper ~ .bx--form-requirement,
 .theme-white .bx--date-picker-input__wrapper ~ .bx--form-requirement,
 .theme-white .bx--time-picker--invalid ~ .bx--form-requirement,

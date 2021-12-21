@@ -278,16 +278,16 @@ class Textarea(BaseWidget):
         super().__init__(
             label,
             hg.DIV(
+                hg.If(
+                    getattr(errors, "condition", None),
+                    Icon(
+                        "warning--filled",
+                        size=16,
+                        _class="bx--text-area__invalid-icon",
+                    ),
+                ),
                 hg.TEXTAREA(
                     boundfield.value() if boundfield else None,
-                    hg.If(
-                        getattr(errors, "condition", None),
-                        Icon(
-                            "warning--filled",
-                            size=16,
-                            _class="bx--text-area__invalid-icon",
-                        ),
-                    ),
                     lazy_attributes=_combine_lazy_dict(
                         _append_classes(
                             inputelement_attrs or {},
@@ -301,6 +301,7 @@ class Textarea(BaseWidget):
                     ),
                 ),
                 _class="bx--text-area__wrapper",
+                data_invalid=hg.If(getattr(errors, "condition", None), True),
             ),
             help_text,
             errors,
@@ -599,11 +600,14 @@ class Checkbox(BaseWidget):
         label = hg.F(
             lambda c, label=label: getattr(hg.resolve_lazy(label, c), "label", label)
         )
+        required = hg.F(lambda c, label=label: hg.resolve_lazy(label, c) is not None)
         super().__init__(
             hg.LABEL(
                 self.get_input_element(inputelement_attrs, errors),
                 label,
-                hg.If(inputelement_attrs.get("required"), REQUIRED_LABEL),
+                hg.If(
+                    inputelement_attrs.get("required"), hg.If(required, REQUIRED_LABEL)
+                ),
                 _class=hg.BaseElement(
                     "bx--checkbox-label",
                     hg.If(inputelement_attrs.get("disabled"), " bx--label--disabled"),
@@ -613,6 +617,7 @@ class Checkbox(BaseWidget):
                     "true",
                     "false",
                 ),
+                data_invalid=hg.If(getattr(errors, "condition", False), True),
             ),
             help_text,
             errors,
@@ -656,6 +661,7 @@ class CheckboxSelectMultiple(BaseWidget):
                         ),
                     ),
                 ),
+                data_invalid=hg.If(getattr(errors, "condition", False), True),
             ),
             help_text,
             errors,
@@ -740,6 +746,7 @@ class RadioSelect(BaseWidget):
                     ),
                     _class="bx--radio-button-group  bx--radio-button-group--vertical",
                 ),
+                data_invalid=hg.If(getattr(errors, "condition", False), True),
             ),
             help_text,
             errors,
@@ -854,7 +861,10 @@ class FileInput(BaseWidget):
         uploadbutton = hg.LABEL(
             hg.SPAN(_("Select file"), role="button"),
             tabindex=0,
-            _class="bx--btn bx--btn--primary",
+            _class=hg.BaseElement(
+                "bx--btn bx--btn--primary",
+                hg.If(inputelement_attrs.get("disabled"), " bx--btn--disabled"),
+            ),
             data_file_drop_container=True,
             disabled=inputelement_attrs.get("disabled"),
             data_invalid=getattr(errors, "condition"),
@@ -918,8 +928,7 @@ document.addEventListener('change', (e) => {
         )
 
         super().__init__(
-            hg.STRONG(_class="bx--file--label"),
-            hg.P(_class="bx--label-description"),
+            label,
             hg.DIV(
                 uploadbutton,
                 input,
