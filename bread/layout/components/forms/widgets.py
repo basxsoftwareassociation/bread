@@ -280,9 +280,9 @@ class Textarea(BaseWidget):
             label,
             hg.DIV(
                 hg.TEXTAREA(
-                    boundfield.value(),
+                    boundfield.value() if boundfield else None,
                     hg.If(
-                        errors.condition,
+                        getattr(errors, "condition", None),
                         Icon(
                             "warning--filled",
                             size=16,
@@ -294,7 +294,7 @@ class Textarea(BaseWidget):
                             inputelement_attrs or {},
                             self.carbon_input_class,
                             hg.If(
-                                errors.condition,
+                                getattr(errors, "condition", None),
                                 self.carbon_input_error_class,
                             ),
                         ),

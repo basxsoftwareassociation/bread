@@ -15,6 +15,7 @@ from bread.utils import filter_fieldlist, generate_excel, xlsxresponse
 from bread.utils.links import ModelHref
 
 from ...layout.components.datatable import DataTableColumn, sortingname_for_column
+from .fields.queryfield import QuerysetFormWidget
 from .models import Report
 
 
@@ -47,7 +48,12 @@ class EditView(views.EditView):
                     style="margin: 2rem 0 2rem 0",
                 ),
                 F("name"),
-                F("filter", inputelement_attrs={"rows": 1}, style="width: 100%"),
+                F(
+                    "filter",
+                    widgetclass=QuerysetFormWidget,
+                    inputelement_attrs={"rows": 1},
+                    style="width: 100%",
+                ),
                 F("custom_queryset"),
                 _layout.forms.FormsetField.as_datatable(
                     "columns",

@@ -5,7 +5,6 @@ from django.core import checks
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db import models
 from django.urls import reverse
-from django.utils.html import mark_safe
 from django.utils.translation import gettext_lazy as _
 from djangoql.exceptions import DjangoQLError
 from djangoql.queryset import apply_search
@@ -105,49 +104,57 @@ class QuerysetField(models.TextField):
         )
 
 
-class QuerySetFormWidget(layout.forms.widgets.Textarea):
-    django_widget = QuerysetField
+class QuerysetFormWidget(layout.forms.widgets.Textarea):
+    django_widget = None
 
-    def __init__(self, *args, **kwargs):
-        print(*args, **kwargs)
-        # def __init__(self, *args, modelfieldname, name, **kwargs):
-        super().__init__(*args, **kwargs)
-        # self.name = name
-        # self.boundfield = kwargs.get("boundfield", None)
-        # self.model = None
-        # if "boundfield" in kwargs:
-        # self.model = getattr(
-        # self.boundfield.form.instance, modelfieldname
-        # ).model_class()
+    def __init__(
+        self,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
+        boundfield=None,
+        **attributes
+    ):
+        super().__init__(
+            label=label,
+            help_text=help_text,
+            errors=errors,
+            inputelement_attrs=inputelement_attrs,
+            boundfield=boundfield,
+            **attributes
+        )
 
-    def render(self, context):
-        if self.model:
+        def introspections(context):
+            return json.dumps(
+                DjangoQLSchemaSerializer().serialize(
+                    DjangoQLSchema(
+                        hg.resolve_lazy(boundfield, context).value().queryset.model
+                    )
+                )
+            )
+
+        if boundfield:
             self.append(
                 hg.SCRIPT(
-                    mark_safe(
+                    hg.format(
                         """
-    document.addEventListener("DOMContentLoaded", () => DjangoQL.DOMReady(function () {
-    new DjangoQL({
-        introspections: %s,
-        selector: 'textarea[name=%s]',
-        syntaxHelp: '%s',
-        autoResize: false
-      });
-    }));
-    """
-                        % (
-                            json.dumps(
-                                DjangoQLSchemaSerializer().serialize(
-                                    DjangoQLSchema(self.model)
-                                )
-                            ),
-                            self.name,
-                            reverse("reporthelp"),
-                        )
-                    )
-                ),
+                        document.addEventListener("DOMContentLoaded", () => DjangoQL.DOMReady(function () {{
+                            new DjangoQL({{
+                            introspections: {},
+                            selector: 'textarea[name={}]',
+                            syntaxHelp: '{}',
+                            autoResize: false
+                            }});
+                        }}));
+                    """,
+                        hg.F(introspections),
+                        inputelement_attrs.get("name"),
+                        reverse("reporthelp"),
+                        autoescape=False,
+                    ),
+                )
             )
-        return super().render(context)
 
 
 def parsequeryexpression(basequeryset, expression):

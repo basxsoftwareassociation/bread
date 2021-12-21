@@ -169,16 +169,15 @@ def _guess_widget(fieldname, form):
         realform = hg.resolve_lazy(form, context)
         widgetclass = type(realform[fieldname].field.widget)
         fieldclass = type(realform[fieldname].field)
-        if widgetclass not in widget_map:
-            warnings.warn(
-                f"Form field {type(realform).__name__}.{fieldname} ({fieldclass}) uses widget {widgetclass} but "
-                "bread has no implementation, default to TextInput"
-            )
 
         if fieldclass in widget_map:
             return widget_map[fieldclass][0]
         if widgetclass in widget_map:
             return widget_map[widgetclass][0]
+        warnings.warn(
+            f"Form field {type(realform).__name__}.{fieldname} ({fieldclass}) uses widget {widgetclass} but "
+            "bread has no implementation, default to TextInput"
+        )
         return TextInput
 
     return hg.F(wrapper)
