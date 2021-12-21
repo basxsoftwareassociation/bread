@@ -20,7 +20,7 @@ class FormFieldMarker(hg.BaseElement):
         super().__init__(field)
 
 
-def generate_formfield(
+def generate_widget_element(
     fieldname: str = None,  # required to derive the widget from a django form field
     form: Union[
         forms.Form, hg.Lazy, str
@@ -58,7 +58,7 @@ def generate_formfield(
 
     hidden = None
     if show_hidden_initial:
-        hidden = generate_formfield(
+        hidden = generate_widget_element(
             fieldname=fieldname,
             form=form,
             inputelement_attrs=inputelement_attrs,
@@ -155,7 +155,7 @@ def generate_formfield(
 # is slightly inconsistent with the default naming scheme of python where camel
 # case denotes not a function but a class
 # TODO: maybe refactor Formfield to be formfield
-FormField = generate_formfield
+FormField = generate_widget_element
 
 
 def _guess_widget(fieldname, form):
