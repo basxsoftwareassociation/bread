@@ -35,7 +35,7 @@ def generate_widget_element(
     # but can be filled in to create form fields independently from django form fields or
     # manually overriding values from the form field
     widgetclass: Optional[
-        BaseWidget
+        Type[BaseWidget]
     ] = None,  # normally be taken from the django form field, will be carbon-ized
     label: Union[
         str, hg.BaseElement
