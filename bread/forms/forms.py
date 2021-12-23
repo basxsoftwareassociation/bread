@@ -114,9 +114,10 @@ def breadmodelform_factory(  # noqa
             attribs[modelfield.name] = GenericForeignKeyField(
                 required=not model._meta.get_field(modelfield.fk_field).blank
             )
-        elif modelfield.one_to_many or (
-            modelfield.one_to_one and not modelfield.concrete
-        ):
+        # elif modelfield.one_to_many or (
+        # modelfield.one_to_one and not modelfield.concrete
+        # ):
+        elif isinstance(formfieldelement, _layout.forms.FormsetField):
             attribs[modelfield.name] = FormsetField(
                 _generate_formset_class(
                     request=request,
