@@ -135,7 +135,7 @@ def generate_widget_element(
     errors = ErrorList(errors)
 
     # instantiate field (might create a lazy element when using _guess_widget)
-    widgetclass = widgetclass or _guess_widget(fieldname, form)
+    widgetclass = _guess_widget(fieldname, form, widgetclass)
     ret = widgetclass(
         label=None if no_label else label,
         help_text=help_text,
@@ -158,7 +158,7 @@ def generate_widget_element(
 FormField = generate_widget_element
 
 
-def _guess_widget(fieldname, form):
+def _guess_widget(fieldname, form, suggested_widgetclass):
     widget_map = {}
     for cls in _all_subclasses(BaseWidget):
         if cls.django_widget not in widget_map:
@@ -170,10 +170,20 @@ def _guess_widget(fieldname, form):
         widgetclass = type(realform[fieldname].field.widget)
         fieldclass = type(realform[fieldname].field)
 
+        # Hidden widgets have highest priority
+        if issubclass(widgetclass, forms.HiddenInput):
+            return HiddenInput
+        # Manually passed widgets have second priority
+        if suggested_widgetclass is not None:
+            return suggested_widgetclass
+
+        # Automated detection via django-bread-widget-mapp have lowest priority
         if fieldclass in widget_map:
             return widget_map[fieldclass][0]
         if widgetclass in widget_map:
             return widget_map[widgetclass][0]
+
+        # Fallback for unknown widgets
         warnings.warn(
             f"Form field {type(realform).__name__}.{fieldname} ({fieldclass}) uses widget {widgetclass} but "
             "bread has no implementation, default to TextInput"
