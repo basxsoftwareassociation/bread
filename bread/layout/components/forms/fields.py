@@ -147,7 +147,15 @@ def generate_widget_element(
     if show_hidden_initial:
         ret = hg.BaseElement(ret, hidden)
     if not no_wrapper:
-        ret = ret.with_fieldwrapper()
+        ret = hg.If(
+            hg.F(
+                lambda c: isinstance(
+                    hg.resolve_lazy(boundfield, c).field.widget, forms.HiddenInput
+                )
+            ),
+            ret,
+            ret.with_fieldwrapper(),
+        )
     return FormFieldMarker(fieldname, ret)
 
 

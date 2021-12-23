@@ -62,20 +62,20 @@ class CustomFormMixin:
         form = super().get_form(form_class)
 
         # hide or disable predefined fields passed in GET parameters
-        if self.request.method != "POST":
-            for fieldelement in self._get_layout_cached().filter(
-                lambda element, ancestors: isinstance(
-                    element, breadlayout.forms.fields.FormFieldMarker
-                )
+        # if self.request.method != "POST":
+        for fieldelement in self._get_layout_cached().filter(
+            lambda element, ancestors: isinstance(
+                element, breadlayout.forms.fields.FormFieldMarker
+            )
+        ):
+            if (
+                fieldelement.fieldname in self.request.GET
+                and fieldelement.fieldname + "_nohide" not in self.request.GET
             ):
-                if (
-                    fieldelement.fieldname in self.request.GET
-                    and fieldelement.fieldname + "_nohide" not in self.request.GET
-                ):
-                    form.fields[fieldelement.fieldname].widget = forms.HiddenInput(
-                        attrs=form.fields[fieldelement.fieldname].widget.attrs
-                    )
-        else:
+                form.fields[fieldelement.fieldname].widget = forms.HiddenInput(
+                    attrs=form.fields[fieldelement.fieldname].widget.attrs
+                )
+        if self.request.method == "POST":
             if form.errors and self.ajax_urlparameter not in self.request.GET:
                 messages.error(
                     self.request,
