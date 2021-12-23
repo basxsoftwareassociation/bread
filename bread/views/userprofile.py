@@ -280,10 +280,6 @@ class EditLoginView(EditView):
 
         return EditLoginForm
 
-    def get_form(self, *args, **kwargs):
-        ret = super().get_form(*args, **kwargs)
-        return ret
-
     def get_layout(self):
         ret = super().get_layout()
         ret.append(layout.forms.FormField("current_password"))

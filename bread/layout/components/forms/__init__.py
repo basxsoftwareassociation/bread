@@ -81,6 +81,11 @@ class Form(hg.FORM):
             **attributes,
         )
 
+    # makes sure that any child elements appended to the form are
+    # inside the intermediate context (from WithContext)
+    def append(self, obj):
+        self[0].append(obj)
+
     def render(self, context):
         if self.standalone:
             return super().render(context)
