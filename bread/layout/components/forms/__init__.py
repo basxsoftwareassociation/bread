@@ -326,7 +326,7 @@ class InlineDeleteButton(Button):
             label,
             FormField(
                 forms.formsets.DELETION_FIELD_NAME,
-                elementattributes={"style": "display: none"},
+                style="display: none",
             ),
             **defaults,
         )
