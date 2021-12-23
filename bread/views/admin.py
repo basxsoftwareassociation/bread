@@ -32,6 +32,8 @@ def maintenancesettings(request):
             C(
                 hg.H4(_("Database Optimization")),
                 admin.maintenance_database_optimization(request),
+                hg.H4(_("Search Reindexing"), _style="margin-top: 3rem;"),
+                admin.maintenance_search_reindex(request),
             ),
         )
     )
