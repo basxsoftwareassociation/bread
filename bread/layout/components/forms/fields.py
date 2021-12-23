@@ -32,10 +32,10 @@ def generate_widget_element(
     #
     # --------------------------------------------------------------------------
     # parameters which are normally not required, when using a django form field
-    # but can be filled in to create form fields independently from form fields or
+    # but can be filled in to create form fields independently from django form fields or
     # manually overriding values from the form field
     widgetclass: Optional[
-        BaseWidget
+        Type[BaseWidget]
     ] = None,  # normally be taken from the django form field, will be carbon-ized
     label: Union[
         str, hg.BaseElement

@@ -265,7 +265,7 @@ class PreferencesForm(GlobalPreferenceForm):
         self.layout = lambda request: _layout.forms.Form(
             hg.C("form"),
             *[_layout.forms.FormField(f) for f in self.fields],
-            _layout.forms.helper.Submit(),
+            _layout.forms.helpers.Submit(),
         )
 
 
