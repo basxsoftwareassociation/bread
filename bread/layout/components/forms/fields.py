@@ -1,5 +1,5 @@
 import warnings
-from typing import List, Optional, Union
+from typing import List, Optional, Type, Union
 
 import htmlgenerator as hg
 from django import forms
