@@ -1,5 +1,6 @@
 import os
 
+import django_countries.widgets
 import htmlgenerator as hg
 from _strptime import TimeRE
 from django.conf import settings
@@ -991,6 +992,10 @@ document.addEventListener('change', (e) => {
 class ClearableFileInput(FileInput):
     django_widget = widgets.ClearableFileInput
     clearable = True
+
+
+class LazySelect(Select):
+    django_widget = django_countries.widgets.LazySelect
 
 
 def _append_classes(lazy_attrs, *_classes):
