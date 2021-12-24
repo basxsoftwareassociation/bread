@@ -109,8 +109,6 @@ def maintenance_database_optimization(request):
         Button(
             _("Optimize"),
             type="submit",
-            onclick="return confirm('%s');"
-            % _("Are you sure you want to shrink the database?"),
         ),
     )
 
@@ -141,7 +139,7 @@ def maintenance_search_reindex(request):
             logmsg = out.getvalue().replace("\n", "<br>")
 
             # try adding some message here.
-            messages.info(request, _("Search Reindex Completed."))
+            messages.info(request, _("Rebuilt search index"))
 
     if not received_post:
         form = ReindexForm()
@@ -150,10 +148,8 @@ def maintenance_search_reindex(request):
         form,
         FormField("confirmed"),
         Button(
-            _("Optimize"),
+            _("Rebuild"),
             type="submit",
-            onclick="return confirm('%s');"
-            % _("Are you sure you want to shrink the database?"),
             style="margin-bottom: 1rem;",
         ),
     )
@@ -162,8 +158,9 @@ def maintenance_search_reindex(request):
         hg.P(
             _(
                 (
-                    "If searching seems to work improperly, we highly recommended to "
-                    "reindex the search by clicking the button below."
+                    "After certain kind of database updates the search index may become outdated. "
+                    "You can reindex the search index by clicking the button below. "
+                    "This should fix most problems releated to search fields."
                 )
             ),
             style="margin-bottom: 1rem;",
