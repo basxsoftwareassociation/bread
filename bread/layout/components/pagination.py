@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from bread.utils.urls import link_with_urlparameters
 
 from ..base import aslink_attributes
-from .forms.select import Select
+from .forms.widgets import Select
 from .icon import Icon
 
 
@@ -47,44 +47,35 @@ class Pagination(hg.DIV):
                     _for=select1_id,
                 ),
                 Select(
-                    [
+                    choices=[
                         (
-                            None,
-                            [
-                                {
-                                    "label": i,
-                                    "value": linkwithitemsperpage(
-                                        itemsperpage_urlparameter, i, page_urlparameter
-                                    ),
-                                    "attrs": {
-                                        "selected": hg.F(
-                                            lambda c, i=i: c["request"].GET.get(
-                                                itemsperpage_urlparameter
-                                            )
-                                            == str(i)
-                                        )
-                                    },
-                                }
-                                for i in items_per_page_options
-                            ],
+                            linkwithitemsperpage(
+                                itemsperpage_urlparameter,
+                                page_urlparameter,
+                                itemsperpage=i,
+                            ),
+                            i,
                         )
+                        for i in items_per_page_options
                     ],
                     inline=True,
-                    widgetattributes={
+                    inputelement_attrs={
                         "data_items_per_page": True,
                         "onchange": "document.location = this.value",
                         "onauxclick": "window.open(this.value, '_blank')",
+                        "value": linkwithitemsperpage(
+                            itemsperpage_urlparameter,
+                            page_urlparameter,
+                        ),
                     },
                     _class="bx--select__item-count",
                 ),
                 hg.SPAN(
                     hg.SPAN(
-                        hg.getattr_lazy(
-                            get_page(paginator, page_urlparameter), "start_index"
-                        ),
-                        " - ",
-                        hg.getattr_lazy(
-                            get_page(paginator, page_urlparameter), "end_index"
+                        hg.format(
+                            "{} - {}",
+                            get_page(paginator, page_urlparameter).start_index(),
+                            get_page(paginator, page_urlparameter).end_index(),
                         ),
                         data_displayed_item_range=True,
                     ),
@@ -92,9 +83,7 @@ class Pagination(hg.DIV):
                     _("of"),
                     " ",
                     hg.SPAN(
-                        " ",
-                        hg.getattr_lazy(paginator, "count"),
-                        " ",
+                        hg.format(" {} ", paginator.count),
                         data_total_items=True,
                     ),
                     " ",
@@ -105,40 +94,26 @@ class Pagination(hg.DIV):
             ),
             hg.DIV(
                 Select(
-                    hg.F(
-                        lambda c: [
-                            (
-                                None,
-                                [
-                                    {
-                                        "label": i,
-                                        "value": linktopage(page_urlparameter, i),
-                                        "attrs": {
-                                            "selected": hg.F(
-                                                lambda c, i=i: c["request"].GET.get(
-                                                    page_urlparameter, "1"
-                                                )
-                                                == str(i)
-                                            ),
-                                        },
-                                    }
-                                    for i in hg.resolve_lazy(paginator, c).page_range
-                                ],
-                            )
-                        ]
-                    ),
+                    choices=[
+                        (linktopage(page_urlparameter, i), i)
+                        for i in paginator.page_range
+                    ],
                     inline=True,
-                    widgetattributes={
+                    inputelement_attrs={
                         "data_page_number_input": True,
                         "onchange": "document.location = this.value",
                         "onauxclick": "window.open(this.value, '_blank')",
+                        "value": linktopage(
+                            page_urlparameter,
+                            hg.C("request").GET.get(page_urlparameter, "1"),
+                        ),
                     },
                     _class="bx--select__page-number",
                 ),
                 hg.LABEL(
                     _("of"),
                     " ",
-                    hg.getattr_lazy(paginator, "num_pages"),
+                    paginator.num_pages,
                     " ",
                     _("pages"),
                     _class="bx--pagination__text",
@@ -159,7 +134,7 @@ class Pagination(hg.DIV):
                         linktorelativepage(
                             page_urlparameter,
                             -1,
-                            hg.getattr_lazy(paginator, "num_pages"),
+                            paginator.num_pages,
                         )
                     ),
                 ),
@@ -178,7 +153,7 @@ class Pagination(hg.DIV):
                         linktorelativepage(
                             page_urlparameter,
                             1,
-                            hg.getattr_lazy(paginator, "num_pages"),
+                            paginator.num_pages,
                         )
                     ),
                 ),
@@ -218,11 +193,17 @@ def linktorelativepage(page_urlparameter, direction, maxnum):
     )
 
 
-def linkwithitemsperpage(itemsperpage_urlparameter, itemsperpage, page_urlparameter):
+def linkwithitemsperpage(
+    itemsperpage_urlparameter, page_urlparameter, itemsperpage=None
+):
     return hg.F(
         lambda c: link_with_urlparameters(
             c["request"],
-            **{itemsperpage_urlparameter: itemsperpage, page_urlparameter: None},
+            **{
+                itemsperpage_urlparameter: itemsperpage
+                or c["request"].GET.get(itemsperpage_urlparameter),
+                page_urlparameter: None,
+            },
         )
     )
 

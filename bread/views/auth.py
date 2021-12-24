@@ -59,27 +59,24 @@ class BreadLoginView(BreadView, LoginView):
 
     def get_layout(self):
         return auth_page(
-            layout.form.Form(
+            layout.forms.Form(
                 hg.C("form"),
                 hg.A(
                     _("Lost password?"),
                     href=reverse("password_reset"),
-                    style="float: right; font-size: 0.75rem",
+                    style="display: block; text-align: right; font-size: 0.75rem",
                 ),
-                layout.form.FormField(
-                    "username",
-                    elementattributes={
-                        "style": "width: 100%",
-                    },
-                    widgetattributes={
-                        "_class": "field-02-background",
-                    },
+                layout.forms.FormField(
+                    fieldname="username",
+                    form="form",
+                    inputelement_attrs={"_class": "field-02-background"},
+                    style="width: 100%",
                 ),
-                layout.form.FormField(
-                    "password",
-                    widgetattributes={
-                        "_class": "field-02-background",
-                    },
+                layout.forms.FormField(
+                    fieldname="password",
+                    form="form",
+                    inputelement_attrs={"_class": "field-02-background"},
+                    style="width: 100%",
                 ),
                 id="authform",
             ),
@@ -116,21 +113,19 @@ class BreadPasswordResetView(BreadView, PasswordResetView):
 
     def get_layout(self):
         return auth_page(
-            layout.form.Form(
+            layout.forms.Form(
                 hg.C("form"),
                 hg.A(
                     _("Lost password?"),
                     href=reverse("password_reset"),
                     style="float: right; font-size: 0.75rem",
                 ),
-                layout.form.FormField(
+                layout.forms.FormField(
                     "email",
-                    elementattributes={
-                        "style": "width: 100%",
-                    },
-                    widgetattributes={
+                    inputelement_attrs={
                         "_class": "field-02-background",
                     },
+                    style="width: 100%",
                 ),
                 id="authform",
             ),
@@ -175,22 +170,16 @@ class BreadPasswordResetConfirmView(BreadView, PasswordResetConfirmView):
         return hg.If(
             hg.C("validlink"),
             auth_page(
-                layout.form.Form(
+                layout.forms.Form(
                     hg.C("form"),
-                    layout.form.FormField(
+                    layout.forms.FormField(
                         "new_password1",
-                        elementattributes={
-                            "style": "width: 100%",
-                        },
-                        widgetattributes={
-                            "_class": "field-02-background",
-                        },
+                        inputelement_attrs={"_class": "field-02-background"},
+                        style="width: 100%",
                     ),
-                    layout.form.FormField(
+                    layout.forms.FormField(
                         "new_password2",
-                        widgetattributes={
-                            "_class": "field-02-background",
-                        },
+                        inputelement_attrs={"_class": "field-02-background"},
                     ),
                     id="authform",
                 ),
