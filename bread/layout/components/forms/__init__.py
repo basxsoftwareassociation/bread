@@ -222,11 +222,14 @@ class FormsetField(hg.Iterator):
         return hg.BaseElement(
             hg.DIV(formset, id=id),
             formset.management_form,
-            formset.add_button(
-                buttontype="ghost",
-                notext=False,
-                label=add_label,
-                container_css_selector=f"#{id}",
+            hg.If(
+                hg.C(f"{formset.formname}.{formset.fieldname}.formset.can_add"),
+                formset.add_button(
+                    buttontype="ghost",
+                    notext=False,
+                    label=add_label,
+                    container_css_selector=f"#{id}",
+                ),
             ),
         )
 

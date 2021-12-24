@@ -114,9 +114,6 @@ def breadmodelform_factory(  # noqa
             attribs[modelfield.name] = GenericForeignKeyField(
                 required=not model._meta.get_field(modelfield.fk_field).blank
             )
-        # elif modelfield.one_to_many or (
-        # modelfield.one_to_one and not modelfield.concrete
-        # ):
         elif isinstance(formfieldelement, _layout.forms.FormsetField):
             attribs[modelfield.name] = FormsetField(
                 _generate_formset_class(
@@ -201,6 +198,14 @@ def _generate_formset_class(
         "extra": 0,
         "can_delete": True,
     }
+    if modelfield.one_to_one:
+        base_formset_kwargs["can_delete"] = False
+        base_formset_kwargs["can_delete_extra"] = False
+        base_formset_kwargs["absolute_max"] = 1
+        base_formset_kwargs["min_num"] = 1
+        base_formset_kwargs["max_num"] = 1
+        base_formset_kwargs["extra"] = 1
+
     base_formset_kwargs.update(formsetfieldelement.formsetfactory_kwargs)
     if isinstance(modelfield, GenericRelation):
         return generic_inlineformset_factory(
