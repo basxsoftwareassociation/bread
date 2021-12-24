@@ -41,9 +41,10 @@ class Button(hg.BUTTON):
         if icon is not None:
             if isinstance(icon, str):
                 icon = Icon(icon)
-            icon.attributes["_class"] = (
-                icon.attributes.get("_class", "") + " bx--btn__icon"
-            )
+            if isinstance(icon, Icon):
+                icon.attributes["_class"] = (
+                    icon.attributes.get("_class", "") + " bx--btn__icon"
+                )
             children += (icon,)
         super().__init__(*children, **attributes)
 

@@ -110,14 +110,14 @@ class FormReadView(EditView):
 
 def layoutasreadonly(layout):
     layout.wrap(
-        lambda element, ancestors: isinstance(element, _layout.form.Form)
+        lambda element, ancestors: isinstance(element, _layout.forms.Form)
         and element.standalone,
         hg.FIELDSET(readonly="true"),
     )
 
     layout.delete(
         lambda element, ancestors: any(
-            [isinstance(a, _layout.form.Form) for a in ancestors]
+            [isinstance(a, _layout.forms.Form) for a in ancestors]
         )
         and (
             (

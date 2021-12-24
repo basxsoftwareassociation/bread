@@ -35,6 +35,8 @@ setup(
         "django-dynamic-preferences",  # easy handling of preferences #
         "django-countries",
         "django-money[exchange]",
+        "django-phonenumber-field",
+        "phonenumbers",
         "django-simple-history",
         "openpyxl",  # working with excel files
         "djangoql",

@@ -1,7 +1,7 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
-from .helpers import REQUIRED_LABEL, ErrorListElement, HelpTextElement
+from .forms.helpers import REQUIRED_LABEL, ErrorList, HelpText
 
 
 class Toggle(hg.DIV):
@@ -41,7 +41,7 @@ class Toggle(hg.DIV):
         super().__init__(
             self.input,
             self.label,
-            HelpTextElement(help_text),
-            ErrorListElement(errors),
+            HelpText(help_text),
+            ErrorList(errors),
             **attributes,
         )
