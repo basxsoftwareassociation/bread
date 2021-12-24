@@ -30,9 +30,9 @@ def maintenancesettings(request):
                 admin.maintainance_package_layout(request),
             ),
             C(
-                hg.H4(_("Database Optimization")),
+                hg.H4(_("Optimize database")),
                 admin.maintenance_database_optimization(request),
-                hg.H4(_("Search Reindexing"), _style="margin-top: 3rem;"),
+                hg.H4(_("Rebuild search index"), _style="margin-top: 3rem;"),
                 admin.maintenance_search_reindex(request),
             ),
         )
