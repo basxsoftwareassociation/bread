@@ -39,7 +39,9 @@ class CustomFormMixin:
         )
 
     def get_layout(self):
-        formfields = filter_fieldlist(self.model, self.fields, for_form=True)
+        formfields = filter_fieldlist(
+            self.model, [f for f in self.fields if isinstance(f, str)], for_form=True
+        )
         ret = hg.BaseElement()
         for field in self.fields or formfields:
             if field in formfields:

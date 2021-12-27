@@ -193,6 +193,13 @@ class FormsetField(hg.Iterator):
                 hg.C(f"{self.formname}.{self.fieldname}.formset.prefix"),
                 mark_safe("'));"),
             ),
+            hg.SPAN(
+                onload=hg.BaseElement(
+                    mark_safe("init_formset('"),
+                    hg.C(f"{self.formname}.{self.fieldname}.formset.prefix"),
+                    mark_safe("');"),
+                ),
+            ),
         )
 
     def add_button(self, container_css_selector, label=_("Add"), **kwargs):
@@ -255,9 +262,13 @@ class FormsetField(hg.Iterator):
         columns = []
         for f in fields:
             if isinstance(f, str):
+                f = FormField(f, no_wrapper=True, no_label=True)
+            if isinstance(f, FormFieldMarker):
                 f = DataTableColumn(
-                    hg.C(f"{formname}.{fieldname}.formset.form.base_fields.{f}.label"),
-                    FormField(f, no_wrapper=True, no_label=True),
+                    hg.C(
+                        f"{formname}.{fieldname}.formset.form.base_fields.{f.fieldname}.label"
+                    ),
+                    f,
                 )
             columns.append(f)
         columns.append(
