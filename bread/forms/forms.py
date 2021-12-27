@@ -199,8 +199,6 @@ def _generate_formset_class(
         "can_delete": True,
     }
     if modelfield.one_to_one:
-        base_formset_kwargs["can_delete"] = False
-        base_formset_kwargs["can_delete_extra"] = False
         base_formset_kwargs["absolute_max"] = 1
         base_formset_kwargs["min_num"] = 1
         base_formset_kwargs["max_num"] = 1
