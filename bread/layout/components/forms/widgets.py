@@ -868,7 +868,7 @@ class FileInput(BaseWidget):
             ),
             data_file_drop_container=True,
             disabled=inputelement_attrs.get("disabled"),
-            data_invalid=getattr(errors, "condition"),
+            data_invalid=hg.If(getattr(errors, "condition", False), True),
             _for=inputelement_attrs.get("id"),
         )
         input = self.get_input_element(

@@ -200,7 +200,7 @@ def _generate_formset_class(
     }
     if modelfield.one_to_one:
         base_formset_kwargs["absolute_max"] = 1
-        base_formset_kwargs["min_num"] = 1
+        base_formset_kwargs["min_num"] = 0
         base_formset_kwargs["max_num"] = 1
         base_formset_kwargs["extra"] = 1
 
