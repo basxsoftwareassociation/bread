@@ -1,4 +1,5 @@
 import os
+from io import StringIO
 
 import htmlgenerator as hg
 import pkg_resources
@@ -6,6 +7,7 @@ import requests
 from django import forms
 from django.conf import settings
 from django.contrib import messages
+from django.core import management
 from django.db import connection
 from django.utils.translation import gettext_lazy as _
 
@@ -75,11 +77,13 @@ def maintenance_database_optimization(request):
         )
 
     form: OptimizeForm
+    ret = hg.BaseElement()
+    received_post = False
 
     if request.method == "POST":
         form = OptimizeForm(request.POST)
-
-        if form.is_valid():
+        if form.is_valid() and "previous" in form.cleaned_data:
+            received_post = True
             connection.cursor().execute("VACUUM;")
             # get the previous size
             previous_size = form.cleaned_data["previous"]
@@ -88,19 +92,85 @@ def maintenance_database_optimization(request):
             # try adding some message here.
             messages.info(
                 request,
-                _(
-                    "The database size has been minimized from %.2f kB to %.2f kB."
-                    % (previous_size, current_db_size)
-                ),
+                _("The database size has been minimized from %.2f kB to %.2f kB.")
+                % (previous_size, current_db_size),
             )
-    else:
+
+            ret.append(
+                hg.H5(_("Previous Size: %.2f kB") % form.cleaned_data["previous"])
+            )
+
+    if not received_post:
         form = OptimizeForm()
 
     optimize_btn = Form(
-        form, FormField("previous"), Button(_("Optimize"), type="submit")
+        form,
+        FormField("previous"),
+        Button(
+            _("Optimize"),
+            type="submit",
+        ),
+    )
+
+    ret.append(hg.H5(_("Current Size: %.2f kB") % current_db_size))
+    ret.append(optimize_btn)
+
+    return ret
+
+
+def maintenance_search_reindex(request):
+    class ReindexForm(forms.Form):
+        confirmed = forms.BooleanField(
+            widget=forms.HiddenInput,
+            initial=True,
+        )
+
+    form: ReindexForm
+    received_post = False
+    logmsg: str = None
+
+    if request.method == "POST":
+        form = ReindexForm(request.POST)
+        if form.is_valid() and "confirmed" in form.cleaned_data:
+            received_post = True
+
+            out = StringIO()
+            management.call_command("rebuild_index", interactive=False, stdout=out)
+            logmsg = out.getvalue().replace("\n", "<br>")
+
+            # try adding some message here.
+            messages.info(request, _("Rebuilt search index"))
+
+    if not received_post:
+        form = ReindexForm()
+
+    reindex_btn = Form(
+        form,
+        FormField("confirmed"),
+        Button(
+            _("Rebuild"),
+            type="submit",
+            style="margin-bottom: 1rem;",
+        ),
     )
 
     return hg.BaseElement(
-        hg.H5(f"Current Size: {current_db_size : .2f} kB"),
-        optimize_btn,
+        hg.P(
+            _(
+                (
+                    "After certain kind of database updates the search index may become outdated. "
+                    "You can reindex the search index by clicking the button below. "
+                    "This should fix most problems releated to search fields."
+                )
+            ),
+            style="margin-bottom: 1rem;",
+        ),
+        reindex_btn,
+        hg.If(
+            logmsg,
+            hg.BaseElement(
+                hg.H6(_("Log from the server"), style="margin-bottom: 0.75rem;"),
+                hg.SAMP(hg.mark_safe(logmsg), style="font-family: monospace;"),
+            ),
+        ),
     )

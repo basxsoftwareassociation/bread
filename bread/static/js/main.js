@@ -96,9 +96,9 @@ function delete_inline_element(checkbox, element) {
 }
 
 function update_add_button(form_prefix) {
-    var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS')
-    var maxforms = $('#id_' + form_prefix + '-MAX_NUM_FORMS')
-    var addbutton = $('#add_' + form_prefix + '_button')
+    var formcount = $('#id_' + form_prefix + '-TOTAL_FORMS');
+    var maxforms = $('#id_' + form_prefix + '-MAX_NUM_FORMS');
+    var addbutton = $('#add_' + form_prefix + '_button');
     if(addbutton) {
         addbutton.style.display = "inline-flex";
         if(parseInt(formcount.value) >= parseInt(maxforms.value)) {

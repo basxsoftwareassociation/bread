@@ -49,13 +49,14 @@ class Search(hg.DIV):
             **(widgetattributes or {}),
         }
         if backend:
-            resultcontainerid = (
-                resultcontainerid or f"search-result-{hg.html_id((self, backend.url))}"
-            )
+            if resultcontainerid is None:
+                resultcontainerid = f"search-result-{hg.html_id((self, backend.url))}"
             widgetattributes["hx_get"] = backend.url
             widgetattributes["hx_trigger"] = "changed, click, keyup changed delay:500ms"
-            widgetattributes["hx_target"] = f"#{resultcontainerid}"
-            widgetattributes["hx_indicator"] = f"#{resultcontainerid}-indicator"
+            widgetattributes["hx_target"] = hg.format("#{}", resultcontainerid)
+            widgetattributes["hx_indicator"] = hg.format(
+                "#{}-indicator", resultcontainerid
+            )
             widgetattributes["name"] = backend.query_parameter
 
         widgetattributes[
@@ -89,8 +90,8 @@ def _result_container(_id, onload_js, width="100%"):
     return hg.DIV(
         hg.DIV(
             id=_id,
-            _style="width: 100%; position: absolute; z-index: 999",
-            **({"onload": onload_js} if onload_js else {}),
+            style="width: 100%; position: absolute; z-index: 999",
+            onload=onload_js,
         ),
         style=f"width: {width}; position: relative",
     )
@@ -108,7 +109,7 @@ def _search_icon():
 def _loading_indicator(resultcontainerid):
     return hg.DIV(
         Loading(small=True),
-        id=f"{resultcontainerid}-indicator",
+        id=hg.format("{}-indicator", resultcontainerid),
         _class="htmx-indicator",
         style="position: absolute; right: 2rem",
     )
@@ -121,8 +122,8 @@ def _close_button(resultcontainerid):
         "aria_label": _("Clear search input"),
         "type": "button",
     }
-    if resultcontainerid:
-        kwargs[
-            "onclick"
-        ] = f"document.getElementById('{resultcontainerid}').innerHTML = '';"
+    if resultcontainerid is not None:
+        kwargs["onclick"] = hg.format(
+            "document.getElementById('{}').innerHTML = '';", resultcontainerid
+        )
     return hg.BUTTON(Icon("close", size=20, _class="bx--search-clear"), **kwargs)

@@ -3085,6 +3085,7 @@ input[data-invalid]:not(:focus),
   outline-offset: -2px; }
 
 input[data-invalid] ~ .bx--form-requirement,
+[data-invalid] ~ .bx--form-requirement,
 .bx--number[data-invalid] .bx--number__input-wrapper ~ .bx--form-requirement,
 .bx--date-picker-input__wrapper ~ .bx--form-requirement,
 .bx--time-picker--invalid ~ .bx--form-requirement,
@@ -3100,6 +3101,7 @@ input[data-invalid] ~ .bx--form-requirement,
   font-weight: 400; }
 
 input[data-invalid] ~ .bx--form-requirement,
+[data-invalid] ~ .bx--form-requirement,
 .bx--number[data-invalid] .bx--number__input-wrapper ~ .bx--form-requirement,
 .bx--date-picker-input__wrapper ~ .bx--form-requirement,
 .bx--time-picker--invalid ~ .bx--form-requirement,
@@ -15349,7 +15351,7 @@ a.bx--navigation-link:focus {
 .bx--content {
   transform: none; }
 
-a:disabled, a.bx--btn--disabled {
+a[disabled], a.bx--btn--disabled {
   pointer-events: none; }
 
 @media print {
@@ -15400,6 +15402,9 @@ td .bx--form-item {
   .bx--col .bx--form-item [data-date-picker] input {
     width: 100%;
     max-width: 100%; }
+
+.bx--col .bx--form-item > * {
+  width: 100%; }
 
 .bx--action-list .bx--btn.bx--btn--icon-only .bx--btn__icon {
   margin-left: 0; }
@@ -17396,6 +17401,7 @@ svg {
   outline-offset: -2px; }
 
 .theme-white input[data-invalid] ~ .bx--form-requirement,
+.theme-white [data-invalid] ~ .bx--form-requirement,
 .theme-white .bx--number[data-invalid] .bx--number__input-wrapper ~ .bx--form-requirement,
 .theme-white .bx--date-picker-input__wrapper ~ .bx--form-requirement,
 .theme-white .bx--time-picker--invalid ~ .bx--form-requirement,
@@ -17411,6 +17417,7 @@ svg {
   font-weight: 400; }
 
 .theme-white input[data-invalid] ~ .bx--form-requirement,
+.theme-white [data-invalid] ~ .bx--form-requirement,
 .theme-white .bx--number[data-invalid] .bx--number__input-wrapper ~ .bx--form-requirement,
 .theme-white .bx--date-picker-input__wrapper ~ .bx--form-requirement,
 .theme-white .bx--time-picker--invalid ~ .bx--form-requirement,

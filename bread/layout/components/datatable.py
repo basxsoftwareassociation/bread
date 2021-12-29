@@ -457,7 +457,7 @@ class DataTable(hg.TABLE):
                 hg.F(
                     lambda c: len(hg.resolve_lazy(queryset, c))
                     if pagination_config is None
-                    else hg.getattr_lazy(pagination_config.paginator, "count")
+                    else pagination_config.paginator.count
                 ),
                 model._meta.verbose_name_plural,
             ),

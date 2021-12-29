@@ -95,6 +95,11 @@ urlpatterns = [
     ),
     path("systeminformation", system.systeminformation, name="systeminformation"),
     path("admin/maintenance", admin.maintenancesettings, name="breadadmin.maintenance"),
+    path(
+        "admin/widgetpreview",
+        admin.widgetpreview,
+        name="breadadmin.widgetpreview",
+    ),
     *default_model_paths(
         django_celery_results.models.TaskResult,
         browseview=admin.TaskResultBrowseView,
