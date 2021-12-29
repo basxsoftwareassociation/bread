@@ -5,7 +5,7 @@ from dynamic_preferences import views as preferences_views
 from dynamic_preferences.registries import global_preferences_registry
 
 from bread.utils import autopath, default_model_paths
-from bread.views import searchbar
+from bread.views import generic_search
 
 from .forms.forms import PreferencesForm
 from .views import admin, auth, system, userprofile
@@ -63,7 +63,7 @@ urlpatterns = [
         userprofile.UserProfileView.as_view(),
         name="userprofile",
     ),
-    autopath(searchbar.search),
+    autopath(generic_search.generic_search),
     autopath(
         userprofile.EditPersonalDataView.as_view(), urlname="userprofile.personal"
     ),

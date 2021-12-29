@@ -58,6 +58,16 @@ class Search(hg.DIV):
             widgetattributes["hx_indicator"] = f"#{resultcontainerid}-indicator"
             widgetattributes["name"] = backend.query_parameter
 
+        widgetattributes[
+            "onkeydown"
+        ] = f"""
+            e => {{
+                let boxVal = document.getElementById('{widgetattributes['id']}').value;
+                if (e.code === 'Enter')
+                    document.location = document.location + `?{widgetattributes['name']}=${{boxVal}}`;
+            }}
+            """
+
         super().__init__(
             hg.DIV(
                 hg.LABEL(_("Search"), _class="bx--label", _for=widgetattributes["id"]),

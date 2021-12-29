@@ -2,6 +2,7 @@ from typing import Any, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
@@ -412,6 +413,17 @@ class DataTable(hg.TABLE):
                     col = col._replace(td_attributes=td_attributes)
 
             column_definitions.append(col)
+
+        if search_backend is None:
+            search_backend = SearchBackendConfig(
+                url=reverse(
+                    "bread.views.generic_search.generic_search",
+                    kwargs={
+                        "app": model._meta.app_label,
+                        "model": model._meta.model_name,
+                    },
+                )
+            )
 
         return DataTable(
             column_definitions

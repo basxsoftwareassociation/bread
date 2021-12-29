@@ -18,7 +18,8 @@ ITEM_LABEL_CLASS = "search_result_label"
 ITEM_VALUE_CLASS = "search_result_value"
 
 
-def search(request, app: str, model: str):
+def generic_search(request, app: str, model: str):
+    return HttpResponse("")
     query = request.GET.get("q")
 
     highlight = CustomHighlighter(query)
