@@ -115,7 +115,7 @@ class TextInput(BaseWidget):
             label,
             hg.DIV(
                 hg.If(
-                    errors.condition,
+                    getattr(errors, "condition", None),
                     Icon(
                         "warning--filled",
                         size=16,
@@ -139,7 +139,7 @@ class TextInput(BaseWidget):
                     "bx--text-input__field-wrapper"
                     + (" text-input-with-icon" if icon is not None else "")
                 ),
-                data_invalid=hg.If(errors.condition, True),
+                data_invalid=hg.If(getattr(errors, "condition", None), True),
             ),
             errors,
             help_text,
