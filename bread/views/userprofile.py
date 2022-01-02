@@ -234,8 +234,8 @@ class EditPersonalDataView(EditView):
 
     def get_layout(self):
         ret = super().get_layout()
-        ret.append(layout.form.FormField("preferred_language"))
-        ret.append(layout.form.FormField("timezone"))
+        ret.append(layout.forms.FormField("preferred_language"))
+        ret.append(layout.forms.FormField("timezone"))
         return ret
 
     def get_object(self):
@@ -280,13 +280,9 @@ class EditLoginView(EditView):
 
         return EditLoginForm
 
-    def get_form(self, *args, **kwargs):
-        ret = super().get_form(*args, **kwargs)
-        return ret
-
     def get_layout(self):
         ret = super().get_layout()
-        ret.append(layout.form.FormField("current_password"))
+        ret.append(layout.forms.FormField("current_password"))
         return ret
 
     def get_object(self):
@@ -336,10 +332,9 @@ def profile_field_password(fieldname):
 
 
 def profile_field_checkbox(fieldname):
-    return layout.checkbox.Checkbox(
-        layout.ObjectFieldLabel(fieldname),
-        disabled=True,
-        widgetattributes={"checked": hg.C(f"object.{fieldname}")},
+    return layout.forms.widgets.Checkbox(
+        label=layout.ObjectFieldLabel(fieldname),
+        inputelement_attrs={"checked": hg.C(f"object.{fieldname}"), "disabled": True},
     )
 
 

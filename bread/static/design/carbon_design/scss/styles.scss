@@ -94,6 +94,9 @@ td .bx--form-item {
             max-width: 100%;
         }
     }
+    > * {
+        width: 100%;
+    }
 }
 
 // fix position of unlabeled table bulk action buttons

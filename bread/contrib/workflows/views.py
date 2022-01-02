@@ -39,13 +39,15 @@ class WorkflowBrowseView(views.BrowseView):
 class WorkflowEditView(views.EditView):
     def get_layout(self):
         fields = hg.BaseElement(
-            *[layout.form.FormField(f) for f in self.object.active_fields()]
+            *[layout.forms.FormField(f) for f in self.object.active_fields()]
         )
         return hg.BaseElement(
             hg.H1(self.object, style="margin-bottom: 2rem"),
             hg.DIV(
                 hg.DIV(
-                    layout.form.Form.wrap_with_form(hg.C("form"), fields),
+                    layout.forms.Form(
+                        hg.C("form"), fields, layout.forms.helpers.Submit()
+                    ),
                     style="padding: 1rem",
                 ),
                 hg.DIV(
@@ -60,7 +62,7 @@ class WorkflowReadView(views.ReadView):
     def get_layout(self):
         fields = hg.BaseElement(
             *[
-                layout.form.FormField(f)
+                layout.forms.FormField(f)
                 for f in utils.filter_fieldlist(self.model, ["__all__"], for_form=True)
             ]
         )
@@ -77,7 +79,9 @@ class WorkflowReadView(views.ReadView):
                 views.layoutasreadonly(
                     hg.DIV(
                         hg.DIV(
-                            layout.form.Form.wrap_with_form(hg.C("form"), fields),
+                            layout.forms.Form(
+                                hg.C("form"), fields, layout.forms.helpers.Submit()
+                            ),
                             style="padding: 1rem",
                         ),
                         hg.DIV(

@@ -130,7 +130,11 @@ class ObjectFieldValue(hg.Lazy):
             object, f"{'.'.join(parts[:-1])}.get_{parts[-1]}_display".lstrip(".")
         )
         if value is None:
-            value = hg.resolve_lookup(object, self.fieldname)
+            try:
+                value = hg.resolve_lookup(object, self.fieldname)
+            except AttributeError:
+                # e.g. for non-existing OneToOneField related value
+                pass
         if isinstance(value, datetime.datetime):
             value = localtime(value)
         value = localize(value, use_l10n=settings.USE_L10N)

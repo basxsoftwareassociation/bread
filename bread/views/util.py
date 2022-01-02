@@ -39,40 +39,47 @@ class CustomFormMixin:
         )
 
     def get_layout(self):
-        formfields = filter_fieldlist(self.model, self.fields, for_form=True)
+        formfields = filter_fieldlist(
+            self.model,
+            [f for f in self.fields if isinstance(f, str)] if self.fields else None,
+            for_form=True,
+        )
         ret = hg.BaseElement()
         for field in self.fields or formfields:
             if field in formfields:
-                ret.append(breadlayout.form.FormField(field))
+                ret.append(breadlayout.forms.FormField(field))
             else:
                 ret.append(field)
 
         if self.ajax_urlparameter in self.request.GET:
-            return breadlayout.form.Form(hg.C("form"), ret)
+            return breadlayout.forms.Form(hg.C("form"), ret)
 
         # wrap with form will add a submit button
         return hg.BaseElement(
-            hg.H3(self.object), breadlayout.form.Form.wrap_with_form(hg.C("form"), ret)
+            hg.H3(self.object),
+            breadlayout.forms.Form(
+                hg.C("form"), ret, breadlayout.forms.helpers.Submit()
+            ),
         )
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
 
         # hide or disable predefined fields passed in GET parameters
-        if self.request.method != "POST":
-            for fieldelement in self._get_layout_cached().filter(
-                lambda element, ancestors: isinstance(
-                    element, breadlayout.form.FormField
-                )
+        # if self.request.method != "POST":
+        for fieldelement in self._get_layout_cached().filter(
+            lambda element, ancestors: isinstance(
+                element, breadlayout.forms.fields.FormFieldMarker
+            )
+        ):
+            if (
+                fieldelement.fieldname in self.request.GET
+                and fieldelement.fieldname + "_nohide" not in self.request.GET
             ):
-                if (
-                    fieldelement.fieldname in self.request.GET
-                    and fieldelement.fieldname + "_nohide" not in self.request.GET
-                ):
-                    form.fields[fieldelement.fieldname].widget = forms.HiddenInput(
-                        attrs=form.fields[fieldelement.fieldname].widget.attrs
-                    )
-        else:
+                form.fields[fieldelement.fieldname].widget = forms.HiddenInput(
+                    attrs=form.fields[fieldelement.fieldname].widget.attrs
+                )
+        if self.request.method == "POST":
             if form.errors and self.ajax_urlparameter not in self.request.GET:
                 messages.error(
                     self.request,
