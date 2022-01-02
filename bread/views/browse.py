@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import models
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
 from guardian.mixins import PermissionListMixin
@@ -72,7 +73,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
 
     title: Optional[hg.BaseElement] = None
     columns: Tuple[Union[str, layout.datatable.DataTableColumn]] = ["__all__"]
-    search_backend: SearchBackendConfig = None
+    search_backend: SearchBackendConfig = SearchBackendConfig(
+        url=reverse_lazy("bread.views.generic_search.generic_search")
+    )
     rowclickaction: Optional[Link] = None
     # bulkactions: List[(Link, function(request, queryset))]
     # - link.js should be a slug and not a URL
@@ -176,12 +179,19 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
 
     def get(self, *args, **kwargs):
         if "reset" in self.request.GET:
-            # reset clear state and reset filters and sorting
             if (
                 self.viewstate_sessionkey
                 and self.viewstate_sessionkey in self.request.session
             ):
-                del self.request.session[self.viewstate_sessionkey]
+                if self.request.GET["reset"] == "2":
+                    # only reset search value
+                    session_str = self.request.session[self.viewstate_sessionkey].split(
+                        "&"
+                    )
+                    session_str = "&".join((x for x in session_str if "q=" not in x))
+                    self.request.session[self.viewstate_sessionkey] = session_str
+                else:
+                    del self.request.session[self.viewstate_sessionkey]
             return redirect(self.request.path)
         if self.bulkaction_urlparameter in self.request.GET:
             bulkactions = {

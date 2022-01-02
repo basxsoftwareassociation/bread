@@ -30,7 +30,7 @@ def get_country_qset(fields, queries, prefix, **kwargs):
         country_name
         for country_name in countries
         for query in queries
-        if query.lower() in country_name
+        if query in country_name
     }
 
     return {
@@ -41,6 +41,9 @@ def get_country_qset(fields, queries, prefix, **kwargs):
 
 
 def get_field_queryset(fields, queries, prefix="", **kwargs):
+    # format queries so they are more easily to be searched.
+    queries = [query.strip().lower() for query in queries]
+
     if "countries" not in kwargs:
         kwargs["countries"] = {
             name.lower(): code for code, name in django_countries.countries
@@ -77,5 +80,4 @@ def get_field_queryset(fields, queries, prefix="", **kwargs):
             new_prefix = prefix + "__".join([foreignkey_field.name, ""])
             qs |= get_field_queryset(foreign_fields, queries, new_prefix, **kwargs)
 
-    print(qs)
     return qs

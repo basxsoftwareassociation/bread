@@ -416,13 +416,7 @@ class DataTable(hg.TABLE):
 
         if search_backend is None:
             search_backend = SearchBackendConfig(
-                url=reverse(
-                    "bread.views.generic_search.generic_search",
-                    kwargs={
-                        "app": model._meta.app_label,
-                        "model": model._meta.model_name,
-                    },
-                )
+                url=reverse("bread.views.generic_search.generic_search")
             )
 
         return DataTable(

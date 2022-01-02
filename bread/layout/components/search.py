@@ -58,6 +58,11 @@ class Search(hg.DIV):
                 "#{}-indicator", resultcontainerid
             )
             widgetattributes["name"] = backend.query_parameter
+            # if backend.url == reverse("bread.views.generic_search.generic_search"):
+            #     widgetattributes["placeholder"] = placeholder or "%s (%s)" % (
+            #         _("Search"),
+            #         _("Press Enter to proceed"),
+            #     )
 
         super().__init__(
             hg.DIV(
@@ -72,36 +77,31 @@ class Search(hg.DIV):
                         hg.SCRIPT(
                             hg.mark_safe(
                                 f"""
-                                var searchBox = document.getElementById('{widgetattributes['id']}');
-                                searchBox.addEventListener('keydown', e => {{
-                                    if (e.code === 'Enter') {{
-                                        let boxVal = searchBox.value;
-                                        // check if param q already exists
-                                        // if so, replaced it with the new one
-                                        let urlToken = document.location.toString().split('?');
-                                        console.log(urlToken);
-
-                                        let params;
-                                        if (urlToken.length > 1)
-                                            params = urlToken[1].split('&');
-                                        else
-                                            params = [];
-
-                                        let hasPreviousQ = false;
-                                        console.log(typeof params);
-                                        params.forEach((el, ind) => {{
+                                document.addEventListener('load', () => {{
+                                    let searchBox = document.getElementById('{widgetattributes['id']}');
+                                    let searchBoxClose = document.querySelector('#{widgetattributes['id']}~.bx--search-close');
+                                    let currentURL = document.location.toString().split('?');
+                                    let currentParams = {{}};
+                                    if (currentURL.length > 1)
+                                        currentURL[1].split('&').forEach(el => {{
                                             [key, val] = el.split('=');
-                                            if (key === 'q') {{
-                                                params[ind] = key + '=' + boxVal;
-                                                hasPreviousQ = true;
+                                            val = decodeURIComponent(val);
+                                            if (key === '{widgetattributes['name']}') {{
+                                                searchBox.value = val;
+                                                searchBoxClose.classList.remove('bx--search-close--hidden');
                                             }}
+                                            currentParams[key] = val;
                                         }});
-
-                                        if (!hasPreviousQ)
-                                            params.push('q=' + boxVal);
-
-                                        document.location = urlToken[0] + '?' + params.join('&');
-                                    }}
+                                    searchBox.addEventListener('keydown', e => {{
+                                        if (e.code === 'Enter') {{
+                                            let boxVal = searchBox.value;
+                                            currentParams.{widgetattributes['name']} = boxVal;
+                                            let newQuery = [];
+                                            for (let prop in currentParams)
+                                                newQuery.push(encodeURI(prop + '=' + currentParams[prop]));
+                                            document.location = currentURL[0] + '?' + newQuery.join('&');
+                                        }}
+                                    }});
                                 }});
                                 """
                             )
@@ -156,6 +156,6 @@ def _close_button(resultcontainerid):
     }
     if resultcontainerid is not None:
         kwargs["onclick"] = hg.format(
-            "document.getElementById('{}').innerHTML = '';", resultcontainerid
+            "document.location = document.location.href.split('?')[0] + '?reset=2'"
         )
     return hg.BUTTON(Icon("close", size=20, _class="bx--search-clear"), **kwargs)
