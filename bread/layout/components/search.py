@@ -59,23 +59,55 @@ class Search(hg.DIV):
             )
             widgetattributes["name"] = backend.query_parameter
 
-        widgetattributes[
-            "onkeydown"
-        ] = f"""
-            e => {{
-                let boxVal = document.getElementById('{widgetattributes['id']}').value;
-                if (e.code === 'Enter')
-                    document.location = document.location + `?{widgetattributes['name']}=${{boxVal}}`;
-            }}
-            """
-
         super().__init__(
             hg.DIV(
                 hg.LABEL(_("Search"), _class="bx--label", _for=widgetattributes["id"]),
                 hg.INPUT(**widgetattributes),
                 _search_icon(),
                 _close_button(resultcontainerid),
-                hg.If(backend is not None, _loading_indicator(resultcontainerid)),
+                hg.If(
+                    backend is not None,
+                    hg.BaseElement(
+                        _loading_indicator(resultcontainerid),
+                        hg.SCRIPT(
+                            hg.mark_safe(
+                                f"""
+                                var searchBox = document.getElementById('{widgetattributes['id']}');
+                                searchBox.addEventListener('keydown', e => {{
+                                    if (e.code === 'Enter') {{
+                                        let boxVal = searchBox.value;
+                                        // check if param q already exists
+                                        // if so, replaced it with the new one
+                                        let urlToken = document.location.toString().split('?');
+                                        console.log(urlToken);
+
+                                        let params;
+                                        if (urlToken.length > 1)
+                                            params = urlToken[1].split('&');
+                                        else
+                                            params = [];
+
+                                        let hasPreviousQ = false;
+                                        console.log(typeof params);
+                                        params.forEach((el, ind) => {{
+                                            [key, val] = el.split('=');
+                                            if (key === 'q') {{
+                                                params[ind] = key + '=' + boxVal;
+                                                hasPreviousQ = true;
+                                            }}
+                                        }});
+
+                                        if (!hasPreviousQ)
+                                            params.push('q=' + boxVal);
+
+                                        document.location = urlToken[0] + '?' + params.join('&');
+                                    }}
+                                }});
+                                """
+                            )
+                        ),
+                    ),
+                ),
                 **kwargs,
             ),
             hg.If(

@@ -77,4 +77,5 @@ def get_field_queryset(fields, queries, prefix="", **kwargs):
             new_prefix = prefix + "__".join([foreignkey_field.name, ""])
             qs |= get_field_queryset(foreign_fields, queries, new_prefix, **kwargs)
 
+    print(qs)
     return qs
