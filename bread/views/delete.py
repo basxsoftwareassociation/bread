@@ -39,14 +39,12 @@ class DeleteView(BreadView, PermissionRequiredMixin, RedirectView):
         return [f"{self.model._meta.app_label}.delete_{self.model.__name__.lower()}"]
 
     def get(self, *args, **kwargs):
-        self.instance = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
-        restore = "restore" in self.request.GET
         if self.softdeletefield:
-            setattr(self.instance, self.softdeletefield, not restore)
+            setattr(self.instance, self.softdeletefield, not self.restore)
             self.instance.save()
             msg = (
                 _("Restored %(modelname)s %(objectname)s")
-                if restore
+                if self.restore
                 else _("Deleted %(modelname)s %(objectname)s")
             )
         else:
@@ -76,3 +74,8 @@ class DeleteView(BreadView, PermissionRequiredMixin, RedirectView):
                 self.model, "read", kwargs={"pk": self.kwargs.get("pk")}
             )
         return reverse_model(self.model, "browse")
+
+    def dispatch(self, request, *args, **kwargs):
+        self.instance = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
+        self.restore = "restore" in self.request.GET
+        return super().dispatch(request, *args, **kwargs)
