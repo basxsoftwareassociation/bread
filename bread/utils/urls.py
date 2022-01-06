@@ -27,7 +27,7 @@ def reverse(*args, query: dict = None, **kwargs):
         return format_lazy(
             "{}?{}",
             django_reverse(*args, **kwargs),
-            urlencode(query),
+            urlencode(query, doseq=True),
         )
     return django_reverse(*args, **kwargs)
 
