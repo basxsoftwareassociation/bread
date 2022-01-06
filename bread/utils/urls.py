@@ -4,6 +4,7 @@ import logging
 import uuid
 from functools import wraps
 
+import htmlgenerator as hg
 from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
 from django.db import models
@@ -59,23 +60,24 @@ def link_with_urlparameters(request, **kwargs):
 
 
 def aslayout(view):
-    """Helper function which wraps functions who return a layout to be full django views"""
+    """Helper function which wraps functions who return a layout to be full django views.
+    Non-htmlgenerator.BaseElement responses will simply be passed through."""
 
     @wraps(view)
     def wrapper(request, *args, **kwargs):
         from .. import layout, menu  # needs to be imported here to avoid cyclic imports
 
-        return layout.render(
-            request,
-            import_string(settings.DEFAULT_PAGE_LAYOUT)(
-                menu.main, view(request, *args, **kwargs)
-            ),
-        )
+        response = view(request, *args, **kwargs)
+        if isinstance(response, hg.BaseElement):
+            return layout.render(
+                request,
+                import_string(settings.DEFAULT_PAGE_LAYOUT)(menu.main, response),
+            )
+        return response
 
     return wrapper
 
 
-# TODO:
 def autopath(*args, **kwargs):
     """This function can be used to automatically generate a URL for a view.
     In many situations for internal database applications we are not too conserned
