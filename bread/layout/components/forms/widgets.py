@@ -26,7 +26,7 @@ from .helpers import REQUIRED_LABEL, Label, to_php_formatstr
 class BaseWidget(hg.DIV):
     # used to mark that this class can be used in place of the according django widget or field
     # all bread widgets must have this if they should be used automatically to render form fields
-    django_widget: Optional[str] = None
+    django_widget = None
 
     # default attributes which are used to create the input element in a standardized way for many inputs
     carbon_input_class: Optional[str] = ""
