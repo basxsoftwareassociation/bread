@@ -45,7 +45,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install "${{ matrix.django-version }}"
-        pip install flake8 flake8-black pytest pytest-custom_exit_code black isort bandit safety mypy types-setuptools, types-python-dateutil
+        pip install flake8 flake8-black pytest pytest-custom_exit_code black isort bandit safety mypy types-setuptools types-python-dateutil
         pip install -e .[testing]
 
     - name: Lint with flake8
