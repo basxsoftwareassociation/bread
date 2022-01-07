@@ -34,8 +34,8 @@ def generate_widget_element(
     # parameters which are normally not required, when using a django form field
     # but can be filled in to create form fields independently from django form fields or
     # manually overriding values from the form field
-    widgetclass: Optional[
-        Type[BaseWidget]
+    widgetclass: Union[
+        Optional[Type[BaseWidget]], hg.Lazy
     ] = None,  # normally be taken from the django form field, will be carbon-ized
     label: Union[
         str, hg.BaseElement
@@ -46,8 +46,8 @@ def generate_widget_element(
     errors: Optional[
         List[str]
     ] = None,  # normally be taken from the django form field, will be carbon-ized
-    inputelement_attrs: Optional[
-        dict
+    inputelement_attrs: Union[
+        Optional[dict], hg.Lazy
     ] = None,  # normally be taken from the django form field, will be carbon-ized
     **attributes,
 ):
@@ -166,8 +166,8 @@ def generate_widget_element(
 FormField = generate_widget_element
 
 
-def _guess_widget(fieldname, form, suggested_widgetclass):
-    widget_map = {}
+def _guess_widget(fieldname, form, suggested_widgetclass) -> hg.Lazy:
+    widget_map: dict = {}
     for cls in _all_subclasses(BaseWidget):
         if cls.django_widget not in widget_map:
             widget_map[cls.django_widget] = []

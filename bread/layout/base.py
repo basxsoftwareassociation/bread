@@ -169,4 +169,4 @@ def render(request, layout, context=None, **response_kwargs):
     return HttpResponse(layout.render(defaultcontext), **response_kwargs)
 
 
-render.CONTEXT_PROCESSORS = None
+render.CONTEXT_PROCESSORS = None  # type: ignore
