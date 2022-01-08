@@ -271,7 +271,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         return qs
 
     @staticmethod
-    def gen_rowclickaction(modelaction):
+    def gen_rowclickaction(modelaction, **kwargs):
         """
         Shortcut to get a Link to a model view.
         The default models views in bread are "read", "edit", "delete".
@@ -280,9 +280,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         return Link(
             label="",
             href=ModelHref(
-                hg.C("row"),
-                modelaction,
-                kwargs={"pk": hg.C("row.pk")},
+                hg.C("row"), modelaction, kwargs={"pk": hg.C("row.pk")}, **kwargs
             ),
             iconname=None,
         )
