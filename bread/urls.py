@@ -54,7 +54,6 @@ external_urlpatterns = [
 ]
 
 urlpatterns = [
-    path("404", error.view404, name="breaderror:404"),
     path(
         "accounts/login/",
         auth.BreadLoginView.as_view(),
