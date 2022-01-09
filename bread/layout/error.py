@@ -1,7 +1,6 @@
 from typing import Union
 
 import htmlgenerator as hg
-from django.utils.translation import gettext_lazy as _
 
 from bread.layout.components.button import Button
 from bread.utils import Link, aslayout
