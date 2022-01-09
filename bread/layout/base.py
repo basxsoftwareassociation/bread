@@ -161,7 +161,7 @@ def render(request, layout, context=None, **response_kwargs):
                 .get("context_processors", [])
             )
         )
-    response_kwargs.setdefault("content_type", "text/html")
+    # response_kwargs.setdefault("content_type", "text/html")
     defaultcontext = {}
     for processor in render.CONTEXT_PROCESSORS:
         defaultcontext.update(processor(request))
