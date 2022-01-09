@@ -24,6 +24,7 @@ from ..utils import (
     pretty_modelname,
     xlsxresponse,
 )
+from . import generic_search
 from .util import BreadView
 
 
@@ -73,8 +74,8 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
 
     title: Optional[hg.BaseElement] = None
     columns: Tuple[Union[str, layout.datatable.DataTableColumn]] = ["__all__"]
-    search_backend: SearchBackendConfig = SearchBackendConfig(
-        url=reverse_lazy("bread.views.generic_search.generic_search")
+    search_backend: Optional[SearchBackendConfig] = SearchBackendConfig(
+        url=reverse_lazy("bread.views.generic_search.view")
     )
     rowclickaction: Optional[Link] = None
     # bulkactions: List[(Link, function(request, queryset))]
@@ -141,27 +142,35 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             for action in self.bulkactions
             if action.has_permission(self.request)
         ]
-        return layout.datatable.DataTable.from_model(
-            self.model,
-            hg.C("object_list"),
-            columns=self.columns,
-            bulkactions=bulkactions,
-            rowactions=self.rowactions,
-            rowactions_dropdown=len(self.rowactions)
-            > 2,  # recommendation from carbon design
-            search_backend=self.search_backend,
-            rowclickaction=self.rowclickaction,
-            pagination_config=layout.pagination.PaginationConfig(
-                items_per_page_options=self.items_per_page_options,
-                page_urlparameter=self.page_kwarg,
-                paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
-                itemsperpage_urlparameter=self.itemsperpage_urlparameter,
+        return hg.BaseElement(
+            layout.datatable.DataTable.from_model(
+                self.model,
+                hg.C("object_list"),
+                columns=self.columns,
+                bulkactions=bulkactions,
+                rowactions=self.rowactions,
+                rowactions_dropdown=len(self.rowactions)
+                > 2,  # recommendation from carbon design
+                search_backend=self.search_backend,
+                rowclickaction=self.rowclickaction,
+                pagination_config=layout.pagination.PaginationConfig(
+                    items_per_page_options=self.items_per_page_options,
+                    page_urlparameter=self.page_kwarg,
+                    paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
+                    itemsperpage_urlparameter=self.itemsperpage_urlparameter,
+                ),
+                checkbox_for_bulkaction_name=self.objectids_urlparameter,
+                title=self.title,
+                settingspanel=self.get_settingspanel(),
+                backurl=self.backurl,
+                primary_button=self.primary_button,
             ),
-            checkbox_for_bulkaction_name=self.objectids_urlparameter,
-            title=self.title,
-            settingspanel=self.get_settingspanel(),
-            backurl=self.backurl,
-            primary_button=self.primary_button,
+            # basic support for generic search
+            hg.If(
+                self.search_backend.url
+                == reverse_lazy("bread.views.generic_search.view"),
+                generic_search.script(),
+            ),
         )
 
     def get_context_data(self, *args, **kwargs):

@@ -63,7 +63,7 @@ urlpatterns = [
         userprofile.UserProfileView.as_view(),
         name="userprofile",
     ),
-    autopath(generic_search.generic_search),
+    autopath(generic_search.view),
     autopath(
         userprofile.EditPersonalDataView.as_view(), urlname="userprofile.personal"
     ),

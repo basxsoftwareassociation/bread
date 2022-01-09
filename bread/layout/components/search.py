@@ -49,20 +49,14 @@ class Search(hg.DIV):
             **(widgetattributes or {}),
         }
         if backend:
-            if resultcontainerid is None:
-                resultcontainerid = f"search-result-{hg.html_id((self, backend.url))}"
+            resultcontainerid = (
+                resultcontainerid or f"search-result-{hg.html_id((self, backend.url))}"
+            )
             widgetattributes["hx_get"] = backend.url
             widgetattributes["hx_trigger"] = "changed, click, keyup changed delay:500ms"
-            widgetattributes["hx_target"] = hg.format("#{}", resultcontainerid)
-            widgetattributes["hx_indicator"] = hg.format(
-                "#{}-indicator", resultcontainerid
-            )
+            widgetattributes["hx_target"] = f"#{resultcontainerid}"
+            widgetattributes["hx_indicator"] = f"#{resultcontainerid}-indicator"
             widgetattributes["name"] = backend.query_parameter
-            # if backend.url == reverse("bread.views.generic_search.generic_search"):
-            #     widgetattributes["placeholder"] = placeholder or "%s (%s)" % (
-            #         _("Search"),
-            #         _("Press Enter to proceed"),
-            #     )
 
         super().__init__(
             hg.DIV(
@@ -70,44 +64,7 @@ class Search(hg.DIV):
                 hg.INPUT(**widgetattributes),
                 _search_icon(),
                 _close_button(resultcontainerid),
-                hg.If(
-                    backend is not None,
-                    hg.BaseElement(
-                        _loading_indicator(resultcontainerid),
-                        hg.SCRIPT(
-                            hg.mark_safe(
-                                f"""
-                                document.addEventListener('load', () => {{
-                                    let searchBox = document.getElementById('{widgetattributes['id']}');
-                                    let searchBoxClose = document.querySelector('#{widgetattributes['id']}~.bx--search-close');
-                                    let currentURL = document.location.toString().split('?');
-                                    let currentParams = {{}};
-                                    if (currentURL.length > 1)
-                                        currentURL[1].split('&').forEach(el => {{
-                                            [key, val] = el.split('=');
-                                            val = decodeURIComponent(val);
-                                            if (key === '{widgetattributes['name']}') {{
-                                                searchBox.value = val;
-                                                searchBoxClose.classList.remove('bx--search-close--hidden');
-                                            }}
-                                            currentParams[key] = val;
-                                        }});
-                                    searchBox.addEventListener('keydown', e => {{
-                                        if (e.code === 'Enter') {{
-                                            let boxVal = searchBox.value;
-                                            currentParams.{widgetattributes['name']} = boxVal;
-                                            let newQuery = [];
-                                            for (let prop in currentParams)
-                                                newQuery.push(encodeURI(prop + '=' + currentParams[prop]));
-                                            document.location = currentURL[0] + '?' + newQuery.join('&');
-                                        }}
-                                    }});
-                                }});
-                                """
-                            )
-                        ),
-                    ),
-                ),
+                hg.If(backend is not None, _loading_indicator(resultcontainerid)),
                 **kwargs,
             ),
             hg.If(
@@ -122,8 +79,8 @@ def _result_container(_id, onload_js, width="100%"):
     return hg.DIV(
         hg.DIV(
             id=_id,
-            style="width: 100%; position: absolute; z-index: 999",
-            onload=onload_js,
+            _style="width: 100%; position: absolute; z-index: 999",
+            **({"onload": onload_js} if onload_js else {}),
         ),
         style=f"width: {width}; position: relative",
     )
@@ -141,7 +98,7 @@ def _search_icon():
 def _loading_indicator(resultcontainerid):
     return hg.DIV(
         Loading(small=True),
-        id=hg.format("{}-indicator", resultcontainerid),
+        id=f"{resultcontainerid}-indicator",
         _class="htmx-indicator",
         style="position: absolute; right: 2rem",
     )
@@ -154,8 +111,8 @@ def _close_button(resultcontainerid):
         "aria_label": _("Clear search input"),
         "type": "button",
     }
-    if resultcontainerid is not None:
-        kwargs["onclick"] = hg.format(
-            "document.location = document.location.href.split('?')[0] + '?reset=2'"
-        )
+    if resultcontainerid:
+        kwargs[
+            "onclick"
+        ] = f"document.getElementById('{resultcontainerid}').innerHTML = '';"
     return hg.BUTTON(Icon("close", size=20, _class="bx--search-clear"), **kwargs)
