@@ -1,4 +1,5 @@
 import django_celery_results.models
+from django.conf import urls as django_urls
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import include, path
 from dynamic_preferences import views as preferences_views
@@ -7,10 +8,13 @@ from dynamic_preferences.registries import global_preferences_registry
 from bread.utils import autopath, default_model_paths
 
 from .forms.forms import PreferencesForm
-from .views import admin, auth, system, userprofile
+from .views import admin, auth, error, system, userprofile
 
 # default error views
-handler404 = "bread.views.error.view404"
+django_urls.handler400 = error.view400
+django_urls.handler403 = error.view403
+django_urls.handler404 = error.view404
+django_urls.handler500 = error.view500
 
 PreferencesView = type(
     "PreferencesView",
@@ -50,6 +54,7 @@ external_urlpatterns = [
 ]
 
 urlpatterns = [
+    path("404", error.view404, name="breaderror:404"),
     path(
         "accounts/login/",
         auth.BreadLoginView.as_view(),
