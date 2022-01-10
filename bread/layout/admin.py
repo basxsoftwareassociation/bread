@@ -12,7 +12,6 @@ from django.db import connection
 from django.utils.translation import gettext_lazy as _
 
 from bread import layout
-from bread.layout.components import tooltip
 from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
 from bread.layout.components.forms import Form, FormField
