@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 import htmlgenerator as hg
 
@@ -22,7 +22,6 @@ class DefinitionTooltip(hg.BaseElement):
     """Definition tooltip is for regular use case of tooltip, e.g. giving the user more
     text information about something, like defining a word.
 
-    This works better than the interactive tooltip in regular use cases because
     the info icon used in interactive tooltip can be repetitive when it’s shown several times
     on a page. Definition tooltip does not use any JavaScript.
 
@@ -31,8 +30,8 @@ class DefinitionTooltip(hg.BaseElement):
 
     def __init__(
         self,
-        label: str,
-        description: str,
+        label: Any,
+        description: Any,
         align: str = "center",
         position: str = "bottom",
         **attributes,
@@ -40,9 +39,9 @@ class DefinitionTooltip(hg.BaseElement):
         """
         Parameters
         ----------
-        label : str
+        label : Any
             Text to be displayed
-        description : str
+        description : Any
             One line of string defining the label
         align : str, optional
             Specify where the arrow pointing the icon should align to the text.
@@ -97,7 +96,7 @@ class IconTooltip(hg.BaseElement):
 
     def __init__(
         self,
-        description: str,
+        description: Any,
         icon: Union[Icon, str] = "information",
         align: str = "center",
         position: str = "bottom",
@@ -106,7 +105,7 @@ class IconTooltip(hg.BaseElement):
         """
         Parameters
         ----------
-        description : str
+        description : Any
             One line of string describing an icon.
         icon : Icon, str, optional
             Specify an icon for the tooltip.
@@ -152,14 +151,11 @@ class InteractiveTooltip(hg.BaseElement):
     Reference: https://the-carbon-components.netlify.app/?nav=tooltip
     """
 
-    base_class = "bx--tooltip"
-    suffix_label = "label"
-
     def __init__(
         self,
-        label: Union[hg.BaseElement, str],
-        body: str,
-        heading: Optional[str] = None,
+        label: Any,
+        body: Any,
+        heading: Optional[Any] = None,
         link: Optional[Link] = None,
         button: Optional[Button] = None,
         icon: Union[Icon, str] = "information",
@@ -169,11 +165,11 @@ class InteractiveTooltip(hg.BaseElement):
         """
         Parameters
         ----------
-        label : str
+        label : Any
             Label for a tooltip
-        body : str
+        body : Any
             The content inside a tooltip
-        heading : str, optional
+        heading : Any, optional
             A heading for a tooltip.
         link : Link, optional
             Bread's Link NamedTuple in case you want to bring users to a specific webpage.
@@ -187,6 +183,8 @@ class InteractiveTooltip(hg.BaseElement):
             It can be either top, left, right, or bottom.
             The default value is "bottom".
         """
+        base_class = "bx--tooltip"
+
         footer = (
             hg.BaseElement(
                 hg.If(bool(link), hg.A(link.label, href=link.href, _class="bx--link")),
@@ -196,11 +194,11 @@ class InteractiveTooltip(hg.BaseElement):
             else None
         )
 
-        base_id = hg.html_id(self, self.base_class + "-id")
-        label_id = "-".join([base_id, self.suffix_label])
+        base_id = hg.html_id(self, base_class + "-id")
+        label_id = f"{base_id}-label"
 
         trigger_attributes = {
-            "_class": self.base_class + "__trigger",
+            "_class": base_class + "__trigger",
             "aria_controls": base_id,
             "aria_expanded": "false",
             "aria_haspopup": "true",
@@ -210,14 +208,14 @@ class InteractiveTooltip(hg.BaseElement):
         }
 
         tooltip_attributes = {
-            "_class": self.base_class,
+            "_class": base_class,
             "aria_hidden": "true",
             "data_floating_menu_direction": menudirection,
             "id": base_id,
         }
 
         tooltip_content_attributes = {
-            "_class": self.base_class + "__content",
+            "_class": base_class + "__content",
             "aria_describedby": base_id + "-body",
             "aria_labelledby": label_id,
             "role": "dialog",
@@ -238,18 +236,18 @@ class InteractiveTooltip(hg.BaseElement):
                     **trigger_attributes,
                 ),
                 id=label_id,
-                _class=self.base_class + "__label",
+                _class=base_class + "__label",
             ),
             # the real tooltip goes here
             hg.DIV(
-                hg.SPAN(_class=self.base_class + "__caret"),
+                hg.SPAN(_class=base_class + "__caret"),
                 hg.DIV(
                     hg.If(
                         bool(heading),
                         hg.H4(
                             heading,
                             id=base_id + "-heading",
-                            _class=self.base_class + "__heading",
+                            _class=base_class + "__heading",
                         ),
                     ),
                     hg.P(body, id=base_id + "-body"),
@@ -257,7 +255,7 @@ class InteractiveTooltip(hg.BaseElement):
                         bool(footer),
                         hg.DIV(
                             footer,
-                            _class=self.base_class + "__footer",
+                            _class=base_class + "__footer",
                         ),
                     ),
                     **tooltip_content_attributes,
