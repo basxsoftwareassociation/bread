@@ -4,7 +4,7 @@ from django.db.models import Q
 from django_countries.fields import CountryField
 
 
-def get_char_text_qset(fields, queries, prefix, **kwargs):
+def get_char_text_qset(fields, searchquery, prefix):
     char_text_fields = {
         f
         for f in fields
@@ -13,24 +13,20 @@ def get_char_text_qset(fields, queries, prefix, **kwargs):
     }
 
     return {
-        Q(**{prefix + "_".join((f.name, "_contains")): query})
+        Q(**{prefix + "_".join((f.name, "_contains")): searchquery})
         for f in char_text_fields
-        for query in queries
     }
 
 
-def get_country_qset(fields, queries, prefix, **kwargs):
-    countries = kwargs["countries"]  # for the convenience of referencing.
+def get_country_qset(fields, searchquery, prefix):
+    countries = {name.lower(): code for code, name in django_countries.countries}
     country_fields = {f for f in fields if isinstance(f, CountryField)}
 
     if not country_fields:
         return set()
 
     match_countries = {
-        country_name
-        for country_name in countries
-        for query in queries
-        if query in country_name
+        country_name for country_name in countries if searchquery in country_name
     }
 
     return {
@@ -40,27 +36,17 @@ def get_country_qset(fields, queries, prefix, **kwargs):
     }
 
 
-def get_field_queryset(fields, queries, prefix="", **kwargs):
-    # format queries so they are more easily to be searched.
-    queries = [query.strip().lower() for query in queries]
-
-    if "countries" not in kwargs:
-        kwargs["countries"] = {
-            name.lower(): code for code, name in django_countries.countries
-        }
-
+def get_field_queryset(fields, searchquery, prefix="", follow_relationships=1):
     queryset = {
-        *get_char_text_qset(fields, queries, prefix, **kwargs),
-        *get_country_qset(fields, queries, prefix, **kwargs),
+        *get_char_text_qset(fields, searchquery, prefix),
+        *get_country_qset(fields, searchquery, prefix),
     }
 
     qs = Q()
     for query in queryset:
         qs |= query
 
-    if "no_recursion" not in kwargs:  # to prevent infinite recursion
-        kwargs["no_recursion"] = True
-
+    if follow_relationships > 0:
         foreignkey_fields = {
             f
             for f in fields
@@ -78,6 +64,8 @@ def get_field_queryset(fields, queries, prefix="", **kwargs):
                 foreign_fields = foreignkey_field._meta.fields
 
             new_prefix = prefix + "__".join([foreignkey_field.name, ""])
-            qs |= get_field_queryset(foreign_fields, queries, new_prefix, **kwargs)
+            qs |= get_field_queryset(
+                foreign_fields, searchquery, new_prefix, follow_relationships - 1
+            )
 
     return qs

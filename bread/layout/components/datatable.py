@@ -1,3 +1,4 @@
+import html
 from typing import Any, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
@@ -13,7 +14,7 @@ from .button import Button
 from .icon import Icon
 from .overflow_menu import OverflowMenu
 from .pagination import Pagination, PaginationConfig
-from .search import Search, SearchBackendConfig
+from .search import Search
 
 
 class DataTable(hg.TABLE):
@@ -139,10 +140,10 @@ class DataTable(hg.TABLE):
         title: Any,
         helper_text: Any = None,
         primary_button: Optional[Button] = None,
-        search_backend: Optional[SearchBackendConfig] = None,
         bulkactions: List[Link] = (),
         pagination_config: Optional[PaginationConfig] = None,
         checkbox_for_bulkaction_name="_selected",
+        search_urlparameter=None,
         settingspanel: Any = None,
     ):
         """
@@ -150,7 +151,6 @@ class DataTable(hg.TABLE):
         title: table title
         helper_text: sub title
         primary_button: bread.layout.button.Button instance
-        search_backend: search endpoint
         bulkactions: List of bread.utils.links.Link instances. Will send a post or a get (depending on its "method" attribute) to the target url the sent data will be a form with the selected checkboxes as fields if the head-checkbox has been selected only that field will be selected
         """
         checkboxallid = f"datatable-check-{hg.html_id(self)}"
@@ -159,7 +159,6 @@ class DataTable(hg.TABLE):
             header.append(
                 hg.P(helper_text, _class="bx--data-table-header__description")
             )
-        resultcontainerid = f"datatable-search-{hg.html_id(self)}"
         bulkactionlist = []
         for link in bulkactions:
             bulkactionlist.append(
@@ -227,6 +226,17 @@ class DataTable(hg.TABLE):
                 ),
             )
 
+        searchbar = Search(
+            widgetattributes={
+                "autofocus": True,
+                "name": search_urlparameter,
+                "value": html.escape(hg.C("request").GET.get(search_urlparameter)),
+                "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
+            }
+        )
+        searchbar[0][3].attributes[
+            "onclick"
+        ] = "this.parentElement.querySelector('input').value = ''; this.closest('form').submit()"
         return hg.DIV(
             hg.DIV(*header, _class="bx--data-table-header"),
             hg.SECTION(
@@ -257,15 +267,28 @@ class DataTable(hg.TABLE):
                 ),
                 hg.DIV(
                     hg.DIV(
-                        Search(
-                            widgetattributes={"autofocus": True},
-                            backend=search_backend,
-                            resultcontainerid=resultcontainerid,
-                            show_result_container=False,
+                        hg.FORM(
+                            searchbar,
+                            hg.Iterator(
+                                hg.C("request").GET.items(),
+                                "queryitem",
+                                hg.If(
+                                    hg.F(
+                                        lambda c: c["queryitem"][0]
+                                        != search_urlparameter
+                                    ),
+                                    hg.INPUT(
+                                        type="hidden",
+                                        name=hg.C("queryitem")[0],
+                                        value=hg.C("queryitem")[1],
+                                    ),
+                                ),
+                            ),
+                            method="GET",
                         ),
                         _class="bx--toolbar-search-container-persistent",
                     )
-                    if search_backend
+                    if search_urlparameter is not None
                     else None,
                     Button(
                         icon="settings--adjust",
@@ -278,13 +301,6 @@ class DataTable(hg.TABLE):
                     _class="bx--toolbar-content",
                 ),
                 _class="bx--table-toolbar",
-            ),
-            hg.DIV(
-                hg.DIV(
-                    id=resultcontainerid,
-                    style="width: 100%; position: absolute; z-index: 999",
-                ),
-                style="width: 100%; position: relative",
             ),
             hg.DIV(
                 hg.DIV(
@@ -325,8 +341,8 @@ class DataTable(hg.TABLE):
         title=None,
         primary_button: Optional[Button] = None,
         settingspanel: Any = None,
-        search_backend: Optional[SearchBackendConfig] = None,
         pagination_config: Optional[PaginationConfig] = None,
+        search_urlparameter=None,
         **kwargs,
     ):
         """TODO: Write Docs!!!!
@@ -450,10 +466,10 @@ class DataTable(hg.TABLE):
                 model._meta.verbose_name_plural,
             ),
             primary_button=primary_button,
-            search_backend=search_backend,
             bulkactions=bulkactions,
             pagination_config=pagination_config,
             checkbox_for_bulkaction_name=checkbox_for_bulkaction_name,
+            search_urlparameter=search_urlparameter,
             settingspanel=settingspanel,
         )
 

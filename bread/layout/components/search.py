@@ -64,7 +64,7 @@ class Search(hg.DIV):
                 hg.LABEL(_("Search"), _class="bx--label", _for=widgetattributes["id"]),
                 hg.INPUT(**widgetattributes),
                 _search_icon(),
-                _close_button(resultcontainerid),
+                _close_button(resultcontainerid, widgetattributes),
                 hg.If(backend is not None, _loading_indicator(resultcontainerid)),
                 **kwargs,
             ),
@@ -105,9 +105,12 @@ def _loading_indicator(resultcontainerid):
     )
 
 
-def _close_button(resultcontainerid):
+def _close_button(resultcontainerid, widgetattributes):
     kwargs = {
-        "_class": "bx--search-close bx--search-close--hidden",
+        "_class": hg.BaseElement(
+            "bx--search-close",
+            hg.If(widgetattributes.get("value"), None, " bx--search-close--hidden"),
+        ),
         "title": _("Clear search input"),
         "aria_label": _("Clear search input"),
         "type": "button",
