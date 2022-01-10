@@ -1,13 +1,55 @@
 import sys
+from typing import Union
 
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
-from bread.layout import error as layouts
+from bread.layout.components.button import Button
+from bread.utils import LazyHref, Link, aslayout
+
+
+@aslayout
+def error_layout(
+    request,
+    status_code: int,
+    status_title: str,
+    description: Union[str, hg.BaseElement],
+    exception_detail: str = None,
+):
+    return hg.BaseElement(
+        hg.H1(f"{status_code}: {status_title}", style="margin-bottom: 1rem;"),
+        hg.P(
+            description,
+            style="margin-bottom: 1rem;",
+        ),
+        hg.If(
+            exception_detail,
+            hg.BaseElement(
+                hg.H4("Detail", style="margin-bottom: 1rem;"),
+                hg.DIV(
+                    exception_detail,
+                    style=(
+                        "border: 1px solid grey;"
+                        "padding: 1rem;"
+                        "font-family: monospace;"
+                        "margin-bottom: 1rem;"
+                    ),
+                ),
+            ),
+        ),
+        Button.fromlink(
+            Link(
+                label=_("Back to homepage"),
+                href=hg.F(
+                    lambda c: c["request"].META["SCRIPT_NAME"] or "/"
+                ),
+            )
+        ),
+    )
 
 
 def view400(request, exception):
-    response = layouts.error_layout(
+    response = error_layout(
         request,
         status_code=400,
         status_title=_("Bad request"),
@@ -25,7 +67,7 @@ def view400(request, exception):
 # As I understand, we might not need this page because the website will eventually
 # redirect users to the default page. But I'll still make it in case it's necessary.
 def view403(request, exception):
-    response = layouts.error_layout(
+    response = error_layout(
         request,
         status_code=403,
         status_title=_("Forbidden"),
@@ -38,7 +80,7 @@ def view403(request, exception):
 
 
 def view404(request, exception):
-    response = layouts.error_layout(
+    response = error_layout(
         request,
         status_code=404,
         status_title=_("Page not found"),
@@ -57,7 +99,7 @@ def view404(request, exception):
 
 def view500(request):
     exec_info = sys.exc_info()
-    response = layouts.error_layout(
+    response = error_layout(
         request,
         status_code=500,
         status_title=_("Internal Server Error"),
