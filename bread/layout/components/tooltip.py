@@ -12,7 +12,6 @@ def _get_icon(icon):
     if isinstance(icon, str):
         icon = Icon(icon, size="16")
     else:
-        icon.attributes["_class"] = icon.attributes.get("_class", "") + " bx--btn__icon"
         icon.attributes["width"] = "16"
         icon.attributes["height"] = "16"
 
@@ -55,7 +54,7 @@ class DefinitionTooltip(hg.BaseElement):
             The default value is 'bottom'.
         """
         tooltip_attributes = {
-            "_class": ("bx--tooltip--definition " "bx--tooltip--a11y "),
+            "_class": "bx--tooltip--definition bx--tooltip--a11y ",
             "data_tooltip_definition": True,
         }
 
