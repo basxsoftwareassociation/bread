@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import models
-from django.db.models.expressions import Func
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
@@ -26,24 +25,6 @@ from ..utils import (
     xlsxresponse,
 )
 from .util import BreadView
-
-
-class ConcatDirect(Func):
-    function = None
-
-    def __init__(self, *expressions, **extra):
-        if len(expressions) < 2:
-            raise ValueError("Concat must take at least two expressions")
-        super().__init__(*expressions, **extra)
-
-    def as_sqlite(self, compiler, connection, **extra_context):
-        return super().as_sql(
-            compiler,
-            connection,
-            template="%(expressions)s",
-            arg_joiner=" || ",
-            **extra_context,
-        )
 
 
 class BulkAction(NamedTuple):
