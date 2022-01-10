@@ -70,7 +70,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     items_per_page_options: Optional[Tuple[int]] = None
     itemsperpage_urlparameter: str = "itemsperpage"
 
-    title: Optional[hg.BaseElement] = None
+    title: Union[hg.BaseElement, str] = ""
     columns: Iterable[Union[str, layout.datatable.DataTableColumn]] = ("__all__",)
     search_backend = None
     rowclickaction: Optional[Link] = None

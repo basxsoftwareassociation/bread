@@ -1,5 +1,6 @@
 import re
 import urllib
+from typing import List, Optional, Tuple, Type, Union
 
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
@@ -24,8 +25,8 @@ class EditView(
     """TODO: documentation"""
 
     accept_global_perms = True
-    fields = None
-    urlparams = (("pk", int),)
+    fields: Optional[List[str]] = None
+    urlparams: Union[Tuple[Tuple[str, Type]], Tuple[()]] = (("pk", int),)
 
     def __init__(self, *args, **kwargs):
         all = filter_fieldlist(

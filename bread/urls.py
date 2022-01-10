@@ -1,6 +1,7 @@
 import django_celery_results.models
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import include, path
+from django.views import View
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.registries import global_preferences_registry
 
@@ -24,7 +25,7 @@ external_urlpatterns = [
                 [
                     path(
                         "global/",
-                        PreferencesView.as_view(
+                        PreferencesView.as_view(  # type: ignore
                             registry=global_preferences_registry,
                             form_class=PreferencesForm,
                         ),
@@ -32,7 +33,7 @@ external_urlpatterns = [
                     ),
                     path(
                         "global/<slug:section>",
-                        PreferencesView.as_view(
+                        PreferencesView.as_view(  # type: ignore
                             registry=global_preferences_registry,
                             form_class=PreferencesForm,
                         ),

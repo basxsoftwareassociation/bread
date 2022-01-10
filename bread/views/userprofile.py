@@ -210,7 +210,7 @@ class UserProfileView(ReadView):
 class EditPersonalDataView(EditView):
     model = get_user_model()
     fields = ["first_name", "last_name"]
-    urlparams = {}
+    urlparams = ()
 
     def get_form_class(self, *args, **kwargs):
         class CustomForm(super().get_form_class(*args, **kwargs)):
@@ -254,7 +254,7 @@ class EditPersonalDataView(EditView):
 class EditLoginView(EditView):
     model = get_user_model()
     fields = ["username", "email"]
-    urlparams = {}
+    urlparams = ()
 
     def get_form_class(self, *args, **kwargs):
         class EditLoginForm(super().get_form_class(*args, **kwargs)):
@@ -292,7 +292,7 @@ class EditLoginView(EditView):
 class EditPermissionsView(EditView):
     model = get_user_model()
     fields = ["is_active", "is_superuser", "is_staff"]
-    urlparams = {}
+    urlparams = ()
 
     def check_permissions(self, request):
         if not request.user.is_superuser:
