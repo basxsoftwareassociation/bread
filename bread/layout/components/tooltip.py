@@ -19,19 +19,6 @@ def _get_icon(icon):
     return icon
 
 
-def _merge_attributes(dest, source):
-    """Bring the class in 'source' inte 'dest'"""
-    if "_class" in source:
-        if source["_class"]:
-            dest["_class"] += source["_class"]
-        del source["_class"]
-
-    # for other attributes, if there exist on both dicts,
-    # just replace them.
-    for attr in dest.keys() & source.keys():
-        dest[attr] = source[attr]
-
-
 class DefinitionTooltip(hg.BaseElement):
     """Definition tooltip is for regular use case of tooltip, e.g. giving the user more
     text information about something, like defining a word.
@@ -72,7 +59,7 @@ class DefinitionTooltip(hg.BaseElement):
             "data_tooltip_definition": True,
         }
 
-        _merge_attributes(tooltip_attributes, attributes)
+        tooltip_attributes = hg.merge_html_attrs(tooltip_attributes, attributes)
         asst_txt_id = hg.html_id(self, "bx--tooltip--definition-id")
 
         super().__init__(
@@ -145,7 +132,7 @@ class IconTooltip(hg.BaseElement):
             "data_tooltip_icon": True,
         }
 
-        _merge_attributes(tooltip_attributes, attributes)
+        tooltip_attributes = hg.merge_html_attrs(tooltip_attributes, attributes)
         icon = _get_icon(icon)
 
         super().__init__(
@@ -238,7 +225,7 @@ class InteractiveTooltip(hg.BaseElement):
             "tabindex": "-1",
         }
 
-        _merge_attributes(tooltip_attributes, attributes)
+        tooltip_attributes = hg.merge_html_attrs(tooltip_attributes, attributes)
         icon = _get_icon(icon)
 
         super().__init__(
