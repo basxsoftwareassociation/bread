@@ -12,8 +12,7 @@ def view400(request, exception):
         status_code=400,
         status_title=_("Bad request"),
         description=_(
-            "The server cannot process the request due to something that is "
-            "perceived to be a client error."
+            "The server cannot process the request due to a client error."
         ),
         exception_detail=exception.message if hasattr(exception, "message") else None,
     )
@@ -22,14 +21,12 @@ def view400(request, exception):
     return response
 
 
-# As I understand, we might not need this page because the website will eventually
-# redirect users to the default page. But I'll still make it in case it's necessary.
 def view403(request, exception):
     response = layouts.error_layout(
         request,
         status_code=403,
         status_title=_("Forbidden"),
-        description=_("You don't have permission to access this resource."),
+        description=_("You do not have permission to access this resource."),
         exception_detail=exception.message if hasattr(exception, "message") else None,
     )
     response.status_code = 403
@@ -44,7 +41,7 @@ def view404(request, exception):
         status_title=_("Page not found"),
         description=hg.BaseElement(
             hg.mark_safe(
-                _("The path %s does not appear to be any existing page of our website.")
+                _("The path %s could not be found.")
                 % f"<strong>{request.path}</strong>"
             )
         ),
@@ -64,8 +61,8 @@ def view500(request):
         description=hg.BaseElement(
             hg.mark_safe(
                 _(
-                    "There's a problem occurred within the server related to path %s."
-                    "<br>If the problem persists, please contact admin."
+                    "A problem has occurred while loading the page at %s."
+                    "<br>If the problem persists, please contact an administrator."
                 )
                 % f"<strong>{request.path}</strong>"
             )
