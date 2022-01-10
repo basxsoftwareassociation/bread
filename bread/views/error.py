@@ -5,7 +5,7 @@ import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
 from bread.layout.components.button import Button
-from bread.utils import LazyHref, Link, aslayout
+from bread.utils import Link, aslayout
 
 
 @aslayout
@@ -40,9 +40,7 @@ def error_layout(
         Button.fromlink(
             Link(
                 label=_("Back to homepage"),
-                href=hg.F(
-                    lambda c: c["request"].META["SCRIPT_NAME"] or "/"
-                ),
+                href=hg.F(lambda c: c["request"].META["SCRIPT_NAME"] or "/"),
             )
         ),
     )
@@ -53,9 +51,7 @@ def view400(request, exception):
         request,
         status_code=400,
         status_title=_("Bad request"),
-        description=_(
-            "The server cannot process the request due to a client error."
-        ),
+        description=_("The server cannot process the request due to a client error."),
         exception_detail=exception.message if hasattr(exception, "message") else None,
     )
     response.status_code = 400
