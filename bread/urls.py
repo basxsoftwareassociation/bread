@@ -9,7 +9,6 @@ from bread.utils import autopath, default_model_paths
 from .forms.forms import PreferencesForm
 from .views import admin, auth, system, userprofile
 
-
 PreferencesView = type(
     "PreferencesView",
     (SuccessMessageMixin, preferences_views.PreferenceFormView),
