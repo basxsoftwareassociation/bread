@@ -1,5 +1,4 @@
 import django_celery_results.models
-from django.conf import urls as django_urls
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import include, path
 from dynamic_preferences import views as preferences_views
@@ -10,11 +9,6 @@ from bread.utils import autopath, default_model_paths
 from .forms.forms import PreferencesForm
 from .views import admin, auth, error, system, userprofile
 
-# default error views
-django_urls.handler400 = error.view400
-django_urls.handler403 = error.view403
-django_urls.handler404 = error.view404
-django_urls.handler500 = error.view500
 
 PreferencesView = type(
     "PreferencesView",
