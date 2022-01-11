@@ -230,7 +230,9 @@ class DataTable(hg.TABLE):
             widgetattributes={
                 "autofocus": True,
                 "name": search_urlparameter,
-                "value": html.escape(hg.C("request").GET.get(search_urlparameter)),
+                "value": hg.F(
+                    lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
+                ),
                 "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
             }
         )
