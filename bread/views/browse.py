@@ -1,4 +1,4 @@
-from typing import Callable, Iterable, List, NamedTuple, Optional, Tuple, Union
+from typing import Callable, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.conf import settings
