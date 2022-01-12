@@ -67,7 +67,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     orderingurlparameter: str = "ordering"
     objectids_urlparameter: str = "_selected"  # see bread/static/js/main.js:submitbulkaction and bread/layout/components/datatable.py
     bulkaction_urlparameter: str = "_bulkaction"
-    items_per_page_options: Optional[Tuple[int]] = None
+    items_per_page_options: Optional[Iterable[int]] = None
     itemsperpage_urlparameter: str = "itemsperpage"
 
     title: Optional[hg.BaseElement] = None
@@ -77,11 +77,8 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     # bulkactions: List[(Link, function(request, queryset))]
     # - link.js should be a slug and not a URL
     # - if the function returns a HttpResponse, the response is returned instead of the browse view result
-    bulkactions: Union[
-        Tuple[
-            Link, Callable[[HttpRequest, models.QuerySet], Union[None, HttpResponse]]
-        ],
-        Tuple[()],
+    bulkactions: Iterable[
+        Link, Callable[[HttpRequest, models.QuerySet], Union[None, HttpResponse]]
     ] = ()
     rowactions = ()  # list of links
     backurl = None
