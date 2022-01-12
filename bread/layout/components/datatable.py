@@ -109,7 +109,7 @@ class DataTable(hg.TABLE):
         rowvariable: str = "row",
         spacing: str = "default",
         zebra: bool = False,
-        **kwargs: dict,
+        **kwargs: Any,
     ):
         """A carbon DataTable element
 
@@ -140,7 +140,7 @@ class DataTable(hg.TABLE):
         helper_text: Any = None,
         primary_button: Optional[Button] = None,
         search_backend: Optional[SearchBackendConfig] = None,
-        bulkactions: List[Link] = (),
+        bulkactions: Iterable[Link] = (),
         pagination_config: Optional[PaginationConfig] = None,
         checkbox_for_bulkaction_name="_selected",
         settingspanel: Any = None,
@@ -154,7 +154,9 @@ class DataTable(hg.TABLE):
         bulkactions: List of bread.utils.links.Link instances. Will send a post or a get (depending on its "method" attribute) to the target url the sent data will be a form with the selected checkboxes as fields if the head-checkbox has been selected only that field will be selected
         """
         checkboxallid = f"datatable-check-{hg.html_id(self)}"
-        header = [hg.H4(title, _class="bx--data-table-header__title")]
+        header: List[hg.BaseElement] = [
+            hg.H4(title, _class="bx--data-table-header__title")
+        ]
         if helper_text is not None:
             header.append(
                 hg.P(helper_text, _class="bx--data-table-header__description")
@@ -311,15 +313,15 @@ class DataTable(hg.TABLE):
         model,
         queryset=None,
         # column behaviour
-        columns: List[Union[str, "DataTableColumn"]] = None,
+        columns: Iterable[Union[str, "DataTableColumn"]] = (),
         prevent_automatic_sortingnames=False,
         # row behaviour
         rowvariable="row",
-        rowactions: List[Link] = (),
+        rowactions: Iterable[Link] = (),
         rowactions_dropdown=False,
         rowclickaction=None,
         # bulkaction behaviour
-        bulkactions: List[Link] = (),
+        bulkactions: Iterable[Link] = (),
         checkbox_for_bulkaction_name="_selected",
         # toolbar configuration
         title=None,
@@ -342,11 +344,6 @@ class DataTable(hg.TABLE):
                               datatable after creation.
         """
         columns = columns or filter_fieldlist(model, ["__all__"])
-        for col in columns:
-            if not (isinstance(col, DataTableColumn) or isinstance(col, str)):
-                raise ValueError(
-                    f"Argument 'columns' needs to be of a List[str] or a List[DataTableColumn], but found {col}"
-                )
 
         title = title or pretty_modelname(model, plural=True)
 
@@ -363,7 +360,7 @@ class DataTable(hg.TABLE):
             )
 
         if rowactions_dropdown:
-            objectactions_menu = OverflowMenu(
+            objectactions_menu: hg.HTMLElement = OverflowMenu(
                 rowactions,
                 flip=True,
                 item_attributes={"_class": "bx--table-row--menu-option"},
@@ -389,7 +386,11 @@ class DataTable(hg.TABLE):
         queryset = model.objects.all() if queryset is None else queryset
         column_definitions: List[DataTableColumn] = []
         for col in columns:
-            td_attributes = None
+            if not (isinstance(col, DataTableColumn) or isinstance(col, str)):
+                raise ValueError(
+                    f"Argument 'columns' needs to be of a List[str] or a List[DataTableColumn], but found {col}"
+                )
+            td_attributes: Optional[dict] = None
             if rowclickaction and getattr(col, "enable_row_click", True):
                 assert isinstance(
                     rowclickaction, Link
@@ -409,7 +410,7 @@ class DataTable(hg.TABLE):
                 )
             else:
                 if td_attributes:
-                    col = col._replace(td_attributes=td_attributes)
+                    col = col._replace(td_attributes=td_attributes)  # type: ignore
 
             column_definitions.append(col)
 
@@ -501,8 +502,8 @@ class DataTableColumn(NamedTuple):
     cell: Any
     sortingname: Optional[str] = None
     enable_row_click: bool = True
-    th_attributes: hg.F = None
-    td_attributes: hg.F = None
+    th_attributes: Optional[Union[hg.F, dict]] = None
+    td_attributes: Optional[Union[hg.F, dict]] = None
 
     @staticmethod
     def from_modelfield(
