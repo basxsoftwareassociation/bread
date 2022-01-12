@@ -7,15 +7,15 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import models
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
-from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
+from djangoql.exceptions import DjangoQLError
+from djangoql.queryset import apply_search
 from guardian.mixins import PermissionListMixin
 
 from bread.utils import expand_ALL_constant, filter_fieldlist, queryset_from_fields
 
 from .. import layout
-from ..layout.components.search import SearchBackendConfig
 from ..utils import (
     Link,
     ModelHref,
@@ -24,7 +24,6 @@ from ..utils import (
     pretty_modelname,
     xlsxresponse,
 )
-from . import generic_search
 from .util import BreadView
 
 
@@ -71,12 +70,10 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     bulkaction_urlparameter: str = "_bulkaction"
     items_per_page_options: Tuple[int] = None
     itemsperpage_urlparameter: str = "itemsperpage"
+    search_urlparameter: str = "q"
 
     title: Optional[hg.BaseElement] = None
     columns: Tuple[Union[str, layout.datatable.DataTableColumn]] = ["__all__"]
-    search_backend: Optional[SearchBackendConfig] = SearchBackendConfig(
-        url=reverse_lazy("bread.views.generic_search.view")
-    )
     rowclickaction: Optional[Link] = None
     # bulkactions: List[(Link, function(request, queryset))]
     # - link.js should be a slug and not a URL
@@ -107,6 +104,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             or self.items_per_page_options
             or getattr(settings, "DEFAULT_PAGINATION_CHOICES", [25, 100, 500])
         )
+        self.search_urlparameter = (
+            kwargs.get("search_urlparameter") or self.search_urlparameter
+        )
         self.title = kwargs.get("title") or self.title
         self.rowactions = kwargs.get("rowactions") or self.rowactions
         self.columns = expand_ALL_constant(
@@ -124,7 +124,6 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             or self.bulkactions
             or default_bulkactions(self.model, self.columns)
         )
-        self.search_backend = kwargs.get("search_backend") or self.search_backend
 
     def get_layout(self):
         qs = self.get_queryset()
@@ -142,35 +141,27 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             for action in self.bulkactions
             if action.has_permission(self.request)
         ]
-        return hg.BaseElement(
-            layout.datatable.DataTable.from_model(
-                self.model,
-                hg.C("object_list"),
-                columns=self.columns,
-                bulkactions=bulkactions,
-                rowactions=self.rowactions,
-                rowactions_dropdown=len(self.rowactions)
-                > 2,  # recommendation from carbon design
-                search_backend=self.search_backend,
-                rowclickaction=self.rowclickaction,
-                pagination_config=layout.pagination.PaginationConfig(
-                    items_per_page_options=self.items_per_page_options,
-                    page_urlparameter=self.page_kwarg,
-                    paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
-                    itemsperpage_urlparameter=self.itemsperpage_urlparameter,
-                ),
-                checkbox_for_bulkaction_name=self.objectids_urlparameter,
-                title=self.title,
-                settingspanel=self.get_settingspanel(),
-                backurl=self.backurl,
-                primary_button=self.primary_button,
+        return layout.datatable.DataTable.from_model(
+            self.model,
+            hg.C("object_list"),
+            columns=self.columns,
+            bulkactions=bulkactions,
+            rowactions=self.rowactions,
+            rowactions_dropdown=len(self.rowactions)
+            > 2,  # recommendation from carbon design
+            rowclickaction=self.rowclickaction,
+            pagination_config=layout.pagination.PaginationConfig(
+                items_per_page_options=self.items_per_page_options,
+                page_urlparameter=self.page_kwarg,
+                paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
+                itemsperpage_urlparameter=self.itemsperpage_urlparameter,
             ),
-            # basic support for generic search
-            hg.If(
-                self.search_backend.url
-                == reverse_lazy("bread.views.generic_search.view"),
-                generic_search.script(),
-            ),
+            checkbox_for_bulkaction_name=self.objectids_urlparameter,
+            title=self.title,
+            settingspanel=self.get_settingspanel(),
+            backurl=self.backurl,
+            primary_button=self.primary_button,
+            search_urlparameter=self.search_urlparameter,
         )
 
     def get_context_data(self, *args, **kwargs):
@@ -192,15 +183,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 self.viewstate_sessionkey
                 and self.viewstate_sessionkey in self.request.session
             ):
-                if self.request.GET["reset"] == "2":
-                    # only reset search value
-                    session_str = self.request.session[self.viewstate_sessionkey].split(
-                        "&"
-                    )
-                    session_str = "&".join((x for x in session_str if "q=" not in x))
-                    self.request.session[self.viewstate_sessionkey] = session_str
-                else:
-                    del self.request.session[self.viewstate_sessionkey]
+                del self.request.session[self.viewstate_sessionkey]
             return redirect(self.request.path)
         if self.bulkaction_urlparameter in self.request.GET:
             bulkactions = {
@@ -248,15 +231,24 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     def get_queryset(self):
         """Prefetch related tables to speed up queries. Also order result by get-parameters."""
         qs = super().get_queryset()
-        if (
-            self.search_backend
-            and self.search_backend.query_parameter in self.request.GET
-        ):
-            qs = queryset_from_fields.get_field_queryset(
-                [*self.model._meta.fields, *self.model._meta.many_to_many],
-                self.request.GET.getlist(self.search_backend.query_parameter),
-            )
-            qs = self.model.objects.filter(qs)
+        if self.search_urlparameter and self.search_urlparameter in self.request.GET:
+            searchquery = self.request.GET[self.search_urlparameter].strip()
+            if searchquery.startswith("="):
+                try:
+                    qs = apply_search(qs, searchquery[1:])
+                except DjangoQLError as e:
+                    messages.error(
+                        self.request,
+                        _("Bad filter string '%s': '%s'") % (searchquery, e),
+                    )
+
+            else:
+                qs = self.model.objects.filter(
+                    queryset_from_fields.get_field_queryset(
+                        [*self.model._meta.fields, *self.model._meta.many_to_many],
+                        searchquery,
+                    )
+                )
 
         selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
         if selectedobjects and "all" not in selectedobjects:
