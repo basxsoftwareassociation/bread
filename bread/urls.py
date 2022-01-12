@@ -1,7 +1,6 @@
 import django_celery_results.models
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import include, path
-from django.views import View
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.registries import global_preferences_registry
 
