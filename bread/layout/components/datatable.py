@@ -550,14 +550,18 @@ def searchbar(search_urlparameter: str):
         hg.FORM(
             searchinput,
             hg.Iterator(
-                hg.C("request").GET.items(),
-                "queryitem",
+                hg.C("request").GET.lists(),
+                "urlparameter",
                 hg.If(
-                    hg.F(lambda c: c["queryitem"][0] != search_urlparameter),
-                    hg.INPUT(
-                        type="hidden",
-                        name=hg.C("queryitem")[0],
-                        value=hg.C("queryitem")[1],
+                    hg.F(lambda c: c["urlparameter"][0] != search_urlparameter),
+                    hg.Iterator(
+                        hg.C("urlparameter")[1],
+                        "urlvalue",
+                        hg.INPUT(
+                            type="hidden",
+                            name=hg.C("urlparameter")[0],
+                            value=hg.C("urlvalue"),
+                        ),
                     ),
                 ),
             ),
