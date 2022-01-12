@@ -78,7 +78,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     # - link.js should be a slug and not a URL
     # - if the function returns a HttpResponse, the response is returned instead of the browse view result
     bulkactions: Iterable[
-        Link, Callable[[HttpRequest, models.QuerySet], Union[None, HttpResponse]]
+        Union[Link, Callable[[HttpRequest, models.QuerySet], Union[None, HttpResponse]]]
     ] = ()
     rowactions = ()  # list of links
     backurl = None
