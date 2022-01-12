@@ -343,6 +343,8 @@ class DataTable(hg.TABLE):
                               difficutl to add another button by modifying the
                               datatable after creation.
         """
+        columns = columns or filter_fieldlist(model, ["__all__"])
+
         title = title or pretty_modelname(model, plural=True)
 
         if primary_button is None:
@@ -382,7 +384,6 @@ class DataTable(hg.TABLE):
             )
 
         queryset = model.objects.all() if queryset is None else queryset
-        columns = columns or filter_fieldlist(model, ["__all__"])
         column_definitions: List[DataTableColumn] = []
         for col in columns:
             if not (isinstance(col, DataTableColumn) or isinstance(col, str)):
