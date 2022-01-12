@@ -29,8 +29,8 @@ class BaseWidget(hg.DIV):
     django_widget = None
 
     # default attributes which are used to create the input element in a standardized way for many inputs
-    carbon_input_class: Optional[str] = ""
-    carbon_input_error_class: Optional[str] = ""
+    carbon_input_class: str = ""
+    carbon_input_error_class: str = ""
     input_type: Optional[str] = None
 
     # __init__ of derived classes should support the following parameters

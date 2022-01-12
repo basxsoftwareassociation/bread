@@ -1,4 +1,4 @@
-from typing import Callable, List, NamedTuple, Optional, Tuple, Union
+from typing import Callable, Iterable, List, NamedTuple, Optional, Tuple, Union
 
 import htmlgenerator as hg
 from django.conf import settings
@@ -71,7 +71,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     itemsperpage_urlparameter: str = "itemsperpage"
 
     title: Optional[hg.BaseElement] = None
-    columns: Tuple[Union[str, layout.datatable.DataTableColumn]] = ("__all__",)
+    columns: Iterable[Union[str, layout.datatable.DataTableColumn]] = ("__all__",)
     search_backend = None
     rowclickaction: Optional[Link] = None
     # bulkactions: List[(Link, function(request, queryset))]

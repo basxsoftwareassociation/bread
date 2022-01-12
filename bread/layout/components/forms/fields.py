@@ -34,8 +34,8 @@ def generate_widget_element(
     # parameters which are normally not required, when using a django form field
     # but can be filled in to create form fields independently from django form fields or
     # manually overriding values from the form field
-    widgetclass: Union[
-        Optional[Type[BaseWidget]], hg.Lazy
+    widgetclass: Optional[
+        Union[Type[BaseWidget], hg.Lazy]
     ] = None,  # normally be taken from the django form field, will be carbon-ized
     label: Union[
         str, hg.BaseElement
@@ -46,8 +46,8 @@ def generate_widget_element(
     errors: Optional[
         List[str]
     ] = None,  # normally be taken from the django form field, will be carbon-ized
-    inputelement_attrs: Union[
-        Optional[dict], hg.Lazy
+    inputelement_attrs: Optional[
+        Union[dict, hg.Lazy]
     ] = None,  # normally be taken from the django form field, will be carbon-ized
     **attributes,
 ):

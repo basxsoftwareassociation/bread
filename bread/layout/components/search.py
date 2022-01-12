@@ -11,9 +11,9 @@ class SearchBackendConfig(typing.NamedTuple):
     """Describes an endpoint for auto-complete searches"""
 
     url: typing.Any
-    result_selector: typing.Optional[str] = None
-    result_label_selector: typing.Optional[str] = None
-    result_value_selector: typing.Optional[str] = None
+    result_selector: str = ""
+    result_label_selector: str = ""
+    result_value_selector: str = ""
     query_parameter: str = "q"
 
 

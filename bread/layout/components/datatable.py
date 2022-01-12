@@ -1,4 +1,4 @@
-from typing import Any, Iterable, List, NamedTuple, Optional, Tuple, Union
+from typing import Any, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.db import models
@@ -109,7 +109,7 @@ class DataTable(hg.TABLE):
         rowvariable: str = "row",
         spacing: str = "default",
         zebra: bool = False,
-        **kwargs: str,
+        **kwargs: Any,
     ):
         """A carbon DataTable element
 
@@ -132,9 +132,7 @@ class DataTable(hg.TABLE):
         kwargs["_class"] = kwargs.get("_class", "") + " ".join(
             DataTable.tableclasses(spacing, zebra)
         )
-        super().__init__(
-            hg.THEAD(self.head), hg.TBODY(self.iterator), lazy_attributes=None, **kwargs
-        )
+        super().__init__(hg.THEAD(self.head), hg.TBODY(self.iterator), **kwargs)
 
     def with_toolbar(
         self,
@@ -142,7 +140,7 @@ class DataTable(hg.TABLE):
         helper_text: Any = None,
         primary_button: Optional[Button] = None,
         search_backend: Optional[SearchBackendConfig] = None,
-        bulkactions: Union[Iterable[Link], Tuple[()]] = (),
+        bulkactions: Iterable[Link] = (),
         pagination_config: Optional[PaginationConfig] = None,
         checkbox_for_bulkaction_name="_selected",
         settingspanel: Any = None,
@@ -315,15 +313,15 @@ class DataTable(hg.TABLE):
         model,
         queryset=None,
         # column behaviour
-        columns: Union[Iterable[Union[str, "DataTableColumn"]], Tuple[()]] = (),
+        columns: Iterable[Union[str, "DataTableColumn"]] = (),
         prevent_automatic_sortingnames=False,
         # row behaviour
         rowvariable="row",
-        rowactions: Union[Iterable[Link], Tuple[()]] = (),
+        rowactions: Iterable[Link] = (),
         rowactions_dropdown=False,
         rowclickaction=None,
         # bulkaction behaviour
-        bulkactions: Union[Iterable[Link], Tuple[()]] = (),
+        bulkactions: Iterable[Link] = (),
         checkbox_for_bulkaction_name="_selected",
         # toolbar configuration
         title=None,
@@ -345,12 +343,6 @@ class DataTable(hg.TABLE):
                               difficutl to add another button by modifying the
                               datatable after creation.
         """
-        for col in columns:
-            if not (isinstance(col, DataTableColumn) or isinstance(col, str)):
-                raise ValueError(
-                    f"Argument 'columns' needs to be of a List[str] or a List[DataTableColumn], but found {col}"
-                )
-
         title = title or pretty_modelname(model, plural=True)
 
         if primary_button is None:
@@ -393,6 +385,10 @@ class DataTable(hg.TABLE):
         columns = columns or filter_fieldlist(model, ["__all__"])
         column_definitions: List[DataTableColumn] = []
         for col in columns:
+            if not (isinstance(col, DataTableColumn) or isinstance(col, str)):
+                raise ValueError(
+                    f"Argument 'columns' needs to be of a List[str] or a List[DataTableColumn], but found {col}"
+                )
             td_attributes: Optional[dict] = None
             if rowclickaction and getattr(col, "enable_row_click", True):
                 assert isinstance(
@@ -505,8 +501,8 @@ class DataTableColumn(NamedTuple):
     cell: Any
     sortingname: Optional[str] = None
     enable_row_click: bool = True
-    th_attributes: Optional[hg.F] = None
-    td_attributes: Union[hg.F, dict, None] = None
+    th_attributes: Optional[Union[hg.F, dict]] = None
+    td_attributes: Optional[Union[hg.F, dict]] = None
 
     @staticmethod
     def from_modelfield(
