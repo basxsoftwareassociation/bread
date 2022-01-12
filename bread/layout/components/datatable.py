@@ -142,8 +142,8 @@ class DataTable(hg.TABLE):
         primary_button: Optional[Button] = None,
         bulkactions: List[Link] = (),
         pagination_config: Optional[PaginationConfig] = None,
-        checkbox_for_bulkaction_name="_selected",
-        search_urlparameter=None,
+        checkbox_for_bulkaction_name: str = "_selected",
+        search_urlparameter: Optional[str] = None,
         settingspanel: Any = None,
     ):
         """
@@ -344,7 +344,7 @@ class DataTable(hg.TABLE):
         primary_button: Optional[Button] = None,
         settingspanel: Any = None,
         pagination_config: Optional[PaginationConfig] = None,
-        search_urlparameter=None,
+        search_urlparameter: Optional[str] = None,
         **kwargs,
     ):
         """TODO: Write Docs!!!!
