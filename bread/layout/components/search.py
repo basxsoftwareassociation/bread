@@ -59,12 +59,14 @@ class Search(hg.DIV):
             )
             widgetattributes["name"] = backend.query_parameter
 
+        self.close_button = _close_button(resultcontainerid, widgetattributes)
+
         super().__init__(
             hg.DIV(
                 hg.LABEL(_("Search"), _class="bx--label", _for=widgetattributes["id"]),
                 hg.INPUT(**widgetattributes),
                 _search_icon(),
-                _close_button(resultcontainerid, widgetattributes),
+                self.close_button,
                 hg.If(backend is not None, _loading_indicator(resultcontainerid)),
                 **kwargs,
             ),

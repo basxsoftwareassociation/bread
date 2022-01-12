@@ -226,19 +226,6 @@ class DataTable(hg.TABLE):
                 ),
             )
 
-        searchbar = Search(
-            widgetattributes={
-                "autofocus": True,
-                "name": search_urlparameter,
-                "value": hg.F(
-                    lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
-                ),
-                "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
-            }
-        )
-        searchbar[0][3].attributes[
-            "onclick"
-        ] = "this.parentElement.querySelector('input').value = ''; this.closest('form').submit()"
         return hg.DIV(
             hg.DIV(*header, _class="bx--data-table-header"),
             hg.SECTION(
@@ -268,30 +255,7 @@ class DataTable(hg.TABLE):
                     aria_label=_("Table Action Bar"),
                 ),
                 hg.DIV(
-                    hg.DIV(
-                        hg.FORM(
-                            searchbar,
-                            hg.Iterator(
-                                hg.C("request").GET.items(),
-                                "queryitem",
-                                hg.If(
-                                    hg.F(
-                                        lambda c: c["queryitem"][0]
-                                        != search_urlparameter
-                                    ),
-                                    hg.INPUT(
-                                        type="hidden",
-                                        name=hg.C("queryitem")[0],
-                                        value=hg.C("queryitem")[1],
-                                    ),
-                                ),
-                            ),
-                            method="GET",
-                        ),
-                        _class="bx--toolbar-search-container-persistent",
-                    )
-                    if search_urlparameter is not None
-                    else None,
+                    searchbar(search_urlparameter) if search_urlparameter else None,
                     Button(
                         icon="settings--adjust",
                         buttontype="ghost",
@@ -561,6 +525,46 @@ class DataTableColumn(NamedTuple):
                 **sortinglink_for_column(orderingurlparameter, self.sortingname),
             )
         return hg.TH(headcontent, lazy_attributes=self.th_attributes)
+
+
+def searchbar(search_urlparameter: str):
+    """
+    Creates a searchbar element for datatables to submit an entered search
+    term via a GET url parameter
+    """
+    searchinput = Search(
+        widgetattributes={
+            "autofocus": True,
+            "name": search_urlparameter,
+            "value": hg.F(
+                lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
+            ),
+            "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
+        }
+    )
+    searchinput.close_button.attributes[
+        "onclick"
+    ] = "this.closest('form').querySelector('input').value = ''; this.closest('form').submit()"
+
+    return hg.DIV(
+        hg.FORM(
+            searchinput,
+            hg.Iterator(
+                hg.C("request").GET.items(),
+                "queryitem",
+                hg.If(
+                    hg.F(lambda c: c["queryitem"][0] != search_urlparameter),
+                    hg.INPUT(
+                        type="hidden",
+                        name=hg.C("queryitem")[0],
+                        value=hg.C("queryitem")[1],
+                    ),
+                ),
+            ),
+            method="GET",
+        ),
+        _class="bx--toolbar-search-container-persistent",
+    )
 
 
 def sortingclass_for_column(orderingurlparameter, columnname):
