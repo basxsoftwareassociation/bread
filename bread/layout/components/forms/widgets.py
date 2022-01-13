@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 import django_countries.widgets
 import htmlgenerator as hg
@@ -28,9 +29,9 @@ class BaseWidget(hg.DIV):
     django_widget = None
 
     # default attributes which are used to create the input element in a standardized way for many inputs
-    carbon_input_class = ""
-    carbon_input_error_class = ""
-    input_type = None
+    carbon_input_class: str = ""
+    carbon_input_error_class: str = ""
+    input_type: Optional[str] = None
 
     # __init__ of derived classes should support the following parameters
     # label: bread.layout.components.forms.utils.Label

@@ -1,4 +1,4 @@
-from typing import Callable, List, NamedTuple, Optional, Tuple, Union
+from typing import Callable, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.conf import settings
@@ -68,23 +68,25 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     orderingurlparameter: str = "ordering"
     objectids_urlparameter: str = "_selected"  # see bread/static/js/main.js:submitbulkaction and bread/layout/components/datatable.py
     bulkaction_urlparameter: str = "_bulkaction"
-    items_per_page_options: Tuple[int] = None
+    items_per_page_options: Optional[Iterable[int]] = None
     itemsperpage_urlparameter: str = "itemsperpage"
     search_urlparameter: str = "q"
 
     title: Optional[hg.BaseElement] = None
-    columns: Tuple[Union[str, layout.datatable.DataTableColumn]] = ["__all__"]
+    columns: Iterable[Union[str, layout.datatable.DataTableColumn]] = ("__all__",)
     rowclickaction: Optional[Link] = None
     # bulkactions: List[(Link, function(request, queryset))]
     # - link.js should be a slug and not a URL
     # - if the function returns a HttpResponse, the response is returned instead of the browse view result
-    bulkactions: Tuple[
-        Link, Callable[[HttpRequest, models.QuerySet], Union[None, HttpResponse]]
+    bulkactions: Iterable[
+        Union[Link, Callable[[HttpRequest, models.QuerySet], Union[None, HttpResponse]]]
     ] = ()
     rowactions = ()  # list of links
     backurl = None
     primary_button = None
-    viewstate_sessionkey: str = None  # if set will be used to save the state of the url parameters and restore them on the next call
+    viewstate_sessionkey: Optional[
+        str
+    ] = None  # if set will be used to save the state of the url parameters and restore them on the next call
 
     def __init__(self, *args, **kwargs):
         self.orderingurlparameter = (

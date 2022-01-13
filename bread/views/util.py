@@ -123,10 +123,12 @@ class BreadView:
     Shortcut to create a subclass with the given attributes
     """
 
-    layout: hg.BaseElement = None
-    _layout_cached: hg.BaseElement = None
+    layout: typing.Optional[hg.BaseElement] = None
+    _layout_cached: typing.Optional[hg.BaseElement] = None
     ajax_urlparameter = "asajax"
-    page_layout: typing.Callable[[menu.Menu, hg.BaseElement], hg.BaseElement] = None
+    page_layout: typing.Optional[
+        typing.Callable[[menu.Menu, hg.BaseElement], hg.BaseElement]
+    ] = None
 
     @classmethod
     def _with(cls, **kwargs):
