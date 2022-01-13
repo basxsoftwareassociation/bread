@@ -9,10 +9,11 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
+from djangoql.exceptions import DjangoQLError
 from djangoql.queryset import apply_search
 from guardian.mixins import PermissionListMixin
 
-from bread.utils import expand_ALL_constant, filter_fieldlist
+from bread.utils import expand_ALL_constant, filter_fieldlist, queryset_from_fields
 
 from .. import layout
 from ..utils import (
@@ -69,10 +70,10 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     bulkaction_urlparameter: str = "_bulkaction"
     items_per_page_options: Optional[Iterable[int]] = None
     itemsperpage_urlparameter: str = "itemsperpage"
+    search_urlparameter: str = "q"
 
     title: Optional[hg.BaseElement] = None
     columns: Iterable[Union[str, layout.datatable.DataTableColumn]] = ("__all__",)
-    search_backend = None
     rowclickaction: Optional[Link] = None
     # bulkactions: List[(Link, function(request, queryset))]
     # - link.js should be a slug and not a URL
@@ -105,12 +106,14 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             or self.items_per_page_options
             or getattr(settings, "DEFAULT_PAGINATION_CHOICES", [25, 100, 500])
         )
+        self.search_urlparameter = (
+            kwargs.get("search_urlparameter") or self.search_urlparameter
+        )
         self.title = kwargs.get("title") or self.title
         self.rowactions = kwargs.get("rowactions") or self.rowactions
         self.columns = expand_ALL_constant(
             kwargs["model"], kwargs.get("columns") or self.columns
         )
-        self.search_backend = kwargs.get("search_backend") or self.search_backend
         self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
         self.backurl = kwargs.get("backurl") or self.backurl
         self.primary_button = kwargs.get("primary_button") or self.primary_button
@@ -148,7 +151,6 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             rowactions=self.rowactions,
             rowactions_dropdown=len(self.rowactions)
             > 2,  # recommendation from carbon design
-            search_backend=self.search_backend,
             rowclickaction=self.rowclickaction,
             pagination_config=layout.pagination.PaginationConfig(
                 items_per_page_options=self.items_per_page_options,
@@ -161,6 +163,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             settingspanel=self.get_settingspanel(),
             backurl=self.backurl,
             primary_button=self.primary_button,
+            search_urlparameter=self.search_urlparameter,
         )
 
     def get_context_data(self, *args, **kwargs):
@@ -178,7 +181,6 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
 
     def get(self, *args, **kwargs):
         if "reset" in self.request.GET:
-            # reset clear state and reset filters and sorting
             if (
                 self.viewstate_sessionkey
                 and self.viewstate_sessionkey in self.request.session
@@ -231,18 +233,24 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     def get_queryset(self):
         """Prefetch related tables to speed up queries. Also order result by get-parameters."""
         qs = super().get_queryset()
-        if (
-            self.search_backend
-            and self.search_backend.query_parameter in self.request.GET
-        ):
-            qs = apply_search(
-                qs,
-                "("
-                + ") and (".join(
-                    self.request.GET.getlist(self.search_backend.query_parameter)
+        if self.search_urlparameter and self.search_urlparameter in self.request.GET:
+            searchquery = self.request.GET[self.search_urlparameter].strip()
+            if searchquery.startswith("="):
+                try:
+                    qs = apply_search(qs, searchquery[1:])
+                except DjangoQLError as e:
+                    messages.error(
+                        self.request,
+                        _("Bad filter string '%s': '%s'") % (searchquery, e),
+                    )
+
+            else:
+                qs = self.model.objects.filter(
+                    queryset_from_fields.get_field_queryset(
+                        [*self.model._meta.fields, *self.model._meta.many_to_many],
+                        searchquery,
+                    )
                 )
-                + ")",
-            )
 
         selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
         if selectedobjects and "all" not in selectedobjects:
