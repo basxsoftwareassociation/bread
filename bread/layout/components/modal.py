@@ -74,6 +74,7 @@ class Modal(hg.DIV):
                     _class="bx--modal-header",
                 ),
                 self.contentcontainer,
+                hg.DIV(_class="bx--modal-content--overflow-indicator"),
                 hg.DIV(
                     *buttons,
                     _class="bx--modal-footer",

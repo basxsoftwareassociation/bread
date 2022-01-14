@@ -251,3 +251,15 @@ fieldset[readonly] {
 a.bx--header__name {
     padding: 0 .5rem 0 .5rem;
 }
+
+// modals with a single drop-down keep the dropped part
+// as overflow: hidden and the drop-down is almost invisible
+// Therefore set a min-height here
+
+.bx--modal-container {
+    min-height: 20rem;
+    .bx--modal-content--overflow-indicator {
+        z-index: 9999; // drop-downs have a high z-index, this needs to be higher
+    }
+}
+

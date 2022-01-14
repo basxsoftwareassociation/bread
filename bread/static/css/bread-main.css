@@ -18869,3 +18869,8 @@ td {
 
 a.bx--header__name {
   padding: 0 .5rem 0 .5rem; }
+
+.bx--modal-container {
+  min-height: 20rem; }
+  .bx--modal-container .bx--modal-content--overflow-indicator {
+    z-index: 9999; }
