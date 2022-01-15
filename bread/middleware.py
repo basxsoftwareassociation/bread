@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.translation import LANGUAGE_SESSION_KEY, activate, get_language
+from django.utils.translation import activate, get_language
 
 
 class RequireAuthenticationMiddleware:
@@ -23,11 +23,13 @@ class RequireAuthenticationMiddleware:
             if k.startswith("bread-"):
                 request.session["bread-cookies"][k] = urllib.parse.unquote(v)
 
+        # load the preferred language for a user and change translation system
+        # and language cookie if required
         if request.user and hasattr(request.user, "preferences"):
             lang = request.user.preferences.get("general__preferred_language")
             if lang and lang != get_language():
+                # needs to be called before every request to do translation correctly
                 activate(lang)
-                request.session[LANGUAGE_SESSION_KEY] = lang
             tz = request.user.preferences.get("general__timezone")
             if tz:
                 timezone.activate(zoneinfo.ZoneInfo(tz))

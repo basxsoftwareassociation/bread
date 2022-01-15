@@ -242,13 +242,28 @@ class EditPersonalDataView(EditView):
         return self.request.user
 
     def form_valid(self, form):
+        ret = super().form_valid(form)
+        if (
+            self.request.user.preferences["general__preferred_language"]
+            != form.cleaned_data["preferred_language"]
+        ):
+            ret.set_cookie(
+                settings.LANGUAGE_COOKIE_NAME,
+                form.cleaned_data["preferred_language"],
+                max_age=settings.LANGUAGE_COOKIE_AGE,
+                path=settings.LANGUAGE_COOKIE_PATH,
+                domain=settings.LANGUAGE_COOKIE_DOMAIN,
+                secure=settings.LANGUAGE_COOKIE_SECURE,
+                httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
+                samesite=settings.LANGUAGE_COOKIE_SAMESITE,
+            )
         self.request.user.preferences[
             "general__preferred_language"
         ] = form.cleaned_data["preferred_language"]
         self.request.user.preferences["general__timezone"] = form.cleaned_data[
             "timezone"
         ]
-        return super().form_valid(form)
+        return ret
 
 
 class EditLoginView(EditView):
