@@ -7,7 +7,7 @@ from dynamic_preferences.registries import global_preferences_registry
 from bread.utils import autopath, default_model_paths
 
 from .forms.forms import PreferencesForm
-from .views import admin, auth, system, userprofile
+from .views import administration, auth, userprofile
 
 PreferencesView = type(
     "PreferencesView",
@@ -91,15 +91,21 @@ urlpatterns = [
         auth.BreadPasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
-    path("systeminformation", system.systeminformation, name="systeminformation"),
-    path("admin/maintenance", admin.maintenancesettings, name="breadadmin.maintenance"),
+    path(
+        "systeminformation", administration.systeminformation, name="systeminformation"
+    ),
+    path(
+        "admin/maintenance",
+        administration.maintenancesettings,
+        name="breadadmin.maintenance",
+    ),
     path(
         "admin/widgetpreview",
-        admin.widgetpreview,
+        administration.widgetpreview,
         name="breadadmin.widgetpreview",
     ),
     *default_model_paths(
         django_celery_results.models.TaskResult,
-        browseview=admin.TaskResultBrowseView,
+        browseview=administration.TaskResultBrowseView,
     ),
 ] + external_urlpatterns
