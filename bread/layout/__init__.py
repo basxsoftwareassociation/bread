@@ -19,6 +19,7 @@ from .components import sidenav  # noqa
 from .components import tabs  # noqa
 from .components import tag  # noqa
 from .components import toggle  # noqa
+from .components import tooltip  # noqa
 from .components.forms import helpers  # noqa
 from .components.forms import search_select  # noqa
 from .skeleton import *  # noqa
