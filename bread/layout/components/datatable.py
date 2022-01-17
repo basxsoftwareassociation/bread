@@ -522,7 +522,6 @@ class DataTableColumn(NamedTuple):
                     sortingclass_for_column(orderingurlparameter, self.sortingname),
                 ),
                 data_event="sort",
-                title=self.header,
                 **sortinglink_for_column(orderingurlparameter, self.sortingname),
             )
         return hg.TH(headcontent, lazy_attributes=self.th_attributes)
