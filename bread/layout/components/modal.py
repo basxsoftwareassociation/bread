@@ -14,7 +14,7 @@ class Modal(hg.DIV):
         heading,
         *content,
         label="",
-        size="md",
+        size="sm",
         buttons=(),
         id=None,
         with_form=False,
@@ -95,7 +95,7 @@ class Modal(hg.DIV):
 
     @classmethod
     def with_ajax_content(
-        cls, heading, url, label="", size="md", submitlabel=None, id=None, **attributes
+        cls, heading, url, label="", size="xs", submitlabel=None, id=None, **attributes
     ):
         """
         Same arguments as Modal() except ``url`` replaces ``content`` and ``submitlabel`` replaces ``buttons``
@@ -116,7 +116,7 @@ class Modal(hg.DIV):
             ),
             label="",
             buttons=buttons,
-            size="md",
+            size=size,
             id=id,
             with_form=bool(submitlabel),
             **attributes,
