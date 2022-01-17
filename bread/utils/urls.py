@@ -11,6 +11,7 @@ from django.db import models
 from django.http import HttpResponse
 from django.urls import path as djangopath
 from django.urls import reverse_lazy as django_reverse
+from django.utils.functional import Promise
 from django.utils.http import urlencode
 from django.utils.module_loading import import_string
 from django.utils.text import format_lazy
@@ -27,7 +28,10 @@ def reverse(*args, query: dict = None, **kwargs):
         return format_lazy(
             "{}?{}",
             django_reverse(*args, **kwargs),
-            urlencode(query, doseq=True),
+            urlencode(
+                {k: str(v) if isinstance(v, Promise) else v for k, v in query.items()},
+                doseq=True,
+            ),
         )
     return django_reverse(*args, **kwargs)
 
