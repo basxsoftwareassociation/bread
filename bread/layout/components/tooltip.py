@@ -185,14 +185,11 @@ class InteractiveTooltip(hg.BaseElement):
         """
         base_class = "bx--tooltip"
 
-        footer = (
-            hg.BaseElement(
-                hg.If(bool(link), hg.A(link.label, href=link.href, _class="bx--link")),
-                hg.If(bool(button), button),
-            )
-            if link or button
-            else None
-        )
+        footer_elements = []
+        if link:
+            footer_elements.append(hg.A(link.label, href=link.href, _class="bx--link"))
+        if button:
+            footer_elements.append(button)
 
         base_id = hg.html_id(self, base_class + "-id")
         label_id = f"{base_id}-label"
@@ -252,9 +249,9 @@ class InteractiveTooltip(hg.BaseElement):
                     ),
                     hg.P(body, id=base_id + "-body"),
                     hg.If(
-                        bool(footer),
+                        len(footer_elements) > 0,
                         hg.DIV(
-                            footer,
+                            *footer_elements,
                             _class=base_class + "__footer",
                         ),
                     ),
