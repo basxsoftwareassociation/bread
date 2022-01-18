@@ -22,7 +22,7 @@ from bread.layout.components.forms import Form, FormField
 from bread.views import BrowseView
 
 from ..layout.components.icon import Icon
-from ..utils import aslayout, Link
+from ..utils import Link, aslayout
 
 R = layout.grid.Row
 C = layout.grid.Col
