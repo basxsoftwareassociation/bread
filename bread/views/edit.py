@@ -1,7 +1,8 @@
 import re
 import urllib
-from typing import List, Optional, Tuple, Type, Union
+from typing import Iterable, List, Optional, Tuple, Type, Union
 
+import htmlgenerator as hg
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
@@ -25,8 +26,8 @@ class EditView(
     """TODO: documentation"""
 
     accept_global_perms = True
-    fields: Optional[List[str]] = None
-    urlparams: Union[Tuple[Tuple[str, Type]], Tuple[()]] = (("pk", int),)
+    fields: Optional[List[Union[hg.BaseElement, str]]] = None
+    urlparams: Iterable[Tuple[str, Type]] = (("pk", int),)
 
     def __init__(self, *args, **kwargs):
         all = filter_fieldlist(
