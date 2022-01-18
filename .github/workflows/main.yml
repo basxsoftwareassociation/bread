@@ -67,4 +67,4 @@ jobs:
       run: ./manage.py test
 
     - name: Check types
-      run: mypy bread/forms
+      run: mypy bread
