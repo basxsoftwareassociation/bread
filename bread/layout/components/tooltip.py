@@ -62,7 +62,7 @@ class DefinitionTooltip(hg.BaseElement):
 
         super().__init__(
             hg.DIV(
-                hg.BUTTON(
+                hg.DIV(
                     label,
                     _class=(
                         "bx--tooltip__trigger "
@@ -134,7 +134,7 @@ class IconTooltip(hg.BaseElement):
         icon = _get_icon(icon)
 
         super().__init__(
-            hg.BUTTON(
+            hg.DIV(
                 hg.SPAN(description, _class="bx--assistive-text"),
                 icon,
                 **tooltip_attributes,
@@ -228,7 +228,7 @@ class InteractiveTooltip(hg.BaseElement):
                 label,
                 # cannot use bread's Button class because
                 # only the class bx--tooltip__trigger can be used
-                hg.BUTTON(
+                hg.DIV(
                     icon,
                     **trigger_attributes,
                 ),
