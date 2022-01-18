@@ -21,6 +21,7 @@ from bread.layout.components.datatable import DataTable, DataTableColumn
 from bread.layout.components.forms import Form, FormField
 from bread.views import BrowseView
 
+from ..layout.components.icon import Icon
 from ..utils import aslayout
 
 R = layout.grid.Row
@@ -164,7 +165,42 @@ def widgetpreview(request):
                         method="GET",
                     ),
                 ),
-            )
+            ),
+            R(
+                C(
+                    hg.H3(_("Tooltips")),
+                    hg.H4(_("Definition tooltip")),
+                    hg.DIV(
+                        layout.components.tooltip.DefinitionTooltip(
+                            "Definition tooltip",
+                            "Brief definition of the dotted, underlined word above.",
+                        )
+                    ),
+                    hg.H4(_("Icon tooltip")),
+                    hg.DIV(
+                        layout.components.tooltip.IconTooltip(
+                            "Help",
+                        ),
+                        layout.components.tooltip.IconTooltip(
+                            "Filter",
+                            icon=Icon("filter"),
+                        ),
+                        layout.components.tooltip.IconTooltip(
+                            "Email",
+                            icon="email",
+                        ),
+                    ),
+                    hg.H4(_("Interactive tooltip")),
+                    hg.DIV(
+                        layout.components.tooltip.InteractiveTooltip(
+                            label="Tooltip label",
+                            body="This is some tooltip text. This box shows the maximum amount of text that should appear inside. If more room is needed please use a modal instead.",
+                            heading="Heading within a Tooltip",
+                            button=(layout.components.button.Button("Button")),
+                        ),
+                    ),
+                ),
+            ),
         ),
     )
 
