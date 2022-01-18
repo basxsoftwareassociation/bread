@@ -22,7 +22,7 @@ from bread.layout.components.forms import Form, FormField
 from bread.views import BrowseView
 
 from ..layout.components.icon import Icon
-from ..utils import aslayout
+from ..utils import aslayout, Link
 
 R = layout.grid.Row
 C = layout.grid.Col
@@ -172,8 +172,23 @@ def widgetpreview(request):
                     hg.H4(_("Definition tooltip")),
                     hg.DIV(
                         layout.components.tooltip.DefinitionTooltip(
-                            "Definition tooltip",
+                            "Definition tooltip (left aligned)",
                             "Brief definition of the dotted, underlined word above.",
+                            align="left",
+                        )
+                    ),
+                    hg.DIV(
+                        layout.components.tooltip.DefinitionTooltip(
+                            "Definition tooltip (center aligned)",
+                            "Brief definition of the dotted, underlined word above.",
+                            align="center",
+                        )
+                    ),
+                    hg.DIV(
+                        layout.components.tooltip.DefinitionTooltip(
+                            "Definition tooltip (right aligned)",
+                            "Brief definition of the dotted, underlined word above.",
+                            align="right",
                         )
                     ),
                     hg.H4(_("Icon tooltip")),
@@ -197,6 +212,7 @@ def widgetpreview(request):
                             body="This is some tooltip text. This box shows the maximum amount of text that should appear inside. If more room is needed please use a modal instead.",
                             heading="Heading within a Tooltip",
                             button=(layout.components.button.Button("Button")),
+                            link=Link(href="#", label="link"),
                         ),
                     ),
                 ),
