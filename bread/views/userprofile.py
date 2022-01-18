@@ -1,7 +1,7 @@
 try:
     import zoneinfo
 except ImportError:
-    from backports import zoneinfo
+    from backports import zoneinfo  # type: ignore
 
 import htmlgenerator as hg
 from django import forms
