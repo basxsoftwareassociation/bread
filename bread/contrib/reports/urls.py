@@ -39,7 +39,7 @@ urlpatterns = [
                 ),
                 Link(
                     href=ModelHref(Report, "excel", kwargs={"pk": hg.C("row.pk")}),
-                    iconname="download",
+                    iconname="document",
                     label=_("Excel"),
                 ),
             ],
@@ -69,8 +69,8 @@ menu.registeritem(
         Link(
             urls.reverse_model(Report, "browse"),
             label=_("Reports"),
-            iconname="download",
+            iconname="document",
         ),
-        menu.Group(_("Reports"), iconname="download"),
+        menu.Group(_("Reports"), iconname="document"),
     )
 )
