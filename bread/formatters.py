@@ -4,7 +4,6 @@ import os
 from collections.abc import Iterable
 
 import htmlgenerator as hg
-from dateutil import tz
 from django.conf import settings
 from django.db import models
 from django.utils.functional import Promise
@@ -57,12 +56,6 @@ def as_url(value):
 
 def as_text(value):
     return mark_safe(linebreaks(value, autoescape=True))
-
-
-def as_time(value):
-    if value.tzinfo:
-        value = value.astimezone(tz.gettz(settings.TIME_ZONE))
-    return f"{value.hour:02}:{value.minute:02}:{value.second:02}"
 
 
 def as_duration(value):
