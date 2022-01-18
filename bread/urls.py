@@ -1,4 +1,5 @@
 import django_celery_results.models
+from django.apps import apps
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import include, path
 from dynamic_preferences import views as preferences_views
@@ -109,3 +110,7 @@ urlpatterns = [
         browseview=administration.TaskResultBrowseView,
     ),
 ] + external_urlpatterns
+
+for app in apps.get_app_configs():
+    if app.name.startswith("bread.contrib"):
+        urlpatterns.append(path("contrib/", include(f"{app.name}.urls")))
