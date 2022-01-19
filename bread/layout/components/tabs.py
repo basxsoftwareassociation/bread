@@ -3,25 +3,7 @@ import collections
 import htmlgenerator as hg
 from django.utils.text import slugify
 
-from bread.layout import HasBreadCookieValue
-
-
-class HasBreadCookieValueWithinTabs(HasBreadCookieValue):
-    def __init__(self, value, value_set: set, default=None):
-        super().__init__("selected-tab", value, default)
-        self.value_set = value_set
-
-    def resolve(self, context: dict):
-        if f"bread-{self.cookiename}" in context["request"].session.get(
-            "bread-cookies", {}
-        ):
-            cookieval = context["request"].session["bread-cookies"][
-                f"bread-{self.cookiename}"
-            ]
-            if cookieval in self.value_set:
-                return cookieval == self.value
-
-        return self.default == self.value
+from .. import HasBreadCookieValue
 
 
 class TabLabel(hg.LI):
@@ -94,38 +76,29 @@ class Tabs(hg.DIV):
             ),
             self.tablabels,
             data_tabs=True,
-            **labelcontainer_attributes,
+            **hg.merge_html_attrs(
+                {
+                    "onload": "if( $('.bx--tabs__nav-item--selected', this) == null ) "
+                    "(new CarbonComponents.Tab(this)).setActive($('.bx--tabs__nav-item', this))"
+                },
+                labelcontainer_attributes,
+            ),
         )
         tabpanel_attributes["_class"] += " bx--tab-content"
         self.tabpanels = hg.DIV(**tabpanel_attributes)
 
         firsttab = None
-        tab_tuples = []
-        tabids = set()
         for i, (label, content) in enumerate(tabs):
             tabid = f"tab-{slugify(label)}-{i}"
             panelid = f"panel-{slugify(label)}-{i}"
             if firsttab is None:
                 firsttab = tabid
-
-            tab_tuples.append(
-                (
-                    label,
-                    content,
-                    tabid,
-                    panelid,
-                    HasBreadCookieValueWithinTabs(tabid, tabids, firsttab),
-                )
-            )
-            tabids.add(tabid)
-
-        for i, (label, content, tabid, panelid, selected) in enumerate(tab_tuples):
             self.tablabels.append(
                 TabLabel(
                     label,
                     tabid,
                     panelid,
-                    selected,
+                    HasBreadCookieValue("selected-tab", tabid, firsttab),
                 )
             )
             self.tabpanels.append(
@@ -133,7 +106,7 @@ class Tabs(hg.DIV):
                     content,
                     panelid,
                     tabid,
-                    selected,
+                    HasBreadCookieValue("selected-tab", tabid, firsttab),
                 )
             )
         super().__init__(
