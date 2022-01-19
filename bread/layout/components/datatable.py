@@ -555,7 +555,6 @@ def searchbar(search_urlparameter: str):
             "rows": 1,
         },
         style="width: 100%;",
-        # boundfield="object_list",
     )
     # searchinput.close_button.attributes[
     #     "onclick"

@@ -14,116 +14,32 @@ from djangoql.serializers import DjangoQLSchemaSerializer
 from bread.layout.components.forms import widgets
 
 
-class QueryValue:
-    def __init__(self, queryset, raw):
-        self.queryset = queryset
-        self.raw = raw
-
-    def __str__(self):
-        return self.raw
-
-
-class QuerySetDescriptor:
-    def __init__(self, field):
-        self.field = field
-
-    def __get__(self, instance=None, owner=None):
-        if instance is None:
-            return self
-        if self.field.name not in instance.__dict__:
-            instance.refresh_from_db(fields=[self.field.name])
-        value = instance.__dict__[self.field.name]
-        model = getattr(instance, self.field.modelfieldname, None)
-        if model and model.model_class():
-            try:
-                return parsequeryexpression(model.model_class().objects, value)
-            except ValidationError:
-                pass
-        return QueryValue(None, value)
-
-    def __set__(self, instance, value):
-        instance.__dict__[self.field.name] = self.field.get_clean_value(value)
-
-
-class QuerysetField(models.TextField):
-    descriptor_class = QuerySetDescriptor
-
-    def __init__(self, *args, modelfieldname, **kwargs):
-        self.modelfieldname = modelfieldname
-        kwargs["blank"] = True
-        super().__init__(*args, **kwargs)
-
-    def deconstruct(self):
-        name, path, args, kwargs = super().deconstruct()
-        return name, path, args, {"modelfieldname": self.modelfieldname, **kwargs}
-
-    def contribute_to_class(self, cls, name, **kwargs):
-        super().contribute_to_class(cls, name)
-        setattr(cls, self.name, self.descriptor_class(self))
-
-    def get_clean_value(self, value):
-        return str(value)
-
-    def get_prep_value(self, value):
-        super().get_prep_value(self.get_clean_value(value))
-
-    def value_to_string(self, obj):
-        return self.get_prep_value(self.value_from_object(obj))
-
-    def get_db_prep_value(self, value, connection, prepared=False):
-        return self.get_clean_value(value)
-
-    def check(self, **kwargs):
-        return [
-            *super().check(**kwargs),
-            *self._check_field_name(),
-        ]
-
-    def _check_field_name(self):
-        try:
-            self.model._meta.get_field(self.modelfieldname)
-        except FieldDoesNotExist:
-            return [
-                checks.Error(
-                    "The QuerysetField modelfieldname references the "
-                    "nonexistent field '%s'." % self.modelfieldname,
-                    obj=self,
-                    id="queryfield.E001",
-                )
-            ]
-        else:
-            return []
-
-    def validate(self, value, model_instance):
-        super().validate(value, model_instance)
-        model = getattr(model_instance, self.modelfieldname)
-        if not model or not model.model_class():
-            raise ValidationError(_("Invalid model '%s' selected") % model)
-        parsequeryexpression(
-            getattr(model_instance, self.modelfieldname).model_class().objects, value
-        )
-
-
-class QuerysetFormWidget(widgets.Textarea):
+class DjangoQLSearch(hg.DIV):
     django_widget = None
 
     def __init__(
         self,
-        label=None,
-        help_text=None,
-        errors=None,
-        inputelement_attrs=None,
-        boundfield=None,
-        **attributes
+        size="xl",
+        placeholder=None,
+        widgetattributes=None,
+        backend=None,
+        resultcontainerid=None,
+        show_result_container=True,
+        resultcontainer_onload_js=None,
+        disabled=False,
+        **kwargs,
     ):
-        super().__init__(
-            label=label,
-            help_text=help_text,
-            errors=errors,
-            inputelement_attrs=inputelement_attrs,
-            boundfield=boundfield,
-            **attributes
-        )
+
+        if backend:
+            if resultcontainerid is None:
+                resultcontainerid = f"search-result-{hg.html_id((self, backend.url))}"
+            widgetattributes["hx_get"] = backend.url
+            widgetattributes["hx_trigger"] = "changed, click, keyup changed delay:500ms"
+            widgetattributes["hx_target"] = hg.format("#{}", resultcontainerid)
+            widgetattributes["hx_indicator"] = hg.format(
+                "#{}-indicator", resultcontainerid
+            )
+            widgetattributes["name"] = backend.query_parameter
 
         def introspections(context):
             return json.dumps(
@@ -155,12 +71,3 @@ class QuerysetFormWidget(widgets.Textarea):
                     ),
                 )
             )
-
-
-def parsequeryexpression(basequeryset, expression):
-    if not expression:
-        return QueryValue(basequeryset.all(), expression)
-    try:
-        return QueryValue(apply_search(basequeryset, expression), expression)
-    except DjangoQLError as e:
-        raise ValidationError(str(e))
