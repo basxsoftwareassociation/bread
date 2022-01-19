@@ -11,7 +11,7 @@ from djangoql.queryset import apply_search
 from djangoql.schema import DjangoQLSchema
 from djangoql.serializers import DjangoQLSchemaSerializer
 
-from bread import layout
+from bread.layout.components.forms import widgets
 
 
 class QueryValue:
@@ -104,7 +104,7 @@ class QuerysetField(models.TextField):
         )
 
 
-class QuerysetFormWidget(layout.forms.widgets.Textarea):
+class QuerysetFormWidget(widgets.Textarea):
     django_widget = None
 
     def __init__(

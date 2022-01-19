@@ -1,22 +1,25 @@
 import html
+import json
 from typing import Any, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from djangoql.schema import DjangoQLSchema
+from djangoql.serializers import DjangoQLSchemaSerializer
 
-from bread import layout
 from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
 from bread.utils.links import Link, ModelHref
 from bread.utils.urls import link_with_urlparameters
 
 from ..base import ObjectFieldLabel, ObjectFieldValue, aslink_attributes
 from .button import Button
+from .forms.queryfield import QuerysetFormWidget
 from .icon import Icon
 from .overflow_menu import OverflowMenu
 from .pagination import Pagination, PaginationConfig
-from .search import Search
 
 
 class DataTable(hg.TABLE):
@@ -534,7 +537,6 @@ def searchbar(search_urlparameter: str):
     Creates a searchbar element for datatables to submit an entered search
     term via a GET url parameter
     """
-    # search_urlparameter = "filter"
     # searchinput = Search(
     #     widgetattributes={
     #         "autofocus": True,
@@ -545,59 +547,24 @@ def searchbar(search_urlparameter: str):
     #         "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
     #     }
     # )
+    searchinput = QuerysetFormWidget(
+        inputelement_attrs={
+            "_class": "bx--search bx--search--xl",
+            "name": search_urlparameter,
+            "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
+            "rows": 1,
+        },
+        style="width: 100%;",
+        # boundfield="object_list",
+    )
     # searchinput.close_button.attributes[
     #     "onclick"
     # ] = "this.closest('form').querySelector('input').value = ''; this.closest('form').submit()"
-    #
-    # return hg.DIV(
-    #     hg.LINK(
-    #         rel="stylesheet",
-    #         type="text/css",
-    #         href=staticfiles_storage.url("djangoql/css/completion.css"),
-    #     ),
-    #     hg.SCRIPT(src=staticfiles_storage.url("djangoql/js/completion.js")),
-    #     layout.forms.Form(
-    #         hg.C("form"),
-    #         searchinput,
-    # hg.Iterator(
-    #     hg.C("request").GET.lists(),
-    #     "urlparameter",
-    #     hg.If(
-    #         hg.F(lambda c: c["urlparameter"][0] != search_urlparameter),
-    #         hg.Iterator(
-    #             hg.C("urlparameter")[1],
-    #             "urlvalue",
-    #             hg.INPUT(
-    #                 type="hidden",
-    #                 name=hg.C("urlparameter")[0],
-    #                 value=hg.C("urlvalue"),
-    #             ),
-    #         ),
-    #     ),
-    # ),
-    # method="GET",
-    #     ),
-    #     _class="bx--toolbar-search-container-persistent",
-    # )
-
-    searchinput = Search(
-        widgetattributes={
-            "autofocus": True,
-            "name": search_urlparameter,
-            "value": hg.F(
-                lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
-            ),
-            "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
-        }
-    )
-    searchinput.close_button.attributes[
-        "onclick"
-    ] = "this.closest('form').querySelector('input').value = ''; this.closest('form').submit()"
 
     return hg.DIV(
         hg.FORM(
-            hg.F(lambda context: breakpoint()),
             searchinput,
+            # hg.F(lambda context: breakpoint()),
             hg.Iterator(
                 hg.C("request").GET.lists(),
                 "urlparameter",
@@ -616,8 +583,80 @@ def searchbar(search_urlparameter: str):
             ),
             method="GET",
         ),
+        hg.LINK(
+            rel="stylesheet",
+            type="text/css",
+            href=staticfiles_storage.url("djangoql/css/completion.css"),
+        ),
+        hg.SCRIPT(src=staticfiles_storage.url("djangoql/js/completion.js")),
+        hg.SCRIPT(
+            hg.format(
+                """
+                document.querySelector('textarea[name=q]').value = '{}';
+                document.addEventListener("DOMContentLoaded", () => DjangoQL.DOMReady(function () {{
+                    new DjangoQL({{
+                    introspections: {},
+                    selector: 'textarea[name={}]',
+                    syntaxHelp: '{}',
+                    autoResize: false
+                    }});
+                }}));
+            """,
+                hg.F(
+                    lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
+                ),
+                hg.F(
+                    lambda context: json.dumps(
+                        DjangoQLSchemaSerializer().serialize(
+                            DjangoQLSchema(context["object_list"][0]._meta.model)
+                        )
+                    )
+                ),
+                "q",
+                reverse("reporthelp"),
+                autoescape=False,
+            ),
+        ),
         _class="bx--toolbar-search-container-persistent",
     )
+
+    # searchinput = Search(
+    #     widgetattributes={
+    #         "autofocus": True,
+    #         "name": search_urlparameter,
+    #         "value": hg.F(
+    #             lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
+    #         ),
+    #         "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
+    #     }
+    # )
+    # searchinput.close_button.attributes[
+    #     "onclick"
+    # ] = "this.closest('form').querySelector('input').value = ''; this.closest('form').submit()"
+    #
+    # return hg.DIV(
+    #     hg.FORM(
+    #         searchinput,
+    #         hg.Iterator(
+    #             hg.C("request").GET.lists(),
+    #             "urlparameter",
+    #             hg.If(
+    #                 hg.F(lambda c: c["urlparameter"][0] != search_urlparameter),
+    #                 hg.Iterator(
+    #                     hg.C("urlparameter")[1],
+    #                     "urlvalue",
+    #                     hg.INPUT(
+    #                         type="hidden",
+    #                         name=hg.C("urlparameter")[0],
+    #                         value=hg.C("urlvalue"),
+    #                     ),
+    #                 ),
+    #             ),
+    #         ),
+    #         method="GET",
+    #     ),
+    #     _class="bx--toolbar-search-container-persistent",
+    # )
 
 
 def sortingclass_for_column(orderingurlparameter, columnname):
