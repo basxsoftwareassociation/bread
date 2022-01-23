@@ -10,13 +10,13 @@ from django.utils.translation import gettext_lazy as _
 from djangoql.schema import DjangoQLSchema
 from djangoql.serializers import DjangoQLSchemaSerializer
 
+from bread.layout.components.forms.queryfield import BrowseViewSearch
 from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
 from bread.utils.links import Link, ModelHref
 from bread.utils.urls import link_with_urlparameters
 
 from ..base import ObjectFieldLabel, ObjectFieldValue, aslink_attributes
 from .button import Button
-from .forms.queryfield import QuerysetFormWidget
 from .icon import Icon
 from .overflow_menu import OverflowMenu
 from .pagination import Pagination, PaginationConfig
@@ -547,23 +547,26 @@ def searchbar(search_urlparameter: str):
     #         "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
     #     }
     # )
-    searchinput = QuerysetFormWidget(
-        inputelement_attrs={
-            "_class": "bx--search bx--search--xl",
-            "name": search_urlparameter,
-            "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
-            "rows": 1,
-        },
-        style="width: 100%;",
-    )
+    # searchinput = QuerysetFormWidget(
+    #     inputelement_attrs={
+    #         "_class": "bx--search bx--search--xl",
+    #         "name": search_urlparameter,
+    #         "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
+    #         "rows": 1,
+    #     },
+    #     style="width: 100%;",
+    # )
     # searchinput.close_button.attributes[
     #     "onclick"
     # ] = "this.closest('form').querySelector('input').value = ''; this.closest('form').submit()"
 
     return hg.DIV(
         hg.FORM(
-            searchinput,
-            # hg.F(lambda context: breakpoint()),
+            BrowseViewSearch(
+                defaultvalue=hg.F(
+                    lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
+                ),
+            ),
             hg.Iterator(
                 hg.C("request").GET.lists(),
                 "urlparameter",
@@ -581,6 +584,7 @@ def searchbar(search_urlparameter: str):
                 ),
             ),
             method="GET",
+            onsubmit="",
         ),
         hg.LINK(
             rel="stylesheet",
@@ -588,34 +592,35 @@ def searchbar(search_urlparameter: str):
             href=staticfiles_storage.url("djangoql/css/completion.css"),
         ),
         hg.SCRIPT(src=staticfiles_storage.url("djangoql/js/completion.js")),
-        hg.SCRIPT(
-            hg.format(
-                """
-                document.querySelector('textarea[name=q]').value = '{}';
-                document.addEventListener("DOMContentLoaded", () => DjangoQL.DOMReady(function () {{
-                    new DjangoQL({{
-                    introspections: {},
-                    selector: 'textarea[name={}]',
-                    syntaxHelp: '{}',
-                    autoResize: false
-                    }});
-                }}));
-            """,
-                hg.F(
-                    lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
-                ),
-                hg.F(
-                    lambda context: json.dumps(
-                        DjangoQLSchemaSerializer().serialize(
-                            DjangoQLSchema(context["object_list"][0]._meta.model)
-                        )
-                    )
-                ),
-                "q",
-                reverse("reporthelp"),
-                autoescape=False,
-            ),
-        ),
+        # hg.SCRIPT(
+        #     hg.format(
+        #         """
+        #         document.querySelector("textarea[name='{}']").value = '{}';
+        #         document.addEventListener("DOMContentLoaded", () => DjangoQL.DOMReady(function () {{
+        #             new DjangoQL({{
+        #                 introspections: {},
+        #                 selector: "textarea[name='{}']",
+        #                 syntaxHelp: '{}',
+        #                 autoResize: false
+        #             }});
+        #         }}));
+        #     """,
+        #         search_urlparameter,
+        #         hg.F(
+        #             lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
+        #         ),
+        #         hg.F(
+        #             lambda context: json.dumps(
+        #                 DjangoQLSchemaSerializer().serialize(
+        #                     DjangoQLSchema(context["object_list"][0]._meta.model)
+        #                 )
+        #             )
+        #         ),
+        #         "q",
+        #         reverse("reporthelp"),
+        #         autoescape=False,
+        #     ),
+        # ),
         _class="bx--toolbar-search-container-persistent",
     )
 
