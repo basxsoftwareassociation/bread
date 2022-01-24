@@ -1,8 +1,7 @@
 from bread import menu, views
 from bread.contrib.document_templates.models import DocumentTemplate
 from bread.contrib.document_templates.views import DocumentTemplateEditView
-from bread.utils import Link, default_model_paths
-from build.lib.bread.utils import urls
+from bread.utils import Link, default_model_paths, urls
 
 urlpatterns = [
     *default_model_paths(
