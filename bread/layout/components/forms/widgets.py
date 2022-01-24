@@ -864,7 +864,7 @@ class FileInput(BaseWidget):
             hg.SPAN(_("Select file"), role="button"),
             tabindex=0,
             _class=hg.BaseElement(
-                "bx--btn bx--btn--primary",
+                "bx--btn bx--btn--tertiary",
                 hg.If(inputelement_attrs.get("disabled"), " bx--btn--disabled"),
             ),
             data_file_drop_container=True,
