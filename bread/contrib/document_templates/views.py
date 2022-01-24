@@ -9,7 +9,6 @@ from docxtpl import DocxTemplate
 
 from bread import layout, views
 from bread.contrib.reports.fields.queryfield import QuerysetFormWidget
-from bread.layout.components.forms.helpers import Submit
 
 
 class DocumentTemplateEditView(views.EditView):
