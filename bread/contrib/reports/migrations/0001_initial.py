@@ -3,7 +3,7 @@
 import django.db.models.deletion
 from django.db import migrations, models
 
-import bread.contrib.reports.fields.queryfield
+import bread.querysetfield
 
 
 class Migration(migrations.Migration):
@@ -11,33 +11,78 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
+        ("contenttypes", "0002_remove_content_type_name"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Report',
+            name="Report",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateField(auto_now_add=True, verbose_name='Created')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('filter', bread.contrib.reports.fields.queryfield.QuerysetField(blank=True, modelfieldname='model', verbose_name='Filter')),
-                ('model', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='contenttypes.contenttype')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    models.DateField(auto_now_add=True, verbose_name="Created"),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "filter",
+                    bread.querysetfield.QuerysetField(
+                        blank=True, modelfieldname="model", verbose_name="Filter"
+                    ),
+                ),
+                (
+                    "model",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Report',
-                'verbose_name_plural': 'Reports',
-                'ordering': ['name'],
+                "verbose_name": "Report",
+                "verbose_name_plural": "Reports",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='ReportColumn',
+            name="ReportColumn",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('column', models.CharField(max_length=255, verbose_name='Column')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('aggregation', models.CharField(blank=True, choices=[('count', ''), ('sum', '')], max_length=64, verbose_name='Aggregation')),
-                ('report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='columns', to='reports.report')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("column", models.CharField(max_length=255, verbose_name="Column")),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "aggregation",
+                    models.CharField(
+                        blank=True,
+                        choices=[("count", ""), ("sum", "")],
+                        max_length=64,
+                        verbose_name="Aggregation",
+                    ),
+                ),
+                (
+                    "report",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="columns",
+                        to="reports.report",
+                    ),
+                ),
             ],
         ),
     ]
