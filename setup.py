@@ -40,6 +40,7 @@ setup(
         "django-simple-history",
         "openpyxl",  # working with excel files
         "djangoql",
+        "requests",
         # required for task scheduling
         "celery",
         "django-celery-results",
@@ -49,9 +50,7 @@ setup(
         "whoosh",
         # TODO: review whether we can or should remove these
         "WeasyPrint",  # creating PDFs
-        "django-ckeditor",
         "backports.zoneinfo; python_version < '3.9'",
-        "requests",
     ],
     extras_require={"testing": ["hypothesis[django]", "django_dynamic_fixture"]},
     packages=find_packages(),

@@ -76,7 +76,13 @@ class Tabs(hg.DIV):
             ),
             self.tablabels,
             data_tabs=True,
-            **labelcontainer_attributes,
+            **hg.merge_html_attrs(
+                {
+                    "onload": "if( $('.bx--tabs__nav-item--selected', this) == null ) "
+                    "(new CarbonComponents.Tab(this)).setActive($('.bx--tabs__nav-item', this))"
+                },
+                labelcontainer_attributes,
+            ),
         )
         tabpanel_attributes["_class"] += " bx--tab-content"
         self.tabpanels = hg.DIV(**tabpanel_attributes)

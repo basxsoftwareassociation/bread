@@ -5,9 +5,9 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from bread import layout
+from bread.querysetfield import QuerysetField, parsequeryexpression
 
 from ...layout.components.datatable import DataTableColumn
-from .fields.queryfield import QuerysetField, parsequeryexpression
 
 
 def available_report_filters(modelfield, request, report):
