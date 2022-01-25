@@ -1,10 +1,12 @@
+from django.urls import path
+
 from bread import menu, views
 from bread.contrib.document_templates.models import DocumentTemplate
 from bread.contrib.document_templates.views import (
     DocumentTemplateEditView,
     generate_document_view,
 )
-from bread.utils import Link, autopath, default_model_paths, urls
+from bread.utils import Link, default_model_paths, urls
 
 urlpatterns = [
     *default_model_paths(
@@ -20,7 +22,11 @@ urlpatterns = [
             rowclickaction=views.BrowseView.gen_rowclickaction("edit"),
         ),
     ),
-    autopath(generate_document_view, urlname="generate-document"),
+    path(
+        "document-template/<int:template_id>/object/<int:object_id>",
+        generate_document_view,
+        name="generate-document",
+    ),
 ]
 
 menu.registeritem(
