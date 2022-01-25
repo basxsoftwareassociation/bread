@@ -580,44 +580,6 @@ def searchbar(search_urlparameter: str, model: models.Model = None):
         _class="bx--toolbar-search-container-persistent",
     )
 
-    # searchinput = Search(
-    #     widgetattributes={
-    #         "autofocus": True,
-    #         "name": search_urlparameter,
-    #         "value": hg.F(
-    #             lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
-    #         ),
-    #         "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
-    #     }
-    # )
-    # searchinput.close_button.attributes[
-    #     "onclick"
-    # ] = "this.closest('form').querySelector('input').value = ''; this.closest('form').submit()"
-    #
-    # return hg.DIV(
-    #     hg.FORM(
-    #         searchinput,
-    #         hg.Iterator(
-    #             hg.C("request").GET.lists(),
-    #             "urlparameter",
-    #             hg.If(
-    #                 hg.F(lambda c: c["urlparameter"][0] != search_urlparameter),
-    #                 hg.Iterator(
-    #                     hg.C("urlparameter")[1],
-    #                     "urlvalue",
-    #                     hg.INPUT(
-    #                         type="hidden",
-    #                         name=hg.C("urlparameter")[0],
-    #                         value=hg.C("urlvalue"),
-    #                     ),
-    #                 ),
-    #             ),
-    #         ),
-    #         method="GET",
-    #     ),
-    #     _class="bx--toolbar-search-container-persistent",
-    # )
-
 
 def sortingclass_for_column(orderingurlparameter, columnname):
     def extracturlparameter(context):
