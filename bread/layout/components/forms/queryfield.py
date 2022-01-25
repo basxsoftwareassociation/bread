@@ -21,7 +21,6 @@ class BrowseViewSearch(hg.DIV):
         disabled=False,
         **kwargs,
     ):
-        # print("defaultvalue =", defaultvalue)
         kwargs["_class"] = kwargs.get("_class", "") + f" bx--search bx--search--{size}"
         kwargs["data_search"] = True
         kwargs["role"] = "search"
@@ -33,13 +32,8 @@ class BrowseViewSearch(hg.DIV):
             "autocomplete": "off",
             "autofocus": True,
             "_class": "bx--search-input",
-            # "id": "search__" + hg.html_id(self),
             "name": "q",
             "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
-            # "type": "text",
-            # "value": hg.F(
-            #     lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
-            # ),
             **(widgetattributes or {}),
         }
 
@@ -101,6 +95,7 @@ class BrowseViewSearch(hg.DIV):
                     advanced_icon,
                     id="searchinputicon",
                 ),
+                _close_button(None, {"value": defaultvalue}),
                 **kwargs,
             ),
             hg.If(
@@ -109,92 +104,71 @@ class BrowseViewSearch(hg.DIV):
                     hg.format(
                         """
                 document.addEventListener("DOMContentLoaded", () => {{
-                    let inputContainer = document.getElementById('searchinputcontainer');
-                    let normalInput = document.getElementById('{}');
-                    let advancedInput = document.getElementById('{}');
-                    let iconContainer = document.getElementById('searchinputicon');
-                    let normalIcon = document.getElementById('searchinputicon_normal');
-                    let advancedIcon = document.getElementById('searchinputicon_advanced');
-                    let advancedMode = document.getElementById('searchinput_advancedmode');
-                    let djangoqlCompletion = document.querySelector('.djangoql-completion');
+                    const inputContainer = document.getElementById('searchinputcontainer');
+                    const normalInput = document.getElementById('{}');
+                    const advancedInput = document.getElementById('{}');
+                    const iconContainer = document.getElementById('searchinputicon');
+                    const normalIcon = document.getElementById('searchinputicon_normal');
+                    const advancedIcon = document.getElementById('searchinputicon_advanced');
+                    const advancedMode = document.getElementById('searchinput_advancedmode');
+                    const switchToNormal = () => {{
+                        inputContainer.appendChild(normalInput);
+                        inputContainer.removeChild(advancedInput);
+                        advancedMode.value = 'off';
+                        iconContainer.appendChild(normalIcon);
+                        iconContainer.removeChild(advancedIcon);
+                        const djangoqlCompletion = document.querySelector('.djangoql-completion');
+                        if (djangoqlCompletion)
+                            document.body.removeChild(djangoqlCompletion);
+                        normalInput.value = advancedInput.value;
+                        normalInput.focus();
+                    }};
+                    const switchToAdvanced = () => {{
+                        inputContainer.removeChild(normalInput);
+                        inputContainer.appendChild(advancedInput);
+                        advancedMode.value = 'on';
+                        iconContainer.removeChild(normalIcon);
+                        iconContainer.appendChild(advancedIcon);
+                        DjangoQL.DOMReady(() => {{
+                            new DjangoQL({{
+                                introspections: {},
+                                selector: "textarea[name='{}']",
+                                syntaxHelp: '{}',
+                                autoResize: false
+                            }});
+                            if (normalInput.value.length > 0) {{
+                                if (normalInput.value[0] == '=')
+                                    advancedInput.value = normalInput.value.slice(1);
+                                else
+                                    advancedInput.value = normalInput.value;
+                            }}
+                            advancedInput.focus();
+                            advancedInput.click();
+                            document.querySelector('.djangoql-completion').style.marginLeft = '3rem';
+                        }});
+                    }};
                     // actions here depend on whether the advancedmode is on.
                     {}
                     normalInput.addEventListener('input', e => {{
                         if (e.target.value.length > 0) {{
                             if (e.target.value[0] === '=') {{
-                                inputContainer.removeChild(normalInput);
-                                inputContainer.appendChild(advancedInput);
-                                advancedMode.value = 'on';
-                                iconContainer.removeChild(normalIcon);
-                                iconContainer.appendChild(advancedIcon);
-                                DjangoQL.DOMReady(() => {{
-                                    new DjangoQL({{
-                                        introspections: {},
-                                        selector: "textarea[name='{}']",
-                                        syntaxHelp: '{}',
-                                        autoResize: false
-                                    }});
-                                    advancedInput.value = e.target.value.slice(1);
-                                    advancedInput.focus();
-                                    advancedInput.click();
-                                    document.querySelector('.djangoql-completion').style.marginLeft = '3rem';
-                                }});
+                                switchToAdvanced();
                             }}
                         }}
                     }});
                     advancedInput.addEventListener('keydown', e => {{
                         if (e.target.value.length === 0 && e.key === 'Backspace') {{
-                            inputContainer.appendChild(normalInput);
-                            inputContainer.removeChild(advancedInput);
-                            advancedMode.value = 'off';
-                            iconContainer.appendChild(normalIcon);
-                            iconContainer.removeChild(advancedIcon);
-                            document.body.removeChild(document.querySelector('.djangoql-completion'));
-                            normalInput.value = advancedInput.value;
-                            normalInput.focus();
+                            switchToNormal();
                         }}
+                    }});
+                    document.querySelector('.bx--content .bx--search-close').addEventListener('click', () => {{
+                        switchToNormal();
+                        normalInput.value = '';
                     }});
                 }});
                 """,
                         normal_inputid,
                         advanced_inputid,
-                        hg.If(
-                            advancedmode,
-                            hg.format(
-                                """
-                            inputContainer.removeChild(normalInput);
-                            iconContainer.removeChild(normalIcon);
-                            advancedMode.value = 'on';
-                            DjangoQL.DOMReady(() => {{
-                                new DjangoQL({{
-                                    introspections: {},
-                                    selector: "textarea[name='{}']",
-                                    syntaxHelp: '{}',
-                                    autoResize: false
-                                }});
-                                document.querySelector('.djangoql-completion').style.marginLeft = '3rem';
-                            }});
-                            """,
-                                hg.F(
-                                    lambda context: json.dumps(
-                                        DjangoQLSchemaSerializer().serialize(
-                                            DjangoQLSchema(model)
-                                        )
-                                    )
-                                ),
-                                "q",
-                                reverse("reporthelp"),
-                                advanced_inputid,
-                                autoescape=False,
-                            ),
-                            hg.mark_safe(
-                                """
-                            inputContainer.removeChild(advancedInput);
-                            iconContainer.removeChild(advancedIcon);
-                            advancedMode.value = 'off';
-                            """
-                            ),
-                        ),
                         hg.F(
                             lambda context: json.dumps(
                                 DjangoQLSchemaSerializer().serialize(
@@ -204,10 +178,24 @@ class BrowseViewSearch(hg.DIV):
                         ),
                         "q",
                         reverse("reporthelp"),
-                        advanced_inputid,
+                        hg.If(advancedmode, "switchToAdvanced();", "switchToNormal();"),
                         autoescape=False,
                     )
                 ),
             ),
             style=hg.If(disabled, hg.BaseElement("display: none")),
         )
+
+
+def _close_button(resultcontainerid, widgetattributes):
+    kwargs = {
+        "_class": hg.BaseElement(
+            "bx--search-close",
+            hg.If(widgetattributes.get("value"), None, " bx--search-close--hidden"),
+        ),
+        "title": _("Clear search input"),
+        "aria_label": _("Clear search input"),
+        "type": "button",
+    }
+
+    return hg.BUTTON(Icon("close", size=20, _class="bx--search-clear"), **kwargs)

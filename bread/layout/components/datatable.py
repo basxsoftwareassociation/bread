@@ -1,15 +1,10 @@
 import html
-import json
-import urllib
 from typing import Any, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db import models
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from djangoql.schema import DjangoQLSchema
-from djangoql.serializers import DjangoQLSchemaSerializer
 
 from bread.layout.components.forms.queryfield import BrowseViewSearch
 from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
@@ -542,28 +537,6 @@ def searchbar(search_urlparameter: str, model: models.Model = None):
     Creates a searchbar element for datatables to submit an entered search
     term via a GET url parameter
     """
-    # searchinput = Search(
-    #     widgetattributes={
-    #         "autofocus": True,
-    #         "name": search_urlparameter,
-    #         "value": hg.F(
-    #             lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
-    #         ),
-    #         "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
-    #     }
-    # )
-    # searchinput = QuerysetFormWidget(
-    #     inputelement_attrs={
-    #         "_class": "bx--search bx--search--xl",
-    #         "name": search_urlparameter,
-    #         "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
-    #         "rows": 1,
-    #     },
-    #     style="width: 100%;",
-    # )
-    # searchinput.close_button.attributes[
-    #     "onclick"
-    # ] = "this.closest('form').querySelector('input').value = ''; this.closest('form').submit()"
 
     return hg.DIV(
         hg.FORM(
@@ -572,9 +545,7 @@ def searchbar(search_urlparameter: str, model: models.Model = None):
                     lambda c: c["request"].GET.get("advancedmode", "off") == "on"
                 ),
                 defaultvalue=hg.F(
-                    lambda c: urllib.parse.unquote(
-                        c["request"].GET.get(search_urlparameter, "")
-                    )
+                    lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
                 ),
                 model=model,
             ),
