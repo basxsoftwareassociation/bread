@@ -1,9 +1,9 @@
+import io
 import os
 
 import htmlgenerator as hg
 from django.conf import settings
-from django.core.files import File
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from docxtpl import DocxTemplate
 
 from bread import layout, views
@@ -57,12 +57,14 @@ def generate_document_view(request, template_id: int, object_id: int):
             for variable in variables
         }
     )
-    document_name = f"rendered_{os.path.basename(template_path).split('.')[0]}_object{object.id}.doc"
 
-    if not os.path.exists("tmp"):
-        os.makedirs("tmp")
-    tmp_document_path = f"tmp/{document_name}"
-    template.save(tmp_document_path)
-    with open(tmp_document_path, mode="rb") as f:
-        document = document_template.documents.create(file=File(f, name=document_name))
-    return HttpResponseRedirect(f"{settings.MEDIA_URL}{document.file.name}")
+    buf = io.BytesIO()
+    template.save(buf)
+    buf.seek(0)
+
+    document_name = (
+        f"{os.path.basename(template_path).split('.')[0]}_object{object.id}.doc"
+    )
+    response = HttpResponse(buf.read(), content_type="application/vnd.ms-excel")
+    response["Content-Disposition"] = f'attachment; filename="{document_name}"'
+    return response
