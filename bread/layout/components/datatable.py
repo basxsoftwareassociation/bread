@@ -2,7 +2,6 @@ import html
 from typing import Any, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
-from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -571,12 +570,6 @@ def searchbar(search_urlparameter: str, model: models.Model = None):
             method="GET",
             name="browseviewsearchform",
         ),
-        hg.LINK(
-            rel="stylesheet",
-            type="text/css",
-            href=staticfiles_storage.url("djangoql/css/completion.css"),
-        ),
-        hg.SCRIPT(src=staticfiles_storage.url("djangoql/js/completion.js")),
         _class="bx--toolbar-search-container-persistent",
     )
 

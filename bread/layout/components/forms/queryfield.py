@@ -1,6 +1,7 @@
 import json
 
 import htmlgenerator as hg
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from djangoql.schema import DjangoQLSchema
@@ -100,9 +101,10 @@ class BrowseViewSearch(hg.DIV):
             ),
             hg.If(
                 model,
-                hg.SCRIPT(
-                    hg.format(
-                        """
+                hg.BaseElement(
+                    hg.SCRIPT(
+                        hg.format(
+                            """
                 document.addEventListener("DOMContentLoaded", () => {{
                     const inputContainer = document.getElementById('searchinputcontainer');
                     const normalInput = document.getElementById('{}');
@@ -167,20 +169,29 @@ class BrowseViewSearch(hg.DIV):
                     }});
                 }});
                 """,
-                        normal_inputid,
-                        advanced_inputid,
-                        hg.F(
-                            lambda context: json.dumps(
-                                DjangoQLSchemaSerializer().serialize(
-                                    DjangoQLSchema(model)
+                            normal_inputid,
+                            advanced_inputid,
+                            hg.F(
+                                lambda context: json.dumps(
+                                    DjangoQLSchemaSerializer().serialize(
+                                        DjangoQLSchema(model)
+                                    )
                                 )
-                            )
-                        ),
-                        "q",
-                        reverse("reporthelp"),
-                        hg.If(advancedmode, "switchToAdvanced();", "switchToNormal();"),
-                        autoescape=False,
-                    )
+                            ),
+                            "q",
+                            reverse("reporthelp"),
+                            hg.If(
+                                advancedmode, "switchToAdvanced();", "switchToNormal();"
+                            ),
+                            autoescape=False,
+                        )
+                    ),
+                    hg.LINK(
+                        rel="stylesheet",
+                        type="text/css",
+                        href=staticfiles_storage.url("djangoql/css/completion.css"),
+                    ),
+                    hg.SCRIPT(src=staticfiles_storage.url("djangoql/js/completion.js")),
                 ),
             ),
             style=hg.If(disabled, hg.BaseElement("display: none")),
