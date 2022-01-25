@@ -1,11 +1,12 @@
 import datetime
 
 from django.apps import AppConfig
+from django.conf import settings
 from django.utils import timezone
 
 from bread.utils import get_concrete_instance
 
-TRIGGER_PERIOD = datetime.timedelta(seconds=10)
+TRIGGER_PERIOD = getattr(settings, "TRIGGER_PERIOD", datetime.timedelta(hours=1))
 
 
 class TriggersConfig(AppConfig):
