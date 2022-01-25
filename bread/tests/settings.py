@@ -1,6 +1,10 @@
 from bread.settings.required import *  # noqa
 
-INSTALLED_APPS = BREAD_DEPENDENCIES + ["django.contrib.admin"]  # noqa
+INSTALLED_APPS = BREAD_DEPENDENCIES + [  # noqa
+    "django.contrib.admin",
+    "bread.contrib.reports",
+    "bread.contrib.triggers",
+]
 SECRET_KEY = "test"  # nosec because this is only used to run tests
 ROOT_URLCONF = "bread.tests.urls"
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}}

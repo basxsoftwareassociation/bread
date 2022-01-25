@@ -28,7 +28,6 @@ setup(
     install_requires=[
         # core dependencies
         "Django",
-        "dateparser",
         "htmlgenerator",  # replacement for django templates
         "django-extensions",  # bunch of usefull management commands and functions
         "django-guardian",  # object level permissions

@@ -1,3 +1,5 @@
+import datetime
+
 import htmlgenerator as hg
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -5,10 +7,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
 from django.db import models
 from django.template import engines
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from bread.contrib.reports.fields.queryfield import QuerysetField
 from bread.formatters import is_email_simple
+from bread.querysetfield import QuerysetField
 
 syntax_email_field = """
 Syntax:
@@ -126,18 +129,36 @@ class DataChangeTrigger(Trigger):
         verbose_name_plural = _("Data change triggers")
 
 
+INTERVAL_CHOICES = {
+    "hours": (datetime.timedelta(hours=1), _("Hours")),
+    "days": (datetime.timedelta(days=1), _("Days")),
+    "weeks": (datetime.timedelta(days=7), _("Weeks")),
+    "months": (datetime.timedelta(days=30.5), _("Months")),  # approximation
+    "years": (datetime.timedelta(days=365.25), _("Years")),  # approximation
+}
+
+
 class DateFieldTrigger(Trigger):
     field = models.CharField(max_length=255)
-    date_offset = models.CharField(
+    offset_type = models.CharField(
         max_length=255,
-        help_text=_(
-            "Use e.g. '2 days ago' or 'in 2 week' to trigger 2 days "
-            "before the specified date field or 2 weeks after it "
-        ),
+        choices=tuple((name, value[1]) for name, value in INTERVAL_CHOICES.items()),
+    )
+    offset_amount = models.IntegerField(
+        help_text=_("Can be negative (before) or positive (after)")
     )
 
+    def triggerdate(self, object):
+        field_value = getattr(object, self.field)
+        if isinstance(field_value, datetime.date):
+            field_value = timezone.make_aware(
+                datetime.datetime.combine(field_value, datetime.time())
+            )
+
+        return field_value + INTERVAL_CHOICES[self.offset_type][0] * self.offset_amount
+
     def __str__(self):
-        return f"{self.model} Trigger: {self.action} when {self.type})"
+        return f"{self.model} Trigger: {self.action} on: {abs(self.offset_amount)} {self.get_offset_type_display()} {'before' if self.offset_amount < 0 else 'after'} {self.model}.{self.field})"
 
     class Meta:
         verbose_name = _("Date field trigger")

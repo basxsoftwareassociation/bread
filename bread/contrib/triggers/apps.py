@@ -1,9 +1,9 @@
 import datetime
 
-import dateparser
-import htmlgenerator as hg
 from django.apps import AppConfig
 from django.utils import timezone
+
+from bread.utils import get_concrete_instance
 
 TRIGGER_PERIOD = datetime.timedelta(hours=1)
 
@@ -36,8 +36,6 @@ def delete_handler(sender, instance, **kwargs):
 def datachange_trigger(model, instance, type):
     from django.contrib.contenttypes.models import ContentType
 
-    from bread.utils import get_concrete_instance
-
     from .models import DataChangeTrigger
 
     for trigger in DataChangeTrigger.objects.filter(
@@ -48,18 +46,14 @@ def datachange_trigger(model, instance, type):
 
 
 def periodic_trigger():
+
     from .models import DateFieldTrigger
 
     for trigger in DateFieldTrigger.objects.filter(enable=True):
-        for object in trigger.filter.queryset.all():
-            datefield_value = hg.resolve_lookup(object, trigger.field)
-            if isinstance(datefield_value, (datetime.datetime, datetime.date)):
-                if isinstance(datefield_value, datetime.date):
-                    datefield_value = datetime.datetime.combine(
-                        datefield_value, datetime.time()
-                    )
-                triggerdate = dateparser.parse(
-                    trigger.offset, settings={"RELATIVE_BASE": datefield_value}
-                )
-                if timezone.now() <= triggerdate < timezone.now() + TRIGGER_PERIOD:
-                    trigger.action(object)
+        for instance in trigger.filter.queryset.all():
+            if (
+                timezone.now()
+                <= trigger.triggerdate(instance)
+                < timezone.now() + TRIGGER_PERIOD
+            ):
+                get_concrete_instance(trigger.action).run(instance)
