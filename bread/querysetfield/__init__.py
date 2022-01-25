@@ -59,7 +59,7 @@ class QuerysetField(models.TextField):
         return name, path, args, {"modelfieldname": self.modelfieldname, **kwargs}
 
     def contribute_to_class(self, cls, name, **kwargs):
-        super().contribute_to_class(cls, name)
+        super().contribute_to_class(cls, name, **kwargs)
         setattr(cls, self.name, self.descriptor_class(self))
 
     def get_clean_value(self, value):
