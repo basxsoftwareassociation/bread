@@ -2,43 +2,43 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 
 
-def quickregister(urlpatterns, model, menugroup=None):
-    import htmlgenerator as hg
+def quickregister(
+    urlpatterns,
+    model,
+    menugroup=None,
+    with_editaction=True,
+    with_deleteaction=True,
+    with_menuitem=True,
+    **kwargs,
+):
 
     from bread import menu
-    from bread.utils.links import Link, ModelHref
-    from bread.utils.urls import default_model_paths
     from bread.views import BrowseView
 
-    urlpatterns.extend(
-        default_model_paths(
-            model,
-            browseview=BrowseView._with(
-                rowactions=(
-                    Link(
-                        href=ModelHref(
-                            model,
-                            "edit",
-                            kwargs={"pk": hg.C("row.id")},
-                            query={"next": hg.C("request.get_full_path")},
-                        ),
-                        label="Edit",
-                        iconname="edit",
-                    ),
-                )
-            ),
-        )
-    )
+    from .links import Link, ModelHref
+    from .urls import default_model_paths
 
-    menu.registeritem(
-        menu.Item(
-            Link(
-                ModelHref(model, "browse"),
-                model._meta.verbose_name_plural.title(),
-            ),
-            model._meta.app_label.title() if menugroup is None else menugroup,
-        )
+    rowactions = []
+    if with_editaction:
+        rowactions.append(BrowseView.editlink())
+    if with_deleteaction:
+        rowactions.append(BrowseView.deletelink())
+
+    kwargs["browseview"] = kwargs.get("browseview", BrowseView)._with(
+        rowactions=rowactions
     )
+    urlpatterns.extend(default_model_paths(model, **kwargs))
+
+    if with_menuitem:
+        menu.registeritem(
+            menu.Item(
+                Link(
+                    ModelHref(model, "browse"),
+                    model._meta.verbose_name_plural.title(),
+                ),
+                model._meta.app_label.title() if menugroup is None else menugroup,
+            )
+        )
 
 
 def pretty_modelname(model, plural=False):
