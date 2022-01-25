@@ -235,9 +235,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         qs = super().get_queryset()
         if self.search_urlparameter and self.search_urlparameter in self.request.GET:
             searchquery = self.request.GET[self.search_urlparameter].strip()
-            if searchquery.startswith("="):
+            if self.request.GET.get("advancedmode", "off") == "on":
                 try:
-                    qs = apply_search(qs, searchquery[1:])
+                    qs = apply_search(qs, searchquery)
                 except DjangoQLError as e:
                     messages.error(
                         self.request,

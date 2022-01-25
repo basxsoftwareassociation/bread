@@ -1,5 +1,6 @@
 import html
 import json
+import urllib
 from typing import Any, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
@@ -149,6 +150,7 @@ class DataTable(hg.TABLE):
         pagination_config: Optional[PaginationConfig] = None,
         checkbox_for_bulkaction_name: str = "_selected",
         search_urlparameter: Optional[str] = None,
+        model: Optional[models.Model] = None,
         settingspanel: Any = None,
     ):
         """
@@ -262,7 +264,9 @@ class DataTable(hg.TABLE):
                     aria_label=_("Table Action Bar"),
                 ),
                 hg.DIV(
-                    searchbar(search_urlparameter) if search_urlparameter else None,
+                    searchbar(search_urlparameter, model)
+                    if search_urlparameter
+                    else None,
                     Button(
                         icon="settings--adjust",
                         buttontype="ghost",
@@ -442,6 +446,7 @@ class DataTable(hg.TABLE):
             pagination_config=pagination_config,
             checkbox_for_bulkaction_name=checkbox_for_bulkaction_name,
             search_urlparameter=search_urlparameter,
+            model=model,
             settingspanel=settingspanel,
         )
 
@@ -532,7 +537,7 @@ class DataTableColumn(NamedTuple):
         return hg.TH(headcontent, lazy_attributes=self.th_attributes)
 
 
-def searchbar(search_urlparameter: str):
+def searchbar(search_urlparameter: str, model: models.Model = None):
     """
     Creates a searchbar element for datatables to submit an entered search
     term via a GET url parameter
@@ -563,15 +568,24 @@ def searchbar(search_urlparameter: str):
     return hg.DIV(
         hg.FORM(
             BrowseViewSearch(
-                defaultvalue=hg.F(
-                    lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
+                advancedmode=hg.F(
+                    lambda c: c["request"].GET.get("advancedmode", "off") == "on"
                 ),
+                defaultvalue=hg.F(
+                    lambda c: urllib.parse.unquote(
+                        c["request"].GET.get(search_urlparameter, "")
+                    )
+                ),
+                model=model,
             ),
             hg.Iterator(
                 hg.C("request").GET.lists(),
                 "urlparameter",
                 hg.If(
-                    hg.F(lambda c: c["urlparameter"][0] != search_urlparameter),
+                    hg.F(
+                        lambda c: c["urlparameter"][0]
+                        not in (search_urlparameter, "advancedmode")
+                    ),
                     hg.Iterator(
                         hg.C("urlparameter")[1],
                         "urlvalue",
@@ -584,7 +598,7 @@ def searchbar(search_urlparameter: str):
                 ),
             ),
             method="GET",
-            onsubmit="",
+            name="browseviewsearchform",
         ),
         hg.LINK(
             rel="stylesheet",
@@ -592,35 +606,6 @@ def searchbar(search_urlparameter: str):
             href=staticfiles_storage.url("djangoql/css/completion.css"),
         ),
         hg.SCRIPT(src=staticfiles_storage.url("djangoql/js/completion.js")),
-        # hg.SCRIPT(
-        #     hg.format(
-        #         """
-        #         document.querySelector("textarea[name='{}']").value = '{}';
-        #         document.addEventListener("DOMContentLoaded", () => DjangoQL.DOMReady(function () {{
-        #             new DjangoQL({{
-        #                 introspections: {},
-        #                 selector: "textarea[name='{}']",
-        #                 syntaxHelp: '{}',
-        #                 autoResize: false
-        #             }});
-        #         }}));
-        #     """,
-        #         search_urlparameter,
-        #         hg.F(
-        #             lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
-        #         ),
-        #         hg.F(
-        #             lambda context: json.dumps(
-        #                 DjangoQLSchemaSerializer().serialize(
-        #                     DjangoQLSchema(context["object_list"][0]._meta.model)
-        #                 )
-        #             )
-        #         ),
-        #         "q",
-        #         reverse("reporthelp"),
-        #         autoescape=False,
-        #     ),
-        # ),
         _class="bx--toolbar-search-container-persistent",
     )
 
