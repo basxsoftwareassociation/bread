@@ -14,10 +14,9 @@ class TriggersConfig(AppConfig):
 
     def ready(self):
 
+        from bread.utils.celery import RepeatedTask
         from celery import shared_task
         from django.db.models.signals import post_delete, post_save
-
-        from bread.utils.celery import RepeatedTask
 
         post_save.connect(save_handler, dispatch_uid="trigger_save")
         post_delete.connect(delete_handler, dispatch_uid="trigger_delete")
@@ -34,6 +33,7 @@ def delete_handler(sender, instance, **kwargs):
 
 
 def datachange_trigger(model, instance, type):
+    from bread.utils import get_concrete_instance
     from django.contrib.contenttypes.models import ContentType
 
     from .models import DataChangeTrigger
@@ -42,7 +42,7 @@ def datachange_trigger(model, instance, type):
         model=ContentType.objects.get_for_model(model), type=type, enable=True
     ):
         if trigger.filter.queryset.filter(id=instance.id).exists():
-            trigger.action.run(instance)
+            get_concrete_instance(trigger.action).run(instance)
 
 
 def periodic_trigger():
