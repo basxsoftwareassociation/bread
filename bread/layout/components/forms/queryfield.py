@@ -39,6 +39,7 @@ class BrowseViewSearch(hg.DIV):
         }
 
         normal_inputid = "normal_search__" + hg.html_id(self)
+        normal_placeholder = placeholder or _("Search")
         normal_input = hg.INPUT(
             id=normal_inputid,
             type="text",
@@ -54,6 +55,7 @@ class BrowseViewSearch(hg.DIV):
             aria_hidden="true",
         )
         advanced_inputid = "advanced_search__" + hg.html_id(self)
+        advanced_placeholder = _("Advanced Search (Press Backspace again to exit)")
         advanced_input = hg.If(
             model,
             hg.TEXTAREA(
@@ -85,7 +87,7 @@ class BrowseViewSearch(hg.DIV):
         super().__init__(
             hg.DIV(
                 hg.DIV(
-                    normal_input,
+                    # normal_input,
                     advanced_input,
                     advanced_mode,
                     id="searchinputcontainer",
@@ -106,28 +108,31 @@ class BrowseViewSearch(hg.DIV):
                         hg.format(
                             """
                 document.addEventListener("DOMContentLoaded", () => {{
-                    const inputContainer = document.getElementById('searchinputcontainer');
-                    const normalInput = document.getElementById('{}');
+                    window.advancedSearchEnabled = false;
+                    // const inputContainer = document.getElementById('searchinputcontainer');
+                    // const normalInput = document.getElementById('{}');
                     const advancedInput = document.getElementById('{}');
                     const iconContainer = document.getElementById('searchinputicon');
                     const normalIcon = document.getElementById('searchinputicon_normal');
                     const advancedIcon = document.getElementById('searchinputicon_advanced');
                     const advancedMode = document.getElementById('searchinput_advancedmode');
                     const switchToNormal = () => {{
-                        inputContainer.appendChild(normalInput);
-                        inputContainer.removeChild(advancedInput);
+                        advancedSearchEnabled = false;
+                        // inputContainer.appendChild(normalInput);
+                        // inputContainer.removeChild(advancedInput);
                         advancedMode.value = 'off';
                         iconContainer.appendChild(normalIcon);
                         iconContainer.removeChild(advancedIcon);
                         const djangoqlCompletion = document.querySelector('.djangoql-completion');
                         if (djangoqlCompletion)
                             document.body.removeChild(djangoqlCompletion);
-                        normalInput.value = advancedInput.value;
-                        normalInput.focus();
+                        advancedInput.placeholder = '{}';
+                        advancedInput.focus();
                     }};
                     const switchToAdvanced = () => {{
-                        inputContainer.removeChild(normalInput);
-                        inputContainer.appendChild(advancedInput);
+                        window.advancedSearchEnabled = true;
+                        // inputContainer.removeChild(normalInput);
+                        // inputContainer.appendChild(advancedInput);
                         advancedMode.value = 'on';
                         iconContainer.removeChild(normalIcon);
                         iconContainer.appendChild(advancedIcon);
@@ -138,12 +143,11 @@ class BrowseViewSearch(hg.DIV):
                                 syntaxHelp: '{}',
                                 autoResize: false
                             }});
-                            if (normalInput.value.length > 0) {{
-                                if (normalInput.value[0] == '=')
-                                    advancedInput.value = normalInput.value.slice(1);
-                                else
-                                    advancedInput.value = normalInput.value;
+                            if (advancedInput.value.length > 0) {{
+                                if (advancedInput.value[0] == '=')
+                                    advancedInput.value = advancedInput.value.slice(1);
                             }}
+                            advancedInput.placeholder = '{}';
                             advancedInput.focus();
                             advancedInput.click();
                             document.querySelector('.djangoql-completion').style.marginLeft = '3rem';
@@ -151,26 +155,32 @@ class BrowseViewSearch(hg.DIV):
                     }};
                     // actions here depend on whether the advancedmode is on.
                     {}
-                    normalInput.addEventListener('input', e => {{
-                        if (e.target.value.length > 0) {{
-                            if (e.target.value[0] === '=') {{
-                                switchToAdvanced();
+                    advancedInput.addEventListener('input', e => {{
+                        if (!window.advancedSearchEnabled) {{
+                            if (e.target.value.length > 0) {{
+                                if (e.target.value[0] === '=') {{
+                                    switchToAdvanced();
+                                }}
                             }}
                         }}
                     }});
                     advancedInput.addEventListener('keydown', e => {{
-                        if (e.target.value.length === 0 && e.key === 'Backspace') {{
-                            switchToNormal();
+                        console.log(e);
+                        if (window.advancedSearchEnabled) {{
+                            if (e.target.selectionStart === 0 && e.target.selectionEnd === 0 && e.key === 'Backspace') {{
+                                switchToNormal();
+                            }}
                         }}
                     }});
                     document.querySelector('.bx--content .bx--search-close').addEventListener('click', () => {{
                         switchToNormal();
-                        normalInput.value = '';
+                        advancedInput.value = '';
                     }});
                 }});
                 """,
                             normal_inputid,
                             advanced_inputid,
+                            normal_placeholder,
                             hg.F(
                                 lambda context: json.dumps(
                                     DjangoQLSchemaSerializer().serialize(
@@ -180,6 +190,7 @@ class BrowseViewSearch(hg.DIV):
                             ),
                             "q",
                             reverse("reporthelp"),
+                            advanced_placeholder,
                             hg.If(
                                 advancedmode, "switchToAdvanced();", "switchToNormal();"
                             ),
