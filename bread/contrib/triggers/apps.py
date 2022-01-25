@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from bread.utils import get_concrete_instance
 
-TRIGGER_PERIOD = datetime.timedelta(hours=1)
+TRIGGER_PERIOD = datetime.timedelta(seconds=10)
 
 
 class TriggersConfig(AppConfig):
@@ -51,9 +51,9 @@ def periodic_trigger():
 
     for trigger in DateFieldTrigger.objects.filter(enable=True):
         for instance in trigger.filter.queryset.all():
+            td = trigger.triggerdate(instance)
             if (
-                timezone.now()
-                <= trigger.triggerdate(instance)
-                < timezone.now() + TRIGGER_PERIOD
+                td is not None
+                and timezone.now() <= td < timezone.now() + TRIGGER_PERIOD
             ):
                 get_concrete_instance(trigger.action).run(instance)

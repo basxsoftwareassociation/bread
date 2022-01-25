@@ -130,6 +130,7 @@ class DataChangeTrigger(Trigger):
 
 
 INTERVAL_CHOICES = {
+    "minutes": (datetime.timedelta(minutes=1), _("Minutes")),
     "hours": (datetime.timedelta(hours=1), _("Hours")),
     "days": (datetime.timedelta(days=1), _("Days")),
     "weeks": (datetime.timedelta(days=7), _("Weeks")),
@@ -150,7 +151,11 @@ class DateFieldTrigger(Trigger):
 
     def triggerdate(self, object):
         field_value = getattr(object, self.field)
-        if isinstance(field_value, datetime.date):
+        if field_value is None:
+            return None
+        if isinstance(field_value, datetime.date) and not isinstance(
+            field_value, datetime.datetime
+        ):
             field_value = timezone.make_aware(
                 datetime.datetime.combine(field_value, datetime.time())
             )
