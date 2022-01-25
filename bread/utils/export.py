@@ -5,19 +5,7 @@ import re
 import htmlgenerator as hg
 from django.conf import settings
 from django.http import HttpResponse
-from django.template import Context, Template
 from django.utils.html import strip_tags
-
-
-def render_template(value, context):
-    """
-    Renders a template text with values:
-    [[ XXX ]] will be replace with context["XXX"]
-    Use to work with CKEditor template tags
-    """
-    return Template(value.replace("[[", "{{").replace("]]", "}}")).render(
-        Context(context)
-    )
 
 
 def html_to_pdf(html, as_http_response=False, name=None):

@@ -17,7 +17,6 @@ PreferencesView = type(
 )
 
 external_urlpatterns = [
-    path("ckeditor/", include("ckeditor_uploader.urls")),
     path(
         "preferences/",
         include(

@@ -1,6 +1,7 @@
 import json
 
 import htmlgenerator as hg
+from django import forms
 from django.core import checks
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db import models
@@ -103,9 +104,16 @@ class QuerysetField(models.TextField):
             getattr(model_instance, self.modelfieldname).model_class().objects, value
         )
 
+    def formfield(self, **kwargs):
+        return super().formfield(**{**kwargs, "form_class": QuerysetFormField})
+
+
+class QuerysetFormField(forms.CharField):
+    pass
+
 
 class QuerysetFormWidget(layout.forms.widgets.Textarea):
-    django_widget = None
+    django_widget = QuerysetFormField
 
     def __init__(
         self,
