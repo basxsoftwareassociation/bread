@@ -295,6 +295,36 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             iconname=None,
         )
 
+    @staticmethod
+    def editlink(return_to_current=True):
+        return Link(
+            href=ModelHref(
+                hg.C("row"),
+                "edit",
+                kwargs={"pk": hg.C("row.id")},
+                query={"next": hg.C("request.get_full_path")}
+                if return_to_current
+                else {},
+            ),
+            label=_("Edit"),
+            iconname="edit",
+        )
+
+    @staticmethod
+    def deletelink(return_to_current=True):
+        return Link(
+            href=ModelHref(
+                hg.C("row"),
+                "delete",
+                kwargs={"pk": hg.C("row.id")},
+                query={"next": hg.C("request.get_full_path")}
+                if return_to_current
+                else {},
+            ),
+            label=_("Delete"),
+            iconname="delete",
+        )
+
 
 # helper function to export a queryset to excel
 def export(queryset, columns):
