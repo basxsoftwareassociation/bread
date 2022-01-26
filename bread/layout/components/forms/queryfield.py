@@ -38,15 +38,7 @@ class BrowseViewSearch(hg.DIV):
             **(widgetattributes or {}),
         }
 
-        normal_inputid = "normal_search__" + hg.html_id(self)
         normal_placeholder = placeholder or _("Search")
-        normal_input = hg.INPUT(
-            id=normal_inputid,
-            type="text",
-            value=defaultvalue,
-            placeholder=placeholder or _("Search"),
-            **widgetattributes,
-        )
         normal_icon = Icon(
             "search",
             size=16,
@@ -63,7 +55,7 @@ class BrowseViewSearch(hg.DIV):
                 rows=1,
                 id=advanced_inputid,
                 style="padding-top: 1rem;",
-                placeholder=_("Advanced Search (Press Backspace again to exit)"),
+                placeholder=normal_placeholder,
                 **widgetattributes,
             ),
         )
@@ -87,7 +79,6 @@ class BrowseViewSearch(hg.DIV):
         super().__init__(
             hg.DIV(
                 hg.DIV(
-                    # normal_input,
                     advanced_input,
                     advanced_mode,
                     id="searchinputcontainer",
@@ -109,8 +100,6 @@ class BrowseViewSearch(hg.DIV):
                             """
                 document.addEventListener("DOMContentLoaded", () => {{
                     window.advancedSearchEnabled = false;
-                    // const inputContainer = document.getElementById('searchinputcontainer');
-                    // const normalInput = document.getElementById('{}');
                     const advancedInput = document.getElementById('{}');
                     const iconContainer = document.getElementById('searchinputicon');
                     const normalIcon = document.getElementById('searchinputicon_normal');
@@ -118,8 +107,6 @@ class BrowseViewSearch(hg.DIV):
                     const advancedMode = document.getElementById('searchinput_advancedmode');
                     const switchToNormal = () => {{
                         advancedSearchEnabled = false;
-                        // inputContainer.appendChild(normalInput);
-                        // inputContainer.removeChild(advancedInput);
                         advancedMode.value = 'off';
                         iconContainer.appendChild(normalIcon);
                         iconContainer.removeChild(advancedIcon);
@@ -131,8 +118,6 @@ class BrowseViewSearch(hg.DIV):
                     }};
                     const switchToAdvanced = () => {{
                         window.advancedSearchEnabled = true;
-                        // inputContainer.removeChild(normalInput);
-                        // inputContainer.appendChild(advancedInput);
                         advancedMode.value = 'on';
                         iconContainer.removeChild(normalIcon);
                         iconContainer.appendChild(advancedIcon);
@@ -165,7 +150,6 @@ class BrowseViewSearch(hg.DIV):
                         }}
                     }});
                     advancedInput.addEventListener('keydown', e => {{
-                        console.log(e);
                         if (window.advancedSearchEnabled) {{
                             if (e.target.selectionStart === 0 && e.target.selectionEnd === 0 && e.key === 'Backspace') {{
                                 switchToNormal();
@@ -178,7 +162,6 @@ class BrowseViewSearch(hg.DIV):
                     }});
                 }});
                 """,
-                            normal_inputid,
                             advanced_inputid,
                             normal_placeholder,
                             hg.F(
