@@ -209,7 +209,12 @@ def componentpreview(request):
                     hg.DIV(
                         layout.components.tooltip.InteractiveTooltip(
                             label="Tooltip label",
-                            body="This is some tooltip text. This box shows the maximum amount of text that should appear inside. If more room is needed please use a modal instead.",
+                            body=(
+                                _(
+                                    "This is some tooltip text. This box shows the maximum amount of text that should "
+                                    "appear inside. If more room is needed please use a modal instead."
+                                )
+                            ),
                             heading="Heading within a Tooltip",
                             button=(layout.components.button.Button("Button")),
                             link=Link(href="#", label="link"),
