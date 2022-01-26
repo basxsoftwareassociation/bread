@@ -31,9 +31,7 @@ class DocumentTemplateEditView(views.EditView):
                 hg.DIV(
                     hg.A(
                         hg.C("document").file,
-                        href=hg.format(
-                            "{}/{}", settings.MEDIA_URL, hg.C("document").file
-                        ),
+                        href=hg.C("document").url,
                     ),
                 ),
             ),
