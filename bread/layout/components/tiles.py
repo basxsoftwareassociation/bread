@@ -54,12 +54,12 @@ class ExpandableTile(Tile):
             the primary content of the tile that is not hidden under the fold
         below : Any
             the hidden content that only visible when user click to unfold the tile
-        above_attrs : Any, optional
+        above_attrs : dict, optional
             dict representing the specific HTML attributes for the visible content
             within the above parameter,
             for example, {'style': 'height: 400px'} is usually used if you do not
             want the height to depend on the content inside.
-        below_attrs : Any, optional
+        below_attrs : dict, optional
             dict representing the specific HTML attributes for the hidden content,
             within the below parameter,
             for example, {'style': 'height: 400px'} is usually used if you do not
@@ -74,15 +74,13 @@ class ExpandableTile(Tile):
         }
         hg.merge_html_attrs(attributes, expandable_tile_attrs)
 
-        if not above_attrs:
-            above_attrs = {}
+        above_attrs = above_attrs or {}
         hg.merge_html_attrs(
             above_attrs,
             {"data_tile_atf": True, "_class": "bx--tile-content__above-the-fold"},
         )
 
-        if not below_attrs:
-            below_attrs = {}
+        below_attrs = below_attrs or {}
         hg.merge_html_attrs(below_attrs, {"_class": "bx--tile-content__below-the-fold"})
 
         super().__init__(
