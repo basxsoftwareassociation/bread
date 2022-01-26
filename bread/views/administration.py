@@ -58,7 +58,7 @@ def maintenancesettings(request):
 
 
 @aslayout
-def widgetpreview(request):
+def componentpreview(request):
     class ConfigForm(forms.Form):
         with_label = forms.BooleanField(required=False)
         with_helptext = forms.BooleanField(required=False)

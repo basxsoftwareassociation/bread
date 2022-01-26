@@ -99,9 +99,9 @@ urlpatterns = [
         name="breadadmin.maintenance",
     ),
     path(
-        "admin/widgetpreview",
-        administration.widgetpreview,
-        name="breadadmin.widgetpreview",
+        "admin/componentpreview",
+        administration.componentpreview,
+        name="breadadmin.componentpreview",
     ),
     *default_model_paths(
         django_celery_results.models.TaskResult,
