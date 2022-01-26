@@ -60,7 +60,7 @@ class ExpandableTile(Tile):
             for example, {'style': 'height: 400px'} is usually used if you do not
             want the height to depend on the content inside.
         below_attrs : dict, optional
-            dict representing the specific HTML attributes for the hidden content,
+            dict representing the specific HTML attributes for the hidden content
             within the below parameter,
             for example, {'style': 'height: 400px'} is usually used if you do not
             want the height to depend on the content inside.
