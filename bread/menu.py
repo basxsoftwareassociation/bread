@@ -134,6 +134,18 @@ def registeritem(item):
 # global main menu
 main = Menu()
 
+settingsgroup = Group(_("Settings"), iconname="settings", order=100)
+
+registeritem(
+    Item(
+        Link(
+            reverse("preferences:global"),
+            _("Global Settings"),
+        ),
+        settingsgroup,
+    )
+)
+
 # The Administration items are registered by default.
 admingroup = DevGroup(_("Administration"), iconname="network--3--reference", order=500)
 registeritem(
