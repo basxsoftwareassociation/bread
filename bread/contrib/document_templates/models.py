@@ -2,8 +2,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from bread.contrib.reports.fields.queryfield import QuerysetField
-
 
 class DocumentTemplate(models.Model):
     name = models.CharField(_("Name"), max_length=255)
@@ -11,7 +9,6 @@ class DocumentTemplate(models.Model):
         ContentType,
         on_delete=models.PROTECT,
     )
-    filter = QuerysetField(_("Filter"), modelfieldname="model")
     file = models.FileField(upload_to="document_templates/")
 
     def __str__(self):
