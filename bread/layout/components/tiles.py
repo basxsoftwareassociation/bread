@@ -55,13 +55,13 @@ class ExpandableTile(Tile):
         below : Any
             the hidden content that only visible when user click to unfold the tile
         above_attrs : dict, optional
-            dict representing the specific HTML attributes for the visible content
-            within the above parameter,
+            dict representing the specific HTML attributes for the visible element
+            container within the above parameter,
             for example, {'style': 'height: 400px'} is usually used if you do not
             want the height to depend on the content inside.
         below_attrs : dict, optional
-            dict representing the specific HTML attributes for the hidden content
-            within the below parameter,
+            dict representing the specific HTML attributes for the hidden element
+            container within the below parameter,
             for example, {'style': 'height: 400px'} is usually used if you do not
             want the height to depend on the content inside.
         **attributes : optional
