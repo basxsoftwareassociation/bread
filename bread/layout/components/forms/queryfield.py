@@ -46,19 +46,7 @@ class BrowseViewSearch(hg.DIV):
             id="searchinputicon_normal",
             aria_hidden="true",
         )
-        advanced_inputid = "advanced_search__" + hg.html_id(self)
         advanced_placeholder = _("Advanced Search (Press Backspace again to exit)")
-        advanced_input = hg.If(
-            model,
-            hg.TEXTAREA(
-                defaultvalue,
-                rows=1,
-                id=advanced_inputid,
-                style="padding-top: 1rem;",
-                placeholder=normal_placeholder,
-                **widgetattributes,
-            ),
-        )
         advanced_icon = hg.If(
             model,
             Icon(
@@ -75,11 +63,23 @@ class BrowseViewSearch(hg.DIV):
             name="advancedmode",
             value="off",
         )
+        search_inputid = "browseview_search__" + hg.html_id(self)
+        search_input = hg.If(
+            model,
+            hg.TEXTAREA(
+                defaultvalue,
+                rows=1,
+                id=search_inputid,
+                style="padding-top: 1rem;",
+                placeholder=normal_placeholder,
+                **widgetattributes,
+            ),
+        )
 
         super().__init__(
             hg.DIV(
                 hg.DIV(
-                    advanced_input,
+                    search_input,
                     advanced_mode,
                     id="searchinputcontainer",
                     style="width: 100%;",
@@ -100,7 +100,7 @@ class BrowseViewSearch(hg.DIV):
                             """
                 document.addEventListener("DOMContentLoaded", () => {{
                     window.advancedSearchEnabled = false;
-                    const advancedInput = document.getElementById('{}');
+                    const searchInput = document.getElementById('{}');
                     const iconContainer = document.getElementById('searchinputicon');
                     const normalIcon = document.getElementById('searchinputicon_normal');
                     const advancedIcon = document.getElementById('searchinputicon_advanced');
@@ -113,8 +113,8 @@ class BrowseViewSearch(hg.DIV):
                         const djangoqlCompletion = document.querySelector('.djangoql-completion');
                         if (djangoqlCompletion)
                             document.body.removeChild(djangoqlCompletion);
-                        advancedInput.placeholder = '{}';
-                        advancedInput.focus();
+                        searchInput.placeholder = '{}';
+                        searchInput.focus();
                     }};
                     const switchToAdvanced = () => {{
                         window.advancedSearchEnabled = true;
@@ -128,19 +128,19 @@ class BrowseViewSearch(hg.DIV):
                                 syntaxHelp: '{}',
                                 autoResize: false
                             }});
-                            if (advancedInput.value.length > 0) {{
-                                if (advancedInput.value[0] == '=')
-                                    advancedInput.value = advancedInput.value.slice(1);
+                            if (searchInput.value.length > 0) {{
+                                if (searchInput.value[0] == '=')
+                                    searchInput.value = searchInput.value.slice(1);
                             }}
-                            advancedInput.placeholder = '{}';
-                            advancedInput.focus();
-                            advancedInput.click();
+                            searchInput.placeholder = '{}';
+                            searchInput.focus();
+                            searchInput.click();
                             document.querySelector('.djangoql-completion').style.marginLeft = '3rem';
                         }});
                     }};
                     // actions here depend on whether the advancedmode is on.
                     {}
-                    advancedInput.addEventListener('input', e => {{
+                    searchInput.addEventListener('input', e => {{
                         if (!window.advancedSearchEnabled) {{
                             if (e.target.value.length > 0) {{
                                 if (e.target.value[0] === '=') {{
@@ -149,7 +149,7 @@ class BrowseViewSearch(hg.DIV):
                             }}
                         }}
                     }});
-                    advancedInput.addEventListener('keydown', e => {{
+                    searchInput.addEventListener('keydown', e => {{
                         if (window.advancedSearchEnabled) {{
                             if (e.target.selectionStart === 0 && e.target.selectionEnd === 0 && e.key === 'Backspace') {{
                                 switchToNormal();
@@ -158,11 +158,11 @@ class BrowseViewSearch(hg.DIV):
                     }});
                     document.querySelector('.bx--content .bx--search-close').addEventListener('click', () => {{
                         switchToNormal();
-                        advancedInput.value = '';
+                        searchInput.value = '';
                     }});
                 }});
                 """,
-                            advanced_inputid,
+                            search_inputid,
                             normal_placeholder,
                             hg.F(
                                 lambda context: json.dumps(
