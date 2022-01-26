@@ -2,7 +2,6 @@ import io
 import os
 
 import htmlgenerator as hg
-from django.conf import settings
 from django.http import HttpResponse
 from docxtpl import DocxTemplate
 
@@ -63,6 +62,9 @@ def generate_document_view(request, template_id: int, object_id: int):
     document_name = (
         f"{os.path.basename(template_path).split('.')[0]}_object{object.id}.doc"
     )
-    response = HttpResponse(buf.read(), content_type="application/vnd.ms-excel")
+    response = HttpResponse(
+        buf.read(),
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
     response["Content-Disposition"] = f'attachment; filename="{document_name}"'
     return response
