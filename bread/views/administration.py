@@ -16,7 +16,6 @@ from django.utils.translation import gettext_lazy as _
 from django_celery_results.models import TaskResult
 
 from bread import layout
-from bread.layout.components import tiles
 from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
 from bread.layout.components.forms import Form, FormField
@@ -418,14 +417,6 @@ def maintenance_search_reindex(request):
                 hg.H6(_("Log from the server"), style="margin-bottom: 0.75rem;"),
                 hg.SAMP(hg.mark_safe(logmsg), style="font-family: monospace;"),
             ),
-        ),
-        tiles.Tile(hg.BaseElement(hg.H3("Title"), hg.P("content"))),
-        tiles.ExpandableTile(
-            above=hg.BaseElement(
-                hg.H3("Title"),
-                hg.P("visible content"),
-            ),
-            below=hg.P("invisible content"),
         ),
     )
 
