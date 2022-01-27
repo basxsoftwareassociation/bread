@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('reports', '0002_auto_20210322_1115'),
+        ("reports", "0002_auto_20210322_1115"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='report',
-            name='custom_queryset',
-            field=models.CharField(blank=True, help_text='python path to function which returns a queryset, ignores filter field', max_length=255, verbose_name='Custom Filter'),
+            model_name="report",
+            name="custom_queryset",
+            field=models.CharField(
+                blank=True,
+                help_text="python path to function which returns a queryset, ignores filter field",
+                max_length=255,
+                verbose_name="Custom Filter",
+            ),
         ),
     ]
