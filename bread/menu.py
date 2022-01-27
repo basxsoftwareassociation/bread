@@ -140,7 +140,7 @@ registeritem(
     Item(
         Link(
             reverse("preferences:global"),
-            _("Global Settings"),
+            _("Global preferences"),
         ),
         settingsgroup,
     )
