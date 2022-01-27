@@ -62,6 +62,25 @@ def default_bulkactions(model, columns=["__all__"]):
     )
 
 
+def order_queryset_by_urlparameter(qs, order):
+    """Can used to order a queryset by a user-provided string, e.g. through a GET query parameter"""
+    if order:
+        if order.endswith("__int"):
+            order = order[: -len("__int")]
+            qs = qs.order_by(
+                models.functions.Cast(order[1:], models.IntegerField()).desc()
+                if order.startswith("-")
+                else models.functions.Cast(order, models.IntegerField())
+            )
+        else:
+            qs = qs.order_by(
+                models.functions.Lower(order[1:]).desc()
+                if order.startswith("-")
+                else models.functions.Lower(order)
+            )
+    return qs
+
+
 class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     """TODO: documentation"""
 
@@ -72,7 +91,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     itemsperpage_urlparameter: str = "itemsperpage"
     search_urlparameter: str = "q"
 
-    title: Optional[hg.BaseElement] = None
+    title: Union[hg.BaseElement, str] = ""
     columns: Iterable[Union[str, layout.datatable.DataTableColumn]] = ("__all__",)
     rowclickaction: Optional[Link] = None
     # bulkactions: List[(Link, function(request, queryset))]
@@ -256,21 +275,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         if selectedobjects and "all" not in selectedobjects:
             qs &= super().get_queryset().filter(pk__in=selectedobjects)
 
-        order = self.request.GET.get(self.orderingurlparameter)
-        if order:
-            if order.endswith("__int"):
-                order = order[: -len("__int")]
-                qs = qs.order_by(
-                    models.functions.Cast(order[1:], models.IntegerField()).desc()
-                    if order.startswith("-")
-                    else models.functions.Cast(order, models.IntegerField())
-                )
-            else:
-                qs = qs.order_by(
-                    models.functions.Lower(order[1:]).desc()
-                    if order.startswith("-")
-                    else models.functions.Lower(order)
-                )
+        qs = order_queryset_by_urlparameter(
+            qs, self.request.GET.get(self.orderingurlparameter)
+        )
         return qs
 
     @staticmethod
@@ -286,6 +293,36 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 hg.C("row"), modelaction, kwargs={"pk": hg.C("row.pk")}, **kwargs
             ),
             iconname=None,
+        )
+
+    @staticmethod
+    def editlink(return_to_current=True):
+        return Link(
+            href=ModelHref(
+                hg.C("row"),
+                "edit",
+                kwargs={"pk": hg.C("row.id")},
+                query={"next": hg.C("request.get_full_path")}
+                if return_to_current
+                else {},
+            ),
+            label=_("Edit"),
+            iconname="edit",
+        )
+
+    @staticmethod
+    def deletelink(return_to_current=True):
+        return Link(
+            href=ModelHref(
+                hg.C("row"),
+                "delete",
+                kwargs={"pk": hg.C("row.id")},
+                query={"next": hg.C("request.get_full_path")}
+                if return_to_current
+                else {},
+            ),
+            label=_("Delete"),
+            iconname="delete",
         )
 
 

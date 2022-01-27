@@ -16,7 +16,6 @@ PreferencesView = type(
 )
 
 external_urlpatterns = [
-    path("ckeditor/", include("ckeditor_uploader.urls")),
     path(
         "preferences/",
         include(
@@ -24,7 +23,7 @@ external_urlpatterns = [
                 [
                     path(
                         "global/",
-                        PreferencesView.as_view(
+                        PreferencesView.as_view(  # type: ignore
                             registry=global_preferences_registry,
                             form_class=PreferencesForm,
                         ),
@@ -32,7 +31,7 @@ external_urlpatterns = [
                     ),
                     path(
                         "global/<slug:section>",
-                        PreferencesView.as_view(
+                        PreferencesView.as_view(  # type: ignore
                             registry=global_preferences_registry,
                             form_class=PreferencesForm,
                         ),

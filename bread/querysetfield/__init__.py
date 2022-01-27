@@ -1,6 +1,8 @@
 import json
 
 import htmlgenerator as hg
+from django import forms
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core import checks
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.db import models
@@ -103,9 +105,16 @@ class QuerysetField(models.TextField):
             getattr(model_instance, self.modelfieldname).model_class().objects, value
         )
 
+    def formfield(self, **kwargs):
+        return super().formfield(**{**kwargs, "form_class": QuerysetFormField})
+
+
+class QuerysetFormField(forms.CharField):
+    pass
+
 
 class QuerysetFormWidget(layout.forms.widgets.Textarea):
-    django_widget = None
+    django_widget = QuerysetFormField
 
     def __init__(
         self,
@@ -154,6 +163,16 @@ class QuerysetFormWidget(layout.forms.widgets.Textarea):
                         autoescape=False,
                     ),
                 )
+            )
+            self.append(
+                hg.LINK(
+                    rel="stylesheet",
+                    type="text/css",
+                    href=staticfiles_storage.url("djangoql/css/completion.css"),
+                )
+            )
+            self.append(
+                hg.SCRIPT(src=staticfiles_storage.url("djangoql/js/completion.js"))
             )
 
 

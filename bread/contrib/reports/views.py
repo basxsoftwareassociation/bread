@@ -1,7 +1,6 @@
 import datetime
 
 import htmlgenerator as hg
-from django.contrib.staticfiles.storage import staticfiles_storage
 from django.db import models
 from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404
@@ -15,7 +14,6 @@ from bread.utils import filter_fieldlist, generate_excel, xlsxresponse
 from bread.utils.links import ModelHref
 
 from ...layout.components.datatable import DataTableColumn, sortingname_for_column
-from .fields.queryfield import QuerysetFormWidget
 from .models import Report
 
 
@@ -32,12 +30,6 @@ class EditView(views.EditView):
 
         F = _layout.forms.FormField
         ret = hg.BaseElement(
-            hg.LINK(
-                rel="stylesheet",
-                type="text/css",
-                href=staticfiles_storage.url("djangoql/css/completion.css"),
-            ),
-            hg.SCRIPT(src=staticfiles_storage.url("djangoql/js/completion.js")),
             hg.H3(self.object),
             _layout.forms.Form(
                 hg.C("form"),
@@ -50,7 +42,6 @@ class EditView(views.EditView):
                 F("name"),
                 F(
                     "filter",
-                    widgetclass=QuerysetFormWidget,
                     inputelement_attrs={"rows": 1},
                     style="width: 100%",
                 ),

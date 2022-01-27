@@ -3,7 +3,7 @@
 import django.db.models.deletion
 from django.db import migrations, models
 
-import bread.contrib.reports.fields.queryfield
+import bread.querysetfield
 
 
 class Migration(migrations.Migration):
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=255, verbose_name="Name")),
                 (
                     "filter",
-                    bread.contrib.reports.fields.queryfield.QuerysetField(
+                    bread.querysetfield.QuerysetField(
                         blank=True, modelfieldname="model", verbose_name="Filter"
                     ),
                 ),
