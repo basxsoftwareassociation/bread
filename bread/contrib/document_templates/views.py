@@ -2,6 +2,7 @@ import io
 import os
 
 import htmlgenerator as hg
+from django.apps import apps
 from django.http import HttpResponse
 from docxtpl import DocxTemplate
 
@@ -30,10 +31,11 @@ class DocumentTemplateEditView(views.EditView):
         return self.request.get_full_path()
 
 
-def generate_document_view(request, template_id: int, object_id: int):
-    document_template = DocumentTemplate.objects.get(id=template_id)
-    object = document_template.model.model_class().objects.get(id=object_id)
-    template_path = document_template.file.path
+def generate_document_view(
+    request, template_id: int, model_string: str, object_id: int
+):
+    object = apps.get_model(model_string).objects.get(id=object_id)
+    template_path = DocumentTemplate.objects.get(id=template_id).file.path
     docxtpl_template = DocxTemplate(template_path)
     docxtpl_template.render(
         {

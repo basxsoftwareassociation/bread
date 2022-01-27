@@ -23,7 +23,7 @@ urlpatterns = [
         ),
     ),
     path(
-        "document-template/<int:template_id>/object/<int:object_id>",
+        "document-template/<int:template_id>/model/<str:model_string>/object/<int:object_id>",
         generate_document_view,
         name="generate-document",
     ),
