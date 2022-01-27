@@ -23,17 +23,6 @@ class DocumentTemplateEditView(views.EditView):
                 F("file"),
                 layout.forms.helpers.Submit(),
             ),
-            hg.H4("Rendered documents:"),
-            hg.Iterator(
-                hg.F(lambda c: c["object"].documents.all()),
-                "document",
-                hg.DIV(
-                    hg.A(
-                        hg.C("document").file,
-                        href=hg.C("document").url,
-                    ),
-                ),
-            ),
         )
         return ret
 

@@ -13,10 +13,3 @@ class DocumentTemplate(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class Document(models.Model):
-    template = models.ForeignKey(
-        DocumentTemplate, on_delete=models.CASCADE, related_name="documents"
-    )
-    file = models.FileField(upload_to="documents/")
