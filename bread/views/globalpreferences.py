@@ -30,7 +30,7 @@ class PreferencesView(
 
         return breadlayout.forms.Form(
             hg.C("form"),
-            hg.H3(_("Global Preferences")),
+            hg.H3(_("Global preferences")),
             Tabs(
                 *[
                     Tab(
