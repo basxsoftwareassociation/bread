@@ -1,10 +1,12 @@
 import htmlgenerator as hg
 from django.contrib.messages.views import SuccessMessageMixin
+from django.utils.translation import gettext_lazy as _
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.forms import GlobalPreferenceForm
 from dynamic_preferences.registries import global_preferences_registry
 
 from bread import layout as breadlayout
+from bread.layout.components.tabs import Tab, Tabs
 from bread.views import BreadView
 
 
@@ -28,15 +30,21 @@ class PreferencesView(
 
         return breadlayout.forms.Form(
             hg.C("form"),
-            *[
-                hg.BaseElement(
-                    hg.H3(section.capitalize()),
-                    *[
-                        breadlayout.forms.FormField(f)
-                        for f in section_fields.get(section)
-                    ],
-                )
-                for section in section_fields.keys()
-            ],
+            hg.H3(_("Global Preferences")),
+            Tabs(
+                *[
+                    Tab(
+                        section.capitalize(),
+                        hg.BaseElement(
+                            *[
+                                breadlayout.forms.FormField(f)
+                                for f in section_fields.get(section)
+                            ]
+                        ),
+                    )
+                    for section in section_fields.keys()
+                ],
+                tabpanel_attributes={"style": "padding-left:0;"},
+            ),
             breadlayout.forms.helpers.Submit(),
         )
