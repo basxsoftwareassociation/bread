@@ -60,7 +60,7 @@ def generate_document_view(request, template_id: int, object_id: int):
     buf.seek(0)
 
     document_name = (
-        f"{os.path.basename(template_path).split('.')[0]}_object{object.id}.doc"
+        f"{os.path.basename(template_path).split('.')[0]}_object{object.id}.docx"
     )
     response = HttpResponse(
         buf.read(),
