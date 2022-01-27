@@ -13,7 +13,7 @@ urlpatterns = [
         DocumentTemplate,
         editview=DocumentTemplateEditView,
         addview=views.AddView._with(
-            fields=["name", "model", "file"],
+            fields=["name", "file"],
             get_success_url=lambda s: urls.reverse_model(
                 DocumentTemplate, "edit", kwargs={"pk": s.object.pk}
             ),

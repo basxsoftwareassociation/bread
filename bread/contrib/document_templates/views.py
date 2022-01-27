@@ -20,7 +20,6 @@ class DocumentTemplateEditView(views.EditView):
             layout.forms.Form(
                 hg.C("form"),
                 F("name"),
-                F("model"),
                 F("file"),
                 layout.forms.helpers.Submit(),
             ),
