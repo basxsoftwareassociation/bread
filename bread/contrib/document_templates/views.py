@@ -34,26 +34,23 @@ def generate_document_view(request, template_id: int, object_id: int):
     document_template = DocumentTemplate.objects.get(id=template_id)
     object = document_template.model.model_class().objects.get(id=object_id)
     template_path = document_template.file.path
-    template = DocxTemplate(template_path)
-    variables = template.get_undeclared_template_variables()
-
-    template.render(
+    docxtpl_template = DocxTemplate(template_path)
+    docxtpl_template.render(
         {
             variable: hg.resolve_lookup({"object": object}, variable)
-            for variable in variables
+            for variable in (docxtpl_template.get_undeclared_template_variables())
         }
     )
 
     buf = io.BytesIO()
-    template.save(buf)
+    docxtpl_template.save(buf)
     buf.seek(0)
 
-    document_name = (
-        f"{os.path.basename(template_path).split('.')[0]}_object{object.id}.docx"
-    )
     response = HttpResponse(
         buf.read(),
         content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     )
-    response["Content-Disposition"] = f'attachment; filename="{document_name}"'
+    response[
+        "Content-Disposition"
+    ] = f'attachment; filename="{os.path.basename(template_path).split(".")[0]}_object{object.id}.docx"'
     return response
