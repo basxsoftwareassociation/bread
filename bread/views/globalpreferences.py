@@ -16,11 +16,11 @@ class PreferencesView(
     registry = global_preferences_registry
 
     def get_layout(self):
-        section_fields = {}
         if self.section_name:
             section_names = [self.section_name]
         else:
             section_names = self.form_class.registry.section_objects.keys()
+        section_fields = {}
         for section in section_names:
             section_fields[section] = []
             for field in self.form_class.registry[section]:
