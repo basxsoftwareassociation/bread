@@ -14,9 +14,9 @@ from .icon import Icon
 
 class PaginationConfig(NamedTuple):
     paginator: Paginator
-    items_per_page_options: Iterator = getattr(
+    items_per_page_options: Iterator = getattr(  # type: ignore
         settings, "DEFAULT_PAGINATION_CHOICES", [25, 50, 100]
-    )  # type: ignore
+    )
     page_urlparameter: str = (
         "page"  # URL parameter which holds value for current page selection
     )

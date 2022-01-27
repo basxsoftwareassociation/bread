@@ -91,7 +91,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     itemsperpage_urlparameter: str = "itemsperpage"
     search_urlparameter: str = "q"
 
-    title: Optional[hg.BaseElement] = None
+    title: Union[hg.BaseElement, str] = ""
     columns: Iterable[Union[str, layout.datatable.DataTableColumn]] = ("__all__",)
     rowclickaction: Optional[Link] = None
     # bulkactions: List[(Link, function(request, queryset))]
