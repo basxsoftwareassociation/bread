@@ -129,6 +129,7 @@ class BreadView:
     page_layout: typing.Optional[
         typing.Callable[[menu.Menu, hg.BaseElement], hg.BaseElement]
     ] = None
+    urlparams: typing.Iterable[typing.Tuple[str, typing.Type]] = ()
 
     @classmethod
     def _with(cls, **kwargs):
