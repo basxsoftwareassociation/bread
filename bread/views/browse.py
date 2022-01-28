@@ -162,8 +162,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             for action in self.bulkactions
             if action.has_permission(self.request)
         ]
-        return layout.datatable.DataTable.from_model(
-            self.model,
+        return layout.datatable.DataTable.from_queryset(
             hg.C("object_list"),
             columns=self.columns,
             bulkactions=bulkactions,
