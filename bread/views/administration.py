@@ -16,6 +16,7 @@ from django.utils.translation import gettext_lazy as _
 from django_celery_results.models import TaskResult
 
 from bread import layout
+from bread.layout.components import grid, tabs, tile
 from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
 from bread.layout.components.forms import Form, FormField
@@ -135,6 +136,41 @@ def componentpreview(request):
         },
     )
 
+    return tabs.Tabs(
+        tabs.Tab(
+            _("Layout"),
+            componentpreview_layout(),
+        ),
+        tabs.Tab(
+            _("Informational"),
+            hg.BaseElement(
+                hg.H3("Component Name"),
+                hg.P("More detail here"),
+            ),
+        ),
+        tabs.Tab(
+            _("Interactive"),
+            hg.BaseElement(
+                hg.H3("Component Name"),
+                hg.P("More detail here"),
+            ),
+        ),
+        tabs.Tab(
+            _("Datatable"),
+            hg.BaseElement(
+                hg.H3("Component Name"),
+                hg.P("More detail here"),
+            ),
+        ),
+        tabs.Tab(
+            _("Form"),
+            hg.BaseElement(
+                hg.H3("Component Name"),
+                hg.P("More detail here"),
+            ),
+        ),
+    )
+
     return hg.BaseElement(
         hg.H3(_("Widget preview")),
         layout.grid.Grid(
@@ -223,6 +259,136 @@ def componentpreview(request):
                 ),
             ),
         ),
+    )
+
+
+def componentpreview_layout():
+    def grid_col_preview(content):
+        return grid.Col(
+            content,
+            style=(
+                "align-items: center;"
+                "background: #edf5ff; "
+                "color: #000000; "
+                "display: flex;"
+                "height: 100px; "
+                "justify-content: center; "
+                "outline: 1px solid #a6c8ff; "
+                "overflow: hidden; "
+                "text-align: center;"
+            ),
+        )
+
+    grid_gutter_preview = hg.BaseElement(
+        grid.Row(
+            hg.Iterator(
+                range(4),
+                "colindex",
+                grid_col_preview("4x4"),
+            )
+        ),
+        grid.Row(
+            hg.Iterator(
+                range(2),
+                "colindex",
+                grid_col_preview("2x2"),
+            )
+        ),
+        grid.Row(grid_col_preview("1x1")),
+    )
+
+    def grid_content_area_preview(content):
+        return hg.DIV(
+            content,
+            style=(
+                "display: flex;"
+                "justify-content: center;"
+                "align-items: center;"
+                "background-color: #9ef0f0;"
+                "height: 100px; "
+                "text-align: center;"
+                "width: 100%; "
+            ),
+        )
+
+    grid_mode_preview = hg.BaseElement(
+        grid.Row(
+            hg.Iterator(
+                range(4),
+                "colindex",
+                grid_col_preview(grid_content_area_preview("content area")),
+            )
+        ),
+        grid.Row(
+            hg.Iterator(
+                range(2),
+                "colindex",
+                grid_col_preview(grid_content_area_preview("content area")),
+            )
+        ),
+        grid.Row(grid_col_preview(grid_content_area_preview("content area"))),
+    )
+
+    return hg.BaseElement(
+        hg.H6("bread.layout.components.grid"),
+        hg.H3("Grid", style="margin-bottom: 1.5rem;"),
+        hg.PRE(grid.Grid.__doc__),
+        grid.Row(
+            grid.Col(
+                tile.Tile(
+                    hg.H4("gutter=True (default)"),
+                    grid.Grid(
+                        grid_gutter_preview,
+                        gutter=True,
+                    ),
+                    style="margin-bottom: 1rem;",
+                ),
+            ),
+            grid.Col(
+                tile.Tile(
+                    hg.H4("gutter=False"),
+                    grid.Grid(
+                        grid_gutter_preview,
+                        gutter=False,
+                    ),
+                    style="margin-bottom: 1rem;",
+                ),
+            ),
+        ),
+        grid.Row(
+            grid.Col(
+                tile.Tile(
+                    hg.H4('gridmode="full-width" (default)'),
+                    grid.Grid(
+                        grid_mode_preview,
+                        gridmode="full-width",
+                    ),
+                    style="margin-bottom: 1rem;",
+                ),
+            ),
+            grid.Col(
+                tile.Tile(
+                    hg.H4('gridmode="condensed"'),
+                    grid.Grid(
+                        grid_mode_preview,
+                        gridmode="condensed",
+                    ),
+                    style="margin-bottom: 1rem;",
+                ),
+            ),
+            grid.Col(
+                tile.Tile(
+                    hg.H4('gridmode="narrow"'),
+                    grid.Grid(
+                        grid_mode_preview,
+                        gridmode="narrow",
+                    ),
+                    style="margin-bottom: 1rem;",
+                ),
+            ),
+        ),
+        hg.H6("bread.layout.components.grid"),
+        hg.H3("Row", style="margin-bottom: 1.5rem;"),
     )
 
 
