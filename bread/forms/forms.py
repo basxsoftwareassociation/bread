@@ -8,7 +8,6 @@ from django.contrib.contenttypes.forms import (
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models, transaction
 from django.forms.formsets import DELETION_FIELD_NAME, ORDERING_FIELD_NAME
-from dynamic_preferences.forms import GlobalPreferenceForm
 from guardian.shortcuts import get_objects_for_user
 
 from .. import layout as _layout  # prevent name clashing
@@ -261,16 +260,6 @@ def _formfield_callback_with_request(field, request, model, instance, cache_quer
                 request.formfield_cache[cache_key] = [*ret.choices]
             ret.choices = request.formfield_cache[cache_key]
     return ret
-
-
-class PreferencesForm(GlobalPreferenceForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.layout = lambda request: _layout.forms.Form(
-            hg.C("form"),
-            *[_layout.forms.FormField(f) for f in self.fields],
-            _layout.forms.helpers.Submit(),
-        )
 
 
 def _get_form_fields_from_layout(layout):
