@@ -291,9 +291,8 @@ class DataTable(hg.TABLE):
         )
 
     @staticmethod
-    def from_model(
-        model,
-        queryset=None,
+    def from_queryset(
+        queryset,
         # column behaviour
         columns: Iterable[Union[str, "DataTableColumn"]] = (),
         prevent_automatic_sortingnames=False,
@@ -325,6 +324,7 @@ class DataTable(hg.TABLE):
                               difficutl to add another button by modifying the
                               datatable after creation.
         """
+        model = queryset.model
         columns = columns or filter_fieldlist(model, ["__all__"])
 
         title = title or pretty_modelname(model, plural=True)
@@ -365,7 +365,6 @@ class DataTable(hg.TABLE):
                 style="display: flex; justify-content: flex-end;",
             )
 
-        queryset = model.objects.all() if queryset is None else queryset
         column_definitions: List[DataTableColumn] = []
         for col in columns:
             if not (isinstance(col, DataTableColumn) or isinstance(col, str)):
@@ -438,17 +437,6 @@ class DataTable(hg.TABLE):
             checkbox_for_bulkaction_name=checkbox_for_bulkaction_name,
             search_urlparameter=search_urlparameter,
             settingspanel=settingspanel,
-        )
-
-    @staticmethod
-    def from_queryset(
-        queryset,
-        **kwargs,
-    ):
-        return DataTable.from_model(
-            queryset.model,
-            queryset=queryset,
-            **kwargs,
         )
 
     # A few helper classes to make the composition in the __init__ method easier
