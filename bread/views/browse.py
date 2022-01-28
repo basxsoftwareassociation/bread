@@ -163,7 +163,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             if action.has_permission(self.request)
         ]
         return layout.datatable.DataTable.from_queryset(
-            hg.C("object_list"),
+            self.get_queryset(),
             columns=self.columns,
             bulkactions=bulkactions,
             rowactions=self.rowactions,
