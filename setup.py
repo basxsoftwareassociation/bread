@@ -54,6 +54,7 @@ setup(
     ],
     extras_require={"testing": ["hypothesis[django]", "django_dynamic_fixture"]},
     packages=find_packages(),
+    setup_requires=["setuptools_scm"],
     zip_safe=False,
     include_package_data=True,
     classifiers=[
