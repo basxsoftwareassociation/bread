@@ -279,24 +279,6 @@ def componentpreview_layout():
             ),
         )
 
-    grid_gutter_preview = hg.BaseElement(
-        grid.Row(
-            hg.Iterator(
-                range(4),
-                "colindex",
-                grid_col_preview("4x4"),
-            )
-        ),
-        grid.Row(
-            hg.Iterator(
-                range(2),
-                "colindex",
-                grid_col_preview("2x2"),
-            )
-        ),
-        grid.Row(grid_col_preview("1x1")),
-    )
-
     def grid_content_area_preview(content):
         return hg.DIV(
             content,
@@ -311,23 +293,51 @@ def componentpreview_layout():
             ),
         )
 
+    grid_gutter_preview = hg.BaseElement(
+        grid.Row(
+            hg.Iterator(
+                range(1, 5),
+                "colindex",
+                grid_col_preview(hg.F(lambda c: str(c["colindex"]) + " of 4")),
+            )
+        ),
+        grid.Row(
+            hg.Iterator(
+                range(1, 3),
+                "colindex",
+                grid_col_preview(hg.F(lambda c: str(c["colindex"]) + " of 2")),
+            )
+        ),
+        grid.Row(grid_col_preview("1 of 1")),
+    )
+
     grid_mode_preview = hg.BaseElement(
         grid.Row(
             hg.Iterator(
                 range(4),
                 "colindex",
-                grid_col_preview(grid_content_area_preview("content area")),
+                grid_col_preview(grid_content_area_preview("area")),
             )
         ),
         grid.Row(
             hg.Iterator(
                 range(2),
                 "colindex",
-                grid_col_preview(grid_content_area_preview("content area")),
+                grid_col_preview(grid_content_area_preview("area")),
             )
         ),
-        grid.Row(grid_col_preview(grid_content_area_preview("content area"))),
+        grid.Row(grid_col_preview(grid_content_area_preview("area"))),
     )
+
+    def row_mode_preview(gridmode):
+        return grid.Row(
+            hg.Iterator(
+                range(4),
+                "colindex",
+                grid_col_preview(grid_content_area_preview("area")),
+            ),
+            gridmode=gridmode,
+        )
 
     return hg.BaseElement(
         hg.H6("bread.layout.components.grid"),
@@ -389,6 +399,102 @@ def componentpreview_layout():
         ),
         hg.H6("bread.layout.components.grid"),
         hg.H3("Row", style="margin-bottom: 1.5rem;"),
+        hg.PRE(grid.Row.__doc__),
+        grid.Row(
+            grid.Col(
+                tile.Tile(
+                    hg.H4("gridmode=None (default)"),
+                    hg.H5('* the same as "full-width"'),
+                    row_mode_preview(None),
+                    style="margin-bottom: 1rem;",
+                ),
+            ),
+            grid.Col(
+                tile.Tile(
+                    hg.H4('gridmode="condensed"'),
+                    row_mode_preview("condensed"),
+                    style="margin-bottom: 1rem;",
+                ),
+            ),
+            grid.Col(
+                tile.Tile(
+                    hg.H4('gridmode="narrow"'),
+                    row_mode_preview("narrow"),
+                    style="margin-bottom: 1rem;",
+                ),
+            ),
+        ),
+        hg.H6("bread.layout.components.grid"),
+        hg.H3("Col", style="margin-bottom: 1.5rem;"),
+        hg.PRE(grid.Col.__doc__),
+        hg.H4(),
+        grid.Row(
+            grid.Col(
+                hg.H4("Flexible width"),
+                tile.Tile(
+                    hg.H4("width=None (default)"),
+                    hg.P(
+                        "Widths are divided equally within the same row regardless of the number of columns inside."
+                    ),
+                    grid.Grid(
+                        hg.Iterator(
+                            range(5, 0, -1),
+                            "rowindex",
+                            grid.Row(
+                                hg.F(
+                                    lambda cout: hg.Iterator(
+                                        range(1, cout["rowindex"] + 1),
+                                        "colindex",
+                                        grid_col_preview(
+                                            hg.F(
+                                                lambda c: "%d of %d"
+                                                % (c["colindex"], c["rowindex"])
+                                            )
+                                        ),
+                                    )
+                                ),
+                            ),
+                        ),
+                    ),
+                    style="margin-bottom: 1rem;",
+                ),
+            ),
+        ),
+        grid.Row(
+            grid.Col(
+                hg.H4("Fixed width"),
+                hg.P(
+                    "You can learn more about possible widths (number of columns) ",
+                    hg.A(
+                        "here",
+                        href="https://www.carbondesignsystem.com/guidelines/2x-grid/overview/#breakpoints",
+                        rel="noreferrer noopener",
+                        target="_blank",
+                    ),
+                    ".",
+                ),
+                tile.Tile(
+                    hg.H4('breakpoint="sm"'),
+                    hg.P(
+                        (
+                            "the maximum total width for 'sm' is 4. "
+                            "Columns that go beyond the total width of their prior columns "
+                            "will fall as a new row instead."
+                        )
+                    ),
+                    grid.Grid(
+                        grid.Row(
+                            hg.Iterator(
+                                range(2),
+                                "colindex",
+                                grid_col_preview("content"),
+                            ),
+                        ),
+                    ),
+                    style="margin-bottom: 1rem;",
+                ),
+            ),
+        ),
     )
 
 
