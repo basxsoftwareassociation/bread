@@ -1,11 +1,60 @@
 import htmlgenerator as hg
+from django.utils.translation import gettext_lazy as _
 
 from bread.layout.components import grid, tile
 
 
-def table_of_contents(anchor_names, prefix=""):
+def table_of_contents(anchor_names: list, show_header=True):
     """Generate a table of content to browse within the webpage."""
-    pass
+    ret = hg.UL(
+        _class=f"bx--list--unordered {'' if show_header else 'bx--list--nested'}",
+    )
+
+    latest_list = hg.LI(_class="bx--list__item")
+    for a_name in anchor_names:
+        if isinstance(a_name, list):
+            latest_list.append(table_of_contents(a_name, False))
+        else:
+            if len(latest_list) > 0:
+                ret.append(latest_list)
+                latest_list = hg.LI(_class="bx--list__item")
+            latest_list.append(hg.A(a_name, href=f"#{a_name}"))
+
+    if len(ret) < len(anchor_names):
+        ret.append(latest_list)
+
+    if show_header:
+        return grid.Row(
+            hg.STYLE(
+                hg.mark_safe(
+                    """
+                    .componentpreview-toc {
+                        padding-left: 2rem;
+                        padding-right: 2rem;
+                        margin-bottom: 2rem;
+                    }
+                    .componentpreview-toc>ul {
+                        margin-bottom: 1.75rem;
+                    }
+                    .componentpreview-toc>ul>::before {
+                        display: none;
+                    }
+                    """
+                )
+            ),
+            grid.Col(
+                tile.Tile(
+                    hg.H4(_("Table of Contents")),
+                    ret,
+                    _class="componentpreview-toc",
+                ),
+                breakpoint="lg",
+                width=8,
+            ),
+            grid.Col(breakpoint="lg", width=8),
+        )
+
+    return ret
 
 
 def layout():
@@ -132,6 +181,8 @@ def _grid_py():
     ]
 
     return hg.BaseElement(
+        hg.A(name="grid"),
+        hg.A(name="grid-grid"),
         hg.H6("bread.layout.components.grid"),
         hg.H3("Grid", style="margin-bottom: 1.5rem;"),
         hg.PRE(grid.Grid.__doc__, style="margin-bottom: 1rem;"),
@@ -189,6 +240,7 @@ def _grid_py():
                 ),
             ),
         ),
+        hg.A(name="grid-row"),
         hg.H6("bread.layout.components.grid", style="margin-top: 3rem;"),
         hg.H3("Row", style="margin-bottom: 1.5rem;"),
         hg.PRE(grid.Row.__doc__, style="margin-bottom: 1rem;"),
@@ -216,6 +268,7 @@ def _grid_py():
                 ),
             ),
         ),
+        hg.A(name="grid-col"),
         hg.H6("bread.layout.components.grid", style="margin-top: 3rem;"),
         hg.H3("Col", style="margin-bottom: 1.5rem;"),
         hg.PRE(grid.Col.__doc__, style="margin-bottom: 1rem;"),
