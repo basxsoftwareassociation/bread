@@ -190,102 +190,103 @@ def componentpreview(request):
             tabs.Tab(
                 _("Form"),
                 hg.BaseElement(
-                    hg.H3("Component Name"),
-                    hg.P("More detail here"),
+                    hg.H3(_("Widget preview")),
+                    layout.grid.Grid(
+                        layout.grid.Row(
+                            layout.grid.Col(
+                                hg.H4(_("Widgets")),
+                                layout.forms.Form(
+                                    Form(),
+                                    *[
+                                        F(
+                                            nicefieldname(w),
+                                            no_label=not config["with_label"],
+                                            errors=ERRORS
+                                            if config["with_errors"]
+                                            else None,
+                                        )
+                                        for w in widgets.keys()
+                                    ]
+                                ),
+                            ),
+                            layout.grid.Col(
+                                hg.H4(_("Configure preview")),
+                                layout.forms.Form(
+                                    configform,
+                                    F("with_label"),
+                                    F("with_helptext"),
+                                    F("with_errors"),
+                                    F("disabled"),
+                                    layout.forms.helpers.Submit(_("Apply")),
+                                    method="GET",
+                                ),
+                            ),
+                        ),
+                        R(
+                            C(
+                                hg.H3(_("Tooltips")),
+                                hg.H4(_("Definition tooltip")),
+                                hg.DIV(
+                                    layout.components.tooltip.DefinitionTooltip(
+                                        "Definition tooltip (left aligned)",
+                                        "Brief definition of the dotted, underlined word above.",
+                                        align="left",
+                                    )
+                                ),
+                                hg.DIV(
+                                    layout.components.tooltip.DefinitionTooltip(
+                                        "Definition tooltip (center aligned)",
+                                        "Brief definition of the dotted, underlined word above.",
+                                        align="center",
+                                    )
+                                ),
+                                hg.DIV(
+                                    layout.components.tooltip.DefinitionTooltip(
+                                        "Definition tooltip (right aligned)",
+                                        "Brief definition of the dotted, underlined word above.",
+                                        align="right",
+                                    )
+                                ),
+                                hg.H4(_("Icon tooltip")),
+                                hg.DIV(
+                                    layout.components.tooltip.IconTooltip(
+                                        "Help",
+                                    ),
+                                    layout.components.tooltip.IconTooltip(
+                                        "Filter",
+                                        icon=Icon("filter"),
+                                    ),
+                                    layout.components.tooltip.IconTooltip(
+                                        "Email",
+                                        icon="email",
+                                    ),
+                                ),
+                                hg.H4(_("Interactive tooltip")),
+                                hg.DIV(
+                                    layout.components.tooltip.InteractiveTooltip(
+                                        label="Tooltip label",
+                                        body=(
+                                            _(
+                                                "This is some tooltip text. This box shows the maximum amount of text that should "
+                                                "appear inside. If more room is needed please use a modal instead."
+                                            )
+                                        ),
+                                        heading="Heading within a Tooltip",
+                                        button=(
+                                            layout.components.button.Button("Button")
+                                        ),
+                                        link=Link(href="#", label="link"),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
             ),
         ),
     )
 
-    return hg.BaseElement(
-        hg.H3(_("Widget preview")),
-        layout.grid.Grid(
-            layout.grid.Row(
-                layout.grid.Col(
-                    hg.H4(_("Widgets")),
-                    layout.forms.Form(
-                        Form(),
-                        *[
-                            F(
-                                nicefieldname(w),
-                                no_label=not config["with_label"],
-                                errors=ERRORS if config["with_errors"] else None,
-                            )
-                            for w in widgets.keys()
-                        ]
-                    ),
-                ),
-                layout.grid.Col(
-                    hg.H4(_("Configure preview")),
-                    layout.forms.Form(
-                        configform,
-                        F("with_label"),
-                        F("with_helptext"),
-                        F("with_errors"),
-                        F("disabled"),
-                        layout.forms.helpers.Submit(_("Apply")),
-                        method="GET",
-                    ),
-                ),
-            ),
-            R(
-                C(
-                    hg.H3(_("Tooltips")),
-                    hg.H4(_("Definition tooltip")),
-                    hg.DIV(
-                        layout.components.tooltip.DefinitionTooltip(
-                            "Definition tooltip (left aligned)",
-                            "Brief definition of the dotted, underlined word above.",
-                            align="left",
-                        )
-                    ),
-                    hg.DIV(
-                        layout.components.tooltip.DefinitionTooltip(
-                            "Definition tooltip (center aligned)",
-                            "Brief definition of the dotted, underlined word above.",
-                            align="center",
-                        )
-                    ),
-                    hg.DIV(
-                        layout.components.tooltip.DefinitionTooltip(
-                            "Definition tooltip (right aligned)",
-                            "Brief definition of the dotted, underlined word above.",
-                            align="right",
-                        )
-                    ),
-                    hg.H4(_("Icon tooltip")),
-                    hg.DIV(
-                        layout.components.tooltip.IconTooltip(
-                            "Help",
-                        ),
-                        layout.components.tooltip.IconTooltip(
-                            "Filter",
-                            icon=Icon("filter"),
-                        ),
-                        layout.components.tooltip.IconTooltip(
-                            "Email",
-                            icon="email",
-                        ),
-                    ),
-                    hg.H4(_("Interactive tooltip")),
-                    hg.DIV(
-                        layout.components.tooltip.InteractiveTooltip(
-                            label="Tooltip label",
-                            body=(
-                                _(
-                                    "This is some tooltip text. This box shows the maximum amount of text that should "
-                                    "appear inside. If more room is needed please use a modal instead."
-                                )
-                            ),
-                            heading="Heading within a Tooltip",
-                            button=(layout.components.button.Button("Button")),
-                            link=Link(href="#", label="link"),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-    )
+    return hg.BaseElement()
 
 
 class TaskResultBrowseView(BrowseView):
