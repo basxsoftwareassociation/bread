@@ -544,7 +544,7 @@ def searchbar(search_urlparameter: str, model: models.Model = None):
                     lambda c: c["request"].GET.get("advancedmode", "off") == "on"
                 ),
                 defaultvalue=hg.F(
-                    lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
+                    lambda c: c["request"].GET.get(search_urlparameter, "")
                 ),
                 model=model,
             ),
