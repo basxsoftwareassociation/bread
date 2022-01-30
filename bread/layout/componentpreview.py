@@ -1,7 +1,7 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
-from bread.layout.components import grid, tile
+from bread.layout.components import button, grid, tile
 
 
 def table_of_contents(menu_list: list, show_header=True):
@@ -30,13 +30,11 @@ def table_of_contents(menu_list: list, show_header=True):
                 hg.mark_safe(
                     """
                     .componentpreview-toc {
-                        padding-left: 2rem;
-                        padding-right: 2rem;
+                        padding: 2rem;
                         margin-bottom: 2rem;
                     }
                     .componentpreview-toc>ul {
-                        margin-left: 1.5rem;
-                        margin-bottom: 1.75rem;
+                        margin: 1.75rem 1.5rem;
                     }
                     .componentpreview-toc>ul>::before {
                         display: none;
@@ -54,20 +52,35 @@ def table_of_contents(menu_list: list, show_header=True):
                 width=8,
             ),
             grid.Col(breakpoint="lg", width=8),
+            grid.Col(),
         )
 
     return ret
 
 
-def section():
-    pass
+def section_header(header, anchor):
+    return hg.BaseElement(
+        hg.A(name=anchor),
+        hg.H1(header),
+        hg.HR(),
+    )
+
+
+def section(classInstance, anchor, *content):
+    return hg.BaseElement(
+        hg.If(anchor, hg.A(name=anchor)),
+        hg.H6(classInstance.__module__),
+        hg.H4(classInstance.__name__, style="margin-bottom: 1.5rem;"),
+        hg.PRE(classInstance.__doc__, style="margin-bottom: 1rem;"),
+        *content,
+    )
 
 
 def layout():
     return hg.BaseElement(
         table_of_contents(
             [
-                ("grid", "bread.layout.components.grid"),
+                ("grid", "bread.layout.components.grid (grid.py)"),
                 [
                     ("grid-grid", "Grid"),
                     ("grid-row", "Row"),
@@ -187,211 +200,210 @@ def _grid_py():
     ]
 
     return hg.BaseElement(
-        hg.A(name="grid"),
-        hg.A(name="grid-grid"),
-        hg.H6("bread.layout.components.grid"),
-        hg.H3("Grid", style="margin-bottom: 1.5rem;"),
-        hg.PRE(grid.Grid.__doc__, style="margin-bottom: 1rem;"),
-        grid.Row(
-            grid.Col(
-                tile.Tile(
-                    hg.H4("gutter=True (default)"),
-                    grid.Grid(
-                        grid_gutter_preview,
-                        gutter=True,
-                    ),
-                    style="margin-bottom: 1rem;",
-                ),
-            ),
-            grid.Col(
-                tile.Tile(
-                    hg.H4("gutter=False"),
-                    grid.Grid(
-                        grid_gutter_preview,
-                        gutter=False,
-                    ),
-                    style="margin-bottom: 1rem;",
-                ),
-            ),
-        ),
-        grid.Row(
-            grid.Col(
-                tile.Tile(
-                    hg.H4('gridmode="full-width" (default)'),
-                    grid.Grid(
-                        grid_mode_preview,
-                        gridmode="full-width",
-                    ),
-                    style="margin-bottom: 1rem;",
-                ),
-            ),
-            grid.Col(
-                tile.Tile(
-                    hg.H4('gridmode="condensed"'),
-                    grid.Grid(
-                        grid_mode_preview,
-                        gridmode="condensed",
-                    ),
-                    style="margin-bottom: 1rem;",
-                ),
-            ),
-            grid.Col(
-                tile.Tile(
-                    hg.H4('gridmode="narrow"'),
-                    grid.Grid(
-                        grid_mode_preview,
-                        gridmode="narrow",
-                    ),
-                    style="margin-bottom: 1rem;",
-                ),
-            ),
-        ),
-        hg.A(name="grid-row"),
-        hg.H6("bread.layout.components.grid", style="margin-top: 3rem;"),
-        hg.H3("Row", style="margin-bottom: 1.5rem;"),
-        hg.PRE(grid.Row.__doc__, style="margin-bottom: 1rem;"),
-        grid.Row(
-            grid.Col(
-                tile.Tile(
-                    hg.H4("gridmode=None (default)"),
-                    hg.H5('* the same as "full-width"'),
-                    row_mode_preview(None),
-                    style="margin-bottom: 1rem;",
-                ),
-            ),
-            grid.Col(
-                tile.Tile(
-                    hg.H4('gridmode="condensed"'),
-                    row_mode_preview("condensed"),
-                    style="margin-bottom: 1rem;",
-                ),
-            ),
-            grid.Col(
-                tile.Tile(
-                    hg.H4('gridmode="narrow"'),
-                    row_mode_preview("narrow"),
-                    style="margin-bottom: 1rem;",
-                ),
-            ),
-        ),
-        hg.A(name="grid-col"),
-        hg.H6("bread.layout.components.grid", style="margin-top: 3rem;"),
-        hg.H3("Col", style="margin-bottom: 1.5rem;"),
-        hg.PRE(grid.Col.__doc__, style="margin-bottom: 1rem;"),
-        hg.H4(),
-        grid.Row(
-            grid.Col(
-                hg.H4("Flexible width"),
-                tile.Tile(
-                    hg.H4("width=None (default)"),
-                    hg.P(
-                        (
-                            "Widths are divided equally within the same row regardless of the number of columns "
-                            "inside. If the viewport is too narrow, rightmost columns may fall to the new row."
-                        ),
-                        style="margin-bottom: 2rem;",
-                    ),
-                    grid.Grid(
-                        hg.Iterator(
-                            range(8, 3, -1),
-                            "rowindex",
-                            grid.Row(
-                                hg.F(
-                                    lambda cout: hg.Iterator(
-                                        range(1, cout["rowindex"] + 1),
-                                        "colindex",
-                                        grid_col_preview(
-                                            hg.F(
-                                                lambda c: "%d of %d"
-                                                % (c["colindex"], c["rowindex"])
-                                            ),
-                                            is_short=True,
-                                        ),
-                                    )
-                                ),
-                            ),
-                        ),
-                    ),
-                    style="margin-bottom: 1rem;",
-                ),
-            ),
-        ),
-        grid.Row(
-            grid.Col(
-                hg.H4("Fixed width"),
-                hg.P(
-                    "Each column is assigned their minimum possible width. If widths ",
-                    "are getting less than the minimum width, the rightmost columns will fall ",
-                    "as a new row instead. "
-                    "You can learn more about possible widths (number of columns) ",
-                    hg.A(
-                        "here",
-                        href="https://www.carbondesignsystem.com/guidelines/2x-grid/overview/#breakpoints",
-                        rel="noreferrer noopener",
-                        target="_blank",
-                    ),
-                    ". You can also resize the window to see how columns will rearrange.",
-                    style="margin-bottom: 2rem;",
-                ),
-            ),
-        ),
-        hg.Iterator(
-            breakpoints,
-            "bp",
+        section_header("grid.py", "grid"),
+        section(
+            grid.Grid,
+            "grid-grid",
             grid.Row(
                 grid.Col(
                     tile.Tile(
-                        hg.H4(hg.F(lambda c: f'breakpoint="{c["bp"]["name"]}"')),
+                        hg.H4("gutter=True (default)"),
+                        grid.Grid(
+                            grid_gutter_preview,
+                            gutter=True,
+                        ),
+                        style="margin-bottom: 1rem;",
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("gutter=False"),
+                        grid.Grid(
+                            grid_gutter_preview,
+                            gutter=False,
+                        ),
+                        style="margin-bottom: 1rem;",
+                    ),
+                ),
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('gridmode="full-width" (default)'),
+                        grid.Grid(
+                            grid_mode_preview,
+                            gridmode="full-width",
+                        ),
+                        style="margin-bottom: 1rem;",
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('gridmode="condensed"'),
+                        grid.Grid(
+                            grid_mode_preview,
+                            gridmode="condensed",
+                        ),
+                        style="margin-bottom: 1rem;",
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('gridmode="narrow"'),
+                        grid.Grid(
+                            grid_mode_preview,
+                            gridmode="narrow",
+                        ),
+                        style="margin-bottom: 1rem;",
+                    ),
+                ),
+            ),
+        ),
+        section(
+            grid.Row,
+            "grid-row",
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("gridmode=None (default)"),
+                        hg.H5('* the same as "full-width"'),
+                        row_mode_preview(None),
+                        style="margin-bottom: 1rem;",
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('gridmode="condensed"'),
+                        row_mode_preview("condensed"),
+                        style="margin-bottom: 1rem;",
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('gridmode="narrow"'),
+                        row_mode_preview("narrow"),
+                        style="margin-bottom: 1rem;",
+                    ),
+                ),
+            ),
+        ),
+        section(
+            grid.Row,
+            "grid-row",
+            grid.Row(
+                grid.Col(
+                    hg.H4("Flexible width"),
+                    tile.Tile(
+                        hg.H4("width=None (default)"),
                         hg.P(
-                            hg.F(
-                                lambda c: (
-                                    f"The minimum viewport width is {c['bp']['size']} px. "
-                                    f"The maximum total width for \"{c['bp']['name']}\" is {c['bp']['width']}. "
-                                    "Shorter widths of viewport will result in rightmost columns would "
-                                    " fall as a new row instead."
-                                )
+                            (
+                                "Widths are divided equally within the same row regardless of the number of columns "
+                                "inside. If the viewport is too narrow, rightmost columns may fall to the new row."
                             ),
                             style="margin-bottom: 2rem;",
                         ),
                         grid.Grid(
-                            hg.F(
-                                lambda cout: hg.Iterator(
-                                    range(cout["bp"]["width"], 0, -1),
-                                    "rowindex",
-                                    grid.Row(
-                                        hg.F(
-                                            lambda c: hg.BaseElement(
-                                                hg.Iterator(
-                                                    range(1, c["rowindex"]),
-                                                    "colindex",
-                                                    grid_col_preview(
-                                                        "width=1",
-                                                        is_short=True,
-                                                    ),
+                            hg.Iterator(
+                                range(8, 3, -1),
+                                "rowindex",
+                                grid.Row(
+                                    hg.F(
+                                        lambda cout: hg.Iterator(
+                                            range(1, cout["rowindex"] + 1),
+                                            "colindex",
+                                            grid_col_preview(
+                                                hg.F(
+                                                    lambda c: "%d of %d"
+                                                    % (c["colindex"], c["rowindex"])
                                                 ),
-                                                grid_col_preview(
-                                                    "width=%d"
-                                                    % (
-                                                        c["bp"]["width"]
-                                                        - c["rowindex"]
-                                                        + 1
+                                                is_short=True,
+                                            ),
+                                        )
+                                    ),
+                                ),
+                            ),
+                        ),
+                        style="margin-bottom: 1rem;",
+                    ),
+                ),
+            ),
+            grid.Row(
+                grid.Col(
+                    hg.H4("Fixed width"),
+                    hg.P(
+                        "Each column is assigned their minimum possible width. If widths ",
+                        "are getting less than the minimum width, the rightmost columns will fall ",
+                        "as a new row instead. "
+                        "You can learn more about possible widths (number of columns) ",
+                        hg.A(
+                            "here",
+                            href="https://www.carbondesignsystem.com/guidelines/2x-grid/overview/#breakpoints",
+                            rel="noreferrer noopener",
+                            target="_blank",
+                        ),
+                        ". You can also resize the window to see how columns will rearrange.",
+                        style="margin-bottom: 2rem;",
+                    ),
+                ),
+            ),
+            hg.Iterator(
+                breakpoints,
+                "bp",
+                grid.Row(
+                    grid.Col(
+                        tile.Tile(
+                            hg.H4(hg.F(lambda c: f'breakpoint="{c["bp"]["name"]}"')),
+                            hg.P(
+                                hg.F(
+                                    lambda c: (
+                                        f"The minimum viewport width is {c['bp']['size']} px. "
+                                        f"The maximum total width for \"{c['bp']['name']}\" is {c['bp']['width']}. "
+                                        "Shorter widths of viewport will result in rightmost columns would "
+                                        " fall as a new row instead."
+                                    )
+                                ),
+                                style="margin-bottom: 2rem;",
+                            ),
+                            grid.Grid(
+                                hg.F(
+                                    lambda cout: hg.Iterator(
+                                        range(cout["bp"]["width"], 0, -1),
+                                        "rowindex",
+                                        grid.Row(
+                                            hg.F(
+                                                lambda c: hg.BaseElement(
+                                                    hg.Iterator(
+                                                        range(1, c["rowindex"]),
+                                                        "colindex",
+                                                        grid_col_preview(
+                                                            "width=1",
+                                                            is_short=True,
+                                                        ),
                                                     ),
-                                                    is_short=True,
-                                                    breakpoint=c["bp"]["name"],
-                                                    width=c["bp"]["width"]
-                                                    - c["rowindex"]
-                                                    + 1,
+                                                    grid_col_preview(
+                                                        "width=%d"
+                                                        % (
+                                                            c["bp"]["width"]
+                                                            - c["rowindex"]
+                                                            + 1
+                                                        ),
+                                                        is_short=True,
+                                                        breakpoint=c["bp"]["name"],
+                                                        width=c["bp"]["width"]
+                                                        - c["rowindex"]
+                                                        + 1,
+                                                    ),
                                                 ),
                                             ),
                                         ),
-                                    ),
-                                )
+                                    )
+                                ),
+                                style="margin-bottom: 1rem;",
                             ),
-                            style="margin-bottom: 1rem;",
                         ),
                     ),
+                    style="margin-bottom: 1rem;",
                 ),
-                style="margin-bottom: 1rem;",
             ),
         ),
     )

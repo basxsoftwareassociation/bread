@@ -136,37 +136,63 @@ def componentpreview(request):
         },
     )
 
-    return tabs.Tabs(
-        tabs.Tab(
-            _("Layout"),
-            layout.componentpreview.layout(),
+    return hg.BaseElement(
+        hg.STYLE(
+            hg.mark_safe(
+                """
+                #backtotopBtn {
+                    position: fixed;
+                    right: 0;
+                    bottom: 0;
+                    z-index: 999;
+                    margin-right: 3rem;
+                    margin-bottom: 3rem;
+                    border-radius: 50%;
+                }
+                """
+            )
         ),
-        tabs.Tab(
-            _("Informational"),
-            hg.BaseElement(
-                hg.H3("Component Name"),
-                hg.P("More detail here"),
+        layout.button.Button.fromlink(
+            Link(href="#", label=_("Back to top")),
+            buttontype="secondary",
+            icon="arrow--up",
+            notext=True,
+            id="backtotopBtn",
+        ),
+        tabs.Tabs(
+            tabs.Tab(
+                _("Layout"),
+                hg.BaseElement(
+                    layout.componentpreview.layout(),
+                ),
             ),
-        ),
-        tabs.Tab(
-            _("Interactive"),
-            hg.BaseElement(
-                hg.H3("Component Name"),
-                hg.P("More detail here"),
+            tabs.Tab(
+                _("Informational"),
+                hg.BaseElement(
+                    hg.H3("Component Name"),
+                    hg.P("More detail here"),
+                ),
             ),
-        ),
-        tabs.Tab(
-            _("Datatable"),
-            hg.BaseElement(
-                hg.H3("Component Name"),
-                hg.P("More detail here"),
+            tabs.Tab(
+                _("Interactive"),
+                hg.BaseElement(
+                    hg.H3("Component Name"),
+                    hg.P("More detail here"),
+                ),
             ),
-        ),
-        tabs.Tab(
-            _("Form"),
-            hg.BaseElement(
-                hg.H3("Component Name"),
-                hg.P("More detail here"),
+            tabs.Tab(
+                _("Datatable"),
+                hg.BaseElement(
+                    hg.H3("Component Name"),
+                    hg.P("More detail here"),
+                ),
+            ),
+            tabs.Tab(
+                _("Form"),
+                hg.BaseElement(
+                    hg.H3("Component Name"),
+                    hg.P("More detail here"),
+                ),
             ),
         ),
     )
