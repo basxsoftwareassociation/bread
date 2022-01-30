@@ -154,6 +154,9 @@ class BrowseViewSearch(hg.DIV):
                             if (e.target.selectionStart === 0 && e.target.selectionEnd === 0 && e.key === 'Backspace') {{
                                 switchToNormal();
                             }}
+                        }} else if (e.key === 'Enter') {{
+                            e.preventDefault();
+                            e.target.closest('form').submit();
                         }}
                     }});
                     document.querySelector('.bx--content .bx--search-close').addEventListener('click', () => {{
