@@ -4,23 +4,24 @@ from django.utils.translation import gettext_lazy as _
 from bread.layout.components import grid, tile
 
 
-def table_of_contents(anchor_names: list, show_header=True):
+def table_of_contents(menu_list: list, show_header=True):
     """Generate a table of content to browse within the webpage."""
     ret = hg.UL(
         _class=f"bx--list--unordered {'' if show_header else 'bx--list--nested'}",
     )
 
     latest_list = hg.LI(_class="bx--list__item")
-    for a_name in anchor_names:
-        if isinstance(a_name, list):
-            latest_list.append(table_of_contents(a_name, False))
+    for item in menu_list:
+        if isinstance(item, list):
+            latest_list.append(table_of_contents(item, False))
         else:
+            anchor, title = item
             if len(latest_list) > 0:
                 ret.append(latest_list)
                 latest_list = hg.LI(_class="bx--list__item")
-            latest_list.append(hg.A(a_name, href=f"#{a_name}"))
+            latest_list.append(hg.A(title, href=f"#{anchor}"))
 
-    if len(ret) < len(anchor_names):
+    if len(ret) < len(menu_list):
         ret.append(latest_list)
 
     if show_header:
@@ -34,6 +35,7 @@ def table_of_contents(anchor_names: list, show_header=True):
                         margin-bottom: 2rem;
                     }
                     .componentpreview-toc>ul {
+                        margin-left: 1.5rem;
                         margin-bottom: 1.75rem;
                     }
                     .componentpreview-toc>ul>::before {
@@ -57,15 +59,19 @@ def table_of_contents(anchor_names: list, show_header=True):
     return ret
 
 
+def section():
+    pass
+
+
 def layout():
     return hg.BaseElement(
         table_of_contents(
             [
-                "grid",
+                ("grid", "bread.layout.components.grid"),
                 [
-                    "grid-grid",
-                    "grid-row",
-                    "grid-col",
+                    ("grid-grid", "Grid"),
+                    ("grid-row", "Row"),
+                    ("grid-col", "Col"),
                 ],
             ]
         ),
@@ -324,7 +330,7 @@ def _grid_py():
                         rel="noreferrer noopener",
                         target="_blank",
                     ),
-                    ". You can also resize the window's size to see how columns will rearrange.",
+                    ". You can also resize the window to see how columns will rearrange.",
                     style="margin-bottom: 2rem;",
                 ),
             ),
