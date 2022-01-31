@@ -1,3 +1,4 @@
+import typing
 from typing import Any, Optional, Union
 
 import htmlgenerator as hg
@@ -185,7 +186,7 @@ class InteractiveTooltip(hg.BaseElement):
         """
         base_class = "bx--tooltip"
 
-        footer_elements = []
+        footer_elements: typing.List[hg.BaseElement] = []
         if link:
             footer_elements.append(hg.A(link.label, href=link.href, _class="bx--link"))
         if button:

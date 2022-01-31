@@ -48,6 +48,7 @@ setup(
         "django-haystack",
         "celery-haystack-ng",
         "whoosh",
+        "docxtpl",
         # TODO: review whether we can or should remove these
         "WeasyPrint",  # creating PDFs
         "backports.zoneinfo; python_version < '3.9'",
