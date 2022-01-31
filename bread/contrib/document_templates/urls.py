@@ -6,7 +6,7 @@ from bread.contrib.document_templates.views import (
     DocumentTemplateEditView,
     generate_document_view,
 )
-from bread.utils import Link, default_model_paths, urls
+from bread.utils import Link, default_model_paths, model_urlname, urls
 
 urlpatterns = [
     *default_model_paths(
@@ -23,9 +23,9 @@ urlpatterns = [
         ),
     ),
     path(
-        "document-template/<int:template_id>/model/<str:model_string>/object/<int:object_id>",
+        "document-template/generate-document/<int:pk>//model/<str:model_string>/object/<int:object_id>",
         generate_document_view,
-        name="generate-document",
+        name=model_urlname(DocumentTemplate, "generate-document"),
     ),
 ]
 

@@ -30,11 +30,9 @@ class DocumentTemplateEditView(views.EditView):
         return self.request.get_full_path()
 
 
-def generate_document_view(
-    request, template_id: int, model_string: str, object_id: int
-):
+def generate_document_view(request, pk: int, model_string: str, object_id: int):
     object = apps.get_model(model_string).objects.get(id=object_id)
-    template_path = DocumentTemplate.objects.get(id=template_id).file.path
+    template_path = DocumentTemplate.objects.get(id=pk).file.path
     docxtpl_template = DocxTemplate(template_path)
     docxtpl_template.render(
         {
