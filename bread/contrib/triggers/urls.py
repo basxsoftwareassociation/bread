@@ -1,4 +1,7 @@
+import typing
+
 import htmlgenerator as hg
+from django.urls import path
 
 from bread import layout
 from bread.utils import quickregister
@@ -6,7 +9,7 @@ from bread.views import AddView, EditView
 
 from .models import DataChangeTrigger, DateFieldTrigger, SendEmail
 
-urlpatterns = []
+urlpatterns: typing.List[path] = []
 quickregister(
     urlpatterns,
     DataChangeTrigger,
