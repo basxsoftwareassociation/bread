@@ -1,3 +1,5 @@
+import collections
+
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
@@ -101,17 +103,35 @@ def table_of_contents(menu_list: list, show_header=True):
     return ret
 
 
-def section_header(header, anchor):
+def table_of_contents_from_cls(*classes):
+    modules = collections.defaultdict(list)
+    for cls in classes:
+        module_name = cls.__module__.split(".")[-1]
+        modules[cls.__module__].append(
+            (f"{module_name}-{cls.__name__.lower()}", cls.__name__)
+        )
+
+    ret = []
+    for module in modules:
+        name = module.split(".")[-1]
+        ret.extend(((name, module), modules[module]))
+
+    return table_of_contents(ret)
+
+
+def section_header(header):
     return hg.BaseElement(
-        hg.A(name=anchor),
+        hg.A(name=header.lower()),
         hg.H1(header, style="margin-top: 6rem;"),
         hg.HR(),
     )
 
 
-def section(cls, anchor, *content):
+def section(cls, *content):
+    module_name = cls.__module__.split(".")[-1]
+
     return hg.BaseElement(
-        hg.If(anchor, hg.A(name=anchor)),
+        hg.A(name=f"{module_name}-{cls.__name__.lower()}"),
         hg.H6(cls.__module__),
         hg.H4(cls.__name__, style="margin-bottom: 1.5rem;"),
         hg.PRE(cls.__doc__, style="margin-bottom: 1rem;"),
@@ -121,27 +141,18 @@ def section(cls, anchor, *content):
 
 def layout():
     return hg.BaseElement(
-        table_of_contents(
-            [
-                ("grid", "bread.layout.components.grid"),
-                [
-                    ("grid-grid", "Grid"),
-                    ("grid-row", "Row"),
-                    ("grid-col", "Col"),
-                ],
-                ("tabs", "bread.layout.components.tabs"),
-                [
-                    ("tabs-tabs", "Tabs"),
-                ],
-                ("tabs", "bread.layout.components.modal"),
-                [
-                    ("modal-modal", "Modal"),
-                ],
-            ]
+        table_of_contents_from_cls(
+            grid.Grid,
+            grid.Row,
+            grid.Col,
+            tabs.Tabs,
+            modal.Modal,
+            tile.Tile,
         ),
         _grid_py(),
         _tabs_py(),
         _modal_py(),
+        _tile_py(),
     )
 
 
@@ -253,10 +264,9 @@ def _grid_py():
     ]
 
     return hg.BaseElement(
-        section_header("Grid components", "grid"),
+        section_header("Grid"),
         section(
             grid.Grid,
-            "grid-grid",
             grid.Row(
                 grid.Col(
                     tile.Tile(
@@ -314,7 +324,6 @@ def _grid_py():
         ),
         section(
             grid.Row,
-            "grid-row",
             grid.Row(
                 grid.Col(
                     tile.Tile(
@@ -342,7 +351,6 @@ def _grid_py():
         ),
         section(
             grid.Col,
-            "grid-col",
             grid.Row(
                 grid.Col(
                     hg.H4("Flexible width"),
@@ -466,16 +474,22 @@ def _tabs_py():
     def sample_tabs(*tabnames):
         return tuple(
             tabs.Tab(
-                f"Tab {tabname}", hg.P(f"This is the content within tab {tabname}.")
+                f"Tab {tabname}",
+                hg.BaseElement(
+                    hg.P(
+                        f"This is the content within tab {tabname}.",
+                        style="margin-bottom: 0.5rem;",
+                    ),
+                    hg.P(dummytxt),
+                ),
             )
-            for tabname in tabnames
+            for tabname, dummytxt in zip(tabnames, LOREMS)
         )
 
     return hg.BaseElement(
-        section_header("Tabs", "tabs"),
+        section_header("Tabs"),
         section(
             tabs.Tabs,
-            "tabs-tabs",
             grid.Row(
                 # Use different tab name to avoid the tab switching confusion.
                 grid.Col(
@@ -502,20 +516,13 @@ def _modal_py():
     def gen_sample_modal(size):
         return modal.Modal(
             "Modal Heading",
-            hg.P(
-                style="margin-bottom: 0.5rem;",
-            ),
-            hg.P(
-                style="margin-bottom: 0.5rem;",
-            ),
-            hg.P(
-                style="margin-bottom: 0.5rem;",
-            ),
-            hg.P(
-                style="margin-bottom: 0.5rem;",
-            ),
-            hg.P(
-                style="margin-bottom: 0.5rem;",
+            hg.Iterator(
+                LOREMS,
+                "dummy_paragraph",
+                hg.P(
+                    hg.F(lambda c: c["dummy_paragraph"]),
+                    style="margin-bottom: 0.5rem;",
+                ),
             ),
             label='Sample Label with size="%s"' % size,
             size=size,
@@ -531,10 +538,9 @@ def _modal_py():
     sample_modal = tuple((size, gen_sample_modal(size)) for size in sizes)
 
     return hg.BaseElement(
-        section_header("Modal", "modal"),
+        section_header("Modal"),
         section(
             modal.Modal,
-            "modal-modal",
             hg.Iterator(
                 sample_modal,
                 "sample_modal",
@@ -549,5 +555,14 @@ def _modal_py():
             hg.Iterator(
                 sample_modal, "sample_modal", hg.F(lambda c: c["sample_modal"][1])
             ),
+        ),
+    )
+
+
+def _tile_py():
+    return hg.BaseElement(
+        section_header("Tile"),
+        section(
+            tile.Tile,
         ),
     )
