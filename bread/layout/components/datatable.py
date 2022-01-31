@@ -1,4 +1,3 @@
-import html
 from typing import Any, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
