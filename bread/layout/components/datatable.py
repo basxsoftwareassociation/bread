@@ -1,4 +1,3 @@
-import html
 from typing import Any, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
@@ -524,9 +523,7 @@ def searchbar(search_urlparameter: str):
         widgetattributes={
             "autofocus": True,
             "name": search_urlparameter,
-            "value": hg.F(
-                lambda c: html.escape(c["request"].GET.get(search_urlparameter, ""))
-            ),
+            "value": hg.F(lambda c: c["request"].GET.get(search_urlparameter, "")),
             "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
         }
     )
