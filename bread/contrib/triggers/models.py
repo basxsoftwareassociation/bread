@@ -1,4 +1,5 @@
 import datetime
+import typing
 
 import htmlgenerator as hg
 from django.contrib.auth import get_user_model
@@ -149,7 +150,7 @@ class DateFieldTrigger(Trigger):
         help_text=_("Can be negative (before) or positive (after)")
     )
 
-    def triggerdate(self, object):
+    def triggerdate(self, object) -> typing.Optional[datetime.datetime]:
         field_value = getattr(object, self.field)
         if field_value is None:
             return None
