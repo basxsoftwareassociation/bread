@@ -27,7 +27,7 @@ class Tile(hg.DIV):
         super().__init__(*children, **attributes)
 
 
-class ExpandableTile(Tile):
+class ExpandableTile(hg.DIV):
     """
     Expandable tiles are helpful for hiding and showing large amounts of content to a user.
     When expanded, tiles push content down the page. They allow the user to specifically
@@ -67,8 +67,9 @@ class ExpandableTile(Tile):
         **attributes : optional
             keyword arguments representing the specific HTML attributes for the tile
         """
+        container_id = hg.html_id(self, "expandable-tile-")
         expandable_tile_attrs = {
-            "_class": "bx--tile--expandable",
+            "_class": "bx--tile bx--tile--expandable",
             "data_tile": "expandable",
             "tabindex": "0",
         }
@@ -83,22 +84,41 @@ class ExpandableTile(Tile):
         below_attrs = below_attrs or {}
         hg.merge_html_attrs(below_attrs, {"_class": "bx--tile-content__below-the-fold"})
 
-        super().__init__(
+        tile_nodes = hg.render(
             hg.BUTTON(
-                Icon("chevron--down", size="16"),
-                aria_label="expand menu",
-                _class="bx--tile__chevron",
-            ),
-            hg.DIV(
-                hg.SPAN(
-                    above,
-                    **above_attrs,
+                hg.DIV(
+                    Icon("chevron--down", size="16"),
+                    _class="bx--tile__chevron",
                 ),
-                hg.SPAN(
-                    below,
-                    **below_attrs,
+                hg.DIV(
+                    hg.SPAN(
+                        above,
+                        **above_attrs,
+                    ),
+                    hg.SPAN(
+                        below,
+                        **below_attrs,
+                    ),
+                    _class="bx--tile-content",
                 ),
-                _class="bx--tile-content",
+                **attributes,
             ),
-            **attributes,
+            {},
+        )
+
+        super().__init__(
+            hg.SCRIPT(
+                hg.format(
+                    """
+                    document.addEventListener('load', () => {{
+                        document.getElementById('{}').innerHTML = `{}`;
+                    }});
+                    """,
+                    container_id,
+                    tile_nodes,
+                    autoescape=False,
+                ),
+            ),
+            _class="bread-expandable-tiles-container",
+            id=container_id,
         )
