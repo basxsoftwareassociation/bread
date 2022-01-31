@@ -1,7 +1,51 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
-from bread.layout.components import button, grid, tile
+from bread.layout.components import button, grid, modal, tabs, tile
+
+LOREMS = (
+    (
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+        "magna aliqua. Est lorem ipsum dolor sit amet consectetur adipiscing. Sit amet mattis vulputate enim nulla "
+        "aliquet porttitor lacus luctus. Elit ullamcorper dignissim cras tincidunt. Sed risus pretium quam vulputate "
+        "dignissim. Quisque sagittis purus sit amet volutpat consequat mauris nunc congue. In eu mi bibendum neque "
+        "egestas. Nibh tortor id aliquet lectus proin. Egestas purus viverra accumsan in nisl. Egestas maecenas "
+        "pharetra convallis posuere."
+    ),
+    (
+        "Tincidunt augue interdum velit euismod in pellentesque massa. Et malesuada fames ac turpis egestas integer. "
+        "Scelerisque varius morbi enim nunc faucibus a pellentesque. Tincidunt vitae semper quis lectus. Nisi "
+        "scelerisque eu ultrices vitae auctor eu augue. Fermentum posuere urna nec tincidunt praesent. Odio tempor "
+        "orci dapibus ultrices in. Risus commodo viverra maecenas accumsan lacus vel facilisis volutpat est. Lectus "
+        "magna fringilla urna porttitor. Adipiscing vitae proin sagittis nisl rhoncus mattis. Consequat id porta nibh "
+        "venenatis cras. Urna id volutpat lacus laoreet non curabitur gravida arcu ac."
+    ),
+    (
+        "At ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget. Imperdiet massa tincidunt nunc "
+        "pulvinar sapien et ligula ullamcorper malesuada. Mollis nunc sed id semper risus. Erat nam at lectus urna "
+        "duis convallis convallis tellus id. Urna condimentum mattis pellentesque id nibh tortor id aliquet. Diam ut "
+        "venenatis tellus in metus vulputate eu scelerisque felis. Cursus vitae congue mauris rhoncus. Quis viverra "
+        "nibh cras pulvinar mattis nunc sed blandit libero. Imperdiet proin fermentum leo vel. Tincidunt augue "
+        "interdum velit euismod in pellentesque massa placerat duis. Pellentesque eu tincidunt tortor aliquam nulla "
+        "facilisi."
+    ),
+    (
+        "Interdum varius sit amet mattis vulputate enim. Dolor sit amet consectetur adipiscing elit ut aliquam purus. "
+        "Nulla facilisi etiam dignissim diam quis enim. Non odio euismod lacinia at quis risus sed vulputate. Felis "
+        "donec et odio pellentesque diam. Sit amet volutpat consequat mauris nunc congue nisi vitae. Elementum tempus "
+        "egestas sed sed risus pretium. Lacus sed turpis tincidunt id aliquet risus feugiat. Sed id semper risus in "
+        "hendrerit gravida. Habitasse platea dictumst quisque sagittis. In iaculis nunc sed augue. Semper auctor neque "
+        "vitae tempus quam pellentesque. Eu lobortis elementum nibh tellus. Amet justo donec enim diam vulputate. Sit "
+        "amet commodo nulla facilisi. Laoreet id donec ultrices tincidunt arcu non sodales. Integer eget aliquet nibh "
+        "praesent. Feugiat vivamus at augue eget arcu dictum varius duis.",
+    ),
+    (
+        "Enim nunc faucibus a pellentesque sit amet porttitor eget dolor. Adipiscing elit pellentesque habitant morbi "
+        "tristique senectus. Sed egestas egestas fringilla phasellus faucibus scelerisque eleifend donec. Imperdiet "
+        "sed euismod nisi porta lorem mollis aliquam ut porttitor. Nunc vel risus commodo viverra maecenas accumsan. "
+        "Gravida dictum fusce ut placerat orci. Ac turpis egestas integer eget aliquet nibh. Aliquet risus feugiat in ante metus dictum at tempor. Viverra vitae congue eu consequat ac. Quisque sagittis purus sit amet volutpat consequat mauris. Nunc sed blandit libero volutpat sed. Vel pretium lectus quam id leo in. Nisi vitae suscipit tellus mauris a diam maecenas sed. Enim sit amet venenatis urna cursus eget nunc. Odio aenean sed adipiscing diam donec adipiscing tristique. Vivamus at augue eget arcu dictum varius. Feugiat in ante metus dictum at tempor commodo ullamcorper a.",
+    ),
+)
 
 
 def table_of_contents(menu_list: list, show_header=True):
@@ -52,7 +96,6 @@ def table_of_contents(menu_list: list, show_header=True):
                 width=8,
             ),
             grid.Col(breakpoint="lg", width=8),
-            grid.Col(),
         )
 
     return ret
@@ -61,17 +104,17 @@ def table_of_contents(menu_list: list, show_header=True):
 def section_header(header, anchor):
     return hg.BaseElement(
         hg.A(name=anchor),
-        hg.H1(header),
+        hg.H1(header, style="margin-top: 6rem;"),
         hg.HR(),
     )
 
 
-def section(classInstance, anchor, *content):
+def section(cls, anchor, *content):
     return hg.BaseElement(
         hg.If(anchor, hg.A(name=anchor)),
-        hg.H6(classInstance.__module__),
-        hg.H4(classInstance.__name__, style="margin-bottom: 1.5rem;"),
-        hg.PRE(classInstance.__doc__, style="margin-bottom: 1rem;"),
+        hg.H6(cls.__module__),
+        hg.H4(cls.__name__, style="margin-bottom: 1.5rem;"),
+        hg.PRE(cls.__doc__, style="margin-bottom: 1rem;"),
         *content,
     )
 
@@ -80,15 +123,25 @@ def layout():
     return hg.BaseElement(
         table_of_contents(
             [
-                ("grid", "bread.layout.components.grid (grid.py)"),
+                ("grid", "bread.layout.components.grid"),
                 [
                     ("grid-grid", "Grid"),
                     ("grid-row", "Row"),
                     ("grid-col", "Col"),
                 ],
+                ("tabs", "bread.layout.components.tabs"),
+                [
+                    ("tabs-tabs", "Tabs"),
+                ],
+                ("tabs", "bread.layout.components.modal"),
+                [
+                    ("modal-modal", "Modal"),
+                ],
             ]
         ),
         _grid_py(),
+        _tabs_py(),
+        _modal_py(),
     )
 
 
@@ -200,7 +253,7 @@ def _grid_py():
     ]
 
     return hg.BaseElement(
-        section_header("grid.py", "grid"),
+        section_header("Grid components", "grid"),
         section(
             grid.Grid,
             "grid-grid",
@@ -288,8 +341,8 @@ def _grid_py():
             ),
         ),
         section(
-            grid.Row,
-            "grid-row",
+            grid.Col,
+            "grid-col",
             grid.Row(
                 grid.Col(
                     hg.H4("Flexible width"),
@@ -331,17 +384,17 @@ def _grid_py():
                 grid.Col(
                     hg.H4("Fixed width"),
                     hg.P(
-                        "Each column is assigned their minimum possible width. If widths ",
-                        "are getting less than the minimum width, the rightmost columns will fall ",
-                        "as a new row instead. "
-                        "You can learn more about possible widths (number of columns) ",
+                        "Each column is assigned their minimum possible width. If widths are getting less than the ",
+                        "minimum width, the rightmost columns will fall as a new row instead. You can learn more ",
+                        "about possible widths (number of columns) ",
                         hg.A(
                             "here",
                             href="https://www.carbondesignsystem.com/guidelines/2x-grid/overview/#breakpoints",
                             rel="noreferrer noopener",
                             target="_blank",
                         ),
-                        ". You can also resize the window to see how columns will rearrange.",
+                        ". You can also resize the window (or, alternatively, zoom in-out) to see how columns will ",
+                        "rearrange.",
                         style="margin-bottom: 2rem;",
                     ),
                 ),
@@ -404,6 +457,97 @@ def _grid_py():
                     ),
                     style="margin-bottom: 1rem;",
                 ),
+            ),
+        ),
+    )
+
+
+def _tabs_py():
+    def sample_tabs(*tabnames):
+        return tuple(
+            tabs.Tab(
+                f"Tab {tabname}", hg.P(f"This is the content within tab {tabname}.")
+            )
+            for tabname in tabnames
+        )
+
+    return hg.BaseElement(
+        section_header("Tabs", "tabs"),
+        section(
+            tabs.Tabs,
+            "tabs-tabs",
+            grid.Row(
+                # Use different tab name to avoid the tab switching confusion.
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("container=False (default)"),
+                        tabs.Tabs(*sample_tabs("1", "2", "3"), container=False),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("container=True"),
+                        tabs.Tabs(*sample_tabs("A", "B", "C"), container=True),
+                    ),
+                ),
+            ),
+            grid.Row(
+                grid.Col(),
+            ),
+        ),
+    )
+
+
+def _modal_py():
+    def gen_sample_modal(size):
+        return modal.Modal(
+            "Modal Heading",
+            hg.P(
+                style="margin-bottom: 0.5rem;",
+            ),
+            hg.P(
+                style="margin-bottom: 0.5rem;",
+            ),
+            hg.P(
+                style="margin-bottom: 0.5rem;",
+            ),
+            hg.P(
+                style="margin-bottom: 0.5rem;",
+            ),
+            hg.P(
+                style="margin-bottom: 0.5rem;",
+            ),
+            label='Sample Label with size="%s"' % size,
+            size=size,
+            buttons=(
+                button.Button("OK"),
+                button.Button("Action 1", buttontype="secondary"),
+                hg.If(size != "xs", button.Button("Action 2", buttontype="secondary")),
+                button.Button("Cancel", buttontype="danger", data_modal_close=True),
+            ),
+        )
+
+    sizes = "xs", "sm", "md", "lg"
+    sample_modal = tuple((size, gen_sample_modal(size)) for size in sizes)
+
+    return hg.BaseElement(
+        section_header("Modal", "modal"),
+        section(
+            modal.Modal,
+            "modal-modal",
+            hg.Iterator(
+                sample_modal,
+                "sample_modal",
+                hg.F(
+                    lambda c: button.Button(
+                        'Open a modal of size="%s"' % c["sample_modal"][0],
+                        style="margin-right: 1rem;",
+                        **c["sample_modal"][1].openerattributes,
+                    )
+                ),
+            ),
+            hg.Iterator(
+                sample_modal, "sample_modal", hg.F(lambda c: c["sample_modal"][1])
             ),
         ),
     )
