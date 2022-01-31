@@ -64,23 +64,23 @@ class SendEmail(Action):
     )
 
     def run(self, object):
-        recepients = []
+        recipients = []
         for email in self.email.split(","):
             email = email.strip()
             if email.startswith("@"):
                 user = get_user_model().objects.filter(username=email[1:]).first()
                 if user and user.email:
-                    recepients.append(user.email)
+                    recipients.append(user.email)
                 else:
                     users = Group.objects.filter(name=email[1:]).first().user_set.all()
-                    recepients.extend(u.email for u in users if u.email)
+                    recipients.extend(u.email for u in users if u.email)
             elif is_email_simple(email):
-                recepients.append(email)
+                recipients.append(email)
             else:  # try to get value from object via accessor
                 extracted_email = hg.resolve_lookup(object, email) or ""
                 if is_email_simple(extracted_email):
-                    recepients.append(extracted_email)
-        if recepients:
+                    recipients.append(extracted_email)
+        if recipients:
             send_mail(
                 subject=engines["django"]
                 .from_string(self.subject)
@@ -89,7 +89,7 @@ class SendEmail(Action):
                 .from_string(self.message)
                 .render({"object": object}),
                 from_email=None,
-                recipient_list=recepients,
+                recipient_list=recipients,
             )
 
     class Meta:
