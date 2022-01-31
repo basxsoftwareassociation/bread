@@ -36,7 +36,7 @@ In that case only the section *Registering the UI* might be worth reading.
     python3 -m venv .venv
     . .venv/bin/activate # this is for bash, for windows use the script .venv/bin/Activate.ps1, there are also scripts for csh and fish
     pip install basx-bread # should run without problems, but users reported problems in some Mac setups due to native libraries missing
-    django-admin startproject --template .venv/lib/pythonX.Y/site-packages/bread/resources/project_template/ myproject . # template-file path depends on the python version
+    django-admin startproject --template $( pip show basx-bread | grep '^Location: ' | cut -c 11- )/bread/resources/project_template/ myproject . # template-project for bread
 
     # adding a Django "app", Django projects consist of different apps with different models, pretty standard
     # can also be achieved with "python manage.py startapp mymodels" but it would create a few unnecessary files

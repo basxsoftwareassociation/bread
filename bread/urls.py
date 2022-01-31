@@ -1,20 +1,11 @@
 import django_celery_results.models
 from django.apps import apps
-from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import include, path
-from dynamic_preferences import views as preferences_views
-from dynamic_preferences.registries import global_preferences_registry
 
 from bread.utils import autopath, default_model_paths
 
-from .forms.forms import PreferencesForm
 from .views import administration, auth, userprofile
-
-PreferencesView = type(
-    "PreferencesView",
-    (SuccessMessageMixin, preferences_views.PreferenceFormView),
-    {"success_message": "Preferences updated"},
-)
+from .views.globalpreferences import PreferencesView
 
 external_urlpatterns = [
     path(
@@ -22,20 +13,10 @@ external_urlpatterns = [
         include(
             (
                 [
-                    path(
-                        "global/",
-                        PreferencesView.as_view(
-                            registry=global_preferences_registry,
-                            form_class=PreferencesForm,
-                        ),
-                        name="global",
-                    ),
+                    path("global/", PreferencesView.as_view(), name="global"),
                     path(
                         "global/<slug:section>",
-                        PreferencesView.as_view(
-                            registry=global_preferences_registry,
-                            form_class=PreferencesForm,
-                        ),
+                        PreferencesView.as_view(),
                         name="global.section",
                     ),
                 ],
@@ -43,9 +24,8 @@ external_urlpatterns = [
             ),
             namespace="preferences",
         ),
-    ),
+    )
 ]
-
 urlpatterns = [
     path(
         "accounts/login/",
