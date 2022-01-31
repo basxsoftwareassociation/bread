@@ -132,7 +132,7 @@ def section(cls, *content):
 
     return hg.BaseElement(
         hg.A(name=f"{module_name}-{cls.__name__.lower()}"),
-        hg.H6(cls.__module__),
+        hg.H6(cls.__module__, style="margin-top: 2rem;"),
         hg.H4(cls.__name__, style="margin-bottom: 1.5rem;"),
         hg.PRE(cls.__doc__, style="margin-bottom: 1rem;"),
         *content,
@@ -148,6 +148,7 @@ def layout():
             tabs.Tabs,
             modal.Modal,
             tile.Tile,
+            tile.ExpandableTile,
         ),
         _grid_py(),
         _tabs_py(),
@@ -562,7 +563,32 @@ def _modal_py():
 def _tile_py():
     return hg.BaseElement(
         section_header("Tile"),
-        section(
-            tile.Tile,
+        grid.Row(
+            grid.Col(
+                section(
+                    tile.Tile,
+                    tile.Tile(
+                        hg.P("This is a content in Tile."),
+                        hg.P("Almost everything can be put here."),
+                    ),
+                ),
+            ),
+            grid.Col(
+                section(
+                    tile.ExpandableTile,
+                    tile.ExpandableTile(
+                        hg.DIV(
+                            hg.P(
+                                "This is the visible part of ExpandableTile. Click to view the hidden one."
+                            ),
+                        ),
+                        hg.DIV(
+                            hg.P("This is a hidden part of ExpandableTile."),
+                        ),
+                        {"style": "height: 100px;"},
+                        {"style": "height: 100px;"},
+                    ),
+                ),
+            ),
         ),
     )
