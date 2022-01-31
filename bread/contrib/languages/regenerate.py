@@ -10,7 +10,7 @@ import re
 import urllib
 import urllib.request
 
-TEMPLATE = u"""from django.utils.translation import gettext as _
+TEMPLATE = """from django.utils.translation import gettext as _
 
 LANGUAGES = (
     %(languages)s
