@@ -137,9 +137,9 @@ class ObjectFieldValue(hg.Lazy):
                 pass
         if isinstance(value, datetime.datetime):
             value = localtime(value)
-        value = localize(value, use_l10n=settings.USE_L10N)
         if self.formatter:
             value = self.formatter(value)
+        value = localize(value, use_l10n=settings.USE_L10N)
         if isinstance(value, models.Manager):
             value = ", ".join([str(x) for x in value.all()])
         if isinstance(value, str):
