@@ -34,7 +34,7 @@ class PreferencesView(
             Tabs(
                 *[
                     Tab(
-                        section.capitalize(),
+                        self.form_class.registry.section_objects[section].verbose_name,
                         hg.BaseElement(
                             *[
                                 breadlayout.forms.FormField(f)
