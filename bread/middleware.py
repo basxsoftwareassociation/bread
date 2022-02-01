@@ -3,7 +3,7 @@ import urllib
 try:
     import zoneinfo
 except ImportError:
-    from backports import zoneinfo
+    from backports import zoneinfo  # type: ignore
 
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
