@@ -39,15 +39,19 @@ def datachange_trigger(model, instance, type):
 
     from .models import DataChangeTrigger
 
-    for trigger in DataChangeTrigger.objects.filter(
-        model=ContentType.objects.get_for_model(model), type=type, enable=True
-    ):
-        if trigger.filter.queryset.filter(pk=instance.pk).exists():
-            # delay execution a bit as the trigger may run immediately even though
-            # the current request has not finished (and therefore not commited to DB yet)
-            run_action.apply_async(
-                (trigger.action.pk, instance._meta.label, instance.pk), countdown=5
-            )
+    model = ContentType.objects.filter(
+        app_label=model._meta.app_label, model=model._meta.model_name
+    )
+    if model.exists():
+        for trigger in DataChangeTrigger.objects.filter(
+            model=model.first(), type=type, enable=True
+        ):
+            if trigger.filter.queryset.filter(pk=instance.pk).exists():
+                # delay execution a bit as the trigger may run immediately even though
+                # the current request has not finished (and therefore not commited to DB yet)
+                run_action.apply_async(
+                    (trigger.action.pk, instance._meta.label, instance.pk), countdown=5
+                )
 
 
 @shared_task
