@@ -27,7 +27,7 @@ class Tile(hg.DIV):
         super().__init__(*children, **attributes)
 
 
-class ExpandableTile(hg.DIV):
+class ExpandableTile(hg.BaseElement):
     """
     Expandable tiles are helpful for hiding and showing large amounts of content to a user.
     When expanded, tiles push content down the page. They allow the user to specifically
@@ -107,7 +107,14 @@ class ExpandableTile(hg.DIV):
         )
 
         super().__init__(
-            onload=hg.format(
-                "e => e.target.innerHTML = `{}`;", tile_nodes, autoescape=False
+            hg.SCRIPT(
+                hg.format(
+                    "var _expandableTileRawText = `{}`;",
+                    tile_nodes,
+                    autoescape=False,
+                )
+            ),
+            hg.DIV(
+                onload=hg.BaseElement("this.innerHTML = _expandableTileRawText;"),
             ),
         )
