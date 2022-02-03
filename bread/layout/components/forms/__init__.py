@@ -1,3 +1,6 @@
+import typing
+from typing import List
+
 import htmlgenerator as hg
 from django import forms
 from django.utils.html import mark_safe
@@ -239,13 +242,13 @@ class FormsetField(hg.Iterator):
 
     @staticmethod
     def as_datatable(
-        fieldname,
-        fields,
-        title=None,
-        formname="form",
-        formsetfield_kwargs=None,
+        fieldname: str,
+        fields: List,
+        title: typing.Optional[str] = None,
+        formname: str = "form",
+        formsetfield_kwargs: dict = None,
         **kwargs,
-    ):
+    ) -> hg.BaseElement:
         from ..datatable import DataTable, DataTableColumn
 
         """
