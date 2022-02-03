@@ -67,7 +67,7 @@ class ExpandableTile(hg.DIV):
         **attributes : optional
             keyword arguments representing the specific HTML attributes for the tile
         """
-        container_id = hg.html_id(self, "expandable-tile-")
+        # container_id = hg.html_id(self, "expandable-tile-")
         expandable_tile_attrs = {
             "_class": "bx--tile bx--tile--expandable",
             "data_tile": "expandable",
@@ -107,18 +107,7 @@ class ExpandableTile(hg.DIV):
         )
 
         super().__init__(
-            hg.SCRIPT(
-                hg.format(
-                    """
-                    document.addEventListener('load', () => {{
-                        document.getElementById('{}').innerHTML = `{}`;
-                    }});
-                    """,
-                    container_id,
-                    tile_nodes,
-                    autoescape=False,
-                ),
+            onload=hg.format(
+                "e => e.target.innerHTML = `{}`;", tile_nodes, autoescape=False
             ),
-            _class="bread-expandable-tiles-container",
-            id=container_id,
         )
