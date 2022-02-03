@@ -773,6 +773,11 @@ class DatePicker(BaseWidget):
         **attributes,
     ):
         inputelement_attrs = inputelement_attrs or {}
+
+        def format_date_value(context):
+            bfield = hg.resolve_lazy(boundfield, context)
+            return bfield.field.widget.format_value(bfield.value())
+
         super().__init__(
             hg.DIV(
                 label,
@@ -796,6 +801,7 @@ class DatePicker(BaseWidget):
                                 .pattern
                             )
                         ),
+                        value=hg.F(format_date_value),
                     ),
                     hg.DIV(
                         self.get_input_element(
@@ -811,6 +817,7 @@ class DatePicker(BaseWidget):
                                     ).field.widget.format_key,
                                 )
                             ),
+                            value=hg.F(format_date_value),
                         ),
                         Icon(
                             "calendar",
@@ -864,7 +871,7 @@ class FileInput(BaseWidget):
             hg.SPAN(_("Select file"), role="button"),
             tabindex=0,
             _class=hg.BaseElement(
-                "bx--btn bx--btn--primary",
+                "bx--btn bx--btn--tertiary",
                 hg.If(inputelement_attrs.get("disabled"), " bx--btn--disabled"),
             ),
             data_file_drop_container=True,

@@ -2,6 +2,7 @@ from typing import List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.db import models
+from htmlgenerator import Lazy
 
 from .urls import model_urlname
 from .urls import reverse as urlreverse
@@ -77,7 +78,7 @@ def try_call(var, *args, **kwargs):
 
 
 class Link(NamedTuple):
-    href: Union[str, LazyHref]
+    href: Union[str, Lazy]
     label: str
     iconname: Optional[str] = "fade"
     permissions: List[str] = []
