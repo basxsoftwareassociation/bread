@@ -27,8 +27,7 @@ setup(
     license="New BSD License",
     install_requires=[
         # core dependencies
-        "Django",
-        "python-dateutil",
+        "Django>=3.2",
         "htmlgenerator",  # replacement for django templates
         "django-extensions",  # bunch of usefull management commands and functions
         "django-guardian",  # object level permissions
@@ -53,7 +52,10 @@ setup(
         "WeasyPrint",  # creating PDFs
         "backports.zoneinfo; python_version < '3.9'",
     ],
-    extras_require={"testing": ["hypothesis[django]", "django_dynamic_fixture"]},
+    extras_require={
+        "testing": ["hypothesis[django]", "django_dynamic_fixture"],
+        "document_templates": ["docxtpl"],
+    },
     packages=find_packages(),
     setup_requires=["setuptools_scm"],
     zip_safe=False,
