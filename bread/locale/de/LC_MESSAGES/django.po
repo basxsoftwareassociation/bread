@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-24 09:26+0000\n"
+"POT-Creation-Date: 2022-01-27 07:52+0000\n"
 "PO-Revision-Date: 2021-09-21 12:39+0000\n"
 "Last-Translator: Beat Schnyder <schnyder@basx.ch>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -18,11 +18,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.9-dev\n"
-
-#: bread/contrib/reports/fields/queryfield.py:101
-#, python-format
-msgid "Invalid model '%s' selected"
-msgstr "Ungültiges Model '%s' ausgewählt"
 
 #: bread/contrib/reports/models.py:20
 msgid "Created"
@@ -93,7 +88,8 @@ msgid "Columns"
 msgstr "Spalten"
 
 #: bread/contrib/reports/urls.py:23
-#: bread/layout/components/forms/__init__.py:312 bread/views/browse.py:56
+#: bread/layout/components/forms/__init__.py:323 bread/views/browse.py:57
+#: bread/views/browse.py:324
 msgid "Delete"
 msgstr "Löschen"
 
@@ -101,50 +97,50 @@ msgstr "Löschen"
 msgid "Copy"
 msgstr "Kopieren"
 
-#: bread/contrib/reports/urls.py:38 bread/views/read.py:59
-#: bread/views/userprofile.py:100 bread/views/userprofile.py:128
-#: bread/views/userprofile.py:160
+#: bread/contrib/reports/urls.py:38 bread/views/browse.py:309
+#: bread/views/read.py:59 bread/views/userprofile.py:100
+#: bread/views/userprofile.py:128 bread/views/userprofile.py:160
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: bread/contrib/reports/urls.py:43 bread/contrib/reports/views.py:136
-#: bread/views/browse.py:49
+#: bread/contrib/reports/urls.py:43 bread/contrib/reports/views.py:127
+#: bread/views/browse.py:50
 msgid "Excel"
 msgstr "Excel"
 
-#: bread/contrib/reports/views.py:45
+#: bread/contrib/reports/views.py:37
 msgid "Base model"
 msgstr "Basis Model"
 
-#: bread/contrib/reports/views.py:67
+#: bread/contrib/reports/views.py:58
 msgid "Help"
 msgstr "Hilfe"
 
-#: bread/contrib/reports/views.py:205
+#: bread/contrib/reports/views.py:196
 msgid "Unknown"
 msgstr "Unbekannt"
 
-#: bread/contrib/reports/views.py:207
+#: bread/contrib/reports/views.py:198
 msgid "Available columns"
 msgstr "Verfügbare Spalten"
 
-#: bread/contrib/reports/views.py:209
+#: bread/contrib/reports/views.py:200
 msgid "Bold text marks valid column names"
 msgstr "Fetter Text sind gültige Spaltenname"
 
-#: bread/contrib/reports/views.py:213
+#: bread/contrib/reports/views.py:204
 msgid "Column name"
 msgstr "Spaltenname"
 
-#: bread/contrib/reports/views.py:217
+#: bread/contrib/reports/views.py:208
 msgid "Description"
 msgstr "Beschreibung"
 
-#: bread/contrib/reports/views.py:220
+#: bread/contrib/reports/views.py:211
 msgid "Type"
 msgstr "Typ"
 
-#: bread/contrib/reports/views.py:223
+#: bread/contrib/reports/views.py:214
 msgid "Extended columns"
 msgstr "Erweiterte Spalten"
 
@@ -170,71 +166,24 @@ msgstr "Bevorzugte Sprache"
 msgid "Timezone"
 msgstr "Zeitzone"
 
-#: bread/layout/admin.py:31
-msgid "unable to load"
-msgstr "Kann nicht geladen werden"
-
-#: bread/layout/admin.py:44
-msgid "Package"
-msgstr "Packet"
-
-#: bread/layout/admin.py:48
-msgid "Current"
-msgstr "Aktuelle Version"
-
-#: bread/layout/admin.py:52
-msgid "Latest"
-msgstr "Neuste Version"
-
-#: bread/layout/admin.py:95
-#, python-format
-msgid "The database size has been minimized from %.2f kB to %.2f kB."
-msgstr "Die Datenbank wurde von %.2f kB nach %.2f kB optimiert."
-
-#: bread/layout/admin.py:100
-#, python-format
-msgid "Previous Size: %.2f kB"
-msgstr "Vorherige Grösse:  %.2f kB"
-
-#: bread/layout/admin.py:110
-msgid "Optimize"
-msgstr "Optimieren"
-
-#: bread/layout/admin.py:115
-#, python-format
-msgid "Current Size: %.2f kB"
-msgstr "Aktuelle Grösse: %.2f kB"
-
-#: bread/layout/admin.py:142
-msgid "Rebuilt search index"
-msgstr "Suchindex wurde neu erstellt"
-
-#: bread/layout/admin.py:151
-msgid "Rebuild"
-msgstr "Neu erstellen"
-
-#: bread/layout/admin.py:172
-msgid "Log from the server"
-msgstr "Log vom Server"
-
 #: bread/layout/components/button.py:77
 msgid "Print"
 msgstr "Drucken"
 
-#: bread/layout/components/datatable.py:239
-#: bread/layout/components/modal.py:106 bread/views/auth.py:28
+#: bread/layout/components/datatable.py:240
+#: bread/layout/components/modal.py:107 bread/views/auth.py:28
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: bread/layout/components/datatable.py:250
+#: bread/layout/components/datatable.py:251
 msgid " items selected"
 msgstr " Einträge ausgewählt"
 
-#: bread/layout/components/datatable.py:256
+#: bread/layout/components/datatable.py:257
 msgid "Table Action Bar"
 msgstr "Tabellen Aktionsbar"
 
-#: bread/layout/components/datatable.py:356 bread/views/add.py:38
+#: bread/layout/components/datatable.py:336 bread/views/add.py:38
 #: bread/views/add.py:45
 #, python-format
 msgid "Add %s"
@@ -248,12 +197,12 @@ msgstr "Formfehler"
 msgid "Hidden field error: "
 msgstr "Fehler von versteckten Feldern"
 
-#: bread/layout/components/forms/__init__.py:198
-#: bread/layout/components/forms/__init__.py:218
+#: bread/layout/components/forms/__init__.py:205
+#: bread/layout/components/forms/__init__.py:225
 msgid "Add"
 msgstr "Erstellen"
 
-#: bread/layout/components/forms/__init__.py:265
+#: bread/layout/components/forms/__init__.py:276
 msgid "Order"
 msgstr "Reihenfolge"
 
@@ -262,11 +211,11 @@ msgstr "Reihenfolge"
 msgid "Save"
 msgstr "Speichern"
 
-#: bread/layout/components/forms/widgets.py:237
+#: bread/layout/components/forms/widgets.py:238
 msgid "Show password"
 msgstr "Zeige Passwort"
 
-#: bread/layout/components/forms/widgets.py:863
+#: bread/layout/components/forms/widgets.py:864
 msgid "Select file"
 msgstr "Datei auswählen"
 
@@ -295,11 +244,11 @@ msgstr "Seiten"
 msgid "Optional"
 msgstr "Optional"
 
-#: bread/layout/components/search.py:47 bread/layout/components/search.py:64
+#: bread/layout/components/search.py:47 bread/layout/components/search.py:66
 msgid "Search"
 msgstr "Suchen"
 
-#: bread/layout/components/search.py:111 bread/layout/components/search.py:112
+#: bread/layout/components/search.py:116 bread/layout/components/search.py:117
 msgid "Clear search input"
 msgstr "Suchtext löschen"
 
@@ -324,74 +273,150 @@ msgstr "Aus"
 msgid "On"
 msgstr "An"
 
-#: bread/menu.py:138
+#: bread/menu.py:137
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: bread/menu.py:143 bread/views/globalpreferences.py:33
+msgid "Global preferences"
+msgstr "Allgemeine Einstellungen"
+
+#: bread/menu.py:150
 msgid "Administration"
 msgstr "Administration"
 
-#: bread/menu.py:143
+#: bread/menu.py:155
 msgid "Background Jobs"
 msgstr "Hintergrund Jobs"
 
-#: bread/menu.py:149
+#: bread/menu.py:161
 msgid "Django Admin"
 msgstr "Django Admin"
 
-#: bread/menu.py:155 bread/views/admin.py:27
+#: bread/menu.py:167 bread/views/administration.py:39
 msgid "Maintenance"
 msgstr "Wartung"
 
-#: bread/menu.py:165
+#: bread/menu.py:177
 msgid "System Information"
 msgstr "Systeminformationen"
 
-#: bread/menu.py:174
+#: bread/menu.py:186
 msgid "Form widgets preview"
 msgstr "Formular Widget Vorschau"
+
+#: bread/querysetfield/__init__.py:103
+msgid "Invalid model '%s' selected"
+msgstr "Ungültiges Model '%s' ausgewählt"
 
 #: bread/views/add.py:23
 #, python-format
 msgid "Added %s"
 msgstr "%s erstellt"
 
-#: bread/views/admin.py:33
+#: bread/views/administration.py:45
 msgid "Packages"
 msgstr "Packete"
 
-#: bread/views/admin.py:37
+#: bread/views/administration.py:49
 msgid "Optimize database"
 msgstr "Datenbank optimieren"
 
-#: bread/views/admin.py:39
+#: bread/views/administration.py:51
 msgid "Rebuild search index"
 msgstr "Suchindex neu erstellen"
 
-#: bread/views/admin.py:127
+#: bread/views/administration.py:139
 msgid "Widget preview"
 msgstr "Widget Vorschau"
 
-#: bread/views/admin.py:131
+#: bread/views/administration.py:143
 msgid "Widgets"
 msgstr "Widgets"
 
-#: bread/views/admin.py:145
+#: bread/views/administration.py:157
 msgid "Configure preview"
 msgstr "Vorschau konfigurieren"
 
-#: bread/views/admin.py:152
+#: bread/views/administration.py:164
 msgid "Apply"
 msgstr "Anwenden"
 
-#: bread/views/admin.py:178
+#: bread/views/administration.py:171
+msgid "Tooltips"
+msgstr ""
+
+#: bread/views/administration.py:172
+msgid "Definition tooltip"
+msgstr ""
+
+#: bread/views/administration.py:194
+msgid "Icon tooltip"
+msgstr ""
+
+#: bread/views/administration.py:208
+msgid "Interactive tooltip"
+msgstr ""
+
+#: bread/views/administration.py:241
 msgid "Date Created"
 msgstr "Datum erstellt"
 
-#: bread/views/admin.py:185
+#: bread/views/administration.py:248
 msgid "Date Completed"
 msgstr "Datum abgeschlossen"
 
-#: bread/views/admin.py:195
+#: bread/views/administration.py:258
 msgid "Metadata"
 msgstr "Metadaten"
+
+#: bread/views/administration.py:276
+msgid "unable to load"
+msgstr "Kann nicht geladen werden"
+
+#: bread/views/administration.py:289
+msgid "Package"
+msgstr "Packet"
+
+#: bread/views/administration.py:293
+msgid "Current"
+msgstr "Aktuelle Version"
+
+#: bread/views/administration.py:297
+msgid "Latest"
+msgstr "Neuste Version"
+
+#: bread/views/administration.py:340
+msgid "The database size has been minimized from %.2f kB to %.2f kB."
+msgstr "Die Datenbank wurde von %.2f kB nach %.2f kB optimiert."
+
+#: bread/views/administration.py:345
+msgid "Previous Size: %.2f kB"
+msgstr "Vorherige Grösse:  %.2f kB"
+
+#: bread/views/administration.py:355
+msgid "Optimize"
+msgstr "Optimieren"
+
+#: bread/views/administration.py:360
+msgid "Current Size: %.2f kB"
+msgstr "Aktuelle Grösse: %.2f kB"
+
+#: bread/views/administration.py:387
+msgid "Rebuilt search index"
+msgstr "Suchindex wurde neu erstellt"
+
+#: bread/views/administration.py:396
+msgid "Rebuild"
+msgstr "Neu erstellen"
+
+#: bread/views/administration.py:417
+msgid "Log from the server"
+msgstr "Log vom Server"
+
+#: bread/views/administration.py:445
+msgid "System information"
+msgstr "Systeminformationen"
 
 #: bread/views/auth.py:57 bread/views/auth.py:83 bread/views/userprofile.py:115
 #: bread/views/userprofile.py:121
@@ -454,39 +479,44 @@ msgstr "Passwort erfolgreich geändert."
 msgid "Please login again"
 msgstr "Bitte loggen Sie sich wieder ein"
 
-#: bread/views/browse.py:195
+#: bread/views/browse.py:218
 #, python-format
 msgid "Action '%s' is not configured for this view"
 msgstr "Aktion '%s' ist nicht konfiguriert für diese View"
 
-#: bread/views/browse.py:328
+#: bread/views/browse.py:263
+#, python-format
+msgid "Bad filter string '%s': '%s'"
+msgstr ""
+
+#: bread/views/browse.py:373
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "Benutzer hat nicht die benötigten Berechtigungnen um '%s' zu löschen"
 
-#: bread/views/browse.py:341
+#: bread/views/browse.py:386
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s konnte nicht gelöscht werden: %s"
 
-#: bread/views/browse.py:346
+#: bread/views/browse.py:391
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s %(modelname)s gelöscht"
 
-#: bread/views/browse.py:368
+#: bread/views/browse.py:413
 #, python-format
 msgid "Your user has not the permissions to restore %s"
 msgstr ""
 "Ihr Benutzer hat nicht die benötigten Berechtigungnen um '%s' "
 "wiederherzustellen"
 
-#: bread/views/browse.py:377
+#: bread/views/browse.py:422
 #, python-format
 msgid "%s could not be restored: %s"
 msgstr "%s konnte nicht wiederhergestellt werden: %s"
 
-#: bread/views/browse.py:382
+#: bread/views/browse.py:427
 #, python-format
 msgid "Restored %(count)s %(modelname)s"
 msgstr "%(count)s %(modelname)s wiederhergestellt"
@@ -521,6 +551,48 @@ msgctxt "this is a copy"
 msgid "Copy"
 msgstr "Kopie"
 
+#: bread/views/error.py:42
+msgid "Back to homepage"
+msgstr "Zurück zum Login"
+
+#: bread/views/error.py:53
+msgid "Bad request"
+msgstr ""
+
+#: bread/views/error.py:54
+msgid "The server cannot process the request due to a client error."
+msgstr ""
+
+#: bread/views/error.py:66
+msgid "Forbidden"
+msgstr ""
+
+#: bread/views/error.py:67
+msgid "You do not have permission to access this resource."
+msgstr ""
+"Ihr Benutzer hat nicht die benötigten Berechtigungnen um auf '%s' "
+"zuzugreifen"
+
+#: bread/views/error.py:79
+msgid "Page not found"
+msgstr ""
+
+#: bread/views/error.py:82
+#, python-format
+msgid "The path %s could not be found."
+msgstr "Der Pfad %s konnte nicht gefunden werden"
+
+#: bread/views/error.py:98
+msgid "Internal Server Error"
+msgstr ""
+
+#: bread/views/error.py:102
+#, python-format
+msgid ""
+"A problem has occurred while loading the page at %s.<br>If the problem "
+"persists, please contact an administrator."
+msgstr ""
+
 #: bread/views/read.py:40
 msgid "lbl_field"
 msgstr "Feld"
@@ -528,10 +600,6 @@ msgstr "Feld"
 #: bread/views/read.py:43
 msgid "lbl_value"
 msgstr "Wert"
-
-#: bread/views/system.py:31
-msgid "System information"
-msgstr "Systeminformationen"
 
 #: bread/views/userprofile.py:36
 msgid "Manage Profile"
@@ -569,30 +637,30 @@ msgstr "Schalten Sie diese nur ein, wenn Sie wissen was Sie machen."
 msgid "<from browser>"
 msgstr "<vom Browser>"
 
-#: bread/views/userprofile.py:263
+#: bread/views/userprofile.py:278
 msgid "Confirm changes with current password"
 msgstr "Änderungen mit dem aktuellen Passwort bestätigen."
 
-#: bread/views/userprofile.py:267
+#: bread/views/userprofile.py:282
 msgid "Please enter your current password to confirm these changes"
 msgstr ""
 "Bitte geben Sie ihr aktuelles Passwort ein um die Änderungen zu bestätigen."
 
-#: bread/views/userprofile.py:276
+#: bread/views/userprofile.py:291
 msgid "Your current password was entered incorrectly. Please enter it again."
 msgstr ""
 "Ihr aktuelles Passwort wurde nicht korrekt eingegeben. Bitte geben Sie es "
 "nochmals ein."
 
-#: bread/views/userprofile.py:325
+#: bread/views/userprofile.py:340
 msgid "Request reset"
 msgstr "Zurücksetzen"
 
-#: bread/views/userprofile.py:356
+#: bread/views/userprofile.py:371
 msgid "Enabled developer mode"
 msgstr "Entwickler-Modus aktiviert"
 
-#: bread/views/userprofile.py:358
+#: bread/views/userprofile.py:373
 msgid "Disabled developer mode"
 msgstr "Entwickler-Modus deaktiviert"
 

@@ -23,7 +23,7 @@ def error_layout(
             style="margin-bottom: 1rem;",
         ),
         hg.If(
-            exception_detail,
+            bool(exception_detail),
             hg.BaseElement(
                 hg.H4("Detail", style="margin-bottom: 1rem;"),
                 hg.DIV(

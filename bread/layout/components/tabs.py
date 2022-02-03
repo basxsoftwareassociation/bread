@@ -1,4 +1,5 @@
 import collections
+import typing
 
 import htmlgenerator as hg
 from django.utils.text import slugify
@@ -42,7 +43,9 @@ class TabPanel(hg.DIV):
         )
 
 
-Tab = collections.namedtuple("Tab", "label content")
+class Tab(typing.NamedTuple):
+    label: typing.Any
+    content: typing.Any
 
 
 class Tabs(hg.DIV):
