@@ -190,6 +190,7 @@ def informational():
             notification.ToastNotification,
         ),
         _icon_py(),
+        _tag_py(),
         _tooltip_py(),
     )
 
@@ -637,23 +638,15 @@ def _icon_py():
         section(
             icon.Icon,
             grid.Row(
-                grid.Col(
-                    tile.Tile(
-                        hg.H4('name="information"'),
-                        icon.Icon("information"),
-                    )
-                ),
-                grid.Col(
-                    tile.Tile(
-                        hg.H4('name="filter"'),
-                        icon.Icon("filter"),
-                    )
-                ),
-                grid.Col(
-                    tile.Tile(
-                        hg.H4('name="email"'),
-                        icon.Icon("email"),
-                    )
+                hg.Iterator(
+                    ("information", "filter", "email"),
+                    "iconname",
+                    grid.Col(
+                        tile.Tile(
+                            hg.H4('name="', hg.C("iconname"), '"'),
+                            icon.Icon(hg.C("iconname")),
+                        )
+                    ),
                 ),
                 grid.Col(
                     tile.Tile(
@@ -695,6 +688,72 @@ def _icon_py():
                         hg.H4("size=[preferred length]"),
                         hg.P("the width and height of the icon"),
                     )
+                ),
+            ),
+        ),
+    )
+
+
+def _tag_py():
+    return hg.BaseElement(
+        section_header("Tag"),
+        section(
+            tag.Tag,
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("can_delete=False (default)"),
+                        tag.Tag("image", tag_color="warm-gray"),
+                        tag.Tag("document", tag_color="cyan"),
+                        tag.Tag("important", tag_color="magenta"),
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("can_delete=True"),
+                        tag.Tag("image", can_delete=True, tag_color="warm-gray"),
+                        tag.Tag("document", can_delete=True, tag_color="cyan"),
+                        tag.Tag("important", can_delete=True, tag_color="magenta"),
+                    )
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("tag_color=None (default)"),
+                        hg.H6('the same as tag_color="gray"'),
+                        tag.Tag("image"),
+                    ),
+                    breakpoint="lg",
+                    width=4,
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("Possble tag_color value"),
+                        hg.Iterator(
+                            (
+                                "red",
+                                "magenta",
+                                "purple",
+                                "blue",
+                                "cyan",
+                                "teal",
+                                "green",
+                                "gray",
+                                "cool-gray",
+                                "warm-gray",
+                            ),
+                            "tag_color",
+                            hg.F(
+                                lambda c: tag.Tag(
+                                    c["tag_color"], tag_color=c["tag_color"]
+                                )
+                            ),
+                        ),
+                    ),
+                    breakpoint="md",
+                    width=6,
                 ),
             ),
         ),
