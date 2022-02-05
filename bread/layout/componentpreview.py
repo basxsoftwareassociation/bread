@@ -137,9 +137,9 @@ def table_of_contents_from_cls(*classes):
     return table_of_contents(ret)
 
 
-def section_header(header):
+def section_header(header, anchor=None):
     return hg.BaseElement(
-        hg.A(name=header.lower()),
+        hg.A(name=anchor or header.lower()),
         hg.H1(header, style="margin-top: 6rem;"),
         hg.HR(),
     )
@@ -191,8 +191,9 @@ def informational():
         ),
         _icon_py(),
         _tag_py(),
-        _tooltip_py(),
         _loading_py(),
+        _progress_indicator_py(),
+        _tooltip_py(),
     )
 
 
@@ -731,7 +732,7 @@ def _tag_py():
                 ),
                 grid.Col(
                     tile.Tile(
-                        hg.H4("Possble tag_color value"),
+                        hg.H4('Possible "tag_color" value'),
                         hg.Iterator(
                             (
                                 "red",
@@ -769,6 +770,101 @@ def _loading_py():
             grid.Row(
                 grid.Col(tile.Tile(hg.H4("small=False (default)"), loading.Loading())),
                 grid.Col(tile.Tile(hg.H4("small=True"), loading.Loading(small=True))),
+            ),
+        ),
+    )
+
+
+def _progress_indicator_py():
+    progressstep_demo_optional = progress_indicator.ProgressIndicator(
+        (("Another step", "incomplete"),)
+    )
+    progressstep_demo_optional.extend(
+        (
+            progress_indicator.ProgressStep("=False", "complete", optional=False),
+            progress_indicator.ProgressStep("=True", "current", optional=True),
+        )
+    )
+    progressstep_demo_disabled = progress_indicator.ProgressIndicator(
+        (("Another step", "current"),)
+    )
+    progressstep_demo_disabled.extend(
+        (
+            progress_indicator.ProgressStep("=False", "complete", disabled=False),
+            progress_indicator.ProgressStep("=True", "incomplete", disabled=True),
+        )
+    )
+
+    return hg.BaseElement(
+        section_header("Progress Indicator", "progress_indicator"),
+        section(
+            progress_indicator.ProgressIndicator,
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('Possible "status" value'),
+                        hg.H6("* required"),
+                        progress_indicator.ProgressIndicator(
+                            (status, status)
+                            for status in (
+                                "warning",
+                                "current",
+                                "complete",
+                                "incomplete",
+                            )
+                        ),
+                    )
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("vertical=False (default)"),
+                        progress_indicator.ProgressIndicator(
+                            (
+                                ("Step 1", "complete"),
+                                ("Step 2", "current"),
+                                ("Step 3", "incomplete"),
+                                ("Step 4", "incomplete"),
+                            )
+                        ),
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("vertical=True"),
+                        progress_indicator.ProgressIndicator(
+                            (
+                                ("Step 1", "complete"),
+                                ("Step 2", "current"),
+                                ("Step 3", "incomplete"),
+                                ("Step 4", "incomplete"),
+                            ),
+                            vertical=True,
+                        ),
+                    )
+                ),
+            ),
+        ),
+        section(
+            progress_indicator.ProgressStep,
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('Possible "disabled" value'),
+                        hg.H6("* default is False"),
+                        progressstep_demo_disabled,
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('Possible "optional" value'),
+                        hg.H6("* default is False"),
+                        progressstep_demo_optional,
+                    )
+                ),
+                style="margin-bottom: 2rem;",
             ),
         ),
     )
