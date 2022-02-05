@@ -192,6 +192,7 @@ def informational():
         _icon_py(),
         _tag_py(),
         _tooltip_py(),
+        _loading_py(),
     )
 
 
@@ -755,6 +756,19 @@ def _tag_py():
                     breakpoint="md",
                     width=6,
                 ),
+            ),
+        ),
+    )
+
+
+def _loading_py():
+    return hg.BaseElement(
+        section_header("Loading"),
+        section(
+            loading.Loading,
+            grid.Row(
+                grid.Col(tile.Tile(hg.H4("small=False (default)"), loading.Loading())),
+                grid.Col(tile.Tile(hg.H4("small=True"), loading.Loading(small=True))),
             ),
         ),
     )
