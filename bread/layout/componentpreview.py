@@ -3,7 +3,20 @@ import collections
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
-from bread.layout.components import button, grid, modal, tabs, tile
+from bread.layout.components import (
+    button,
+    grid,
+    icon,
+    loading,
+    modal,
+    notification,
+    progress_indicator,
+    tabs,
+    tag,
+    tile,
+    tooltip,
+)
+from bread.utils import Link
 
 LOREMS = (
     (
@@ -45,7 +58,12 @@ LOREMS = (
         "Enim nunc faucibus a pellentesque sit amet porttitor eget dolor. Adipiscing elit pellentesque habitant morbi "
         "tristique senectus. Sed egestas egestas fringilla phasellus faucibus scelerisque eleifend donec. Imperdiet "
         "sed euismod nisi porta lorem mollis aliquam ut porttitor. Nunc vel risus commodo viverra maecenas accumsan. "
-        "Gravida dictum fusce ut placerat orci. Ac turpis egestas integer eget aliquet nibh. Aliquet risus feugiat in ante metus dictum at tempor. Viverra vitae congue eu consequat ac. Quisque sagittis purus sit amet volutpat consequat mauris. Nunc sed blandit libero volutpat sed. Vel pretium lectus quam id leo in. Nisi vitae suscipit tellus mauris a diam maecenas sed. Enim sit amet venenatis urna cursus eget nunc. Odio aenean sed adipiscing diam donec adipiscing tristique. Vivamus at augue eget arcu dictum varius. Feugiat in ante metus dictum at tempor commodo ullamcorper a.",
+        "Gravida dictum fusce ut placerat orci. Ac turpis egestas integer eget aliquet nibh. Aliquet risus feugiat in "
+        "ante metus dictum at tempor. Viverra vitae congue eu consequat ac. Quisque sagittis purus sit amet volutpat "
+        "consequat mauris. Nunc sed blandit libero volutpat sed. Vel pretium lectus quam id leo in. Nisi vitae suscipit "
+        "tellus mauris a diam maecenas sed. Enim sit amet venenatis urna cursus eget nunc. Odio aenean sed adipiscing "
+        "diam donec adipiscing tristique. Vivamus at augue eget arcu dictum varius. Feugiat in ante metus dictum at "
+        "tempor commodo ullamcorper a.",
     ),
 )
 
@@ -154,6 +172,24 @@ def layout():
         _tabs_py(),
         _modal_py(),
         _tile_py(),
+    )
+
+
+def informational():
+    return hg.BaseElement(
+        table_of_contents_from_cls(
+            icon.Icon,
+            tag.Tag,
+            loading.Loading,
+            progress_indicator.ProgressIndicator,
+            progress_indicator.ProgressStep,
+            tooltip.DefinitionTooltip,
+            tooltip.IconTooltip,
+            tooltip.InteractiveTooltip,
+            notification.InlineNotification,
+            notification.ToastNotification,
+        ),
+        _tooltip_py(),
     )
 
 
@@ -587,6 +623,75 @@ def _tile_py():
                         ),
                         {"style": "height: 100px;"},
                         {"style": "height: 100px;"},
+                    ),
+                ),
+            ),
+        ),
+    )
+
+
+def _tooltip_py():
+    return hg.BaseElement(
+        section_header("Tooltip"),
+        grid.Row(
+            grid.Col(
+                section(
+                    tooltip.DefinitionTooltip,
+                    tile.Tile(
+                        hg.DIV(
+                            tooltip.DefinitionTooltip(
+                                "Definition tooltip (left aligned)",
+                                "Brief definition of the dotted, underlined word above.",
+                                align="left",
+                            )
+                        ),
+                        hg.DIV(
+                            tooltip.DefinitionTooltip(
+                                "Definition tooltip (center aligned)",
+                                "Brief definition of the dotted, underlined word above.",
+                                align="center",
+                            )
+                        ),
+                        hg.DIV(
+                            tooltip.DefinitionTooltip(
+                                "Definition tooltip (right aligned)",
+                                "Brief definition of the dotted, underlined word above.",
+                                align="right",
+                            )
+                        ),
+                    ),
+                ),
+                section(
+                    tooltip.IconTooltip,
+                    tile.Tile(
+                        tooltip.IconTooltip(
+                            "Help",
+                        ),
+                        tooltip.IconTooltip(
+                            "Filter",
+                            icon=icon.Icon("filter"),
+                        ),
+                        tooltip.IconTooltip(
+                            "Email",
+                            icon="email",
+                        ),
+                    ),
+                ),
+                section(
+                    tooltip.InteractiveTooltip,
+                    tile.Tile(
+                        tooltip.InteractiveTooltip(
+                            label="Tooltip label",
+                            body=(
+                                _(
+                                    "This is some tooltip text. This box shows the maximum amount of text that should "
+                                    "appear inside. If more room is needed please use a modal instead."
+                                )
+                            ),
+                            heading="Heading within a Tooltip",
+                            button=(button.Button("Button")),
+                            link=Link(href="#", label="link"),
+                        ),
                     ),
                 ),
             ),

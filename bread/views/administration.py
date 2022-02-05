@@ -169,8 +169,7 @@ def componentpreview(request):
             tabs.Tab(
                 _("Informational"),
                 hg.BaseElement(
-                    hg.H3("Component Name"),
-                    hg.P("More detail here"),
+                    layout.componentpreview.informational(),
                 ),
             ),
             tabs.Tab(
