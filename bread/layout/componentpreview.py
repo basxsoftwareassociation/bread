@@ -189,6 +189,7 @@ def informational():
             notification.InlineNotification,
             notification.ToastNotification,
         ),
+        _icon_py(),
         _tooltip_py(),
     )
 
@@ -624,6 +625,76 @@ def _tile_py():
                         {"style": "height: 100px;"},
                         {"style": "height: 100px;"},
                     ),
+                ),
+            ),
+        ),
+    )
+
+
+def _icon_py():
+    return hg.BaseElement(
+        section_header("Icon"),
+        section(
+            icon.Icon,
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('name="information"'),
+                        icon.Icon("information"),
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('name="filter"'),
+                        icon.Icon("filter"),
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('name="email"'),
+                        icon.Icon("email"),
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("name=[iconname]"),
+                        hg.H6("* required"),
+                        hg.P("display the icon corresponding to iconname"),
+                    )
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("size=None (default)"),
+                        hg.H6('* will be interpreted as size="32" (in pixel)'),
+                        icon.Icon("information"),
+                        icon.Icon("filter"),
+                        icon.Icon("email"),
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('size="16"'),
+                        icon.Icon("information", size="16"),
+                        icon.Icon("filter", size="16"),
+                        icon.Icon("email", size="16"),
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('size="64"'),
+                        icon.Icon("information", size="64"),
+                        icon.Icon("filter", size="64"),
+                        icon.Icon("email", size="64"),
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("size=[preferred length]"),
+                        hg.P("the width and height of the icon"),
+                    )
                 ),
             ),
         ),
