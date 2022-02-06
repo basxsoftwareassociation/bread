@@ -163,13 +163,13 @@ def componentpreview(request):
             tabs.Tab(
                 _("Layout"),
                 hg.BaseElement(
-                    layout.componentpreview.layout(),
+                    layout.componentpreview.layout(request),
                 ),
             ),
             tabs.Tab(
                 _("Informational"),
                 hg.BaseElement(
-                    layout.componentpreview.informational(),
+                    layout.componentpreview.informational(request),
                 ),
             ),
             tabs.Tab(

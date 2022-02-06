@@ -1,6 +1,9 @@
 import collections
 
 import htmlgenerator as hg
+from django import forms
+from django.contrib import messages
+from django.contrib.messages.storage.base import Message as DjangoMessage
 from django.utils.translation import gettext_lazy as _
 
 from bread.layout.components import (
@@ -16,6 +19,7 @@ from bread.layout.components import (
     tile,
     tooltip,
 )
+from bread.layout.components.forms import Form, FormField
 from bread.utils import Link
 
 LOREMS = (
@@ -157,7 +161,7 @@ def section(cls, *content):
     )
 
 
-def layout():
+def layout(request):
     return hg.BaseElement(
         table_of_contents_from_cls(
             grid.Grid,
@@ -175,7 +179,7 @@ def layout():
     )
 
 
-def informational():
+def informational(request):
     return hg.BaseElement(
         table_of_contents_from_cls(
             icon.Icon,
@@ -194,6 +198,7 @@ def informational():
         _loading_py(),
         _progress_indicator_py(),
         _tooltip_py(),
+        _notification_py(request),
     )
 
 
@@ -931,6 +936,293 @@ def _tooltip_py():
                             heading="Heading within a Tooltip",
                             button=(button.Button("Button")),
                             link=Link(href="#", label="link"),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+
+class ToastNotificationPreview(notification.ToastNotification):
+    """
+    The class that override some attributes of ToastNotification for the purpose of component preview.
+    It can be used just like ToastNotification, but some functionalities are disabled.
+    """
+
+    def __init__(
+        self,
+        message,
+        details,
+        kind="info",
+        lowcontrast=False,
+        hideclosebutton=False,
+        hidetimestamp=False,
+        autoremove=4.0,
+        **attributes,
+    ):
+        attributes["style"] = hg.BaseElement(
+            ";opacity: 1 !important;animation: unset !important;"
+        )
+        attributes["onload"] = "//"
+        super().__init__(
+            message,
+            details,
+            kind,
+            lowcontrast,
+            hideclosebutton,
+            hidetimestamp,
+            autoremove,
+            **attributes,
+        )
+
+
+def _notification_py(request):
+    class TriggerToastMessageForm(forms.Form):
+        displaymessage = forms.BooleanField(
+            widget=forms.HiddenInput,
+            initial=True,
+        )
+
+    form: TriggerToastMessageForm
+    received_post = False
+
+    if request.method == "POST":
+        form = TriggerToastMessageForm(request.POST)
+        if form.is_valid() and "displaymessage" in form.cleaned_data:
+            received_post = True
+            messages.info(
+                request, _("This is a server message in the ToastNotification.")
+            )
+
+    if not received_post:
+        form = TriggerToastMessageForm()
+
+    # for ToastNotification
+    message_obj = (DjangoMessage("20", "This is a detail."),)
+    notification_kinds = (
+        "error",
+        "info",
+        "info-square",
+        "success",
+        "warning",
+        "warning-alt",
+    )
+    toast_kinds = (
+        hg.Iterator(
+            message_obj,
+            "message",
+            ToastNotificationPreview(
+                "This is a message.", hg.C("message.message"), kind=kind
+            ),
+        )
+        for kind in notification_kinds
+    )
+    toast_demo_kind = hg.BaseElement(
+        *(
+            grid.Col(
+                tile.Tile(
+                    hg.H4(f'kind="{kind}"'),
+                    toast,
+                ),
+                style="margin-bottom: 2rem;",
+            )
+            for kind, toast in zip(notification_kinds, toast_kinds)
+        )
+    )
+
+    return hg.BaseElement(
+        section_header("Notification"),
+        section(
+            notification.InlineNotification,
+            notification.InlineNotification(
+                "This is a message.",
+                "This is a detail.",
+            ),
+            notification.InlineNotification(
+                "This is an InlineNotification with an action.",
+                "Click the link to learn more.",
+                action=(
+                    "Learn more",
+                    "window.alert('This is a possible onclick event for InlineNotification.');",
+                ),
+            ),
+            grid.Row(
+                hg.Iterator(
+                    notification_kinds,
+                    "kind",
+                    grid.Col(
+                        tile.Tile(
+                            hg.H4('kind="', hg.C("kind"), '"'),
+                            notification.InlineNotification(
+                                "This is a message.",
+                                "This is a detail.",
+                                kind=hg.C("kind"),
+                            ),
+                            breakpoint="md",
+                            width=4,
+                        ),
+                        style="margin-bottom: 2rem;",
+                    ),
+                ),
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("lowcontrast=False (default)"),
+                        notification.InlineNotification(
+                            "This is a message.",
+                            "This is a detail.",
+                            lowcontrast=False,
+                        ),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("lowcontrast=True"),
+                        notification.InlineNotification(
+                            "This is a message.",
+                            "This is a detail.",
+                            lowcontrast=True,
+                        ),
+                    ),
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("hideclosebutton=False (default)"),
+                        notification.InlineNotification(
+                            "This is a message.",
+                            "This is a detail.",
+                            hideclosebutton=False,
+                        ),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("hideclosebutton=True"),
+                        notification.InlineNotification(
+                            "This is a message.",
+                            "This is a detail.",
+                            hideclosebutton=True,
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        section(
+            notification.ToastNotification,
+            hg.Iterator(
+                message_obj,
+                "message",
+                ToastNotificationPreview(
+                    "This is a message.",
+                    hg.C("message.message"),
+                ),
+            ),
+            Form(
+                form,
+                FormField("displaymessage"),
+                button.Button(
+                    _("Click to see ToastNotification in action"), type="submit"
+                ),
+            ),
+            hg.DIV(
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                toast_demo_kind,
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("lowcontrast=False (default)"),
+                        hg.Iterator(
+                            message_obj,
+                            "message",
+                            ToastNotificationPreview(
+                                "This is a message.",
+                                hg.C("message.message"),
+                                lowcontrast=False,
+                            ),
+                        ),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("lowcontrast=True"),
+                        hg.Iterator(
+                            message_obj,
+                            "message",
+                            ToastNotificationPreview(
+                                "This is a message.",
+                                hg.C("message.message"),
+                                lowcontrast=True,
+                            ),
+                        ),
+                    ),
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("hideclosebutton=False (default)"),
+                        hg.Iterator(
+                            message_obj,
+                            "message",
+                            ToastNotificationPreview(
+                                "This is a message.",
+                                hg.C("message.message"),
+                                hideclosebutton=False,
+                            ),
+                        ),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("hideclosebutton=True"),
+                        hg.Iterator(
+                            message_obj,
+                            "message",
+                            ToastNotificationPreview(
+                                "This is a message.",
+                                hg.C("message.message"),
+                                hideclosebutton=True,
+                            ),
+                        ),
+                    ),
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("hidetimestamp=False (default)"),
+                        hg.Iterator(
+                            message_obj,
+                            "message",
+                            ToastNotificationPreview(
+                                "This is a message.",
+                                hg.C("message.message"),
+                                hidetimestamp=False,
+                            ),
+                        ),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("hidetimestamp=True"),
+                        hg.Iterator(
+                            message_obj,
+                            "message",
+                            ToastNotificationPreview(
+                                "This is a message.",
+                                hg.C("message.message"),
+                                hidetimestamp=True,
+                            ),
                         ),
                     ),
                 ),
