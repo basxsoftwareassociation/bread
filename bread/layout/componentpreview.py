@@ -202,6 +202,15 @@ def informational(request):
     )
 
 
+def interactive(request):
+    return hg.BaseElement(
+        table_of_contents_from_cls(
+            button.Button,
+        ),
+        _button_py(),
+    )
+
+
 def _grid_py():
     def grid_col_preview(contents, is_short=False, breakpoint="lg", width=None):
         return grid.Col(
@@ -1227,5 +1236,66 @@ def _notification_py(request):
                     ),
                 ),
             ),
+        ),
+    )
+
+
+def _button_py():
+    button_types = (
+        "primary",
+        "secondary",
+        "tertiary",
+        "danger",
+        "ghost",
+    )
+
+    return hg.BaseElement(
+        section_header("Button"),
+        section(
+            button.Button,
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('buttontype="primary" (default)'),
+                        button.Button("Button"),
+                    ),
+                    breakpoint="md",
+                    width="3",
+                    style="margin-bottom: 2rem;",
+                ),
+                hg.Iterator(
+                    button_types[1:],
+                    "button_type",
+                    grid.Col(
+                        tile.Tile(
+                            hg.H4('buttontype="', hg.C("button_type"), '"'),
+                            hg.F(
+                                lambda c: button.Button(
+                                    "Button", buttontype=c["button_type"]
+                                )
+                            ),
+                            style="margin-bottom: 2rem;",
+                        ),
+                        breakpoint="md",
+                        width="2",
+                    ),
+                ),
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("icon=None (default)"),
+                        button.Button("Button", icon=None),
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("icon=[icon name or Icon instance]"),
+                        hg.H6('(for example, this one is icon="information")'),
+                        button.Button("Button", icon="information"),
+                    )
+                ),
+            ),
+            grid.Row(grid.Col(tile.Tile(hg.H4("notext=False (default)"), hg.P("")))),
         ),
     )

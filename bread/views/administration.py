@@ -162,22 +162,15 @@ def componentpreview(request):
         tabs.Tabs(
             tabs.Tab(
                 _("Layout"),
-                hg.BaseElement(
-                    layout.componentpreview.layout(request),
-                ),
+                layout.componentpreview.layout(request),
             ),
             tabs.Tab(
                 _("Informational"),
-                hg.BaseElement(
-                    layout.componentpreview.informational(request),
-                ),
+                layout.componentpreview.informational(request),
             ),
             tabs.Tab(
                 _("Interactive"),
-                hg.BaseElement(
-                    hg.H3("Component Name"),
-                    hg.P("More detail here"),
-                ),
+                layout.componentpreview.interactive(request),
             ),
             tabs.Tab(
                 _("Datatable"),
