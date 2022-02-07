@@ -34,12 +34,12 @@ class LazyHref(hg.Lazy):
             kwargs["kwargs"] = {
                 k: hg.resolve_lazy(v, context) for k, v in kwargs["kwargs"].items()
             }
+        if "args" in kwargs:
+            kwargs["args"] = [hg.resolve_lazy(arg, context) for arg in kwargs["args"]]
         if "query" in kwargs:
             kwargs["query"] = {
                 k: hg.resolve_lazy(v, context) for k, v in kwargs["query"].items()
             }
-        if "args" in kwargs:
-            kwargs["args"] = [hg.resolve_lazy(arg, context) for arg in kwargs["args"]]
         return urlreverse(*[hg.resolve_lazy(a, context) for a in self.args], **kwargs)
 
 
@@ -63,17 +63,36 @@ class ModelHref(LazyHref):
     def __init__(self, model, name, *args, **kwargs):
         # if this is an instance of a model, we can extract the pk URL argument directly
         # TODO: instance-specific routes which don't use the pk argument will fail
-        if isinstance(model, models.Model) and "pk" not in kwargs.get("kwargs", {}):
-            if "kwargs" not in kwargs:
-                kwargs["kwargs"] = {}
-            kwargs["kwargs"]["pk"] = model.pk
-
         if isinstance(model, hg.Lazy):
             url = hg.F(lambda c: model_urlname(hg.resolve_lazy(model, c), name))
         else:
             url = model_urlname(model, name)
 
         super().__init__(url, *args, **kwargs)
+
+    @staticmethod
+    def from_object(
+        object: Union[models.Model, Lazy],
+        name,
+        *args,
+        return_to_current=False,
+        **kwargs
+    ):
+        """
+        name: string which denotes an object action name as generated
+              by bread.utils.urls.model_urlname
+        object: instance of a Model, can be lazy
+        return_to_current: will add a URL query parameter "next=<current_url" to the generated URL
+        """
+
+        if return_to_current:
+            if "query" not in kwargs:
+                kwargs["query"] = {}
+            kwargs["query"]["next"] = hg.C("request.get_full_path")
+        if "kwargs" not in kwargs:
+            kwargs["kwargs"] = {}
+        kwargs["kwargs"]["pk"] = object.pk
+        return ModelHref(object, name, *args, **kwargs)
 
 
 def try_call(var, *args, **kwargs):
