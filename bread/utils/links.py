@@ -25,10 +25,11 @@ class LazyHref(hg.Lazy):
 
     def resolve(self, context: dict):
         kwargs = {k: hg.resolve_lazy(v, context) for k, v in self.kwargs.items()}
-        # the django reverse function requires url-keyword arguments to be pass in a parameter named
-        # "kwarg". This is a bit confusing since kwargs normally referse to the python keyword arguments
-        # and not to URL keyword arguments. However, we also want to support lazy URL keywords, so we do the
-        # resolving of the actualy URL-kwargs as well
+        # the django reverse function requires url-keyword arguments to be pass
+        # in a parameter named "kwarg". This is a bit confusing since kwargs
+        # normally referse to the python keyword arguments and not to URL
+        # keyword arguments. However, we also want to support lazy URL
+        # keywords, so we do the resolving of the actualy URL-kwargs as well
         if "kwargs" in kwargs:
             kwargs["kwargs"] = {
                 k: hg.resolve_lazy(v, context) for k, v in kwargs["kwargs"].items()
@@ -53,7 +54,9 @@ class ModelHref(LazyHref):
     Example usage:
 
         assert "/person/browse" == ModelHref(models.Person, "browse").resolve(context)
-        assert "/person/edit/1" == ModelHref(models.Person, "edit", kwargs={"pk": hg.C("object.pk")}).resolve(context)
+        assert "/person/edit/1" == ModelHref(
+            models.Person, "edit", kwargs={"pk": hg.C("object.pk")}
+        ).resolve(context)
 
     """
 
