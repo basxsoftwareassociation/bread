@@ -263,3 +263,17 @@ a.bx--header__name {
     }
 }
 
+
+// achieves that file uploads in datatables fit on one line
+.bx--data-table-container .bx--file-container {
+    display: inline-block;
+    margin-top: 0;
+}
+
+
+// helping the user to see the whole content of the modal
+// without having the overflow indicator in the way
+.bx--modal-content {
+    padding-bottom: 2rem;
+}
+
