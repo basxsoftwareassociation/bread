@@ -2,7 +2,6 @@ from typing import List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.db import models
-from htmlgenerator import Lazy
 
 from .urls import model_urlname
 from .urls import reverse as urlreverse
@@ -60,7 +59,7 @@ class ModelHref(LazyHref):
 
     """
 
-    def __init__(self, model, name, *args, **kwargs):
+    def __init__(self, model: Union[models.Model, hg.Lazy], name: str, *args, **kwargs):
         # if this is an instance of a model, we can extract the pk URL argument directly
         # TODO: instance-specific routes which don't use the pk argument will fail
         if isinstance(model, hg.Lazy):
@@ -72,10 +71,10 @@ class ModelHref(LazyHref):
 
     @staticmethod
     def from_object(
-        object: Union[models.Model, Lazy],
-        name,
+        object: Union[models.Model, hg.Lazy],
+        name: str,
         *args,
-        return_to_current=False,
+        return_to_current: bool = False,
         **kwargs
     ):
         """
@@ -100,7 +99,7 @@ def try_call(var, *args, **kwargs):
 
 
 class Link(NamedTuple):
-    href: Union[str, Lazy]
+    href: Union[str, hg.Lazy]
     label: str
     iconname: Optional[str] = "fade"
     permissions: List[str] = []
