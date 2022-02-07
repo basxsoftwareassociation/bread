@@ -134,10 +134,7 @@ def expand_ALL_constant(model, fieldnames):
     """Replaces the constant ``__all__`` with all concrete fields of the model"""
     fieldnames = list(fieldnames)
     if "__all__" in fieldnames:
-        concrete_fields = []
-        for f in model._meta.get_fields():
-            if f.concrete:
-                concrete_fields.append(f.name)
+        concrete_fields = [f for f in model._meta.get_fields() if f.concrete]
         i = fieldnames.index("__all__")
         return fieldnames[:i] + concrete_fields + fieldnames[i + 1 :]
     return fieldnames
