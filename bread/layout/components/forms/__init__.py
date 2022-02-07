@@ -276,7 +276,10 @@ class FormsetField(hg.Iterator):
             columns.append(f)
         columns.append(
             DataTableColumn(
-                _("Order"),
+                hg.If(
+                    hg.C(f"{formname}.{fieldname}.formset.can_order"),
+                    _("Order"),
+                ),
                 hg.If(
                     hg.C(f"{formname}.{fieldname}.formset.can_order"),
                     FormField(
