@@ -141,13 +141,23 @@ INTERVAL_CHOICES = {
 
 
 class DateFieldTrigger(Trigger):
-    field = models.CharField(max_length=255)
+    field = models.CharField(
+        _("Field"),
+        max_length=255,
+        help_text=_("The field of the selected model which should trigger an action"),
+    )
     offset_type = models.CharField(
+        _("Offset type"),
         max_length=255,
         choices=tuple((name, value[1]) for name, value in INTERVAL_CHOICES.items()),
     )
     offset_amount = models.IntegerField(
-        help_text=_("Can be negative (before) or positive (after)")
+        _("Offset amount"), help_text=_("Can be negative (before) or positive (after)")
+    )
+    ignore_year = models.BooleanField(
+        _("Ignore year"),
+        default=False,
+        help_text=_("Check this in order to trigger every year"),
     )
 
     def triggerdate(self, object) -> typing.Optional[datetime.datetime]:
@@ -160,11 +170,17 @@ class DateFieldTrigger(Trigger):
             field_value = timezone.make_aware(
                 datetime.datetime.combine(field_value, datetime.time())
             )
+        if self.ignore_year:
+            field_value = field_value.replace(year=datetime.date.today().year)
 
         return field_value + INTERVAL_CHOICES[self.offset_type][0] * self.offset_amount
 
     def __str__(self):
-        return f"{self.model} Trigger: {self.action} on: {abs(self.offset_amount)} {self.get_offset_type_display()} {'before' if self.offset_amount < 0 else 'after'} {self.model}.{self.field})"
+        return (
+            f"{self.model} Trigger: {self.action} on: {abs(self.offset_amount)} "
+            "{self.get_offset_type_display()} {'before' if self.offset_amount < 0 else 'after'} "
+            "{self.model}.{self.field})"
+        )
 
     class Meta:
         verbose_name = _("Date field trigger")
