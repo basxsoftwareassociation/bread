@@ -37,7 +37,7 @@ def error_layout(
                 ),
             ),
         ),
-        Button.fromlink(
+        Button.from_link(
             Link(
                 label=_("Back to homepage"),
                 href=hg.F(lambda c: c["request"].META["SCRIPT_NAME"] or "/"),
