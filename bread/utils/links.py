@@ -57,37 +57,40 @@ class ModelHref(LazyHref):
             models.Person, "edit", kwargs={"pk": hg.C("object.pk")}
         ).resolve(context)
 
+    return_to_current: will add a URL query parameter "next=<current_url" to the generated URL
+
     """
 
-    def __init__(self, model: Union[models.Model, hg.Lazy], name: str, *args, **kwargs):
+    def __init__(
+        self,
+        model: Union[models.Model, hg.Lazy],
+        name: str,
+        *args,
+        return_to_current: bool = False,
+        **kwargs
+    ):
+
         # if this is an instance of a model, we can extract the pk URL argument directly
         # TODO: instance-specific routes which don't use the pk argument will fail
         if isinstance(model, hg.Lazy):
             url = hg.F(lambda c: model_urlname(hg.resolve_lazy(model, c), name))
         else:
             url = model_urlname(model, name)
-
-        super().__init__(url, *args, **kwargs)
-
-    @staticmethod
-    def from_object(
-        object: Union[models.Model, hg.Lazy],
-        name: str,
-        *args,
-        return_to_current: bool = False,
-        **kwargs
-    ):
-        """
-        name: string which denotes an object action name as generated
-              by bread.utils.urls.model_urlname
-        object: instance of a Model, can be lazy
-        return_to_current: will add a URL query parameter "next=<current_url" to the generated URL
-        """
-
         if return_to_current:
             if "query" not in kwargs:
                 kwargs["query"] = {}
             kwargs["query"]["next"] = hg.C("request.get_full_path")
+
+        super().__init__(url, *args, **kwargs)
+
+    @staticmethod
+    def from_object(object: Union[models.Model, hg.Lazy], name: str, *args, **kwargs):
+        """
+        name: string which denotes an object action name as generated
+              by bread.utils.urls.model_urlname
+        object: instance of a Model, can be lazy
+        """
+
         if "kwargs" not in kwargs:
             kwargs["kwargs"] = {}
         kwargs["kwargs"]["pk"] = object.pk
