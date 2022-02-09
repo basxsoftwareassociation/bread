@@ -11,63 +11,6 @@
 /// @access public
 /// @group @carbon/type
 @mixin carbon--font-face-mono {
-  // .woff support for IE11
-  @font-face {
-    font-weight: 300;
-    font-family: 'IBM Plex Mono';
-    font-style: italic;
-    src: local('IBM Plex Mono Light Italic'), local('IBMPlexMono-LightItalic'),
-      url(static('/fonts/IBM-Plex-Mono/fonts/complete/woff2/IBMPlexMono-LightItalic.woff2'))
-        format('woff2');
-    font-display: $carbon--font-display;
-  }
-  @font-face {
-    font-weight: 400;
-    font-family: 'IBM Plex Mono';
-    font-style: italic;
-    src: local('IBM Plex Mono Italic'), local('IBMPlexMono-Italic'),
-      url(static('/fonts/IBM-Flex-Mono/fonts/complete/woff2/IBMPlexMono-Italic.woff2'))
-        format('woff2');
-    font-display: $carbon--font-display;
-  }
-  @font-face {
-    font-weight: 600;
-    font-family: 'IBM Plex Mono';
-    font-style: italic;
-    src: local('IBM Plex Mono SemiBold Italic'),
-      local('IBMPlexMono-SemiBoldItalic'),
-      url(static('/fonts/IBM-Flex-Mono/fonts/complete/woff2/IBMPlexMono-SemiBoldItalic.woff2'))
-        format('woff2');
-    font-display: $carbon--font-display;
-  }
-  @font-face {
-    font-weight: 300;
-    font-family: 'IBM Plex Mono';
-    font-style: normal;
-    src: local('IBM Plex Mono Light'), local('IBMPlexMono-Light'),
-      url(static('/fonts/IBM-Flex-Mono/fonts/complete/woff2/IBMPlexMono-Light.woff2'))
-        format('woff2');
-    font-display: $carbon--font-display;
-  }
-  @font-face {
-    font-weight: 400;
-    font-family: 'IBM Plex Mono';
-    font-style: normal;
-    src: local('IBM Plex Mono'), local('IBMPlexMono'),
-      url(static('/fonts/IBM-Flex-Mono/fonts/complete/woff2/IBMPlexMono-Regular.woff2'))
-        format('woff2');
-    font-display: $carbon--font-display;
-  }
-  @font-face {
-    font-weight: 600;
-    font-family: 'IBM Plex Mono';
-    font-style: normal;
-    src: local('IBM Plex Mono SemiBold'), local('IBMPlexMono-SemiBold'),
-      url(static('/fonts/IBM-Flex-Mono/fonts/complete/woff2/IBMPlexMono-SemiBold.woff2'))
-        format('woff2');
-    font-display: $carbon--font-display;
-  }
-
   /* cyrillic-ext */
   @font-face {
     font-weight: 300;
