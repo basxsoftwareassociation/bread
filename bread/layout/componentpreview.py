@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 
 from bread.layout.components import (
     button,
+    content_switcher,
     grid,
     icon,
     loading,
@@ -206,6 +207,7 @@ def interactive(request):
     return hg.BaseElement(
         table_of_contents_from_cls(
             button.Button,
+            content_switcher.ContentSwitcher
         ),
         _button_py(),
     )
@@ -1346,3 +1348,6 @@ def _button_py():
             ),
         ),
     )
+
+def _content_switcher_py():
+    return hg.BaseElement(hg.P('something'),)
