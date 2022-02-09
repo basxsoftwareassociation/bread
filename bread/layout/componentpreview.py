@@ -1264,7 +1264,7 @@ def _button_py():
                     style="margin-bottom: 2rem;",
                 ),
                 hg.Iterator(
-                    button_types[1:],
+                    button_types[1 : len(button_types) - 1],
                     "button_type",
                     grid.Col(
                         tile.Tile(
@@ -1279,6 +1279,16 @@ def _button_py():
                         breakpoint="md",
                         width="2",
                     ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('buttontype="ghost"'),
+                        hg.H6("* transparent background"),
+                        button.Button("Button", buttontype="ghost"),
+                    ),
+                    breakpoint="md",
+                    width="2",
+                    style="margin-bottom: 2rem;",
                 ),
             ),
             grid.Row(
@@ -1295,7 +1305,44 @@ def _button_py():
                         button.Button("Button", icon="information"),
                     )
                 ),
+                style="margin-bottom: 2rem;",
             ),
-            grid.Row(grid.Col(tile.Tile(hg.H4("notext=False (default)"), hg.P("")))),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("notext=False (default)"),
+                        button.Button(
+                            "Button",
+                            icon="information",
+                            notext=False,
+                        ),
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("notext=True"),
+                        button.Button(
+                            "Button",
+                            icon="information",
+                            notext=True,
+                        ),
+                    )
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("small=False (default)"),
+                        button.Button("Button", small=False),
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("small=True"),
+                        button.Button("Button", small=True),
+                    )
+                ),
+            ),
         ),
     )
