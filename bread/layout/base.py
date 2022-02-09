@@ -94,7 +94,13 @@ class ObjectFieldLabel(hg.ContextValue):
         if isinstance(self.object, str):
             object = resolve_modellookup(context, self.object)[0]
         object = hg.resolve_lazy(object, context)
-        label = resolve_modellookup(object._meta.model, self.fieldname)[-1]
+        fieldname_parts = self.fieldname.rsplit(".", 1)
+        if len(fieldname_parts) > 1:
+            fieldname_accessor, fieldname = tuple(fieldname_parts)
+            object = hg.resolve_lookup(object, fieldname_accessor)
+        else:
+            fieldname = self.fieldname
+        label = resolve_modellookup(object._meta.model, fieldname)[-1]
         if hasattr(label, "verbose_name"):
             return label.verbose_name
         if isinstance(label, property):
