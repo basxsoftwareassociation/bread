@@ -24,7 +24,7 @@ download_js_libraries:
 	curl -L https://blissfuljs.com/bliss.js -o bread/static/js/bliss.js
 
 watch_css:
-	find bread/static/design/carbon_design/scss -name '*.scss' | entr sassc -I bread/static/design/carbon_design/scss/globals/scss/vendor/ bread/static/design/carbon_design/scss/styles.scss > bread/static/css/bread-main.css
+	find bread/static/design/carbon_design/scss -name '*.scss' | entr -n pysassc -I bread/static/design/carbon_design/scss/globals/scss/vendor/ bread/static/design/carbon_design/scss/styles.scss > bread/static/css/bread-main.css
 
 raise_and_release_minor_version:
 	git push
