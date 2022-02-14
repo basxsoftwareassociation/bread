@@ -33,12 +33,12 @@ urlpatterns = [
             ],
             rowactions=[
                 Link(
-                    href=ModelHref(Report, "edit", kwargs={"pk": hg.C("row.pk")}),
+                    href=ModelHref.from_object(hg.C("row"), "edit"),
                     iconname="edit",
                     label=_("Edit"),
                 ),
                 Link(
-                    href=ModelHref(Report, "excel", kwargs={"pk": hg.C("row.pk")}),
+                    href=ModelHref.from_object(hg.C("row"), "excel"),
                     iconname="document",
                     label=_("Excel"),
                 ),
