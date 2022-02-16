@@ -57,9 +57,12 @@ class EditView(
 
 
 def generate_copyview(model, attrs=None, labelfield=None, copy_related_fields=()):
-    """creates a copy of a model instance and redirects to the edit view of the newly created instance
+    """
+    creates a copy of a model instance and redirects to the edit view of the
+    newly created instance
     attrs: custom field values for the new instance
-    labelfield: name of a model field which will be used to create copy-labels (Example, Example (Copy 2), Example (Copy 3), etc)
+    labelfield: name of a model field which will be used to create copy-labels
+                (Example, Example (Copy 2), Example (Copy 3), etc)
     """
     attrs = attrs or {}
 

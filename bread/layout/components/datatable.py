@@ -329,7 +329,7 @@ class DataTable(hg.TABLE):
         title = title or pretty_modelname(model, plural=True)
 
         if primary_button is None:
-            primary_button = Button.fromlink(
+            primary_button = Button.from_link(
                 Link(
                     href=ModelHref(model, "add"),
                     label=_("Add %s") % pretty_modelname(model),
@@ -352,7 +352,7 @@ class DataTable(hg.TABLE):
                     rowactions,
                     "action",
                     hg.F(
-                        lambda c: Button.fromlink(
+                        lambda c: Button.from_link(
                             c["action"],
                             notext=True,
                             small=True,
