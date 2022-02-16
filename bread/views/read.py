@@ -57,7 +57,7 @@ class ReadView(
                 style="width: auto",
             ),
             _layout.button.Button(_("Edit"), style="margin-top: 2rem").as_href(
-                ModelHref(self.model, "edit", kwargs={"pk": self.object.pk})
+                ModelHref.from_object(self.object, "edit")
             ),
         )
 
