@@ -11,13 +11,70 @@
 /// @access public
 /// @group @carbon/type
 @mixin carbon--font-face-serif {
+  // .woff support for IE11
+  @font-face {
+    font-weight: 300;
+    font-family: 'IBM Plex Serif';
+    font-style: italic;
+    src: local('IBM Plex Serif Light Italic'), local('IBMPlexSerif-LightItalic'),
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizGREVNn1dOx-zrZ2X3pZvkTiUa454xm1npiw.woff)
+        format('woff');
+    font-display: $carbon--font-display;
+  }
+  @font-face {
+    font-weight: 400;
+    font-family: 'IBM Plex Serif';
+    font-style: italic;
+    src: local('IBM Plex Serif Italic'), local('IBMPlexSerif-Italic'),
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizBREVNn1dOx-zrZ2X3pZvkTiUa6zUTiA.woff)
+        format('woff');
+    font-display: $carbon--font-display;
+  }
+  @font-face {
+    font-weight: 600;
+    font-family: 'IBM Plex Serif';
+    font-style: italic;
+    src: local('IBM Plex Serif SemiBold Italic'),
+      local('IBMPlexSerif-SemiBoldItalic'),
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizGREVNn1dOx-zrZ2X3pZvkTiUa4-o3m1npiw.woff)
+        format('woff');
+    font-display: $carbon--font-display;
+  }
+  @font-face {
+    font-weight: 300;
+    font-family: 'IBM Plex Serif';
+    font-style: normal;
+    src: local('IBM Plex Serif Light'), local('IBMPlexSerif-Light'),
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizAREVNn1dOx-zrZ2X3pZvkTi20-SI0q10.woff)
+        format('woff');
+    font-display: $carbon--font-display;
+  }
+  @font-face {
+    font-weight: 400;
+    font-family: 'IBM Plex Serif';
+    font-style: normal;
+    src: local('IBM Plex Serif'), local('IBMPlexSerif'),
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizDREVNn1dOx-zrZ2X3pZvkTiUf2zE.woff)
+        format('woff');
+    font-display: $carbon--font-display;
+  }
+  @font-face {
+    font-weight: 600;
+    font-family: 'IBM Plex Serif';
+    font-style: normal;
+    src: local('IBM Plex Serif SemiBold'), local('IBMPlexSerif-SemiBold'),
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizAREVNn1dOx-zrZ2X3pZvkTi3A_yI0q10.woff)
+        format('woff');
+    font-display: $carbon--font-display;
+  }
+
   /* cyrillic-ext */
   @font-face {
     font-weight: 300;
     font-family: 'IBM Plex Serif';
     font-style: italic;
     src: local('IBM Plex Serif Light Italic'), local('IBMPlexSerif-LightItalic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-LightItalic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizGREVNn1dOx-zrZ2X3pZvkTiUa454xm1TpjfGj7oaMBg.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F,
@@ -29,7 +86,7 @@
     font-family: 'IBM Plex Serif';
     font-style: italic;
     src: local('IBM Plex Serif Light Italic'), local('IBMPlexSerif-LightItalic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-LightItalic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizGREVNn1dOx-zrZ2X3pZvkTiUa454xm13pjfGj7oaMBg.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
@@ -40,7 +97,7 @@
     font-family: 'IBM Plex Serif';
     font-style: italic;
     src: local('IBM Plex Serif Light Italic'), local('IBMPlexSerif-LightItalic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-LightItalic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizGREVNn1dOx-zrZ2X3pZvkTiUa454xm1bpjfGj7oaMBg.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
@@ -51,7 +108,7 @@
     font-family: 'IBM Plex Serif';
     font-style: italic;
     src: local('IBM Plex Serif Light Italic'), local('IBMPlexSerif-LightItalic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-LightItalic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizGREVNn1dOx-zrZ2X3pZvkTiUa454xm1fpjfGj7oaMBg.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
@@ -63,7 +120,7 @@
     font-family: 'IBM Plex Serif';
     font-style: italic;
     src: local('IBM Plex Serif Light Italic'), local('IBMPlexSerif-LightItalic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-LightItalic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizGREVNn1dOx-zrZ2X3pZvkTiUa454xm1npjfGj7oY.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
@@ -76,7 +133,7 @@
     font-family: 'IBM Plex Serif';
     font-style: italic;
     src: local('IBM Plex Serif Italic'), local('IBMPlexSerif-Italic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Italic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizBREVNn1dOx-zrZ2X3pZvkTiUa6zgTjnTLgNuZ5w.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F,
@@ -88,7 +145,7 @@
     font-family: 'IBM Plex Serif';
     font-style: italic;
     src: local('IBM Plex Serif Italic'), local('IBMPlexSerif-Italic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Italic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizBREVNn1dOx-zrZ2X3pZvkTiUa6zETjnTLgNuZ5w.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
@@ -99,7 +156,7 @@
     font-family: 'IBM Plex Serif';
     font-style: italic;
     src: local('IBM Plex Serif Italic'), local('IBMPlexSerif-Italic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Italic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizBREVNn1dOx-zrZ2X3pZvkTiUa6zoTjnTLgNuZ5w.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
@@ -110,7 +167,7 @@
     font-family: 'IBM Plex Serif';
     font-style: italic;
     src: local('IBM Plex Serif Italic'), local('IBMPlexSerif-Italic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Italic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizBREVNn1dOx-zrZ2X3pZvkTiUa6zsTjnTLgNuZ5w.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
@@ -122,7 +179,7 @@
     font-family: 'IBM Plex Serif';
     font-style: italic;
     src: local('IBM Plex Serif Italic'), local('IBMPlexSerif-Italic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Italic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizBREVNn1dOx-zrZ2X3pZvkTiUa6zUTjnTLgNs.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
@@ -136,7 +193,7 @@
     font-style: italic;
     src: local('IBM Plex Serif SemiBold Italic'),
       local('IBMPlexSerif-SemiBoldItalic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-SemiBoldItalic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizGREVNn1dOx-zrZ2X3pZvkTiUa4-o3m1TpjfGj7oaMBg.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F,
@@ -149,7 +206,7 @@
     font-style: italic;
     src: local('IBM Plex Serif SemiBold Italic'),
       local('IBMPlexSerif-SemiBoldItalic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-SemiBoldItalic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizGREVNn1dOx-zrZ2X3pZvkTiUa4-o3m13pjfGj7oaMBg.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
@@ -161,7 +218,7 @@
     font-style: italic;
     src: local('IBM Plex Serif SemiBold Italic'),
       local('IBMPlexSerif-SemiBoldItalic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-SemiBoldItalic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizGREVNn1dOx-zrZ2X3pZvkTiUa4-o3m1bpjfGj7oaMBg.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
@@ -173,7 +230,7 @@
     font-style: italic;
     src: local('IBM Plex Serif SemiBold Italic'),
       local('IBMPlexSerif-SemiBoldItalic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-SemiBoldItalic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizGREVNn1dOx-zrZ2X3pZvkTiUa4-o3m1fpjfGj7oaMBg.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
@@ -186,7 +243,7 @@
     font-style: italic;
     src: local('IBM Plex Serif SemiBold Italic'),
       local('IBMPlexSerif-SemiBoldItalic'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-SemiBoldItalic.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizGREVNn1dOx-zrZ2X3pZvkTiUa4-o3m1npjfGj7oY.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
@@ -199,7 +256,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif Light'), local('IBMPlexSerif-Light'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Light.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizAREVNn1dOx-zrZ2X3pZvkTi20-SI5q1vjitOh3oc.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F,
@@ -211,7 +268,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif Light'), local('IBMPlexSerif-Light'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Light.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizAREVNn1dOx-zrZ2X3pZvkTi20-SIwq1vjitOh3oc.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
@@ -222,7 +279,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif Light'), local('IBMPlexSerif-Light'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Light.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizAREVNn1dOx-zrZ2X3pZvkTi20-SI7q1vjitOh3oc.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
@@ -233,7 +290,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif Light'), local('IBMPlexSerif-Light'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Light.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizAREVNn1dOx-zrZ2X3pZvkTi20-SI6q1vjitOh3oc.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
@@ -245,7 +302,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif Light'), local('IBMPlexSerif-Light'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Light.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizAREVNn1dOx-zrZ2X3pZvkTi20-SI0q1vjitOh.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
@@ -258,7 +315,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif'), local('IBMPlexSerif'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Regular.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizDREVNn1dOx-zrZ2X3pZvkTiUS2zcZiVbJsNo.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F,
@@ -270,7 +327,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif'), local('IBMPlexSerif'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Regular.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizDREVNn1dOx-zrZ2X3pZvkTiUb2zcZiVbJsNo.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
@@ -281,7 +338,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif'), local('IBMPlexSerif'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Regular.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizDREVNn1dOx-zrZ2X3pZvkTiUQ2zcZiVbJsNo.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
@@ -292,7 +349,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif'), local('IBMPlexSerif'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Regular.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizDREVNn1dOx-zrZ2X3pZvkTiUR2zcZiVbJsNo.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
@@ -304,7 +361,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif'), local('IBMPlexSerif'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-Regular.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizDREVNn1dOx-zrZ2X3pZvkTiUf2zcZiVbJ.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
@@ -317,7 +374,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif SemiBold'), local('IBMPlexSerif-SemiBold'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-SemiBold.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizAREVNn1dOx-zrZ2X3pZvkTi3A_yI5q1vjitOh3oc.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F,
@@ -329,7 +386,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif SemiBold'), local('IBMPlexSerif-SemiBold'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-SemiBold.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizAREVNn1dOx-zrZ2X3pZvkTi3A_yIwq1vjitOh3oc.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
@@ -340,7 +397,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif SemiBold'), local('IBMPlexSerif-SemiBold'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-SemiBold.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizAREVNn1dOx-zrZ2X3pZvkTi3A_yI7q1vjitOh3oc.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
@@ -351,7 +408,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif SemiBold'), local('IBMPlexSerif-SemiBold'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-SemiBold.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizAREVNn1dOx-zrZ2X3pZvkTi3A_yI6q1vjitOh3oc.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
@@ -363,7 +420,7 @@
     font-family: 'IBM Plex Serif';
     font-style: normal;
     src: local('IBM Plex Serif SemiBold'), local('IBMPlexSerif-SemiBold'),
-      url(static('/fonts/IBM-Plex-Serif/fonts/complete/woff2/IBMPlexSerif-SemiBold.woff2'))
+      url(https://fonts.gstatic.com/s/ibmplexserif/v7/jizAREVNn1dOx-zrZ2X3pZvkTi3A_yI0q1vjitOh.woff2)
         format('woff2');
     font-display: $carbon--font-display;
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
