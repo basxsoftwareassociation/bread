@@ -18,6 +18,7 @@ from bread.layout.components import (
     tabs,
     tag,
     tile,
+    toggle,
     tooltip,
 )
 from bread.layout.components.forms import Form, FormField
@@ -206,10 +207,11 @@ def informational(request):
 def interactive(request):
     return hg.BaseElement(
         table_of_contents_from_cls(
-            button.Button,
-            content_switcher.ContentSwitcher
+            button.Button, content_switcher.ContentSwitcher, toggle.Toggle,
         ),
         _button_py(),
+        _content_switcher_py(),
+        _toggle_py(),
     )
 
 
@@ -1349,5 +1351,59 @@ def _button_py():
         ),
     )
 
+
 def _content_switcher_py():
-    return hg.BaseElement(hg.P('something'),)
+    return hg.BaseElement(
+        section_header("Content Switcher", "content_switcher"),
+        section(
+            content_switcher.ContentSwitcher,
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        content_switcher.ContentSwitcher(
+                            ("Mode 1", {}),
+                            ("Mode 2", {}),
+                            ("Mode 3", {}),
+                        )
+                    ),
+                    style="margin-bottom: 2rem;",
+                )
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("selected=0 (default)"),
+                        content_switcher.ContentSwitcher(
+                            ("Mode 1", {}),
+                            ("Mode 2", {}),
+                            ("Mode 3", {}),
+                        ),
+                    ),
+                    style="margin-bottom: 2rem;",
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("selected=1"),
+                        content_switcher.ContentSwitcher(
+                            ("Mode 1", {}), ("Mode 2", {}), ("Mode 3", {}), selected=1
+                        ),
+                    ),
+                    style="margin-bottom: 2rem;",
+                ),
+                grid.Col(
+                    hg.H4("selected=[index of label]"),
+                    hg.P("Make the corresponding button selected by default."),
+                    style="margin-bottom: 2rem;",
+                ),
+            ),
+        ),
+    )
+
+
+def _toggle_py():
+    return hg.BaseElement(
+        section_header("Toggle"),
+        section(
+            toggle.Toggle,
+        ),
+    )
