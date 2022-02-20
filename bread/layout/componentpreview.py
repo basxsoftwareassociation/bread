@@ -1,4 +1,5 @@
 import collections
+import uuid
 
 import htmlgenerator as hg
 from django import forms
@@ -207,7 +208,9 @@ def informational(request):
 def interactive(request):
     return hg.BaseElement(
         table_of_contents_from_cls(
-            button.Button, content_switcher.ContentSwitcher, toggle.Toggle,
+            button.Button,
+            content_switcher.ContentSwitcher,
+            toggle.Toggle,
         ),
         _button_py(),
         _content_switcher_py(),
@@ -1405,5 +1408,143 @@ def _toggle_py():
         section_header("Toggle"),
         section(
             toggle.Toggle,
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('offlabel=_("Off") (default)'),
+                        toggle.Toggle(
+                            "Label",
+                            widgetattributes={"id": uuid.uuid4()},
+                        ),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("offlabel=[label when toggle is off]"),
+                        toggle.Toggle(
+                            "Label",
+                            offlabel="I'm really off!",
+                            widgetattributes={"id": uuid.uuid4()},
+                        ),
+                    ),
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('onlabel=_("On") (default)'),
+                        toggle.Toggle(
+                            "Label",
+                            checked=True,
+                            widgetattributes={"id": uuid.uuid4(), "checked": True},
+                        ),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4(
+                            "onlabel=[label when toggle is on]",
+                        ),
+                        toggle.Toggle(
+                            "Label",
+                            onlabel="I'm really on!",
+                            checked=True,
+                            widgetattributes={"id": uuid.uuid4(), "checked": True},
+                        ),
+                    ),
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("help_text=None (default)"),
+                        toggle.Toggle(
+                            "Label",
+                            widgetattributes={"id": uuid.uuid4()},
+                        ),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("help_text=[text to describe user]"),
+                        toggle.Toggle(
+                            "Label",
+                            help_text="This is the help text.",
+                            widgetattributes={"id": uuid.uuid4()},
+                        ),
+                    ),
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("errors=None (default)"),
+                        toggle.Toggle(
+                            "Label",
+                            widgetattributes={"id": uuid.uuid4()},
+                        ),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("errors=[list of requirements]"),
+                        toggle.Toggle(
+                            "Label",
+                            widgetattributes={"id": uuid.uuid4()},
+                            errors=[
+                                "All required fields must be filled.",
+                            ],
+                        ),
+                    ),
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("disabled=None (default)"),
+                        toggle.Toggle(
+                            "Label",
+                            widgetattributes={"id": uuid.uuid4()},
+                        ),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("disabled=True"),
+                        toggle.Toggle(
+                            "Label",
+                            widgetattributes={"id": uuid.uuid4()},
+                            disabled=True,
+                        ),
+                    ),
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("required=None (default)"),
+                        toggle.Toggle(
+                            "Label",
+                            widgetattributes={"id": uuid.uuid4()},
+                        ),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("required=True"),
+                        toggle.Toggle(
+                            "Label",
+                            widgetattributes={"id": uuid.uuid4()},
+                            required=True,
+                        ),
+                    ),
+                ),
+                style="margin-bottom: 2rem;",
+            ),
         ),
     )
