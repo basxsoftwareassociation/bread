@@ -5,6 +5,7 @@ import htmlgenerator as hg
 from django import forms
 from django.contrib import messages
 from django.contrib.messages.storage.base import Message as DjangoMessage
+from django.core.paginator import Paginator
 from django.utils.translation import gettext_lazy as _
 
 from bread.layout.components import (
@@ -16,6 +17,7 @@ from bread.layout.components import (
     modal,
     notification,
     overflow_menu,
+    pagination,
     progress_indicator,
     tabs,
     tag,
@@ -213,11 +215,13 @@ def interactive(request):
             content_switcher.ContentSwitcher,
             toggle.Toggle,
             overflow_menu.OverflowMenu,
+            pagination.Pagination,
         ),
         _button_py(),
         _content_switcher_py(),
         _toggle_py(),
         _overflow_menu_py(),
+        _pagination_py(),
     )
 
 
@@ -1651,6 +1655,25 @@ def _overflow_menu_py():
                     )
                 ),
                 style="margin-bottom: 2rem;",
+            ),
+        ),
+    )
+
+
+def _pagination_py():
+    return hg.BaseElement(
+        section_header("Pagination"),
+        section(
+            pagination.Pagination,
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        pagination.Pagination(
+                            Paginator(range(1, 6), 3),
+                            (3, 4),
+                        ),
+                    ),
+                ),
             ),
         ),
     )
