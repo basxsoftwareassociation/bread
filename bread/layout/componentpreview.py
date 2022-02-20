@@ -15,6 +15,7 @@ from bread.layout.components import (
     loading,
     modal,
     notification,
+    overflow_menu,
     progress_indicator,
     tabs,
     tag,
@@ -159,7 +160,7 @@ def section(cls, *content):
         hg.A(name=f"{module_name}-{cls.__name__.lower()}"),
         hg.H6(cls.__module__, style="margin-top: 2rem;"),
         hg.H4(cls.__name__, style="margin-bottom: 1.5rem;"),
-        hg.PRE(cls.__doc__, style="margin-bottom: 1rem;"),
+        hg.PRE(hg.CODE(cls.__doc__), style="margin-bottom: 1rem;"),
         *content,
     )
 
@@ -211,10 +212,12 @@ def interactive(request):
             button.Button,
             content_switcher.ContentSwitcher,
             toggle.Toggle,
+            overflow_menu.OverflowMenu,
         ),
         _button_py(),
         _content_switcher_py(),
         _toggle_py(),
+        _overflow_menu_py(),
     )
 
 
@@ -1543,6 +1546,109 @@ def _toggle_py():
                             required=True,
                         ),
                     ),
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+        ),
+    )
+
+
+def _overflow_menu_py():
+    default_links = (
+        Link(href="#overflow_menu-overflowmenu", label="Link 1", iconname=None),
+        Link(
+            href="#overflow_menu-overflowmenu", label="Link 2", iconname="information"
+        ),
+        Link(href="#overflow_menu-overflowmenu", label="Link 3"),
+    )
+    return hg.BaseElement(
+        section_header("Overflow Menu", "overflow_menu"),
+        section(
+            overflow_menu.OverflowMenu,
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.P(
+                            "Click the three dots below to see overflow menu in action."
+                        ),
+                        overflow_menu.OverflowMenu(links=default_links),
+                    ),
+                    breakpoint="md",
+                    width=2,
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("menuname=None (default)"),
+                        overflow_menu.OverflowMenu(links=default_links),
+                    ),
+                    breakpoint="md",
+                    width=3,
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("menuname=[name for menu]"),
+                        overflow_menu.OverflowMenu(
+                            links=default_links, menuname="This is a menu name."
+                        ),
+                    ),
+                    breakpoint="md",
+                    width=3,
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('direction="bottom" (default)'),
+                        overflow_menu.OverflowMenu(links=default_links),
+                    ),
+                    breakpoint="md",
+                    width=2,
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('direction="right"'),
+                        overflow_menu.OverflowMenu(
+                            links=default_links, direction="right"
+                        ),
+                    ),
+                    breakpoint="md",
+                    width=2,
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('direction="top"'),
+                        overflow_menu.OverflowMenu(
+                            links=default_links, direction="top"
+                        ),
+                    ),
+                    breakpoint="md",
+                    width=2,
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('direction="left"'),
+                        overflow_menu.OverflowMenu(
+                            links=default_links, direction="left"
+                        ),
+                    ),
+                    breakpoint="md",
+                    width=2,
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("flip=False (default)"),
+                        overflow_menu.OverflowMenu(default_links, flip=False),
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("flip=True"),
+                        overflow_menu.OverflowMenu(default_links, flip=True),
+                    )
                 ),
                 style="margin-bottom: 2rem;",
             ),
