@@ -1,6 +1,7 @@
 from typing import Callable, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
+from bread.utils import expand_ALL_constant, filter_fieldlist, queryset_from_fields
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -12,8 +13,6 @@ from django.views.generic import ListView
 from djangoql.exceptions import DjangoQLError
 from djangoql.queryset import apply_search
 from guardian.mixins import PermissionListMixin
-
-from bread.utils import expand_ALL_constant, filter_fieldlist, queryset_from_fields
 
 from .. import layout
 from ..utils import (
@@ -168,8 +167,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             for action in self.bulkactions
             if action.has_permission(self.request)
         ]
+        qs = self.get_queryset()
         return layout.datatable.DataTable.from_queryset(
-            self.get_queryset(),
+            self.paginate_queryset(qs, self.get_paginate_by(qs))[2],
             columns=self.columns,
             bulkactions=bulkactions,
             rowactions=self.rowactions,
