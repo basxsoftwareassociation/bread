@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from bread.layout.components import (
     button,
     content_switcher,
+    datatable,
     grid,
     icon,
     loading,
@@ -227,6 +228,21 @@ def interactive(request):
         _searchbar_py(),
     )
 
+
+def datatable_layout(request):
+    return hg.BaseElement(
+        table_of_contents(
+            [
+                ("datatable", "bread.layout.components.datatable"),
+                [
+                    ("datatable-datatable", "DataTable"),
+                    [
+                        ("datatable-datatable-with_toolbar", "with_toolbar method"),
+                    ],
+                ],
+            ]
+        ),
+        _datatable_py(),
     )
 
 
@@ -1748,3 +1764,108 @@ def _searchbar_py():
         ),
     )
 
+
+def _datatable_py():
+    sample_headers = ["Country", "Continent", "Population"]
+    sample_rows = [
+        ["Switzerland", "Europe", 8_500_000],
+        ["Germany", "Europe", 83_000_000],
+        ["Thailand", "Asia", 70_000_000],
+    ]
+
+    sample_columns = [
+        datatable.DataTableColumn(header=header, cell=hg.DIV(hg.C(f"row.{header}")))
+        for header in sample_headers
+    ]
+
+    sample_row_iterator = [
+        {header: content for header, content in zip(sample_headers, row)}
+        for row in sample_rows
+    ]
+
+    return hg.BaseElement(
+        section_header("Data Table", "datatable"),
+        section(
+            datatable.DataTable,
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('spacing="default" (default)'),
+                        datatable.DataTable(
+                            sample_columns,
+                            sample_row_iterator,
+                        ),
+                    ),
+                    breakpoint="md",
+                    width=4,
+                    style="margin-bottom: 2rem;",
+                ),
+                hg.Iterator(
+                    datatable.DataTable.SPACINGS[1:],
+                    "spacing",
+                    hg.F(
+                        lambda c: hg.BaseElement(
+                            grid.Col(
+                                tile.Tile(
+                                    hg.H4('spacing="', c["spacing"], '"'),
+                                    datatable.DataTable(
+                                        sample_columns,
+                                        sample_row_iterator,
+                                        spacing=c["spacing"],
+                                    ),
+                                ),
+                                breakpoint="md",
+                                width=4,
+                                style="margin-bottom: 2rem;",
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("zebra=False (default)"),
+                        datatable.DataTable(
+                            sample_columns,
+                            sample_row_iterator,
+                            zebra=False,
+                        ),
+                    )
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("zebra=True"),
+                        datatable.DataTable(
+                            sample_columns,
+                            sample_row_iterator,
+                            zebra=True,
+                        ),
+                    )
+                ),
+            ),
+        ),
+        hg.BaseElement(
+            hg.A(name="datatable-datatable-with_toolbar"),
+            hg.H6("bread.layout.components.datatable", style="margin-top: 2rem;"),
+            hg.H4("DataTable.with_toolbar(self)", style="margin-bottom: 1.5rem;"),
+            hg.PRE(
+                hg.CODE(datatable.DataTable.with_toolbar.__doc__),
+                style="margin-bottom: 1rem;",
+            ),
+            datatable.DataTable(sample_columns, sample_row_iterator).with_toolbar(
+                title="Data Table Title",
+                helper_text="Data Table Subtitle",
+                primary_button=button.Button("Primary Button"),
+                bulkactions=[
+                    Link(href="#", label="action 1"),
+                    Link(href="#", label="action 2"),
+                    Link(href="#", label="action 3"),
+                ],
+            ),
+        ),
+        section(
+            datatable.DataTableColumn,
+            hg.P("This is a data table column."),
+        ),
+    )
