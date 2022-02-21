@@ -174,10 +174,7 @@ def componentpreview(request):
             ),
             tabs.Tab(
                 _("Datatable"),
-                hg.BaseElement(
-                    hg.H3("Component Name"),
-                    hg.P("More detail here"),
-                ),
+                layout.componentpreview.datatable_layout(request),
             ),
             tabs.Tab(
                 _("Form"),

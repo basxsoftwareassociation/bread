@@ -19,6 +19,7 @@ from bread.layout.components import (
     overflow_menu,
     pagination,
     progress_indicator,
+    search,
     tabs,
     tag,
     tile,
@@ -216,12 +217,16 @@ def interactive(request):
             toggle.Toggle,
             overflow_menu.OverflowMenu,
             pagination.Pagination,
+            search.Search,
         ),
         _button_py(),
         _content_switcher_py(),
         _toggle_py(),
         _overflow_menu_py(),
         _pagination_py(),
+        _searchbar_py(),
+    )
+
     )
 
 
@@ -1677,3 +1682,69 @@ def _pagination_py():
             ),
         ),
     )
+
+
+def _searchbar_py():
+    sizes = "sm", "lg", "xl"
+    return hg.BaseElement(
+        section_header("Search", "search"),
+        section(
+            search.Search,
+            grid.Row(
+                hg.Iterator(
+                    sizes[:2],
+                    "size",
+                    grid.Col(
+                        tile.Tile(
+                            hg.H4('size="', hg.C("size"), '"'),
+                            hg.F(lambda c: search.Search(size=c["size"])),
+                        ),
+                        breakpoint="md",
+                        width=4,
+                        style="margin-bottom: 2rem;",
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4('size="xl" (default)'),
+                        hg.F(lambda c: search.Search(size="xl")),
+                    ),
+                    breakpoint="md",
+                    width=4,
+                    style="margin-bottom: 2rem;",
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("placeholder=None (default)"),
+                        search.Search(),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("placeholder=[custom placeholder]"),
+                        search.Search(placeholder="I'm the custom placeholder."),
+                    ),
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+            grid.Row(
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("disabled=False (default)"),
+                        search.Search(),
+                    ),
+                ),
+                grid.Col(
+                    tile.Tile(
+                        hg.H4("disabled=True"),
+                        search.Search(disabled=True),
+                    ),
+                ),
+                style="margin-bottom: 2rem;",
+            ),
+        ),
+    )
+
