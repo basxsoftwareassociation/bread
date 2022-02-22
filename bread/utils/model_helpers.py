@@ -101,7 +101,7 @@ def filter_fieldlist(model, fieldlist, for_form=False):
     if fieldlist is None:
         fieldlist = ["__all__"]
     return [
-        f
+        f.name
         for f in expand_ALL_constant(model, fieldlist)
         if not _is_internal_field(model, f)
         and (not for_form or _can_use_in_form(model, f))
