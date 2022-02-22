@@ -883,9 +883,10 @@ class FileInput(BaseWidget):
             inputelement_attrs,
             errors,
             onload="""
+that = this;
 document.addEventListener('change', (e) => {
-    this.parentElement.querySelector('[data-file-container]').innerHTML = '';
-    var widget = new CarbonComponents.FileUploader(this.parentElement);
+    that.parentElement.querySelector('[data-file-container]').innerHTML = '';
+    var widget = new CarbonComponents.FileUploader(that.parentElement);
     widget._displayFilenames();
     widget.setState('edit');
 });
