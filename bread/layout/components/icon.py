@@ -46,7 +46,9 @@ class Icon(hg.SVG):
                 self.append(f"Missing icon: {name}.svg")
                 return super().render(context)
             with open(path) as f:
-                cache.set(name, f.read())
+                # removing line breaks because they get translated to <br> which breaks the svg
+                svg = f.read().replace("\n", " ").replace("\r", "")
+                cache.set(name, svg)
         self.clear()
         self.append(mark_safe(cache.get(name)))
         return super().render(context)
