@@ -27,7 +27,7 @@ class Tile(hg.DIV):
         super().__init__(*children, **attributes)
 
 
-class ExpandableTile(hg.BaseElement):
+class ExpandableTile(Tile):
     """
     Expandable tiles are helpful for hiding and showing large amounts of content to a user.
     When expanded, tiles push content down the page. They allow the user to specifically
@@ -67,9 +67,8 @@ class ExpandableTile(hg.BaseElement):
         **attributes : optional
             keyword arguments representing the specific HTML attributes for the tile
         """
-        # container_id = hg.html_id(self, "expandable-tile-")
         expandable_tile_attrs = {
-            "_class": "bx--tile bx--tile--expandable",
+            "_class": "bx--tile--expandable",
             "data_tile": "expandable",
             "tabindex": "0",
         }
@@ -84,37 +83,22 @@ class ExpandableTile(hg.BaseElement):
         below_attrs = below_attrs or {}
         hg.merge_html_attrs(below_attrs, {"_class": "bx--tile-content__below-the-fold"})
 
-        tile_nodes = hg.render(
-            hg.BUTTON(
-                hg.DIV(
-                    Icon("chevron--down", size="16"),
-                    _class="bx--tile__chevron",
-                ),
-                hg.DIV(
-                    hg.SPAN(
-                        above,
-                        **above_attrs,
-                    ),
-                    hg.SPAN(
-                        below,
-                        **below_attrs,
-                    ),
-                    _class="bx--tile-content",
-                ),
-                **attributes,
-            ),
-            {},
-        )
-
         super().__init__(
-            hg.SCRIPT(
-                hg.format(
-                    "var _expandableTileRawText = `{}`;",
-                    tile_nodes,
-                    autoescape=False,
-                )
+            hg.BUTTON(
+                Icon("chevron--down", size="16"),
+                aria_label="expand menu",
+                _class="bx--tile__chevron",
             ),
             hg.DIV(
-                onload=hg.BaseElement("this.innerHTML = _expandableTileRawText;"),
+                hg.SPAN(
+                    above,
+                    **above_attrs,
+                ),
+                hg.SPAN(
+                    below,
+                    **below_attrs,
+                ),
+                _class="bx--tile-content",
             ),
+            **attributes,
         )
