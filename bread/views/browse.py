@@ -85,7 +85,10 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     """TODO: documentation"""
 
     orderingurlparameter: str = "ordering"
-    objectids_urlparameter: str = "_selected"  # see bread/static/js/main.js:submitbulkaction and bread/layout/components/datatable.py
+
+    # see bread/static/js/main.js:submitbulkaction and bread/layout/components/datatable.py
+    objectids_urlparameter: str = "_selected"
+
     bulkaction_urlparameter: str = "_bulkaction"
     items_per_page_options: Optional[Iterable[int]] = None
     itemsperpage_urlparameter: str = "itemsperpage"
@@ -94,18 +97,21 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     title: Union[hg.BaseElement, str] = ""
     columns: Iterable[Union[str, layout.datatable.DataTableColumn]] = ("__all__",)
     rowclickaction: Optional[Link] = None
+
     # bulkactions: List[(Link, function(request, queryset))]
     # - link.js should be a slug and not a URL
-    # - if the function returns a HttpResponse, the response is returned instead of the browse view result
+    # - if the function returns a HttpResponse, the response is returned
+    #   instead of the browse view result
     bulkactions: Iterable[
         Union[Link, Callable[[HttpRequest, models.QuerySet], Union[None, HttpResponse]]]
     ] = ()
+
     rowactions = ()  # list of links
     backurl = None
     primary_button = None
-    viewstate_sessionkey: Optional[
-        str
-    ] = None  # if set will be used to save the state of the url parameters and restore them on the next call
+
+    # if set will be used to save the state of the url parameters and restore them on the next call
+    viewstate_sessionkey: Optional[str] = None
 
     def __init__(self, *args, **kwargs):
         self.orderingurlparameter = (
@@ -131,7 +137,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         self.title = kwargs.get("title") or self.title
         self.rowactions = kwargs.get("rowactions") or self.rowactions
         self.columns = expand_ALL_constant(
-            kwargs["model"], kwargs.get("columns") or self.columns
+            kwargs.get("model") or self.model, kwargs.get("columns") or self.columns
         )
         self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
         self.backurl = kwargs.get("backurl") or self.backurl
@@ -162,8 +168,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             for action in self.bulkactions
             if action.has_permission(self.request)
         ]
+        qs = self.get_queryset()
         return layout.datatable.DataTable.from_queryset(
-            self.get_queryset(),
+            self.paginate_queryset(qs, self.get_paginate_by(qs))[2],
             columns=self.columns,
             bulkactions=bulkactions,
             rowactions=self.rowactions,
@@ -284,26 +291,20 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         """
         Shortcut to get a Link to a model view.
         The default models views in bread are "read", "edit", "delete".
-        :param modelaction: A model view whose name has been generated with ``bread.utils.urls.model_urlname``
+        :param modelaction: A model view whose name has been generated
+                            with ``bread.utils.urls.model_urlname``
         """
         return Link(
             label="",
-            href=ModelHref(
-                hg.C("row"), modelaction, kwargs={"pk": hg.C("row.pk")}, **kwargs
-            ),
+            href=ModelHref.from_object(hg.C("row"), modelaction, **kwargs),
             iconname=None,
         )
 
     @staticmethod
     def editlink(return_to_current=True):
         return Link(
-            href=ModelHref(
-                hg.C("row"),
-                "edit",
-                kwargs={"pk": hg.C("row.id")},
-                query={"next": hg.C("request.get_full_path")}
-                if return_to_current
-                else {},
+            href=ModelHref.from_object(
+                hg.C("row"), "edit", return_to_current=return_to_current
             ),
             label=_("Edit"),
             iconname="edit",
@@ -312,14 +313,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
     @staticmethod
     def deletelink(return_to_current=True):
         return Link(
-            href=ModelHref(
-                hg.C("row"),
-                "delete",
-                kwargs={"pk": hg.C("row.id")},
-                query={"next": hg.C("request.get_full_path")}
-                if return_to_current
-                else {},
-            ),
+            href=ModelHref(hg.C("row"), "delete", return_to_current=return_to_current),
             label=_("Delete"),
             iconname="delete",
         )
@@ -336,7 +330,8 @@ def export(queryset, columns):
             or isinstance(column, str)
         ):
             raise ValueError(
-                f"Argument 'columns' needs to be of a list with items of type str or DataTableColumn, but found {column}"
+                "Argument 'columns' needs to be of a list with items of type str "
+                f"or DataTableColumn, but found {column}"
             )
         if isinstance(column, str):
             column = layout.datatable.DataTableColumn(

@@ -27,7 +27,7 @@ setup(
     license="New BSD License",
     install_requires=[
         # core dependencies
-        "Django>=3.2",
+        "Django>=3.2,<4.0",
         "htmlgenerator",  # replacement for django templates
         "django-extensions",  # bunch of usefull management commands and functions
         "django-guardian",  # object level permissions

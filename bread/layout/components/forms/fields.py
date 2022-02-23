@@ -50,7 +50,7 @@ def generate_widget_element(
         Union[dict, hg.Lazy]
     ] = None,  # normally be taken from the django form field, will be carbon-ized
     **attributes,
-):
+) -> FormFieldMarker:
     """
     Function to produce a carbon design based form field widget which is
     compatible with Django forms and based on htmlgenerator.

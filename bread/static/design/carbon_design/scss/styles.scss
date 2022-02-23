@@ -2,6 +2,14 @@ $feature-flags: (
   grid-columns-16: true,
 );
 
+// import files in the static directory, and for backward-compatibility with
+// django-compressor with scss support
+@function static($url) {
+    // YOU MAY REPLACE THE STATIC DIRECTORY HERE.
+    $static-dir: "/static";
+    @return "#{$static-dir}#{$url}";
+}
+
 // for changing the theme uncomment the following two lines
 @import 'globals/scss/vendor/@carbon/themes/scss/generated/themes';
 $carbon--theme: $carbon--theme--g10;
@@ -261,5 +269,19 @@ a.bx--header__name {
     .bx--modal-content--overflow-indicator {
         z-index: 9999; // drop-downs have a high z-index, this needs to be higher
     }
+}
+
+
+// achieves that file uploads in datatables fit on one line
+.bx--data-table-container .bx--file-container {
+    display: inline-block;
+    margin-top: 0;
+}
+
+
+// helping the user to see the whole content of the modal
+// without having the overflow indicator in the way
+.bx--modal-content {
+    padding-bottom: 2rem;
 }
 

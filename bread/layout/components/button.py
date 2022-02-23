@@ -49,7 +49,14 @@ class Button(hg.BUTTON):
         super().__init__(*children, **attributes)
 
     @staticmethod
-    def fromlink(link, **kwargs):
+    def fromlink(*args, **kwargs):
+        import warnings
+
+        warnings.warn("use of Button.fromlink is deprecated, use Button.from_link")
+        return Button.from_link(*args, **kwargs)
+
+    @staticmethod
+    def from_link(link, **kwargs):
         buttonargs = {
             "icon": link.iconname,
             "notext": not link.label,

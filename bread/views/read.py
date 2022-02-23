@@ -37,10 +37,10 @@ class ReadView(
             _layout.datatable.DataTable(
                 columns=[
                     _layout.datatable.DataTableColumn(
-                        header=_("lbl_field"), cell=hg.C("row.0")
+                        header=_("Field"), cell=hg.C("row.0")
                     ),
                     _layout.datatable.DataTableColumn(
-                        header=_("lbl_value"), cell=hg.C("row.1")
+                        header=_("Value"), cell=hg.C("row.1")
                     ),
                 ],
                 row_iterator=(
@@ -57,7 +57,7 @@ class ReadView(
                 style="width: auto",
             ),
             _layout.button.Button(_("Edit"), style="margin-top: 2rem").as_href(
-                ModelHref(self.model, "edit", kwargs={"pk": self.object.pk})
+                ModelHref.from_object(self.object, "edit")
             ),
         )
 

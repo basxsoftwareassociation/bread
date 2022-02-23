@@ -22,4 +22,5 @@ def update_workflows():
         for workflow in cls.objects.filter(
             cancelled__isnull=True, completed__isnull=True
         ):
+            print(f"Running workflow '{workflow}'")
             workflow.save()
