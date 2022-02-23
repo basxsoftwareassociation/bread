@@ -1,7 +1,6 @@
 from typing import Any, Optional
 
 import htmlgenerator as hg
-
 from bread.layout.components.icon import Icon
 
 
@@ -67,7 +66,6 @@ class ExpandableTile(hg.BaseElement):
         **attributes : optional
             keyword arguments representing the specific HTML attributes for the tile
         """
-        # container_id = hg.html_id(self, "expandable-tile-")
         expandable_tile_attrs = {
             "_class": "bx--tile bx--tile--expandable",
             "data_tile": "expandable",
@@ -84,7 +82,7 @@ class ExpandableTile(hg.BaseElement):
         below_attrs = below_attrs or {}
         hg.merge_html_attrs(below_attrs, {"_class": "bx--tile-content__below-the-fold"})
 
-        tile_nodes = hg.render(
+        super().__init__(
             hg.BUTTON(
                 hg.DIV(
                     Icon("chevron--down", size="16"),
@@ -102,19 +100,5 @@ class ExpandableTile(hg.BaseElement):
                     _class="bx--tile-content",
                 ),
                 **attributes,
-            ),
-            {},
-        )
-
-        super().__init__(
-            hg.SCRIPT(
-                hg.format(
-                    "var _expandableTileRawText = `{}`;",
-                    tile_nodes,
-                    autoescape=False,
-                )
-            ),
-            hg.DIV(
-                onload=hg.BaseElement("this.innerHTML = _expandableTileRawText;"),
             ),
         )
