@@ -145,7 +145,7 @@ class ObjectFieldValue(hg.Lazy):
 
         if value is None:
             try:
-                value = hg.resolve_lookup(object, self.fieldname)
+                value = hg.resolve_lookup(object, fieldname)
             except AttributeError:
                 # e.g. for non-existing OneToOneField related value
                 pass
