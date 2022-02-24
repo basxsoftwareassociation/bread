@@ -1,5 +1,6 @@
 from . import components  # noqa
 from .base import *  # noqa
+from .componentpreview import *  # noqa
 from .components import *  # noqa
 from .components import button  # noqa
 from .components import content_switcher  # noqa
