@@ -74,11 +74,13 @@ def as_richtext(value):
     return mark_safe(value)
 
 
-def as_download(value):
+def as_download(value, label=None):
     if not value:
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
         return mark_safe("<small><emph>File not found</emph></small>")
+    if label is None:
+        label = hg.SPAN(os.path.basename(value.name))
     return mark_safe(
         hg.render(
             hg.BaseElement(
@@ -88,7 +90,7 @@ def as_download(value):
                         size=16,
                         style="vertical-align: middle; margin-right: 0.25rem;",
                     ),
-                    hg.SPAN(os.path.basename(value.name)),
+                    label,
                     newtab=True,
                     href=value.url,
                     style="margin-right: 0.5rem; margin-left: 0.5rem",
