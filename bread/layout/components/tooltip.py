@@ -20,7 +20,8 @@ def _get_icon(icon):
 
 
 class DefinitionTooltip(hg.BaseElement):
-    """Definition tooltip is for regular use case of tooltip, e.g. giving the user more
+    """
+    Definition tooltip is for regular use case of tooltip, e.g. giving the user more
     text information about something, like defining a word.
 
     the info icon used in interactive tooltip can be repetitive when it’s shown several times
@@ -87,7 +88,8 @@ class DefinitionTooltip(hg.BaseElement):
 
 
 class IconTooltip(hg.BaseElement):
-    """Icon tooltip is for short single line of text describing an icon. Icon tooltip
+    """
+    Icon tooltip is for short single line of text describing an icon. Icon tooltip
     does not use any JavaScript. No label should be added to this variation. If there
     are actions a user can take in the tooltip (e.g. a link or a button),
     use interactive tooltip.
@@ -144,7 +146,8 @@ class IconTooltip(hg.BaseElement):
 
 
 class InteractiveTooltip(hg.BaseElement):
-    """Interactive tooltip should be used if there are actions a user can take in
+    """
+    Interactive tooltip should be used if there are actions a user can take in
     the tooltip (e.g. a link or a button). For more regular use case, e.g. giving
     the user more text information about something, use definition tooltip or icon
     tooltip.

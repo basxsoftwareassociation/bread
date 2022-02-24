@@ -34,7 +34,7 @@ class ProgressStep(hg.LI):
 
         if tooltip is not None:
             tooltipid = hg.html_id(tooltip, "tooltip-label")
-            elements[1]["aria-describedby"] = tooltipid
+            elements[1].attributes["aria-describedby"] = tooltipid
             elements.insert(
                 2,
                 hg.DIV(

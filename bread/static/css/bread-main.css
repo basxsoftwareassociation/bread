@@ -9210,7 +9210,7 @@ button.bx--dropdown-text {
   top: 0;
   left: 0;
   z-index: 9000;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   width: 100vw;
@@ -9223,6 +9223,7 @@ button.bx--dropdown-text {
   .bx--modal.is-visible {
     background-color: rgba(22, 22, 22, 0.5);
     visibility: inherit;
+    display: flex;
     opacity: 1;
     transition: background-color 720ms cubic-bezier(0, 0, 0.3, 1), opacity 240ms cubic-bezier(0, 0, 0.3, 1), visibility 0ms linear; }
   .bx--modal .bx--text-input,
