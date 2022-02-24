@@ -9,6 +9,7 @@ from django.template.context import _builtin_context_processors
 from django.template.defaultfilters import linebreaksbr
 from django.utils.formats import localize
 from django.utils.module_loading import import_string
+from django.utils.safestring import mark_safe
 from django.utils.timezone import localtime
 
 from bread.utils import pretty_modelname, resolve_modellookup
@@ -125,10 +126,23 @@ class ObjectFieldValue(hg.Lazy):
         object = hg.resolve_lazy(object, context)
 
         parts = self.fieldname.split(".")
-        # test if the value has a matching get_FIELDNAME_display function
-        value = hg.resolve_lookup(
-            object, f"{'.'.join(parts[:-1])}.get_{parts[-1]}_display".lstrip(".")
-        )
+        if len(parts) > 1:
+            object = hg.resolve_lookup(object, ".".join(parts[:-1]))
+        fieldname = parts[-1]
+        value = hg.resolve_lookup(object, f"get_{fieldname}_display")
+
+        if isinstance(object, models.Manager):
+            value = mark_safe(
+                " ".join(
+                    [
+                        ObjectFieldValue(
+                            fieldname, object_contextname=v, formatter=self.formatter
+                        ).resolve(context)
+                        for v in object.all()
+                    ]
+                )
+            )
+
         if value is None:
             try:
                 value = hg.resolve_lookup(object, self.fieldname)
@@ -141,7 +155,9 @@ class ObjectFieldValue(hg.Lazy):
             value = self.formatter(value)
         value = localize(value, use_l10n=settings.USE_L10N)
         if isinstance(value, models.Manager):
-            value = ", ".join([str(x) for x in value.all()])
+            value = ", ".join(
+                [self.formatter(x) if self.formatter else str(x) for x in value.all()]
+            )
         if isinstance(value, str):
             value = linebreaksbr(value)
         return value
