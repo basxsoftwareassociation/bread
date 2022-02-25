@@ -112,7 +112,8 @@ class ObjectFieldValue(hg.Lazy):
         :param fieldname: Name of the model field whose value will be rendered
         :param object_contextname: Name of the context object which provides the field value
                                    or a Lazy which produces the object itself
-        :param formatter: function which takes the field value as a single argument and returns a formatted version
+        :param formatter: function which takes the field value as a single
+                          argument and returns a formatted version
         """
         self.object = object_contextname
         self.fieldname = fieldname
