@@ -68,7 +68,7 @@ def as_countries(value):
     return as_list((c.name for c in value))
 
 
-def as_list(iterable, sep=", "):
+def as_list(iterable):
     return hg.UL(hg.Iterator(iterable, "item", hg.LI(hg.C("item"))))
 
 
