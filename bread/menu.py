@@ -182,8 +182,8 @@ registeritem(
 registeritem(
     Item(
         Link(
-            reverse("breadadmin.widgetpreview"),
-            _("Form widgets preview"),
+            reverse("breadadmin.componentpreview"),
+            _("Component Preview"),
         ),
         admingroup,
     )

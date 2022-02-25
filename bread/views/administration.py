@@ -16,6 +16,7 @@ from django.utils.translation import gettext_lazy as _
 from django_celery_results.models import TaskResult
 
 from bread import layout
+from bread.layout.components import tabs
 from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
 from bread.layout.components.forms import Form, FormField
@@ -58,7 +59,7 @@ def maintenancesettings(request):
 
 
 @aslayout
-def widgetpreview(request):
+def componentpreview(request):
     class ConfigForm(forms.Form):
         with_label = forms.BooleanField(required=False)
         with_helptext = forms.BooleanField(required=False)
@@ -136,89 +137,145 @@ def widgetpreview(request):
     )
 
     return hg.BaseElement(
-        hg.H3(_("Widget preview")),
-        layout.grid.Grid(
-            layout.grid.Row(
-                layout.grid.Col(
-                    hg.H4(_("Widgets")),
-                    layout.forms.Form(
-                        Form(),
-                        *[
-                            F(
-                                nicefieldname(w),
-                                no_label=not config["with_label"],
-                                errors=ERRORS if config["with_errors"] else None,
-                            )
-                            for w in widgets.keys()
-                        ]
-                    ),
-                ),
-                layout.grid.Col(
-                    hg.H4(_("Configure preview")),
-                    layout.forms.Form(
-                        configform,
-                        F("with_label"),
-                        F("with_helptext"),
-                        F("with_errors"),
-                        F("disabled"),
-                        layout.forms.helpers.Submit(_("Apply")),
-                        method="GET",
-                    ),
-                ),
+        hg.STYLE(
+            hg.mark_safe(
+                """
+                #backtotopBtn {
+                    position: fixed;
+                    right: 0;
+                    bottom: 0;
+                    z-index: 999;
+                    margin-right: 3rem;
+                    margin-bottom: 3rem;
+                    border-radius: 50%;
+                }
+                """
+            )
+        ),
+        layout.button.Button.fromlink(
+            Link(href="#", label=_("Back to top")),
+            buttontype="secondary",
+            icon="arrow--up",
+            notext=True,
+            id="backtotopBtn",
+        ),
+        tabs.Tabs(
+            tabs.Tab(
+                _("Layout"),
+                layout.componentpreview.layout(request),
             ),
-            R(
-                C(
-                    hg.H3(_("Tooltips")),
-                    hg.H4(_("Definition tooltip")),
-                    hg.DIV(
-                        layout.components.tooltip.DefinitionTooltip(
-                            "Definition tooltip (left aligned)",
-                            "Brief definition of the dotted, underlined word above.",
-                            align="left",
-                        )
-                    ),
-                    hg.DIV(
-                        layout.components.tooltip.DefinitionTooltip(
-                            "Definition tooltip (center aligned)",
-                            "Brief definition of the dotted, underlined word above.",
-                            align="center",
-                        )
-                    ),
-                    hg.DIV(
-                        layout.components.tooltip.DefinitionTooltip(
-                            "Definition tooltip (right aligned)",
-                            "Brief definition of the dotted, underlined word above.",
-                            align="right",
-                        )
-                    ),
-                    hg.H4(_("Icon tooltip")),
-                    hg.DIV(
-                        layout.components.tooltip.IconTooltip(
-                            "Help",
+            tabs.Tab(
+                _("Informational"),
+                layout.componentpreview.informational(request),
+            ),
+            tabs.Tab(
+                _("Interactive"),
+                layout.componentpreview.interactive(request),
+            ),
+            tabs.Tab(
+                _("Datatable"),
+                layout.componentpreview.datatable_layout(request),
+            ),
+            tabs.Tab(
+                _("Form"),
+                hg.BaseElement(
+                    hg.H3(_("Widget preview")),
+                    layout.grid.Grid(
+                        layout.grid.Row(
+                            layout.grid.Col(
+                                hg.H4(_("Widgets")),
+                                layout.forms.Form(
+                                    Form(),
+                                    *[
+                                        F(
+                                            nicefieldname(w),
+                                            no_label=not config["with_label"],
+                                            errors=ERRORS
+                                            if config["with_errors"]
+                                            else None,
+                                        )
+                                        for w in widgets.keys()
+                                    ]
+                                ),
+                            ),
+                            layout.grid.Col(
+                                hg.H4(_("Configure preview")),
+                                layout.forms.Form(
+                                    configform,
+                                    F("with_label"),
+                                    F("with_helptext"),
+                                    F("with_errors"),
+                                    F("disabled"),
+                                    layout.forms.helpers.Submit(_("Apply")),
+                                    method="GET",
+                                ),
+                            ),
                         ),
-                        layout.components.tooltip.IconTooltip(
-                            "Filter",
-                            icon=Icon("filter"),
-                        ),
-                        layout.components.tooltip.IconTooltip(
-                            "Email",
-                            icon="email",
-                        ),
-                    ),
-                    hg.H4(_("Interactive tooltip")),
-                    hg.DIV(
-                        layout.components.tooltip.InteractiveTooltip(
-                            label="Tooltip label",
-                            body="This is some tooltip text. This box shows the maximum amount of text that should appear inside. If more room is needed please use a modal instead.",
-                            heading="Heading within a Tooltip",
-                            button=(layout.components.button.Button("Button")),
-                            link=Link(href="#", label="link"),
+                        R(
+                            C(
+                                hg.H3(_("Tooltips")),
+                                hg.H4(_("Definition tooltip")),
+                                hg.DIV(
+                                    layout.components.tooltip.DefinitionTooltip(
+                                        "Definition tooltip (left aligned)",
+                                        "Brief definition of the dotted, underlined word above.",
+                                        align="left",
+                                    )
+                                ),
+                                hg.DIV(
+                                    layout.components.tooltip.DefinitionTooltip(
+                                        "Definition tooltip (center aligned)",
+                                        "Brief definition of the dotted, underlined word above.",
+                                        align="center",
+                                    )
+                                ),
+                                hg.DIV(
+                                    layout.components.tooltip.DefinitionTooltip(
+                                        "Definition tooltip (right aligned)",
+                                        "Brief definition of the dotted, underlined word above.",
+                                        align="right",
+                                    )
+                                ),
+                                hg.H4(_("Icon tooltip")),
+                                hg.DIV(
+                                    layout.components.tooltip.IconTooltip(
+                                        "Help",
+                                    ),
+                                    layout.components.tooltip.IconTooltip(
+                                        "Filter",
+                                        icon=Icon("filter"),
+                                    ),
+                                    layout.components.tooltip.IconTooltip(
+                                        "Email",
+                                        icon="email",
+                                    ),
+                                ),
+                                hg.H4(_("Interactive tooltip")),
+                                hg.DIV(
+                                    layout.components.tooltip.InteractiveTooltip(
+                                        label="Tooltip label",
+                                        body=(
+                                            _(
+                                                "This is some tooltip text. This box shows the maximum amount of text that should "
+                                                "appear inside. If more room is needed please use a modal instead."
+                                            )
+                                        ),
+                                        heading="Heading within a Tooltip",
+                                        button=(
+                                            layout.components.button.Button("Button")
+                                        ),
+                                        link=Link(href="#", label="link"),
+                                    ),
+                                ),
+                            ),
                         ),
                     ),
                 ),
             ),
         ),
     )
+
+    return hg.BaseElement()
 
 
 class TaskResultBrowseView(BrowseView):

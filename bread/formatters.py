@@ -7,7 +7,8 @@ import htmlgenerator as hg
 from django.conf import settings
 from django.db import models
 from django.utils.functional import Promise
-from django.utils.html import format_html, format_html_join, linebreaks, mark_safe
+from django.utils.html import linebreaks, mark_safe
+from django.utils.translation import gettext_lazy as _
 
 import bread.settings as app_settings
 
@@ -15,7 +16,10 @@ from . import layout
 
 
 def format_value(value):
-    """Renders a python value in a nice way in HTML. If a field-definition has an attribute "renderer" set, that function will be used to render the value"""
+    """
+    Renders a python value in a nice way in HTML. If a field-definition has an
+    attribute "renderer" set, that function will be used to render the value
+    """
     if isinstance(value, bool) or value is None:
         return CONSTANTS[value]
 
@@ -45,13 +49,11 @@ def format_value(value):
 
 
 def as_email(value):
-    return format_html('<a href="mailto:{}">{}</a>', value, value)
+    return hg.A(value, href=hg.format("mailto: {}", value))
 
 
 def as_url(value):
-    return format_html(
-        '<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', value, value
-    )
+    return hg.A(value, href=value, target="_blank", rel="noopener noreferrer")
 
 
 def as_text(value):
@@ -66,69 +68,28 @@ def as_countries(value):
     return as_list((c.name for c in value))
 
 
-def as_list(iterable, sep=", "):
-    return format_html_join(sep, "{}", ((format_value(v),) for v in iterable))
-
-
-def as_richtext(value):
-    return mark_safe(value)
+def as_list(iterable):
+    return hg.UL(hg.Iterator(iterable, "item", hg.LI(hg.C("item"))))
 
 
 def as_download(value, label=None):
     if not value:
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
-        return mark_safe("<small><emph>File not found</emph></small>")
+        return hg.SMALL(hg.EMPH(_("File not found")))
     if label is None:
         label = hg.SPAN(os.path.basename(value.name))
-    return mark_safe(
-        hg.render(
-            hg.BaseElement(
-                hg.A(
-                    layout.icon.Icon(
-                        "launch",
-                        size=16,
-                        style="vertical-align: middle; margin-right: 0.25rem;",
-                    ),
-                    label,
-                    newtab=True,
-                    href=value.url,
-                    style="margin-right: 0.5rem; margin-left: 0.5rem",
-                    onclick="event.stopPropagation();",
-                ),
-            ),
-            {},
-        )
-    )
-
-
-def as_audio(value):
-    if not value:
-        return CONSTANTS[None]
-    if not value.storage.exists(value.name):
-        return mark_safe("<small><emph>Audio file not found</emph></small>")
-    return format_html(
-        """
-        <audio controls controlsList="nodownload" preload="metadata">
-            <source src="{}" type="audio/mp3">
-        </audio>
-    """,
-        value.url,
-    )
-
-
-def as_video(value):
-    if not value:
-        return CONSTANTS[None]
-    if not value.storage.exists(value.name):
-        return mark_safe("<small><emph>Video file not found</emph></small>")
-    return format_html(
-        """
-        <video controls width="320" height="240" controlsList="nodownload" preload="metadata">
-            <source src="{}" type="video/mp4">
-        </video>
-    """,
-        value.url,
+    return hg.A(
+        layout.icon.Icon(
+            "launch",
+            size=16,
+            style="vertical-align: middle; margin-right: 0.25rem;",
+        ),
+        label,
+        newtab=True,
+        href=value.url,
+        style="margin-right: 0.5rem; margin-left: 0.5rem",
+        onclick="event.stopPropagation();",
     )
 
 
@@ -139,7 +100,8 @@ CONSTANTS = {
 }
 
 
-# copied from https://github.com/django/django/blob/1f9874d4ca3e7376036646aedf6ac3060f22fd69/django/utils/html.py
+# copied from
+# https://github.com/django/django/blob/1f9874d4ca3e7376036646aedf6ac3060f22fd69/django/utils/html.py
 # because older versions only have this as a local function available
 def is_email_simple(value):
     """Return True if value looks like an email address."""
