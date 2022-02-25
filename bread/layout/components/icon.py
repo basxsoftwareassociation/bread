@@ -13,8 +13,8 @@ class Icon(hg.SVG):
 
     """Insert the SVG for a carbon icon.
     See https://www.carbondesignsystem.com/guidelines/icons/library for a list of all icons.
-    In order to see the name which should be passed to this template tag, click on "Download SVG" for an
-    icon and use the filename without the attribte, e.g. "thunderstorm--severe"."""
+    In order to see the name which should be passed to this template tag, click on "Download SVG"
+    for an icon and use the filename without the attribte, e.g. "thunderstorm--severe"."""
 
     def __init__(
         self,

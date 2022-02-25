@@ -15,7 +15,10 @@ from . import layout
 
 
 def format_value(value):
-    """Renders a python value in a nice way in HTML. If a field-definition has an attribute "renderer" set, that function will be used to render the value"""
+    """
+    Renders a python value in a nice way in HTML. If a field-definition has an
+    attribute "renderer" set, that function will be used to render the value
+    """
     if isinstance(value, bool) or value is None:
         return CONSTANTS[value]
 

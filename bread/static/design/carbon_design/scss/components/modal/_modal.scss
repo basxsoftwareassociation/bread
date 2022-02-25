@@ -26,7 +26,7 @@
     top: 0;
     left: 0;
     z-index: z('modal');
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     width: 100vw;
@@ -42,6 +42,7 @@
     &.is-visible {
       background-color: $overlay-01;
       visibility: inherit;
+      display: flex;
       opacity: 1;
       transition: background-color $duration--slow-02
           motion(entrance, expressive),
