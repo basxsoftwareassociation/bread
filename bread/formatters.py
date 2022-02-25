@@ -7,7 +7,8 @@ import htmlgenerator as hg
 from django.conf import settings
 from django.db import models
 from django.utils.functional import Promise
-from django.utils.html import format_html, format_html_join, linebreaks, mark_safe
+from django.utils.html import format_html, linebreaks, mark_safe
+from django.utils.translation import gettext_lazy as _
 
 import bread.settings as app_settings
 
@@ -48,13 +49,11 @@ def format_value(value):
 
 
 def as_email(value):
-    return format_html('<a href="mailto:{}">{}</a>', value, value)
+    return hg.A(value, href=hg.format("mailto: {}", value))
 
 
 def as_url(value):
-    return format_html(
-        '<a href="{}" target="_blank" rel="noopener noreferrer">{}</a>', value, value
-    )
+    return hg.A(value, href=value, target="_blank", rel="noopener noreferrer")
 
 
 def as_text(value):
@@ -70,44 +69,34 @@ def as_countries(value):
 
 
 def as_list(iterable, sep=", "):
-    return format_html_join(sep, "{}", ((format_value(v),) for v in iterable))
-
-
-def as_richtext(value):
-    return mark_safe(value)
+    return hg.UL(hg.Iterator(iterable, "item", hg.LI(hg.C("item"))))
 
 
 def as_download(value):
     if not value:
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
-        return mark_safe("<small><emph>File not found</emph></small>")
-    return mark_safe(
-        hg.render(
-            hg.BaseElement(
-                hg.A(
-                    layout.icon.Icon(
-                        "launch",
-                        size=16,
-                        style="vertical-align: middle; margin-right: 0.25rem;",
-                    ),
-                    hg.SPAN(os.path.basename(value.name)),
-                    newtab=True,
-                    href=value.url,
-                    style="margin-right: 0.5rem; margin-left: 0.5rem",
-                    onclick="event.stopPropagation();",
-                ),
-            ),
-            {},
-        )
+        return hg.SMALL(hg.EMPH(_("File not found")))
+    return hg.A(
+        layout.icon.Icon(
+            "launch",
+            size=16,
+            style="vertical-align: middle; margin-right: 0.25rem;",
+        ),
+        hg.SPAN(os.path.basename(value.name)),
+        newtab=True,
+        href=value.url,
+        style="margin-right: 0.5rem; margin-left: 0.5rem",
+        onclick="event.stopPropagation();",
     )
 
 
 def as_audio(value):
+    raise Exception("This should not be used unless refactored!")
     if not value:
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
-        return mark_safe("<small><emph>Audio file not found</emph></small>")
+        return hg.SMALL(hg.EMPH(_("Audio file not found")))
     return format_html(
         """
         <audio controls controlsList="nodownload" preload="metadata">
@@ -119,6 +108,7 @@ def as_audio(value):
 
 
 def as_video(value):
+    raise Exception("This should not be used unless refactored!")
     if not value:
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
@@ -140,7 +130,8 @@ CONSTANTS = {
 }
 
 
-# copied from https://github.com/django/django/blob/1f9874d4ca3e7376036646aedf6ac3060f22fd69/django/utils/html.py
+# copied from
+# https://github.com/django/django/blob/1f9874d4ca3e7376036646aedf6ac3060f22fd69/django/utils/html.py
 # because older versions only have this as a local function available
 def is_email_simple(value):
     """Return True if value looks like an email address."""
