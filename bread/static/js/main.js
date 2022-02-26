@@ -181,3 +181,48 @@ function getBreadCookie(key, _default=null) {
     ret = ret.split('=')[1];
     return ret ? decodeURIComponent(ret) : _default;
 }
+
+window.setExpandableTileMaxHeight = target => {
+    // note: atf = above the fold,
+    // btf = below the fold
+    const atf = target.querySelector("[data-tile-atf]");
+    const btf = target.querySelector(".bx--tile-content__below-the-fold");
+    const atfHeight = atf.getBoundingClientRect().height;
+    const btfHeight = btf.getBoundingClientRect().height;
+
+    if (target.classList.contains("bx--tile--is-expanded"))
+        target.style.maxHeight = `${atfHeight + btfHeight}px`;
+    else
+        target.style.maxHeight = `${atfHeight}px`;
+};
+
+const expandableTileObserver = new MutationObserver(mutations => {
+    for (let mutation of mutations) {
+        if (mutation.attributeName === "class") {
+            window.setExpandableTileMaxHeight(mutation.target);
+        }
+    }
+});
+
+const expandableTileDOMObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        window.setExpandableTileMaxHeight(entry.target);
+    });
+}, {
+    root: null,
+    rootMargin: "0px",
+    threshold: 0.1,
+})
+
+// observe expandable tiles
+document.addEventListener("load", function() {
+    const expandableTiles = document.querySelectorAll(".bx--tile.bx--tile--expandable");
+    for (let tile of expandableTiles) {
+        expandableTileObserver.observe(tile, { attributes: true, });
+        expandableTileDOMObserver.observe(tile);
+    }
+});
+
+document.addEventListener("unload", function() {
+    expandableTileDOMObserver.disconnect();
+});
