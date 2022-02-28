@@ -67,12 +67,9 @@ class ExpandableTile(hg.BaseElement):
         **attributes : optional
             keyword arguments representing the specific HTML attributes for the tile
         """
-        tile_id = hg.html_id(self, "expandable-tile-")
-
         expandable_tile_attrs = {
             "_class": "bx--tile bx--tile--expandable",
             "data_tile": "expandable",
-            "id": tile_id,
             "tabindex": "0",
         }
         hg.merge_html_attrs(attributes, expandable_tile_attrs)
@@ -105,12 +102,9 @@ class ExpandableTile(hg.BaseElement):
                 ),
                 onload=hg.format(
                     (
-                        "(function(){{"
-                        "const thisTile = document.querySelector('#{}');"
+                        "let thisTile=this;"
                         "window.setExpandableTileMaxHeight(thisTile);"
-                        "}})();"
                     ),
-                    tile_id,
                     autoescape=False,
                 ),
                 **attributes,

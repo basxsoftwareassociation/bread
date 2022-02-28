@@ -182,6 +182,7 @@ function getBreadCookie(key, _default=null) {
     return ret ? decodeURIComponent(ret) : _default;
 }
 
+// added a temporary bug fix for expandable tiles before getting carbon library updated.
 window.setExpandableTileMaxHeight = target => {
     // note: atf = above the fold,
     // btf = below the fold
@@ -189,13 +190,11 @@ window.setExpandableTileMaxHeight = target => {
     const btf = target.querySelector(".bx--tile-content__below-the-fold");
     const atfHeight = atf.getBoundingClientRect().height;
     const btfHeight = btf.getBoundingClientRect().height;
-
     if (target.classList.contains("bx--tile--is-expanded"))
         target.style.maxHeight = `${atfHeight + btfHeight}px`;
     else
         target.style.maxHeight = `${atfHeight}px`;
 };
-
 const expandableTileObserver = new MutationObserver(mutations => {
     for (let mutation of mutations) {
         if (mutation.attributeName === "class") {
@@ -203,7 +202,6 @@ const expandableTileObserver = new MutationObserver(mutations => {
         }
     }
 });
-
 const expandableTileDOMObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
         window.setExpandableTileMaxHeight(entry.target);
@@ -213,8 +211,6 @@ const expandableTileDOMObserver = new IntersectionObserver(entries => {
     rootMargin: "0px",
     threshold: 0.1,
 })
-
-// observe expandable tiles
 document.addEventListener("load", function() {
     const expandableTiles = document.querySelectorAll(".bx--tile.bx--tile--expandable");
     for (let tile of expandableTiles) {
@@ -222,7 +218,6 @@ document.addEventListener("load", function() {
         expandableTileDOMObserver.observe(tile);
     }
 });
-
 document.addEventListener("unload", function() {
     expandableTileDOMObserver.disconnect();
 });
