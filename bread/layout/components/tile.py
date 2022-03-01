@@ -27,7 +27,7 @@ class Tile(hg.DIV):
         super().__init__(*children, **attributes)
 
 
-class ExpandableTile(Tile):
+class ExpandableTile(hg.BaseElement):
     """
     Expandable tiles are helpful for hiding and showing large amounts of content to a user.
     When expanded, tiles push content down the page. They allow the user to specifically
@@ -68,7 +68,7 @@ class ExpandableTile(Tile):
             keyword arguments representing the specific HTML attributes for the tile
         """
         expandable_tile_attrs = {
-            "_class": "bx--tile--expandable",
+            "_class": "bx--tile bx--tile--expandable",
             "data_tile": "expandable",
             "tabindex": "0",
         }
@@ -85,20 +85,28 @@ class ExpandableTile(Tile):
 
         super().__init__(
             hg.BUTTON(
-                Icon("chevron--down", size="16"),
-                aria_label="expand menu",
-                _class="bx--tile__chevron",
-            ),
-            hg.DIV(
-                hg.SPAN(
-                    above,
-                    **above_attrs,
+                hg.DIV(
+                    Icon("chevron--down", size="16"),
+                    _class="bx--tile__chevron",
                 ),
-                hg.SPAN(
-                    below,
-                    **below_attrs,
+                hg.DIV(
+                    hg.SPAN(
+                        above,
+                        **above_attrs,
+                    ),
+                    hg.SPAN(
+                        below,
+                        **below_attrs,
+                    ),
+                    _class="bx--tile-content",
                 ),
-                _class="bx--tile-content",
+                onload=hg.format(
+                    (
+                        "let thisTile=this;"
+                        "window.setExpandableTileMaxHeight(thisTile);"
+                    ),
+                    autoescape=False,
+                ),
+                **attributes,
             ),
-            **attributes,
         )
