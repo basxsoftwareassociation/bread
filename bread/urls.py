@@ -84,6 +84,11 @@ urlpatterns = [
         administration.componentpreview,
         name="breadadmin.componentpreview",
     ),
+    path(
+        "admin/usermanagement",
+        administration.usermanagement,
+        name="breadadmin.usermanagement",
+    ),
     *default_model_paths(
         django_celery_results.models.TaskResult,
         browseview=administration.TaskResultBrowseView,
