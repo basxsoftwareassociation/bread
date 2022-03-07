@@ -9,9 +9,11 @@ import requests
 from django import forms
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test
 from django.core import management
 from django.db import connection
+from django.http import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from django_celery_results.models import TaskResult
 
@@ -20,7 +22,8 @@ from bread.layout.components import tabs
 from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
 from bread.layout.components.forms import Form, FormField
-from bread.views import BrowseView
+from bread.utils import reverse_model
+from bread.views import BrowseView, BulkAction
 
 from ..layout.components.icon import Icon
 from ..utils import Link, aslayout
@@ -56,6 +59,34 @@ def maintenancesettings(request):
     )
 
     return ret
+
+
+class UserBrowseView(BrowseView):
+    columns = [
+        "id",
+        DataTableColumn(_("Username"), hg.C("row.username")),
+        DataTableColumn(_("First Name"), hg.C("row.first_name")),
+        DataTableColumn(_("Last Name"), hg.C("row.last_name")),
+        DataTableColumn(
+            _("Is a staff?"),
+            hg.F(
+                lambda context: _("yes").capitalize()
+                if context["row"].is_staff
+                else _("no").capitalize()
+            ),
+        ),
+        DataTableColumn(
+            _("Is a superuser?"),
+            hg.F(
+                lambda context: _("yes").capitalize()
+                if context["row"].is_superuser
+                else _("no").capitalize()
+            ),
+        ),
+    ]
+    title = "Users"
+    rowclickaction = BrowseView.gen_rowclickaction("read")
+    viewstate_sessionkey = "adminusermanagement"
 
 
 @aslayout
@@ -274,8 +305,6 @@ def componentpreview(request):
             ),
         ),
     )
-
-    return hg.BaseElement()
 
 
 class TaskResultBrowseView(BrowseView):

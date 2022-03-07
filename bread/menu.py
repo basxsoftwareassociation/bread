@@ -191,7 +191,7 @@ registeritem(
 registeritem(
     Item(
         Link(
-            reverse("breadadmin.usermanagement"),
+            reverse("auth.user.browse"),
             _("User Management"),
         ),
         admingroup,

@@ -1,5 +1,6 @@
 import django_celery_results.models
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.urls import include, path
 
 from bread.utils import autopath, default_model_paths
@@ -84,14 +85,13 @@ urlpatterns = [
         administration.componentpreview,
         name="breadadmin.componentpreview",
     ),
-    path(
-        "admin/usermanagement",
-        administration.usermanagement,
-        name="breadadmin.usermanagement",
-    ),
     *default_model_paths(
         django_celery_results.models.TaskResult,
         browseview=administration.TaskResultBrowseView,
+    ),
+    *default_model_paths(
+        get_user_model(),
+        browseview=administration.UserBrowseView,
     ),
 ] + external_urlpatterns
 
