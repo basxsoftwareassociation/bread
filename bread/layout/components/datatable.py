@@ -309,6 +309,7 @@ class DataTable(hg.TABLE):
         settingspanel: Any = None,
         pagination_config: Optional[PaginationConfig] = None,
         search_urlparameter: Optional[str] = None,
+        model=None,  # required if queryset is Lazy
         **kwargs,
     ):
         """TODO: Write Docs!!!!
@@ -323,7 +324,13 @@ class DataTable(hg.TABLE):
                               difficutl to add another button by modifying the
                               datatable after creation.
         """
-        model = queryset.model
+        if not isinstance(queryset, hg.Lazy):
+            model = queryset.model
+        if model is None:
+            raise ValueError(
+                "Argument for 'model' must be given if 'queryset' is of type hg.Lazy"
+            )
+
         columns = columns or filter_fieldlist(model, ["__all__"])
 
         title = title or pretty_modelname(model, plural=True)
