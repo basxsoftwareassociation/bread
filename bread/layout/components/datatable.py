@@ -357,10 +357,10 @@ class DataTable(hg.TABLE):
             objectactions_menu = hg.DIV(
                 hg.Iterator(
                     rowactions,
-                    "action",
+                    "link",
                     hg.F(
                         lambda c: Button.from_link(
-                            c["action"],
+                            c["link"],
                             notext=True,
                             small=True,
                             buttontype="ghost",
