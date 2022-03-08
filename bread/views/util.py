@@ -39,17 +39,20 @@ class CustomFormMixin:
         )
 
     def get_layout(self):
-        formfields = filter_fieldlist(
-            self.model,
-            [f for f in self.fields if isinstance(f, str)] if self.fields else None,
-            for_form=True,
-        )
-        ret = hg.BaseElement()
-        for field in self.fields or formfields:
-            if field in formfields:
-                ret.append(breadlayout.forms.FormField(field))
-            else:
-                ret.append(field)
+        if hasattr(self, "layout") and self.layout is not None:
+            ret = self.layout
+        else:
+            formfields = filter_fieldlist(
+                self.model,
+                [f for f in self.fields if isinstance(f, str)] if self.fields else None,
+                for_form=True,
+            )
+            ret = hg.BaseElement()
+            for field in self.fields or formfields:
+                if field in formfields:
+                    ret.append(breadlayout.forms.FormField(field))
+                else:
+                    ret.append(field)
 
         if self.ajax_urlparameter in self.request.GET:
             return breadlayout.forms.Form(hg.C("form"), ret)

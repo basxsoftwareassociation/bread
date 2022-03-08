@@ -15317,7 +15317,7 @@ td .bx--form-item {
   width: 100%;
   max-width: 100%; }
   .bx--col .bx--form-item [data-date-picker] input {
-    width: 100%;
+    width: 100% !important;
     max-width: 100%; }
 
 .bx--col .bx--form-item > * {
