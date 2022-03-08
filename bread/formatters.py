@@ -76,7 +76,7 @@ def as_download(value, label=None):
     if not value:
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
-        return hg.SMALL(hg.EMPH(_("File not found")))
+        return hg.SMALL(hg.EM(_("File not found")))
     if label is None:
         label = hg.SPAN(os.path.basename(value.name))
     return hg.A(
