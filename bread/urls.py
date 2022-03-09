@@ -3,10 +3,12 @@ from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.urls import include, path
 
-from bread.utils import autopath, default_model_paths
+from bread.utils import autopath, default_model_paths, model_urlname
 
 from .views import administration, auth, userprofile
 from .views.globalpreferences import PreferencesView
+
+DjangoUserModel = get_user_model()
 
 external_urlpatterns = [
     path(
@@ -90,8 +92,13 @@ urlpatterns = [
         browseview=administration.TaskResultBrowseView,
     ),
     *default_model_paths(
-        get_user_model(),
+        DjangoUserModel,
         browseview=administration.UserBrowseView,
+        readview=administration.UserReadView,
+    ),
+    autopath(
+        administration.UserEditView.as_view(),
+        urlname=model_urlname(DjangoUserModel, "ajax_edit_user_info"),
     ),
 ] + external_urlpatterns
 

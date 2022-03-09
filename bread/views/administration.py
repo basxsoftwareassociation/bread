@@ -2,6 +2,7 @@ import os
 import re
 import subprocess  # nosec because we covered everything
 from io import StringIO
+from typing import Union
 
 import htmlgenerator as hg
 import pkg_resources
@@ -13,18 +14,22 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test
 from django.core import management
 from django.db import connection
-from django.http import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from django_celery_results.models import TaskResult
+from htmlgenerator import Lazy
 
-from bread import layout
+from bread import layout, utils
+from bread.layout import ObjectFieldLabel, ObjectFieldValue
 from bread.layout.components import tabs
 from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
 from bread.layout.components.forms import Form, FormField
-from bread.utils import reverse_model
-from bread.views import BrowseView, BulkAction
+from bread.layout.components.modal import Modal, modal_with_trigger
+from bread.utils import ModelHref
+from bread.views import BrowseView, EditView
+from bread.views.read import ReadView
 
+from ..formatters import format_value
 from ..layout.components.icon import Icon
 from ..utils import Link, aslayout
 
@@ -64,6 +69,14 @@ def maintenancesettings(request):
 class UserBrowseView(BrowseView):
     columns = [
         "id",
+        DataTableColumn(
+            _("Active"),
+            hg.F(
+                lambda context: _("yes").capitalize()
+                if context["row"].is_active
+                else _("no").capitalize()
+            ),
+        ),
         DataTableColumn(_("Username"), hg.C("row.username")),
         DataTableColumn(_("First Name"), hg.C("row.first_name")),
         DataTableColumn(_("Last Name"), hg.C("row.last_name")),
@@ -87,6 +100,178 @@ class UserBrowseView(BrowseView):
     title = "Users"
     rowclickaction = BrowseView.gen_rowclickaction("read")
     viewstate_sessionkey = "adminusermanagement"
+
+
+class GroupBrowseView(BrowseView):
+    columns = [
+        "id",
+        "name",
+        "permissions",
+    ]
+    title = "Groups"
+    rowclickaction = BrowseView.gen_rowclickaction("read")
+    viewstate_sessionkey = "adminusermanagement"
+
+
+class UserReadView(ReadView):
+    left_fields = ["id", "username", "first_name", "last_name", "email", "date_joined"]
+    right_fields = [
+        "is_superuser",
+        "is_staff",
+        "is_active",
+        "groups",
+        "user_permissions",
+    ]
+
+    def get_layout(self):
+        return hg.BaseElement(
+            hg.H3(
+                hg.SPAN(self.object),
+                edituser_toolbar(self.request),
+            ),
+            layout.tile.Tile(
+                layout.grid.Grid(
+                    R(
+                        C(
+                            *(
+                                display_label_and_value(
+                                    ObjectFieldLabel(field), ObjectFieldValue(field)
+                                )
+                                for field in self.left_fields
+                            ),
+                        ),
+                        C(
+                            *(
+                                display_label_and_value(
+                                    ObjectFieldLabel(field), ObjectFieldValue(field)
+                                )
+                                for field in self.right_fields
+                            ),
+                        ),
+                    ),
+                    R(
+                        C(
+                            open_modal_popup_button(
+                                self.object,
+                                self.model,
+                                "ajax_edit_user_info",
+                            )
+                        )
+                    ),
+                ),
+                style="padding: 4rem;",
+            ),
+        )
+
+
+class UserEditView(EditView):
+    model = get_user_model()
+    fields = [
+        "id",
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "date_joined",
+        "is_superuser",
+        "is_staff",
+        "is_active",
+        "groups",
+        "user_permissions",
+    ]
+
+    def get_layout(self):
+        R = layout.grid.Row
+        C = layout.grid.Col
+        F = layout.forms.FormField
+        return layout.grid.Grid(*(R(C(hg.P(field))) for field in self.fields))
+
+
+def display_label_and_value(label, value):
+    return R(
+        C(
+            hg.DIV(
+                label,
+                style="font-weight: bold;",
+            ),
+            width=6,
+        ),
+        C(value),
+        style="padding-bottom: 1.5rem;",
+    )
+
+
+def edituser_toolbar(request):
+    deletebutton = layout.button.Button(
+        _("Delete"),
+        buttontype="ghost",
+        icon="trash-can",
+        notext=True,
+        **layout.aslink_attributes(
+            hg.F(lambda c: layout.objectaction(c["object"], "delete"))
+        ),
+    )
+    restorebutton = layout.button.Button(
+        _("Restore"),
+        buttontype="ghost",
+        icon="undo",
+        notext=True,
+        **layout.aslink_attributes(
+            hg.F(
+                lambda c: layout.objectaction(
+                    c["object"], "delete", query={"restore": True}
+                )
+            )
+        ),
+    )
+    copybutton = layout.button.Button(
+        _("Copy"),
+        buttontype="ghost",
+        icon="copy",
+        notext=True,
+        **layout.aslink_attributes(
+            hg.F(lambda c: layout.objectaction(c["object"], "copy"))
+        ),
+    )
+
+    return hg.SPAN(
+        hg.If(hg.C("object.deleted"), restorebutton, deletebutton),
+        copybutton,
+        layout.button.PrintPageButton(buttontype="ghost"),
+        _class="no-print",
+        style="margin-bottom: 1rem; margin-left: 1rem",
+        width=3,
+    )
+
+
+# reused from basxconnect
+def open_modal_popup_button(heading, model, action):
+    return R(
+        C(
+            modal_with_trigger(
+                create_modal(heading, model, action),
+                layout.button.Button,
+                _("Edit"),
+                buttontype="tertiary",
+                icon="edit",
+            ),
+            style="margin-top: 1.5rem;",
+        )
+    )
+
+
+def create_modal(heading, model: Union[type, Lazy], action: str):
+    modal = layout.modal.Modal.with_ajax_content(
+        heading=heading,
+        url=ModelHref(
+            model,
+            action,
+            kwargs={"pk": hg.F(lambda c: c["object"].pk)},
+            query={"asajax": True},
+        ),
+        submitlabel=_("Save"),
+    )
+    return modal
 
 
 @aslayout
@@ -161,7 +346,7 @@ def componentpreview(request):
             nicefieldname(widget): field[0](
                 **field[1],
                 **({"help_text": HELPTEXT} if config["with_helptext"] else {}),
-                disabled=config["disabled"]
+                disabled=config["disabled"],
             )
             for widget, field in widgets.items()
         },
@@ -226,7 +411,7 @@ def componentpreview(request):
                                             else None,
                                         )
                                         for w in widgets.keys()
-                                    ]
+                                    ],
                                 ),
                             ),
                             layout.grid.Col(
