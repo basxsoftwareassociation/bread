@@ -15296,6 +15296,9 @@ h5 {
 td .bx--form-item {
   margin-bottom: 0; }
 
+td .bx--modal .bx--form-item {
+  margin-bottom: 2rem; }
+
 .bx--data-table .bx--table-column-menu,
 .bx--data-table .bx--table-column-menu:last-of-type {
   width: 3.25rem;
