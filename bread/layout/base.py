@@ -102,7 +102,10 @@ class ObjectFieldLabel(hg.ContextValue):
         if callable(label):
             return label.__name__.replace("_", " ")
         if isinstance(label, ManyToOneRel):
-            return label.name.replace("_", " ").capitalize()
+            return (
+                label.related_model._meta.verbose_name_plural
+            )  # this is "more correct", but not sure if it always works..
+            # return label.name.replace("_", " ").capitalize()
         return label.title() if self.title and isinstance(label, str) else label
 
 
