@@ -37,15 +37,15 @@ class DataTable(hg.TABLE):
         columns=[
             DataTableColumn(
                 header="Country",
-                cell=hg.DIV(hg.C("row.Country")),    # what will be inside each cell of the specific column.
+                cell=hg.DIV(hg.C("row.Country")),
             ),
             DataTableColumn(
                 header="Continent",
-                cell=hg.DIV(hg.C("row.Continent")),  # what will be inside each cell of the specific column.
+                cell=hg.DIV(hg.C("row.Continent")),
             ),
             DataTableColumn(
                 header="Population",
-                cell=hg.DIV(hg.C("row.Population")), # what will be inside each cell of the specific column.
+                cell=hg.DIV(hg.C("row.Population")),
             ),
         ],
         row_iterator=[
@@ -114,9 +114,13 @@ class DataTable(hg.TABLE):
         """A carbon DataTable element
 
         :param columns: Column definitions
-        :param row_iterator: Iterator which yields row objects. If this is a hg.Iterator instance it will be used for the table body, otherwise a default Iterator will be used to render the column cells. This can also be htmlgenerator.Lazy object which returns a Python iterator when beeing evaluated.
+        :param row_iterator: Iterator which yields row objects. If this is a hg.Iterator instance
+                             it will be used for the table body, otherwise a default iterator will
+                             be used to render the column cells. This can also be htmlgenerator.Lazy
+                             object which returns a Python iterator when beeing evaluated.
         :param rowvariable: Name of the current object passed to childrens context
-        :param orderingurlparameter: The name of the GET query parameter which is used to set the table ordering
+        :param orderingurlparameter: The name of the GET query parameter which is used to set the
+                                     table ordering.
         :param spacing: One of "default", "compact", "short", "tall", according to the carbon styles
         :param zebra: If True alternate row colors
         :param kwargs: HTML element attributes
@@ -150,7 +154,10 @@ class DataTable(hg.TABLE):
         title: table title
         helper_text: sub title
         primary_button: bread.layout.button.Button instance
-        bulkactions: List of bread.utils.links.Link instances. Will send a post or a get (depending on its "method" attribute) to the target url the sent data will be a form with the selected checkboxes as fields if the head-checkbox has been selected only that field will be selected
+        bulkactions: List of bread.utils.links.Link instances. Will send a post or a get (depending
+                     on its "method" attribute) to the target url the sent data will be a form with
+                     the selected checkboxes as fields if the head-checkbox has been selected only
+                     that field will be selected.
         """
         checkboxallid = f"datatable-check-{hg.html_id(self)}"
         header: List[hg.BaseElement] = [
@@ -260,7 +267,10 @@ class DataTable(hg.TABLE):
                     Button(
                         icon="settings--adjust",
                         buttontype="ghost",
-                        onclick="this.parentElement.parentElement.parentElement.querySelector('.settingscontainer').style.display = this.parentElement.parentElement.parentElement.querySelector('.settingscontainer').style.display == 'block' ? 'none' : 'block'; event.stopPropagation()",
+                        onclick="""
+let settings = this.parentElement.parentElement.parentElement.querySelector('.settingscontainer');
+settings.style.display = settings.style.display == 'block' ? 'none' : 'block';
+event.stopPropagation()""",
                     )
                     if settingspanel
                     else None,
@@ -366,6 +376,8 @@ class DataTable(hg.TABLE):
                             buttontype="ghost",
                             _class="bx--overflow-menu",
                         )
+                        if isinstance(c["link"], Link)
+                        else c["link"]
                     ),
                 ),
                 style="display: flex; justify-content: flex-end;",
