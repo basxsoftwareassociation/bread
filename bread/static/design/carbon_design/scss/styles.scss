@@ -66,8 +66,15 @@ h5 {
     margin-bottom: $spacing-07;
 }
 
-td .bx--form-item {
-    margin-bottom: 0;
+td {
+    .bx--form-item {
+        margin-bottom: 0;
+    }
+    .bx--modal {
+        .bx--form-item {
+            margin-bottom: $spacing-07;
+        }
+    }
 }
 
 // specific padding/width for overflow menu columns
@@ -98,7 +105,7 @@ td .bx--form-item {
         width: 100%;
         max-width: 100%;
         input {
-            width: 100%;
+            width: 100% !important;
             max-width: 100%;
         }
     }

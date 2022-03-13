@@ -72,18 +72,20 @@ def as_list(iterable):
     return hg.UL(hg.Iterator(iterable, "item", hg.LI(hg.C("item"))))
 
 
-def as_download(value):
+def as_download(value, label=None):
     if not value:
         return CONSTANTS[None]
     if not value.storage.exists(value.name):
-        return hg.SMALL(hg.EMPH(_("File not found")))
+        return hg.SMALL(hg.EM(_("File not found")))
+    if label is None:
+        label = hg.SPAN(os.path.basename(value.name))
     return hg.A(
         layout.icon.Icon(
             "launch",
             size=16,
             style="vertical-align: middle; margin-right: 0.25rem;",
         ),
-        hg.SPAN(os.path.basename(value.name)),
+        label,
         newtab=True,
         href=value.url,
         style="margin-right: 0.5rem; margin-left: 0.5rem",

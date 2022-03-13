@@ -301,19 +301,22 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         )
 
     @staticmethod
-    def editlink(return_to_current=True):
+    def editlink(return_to_current=True, **attributes):
         return Link(
             href=ModelHref.from_object(
                 hg.C("row"), "edit", return_to_current=return_to_current
             ),
             label=_("Edit"),
             iconname="edit",
+            attributes=attributes,
         )
 
     @staticmethod
     def deletelink(return_to_current=True):
         return Link(
-            href=ModelHref(hg.C("row"), "delete", return_to_current=return_to_current),
+            href=ModelHref.from_object(
+                hg.C("row"), "delete", return_to_current=return_to_current
+            ),
             label=_("Delete"),
             iconname="delete",
         )
