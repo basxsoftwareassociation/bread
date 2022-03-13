@@ -193,6 +193,9 @@ registeritem(
         Link(
             reverse("auth.user.browse"),
             _("User Management"),
+            permissions=[
+                "auth.user.view",
+            ],
         ),
         admingroup,
     )

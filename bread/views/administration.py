@@ -114,13 +114,18 @@ class GroupBrowseView(BrowseView):
 
 
 class UserReadView(ReadView):
-    left_fields = ["id", "username", "first_name", "last_name", "email", "date_joined"]
+    left_fields = [
+        "id",
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+    ]
     right_fields = [
+        "date_joined",
         "is_superuser",
         "is_staff",
         "is_active",
-        "groups",
-        "user_permissions",
     ]
 
     def get_layout(self):
@@ -131,6 +136,7 @@ class UserReadView(ReadView):
             ),
             layout.tile.Tile(
                 layout.grid.Grid(
+                    R(C(hg.H3("Basic Information"))),
                     R(
                         C(
                             *(
@@ -159,7 +165,14 @@ class UserReadView(ReadView):
                         )
                     ),
                 ),
-                style="padding: 4rem;",
+                style="padding: 3rem; margin-bottom: 2rem;",
+            ),
+            layout.tile.Tile(
+                layout.grid.Grid(
+                    R(C(hg.H3(_("Group")))),
+                    R(C()),
+                ),
+                style="padding: 3rem;",
             ),
         )
 

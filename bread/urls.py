@@ -1,6 +1,7 @@
 import django_celery_results.models
 from django.apps import apps
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group as DjangoGroupModel
 from django.urls import include, path
 
 from bread.utils import autopath, default_model_paths, model_urlname
@@ -95,6 +96,10 @@ urlpatterns = [
         DjangoUserModel,
         browseview=administration.UserBrowseView,
         readview=administration.UserReadView,
+    ),
+    *default_model_paths(
+        DjangoGroupModel,
+        browseview=administration.GroupBrowseView,
     ),
     autopath(
         administration.UserEditView.as_view(),
