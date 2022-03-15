@@ -15316,11 +15316,14 @@ td .bx--modal .bx--form-item {
       width: 100%;
       max-width: 100%; }
 
+.bx--col .bx--form-item .bx--date-picker-container {
+  width: 100%; }
+
 .bx--col .bx--form-item [data-date-picker] {
   width: 100%;
   max-width: 100%; }
   .bx--col .bx--form-item [data-date-picker] input {
-    width: 100% !important;
+    width: 100%;
     max-width: 100%; }
 
 .bx--col .bx--form-item > * {
