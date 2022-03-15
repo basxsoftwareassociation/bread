@@ -26,7 +26,7 @@
     top: 0;
     left: 0;
     z-index: z('modal');
-    display: none;
+    display: block;
     align-items: center;
     justify-content: center;
     width: 100vw;
@@ -36,7 +36,8 @@
     opacity: 0;
     transition: background-color $duration--slow-02 motion(exit, expressive),
       opacity $duration--moderate-02 motion(exit, expressive),
-      visibility 0ms linear $duration--moderate-02;
+      visibility 0ms linear $duration--moderate-02
+      display 0ms linear;
     content: '';
 
     &.is-visible {
@@ -44,10 +45,10 @@
       visibility: inherit;
       display: flex;
       opacity: 1;
-      transition: background-color $duration--slow-02
-          motion(entrance, expressive),
+      transition: background-color $duration--slow-02 motion(entrance, expressive),
         opacity $duration--moderate-02 motion(entrance, expressive),
-        visibility 0ms linear;
+        visibility 0ms linear,
+        display 0ms linear;
     }
 
     .#{$prefix}--text-input,

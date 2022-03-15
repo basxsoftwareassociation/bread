@@ -54,11 +54,11 @@ class Modal(hg.DIV):
                 hg.DIV(
                     hg.P(
                         label,
-                        _class="bx--modal-header__label bx--type-delta",
+                        _class="bx--modal-header__label",
                     ),
                     hg.P(
                         heading,
-                        _class="bx--modal-header__heading bx--type-beta",
+                        _class="bx--modal-header__heading",
                     ),
                     hg.BUTTON(
                         Icon(
@@ -134,10 +134,6 @@ class Modal(hg.DIV):
         modal.openerattributes["hx_get"] = url
         modal.openerattributes["hx_target"] = hg.format(
             "#{} .bx--modal-content", modal.id
-        )
-        modal.openerattributes["onload"] = hg.format(
-            "htmx.on('htmx:load', function(){{ $('#{} button[type=submit]')._.fire('focus') }})",
-            modal.id,
         )
         return modal
 
