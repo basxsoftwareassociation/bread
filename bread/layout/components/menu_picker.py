@@ -86,13 +86,19 @@ class MenuPicker(hg.DIV):
                             columns=checkbox_column
                             + (DataTableColumn("Selected", hg.DIV(hg.C("row.label"))),),
                             row_iterator=[
-                                {"name": name, "value": value, "label": label}
+                                {
+                                    "name": name,
+                                    "value": value,
+                                    "label": label,
+                                    "order": i,
+                                }
                                 for i, (name, value, label) in enumerate(
                                     (n, v, l)
-                                    for v, l in vidct.items()
                                     for n, vdict in available_items.items()
+                                    for v, l in vdict.items()
                                 )
                             ],
+                            _class="bread--menupicker__selected-table",
                         ),
                     ),
                     layout.grid.Col(
@@ -108,6 +114,7 @@ class MenuPicker(hg.DIV):
                                 for name, value_dict in available_items.items()
                                 for value, label in value_dict.items()
                             ],
+                            _class="bread--menupicker__unselected-table",
                         ),
                     ),
                 ),
