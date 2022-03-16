@@ -105,6 +105,14 @@ urlpatterns = [
         administration.UserEditView.as_view(),
         urlname=model_urlname(DjangoUserModel, "ajax_edit_user_info"),
     ),
+    autopath(
+        administration.UserEditGroup.as_view(),
+        urlname=model_urlname(DjangoUserModel, "ajax_edit_user_group"),
+    ),
+    autopath(
+        administration.UserEditPermission.as_view(),
+        urlname=model_urlname(DjangoUserModel, "ajax_edit_user_permissions"),
+    ),
 ] + external_urlpatterns
 
 for app in apps.get_app_configs():
