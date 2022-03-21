@@ -116,13 +116,13 @@ class ToastNotification(hg.DIV):
         attributes["style"] = hg.BaseElement(
             attributes.get("style", ""),
             ";opacity: 0; animation: ",
-            hg.F(lambda c: autoremove + 3 * c["message_index"]),
+            hg.F(lambda c: autoremove * (c["message_index"] + 1)),
             "s ease-in-out notification",
         )
         attributes["onload"] = hg.BaseElement(
             attributes.get("onload", ""),
             ";setTimeout(() => this.style.display = 'None', ",
-            hg.F(lambda c: (autoremove + 3 * c["message_index"]) * 1000),
+            hg.F(lambda c: (autoremove * 1000 * (c["message_index"] + 1))),
             ")",
         )
 
@@ -147,6 +147,7 @@ class ToastNotification(hg.DIV):
         children.append(
             hg.If(
                 hideclosebutton,
+                None,
                 hg.BUTTON(
                     Icon("close", size=20, _class="bx--toast-notification__close-icon"),
                     data_notification_btn=True,

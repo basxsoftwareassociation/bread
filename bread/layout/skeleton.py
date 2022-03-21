@@ -57,6 +57,7 @@ def default_page_layout(menu, *content):
                         details=hg.C("message.message"),
                         kind=hg.C("message.level_tag"),
                         hidetimestamp=True,
+                        autoremove=5.0,
                     ),
                 ),
                 style="position: fixed; right: 0; z-index: 999",
