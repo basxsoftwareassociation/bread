@@ -129,7 +129,7 @@ class BreadView:
 
     layout: typing.Optional[hg.BaseElement] = None
     _layout_cached: typing.Optional[hg.BaseElement] = None
-    ajax_urlparameter = "asajax"
+    ajax_urlparameter = settings.AJAX_URLPARAMETER
     page_layout: typing.Optional[
         typing.Callable[[menu.Menu, hg.BaseElement], hg.BaseElement]
     ] = None
@@ -156,9 +156,6 @@ class BreadView:
         if isinstance(self.page_layout, str):
             self.page_layout = import_string(self.page_layout)
 
-    def get_page_layout(self, menu, content_layout):
-        return self.page_layout(menu, content_layout)
-
     def get_layout(self):
         """Returns the layout for this view, returns the ``layout`` attribute by default.
         Either set the ``layout`` attribute or override this method."""
@@ -170,7 +167,7 @@ class BreadView:
         response_kwargs.setdefault("content_type", self.content_type)
         ret = self._get_layout_cached()
         if self.ajax_urlparameter not in self.request.GET:
-            ret = self.get_page_layout(menu.main, ret)
+            ret = self.page_layout(menu.main, ret)
 
         return breadlayout.render(self.request, ret, context, **response_kwargs)
 

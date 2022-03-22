@@ -73,6 +73,8 @@ def aslayout(view):
 
         response = view(request, *args, **kwargs)
         if isinstance(response, hg.BaseElement):
+            if settings.AJAX_URLPARAMETER in request.GET:
+                return layout.render(request, response)
             return layout.render(
                 request,
                 import_string(settings.DEFAULT_PAGE_LAYOUT)(menu.main, response),

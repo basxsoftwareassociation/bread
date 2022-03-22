@@ -144,3 +144,5 @@ DEFAULT_PAGE_LAYOUT = "bread.layout.default_page_layout"
 BREAD_PUBLIC_FILES_PREFIX = (
     "public/"  # request starting with this path will not require login
 )
+
+AJAX_URLPARAMETER = "asajax"
