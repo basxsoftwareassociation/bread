@@ -5,7 +5,14 @@ document.addEventListener(
     () => bread_load_elements()
 );
 
-htmx.onLoad(function(content) { bread_load_elements(); })
+htmx.onLoad(function(content) {
+    bread_load_elements();
+});
+
+htmx.on('htmx:responseError', function(event) {
+    console.log(event);
+    event.detail.target.innerHTML = event.detail.xhr.responseText;
+});
 
 function bread_load_elements() {
     $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load")

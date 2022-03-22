@@ -88,7 +88,8 @@ def generate_copyview(model, attrs=None, labelfield=None, copy_related_fields=()
 def bulkcopy(request, queryset, attrs=None, labelfield=None, copy_related_fields=()):
     """creates a copy all instances of a queryset
     attrs: custom field values for the new instance
-    labelfield: name of a model field which will be used to create copy-labels (Example, Example (Copy 2), Example (Copy 3), etc)
+    labelfield: name of a model field which will be used to create copy-labels
+                (Example, Example (Copy 2), Example (Copy 3), etc)
     copy_related_fields: related fields which should also be (deep) copied
     """
     attrs = attrs or {}
