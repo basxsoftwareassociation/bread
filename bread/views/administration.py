@@ -12,25 +12,26 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.models import Permission
 from django.core import management
 from django.db import connection
 from django.utils.translation import gettext_lazy as _
 from django_celery_results.models import TaskResult
 from htmlgenerator import Lazy
 
-from bread import layout, utils
+from bread import layout
 from bread.layout import ObjectFieldLabel, ObjectFieldValue
 from bread.layout.components import tabs
 from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
 from bread.layout.components.forms import Form, FormField
-from bread.layout.components.modal import Modal, modal_with_trigger
+from bread.layout.components.modal import modal_with_trigger
 from bread.utils import ModelHref
 from bread.views import BrowseView, EditView
 from bread.views.read import ReadView
 
-from ..formatters import format_value
 from ..layout.components.icon import Icon
+from ..layout.components.menu_picker import MenuPicker
 from ..utils import Link, aslayout
 
 R = layout.grid.Row
@@ -170,7 +171,69 @@ class UserReadView(ReadView):
             layout.tile.Tile(
                 layout.grid.Grid(
                     R(C(hg.H3(_("Group")))),
-                    R(C()),
+                    R(
+                        C(
+                            DataTable(
+                                columns=[
+                                    DataTableColumn(
+                                        header=_("ID"), cell=hg.DIV(hg.C("row.id"))
+                                    ),
+                                    DataTableColumn(
+                                        header=_("Group"),
+                                        cell=hg.DIV(hg.C("row.group")),
+                                    ),
+                                ],
+                                row_iterator=[
+                                    {"id": row["id"], "group": row["name"]}
+                                    for row in self.object.groups.values()
+                                ],
+                            )
+                        )
+                    ),
+                    R(
+                        C(
+                            open_modal_popup_button(
+                                self.object,
+                                self.model,
+                                "ajax_edit_user_group",
+                            )
+                        )
+                    ),
+                ),
+                style="padding: 3rem; margin-bottom: 2rem;",
+            ),
+            layout.tile.Tile(
+                layout.grid.Grid(
+                    R(C(hg.H3(_("Permissions")))),
+                    R(
+                        C(
+                            DataTable(
+                                columns=[
+                                    DataTableColumn(
+                                        header=_("ID"), cell=hg.DIV(hg.C("row.id"))
+                                    ),
+                                    DataTableColumn(
+                                        header=_("Permission"),
+                                        cell=hg.DIV(hg.C("row.permissions")),
+                                    ),
+                                ],
+                                row_iterator=[
+                                    {"id": row["id"], "permissions": row["name"]}
+                                    for row in self.object.user_permissions.values()
+                                ],
+                            )
+                        )
+                    ),
+                    R(
+                        C(
+                            open_modal_popup_button(
+                                self.object,
+                                self.model,
+                                "ajax_edit_user_permissions",
+                                "lg",
+                            )
+                        )
+                    ),
                 ),
                 style="padding: 3rem;",
             ),
@@ -180,7 +243,6 @@ class UserReadView(ReadView):
 class UserEditView(EditView):
     model = get_user_model()
     fields = [
-        "id",
         "username",
         "first_name",
         "last_name",
@@ -197,7 +259,63 @@ class UserEditView(EditView):
         R = layout.grid.Row
         C = layout.grid.Col
         F = layout.forms.FormField
-        return layout.grid.Grid(*(R(C(hg.P(field))) for field in self.fields))
+        return layout.grid.Grid(
+            layout.components.forms.Form(
+                hg.C("form"),
+                *(R(C(F(field))) for field in self.fields),
+            )
+        )
+
+
+class UserEditGroup(EditView):
+
+    model = get_user_model()
+    fields = ["groups"]
+
+    def get_layout(self):
+        R = layout.grid.Row
+        C = layout.grid.Col
+        F = layout.forms.FormField
+        return layout.grid.Grid(
+            layout.components.forms.Form(
+                hg.C("form"),
+                *(R(C(F(field))) for field in self.fields),
+            ),
+        )
+
+
+class UserEditPermission(EditView):
+    class ConfigForm(forms.Form):
+        with_label = forms.BooleanField(required=False)
+        with_helptext = forms.BooleanField(required=False)
+        with_errors = forms.BooleanField(required=False)
+        disabled = forms.BooleanField(required=False)
+
+    model = get_user_model()
+    fields = ["user_permissions"]
+
+    def get_layout(self):
+        R = layout.grid.Row
+        C = layout.grid.Col
+        F = layout.forms.FormField
+
+        return layout.grid.Grid(
+            layout.components.forms.Form(
+                hg.C("form"),
+                R(
+                    C(
+                        MenuPicker(
+                            {
+                                "user_permissions": {
+                                    permission.pk: f"{permission._meta.app_label}.{permission.codename}"
+                                    for permission in Permission.objects.all()[:5]
+                                }
+                            }
+                        ),
+                    ),
+                ),
+            ),
+        )
 
 
 def display_label_and_value(label, value):
@@ -258,11 +376,11 @@ def edituser_toolbar(request):
 
 
 # reused from basxconnect
-def open_modal_popup_button(heading, model, action):
+def open_modal_popup_button(heading, model, action, size="xs"):
     return R(
         C(
             modal_with_trigger(
-                create_modal(heading, model, action),
+                create_modal(heading, model, action, size),
                 layout.button.Button,
                 _("Edit"),
                 buttontype="tertiary",
@@ -273,7 +391,7 @@ def open_modal_popup_button(heading, model, action):
     )
 
 
-def create_modal(heading, model: Union[type, Lazy], action: str):
+def create_modal(heading, model: Union[type, Lazy], action: str, size="xs"):
     modal = layout.modal.Modal.with_ajax_content(
         heading=heading,
         url=ModelHref(
@@ -283,6 +401,7 @@ def create_modal(heading, model: Union[type, Lazy], action: str):
             query={"asajax": True},
         ),
         submitlabel=_("Save"),
+        size=size,
     )
     return modal
 

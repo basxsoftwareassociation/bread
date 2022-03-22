@@ -221,3 +221,62 @@ document.addEventListener("load", function() {
 document.addEventListener("unload", function() {
     expandableTileDOMObserver.disconnect();
 });
+
+// js code for menu picker
+function menuPickerLabel(trElement) {
+    return trElement.firstChild.firstChild.firstChild;
+}
+window.menuPickerAdd = target => {
+    const menuPickerId = target.getAttribute("data-menuid");
+    const selectedRowsTable = document.querySelector(`#${menuPickerId} .bread--menupicker__selected-table tbody`)
+    const unselectedRows = [...document.querySelectorAll(`#${menuPickerId} .bread--menupicker__unselected-table tbody tr`)];
+
+    // browse all checked rows
+    const checkedUnselected = unselectedRows.filter(
+        el => menuPickerLabel(el).getAttribute("data-contained-checkbox-state") === "true"
+    );
+
+    // move the checked rows to the left, in the preserved order.
+    if (checkedUnselected.length > 0) {
+        selectedRowsTable.append(...checkedUnselected);
+        [...selectedRowsTable.children]
+            .sort((a, b) =>
+                parseInt(a.getAttribute("data-menuid"))
+                - parseInt(b.getAttribute("data-menuid"))
+            )
+            .forEach(el => {
+                const label = menuPickerLabel(el);
+                label.setAttribute("data-contained-checkbox-state", "false")
+                label.firstChild.checked = false;
+                label.firstChild.setAttribute("aria-checked", "false")
+                selectedRowsTable.appendChild(el);
+            });
+    }
+}
+window.menuPickerRemove = target => {
+    const menuPickerId = target.getAttribute("data-menuid");
+    const unselectedRowsTable = document.querySelector(`#${menuPickerId} .bread--menupicker__unselected-table tbody`)
+    const selectedRows = [...document.querySelectorAll(`#${menuPickerId} .bread--menupicker__selected-table tbody tr`)];
+
+    // browse all checked rows
+    const checkedSelected = selectedRows.filter(
+        el => menuPickerLabel(el).getAttribute("data-contained-checkbox-state") === "true"
+    );
+
+    // move the checked rows to the right, in the preserved order.
+    if (checkedSelected.length > 0) {
+        unselectedRowsTable.append(...checkedSelected);
+        [...unselectedRowsTable.children]
+            .sort((a, b) =>
+                parseInt(a.getAttribute("data-menuid"))
+                - parseInt(b.getAttribute("data-menuid"))
+            )
+            .forEach(el => {
+                const label = menuPickerLabel(el);
+                label.setAttribute("data-contained-checkbox-state", "false")
+                label.firstChild.checked = false;
+                label.firstChild.setAttribute("aria-checked", "false")
+                unselectedRowsTable.appendChild(el);
+            });
+    }
+}

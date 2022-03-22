@@ -1,8 +1,7 @@
-from typing import Iterable, Union
-
 import htmlgenerator as hg
 
 from bread import layout
+from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
 from bread.layout.components.forms.widgets import Checkbox
 
@@ -18,6 +17,7 @@ class MenuPicker(hg.DIV):
         self,
         available_items: dict,
         selected_items: dict = None,
+        max_visible_rows: int = 5,
     ):
         """
         Constructor based on hg.DIV, that will be rendered to an HTML element
@@ -44,19 +44,15 @@ class MenuPicker(hg.DIV):
         selected_items : dict, optional
             a list (or dict) in accordance with `available_items` but for pre-selected
             items that need to be displayed as selected by default. `selected_items`
-            has to be defined in this form.
-            {
-                'input_name1': {'value1', 'value2', ...},
-                'input_name2': {'value3', 'value4', ...},
-                ...
-            }
-            **however, the same form as `available_items` is also accepted as well
-            if necessary.**
+            has to be defined in the same form as `available_items`
         """
 
-        input_name: str
-        available_items: Union[Iterable, dict]
-        selected_items: Union[Iterable, dict]
+        id = hg.html_id(self, "bread--menupicker")
+        selected_items = selected_items or {}
+        unselected_items = {
+            k: available_items[k]
+            for k in available_items.keys() - selected_items.keys()
+        }
 
         checkbox_column = (
             DataTableColumn(
@@ -94,12 +90,40 @@ class MenuPicker(hg.DIV):
                                 }
                                 for i, (name, value, label) in enumerate(
                                     (n, v, l)
-                                    for n, vdict in available_items.items()
+                                    for n, vdict in selected_items.items()
                                     for v, l in vdict.items()
                                 )
                             ],
-                            _class="bread--menupicker__selected-table",
+                            _class="bx--data-table bx--data-table--sort bread--menupicker__selected-table ",
                         ),
+                        breakpoint="lg",
+                        width=7,
+                    ),
+                    layout.grid.Col(
+                        hg.DIV(
+                            Button(
+                                _class="bread--menupicker__add",
+                                data_menuid=id,
+                                icon="add--alt",
+                                onclick="window.menuPickerAdd(this)",
+                                style="text-align: center; margin: 0.5rem;",
+                            ),
+                            Button(
+                                _class="bread--menupicker__remove",
+                                icon="subtract--alt",
+                                style="text-align: center; margin: 0.5rem;",
+                            ),
+                            style=(
+                                "display: flex;"
+                                "flex-wrap: wrap;"
+                                "align-content: center;"
+                                "justify-content: space-evenly;"
+                                "align-items: center;"
+                                "padding: 1rem 0;"
+                            ),
+                        ),
+                        breakpoint="lg",
+                        width=2,
                     ),
                     layout.grid.Col(
                         DataTable(
@@ -111,13 +135,16 @@ class MenuPicker(hg.DIV):
                             ),
                             row_iterator=[
                                 {"name": name, "value": value, "label": label}
-                                for name, value_dict in available_items.items()
+                                for name, value_dict in unselected_items.items()
                                 for value, label in value_dict.items()
                             ],
-                            _class="bread--menupicker__unselected-table",
+                            _class="bx--data-table bx--data-table--sort bread--menupicker__unselected-table ",
                         ),
+                        breakpoint="lg",
+                        width=7,
                     ),
                 ),
             ),
             _class="bread--menupicker",
+            id=id,
         )
