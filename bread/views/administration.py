@@ -284,13 +284,22 @@ class UserEditGroup(EditView):
         )
 
 
-class UserEditPermission(EditView):
-    class ConfigForm(forms.Form):
-        with_label = forms.BooleanField(required=False)
-        with_helptext = forms.BooleanField(required=False)
-        with_errors = forms.BooleanField(required=False)
-        disabled = forms.BooleanField(required=False)
+class UserEditPermissionDemo(EditView):
+    model = get_user_model()
+    fields = ["user_permissions"]
 
+    def get_layout(self):
+        R = layout.grid.Row
+        C = layout.grid.Col
+        F = layout.forms.FormField
+        return layout.grid.Grid(
+            layout.components.forms.Form(
+                hg.C("form"), R(C(*(F(field) for field in self.fields)))
+            )
+        )
+
+
+class UserEditPermission(EditView):
     model = get_user_model()
     fields = ["user_permissions"]
 
@@ -299,18 +308,38 @@ class UserEditPermission(EditView):
         C = layout.grid.Col
         F = layout.forms.FormField
 
+        # print(self.object.user_permissions.values())
+        available_permissions = {
+            permission.pk: {
+                "app_label": permission._meta.app_label,
+                "codename": permission.codename,
+            }
+            for permission in Permission.objects.all()
+        }
+        selected_permissions = {
+            query["id"]: {**available_permissions[query["id"]]}
+            for query in self.object.user_permissions.values()
+        }
+
         return layout.grid.Grid(
             layout.components.forms.Form(
                 hg.C("form"),
                 R(
                     C(
+                        # breakpoint(),
                         MenuPicker(
-                            {
+                            available_items={
                                 "user_permissions": {
-                                    permission.pk: f"{permission._meta.app_label}.{permission.codename}"
-                                    for permission in Permission.objects.all()[:5]
+                                    pk: f"{perm['app_label']}.{perm['codename']}"
+                                    for pk, perm in available_permissions.items()
                                 }
-                            }
+                            },
+                            selected_items={
+                                "user_permissions": {
+                                    pk: f"{perm['app_label']}.{perm['codename']}"
+                                    for pk, perm in selected_permissions.items()
+                                }
+                            },
                         ),
                     ),
                 ),

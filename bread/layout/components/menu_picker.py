@@ -1,3 +1,5 @@
+import copy
+
 import htmlgenerator as hg
 
 from bread import layout
@@ -49,10 +51,13 @@ class MenuPicker(hg.DIV):
 
         id = hg.html_id(self, "bread--menupicker")
         selected_items = selected_items or {}
-        unselected_items = {
-            k: available_items[k]
-            for k in available_items.keys() - selected_items.keys()
-        }
+        unselected_items = {}
+        for name in available_items:
+            unselected_items[name] = available_items[name].copy()
+            if name in selected_items:
+                for key in selected_items[name]:
+                    if key in unselected_items[name]:
+                        del unselected_items[name][key]
 
         checkbox_column = (
             DataTableColumn(
@@ -74,6 +79,18 @@ class MenuPicker(hg.DIV):
         )
 
         super().__init__(
+            # menu_picker is required to be in form in order to make this works.
+            hg.Iterator(
+                [
+                    {"name": n, "value": v}
+                    for n, vdict in selected_items.items()
+                    for v in vdict
+                ],
+                "item",
+                hg.INPUT(
+                    type="hidden", name=hg.C("item.name"), value=hg.C("item.value")
+                ),
+            ),
             layout.grid.Grid(
                 layout.grid.Row(
                     # selected
@@ -134,9 +151,17 @@ class MenuPicker(hg.DIV):
                                 ),
                             ),
                             row_iterator=[
-                                {"name": name, "value": value, "label": label}
-                                for name, value_dict in unselected_items.items()
-                                for value, label in value_dict.items()
+                                {
+                                    "name": name,
+                                    "value": value,
+                                    "label": label,
+                                    "order": i,
+                                }
+                                for i, (name, value, label) in enumerate(
+                                    (n, v, l)
+                                    for n, vdict in unselected_items.items()
+                                    for v, l in vdict.items()
+                                )
                             ],
                             _class="bx--data-table bx--data-table--sort bread--menupicker__unselected-table ",
                         ),
