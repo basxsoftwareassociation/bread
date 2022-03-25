@@ -122,10 +122,11 @@ class ReadView(views.ReadView):
             columns=columns, row_iterator=qs
         ).with_toolbar(
             title=self.object.name,
-            helper_text=f"{self.object.queryset.count()} {self.object.model.model_class()._meta.verbose_name_plural}",
+            helper_text=f"{self.object.queryset.count()} "
+            f"{self.object.model.model_class()._meta.verbose_name_plural}",
             primary_button=_layout.button.Button(
                 label=_("Excel"), icon="download"
-            ).as_href(ModelHref(self.object, "excel")),
+            ).as_href(ModelHref.from_object(self.object, "excel")),
         )
 
 
@@ -233,7 +234,8 @@ def _get_attribute_description(obj, attr, modelfields):
         ):
             return (
                 attr,
-                f"{type(modelfields[attr]).__name__} -> {modelfields[attr].related_model._meta.verbose_name}",
+                f"{type(modelfields[attr]).__name__} -> "
+                f"{modelfields[attr].related_model._meta.verbose_name}",
                 getattr(modelfields[attr], "verbose_name", None),
                 modelfields[attr].related_model,
             )
@@ -249,7 +251,8 @@ def _get_attribute_description(obj, attr, modelfields):
     ):
         return (
             attr,
-            f"{type(getattr(obj, attr, None)).__name__} -> {getattr(obj, attr, None).related.related_model._meta.verbose_name}",
+            f"{type(getattr(obj, attr, None)).__name__} -> "
+            f"{getattr(obj, attr, None).related.related_model._meta.verbose_name}",
             getattr(getattr(obj, attr, None), "verbose_name", None),
             getattr(obj, attr, None).related.related_model,
         )
