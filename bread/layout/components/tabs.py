@@ -4,7 +4,7 @@ import typing
 import htmlgenerator as hg
 from django.utils.text import slugify
 
-from .. import HasBreadCookieValue
+from ..utils import HasBreadCookieValue
 
 
 class TabLabel(hg.LI):

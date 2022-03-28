@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from bread.utils.urls import link_with_urlparameters
 
-from ..base import aslink_attributes
+from ..utils import aslink_attributes
 from .forms.widgets import Select
 from .icon import Icon
 

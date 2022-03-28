@@ -8,7 +8,7 @@ from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
 from bread.utils.links import Link, ModelHref
 from bread.utils.urls import link_with_urlparameters
 
-from ..base import ObjectFieldLabel, ObjectFieldValue, aslink_attributes
+from ..utils import ObjectFieldLabel, ObjectFieldValue, aslink_attributes
 from .button import Button
 from .icon import Icon
 from .overflow_menu import OverflowMenu

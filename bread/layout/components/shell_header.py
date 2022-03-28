@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from bread.utils import reverse
 
-from .. import HasBreadCookieValue
+from ..utils import HasBreadCookieValue
 from .icon import Icon
 
 
