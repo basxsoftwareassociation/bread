@@ -209,6 +209,7 @@ def get_attribute_description_modal(obj):
                 row_iterator=sorted(columns),
             ),
         ),
+        size="lg",
     )
 
 
