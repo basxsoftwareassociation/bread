@@ -1,14 +1,17 @@
-import copy
-
 import htmlgenerator as hg
 
 from bread import layout
 from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
-from bread.layout.components.forms.widgets import Checkbox
+from bread.layout.components.forms.widgets import (
+    BaseWidget,
+    Checkbox,
+    _gen_optgroup,
+    _optgroups_from_choices,
+)
 
 
-class MenuPicker(hg.DIV):
+class MenuPicker(BaseWidget):
     """
     A tool that let users select multiple items from a list of available items.
     This tool might be the good replacement for filters when the number of items
@@ -20,6 +23,13 @@ class MenuPicker(hg.DIV):
         available_items: dict,
         selected_items: dict = None,
         max_visible_rows: int = 5,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
+        boundfield=None,
+        choices=None,
+        **attributes,
     ):
         """
         Constructor based on hg.DIV, that will be rendered to an HTML element
@@ -48,6 +58,17 @@ class MenuPicker(hg.DIV):
             items that need to be displayed as selected by default. `selected_items`
             has to be defined in the same form as `available_items`
         """
+
+        inputelement_attrs = inputelement_attrs or {}
+        optgroups = (
+            _optgroups_from_choices(
+                choices,
+                name=inputelement_attrs.get("name"),
+                value=inputelement_attrs.get("value"),
+            )
+            if choices
+            else _gen_optgroup(boundfield)
+        )
 
         id = hg.html_id(self, "bread--menupicker")
         selected_items = selected_items or {}

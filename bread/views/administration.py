@@ -25,13 +25,13 @@ from bread.layout.components import tabs
 from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
 from bread.layout.components.forms import Form, FormField
+from bread.layout.components.forms.menu_picker import MenuPicker
 from bread.layout.components.modal import modal_with_trigger
 from bread.utils import ModelHref
 from bread.views import BrowseView, EditView
 from bread.views.read import ReadView
 
 from ..layout.components.icon import Icon
-from ..layout.components.menu_picker import MenuPicker
 from ..utils import Link, aslayout
 
 R = layout.grid.Row
@@ -293,9 +293,10 @@ class UserEditPermissionDemo(EditView):
         C = layout.grid.Col
         F = layout.forms.FormField
         return layout.grid.Grid(
+            layout.components.forms.Form(hg.C("form"), R(C(F(fields[0])))),
             layout.components.forms.Form(
                 hg.C("form"), R(C(*(F(field) for field in self.fields)))
-            )
+            ),
         )
 
 
@@ -322,6 +323,7 @@ class UserEditPermission(EditView):
         }
 
         return layout.grid.Grid(
+            layout.components.forms.Form(hg.C("form"), R(C(F(self.fields[0])))),
             layout.components.forms.Form(
                 hg.C("form"),
                 R(
