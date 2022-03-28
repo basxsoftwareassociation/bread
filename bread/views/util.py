@@ -125,7 +125,8 @@ class CustomFormMixin:
             breadlayout.tile.Tile(
                 breadlayout.forms.Form(
                     hg.C("form"), ret, breadlayout.forms.helpers.Submit()
-                )
+                ),
+                _class="theme-white",
             ),
         )
 
