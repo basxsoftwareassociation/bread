@@ -11,16 +11,35 @@ class DocumentTemplateEditView(views.EditView):
         modelclass = self.object.model.model_class()
         if modelclass is None:
             return layout.notification.InlineNotification(
-                "Error",
+                _("Error"),
                 f"Model '{self.object.model}' does no longer exist.",
                 kind="error",
             )
         column_helper = layout.get_attribute_description_modal(modelclass)
 
-        F = layout.forms.FormField
+        only_template, only_definition = self.object.missing_variables()
+        warnings = hg.BaseElement()
+        if only_template:
+            warnings.append(
+                layout.notification.InlineNotification(
+                    _("Variables in document but not defined below: "),
+                    f"{', '.join(only_template)}",
+                    kind="warning",
+                )
+            )
+        if only_definition:
+            warnings.append(
+                layout.notification.InlineNotification(
+                    _("Variables defined below but not used in document: "),
+                    f"{', '.join(only_definition)}",
+                    kind="warning",
+                )
+            )
 
+        F = layout.forms.FormField
         ret = hg.BaseElement(
             hg.H3(self.object),
+            warnings,
             layout.forms.Form(
                 hg.C("form"),
                 F("name"),
@@ -41,7 +60,6 @@ class DocumentTemplateEditView(views.EditView):
             ),
         )
         return ret
-        # for variable in (docxtpl_template.get_undeclared_template_variables())
 
     def get_success_url(self):
         return self.request.get_full_path()

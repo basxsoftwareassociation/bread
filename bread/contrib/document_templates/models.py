@@ -12,7 +12,12 @@ from bread.utils import ModelHref
 
 class DocumentTemplate(models.Model):
     name = models.CharField(_("Name"), max_length=255)
-    file = models.FileField(upload_to="document_templates/")
+    file = models.FileField(
+        upload_to="document_templates/",
+        help_text=_(
+            "Must be a *.docx file, use '{{ variable-name }}' to insert variables from below"
+        ),
+    )
 
     model = models.ForeignKey(
         ContentType, on_delete=models.PROTECT, verbose_name=_("Model")
@@ -31,6 +36,13 @@ class DocumentTemplate(models.Model):
         docxtpl_template.save(buf)
         buf.seek(0)
         return buf
+
+    def missing_variables(self):
+        """Returns (variables_only_in_template, variables_only_in_definition)"""
+        intemplate = DocxTemplate(self.file.path).get_undeclared_template_variables()
+        declared = {v.name for v in self.variables.all()}
+        both = intemplate | declared
+        return declared ^ both, intemplate ^ both
 
     def generate_document_url(self, obj: Union[hg.Lazy, models.Model]):
         return ModelHref.from_object(
@@ -51,8 +63,12 @@ class DocumentTemplateVariable(models.Model):
     document_template = models.ForeignKey(
         DocumentTemplate, on_delete=models.CASCADE, related_name="variables"
     )
-    name = models.CharField(_("Name"), max_length=255)
-    value = models.CharField(_("Value"), max_length=255)
+    name = models.CharField(
+        _("Name"), max_length=255, help_text=_("Name to use in the template document")
+    )
+    value = models.CharField(
+        _("Value"), max_length=255, help_text=_("Path to the desired value (see help)")
+    )
     raw_value = models.BooleanField(_("Raw value"), default=False)
 
     class Meta:
