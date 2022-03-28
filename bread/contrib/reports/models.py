@@ -20,10 +20,8 @@ class Report(models.Model):
     created = models.DateField(_("Created"), auto_now_add=True)
     name = models.CharField(_("Name"), max_length=255)
     model = models.ForeignKey(
-        ContentType,
-        on_delete=models.PROTECT,
+        ContentType, on_delete=models.PROTECT, verbose_name=_("Model")
     )
-    model.verbose_name = _("Model")
     filter = QuerysetField(_("Filter"), modelfieldname="model")
     custom_queryset = models.CharField(
         _("Custom Filter"),
