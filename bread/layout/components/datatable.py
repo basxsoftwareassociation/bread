@@ -109,6 +109,7 @@ class DataTable(hg.TABLE):
         rowvariable: str = "row",
         spacing: str = "default",
         zebra: bool = False,
+        sticky: bool = False,
         **kwargs: Any,
     ):
         """A carbon DataTable element
@@ -134,7 +135,7 @@ class DataTable(hg.TABLE):
                 row_iterator, rowvariable, DataTable.row(columns)
             )
         kwargs["_class"] = kwargs.get("_class", "") + " ".join(
-            DataTable.tableclasses(spacing, zebra)
+            DataTable.tableclasses(spacing, zebra, sticky)
         )
         super().__init__(hg.THEAD(self.head), hg.TBODY(self.iterator), **kwargs)
 
@@ -472,7 +473,7 @@ event.stopPropagation()""",
         )
 
     @staticmethod
-    def tableclasses(spacing, zebra):
+    def tableclasses(spacing, zebra, sticky):
         if spacing not in DataTable.SPACINGS:
             raise ValueError(
                 f"argument 'spacin' is {spacing} but needs to be one of {DataTable.SPACINGS}"
@@ -482,6 +483,8 @@ event.stopPropagation()""",
             classes.append(f" bx--data-table--{spacing}")
         if zebra:
             classes.append(" bx--data-table--zebra")
+        if sticky:
+            classes.append(" bx--data-table--sticky-header")
         return classes
 
 
