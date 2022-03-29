@@ -265,6 +265,7 @@
   //----------------------------------------------------------------------------
   .#{$prefix}--table-column-checkbox .#{$prefix}--checkbox-label {
     padding-left: $spacing-05;
+    z-index: 10;
   }
 
   .#{$prefix}--data-table th.#{$prefix}--table-column-checkbox {

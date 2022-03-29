@@ -34,9 +34,9 @@
     background-color: transparent;
     visibility: hidden;
     opacity: 0;
-    transition: background-color $duration--slow-02 motion(exit, expressive),
-      opacity $duration--moderate-02 motion(exit, expressive),
-      visibility 0ms linear $duration--moderate-02
+    transition: background-color 0ms motion(exit, expressive),
+      opacity 0ms motion(exit, expressive),
+      visibility 0ms linear 0ms,
       display 0ms linear;
     content: '';
 
