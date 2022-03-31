@@ -126,9 +126,12 @@ class ObjectFieldValue(hg.Lazy):
 
         parts = self.fieldname.split(".")
         # test if the value has a matching get_FIELDNAME_display function
-        value = hg.resolve_lookup(
-            object, f"{'.'.join(parts[:-1])}.get_{parts[-1]}_display".lstrip(".")
-        )
+        try:
+            value = hg.resolve_lookup(
+                object, f"{'.'.join(parts[:-1])}.get_{parts[-1]}_display".lstrip(".")
+            )
+        except Exception:
+            value = None
         if value is None:
             try:
                 value = hg.resolve_lookup(object, self.fieldname)
