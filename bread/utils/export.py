@@ -47,7 +47,9 @@ def generate_excel(rows, columns):
         r"<\s*br\s*/?\s*>"
     )  # replace HTML line breaks with newlines
     for columnname, columndata in zip(columns, workbookcolumns):
-        columndata[0].value = str(columnname)
+        columndata[0].value = html.unescape(
+            strip_tags(newline_regex.sub(r"\n", str(columnname)))
+        )
         columndata[0].font = Font(bold=True)
         for i, cell in enumerate(columndata[1:]):
             value = columns[columnname](rows[i])
