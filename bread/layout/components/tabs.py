@@ -62,7 +62,9 @@ class Tabs(hg.DIV):
             str, labelcontainer_attributes or {}
         )
 
-        self.tablabels = hg.UL(_class="bx--tabs__nav bx--tabs__nav--hidden")
+        self.tablabels = hg.UL(
+            _class="bx--tabs__nav bx--tabs__nav--hidden", style="flex-wrap: wrap;"
+        )
         labelcontainer_attributes["_class"] += " bx--tabs" + (
             " bx--tabs--container" if container else ""
         )
@@ -82,7 +84,7 @@ class Tabs(hg.DIV):
             **hg.merge_html_attrs(
                 {
                     "onload": "if( $('.bx--tabs__nav-item--selected', this) == null ) "
-                    "(new CarbonComponents.Tab(this)).setActive($('.bx--tabs__nav-item', this))"
+                    "(new CarbonComponents.Tab(this)).setActive($('.bx--tabs__nav-item', this))",
                 },
                 labelcontainer_attributes,
             ),
@@ -115,5 +117,4 @@ class Tabs(hg.DIV):
         super().__init__(
             self.labelcontainer,
             self.tabpanels,
-            **attributes,
         )
