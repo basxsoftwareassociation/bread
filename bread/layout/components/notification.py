@@ -73,6 +73,7 @@ class InlineNotification(hg.DIV):
         children.append(
             hg.If(
                 hideclosebutton,
+                None,
                 hg.BUTTON(
                     Icon(
                         "close", size=20, _class="bx--inline-notification__close-icon"
