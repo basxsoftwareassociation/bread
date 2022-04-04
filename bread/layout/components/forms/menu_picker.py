@@ -27,15 +27,17 @@ class MenuPicker(BaseWidget):
             DataTableColumn(
                 Checkbox(
                     inputelement_attrs={
-                        "_class": "bread--menupicker__selectall",
                         "data_menuid": widgetid,
                         "onclick": "menuPickerSelectAllClick(this)",
-                    }
+                    },
+                    _class="bread--menupicker__selectall",
                 ),
                 Checkbox(
                     inputelement_attrs={
-                        "name": hg.C("row").data["name"],
-                        "value": hg.C("row").data["value"],
+                        "data_menuid": widgetid,
+                        "data_name": hg.C("row").data["name"],
+                        "data_value": hg.C("row").data["value"],
+                        "onclick": "menuPickerCheckPerformed(this)",
                     }
                 ),
                 td_attributes={"data_order": hg.C("row_index")},
@@ -78,7 +80,7 @@ class MenuPicker(BaseWidget):
                                     DataTable.row(checkbox_column_selected),
                                 ),
                             ),
-                            _class="bx--data-table bx--data-table--sort bread--menupicker__selected-table ",
+                            _class="bx--data-table bx--data-table--sort bread--menupicker__table bread--menupicker__selected-table ",
                         ),
                         breakpoint="lg",
                         width="7",
@@ -124,7 +126,7 @@ class MenuPicker(BaseWidget):
                                     DataTable.row(checkbox_column_unselected),
                                 ),
                             ),
-                            _class="bx--data-table bx--data-table--sort bread--menupicker__unselected-table ",
+                            _class="bx--data-table bx--data-table--sort bread--menupicker__table bread--menupicker__unselected-table ",
                         ),
                         breakpoint="lg",
                         width="7",
@@ -133,6 +135,5 @@ class MenuPicker(BaseWidget):
             ),
             _class="bread--menupicker",
             id=widgetid,
-            onload="menuPickerLoad(this);",
             **attributes,
         )

@@ -25,7 +25,7 @@ from bread.layout.components import tabs
 from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
 from bread.layout.components.forms import Form, FormField
-from bread.layout.components.forms.menu_picker_widget import MenuPicker
+from bread.layout.components.forms.menu_picker import MenuPicker
 from bread.layout.components.modal import modal_with_trigger
 from bread.utils import ModelHref
 from bread.views import BrowseView, EditView
@@ -294,60 +294,6 @@ class UserEditPermissionDemo(EditView):
         return layout.grid.Grid(
             layout.components.forms.Form(
                 hg.C("form"), R(C(F(self.fields[0], widgetclass=MenuPicker)))
-            ),
-        )
-
-
-class UserEditPermission(EditView):
-    model = get_user_model()
-    fields = ["user_permissions"]
-
-    def get_layout(self):
-        R = layout.grid.Row
-        C = layout.grid.Col
-        F = layout.forms.FormField
-
-        # print(self.object.user_permissions.values())
-        available_permissions = {
-            permission.pk: {
-                "app_label": permission._meta.app_label,
-                "codename": permission.codename,
-            }
-            for permission in Permission.objects.all()
-        }
-        selected_permissions = {
-            query["id"]: {**available_permissions[query["id"]]}
-            for query in self.object.user_permissions.values()
-        }
-
-        return layout.grid.Grid(
-            layout.components.forms.Form(hg.C("form"), R(C(F(self.fields[0])))),
-            layout.components.forms.Form(
-                hg.C("form"),
-                R(
-                    C(
-                        # breakpoint(),
-                        MenuPicker(
-                            available_items={
-                                "user_permissions": {
-                                    pk: f"{perm['app_label']}.{perm['codename']}"
-                                    for pk, perm in available_permissions.items()
-                                }
-                            },
-                            selected_items={
-                                "user_permissions": {
-                                    pk: f"{perm['app_label']}.{perm['codename']}"
-                                    for pk, perm in selected_permissions.items()
-                                }
-                            },
-                            choices=[
-                                (pk, f"{perm['app_label']}.{perm['codename']}")
-                                for pk, perm in available_permissions.items()
-                            ],
-                            inputelement_attrs={"name": "user_permissions"},
-                        ),
-                    ),
-                ),
             ),
         )
 

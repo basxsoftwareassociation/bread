@@ -226,16 +226,26 @@ document.addEventListener("unload", function() {
 function menuPickerLabel(trElement) {
     return trElement.firstChild.firstChild.firstChild;
 }
-function menuPickerUncheck(trElement) {
+function setMenuPickerChecked(trElement, value) {
     const label = menuPickerLabel(trElement);
-    label.setAttribute("data-contained-checkbox-state", "false")
-    label.firstChild.checked = false;
-    label.firstChild.setAttribute("aria-checked", "false")
+    label.setAttribute("data-contained-checkbox-state", value.toString())
+    label.firstChild.checked = value === true || value === "mixed";
+    label.firstChild.setAttribute("aria-checked", value.toString())
 }
+
+const setMenuPickerSelectAllChecked = (target, value) => {
+    const selectallLabel = target.closest(".bread--menupicker__table").querySelector(".bread--menupicker__selectall").firstChild;
+    console.log(selectallLabel);
+    selectallLabel.setAttribute("data-contained-checkbox-state", value.toString())
+    selectallLabel.firstChild.checked = value === true || value === "mixed";
+    selectallLabel.firstChild.setAttribute("aria-checked", value.toString())
+};
+
 const menuPickerAdd = target => {
     const menuPickerId = target.getAttribute("data-menuid");
     const datatable = target.closest(".bread--menupicker");
     const selectedRowsTable = datatable.querySelector(".bread--menupicker__selected-table tbody")
+    const unselectedRowsTable = datatable.querySelector(".bread--menupicker__unselected-table tbody")
     const unselectedRows = [...datatable.querySelectorAll(".bread--menupicker__unselected-table tbody tr")];
 
     // browse all checked rows
@@ -245,13 +255,14 @@ const menuPickerAdd = target => {
 
     // move the checked rows to the left, in the preserved order.
     if (checkedUnselected.length > 0) {
+        setMenuPickerSelectAllChecked(unselectedRowsTable, false);
         selectedRowsTable.append(...checkedUnselected);
         checkedUnselected.forEach(el => {
             const checkbox = menuPickerLabel(el).firstChild;
             const inputTag = document.createElement("input");
             inputTag.setAttribute("type", "hidden");
-            inputTag.setAttribute("name", checkbox.name);
-            inputTag.setAttribute("value", checkbox.value);
+            inputTag.setAttribute("name", checkbox.getAttribute("data-name"));
+            inputTag.setAttribute("value", checkbox.getAttribute("data-value"));
             datatable.appendChild(inputTag);
         });
         [...selectedRowsTable.children]
@@ -260,7 +271,7 @@ const menuPickerAdd = target => {
                 - parseInt(b.firstChild.getAttribute("data-order"))
             )
             .forEach(el => {
-                menuPickerUncheck(el);
+                setMenuPickerChecked(el, false);
                 selectedRowsTable.appendChild(el);
             });
     }
@@ -268,6 +279,7 @@ const menuPickerAdd = target => {
 const menuPickerRemove = target => {
     const menuPickerId = target.getAttribute("data-menuid");
     const datatable = target.closest(".bread--menupicker");
+    const selectedRowsTable = datatable.querySelector(".bread--menupicker__selected-table tbody")
     const unselectedRowsTable = datatable.querySelector(".bread--menupicker__unselected-table tbody");
     const selectedRows = [...datatable.querySelectorAll(".bread--menupicker__selected-table tbody tr")];
 
@@ -278,10 +290,11 @@ const menuPickerRemove = target => {
 
     // move the checked rows to the right, in the preserved order.
     if (checkedSelected.length > 0) {
+        setMenuPickerSelectAllChecked(selectedRowsTable, false);
         unselectedRowsTable.append(...checkedSelected);
         checkedSelected.forEach(el => {
             const checkbox = menuPickerLabel(el).firstChild;
-            const inputHidden = datatable.querySelector(`input[type="hidden"][name="${checkbox.getAttribute('name')}"][value="${checkbox.getAttribute('value')}"]`);
+            const inputHidden = datatable.querySelector(`input[type="hidden"][name="${checkbox.getAttribute('data-name')}"][value="${checkbox.getAttribute('data-value')}"]`);
             datatable.removeChild(inputHidden);
         });
         [...unselectedRowsTable.children]
@@ -290,24 +303,30 @@ const menuPickerRemove = target => {
                 - parseInt(b.firstChild.getAttribute("data-order"))
             )
             .forEach(el => {
-                menuPickerUncheck(el);
+                setMenuPickerChecked(el, false);
                 unselectedRowsTable.appendChild(el);
             });
     }
 };
-const menuPickerLoad = menuPicker => {
-    menuPicker.closest("form").addEventListener("submit", e => {
-        e.preventDefault();
 
-        alert('sent');
-        const selectedRows = [...e.target.querySelectorAll(".bread--menupicker__selected-table tbody tr")];
-        const unselectedRows = [...e.target.querySelectorAll(".bread--menupicker__unselected-table tbody tr")];
+const menuPickerSelectAllClick = target => {
+    const rows = [...target.closest(".bread--menupicker__table").querySelectorAll("tbody tr")];
+    const checked = target.checked;
 
-        selectedRows.forEach(el => {
-            menuPickerUncheck(el);
-        });
-        unselectedRows.forEach(el => menuPickerUncheck(el));
+    rows.forEach(row => setMenuPickerChecked(row, checked));
+};
 
-        e.submit();
-    });
+const menuPickerCheckPerformed = target => {
+    const tableRows = [...target.closest(".bread--menupicker__table").querySelectorAll("tbody tr")];
+    const tableRowsChecked = tableRows.filter(row => menuPickerLabel(row).firstChild.checked);
+
+    let value;
+    if (tableRowsChecked.length === 0)
+        value = false;
+    else if (tableRowsChecked.length < tableRows.length)
+        value = "mixed";
+    else
+        value = true;
+
+    setMenuPickerSelectAllChecked(target, value);
 };
