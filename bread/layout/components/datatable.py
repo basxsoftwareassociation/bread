@@ -1,11 +1,12 @@
 from typing import Any, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+
 from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
 from bread.utils.links import Link, ModelHref
 from bread.utils.urls import link_with_urlparameters
-from django.db import models
-from django.utils.translation import gettext_lazy as _
 
 from ..utils import ObjectFieldLabel, ObjectFieldValue, aslink_attributes
 from .button import Button
