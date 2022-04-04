@@ -1,12 +1,11 @@
 from typing import Any, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
-from django.db import models
-from django.utils.translation import gettext_lazy as _
-
 from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
 from bread.utils.links import Link, ModelHref
 from bread.utils.urls import link_with_urlparameters
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from ..utils import ObjectFieldLabel, ObjectFieldValue, aslink_attributes
 from .button import Button
@@ -401,6 +400,7 @@ event.stopPropagation()""",
                 }
             # convert simple string (modelfield) to column definition
             if isinstance(col, str):
+
                 col = DataTableColumn.from_modelfield(
                     col,
                     model,
@@ -597,7 +597,7 @@ def sortingname_for_column(model, column):
     for field in resolve_modellookup(model, column):
         if hasattr(field, "sorting_name"):
             components.append(field.sorting_name)
-        elif isinstance(field, models.Field):
+        elif isinstance(field, (models.Field, models.ForeignObjectRel)):
             components.append(field.name)
         else:
             return None
