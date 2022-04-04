@@ -232,11 +232,11 @@ function menuPickerUncheck(trElement) {
     label.firstChild.checked = false;
     label.firstChild.setAttribute("aria-checked", "false")
 }
-window.menuPickerAdd = target => {
+const menuPickerAdd = target => {
     const menuPickerId = target.getAttribute("data-menuid");
-    const selectedRowsTable = document.querySelector(`#${menuPickerId} .bread--menupicker__selected-table tbody`)
-    const unselectedRows = [...document.querySelectorAll(`#${menuPickerId} .bread--menupicker__unselected-table tbody tr`)];
-    const formEl = target.closest("form");
+    const datatable = target.closest(".bread--menupicker");
+    const selectedRowsTable = datatable.querySelector(".bread--menupicker__selected-table tbody")
+    const unselectedRows = [...datatable.querySelectorAll(".bread--menupicker__unselected-table tbody tr")];
 
     // browse all checked rows
     const checkedUnselected = unselectedRows.filter(
@@ -252,12 +252,12 @@ window.menuPickerAdd = target => {
             inputTag.setAttribute("type", "hidden");
             inputTag.setAttribute("name", checkbox.name);
             inputTag.setAttribute("value", checkbox.value);
-            formEl.appendChild(inputTag);
+            datatable.appendChild(inputTag);
         });
         [...selectedRowsTable.children]
             .sort((a, b) =>
-                parseInt(a.getAttribute("data-menuid"))
-                - parseInt(b.getAttribute("data-menuid"))
+                parseInt(a.firstChild.getAttribute("data-order"))
+                - parseInt(b.firstChild.getAttribute("data-order"))
             )
             .forEach(el => {
                 menuPickerUncheck(el);
@@ -265,11 +265,11 @@ window.menuPickerAdd = target => {
             });
     }
 };
-window.menuPickerRemove = target => {
+const menuPickerRemove = target => {
     const menuPickerId = target.getAttribute("data-menuid");
-    const unselectedRowsTable = document.querySelector(`#${menuPickerId} .bread--menupicker__unselected-table tbody`)
-    const selectedRows = [...document.querySelectorAll(`#${menuPickerId} .bread--menupicker__selected-table tbody tr`)];
-    const formEl = target.closest("form");
+    const datatable = target.closest(".bread--menupicker");
+    const unselectedRowsTable = datatable.querySelector(".bread--menupicker__unselected-table tbody");
+    const selectedRows = [...datatable.querySelectorAll(".bread--menupicker__selected-table tbody tr")];
 
     // browse all checked rows
     const checkedSelected = selectedRows.filter(
@@ -279,26 +279,27 @@ window.menuPickerRemove = target => {
     // move the checked rows to the right, in the preserved order.
     if (checkedSelected.length > 0) {
         unselectedRowsTable.append(...checkedSelected);
+        checkedSelected.forEach(el => {
+            const checkbox = menuPickerLabel(el).firstChild;
+            const inputHidden = datatable.querySelector(`input[type="hidden"][name="${checkbox.getAttribute('name')}"][value="${checkbox.getAttribute('value')}"]`);
+            datatable.removeChild(inputHidden);
+        });
         [...unselectedRowsTable.children]
             .sort((a, b) =>
-                parseInt(a.getAttribute("data-menuid"))
-                - parseInt(b.getAttribute("data-menuid"))
+                parseInt(a.firstChild.getAttribute("data-order"))
+                - parseInt(b.firstChild.getAttribute("data-order"))
             )
             .forEach(el => {
                 menuPickerUncheck(el);
                 unselectedRowsTable.appendChild(el);
-
-                const checkbox = menuPickerLabel(el).firstChild;
-                const inputTag = formEl.querySelector(`input[type="hidden"][name="${checkbox.name}"][value="${checkbox.value}"]`);
-                formEl.removeChild(inputTag);
             });
     }
 };
-[...document.querySelectorAll(".bread--menupicker form")].forEach(
-    () => el.addEventListener("submit", e => {
+const menuPickerLoad = menuPicker => {
+    menuPicker.closest("form").addEventListener("submit", e => {
         e.preventDefault();
 
-        window.alert('sent');
+        alert('sent');
         const selectedRows = [...e.target.querySelectorAll(".bread--menupicker__selected-table tbody tr")];
         const unselectedRows = [...e.target.querySelectorAll(".bread--menupicker__unselected-table tbody tr")];
 
@@ -308,5 +309,5 @@ window.menuPickerRemove = target => {
         unselectedRows.forEach(el => menuPickerUncheck(el));
 
         e.submit();
-    })
-);
+    });
+};

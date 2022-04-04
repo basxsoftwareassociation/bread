@@ -1,115 +1,67 @@
 import htmlgenerator as hg
+from django.forms import widgets
 
 from bread import layout
 from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
-from bread.layout.components.forms.widgets import (
-    BaseWidget,
-    Checkbox,
-    _gen_optgroup,
-    _optgroups_from_choices,
-)
+from bread.layout.components.forms.widgets import BaseWidget, Checkbox
 
 
 class MenuPicker(BaseWidget):
-    """
-    A tool that let users select multiple items from a list of available items.
-    This tool might be the good replacement for filters when the number of items
-    is large.
-    """
+    django_widget = widgets.CheckboxSelectMultiple
 
     def __init__(
         self,
-        available_items: dict,
-        selected_items: dict = None,
-        max_visible_rows: int = 5,
+        name: str = None,
         label=None,
         help_text=None,
         errors=None,
         inputelement_attrs=None,
         boundfield=None,
-        choices=None,
         **attributes,
     ):
-        """
-        Constructor based on hg.DIV, that will be rendered to an HTML element
-        that functions as a menu picker.
-
-        Parameters
-        ----------
-        available_items : dict
-            a list containing tuples in the form
-            {
-                'input_name1': {
-                    'value1': 'label_for_value1',
-                    'value2': 'label_for_value1',
-                    ...
-                },
-                'input_name2': {
-                    'value3': 'label_for_value3',
-                    'value4': 'label_for_value4',
-                    ...
-                },
-                ...
-            }
-            note that the key order depends on the insertion order.
-        selected_items : dict, optional
-            a list (or dict) in accordance with `available_items` but for pre-selected
-            items that need to be displayed as selected by default. `selected_items`
-            has to be defined in the same form as `available_items`
-        """
-
         inputelement_attrs = inputelement_attrs or {}
-        optgroups = (
-            _optgroups_from_choices(
-                choices,
-                name=inputelement_attrs.get("name"),
-                value=inputelement_attrs.get("value"),
-            )
-            if choices
-            else _gen_optgroup(boundfield)
-        )
+        widgetid = hg.html_id(self, "bread--menupicker")
 
-        id = hg.html_id(self, "bread--menupicker")
-        selected_items = selected_items or {}
-        unselected_items = {}
-        for name in available_items:
-            unselected_items[name] = available_items[name].copy()
-            if name in selected_items:
-                for key in selected_items[name]:
-                    if key in unselected_items[name]:
-                        del unselected_items[name][key]
-
-        checkbox_column = (
+        checkbox_column_base = (
             DataTableColumn(
                 Checkbox(
                     inputelement_attrs={
                         "_class": "bread--menupicker__selectall",
-                        "readonly": True,
+                        "data_menuid": widgetid,
+                        "onclick": "menuPickerSelectAllClick(this)",
                     }
                 ),
                 Checkbox(
                     inputelement_attrs={
-                        "name": hg.C("row.name"),
-                        "value": hg.C("row.value"),
-                        "readonly": True,
+                        "name": hg.C("row").data["name"],
+                        "value": hg.C("row").data["value"],
                     }
                 ),
-                td_attributes={"data_order": hg.C("row.order")},
+                td_attributes={"data_order": hg.C("row_index")},
             ),
         )
 
+        checkbox_column_selected = checkbox_column_base + (
+            DataTableColumn("Selected", hg.DIV(hg.C("row").data["label"])),
+        )
+        checkbox_column_unselected = checkbox_column_base + (
+            DataTableColumn("Unselected", hg.DIV(hg.C("row").data["label"])),
+        )
+
+        checkboxes = boundfield.subwidgets
+
         super().__init__(
-            # menu_picker is required to be in form in order to make this works.
             hg.Iterator(
-                [
-                    {"name": n, "value": v}
-                    for n, vdict in selected_items.items()
-                    for v in vdict
-                ],
+                checkboxes,
                 "item",
-                hg.INPUT(
-                    type="hidden", name=hg.C("item.name"), value=hg.C("item.value")
+                hg.If(
+                    hg.C("item").data["selected"],
+                    hg.INPUT(
+                        type="hidden",
+                        name=hg.C("item").data["name"],
+                        value=hg.C("item").data["value"],
+                    ),
                 ),
             ),
             layout.grid.Grid(
@@ -117,38 +69,34 @@ class MenuPicker(BaseWidget):
                     # selected
                     layout.grid.Col(
                         DataTable(
-                            columns=checkbox_column
-                            + (DataTableColumn("Selected", hg.DIV(hg.C("row.label"))),),
-                            row_iterator=[
-                                {
-                                    "name": name,
-                                    "value": value,
-                                    "label": label,
-                                    "order": i,
-                                }
-                                for i, (name, value, label) in enumerate(
-                                    (n, v, l)
-                                    for n, vdict in selected_items.items()
-                                    for v, l in vdict.items()
-                                )
-                            ],
+                            columns=checkbox_column_selected,
+                            row_iterator=hg.Iterator(
+                                checkboxes,
+                                "row",  # for backward-compatibility with datatable
+                                hg.If(
+                                    hg.C("row").data["selected"],
+                                    DataTable.row(checkbox_column_selected),
+                                ),
+                            ),
                             _class="bx--data-table bx--data-table--sort bread--menupicker__selected-table ",
                         ),
                         breakpoint="lg",
-                        width=7,
+                        width="7",
                     ),
                     layout.grid.Col(
                         hg.DIV(
                             Button(
                                 _class="bread--menupicker__add",
-                                data_menuid=id,
+                                data_menuid=widgetid,
                                 icon="add--alt",
-                                onclick="window.menuPickerAdd(this)",
+                                onclick="menuPickerAdd(this)",
                                 style="text-align: center; margin: 0.5rem;",
                             ),
                             Button(
                                 _class="bread--menupicker__remove",
+                                data_menuid=widgetid,
                                 icon="subtract--alt",
+                                onclick="menuPickerRemove(this)",
                                 style="text-align: center; margin: 0.5rem;",
                             ),
                             style=(
@@ -163,34 +111,28 @@ class MenuPicker(BaseWidget):
                         breakpoint="lg",
                         width=2,
                     ),
+                    # unselected
                     layout.grid.Col(
                         DataTable(
-                            columns=checkbox_column
-                            + (
-                                DataTableColumn(
-                                    "Unselected", hg.DIV(hg.C("row.label"))
+                            columns=checkbox_column_unselected,
+                            row_iterator=hg.Iterator(
+                                checkboxes,
+                                "row",  # for backward-compatibility with datatable
+                                hg.If(
+                                    hg.C("row").data["selected"],
+                                    None,
+                                    DataTable.row(checkbox_column_unselected),
                                 ),
                             ),
-                            row_iterator=[
-                                {
-                                    "name": name,
-                                    "value": value,
-                                    "label": label,
-                                    "order": i,
-                                }
-                                for i, (name, value, label) in enumerate(
-                                    (n, v, l)
-                                    for n, vdict in unselected_items.items()
-                                    for v, l in vdict.items()
-                                )
-                            ],
                             _class="bx--data-table bx--data-table--sort bread--menupicker__unselected-table ",
                         ),
                         breakpoint="lg",
-                        width=7,
+                        width="7",
                     ),
                 ),
             ),
             _class="bread--menupicker",
-            id=id,
+            id=widgetid,
+            onload="menuPickerLoad(this);",
+            **attributes,
         )

@@ -110,7 +110,7 @@ urlpatterns = [
         urlname=model_urlname(DjangoUserModel, "ajax_edit_user_group"),
     ),
     autopath(
-        administration.UserEditPermission.as_view(),
+        administration.UserEditPermissionDemo.as_view(),
         urlname=model_urlname(DjangoUserModel, "ajax_edit_user_permissions"),
     ),
 ] + external_urlpatterns

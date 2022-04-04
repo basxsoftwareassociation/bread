@@ -25,7 +25,7 @@ from bread.layout.components import tabs
 from bread.layout.components.button import Button
 from bread.layout.components.datatable import DataTable, DataTableColumn
 from bread.layout.components.forms import Form, FormField
-from bread.layout.components.forms.menu_picker import MenuPicker
+from bread.layout.components.forms.menu_picker_widget import MenuPicker
 from bread.layout.components.modal import modal_with_trigger
 from bread.utils import ModelHref
 from bread.views import BrowseView, EditView
@@ -268,7 +268,6 @@ class UserEditView(EditView):
 
 
 class UserEditGroup(EditView):
-
     model = get_user_model()
     fields = ["groups"]
 
@@ -293,9 +292,8 @@ class UserEditPermissionDemo(EditView):
         C = layout.grid.Col
         F = layout.forms.FormField
         return layout.grid.Grid(
-            layout.components.forms.Form(hg.C("form"), R(C(F(fields[0])))),
             layout.components.forms.Form(
-                hg.C("form"), R(C(*(F(field) for field in self.fields)))
+                hg.C("form"), R(C(F(self.fields[0], widgetclass=MenuPicker)))
             ),
         )
 
@@ -342,6 +340,11 @@ class UserEditPermission(EditView):
                                     for pk, perm in selected_permissions.items()
                                 }
                             },
+                            choices=[
+                                (pk, f"{perm['app_label']}.{perm['codename']}")
+                                for pk, perm in available_permissions.items()
+                            ],
+                            inputelement_attrs={"name": "user_permissions"},
                         ),
                     ),
                 ),
