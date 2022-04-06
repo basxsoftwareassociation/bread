@@ -1,14 +1,15 @@
 import datetime
 
 import htmlgenerator as hg
-from bread import formatters, layout, views
-from bread.utils import filter_fieldlist, generate_excel, xlsxresponse
-from bread.utils.links import ModelHref
 from django.core.paginator import Paginator
 from django.db import models
 from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
+
+from bread import formatters, layout, views
+from bread.utils import filter_fieldlist, generate_excel, xlsxresponse
+from bread.utils.links import ModelHref
 
 from .models import Report
 

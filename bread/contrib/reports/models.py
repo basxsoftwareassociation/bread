@@ -1,10 +1,11 @@
 import htmlgenerator as hg
-from bread import layout
-from bread.querysetfield import QuerysetField, parsequeryexpression
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from bread import layout
+from bread.querysetfield import QuerysetField, parsequeryexpression
 
 from ...layout.components.datatable import DataTableColumn
 
