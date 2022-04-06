@@ -3,10 +3,19 @@ import os
 
 import htmlgenerator as hg
 from django.contrib.staticfiles import finders
-from django.core.cache import cache
 from django.utils.html import mark_safe
 
 logger = logging.getLogger(__name__)
+
+RAW_ICON_BASE_PATH = "design/carbon_design/icons/flat/raw_32/"
+ABSOLUTE_PATH = finders.find(RAW_ICON_BASE_PATH)
+ICONS = {}
+
+for name in os.listdir(ABSOLUTE_PATH):
+    iconpath = os.path.join(ABSOLUTE_PATH, name)
+    if os.path.isfile(iconpath):
+        with open(iconpath) as f:
+            ICONS[name.replace(".svg", "")] = mark_safe(f.read())
 
 
 class Icon(hg.SVG):
@@ -33,20 +42,4 @@ class Icon(hg.SVG):
             attributes["width"] = size
             attributes["height"] = size
         self.name = name
-        super().__init__(**attributes)
-
-    def render(self, context):
-        name = hg.resolve_lazy(self.name, context)
-        if cache.get(name) is None:
-            path = finders.find(
-                os.path.join("design/carbon_design/icons/flat/raw_32/", f"{name}.svg")
-            )
-            if not path:
-                logger.error(f"Missing icon: {name}.svg")
-                self.append(f"Missing icon: {name}.svg")
-                return super().render(context)
-            with open(path) as f:
-                cache.set(name, f.read())
-        self.clear()
-        self.append(mark_safe(cache.get(name)))
-        return super().render(context)
+        super().__init__(hg.F(lambda c: ICONS[hg.resolve_lazy(name, c)]), **attributes)
