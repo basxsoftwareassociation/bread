@@ -26,7 +26,7 @@ class EditView(views.EditView):
 
         F = layout.forms.FormField
         ret = hg.BaseElement(
-            hg.H3(self.object),
+            views.header(),
             layout.forms.Form(
                 hg.C("form"),
                 hg.DIV(
@@ -120,15 +120,16 @@ class ReadView(views.ReadView):
             ]
 
         # generate a nice table
-        return layout.datatable.DataTable(
-            columns=columns, row_iterator=qs
-        ).with_toolbar(
-            title=self.object.name,
-            helper_text=f"{self.object.queryset.count()} "
-            f"{self.object.model.model_class()._meta.verbose_name_plural}",
-            primary_button=layout.button.Button(
-                label=_("Excel"), icon="download"
-            ).as_href(ModelHref.from_object(self.object, "excel")),
+        return hg.BaseElement(
+            views.header(),
+            layout.datatable.DataTable(columns=columns, row_iterator=qs).with_toolbar(
+                title=self.object.name,
+                helper_text=f"{self.object.queryset.count()} "
+                f"{self.object.model.model_class()._meta.verbose_name_plural}",
+                primary_button=layout.button.Button(
+                    label=_("Excel"), icon="download"
+                ).as_href(ModelHref.from_object(self.object, "excel")),
+            ),
         )
 
 
