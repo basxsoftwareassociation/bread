@@ -1,14 +1,14 @@
 import datetime
 
 import htmlgenerator as hg
+from bread import formatters, layout, views
+from bread.utils import filter_fieldlist, generate_excel, xlsxresponse
+from bread.utils.links import ModelHref
+from django.core.paginator import Paginator
 from django.db import models
 from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
-
-from bread import formatters, layout, views
-from bread.utils import filter_fieldlist, generate_excel, xlsxresponse
-from bread.utils.links import ModelHref
 
 from .models import Report
 
@@ -25,6 +25,22 @@ class EditView(views.EditView):
         column_helper = layout.get_attribute_description_modal(modelclass)
 
         F = layout.forms.FormField
+
+        fieldstable = layout.forms.FormsetField.as_datatable(
+            "columns",
+            ["header", "column", "sortingname"],
+            formsetfield_kwargs={
+                "extra": 1,
+                "can_order": True,
+            },
+        )
+        fieldstable[0][1].insert(
+            0,
+            layout.button.Button(
+                _("Help"), buttontype="ghost", **column_helper.openerattributes
+            ),
+        )
+        fieldstable.append(hg.DIV(style="height: 1rem"))
         ret = hg.BaseElement(
             views.header(),
             layout.forms.Form(
@@ -41,22 +57,15 @@ class EditView(views.EditView):
                     inputelement_attrs={"rows": 1},
                     style="width: 100%",
                 ),
-                F("custom_queryset"),
-                layout.forms.FormsetField.as_datatable(
-                    "columns",
-                    ["column", "name"],
-                    formsetfield_kwargs={
-                        "extra": 1,
-                        "can_order": True,
-                    },
+                fieldstable,
+                layout.tile.ExpandableTile(
+                    hg.H4(_("Extended settings")),
+                    hg.DIV(
+                        F("custom_queryset"),
+                        F("pagination"),
+                    ),
                 ),
-                layout.button.Button(
-                    _("Help"),
-                    buttontype="ghost",
-                    style="margin-top: 1rem",
-                    **column_helper.openerattributes,
-                ),
-                layout.forms.helpers.Submit(),
+                layout.forms.helpers.Submit(style="margin-top: 1rem"),
                 column_helper,
             ),
             hg.C("object.preview"),
@@ -94,19 +103,22 @@ class ReadView(views.ReadView):
                     if order.startswith("-")
                     else models.functions.Lower(order)
                 )
+        paginator = Paginator(qs, self.object.pagination)
 
         columns = []
         for col in self.object.columns.all():
             sortingname = None
             try:
-                layout.datatable.sortingname_for_column(
+                sortingname = layout.datatable.sortingname_for_column(
                     self.object.model.model_class(), col.column
-                ),
+                )
             except AttributeError:
                 pass
             columns.append(
                 layout.datatable.DataTableColumn(
-                    col.name, layout.FC(f"row.{col.column}"), sortingname
+                    col.header,
+                    layout.FC(f"row.{col.column}"),
+                    col.sortingname or sortingname,
                 )
             )
         if not columns:
@@ -118,17 +130,28 @@ class ReadView(views.ReadView):
                     self.object.model.model_class(), ["__all__"]
                 )
             ]
-
+        pagination_config = layout.pagination.PaginationConfig(
+            paginator=paginator,
+            items_per_page_options=[self.object.pagination],
+        )
         # generate a nice table
         return hg.BaseElement(
             views.header(),
-            layout.datatable.DataTable(columns=columns, row_iterator=qs).with_toolbar(
+            layout.datatable.DataTable(
+                columns=columns,
+                row_iterator=paginator.get_page(
+                    self.request.GET.get(pagination_config.page_urlparameter)
+                )
+                if self.object.pagination
+                else qs,
+            ).with_toolbar(
                 title=self.object.name,
                 helper_text=f"{self.object.queryset.count()} "
                 f"{self.object.model.model_class()._meta.verbose_name_plural}",
                 primary_button=layout.button.Button(
                     label=_("Excel"), icon="download"
                 ).as_href(ModelHref.from_object(self.object, "excel")),
+                pagination_config=pagination_config if self.object.pagination else None,
             ),
         )
 
