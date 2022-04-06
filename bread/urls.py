@@ -1,3 +1,4 @@
+import django
 import django_celery_results.models
 from django.apps import apps
 from django.contrib.auth import get_user_model
@@ -9,7 +10,7 @@ from bread.utils import autopath, default_model_paths, model_urlname
 from .views import administration, auth, userprofile
 from .views.globalpreferences import PreferencesView
 
-DjangoUserModel = get_user_model()
+DjangoUserModel = django.contrib.auth.models.User
 
 external_urlpatterns = [
     path(
@@ -110,8 +111,12 @@ urlpatterns = [
         urlname=model_urlname(DjangoUserModel, "ajax_edit_user_group"),
     ),
     autopath(
-        administration.UserEditPermissionDemo.as_view(),
+        administration.UserEditPermission.as_view(),
         urlname=model_urlname(DjangoUserModel, "ajax_edit_user_permissions"),
+    ),
+    autopath(
+        administration.UserEditPassword.as_view(),
+        urlname=model_urlname(DjangoUserModel, "ajax_edit_user_password"),
     ),
 ] + external_urlpatterns
 

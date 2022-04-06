@@ -9,10 +9,14 @@ import pkg_resources
 import requests
 from django import forms
 from django.conf import settings
-from django.contrib import messages
+from django.contrib import contenttypes, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.models import Permission
+from django.contrib.auth.hashers import (
+    PBKDF2PasswordHasher,
+    SHA1PasswordHasher,
+    make_password,
+)
 from django.core import management
 from django.db import connection
 from django.utils.translation import gettext_lazy as _
@@ -40,6 +44,9 @@ F = layout.forms.FormField
 
 TR = layout.datatable.DataTable.row
 TD = layout.datatable.DataTableColumn
+
+
+DjangoUserModel = get_user_model()
 
 
 @user_passes_test(lambda user: user.is_superuser)
@@ -162,7 +169,15 @@ class UserReadView(ReadView):
                                 self.object,
                                 self.model,
                                 "ajax_edit_user_info",
-                            )
+                                "md",
+                            ),
+                            open_modal_popup_button(
+                                self.object,
+                                self.model,
+                                "ajax_edit_user_password",
+                                "md",
+                                _("Change Password"),
+                            ),
                         )
                     ),
                 ),
@@ -196,6 +211,7 @@ class UserReadView(ReadView):
                                 self.object,
                                 self.model,
                                 "ajax_edit_user_group",
+                                "lg",
                             )
                         )
                     ),
@@ -210,7 +226,20 @@ class UserReadView(ReadView):
                             DataTable(
                                 columns=[
                                     DataTableColumn(
-                                        header=_("ID"), cell=hg.DIV(hg.C("row.id"))
+                                        header=_("ID"),
+                                        cell=hg.DIV(hg.C("row.id")),
+                                    ),
+                                    DataTableColumn(
+                                        header=_("App"),
+                                        cell=hg.DIV(hg.C("row.app_label")),
+                                    ),
+                                    DataTableColumn(
+                                        header=_("Model"),
+                                        cell=hg.DIV(hg.C("row.model")),
+                                    ),
+                                    DataTableColumn(
+                                        header=_("Codename"),
+                                        cell=hg.DIV(hg.C("row.codename")),
                                     ),
                                     DataTableColumn(
                                         header=_("Permission"),
@@ -218,7 +247,17 @@ class UserReadView(ReadView):
                                     ),
                                 ],
                                 row_iterator=[
-                                    {"id": row["id"], "permissions": row["name"]}
+                                    {
+                                        "id": row["id"],
+                                        "app_label": contenttypes.models.ContentType.objects.get(
+                                            pk=row["content_type_id"]
+                                        ).app_label,
+                                        "model": contenttypes.models.ContentType.objects.get(
+                                            pk=row["content_type_id"]
+                                        ).model,
+                                        "permissions": row["name"],
+                                        "codename": row["codename"],
+                                    }
                                     for row in self.object.user_permissions.values()
                                 ],
                             )
@@ -240,19 +279,64 @@ class UserReadView(ReadView):
         )
 
 
+class UserEditPassword(EditView):
+    model = DjangoUserModel
+
+    class ChangePasswordForm(forms.Form):
+        password = forms.CharField(widget=forms.PasswordInput)
+        confirm_password = forms.CharField(widget=forms.PasswordInput)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        user = self.object
+
+        form = self.ChangePasswordForm(request.POST)
+        if form.is_valid():
+            if (
+                len(form.cleaned_data["password"]) > 0
+                and form.cleaned_data["password"]
+                == form.cleaned_data["confirm_password"]
+            ):
+                print(user)
+                print(type(user))
+                print(form.cleaned_data)
+                encrypted_pwd = make_password(form.cleaned_data["password"])
+                print(encrypted_pwd)
+                user.password = encrypted_pwd
+                user.save(update_fields=["password"])
+            else:
+                return self.form_invalid(form)
+
+        return super().post(request, *args, **kwargs)
+
+    def get_layout(self):
+        R = layout.grid.Row
+        C = layout.grid.Col
+        F = layout.forms.FormField
+
+        form = self.ChangePasswordForm()
+
+        return layout.grid.Grid(
+            layout.components.forms.Form(
+                form,
+                layout.grid.Grid(
+                    R(C(F("password"))),
+                    R(C(F("confirm_password"))),
+                ),
+            ),
+        )
+
+
 class UserEditView(EditView):
-    model = get_user_model()
+    model = DjangoUserModel
     fields = [
         "username",
         "first_name",
         "last_name",
         "email",
-        "date_joined",
         "is_superuser",
         "is_staff",
         "is_active",
-        "groups",
-        "user_permissions",
     ]
 
     def get_layout(self):
@@ -268,8 +352,7 @@ class UserEditView(EditView):
 
 
 class UserEditGroup(EditView):
-    model = get_user_model()
-    fields = ["groups"]
+    model = DjangoUserModel
 
     def get_layout(self):
         R = layout.grid.Row
@@ -283,17 +366,17 @@ class UserEditGroup(EditView):
         )
 
 
-class UserEditPermissionDemo(EditView):
-    model = get_user_model()
-    fields = ["user_permissions"]
+class UserEditPermission(EditView):
+    model = DjangoUserModel
 
     def get_layout(self):
         R = layout.grid.Row
         C = layout.grid.Col
         F = layout.forms.FormField
+
         return layout.grid.Grid(
             layout.components.forms.Form(
-                hg.C("form"), R(C(F(self.fields[0], widgetclass=MenuPicker)))
+                hg.C("form"), R(C(F("user_permissions", widgetclass=MenuPicker)))
             ),
         )
 
@@ -356,13 +439,13 @@ def edituser_toolbar(request):
 
 
 # reused from basxconnect
-def open_modal_popup_button(heading, model, action, size="xs"):
+def open_modal_popup_button(heading, model, action, size="xs", btnlabel=_("Edit")):
     return R(
         C(
             modal_with_trigger(
                 create_modal(heading, model, action, size),
                 layout.button.Button,
-                _("Edit"),
+                btnlabel,
                 buttontype="tertiary",
                 icon="edit",
             ),
