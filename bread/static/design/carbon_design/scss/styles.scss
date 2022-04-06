@@ -292,3 +292,15 @@ a.bx--header__name {
     padding-bottom: 2rem;
 }
 
+.bread--menupicker__table-container {
+    width: 100%;
+    height: auto;
+    max-height: 20rem;
+    overflow-y: auto;
+}
+
+.bread--menupicker__table thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}

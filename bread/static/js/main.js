@@ -223,26 +223,22 @@ document.addEventListener("unload", function() {
 });
 
 // js code for menu picker
-function menuPickerLabel(trElement) {
-    return trElement.firstChild.firstChild.firstChild;
+function menuPickerLabel(target) {
+    return target.querySelector("label");
 }
-function setMenuPickerChecked(trElement, value) {
-    const label = menuPickerLabel(trElement);
+function setMenuPickerChecked(target, value) {
+    const label = menuPickerLabel(target);
     label.setAttribute("data-contained-checkbox-state", value.toString())
     label.firstChild.checked = value === true || value === "mixed";
     label.firstChild.setAttribute("aria-checked", value.toString())
 }
 
 const setMenuPickerSelectAllChecked = (target, value) => {
-    const selectallLabel = target.closest(".bread--menupicker__table").querySelector(".bread--menupicker__selectall").firstChild;
-    console.log(selectallLabel);
-    selectallLabel.setAttribute("data-contained-checkbox-state", value.toString())
-    selectallLabel.firstChild.checked = value === true || value === "mixed";
-    selectallLabel.firstChild.setAttribute("aria-checked", value.toString())
+    const selectallTarget = target.closest(".bread--menupicker__table").querySelector(".bread--menupicker__selectall");
+    setMenuPickerChecked(selectallTarget, value);
 };
 
-const menuPickerAdd = target => {
-    const menuPickerId = target.getAttribute("data-menuid");
+const menuPickerAdd = (target, event) => {
     const datatable = target.closest(".bread--menupicker");
     const selectedRowsTable = datatable.querySelector(".bread--menupicker__selected-table tbody")
     const unselectedRowsTable = datatable.querySelector(".bread--menupicker__unselected-table tbody")
@@ -276,8 +272,7 @@ const menuPickerAdd = target => {
             });
     }
 };
-const menuPickerRemove = target => {
-    const menuPickerId = target.getAttribute("data-menuid");
+const menuPickerRemove = (target, event) => {
     const datatable = target.closest(".bread--menupicker");
     const selectedRowsTable = datatable.querySelector(".bread--menupicker__selected-table tbody")
     const unselectedRowsTable = datatable.querySelector(".bread--menupicker__unselected-table tbody");
@@ -295,6 +290,8 @@ const menuPickerRemove = target => {
         checkedSelected.forEach(el => {
             const checkbox = menuPickerLabel(el).firstChild;
             const inputHidden = datatable.querySelector(`input[type="hidden"][name="${checkbox.getAttribute('data-name')}"][value="${checkbox.getAttribute('data-value')}"]`);
+            console.log(inputHidden);
+            console.log(datatable);
             datatable.removeChild(inputHidden);
         });
         [...unselectedRowsTable.children]
@@ -309,15 +306,17 @@ const menuPickerRemove = target => {
     }
 };
 
-const menuPickerSelectAllClick = target => {
+const menuPickerSelectAllClick = (target, event) => {
     const rows = [...target.closest(".bread--menupicker__table").querySelectorAll("tbody tr")];
     const checked = target.checked;
 
     rows.forEach(row => setMenuPickerChecked(row, checked));
 };
 
-const menuPickerCheckPerformed = target => {
-    const tableRows = [...target.closest(".bread--menupicker__table").querySelectorAll("tbody tr")];
+
+const menuPickerCheckPerformed = (target, event) => {
+    const table = target.closest(".bread--menupicker__table");
+    const tableRows = [...table.querySelectorAll("tbody tr")];
     const tableRowsChecked = tableRows.filter(row => menuPickerLabel(row).firstChild.checked);
 
     let value;
@@ -329,4 +328,9 @@ const menuPickerCheckPerformed = target => {
         value = true;
 
     setMenuPickerSelectAllChecked(target, value);
+};
+
+const menuPickerRowClick = (target, event) => {
+    setMenuPickerChecked(target, !menuPickerLabel(target).firstChild.checked);
+    menuPickerCheckPerformed(target);
 };
