@@ -88,7 +88,6 @@ class MenuPicker(BaseWidget):
             ),
             hg.FIELDSET(
                 label,
-                help_text,
                 errors,
                 layout.grid.Grid(
                     layout.grid.Row(
@@ -166,7 +165,9 @@ class MenuPicker(BaseWidget):
                             width="7",
                         ),
                     ),
+                    gutter=False,
                 ),
+                help_text,
             ),
             _class="bread--menupicker",
             id=widgetid,
