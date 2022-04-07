@@ -12,9 +12,7 @@ from django.conf import settings
 from django.contrib import auth, contenttypes, messages
 from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.hashers import make_password
 from django.core import management
-from django.core.exceptions import ValidationError
 from django.db import connection
 from django.utils.translation import gettext_lazy as _
 from django_celery_results.models import TaskResult
@@ -86,19 +84,84 @@ class UserBrowseView(BrowseView):
         DataTableColumn(_("First Name"), hg.C("row.first_name")),
         DataTableColumn(_("Last Name"), hg.C("row.last_name")),
         DataTableColumn(
-            _("Is a staff?"),
-            hg.F(
-                lambda context: _("yes").capitalize()
-                if context["row"].is_staff
-                else _("no").capitalize()
+            _("Staff?"),
+            hg.DIV(
+                hg.F(
+                    lambda context: Icon("checkmark--filled", size="16")
+                    if context["row"].is_staff
+                    else Icon("misuse--outline", size="16")
+                ),
+                style="text-align: center;",
             ),
         ),
         DataTableColumn(
-            _("Is a superuser?"),
-            hg.F(
-                lambda context: _("yes").capitalize()
-                if context["row"].is_superuser
-                else _("no").capitalize()
+            _("Superuser?"),
+            hg.DIV(
+                hg.F(
+                    lambda context: Icon("checkmark--filled", size="16")
+                    if context["row"].is_superuser
+                    else Icon("misuse--outline", size="16")
+                ),
+                style="text-align: center;",
+            ),
+        ),
+        DataTableColumn(
+            _("Groups"),
+            hg.BaseElement(
+                hg.Iterator(
+                    hg.C("row").groups.values(),
+                    "usergroup",
+                    hg.If(
+                        hg.F(lambda context: context["usergroup_index"] < 3),
+                        hg.DIV(
+                            hg.C("usergroup.name"),
+                            style="margin-bottom: 0.25rem;",  # for groups that may have a long name
+                        ),
+                    ),
+                ),
+                hg.If(
+                    hg.F(lambda context: len(context["row"].groups.values()) >= 3),
+                    hg.SPAN(
+                        hg.F(
+                            lambda context: f"... and {len(context['row'].groups.values()) - 3} more"
+                        ),
+                        style="font-style: italic;" "font-weight: bold;",
+                    ),
+                ),
+            ),
+        ),
+        DataTableColumn(
+            _("Permissions"),
+            hg.BaseElement(
+                hg.Iterator(
+                    hg.C("row").user_permissions.values(),
+                    "usergroup",
+                    hg.If(
+                        hg.F(lambda context: context["usergroup_index"] < 3),
+                        hg.DIV(
+                            hg.F(
+                                lambda c: contenttypes.models.ContentType.objects.get(
+                                    pk=c["usergroup"]["content_type_id"]
+                                ).app_label
+                            ),
+                            ".",
+                            hg.C("usergroup.codename"),
+                            style="margin-bottom: 0.25rem;",  # for ones that may have a long name
+                        ),
+                    ),
+                ),
+                hg.If(
+                    hg.F(
+                        lambda context: len(context["row"].user_permissions.values())
+                        >= 3
+                    ),
+                    hg.SPAN(
+                        hg.F(
+                            lambda context: f"... and {len(context['row'].user_permissions.values()) - 3} more"
+                        ),
+                        style="font-style: italic;" "font-weight: bold;",
+                    ),
+                ),
             ),
         ),
     ]
@@ -191,7 +254,7 @@ class UserReadView(ReadView):
                                         header=_("ID"), cell=hg.DIV(hg.C("row.id"))
                                     ),
                                     DataTableColumn(
-                                        header=_("Group"),
+                                        header=_("Group Name"),
                                         cell=hg.DIV(hg.C("row.group")),
                                     ),
                                 ],
@@ -278,7 +341,6 @@ class UserReadView(ReadView):
 
 class UserEditPassword(EditView):
     model = DjangoUserModel
-    fields = ["password"]
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -353,10 +415,11 @@ class UserEditGroup(EditView):
         R = layout.grid.Row
         C = layout.grid.Col
         F = layout.forms.FormField
+
         return layout.grid.Grid(
             layout.components.forms.Form(
                 hg.C("form"),
-                *(R(C(F(field))) for field in self.fields),
+                R(C(F("groups", widgetclass=MenuPicker))),
             ),
         )
 
