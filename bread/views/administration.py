@@ -9,15 +9,12 @@ import pkg_resources
 import requests
 from django import forms
 from django.conf import settings
-from django.contrib import contenttypes, messages
-from django.contrib.auth import get_user_model
+from django.contrib import auth, contenttypes, messages
+from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.hashers import (
-    PBKDF2PasswordHasher,
-    SHA1PasswordHasher,
-    make_password,
-)
+from django.contrib.auth.hashers import make_password
 from django.core import management
+from django.core.exceptions import ValidationError
 from django.db import connection
 from django.utils.translation import gettext_lazy as _
 from django_celery_results.models import TaskResult
@@ -281,31 +278,30 @@ class UserReadView(ReadView):
 
 class UserEditPassword(EditView):
     model = DjangoUserModel
-
-    class ChangePasswordForm(forms.Form):
-        password = forms.CharField(widget=forms.PasswordInput)
-        confirm_password = forms.CharField(widget=forms.PasswordInput)
+    fields = ["password"]
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         user = self.object
 
-        form = self.ChangePasswordForm(request.POST)
+        form = auth.forms.SetPasswordForm(user, request.POST)
         if form.is_valid():
-            if (
-                len(form.cleaned_data["password"]) > 0
-                and form.cleaned_data["password"]
-                == form.cleaned_data["confirm_password"]
-            ):
-                print(user)
-                print(type(user))
-                print(form.cleaned_data)
-                encrypted_pwd = make_password(form.cleaned_data["password"])
-                print(encrypted_pwd)
-                user.password = encrypted_pwd
-                user.save(update_fields=["password"])
-            else:
-                return self.form_invalid(form)
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(
+                request,
+                _(
+                    "The password for %(username)s has been updated successfully."
+                    % {
+                        "username": user.username,
+                    }
+                ),
+            )
+        else:
+            messages.error(
+                request,
+                _("The password fields might mismatch or empty. Please try again."),
+            )
 
         return super().post(request, *args, **kwargs)
 
@@ -314,14 +310,13 @@ class UserEditPassword(EditView):
         C = layout.grid.Col
         F = layout.forms.FormField
 
-        form = self.ChangePasswordForm()
-
+        form = auth.forms.SetPasswordForm(self.object)
         return layout.grid.Grid(
             layout.components.forms.Form(
                 form,
                 layout.grid.Grid(
-                    R(C(F("password"))),
-                    R(C(F("confirm_password"))),
+                    R(C(F("new_password1"))),
+                    R(C(F("new_password2"))),
                 ),
             ),
         )
