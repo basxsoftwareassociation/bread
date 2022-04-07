@@ -12,6 +12,7 @@ from django.conf import settings
 from django.contrib import auth, contenttypes, messages
 from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.forms import UserCreationForm
 from django.core import management
 from django.db import connection
 from django.utils.translation import gettext_lazy as _
@@ -27,7 +28,7 @@ from bread.layout.components.forms import Form, FormField
 from bread.layout.components.forms.menu_picker import MenuPicker
 from bread.layout.components.modal import modal_with_trigger
 from bread.utils import ModelHref
-from bread.views import BrowseView, EditView
+from bread.views import AddView, BrowseView, EditView
 from bread.views.read import ReadView
 
 from ..layout.components.icon import Icon
@@ -74,37 +75,40 @@ class UserBrowseView(BrowseView):
         "id",
         DataTableColumn(
             _("Active"),
-            hg.F(
-                lambda context: _("yes").capitalize()
-                if context["row"].is_active
-                else _("no").capitalize()
+            hg.DIV(
+                hg.If(
+                    hg.C("row").is_active,
+                    Icon("checkmark--filled", size="16"),
+                    Icon("misuse--outline", size="16"),
+                ),
+                style="text-align: center;",
+            ),
+        ),
+        DataTableColumn(
+            _("Staff"),
+            hg.DIV(
+                hg.If(
+                    hg.C("row").is_staff,
+                    Icon("checkmark--filled", size="16"),
+                    Icon("misuse--outline", size="16"),
+                ),
+                style="text-align: center;",
+            ),
+        ),
+        DataTableColumn(
+            _("Superuser"),
+            hg.DIV(
+                hg.If(
+                    hg.C("row").is_superuser,
+                    Icon("checkmark--filled", size="16"),
+                    Icon("misuse--outline", size="16"),
+                ),
+                style="text-align: center;",
             ),
         ),
         DataTableColumn(_("Username"), hg.C("row.username")),
         DataTableColumn(_("First Name"), hg.C("row.first_name")),
         DataTableColumn(_("Last Name"), hg.C("row.last_name")),
-        DataTableColumn(
-            _("Staff?"),
-            hg.DIV(
-                hg.F(
-                    lambda context: Icon("checkmark--filled", size="16")
-                    if context["row"].is_staff
-                    else Icon("misuse--outline", size="16")
-                ),
-                style="text-align: center;",
-            ),
-        ),
-        DataTableColumn(
-            _("Superuser?"),
-            hg.DIV(
-                hg.F(
-                    lambda context: Icon("checkmark--filled", size="16")
-                    if context["row"].is_superuser
-                    else Icon("misuse--outline", size="16")
-                ),
-                style="text-align: center;",
-            ),
-        ),
         DataTableColumn(
             _("Groups"),
             hg.BaseElement(
@@ -168,6 +172,99 @@ class UserBrowseView(BrowseView):
     title = "Users"
     rowclickaction = BrowseView.gen_rowclickaction("read")
     viewstate_sessionkey = "adminusermanagement"
+
+
+class UserAddView(AddView):
+    model = DjangoUserModel
+    fields = [
+        "is_active",
+        "username",
+        "password1",
+        "password2",
+        "first_name",
+        "last_name",
+        "email",
+        "is_superuser",
+        "is_staff",
+    ]
+
+    class UserAddForm(UserCreationForm):
+        """Based on Django User model"""
+
+        class Meta:
+            model = DjangoUserModel
+            fields = (
+                "username",
+                "first_name",
+                "last_name",
+                "email",
+                "is_superuser",
+                "is_staff",
+                "is_active",
+                "groups",
+                "user_permissions",
+            )
+            field_classes = {"username": auth.forms.UsernameField}
+
+        first_name = forms.CharField(
+            label=_("first name"), max_length=150, required=False
+        )
+        last_name = forms.CharField(
+            label=_("last name"), max_length=150, required=False
+        )
+        email = forms.EmailField(label=_("email"), required=False)
+        is_superuser = forms.BooleanField(
+            label=_("Is superuser?"),
+            help_text=_(
+                "Designates that this user has all permissions without "
+                "explicitly assigning them."
+            ),
+            required=False,
+        )
+        is_staff = forms.BooleanField(
+            label=_("Is staff?"),
+            help_text=_("Designates whether the user can log into this admin site."),
+            required=False,
+        )
+        is_active = forms.BooleanField(
+            label=_("Is active?"),
+            help_text=_(
+                "Designates whether this user should be treated as active. "
+                "Unselect this instead of deleting accounts."
+            ),
+            initial=True,
+            required=False,
+        )
+        groups = forms.ModelMultipleChoiceField(
+            auth.models.Group.objects.all(),
+            label=_("groups"),
+            help_text=_(
+                "The groups this user belongs to. A user will get all permissions "
+                "granted to each of their groups."
+            ),
+            required=False,
+        )
+        user_permissions = forms.ModelMultipleChoiceField(
+            auth.models.Permission.objects.all(),
+            label=_("permissions"),
+            help_text=_("Specific permissions for this user."),
+            required=False,
+        )
+
+    form = UserAddForm()
+
+    def get_layout(self):
+        return layout.grid.Grid(
+            layout.components.forms.Form(
+                self.form,
+                *(R(C(F(field))) for field in self.fields),
+                *(
+                    R(C(F(field, widgetclass=MenuPicker)))
+                    for field in ("groups", "user_permissions")
+                ),
+                layout.forms.helpers.Submit(_("Add User")),
+            )
+        )
 
 
 class GroupBrowseView(BrowseView):

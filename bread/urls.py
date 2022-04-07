@@ -97,6 +97,7 @@ urlpatterns = [
         DjangoUserModel,
         browseview=administration.UserBrowseView,
         readview=administration.UserReadView,
+        addview=administration.UserAddView,
     ),
     *default_model_paths(
         DjangoGroupModel,
