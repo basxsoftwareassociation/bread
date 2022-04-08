@@ -14,6 +14,7 @@ from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.forms import UserCreationForm
 from django.core import management
+from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import Q
 from django.urls import reverse
@@ -398,7 +399,7 @@ class UserAddView(AddView):
                     R(C(F(field, widgetclass=MenuPicker)))
                     for field in ("groups", "user_permissions")
                 ),
-                layout.forms.helpers.Submit(_("Add User")),
+                R(C(layout.forms.helpers.Submit(_("Add Group")))),
             )
         )
 
@@ -446,7 +447,52 @@ class GroupBrowseView(BrowseView):
 
 class GroupAddView(AddView):
     model = auth.models.Group
-    fields = ["name", "user_set", "permissions"]
+    fields = ["name", "permissions"]
+
+    class GroupAddForm(forms.Form):
+        name = forms.CharField(
+            label=_("name"),
+            max_length=150,
+            help_text=_("The group name must be unique."),
+        )
+        user_set = forms.ModelMultipleChoiceField(
+            DjangoUserModel.objects.all(),
+            label=_("members"),
+            required=False,
+        )
+        permissions = forms.ModelMultipleChoiceField(
+            auth.models.Permission.objects.all(),
+            label=_("permissions"),
+            required=False,
+        )
+
+    def post(self, request, *args, **kwargs):
+        # need to be run before proceeding to anything else
+        redirect = super().post(request, *args, **kwargs)
+
+        form = self.GroupAddForm(request.POST)
+        group = self.object
+
+        if form.is_valid():
+            for user in form.cleaned_data["user_set"].values():
+                group.user_set.add(user["id"])
+            group.save()
+
+        return redirect
+
+    def get_layout(self):
+        form = self.GroupAddForm()
+        return layout.grid.Grid(
+            layout.components.forms.Form(
+                form,
+                R(C(F("name"))),
+                *(
+                    R(C(F(field, widgetclass=MenuPicker)))
+                    for field in ("user_set", "permissions")
+                ),
+                R(C(layout.forms.helpers.Submit(_("Add User")))),
+            )
+        )
 
 
 class GroupReadView(ReadView):
@@ -625,27 +671,25 @@ class GroupEditView(EditView):
 class GroupEditUser(EditView):
     model = auth.models.Group
 
-    def get_edit_user_form_for(self, pk=None, *args, **kwargs):
-        class EditUserForm(forms.ModelForm):
-            user_set = forms.ModelMultipleChoiceField(
-                queryset=DjangoUserModel.objects.all(),
-                label=_("Users"),
-                widget=forms.SelectMultiple(),
-                initial=DjangoUserModel.objects.filter(groups__pk=pk),
-                required=False,
+    class EditUserForm(forms.Form):
+        user_set = forms.ModelMultipleChoiceField(
+            queryset=DjangoUserModel.objects.all(),
+            label=_("Users"),
+            widget=forms.SelectMultiple(),
+            required=False,
+        )
+
+        def __init__(self, group, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields["user_set"].initial = DjangoUserModel.objects.filter(
+                groups__pk=group.pk
             )
-
-            class Meta:
-                model = auth.models.Group
-                fields = ("id", "user_set")
-
-        return EditUserForm(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         group = self.object
 
-        form = self.get_edit_user_form_for(self.object.pk, request.POST)
+        form = self.EditUserForm(group, request.POST)
         if form.is_valid():
             user_set_pks = [
                 user["id"] for user in form.cleaned_data["user_set"].values()
@@ -668,8 +712,7 @@ class GroupEditUser(EditView):
         return super().post(request, *args, **kwargs)
 
     def get_layout(self):
-        form = self.get_edit_user_form_for(pk=self.object.pk)
-
+        form = self.EditUserForm(self.object)
         return layout.grid.Grid(
             layout.components.forms.Form(
                 form, R(C(F("user_set", widgetclass=MenuPicker)))
@@ -857,19 +900,10 @@ class UserEditPassword(EditView):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
-            messages.success(
-                request,
-                _(
-                    "The password for %(username)s has been updated successfully."
-                    % {
-                        "username": user.username,
-                    }
-                ),
-            )
         else:
-            messages.error(
-                request,
-                _("The password fields might mismatch or empty. Please try again."),
+            raise ValidationError(
+                _("The password fields might mismatch. Please try again."),
+                code="password_mismatch",
             )
 
         return super().post(request, *args, **kwargs)
