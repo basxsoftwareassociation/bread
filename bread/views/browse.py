@@ -284,7 +284,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         qs = order_queryset_by_urlparameter(
             qs, self.request.GET.get(self.orderingurlparameter)
         )
-        return qs
+
+        # temporarily resolve the duplicate problem for now.
+        return qs.distinct()
 
     @staticmethod
     def gen_rowclickaction(modelaction, **kwargs):
