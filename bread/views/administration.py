@@ -16,6 +16,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core import management
 from django.db import connection
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 from django_celery_results.models import TaskResult
 from htmlgenerator import Lazy
 
@@ -74,7 +75,7 @@ class UserBrowseView(BrowseView):
     columns = [
         "id",
         DataTableColumn(
-            _("Active"),
+            hg.DIV(_("Active"), style="text-align: center;"),
             hg.DIV(
                 hg.If(
                     hg.C("row").is_active,
@@ -85,7 +86,7 @@ class UserBrowseView(BrowseView):
             ),
         ),
         DataTableColumn(
-            _("Staff"),
+            hg.DIV(_("Staff"), style="text-align: center;"),
             hg.DIV(
                 hg.If(
                     hg.C("row").is_staff,
@@ -96,7 +97,7 @@ class UserBrowseView(BrowseView):
             ),
         ),
         DataTableColumn(
-            _("Superuser"),
+            hg.DIV(_("Superuser"), style="text-align: center;"),
             hg.DIV(
                 hg.If(
                     hg.C("row").is_superuser,
@@ -172,6 +173,139 @@ class UserBrowseView(BrowseView):
     title = "Users"
     rowclickaction = BrowseView.gen_rowclickaction("read")
     viewstate_sessionkey = "adminusermanagement"
+
+    class FilterForm(forms.Form):
+        status = forms.MultipleChoiceField(
+            choices=[("active", _("Active")), ("inactive", _("Inactive"))],
+            widget=forms.CheckboxSelectMultiple,
+            required=False,
+        )
+        types = forms.MultipleChoiceField(
+            choices=[("superuser", _("Superuser")), ("staff", _("Staff"))],
+            widget=forms.CheckboxSelectMultiple,
+            required=False,
+        )
+        groups = forms.ModelMultipleChoiceField(
+            auth.models.Group.objects.all(),
+            widget=forms.SelectMultiple,
+            required=False,
+        )
+        permissions = forms.ModelMultipleChoiceField(
+            auth.models.Permission.objects.all(),
+            widget=forms.SelectMultiple,
+            required=False,
+        )
+
+    def _filterform(self):
+        return self.FilterForm({"status": ["active"], **self.request.GET})
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.checkboxcounterid = hg.html_id(self, "checkbox-counter")
+
+    def _checkbox_count(self):
+        counter = 0
+        form = self._filterform()
+        if form.is_valid():
+            counter += 1 if form.cleaned_data["types"] else 0
+            counter += 1 if form.cleaned_data["groups"] else 0
+            counter += 1 if form.cleaned_data["permissions"] else 0
+            counter += 1 if "inactive" in form.cleaned_data["status"] else 0
+        return counter
+
+    def get_queryset(self):
+        form = self._filterform()
+        qs = super().get_queryset()
+        if form.is_valid():
+            ret = (
+                (qs.filter(deleted=form.cleaned_data.get("trash", False)))
+                .select_related(
+                    "primary_email_address", "primary_postal_address", "_type"
+                )
+                .prefetch_related("tags")
+            )
+            if any(
+                [
+                    form.cleaned_data[i]
+                    for i in (
+                        "naturalperson",
+                        "legalperson",
+                        "personassociation",
+                        "naturalperson_subtypes",
+                        "legalperson_subtypes",
+                        "personassociation_subtypes",
+                    )
+                ]
+            ):
+                q = Q()
+                for i in ("naturalperson", "legalperson", "personassociation"):
+                    # setup some logic descriptors
+                    maintype_selected = bool(form.cleaned_data[i])
+                    subtype_selected = bool(form.cleaned_data[f"{i}_subtypes"])
+                    all_subtypes_selected = bool(
+                        form.cleaned_data[f"{i}_subtypes"].count()
+                        == form.fields[f"{i}_subtypes"].queryset.count()
+                    )
+
+    def get_settingspanel(self):
+        return hg.DIV(
+            layout.forms.Form(
+                self._filterform(),
+                hg.DIV(
+                    hg.DIV(
+                        hg.DIV(
+                            hg.DIV(
+                                layout.forms.FormField(
+                                    "types",
+                                ),
+                                style="margin-right: 16px",
+                            ),
+                            hg.DIV(
+                                layout.forms.FormField(
+                                    "groups",
+                                ),
+                                layout.forms.FormField(
+                                    "permissions",
+                                ),
+                                style="margin-right: 16px",
+                            ),
+                            style="display: flex",
+                        ),
+                        style="border-right: #ccc solid 1px; margin: 0 16px 0 0",
+                    ),
+                    hg.DIV(
+                        hg.DIV(layout.forms.FormField("status"), style="flex-grow: 0"),
+                        hg.DIV(style="flex-grow: 1"),
+                        style="display: flex; flex-direction: column",
+                    ),
+                    style="display: flex; max-height: 50vh; padding: 24px 32px 0 32px",
+                ),
+                hg.DIV(
+                    layout.button.Button(
+                        _("Cancel"),
+                        buttontype="ghost",
+                        onclick="this.parentElement.parentElement.parentElement.parentElement.parentElement.style.display = 'none'",
+                    ),
+                    layout.button.Button.fromlink(
+                        Link(
+                            label=_("Reset"),
+                            href=self.request.path + "?reset=1",
+                            iconname=None,
+                        ),
+                        buttontype="secondary",
+                    ),
+                    layout.button.Button(
+                        pgettext_lazy("apply filter", "Filter"),
+                        type="submit",
+                    ),
+                    style="display: flex; justify-content: flex-end; margin-top: 24px",
+                    _class="bx--modal-footer",
+                ),
+                method="GET",
+            ),
+            style="background-color: #fff",
+            onclick="updateCheckboxCounter(this)",
+        )
 
 
 class UserAddView(AddView):
