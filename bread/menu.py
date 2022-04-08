@@ -200,3 +200,15 @@ registeritem(
         admingroup,
     )
 )
+registeritem(
+    Item(
+        Link(
+            reverse("auth.group.browse"),
+            _("Group Management"),
+            permissions=[
+                "auth.group.view",
+            ],
+        ),
+        admingroup,
+    )
+)
