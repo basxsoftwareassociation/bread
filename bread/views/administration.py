@@ -216,39 +216,52 @@ class UserBrowseView(BrowseView):
             counter += 1 if "inactive" in form.cleaned_data["status"] else 0
         return counter
 
-    # def get_queryset(self):
-    #     form = self._filterform()
-    #     qs = super().get_queryset()
-    #     if form.is_valid():
-    #         ret = (
-    #             (qs.filter(deleted=form.cleaned_data.get("trash", False)))
-    #             .select_related(
-    #                 "primary_email_address", "primary_postal_address", "_type"
-    #             )
-    #             .prefetch_related("tags")
-    #         )
-    #         if any(
-    #             [
-    #                 form.cleaned_data[i]
-    #                 for i in (
-    #                     "naturalperson",
-    #                     "legalperson",
-    #                     "personassociation",
-    #                     "naturalperson_subtypes",
-    #                     "legalperson_subtypes",
-    #                     "personassociation_subtypes",
-    #                 )
-    #             ]
-    #         ):
-    #             q = Q()
-    #             for i in ("naturalperson", "legalperson", "personassociation"):
-    #                 # setup some logic descriptors
-    #                 maintype_selected = bool(form.cleaned_data[i])
-    #                 subtype_selected = bool(form.cleaned_data[f"{i}_subtypes"])
-    #                 all_subtypes_selected = bool(
-    #                     form.cleaned_data[f"{i}_subtypes"].count()
-    #                     == form.fields[f"{i}_subtypes"].queryset.count()
-    #                 )
+    def get_queryset(self):
+        form = self._filterform()
+        qs = super().get_queryset()
+
+        q = Q()
+
+        if form.is_valid():
+            filter_conds = (
+                # (field name, field value, Q object)
+                *(
+                    (
+                        ("status", val, Q(is_active=qval))
+                        for val, qval in (("active", True), ("inactive", False))
+                    )
+                    if any(
+                        status not in form.cleaned_data["status"]
+                        for status in ("active", "inactive")
+                    )
+                    else tuple()
+                ),
+                *(
+                    ("types", val, Q(**{f"is_{val}": True}))
+                    for val in ("superuser", "staff")
+                ),
+            )
+            for name, val, qcond in filter_conds:
+                if val in form.cleaned_data[name]:
+                    q &= qcond
+
+            # filtering groups and permissions
+            group_pks = [group["id"] for group in form.cleaned_data["groups"].values()]
+            permission_pks = [
+                permission["id"]
+                for permission in form.cleaned_data["permissions"].values()
+            ]
+
+            if group_pks:
+                q &= Q(groups__pk__in=group_pks)
+            if permission_pks:
+                q &= Q(user_permissions__pk__in=permission_pks)
+
+        print(q)
+        print(qs)
+
+        qs = qs.filter(q)
+        return qs
 
     def get_settingspanel(self):
         return hg.DIV(
