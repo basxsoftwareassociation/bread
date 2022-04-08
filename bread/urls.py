@@ -6,7 +6,7 @@ from django.urls import include, path
 
 from bread.utils import autopath, default_model_paths, model_urlname
 
-from .views import administration, auth, delete, userprofile
+from .views import administration, auth, userprofile
 from .views.globalpreferences import PreferencesView
 
 DjangoUserModel = django.contrib.auth.models.User
