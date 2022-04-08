@@ -97,14 +97,12 @@ urlpatterns = [
         browseview=administration.UserBrowseView,
         readview=administration.UserReadView,
         addview=administration.UserAddView,
-        deleteview=delete.DeleteView,
     ),
     *default_model_paths(
         DjangoGroupModel,
         addview=administration.GroupAddView,
         browseview=administration.GroupBrowseView,
         readview=administration.GroupReadView,
-        deleteview=delete.DeleteView,
     ),
     autopath(
         administration.UserEditView.as_view(),
