@@ -1,12 +1,10 @@
-import logging
 import os
 
 import htmlgenerator as hg
 from django.contrib.staticfiles import finders
-from django.core.cache import cache
 from django.utils.html import mark_safe
 
-logger = logging.getLogger(__name__)
+RAW_ICON_BASE_PATH = "design/carbon_design/icons/flat/raw_32/"
 
 
 class Icon(hg.SVG):
@@ -16,12 +14,16 @@ class Icon(hg.SVG):
     In order to see the name which should be passed to this template tag, click on "Download SVG"
     for an icon and use the filename without the attribte, e.g. "thunderstorm--severe"."""
 
+    ICONS = None
+
     def __init__(
         self,
         name,
         size=None,
         **attributes,
     ):
+        if Icon.ICONS is None:
+            Icon.ICONS = loadicons(RAW_ICON_BASE_PATH)
         attributes["viewBox"] = "0 0 32 32"
         attributes["preserveAspectRatio"] = "xMidYMid meet"
         attributes["focusable"] = "false"
@@ -33,20 +35,18 @@ class Icon(hg.SVG):
             attributes["width"] = size
             attributes["height"] = size
         self.name = name
-        super().__init__(**attributes)
+        super().__init__(
+            hg.F(lambda c: Icon.ICONS[hg.resolve_lazy(name, c)]), **attributes
+        )
 
-    def render(self, context):
-        name = hg.resolve_lazy(self.name, context)
-        if cache.get(name) is None:
-            path = finders.find(
-                os.path.join("design/carbon_design/icons/flat/raw_32/", f"{name}.svg")
-            )
-            if not path:
-                logger.error(f"Missing icon: {name}.svg")
-                self.append(f"Missing icon: {name}.svg")
-                return super().render(context)
-            with open(path) as f:
-                cache.set(name, f.read())
-        self.clear()
-        self.append(mark_safe(cache.get(name)))
-        return super().render(context)
+
+def loadicons(basepath):
+    absolute_path = finders.find(basepath)
+    icons = {}
+
+    for name in os.listdir(absolute_path):
+        iconpath = os.path.join(absolute_path, name)
+        if os.path.isfile(iconpath):
+            with open(iconpath) as f:
+                icons[name.replace(".svg", "")] = mark_safe(f.read())
+    return icons

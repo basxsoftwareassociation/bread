@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 import htmlgenerator as hg
 
@@ -27,7 +27,7 @@ class Tile(hg.DIV):
         super().__init__(*children, **attributes)
 
 
-class ExpandableTile(hg.BaseElement):
+class ExpandableTile(hg.DIV):
     """
     Expandable tiles are helpful for hiding and showing large amounts of content to a user.
     When expanded, tiles push content down the page. They allow the user to specifically
@@ -39,74 +39,40 @@ class ExpandableTile(hg.BaseElement):
     Demo: https://the-carbon-components.netlify.app/?nav=tile
     """
 
-    def __init__(
-        self,
-        above: Any,
-        below: Any,
-        above_attrs: Optional[dict] = None,
-        below_attrs: Optional[dict] = None,
-        **attributes
-    ):
+    def __init__(self, header: Any, content: Any, **attributes):
         """
         Parameters
         ----------
-        above : Any
-            the primary content of the tile that is not hidden under the fold
-        below : Any
+        header : Any
+            the header of the tile that is not hidden under the fold
+        content : Any
             the hidden content that only visible when user click to unfold the tile
-        above_attrs : dict, optional
-            dict representing the specific HTML attributes for the visible element
-            container within the above parameter,
-            for example, {'style': 'height: 400px'} is usually used if you do not
-            want the height to depend on the content inside.
-        below_attrs : dict, optional
-            dict representing the specific HTML attributes for the hidden element
-            container within the below parameter,
-            for example, {'style': 'height: 400px'} is usually used if you do not
-            want the height to depend on the content inside.
         **attributes : optional
             keyword arguments representing the specific HTML attributes for the tile
         """
-        expandable_tile_attrs = {
-            "_class": "bx--tile bx--tile--expandable",
-            "data_tile": "expandable",
-            "tabindex": "0",
-        }
-        hg.merge_html_attrs(attributes, expandable_tile_attrs)
-
-        above_attrs = above_attrs or {}
-        hg.merge_html_attrs(
-            above_attrs,
-            {"data_tile_atf": True, "_class": "bx--tile-content__above-the-fold"},
-        )
-
-        below_attrs = below_attrs or {}
-        hg.merge_html_attrs(below_attrs, {"_class": "bx--tile-content__below-the-fold"})
 
         super().__init__(
-            hg.BUTTON(
-                hg.DIV(
-                    Icon("chevron--down", size="16"),
-                    _class="bx--tile__chevron",
+            hg.BUTTON(Icon("chevron--down", size="16"), _class="bx--tile__chevron"),
+            hg.DIV(
+                hg.SPAN(
+                    header,
+                    data_tile_atf=True,
+                    _class="bx--tile-content__above-the-fold",
                 ),
-                hg.DIV(
-                    hg.SPAN(
-                        above,
-                        **above_attrs,
-                    ),
-                    hg.SPAN(
-                        below,
-                        **below_attrs,
-                    ),
-                    _class="bx--tile-content",
+                hg.SPAN(
+                    content,
+                    _class="bx--tile-content__below-the-fold",
+                    onclick="event.stopPropagation();",
+                    style="cursor: initial",
                 ),
-                onload=hg.format(
-                    (
-                        "let thisTile=this;"
-                        "window.setExpandableTileMaxHeight(thisTile);"
-                    ),
-                    autoescape=False,
-                ),
-                **attributes,
+                _class="bx--tile-content",
             ),
+            **hg.merge_html_attrs(
+                attributes,
+                {
+                    "_class": "bx--tile bx--tile--expandable",
+                    "data_tile": "expandable",
+                    "tabindex": "0",
+                },
+            )
         )

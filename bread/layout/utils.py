@@ -4,17 +4,13 @@ import htmlgenerator as hg
 from django.conf import settings
 from django.db import models
 from django.db.models import ManyToOneRel
-from django.http import HttpResponse
-from django.template.context import _builtin_context_processors
 from django.template.defaultfilters import linebreaksbr
 from django.utils.formats import localize
-from django.utils.module_loading import import_string
 from django.utils.timezone import localtime
-
-from bread.utils import pretty_modelname, resolve_modellookup
-from bread.utils.urls import reverse_model
+from django.utils.translation import gettext_lazy as _
 
 from ..formatters import format_value
+from ..utils import pretty_modelname, resolve_modellookup, reverse_model
 
 DEVMODE_KEY = "DEVMODE"
 
@@ -130,9 +126,12 @@ class ObjectFieldValue(hg.Lazy):
 
         parts = self.fieldname.split(".")
         # test if the value has a matching get_FIELDNAME_display function
-        value = hg.resolve_lookup(
-            object, f"{'.'.join(parts[:-1])}.get_{parts[-1]}_display".lstrip(".")
-        )
+        try:
+            value = hg.resolve_lookup(
+                object, f"{'.'.join(parts[:-1])}.get_{parts[-1]}_display".lstrip(".")
+            )
+        except Exception:
+            value = None
         if value is None:
             try:
                 value = hg.resolve_lookup(object, self.fieldname)
@@ -154,23 +153,107 @@ class ObjectFieldValue(hg.Lazy):
 FC = FormattedContextValue
 
 
-def render(request, layout, context=None, **response_kwargs):
-    if render.CONTEXT_PROCESSORS is None:
-        render.CONTEXT_PROCESSORS = tuple(
-            import_string(path)
-            for path in _builtin_context_processors
-            + tuple(
-                (settings.TEMPLATES + [{}])[0]
-                .get("OPTIONS", {})
-                .get("context_processors", [])
+def get_attribute_description_modal(obj):
+    from . import datatable, modal
+
+    columns = []
+    fields = {f.name: f for f in obj._meta.get_fields()}
+    for i in set(dir(obj) + list(vars(obj))):
+        try:
+            desc = _get_attribute_description(obj, i, fields)
+            if desc is not None and desc[3]:
+                f = desc[3]._meta.get_fields()
+                additional_attrs = list(
+                    filter(
+                        None,
+                        (
+                            _get_attribute_description(desc[3], a, f)
+                            for a in set(dir(desc[3]) + list(vars(desc[3])))
+                        ),
+                    )
+                )
+                desc = (
+                    desc[0],
+                    desc[1],
+                    desc[2],
+                    hg.BaseElement(
+                        hg.UL(
+                            hg.Iterator(
+                                additional_attrs,
+                                "attr",
+                                hg.LI(
+                                    hg.format("{}.{}", i, hg.C("attr.0")),
+                                    style="font-weight: 700",
+                                ),
+                            )
+                        ),
+                    ),
+                )
+            if desc is not None:
+                columns.append(desc)
+        except Exception as e:
+            columns.append((i, _("Unknown"), e))
+    return modal.Modal(
+        _("Available columns"),
+        hg.DIV(
+            hg.DIV(_("Bold text marks valid column names")),
+            datatable.DataTable(
+                columns=[
+                    datatable.DataTableColumn(
+                        _("Column name"),
+                        hg.SPAN(hg.C("row.0"), style="font-weight: 700"),
+                    ),
+                    datatable.DataTableColumn(
+                        _("Description"), hg.F(lambda c: c["row"][2])
+                    ),
+                    datatable.DataTableColumn(_("Type"), hg.F(lambda c: c["row"][1])),
+                    datatable.DataTableColumn(_("Extended columns"), hg.C("row.3")),
+                ],
+                row_iterator=sorted(columns),
+            ),
+        ),
+        size="lg",
+    )
+
+
+def _get_attribute_description(obj, attr, modelfields):
+    # returns tuple(field_name, type_name, description, model)
+    if attr.startswith("_"):  # leading underscore is "private" by convention in python
+        return None
+    if callable(getattr(obj, attr, None)):
+        return None
+
+    if attr in modelfields:
+        if hasattr(modelfields[attr], "related_model") and getattr(
+            modelfields[attr], "related_model"
+        ):
+            return (
+                attr,
+                f"{type(modelfields[attr]).__name__} -> "
+                f"{modelfields[attr].related_model._meta.verbose_name}",
+                getattr(modelfields[attr], "verbose_name", None),
+                modelfields[attr].related_model,
             )
+        else:
+            return (
+                attr,
+                type(modelfields[attr]).__name__,
+                modelfields[attr].verbose_name,
+                None,
+            )
+    if hasattr(getattr(obj, attr, None), "related") and getattr(
+        getattr(obj, attr, None), "related"
+    ):
+        return (
+            attr,
+            f"{type(getattr(obj, attr, None)).__name__} -> "
+            f"{getattr(obj, attr, None).related.related_model._meta.verbose_name}",
+            getattr(getattr(obj, attr, None), "verbose_name", None),
+            getattr(obj, attr, None).related.related_model,
         )
-    response_kwargs.setdefault("content_type", "text/html")
-    defaultcontext = {}
-    for processor in render.CONTEXT_PROCESSORS:
-        defaultcontext.update(processor(request))
-    defaultcontext.update(context or {})
-    return HttpResponse(layout.render(defaultcontext), **response_kwargs)
-
-
-render.CONTEXT_PROCESSORS = None  # type: ignore
+    return (
+        attr,
+        type(getattr(obj, attr, None)).__name__,
+        getattr(getattr(obj, attr, None), "verbose_name", None),
+        None,
+    )

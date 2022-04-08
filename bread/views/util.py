@@ -9,11 +9,73 @@ from django.http import HttpResponse
 from django.urls import NoReverseMatch
 from django.utils.html import mark_safe
 from django.utils.module_loading import import_string
+from django.utils.translation import gettext_lazy as _
 
 from .. import layout as breadlayout
 from .. import menu
 from ..forms.forms import breadmodelform_factory
-from ..utils import filter_fieldlist, reverse_model
+from ..utils import ModelHref, filter_fieldlist, reverse_model
+
+R = breadlayout.grid.Row
+C = breadlayout.grid.Col
+
+
+def header():
+
+    editbutton = breadlayout.button.Button(
+        _("Edit"),
+        buttontype="ghost",
+        icon="edit",
+        notext=True,
+    ).as_href(ModelHref.from_object(hg.C("object"), "edit"))
+    readbutton = breadlayout.button.Button(
+        _("Read"),
+        buttontype="ghost",
+        icon="view",
+        notext=True,
+    ).as_href(ModelHref.from_object(hg.C("object"), "read"))
+
+    deletebutton = breadlayout.button.Button(
+        _("Delete"),
+        buttontype="tertiary",
+        icon="trash-can",
+        notext=True,
+        style="border-color: red; background-color: inherit",
+    ).as_href(ModelHref.from_object(hg.C("object"), "delete"))
+    deletebutton[1].attributes["style"] = "fill: red; color: red;"
+
+    copybutton = breadlayout.button.Button(
+        _("Copy"),
+        buttontype="ghost",
+        icon="copy",
+        notext=True,
+    ).as_href(ModelHref.from_object(hg.C("object"), "copy"))
+
+    return hg.DIV(
+        hg.H3(
+            hg.If(
+                hg.C("object"),
+                hg.BaseElement(
+                    hg.SPAN(hg.C("object")),
+                    hg.SPAN(
+                        hg.If(
+                            hg.C("request").resolver_match.url_name.endswith(".read"),
+                            editbutton,
+                            readbutton,
+                        ),
+                        copybutton,
+                        breadlayout.button.PrintPageButton(buttontype="ghost"),
+                        deletebutton,
+                        _class="no-print",
+                        style="margin-bottom: 1rem; margin-left: 1rem",
+                        width=3,
+                    ),
+                ),
+                hg.SPAN(hg.format(_("Add {}"), hg.C("view").model._meta.verbose_name)),
+            ),
+        ),
+        style="padding-top: 1rem",
+    )
 
 
 class CustomFormMixin:
@@ -58,10 +120,13 @@ class CustomFormMixin:
             return breadlayout.forms.Form(hg.C("form"), ret)
 
         # wrap with form will add a submit button
-        return hg.BaseElement(
-            hg.H3(self.object),
-            breadlayout.forms.Form(
-                hg.C("form"), ret, breadlayout.forms.helpers.Submit()
+        return hg.DIV(
+            header(),
+            breadlayout.tile.Tile(
+                breadlayout.forms.Form(
+                    hg.C("form"), ret, breadlayout.forms.helpers.Submit()
+                ),
+                _class="theme-white",
             ),
         )
 
@@ -129,7 +194,7 @@ class BreadView:
 
     layout: typing.Optional[hg.BaseElement] = None
     _layout_cached: typing.Optional[hg.BaseElement] = None
-    ajax_urlparameter = "asajax"
+    ajax_urlparameter = settings.AJAX_URLPARAMETER
     page_layout: typing.Optional[
         typing.Callable[[menu.Menu, hg.BaseElement], hg.BaseElement]
     ] = None
@@ -156,9 +221,6 @@ class BreadView:
         if isinstance(self.page_layout, str):
             self.page_layout = import_string(self.page_layout)
 
-    def get_page_layout(self, menu, content_layout):
-        return self.page_layout(menu, content_layout)
-
     def get_layout(self):
         """Returns the layout for this view, returns the ``layout`` attribute by default.
         Either set the ``layout`` attribute or override this method."""
@@ -170,7 +232,7 @@ class BreadView:
         response_kwargs.setdefault("content_type", self.content_type)
         ret = self._get_layout_cached()
         if self.ajax_urlparameter not in self.request.GET:
-            ret = self.get_page_layout(menu.main, ret)
+            ret = self.page_layout(menu.main, ret)
 
         return breadlayout.render(self.request, ret, context, **response_kwargs)
 

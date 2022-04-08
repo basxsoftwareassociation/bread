@@ -27,6 +27,7 @@ def generate_widget_element(
     ] = DEFAULT_FORM_CONTEXTNAME,  # required to derive the widget from a django form field
     no_wrapper: bool = False,  # wrapper produces less dense layout, from carbon styles
     no_label: bool = False,
+    no_helptext: bool = False,
     show_hidden_initial: bool = False,  # required in special cases to add an initial value
     #
     #
@@ -65,6 +66,7 @@ def generate_widget_element(
             widgetclass=HiddenInput,
             no_wrapper=True,
             no_label=True,
+            no_helptext=True,
             show_hidden_initial=False,
             **attributes,
         )
@@ -138,7 +140,7 @@ def generate_widget_element(
     widgetclass = _guess_widget(fieldname, form, widgetclass)
     ret = widgetclass(
         label=None if no_label else label,
-        help_text=help_text,
+        help_text=None if no_helptext else help_text,
         errors=errors,
         inputelement_attrs=inputelement_attrs,
         boundfield=boundfield,

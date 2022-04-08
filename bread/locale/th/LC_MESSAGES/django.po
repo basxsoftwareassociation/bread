@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-24 09:26+0000\n"
-"PO-Revision-Date: 2021-11-07 16:52+0000\n"
+"POT-Creation-Date: 2022-03-28 09:32+0000\n"
+"PO-Revision-Date: 2022-03-30 09:12+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
 "th/>\n"
@@ -17,130 +17,271 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.9-dev\n"
+"X-Generator: Weblate 4.12-dev\n"
 
-#: bread/contrib/reports/fields/queryfield.py:101
-#, python-format
-msgid "Invalid model '%s' selected"
-msgstr "เลือกโมเดล '%s'ที่ไม่ถูกต้อง"
+#: bread/contrib/document_templates/models.py:14
+#: bread/contrib/document_templates/models.py:67
+#: bread/contrib/reports/models.py:21 bread/contrib/reports/models.py:96
+msgid "Name"
+msgstr "ชื่อ"
+
+#: bread/contrib/document_templates/models.py:18
+msgid ""
+"Must be a *.docx file, use '{{ variable-name }}' to insert variables from "
+"below"
+msgstr ""
+"ต้องเป็นไฟล์ *.docx ใช้ '{{ variable-name }}' เพื่อแทรกตัวแปรจากด้านล่าง"
+
+#: bread/contrib/document_templates/models.py:23
+#: bread/contrib/reports/models.py:23 bread/contrib/triggers/models.py:104
+msgid "Model"
+msgstr "โมเดล"
+
+#: bread/contrib/document_templates/models.py:58
+msgid "Document Template"
+msgstr "แบบฟอร์มเอกสาร"
+
+#: bread/contrib/document_templates/models.py:59
+msgid "Document Templates"
+msgstr "แบบฟอร์มเอกสาร"
+
+#: bread/contrib/document_templates/models.py:67
+msgid "Name to use in the template document"
+msgstr "ชื่อแบบฟอร์ม"
+
+#: bread/contrib/document_templates/models.py:70 bread/views/read.py:44
+msgid "Value"
+msgstr "ขนาด"
+
+#: bread/contrib/document_templates/models.py:70
+msgid "Path to the desired value (see help)"
+msgstr "การตั้งค่าตามที่ต้องการ(ดูที่ช่วยเหลือ)"
+
+#: bread/contrib/document_templates/models.py:72
+msgid "Raw value"
+msgstr "ตั้งค่าขนาดของแถว"
+
+#: bread/contrib/document_templates/models.py:75
+msgid "Variable"
+msgstr "ค่าตัวแปร"
+
+#: bread/contrib/document_templates/models.py:76
+msgid "Variables"
+msgstr "ตัวแปร"
+
+#: bread/contrib/document_templates/views.py:14
+msgid "Error"
+msgstr "เกิดข้อผิดพลาด"
+
+#: bread/contrib/document_templates/views.py:25
+msgid "Variables in document but not defined below: "
+msgstr "ตัวแปรเอกสารแต่ไม่ได้กำหนดต่อไปนี้ "
+
+#: bread/contrib/document_templates/views.py:33
+msgid "Variables defined below but not used in document: "
+msgstr "ตัวแปรที่กำหนดต่อไปนี้ไม่ถูกใช้ในเอกสาร "
+
+#: bread/contrib/document_templates/views.py:54
+#: bread/contrib/reports/views.py:54
+msgid "Help"
+msgstr "ช่วยเหลือ"
 
 #: bread/contrib/reports/models.py:20
 msgid "Created"
 msgstr "สร้าง"
 
-#: bread/contrib/reports/models.py:21 bread/contrib/reports/models.py:98
-msgid "Name"
-msgstr "ชื่อ"
-
-#: bread/contrib/reports/models.py:26
-msgid "Model"
-msgstr "โมเดล"
-
-#: bread/contrib/reports/models.py:27
+#: bread/contrib/reports/models.py:25 bread/contrib/triggers/models.py:107
 msgid "Filter"
 msgstr "ค้นหา"
 
-#: bread/contrib/reports/models.py:29
+#: bread/contrib/reports/models.py:27
 msgid "Custom Filter"
 msgstr "ตัวกรองแบบกำหนดเอง"
 
-#: bread/contrib/reports/models.py:32
+#: bread/contrib/reports/models.py:30
 msgid ""
 "Key in 'settings.REPORT_FILTERS' must be a function returning a queryset"
 msgstr "คีย์ใน 'settings.REPORT_FILTERS' ต้องเป็นฟังก์ชันที่ส่งคืนชุดข้อความค้นหา"
 
-#: bread/contrib/reports/models.py:50
+#: bread/contrib/reports/models.py:48
 msgid "Preview"
 msgstr "มุมมอง"
 
-#: bread/contrib/reports/models.py:68
+#: bread/contrib/reports/models.py:66
 #, python-format
 msgid ""
 "settings.REPORT_FILTERS[\"%s\"] did not return a queryset but returned: %s"
 msgstr "คีย์ใน 'settings.REPORT_FILTERS'[\"%s\"] ต้องเป็นฟังก์ชันที่ส่งคืนชุดข้อความค้นหา %s"
 
-#: bread/contrib/reports/models.py:75
+#: bread/contrib/reports/models.py:73
 #, python-format
 msgid ""
 "settings.REPORT_FILTERS[\"%s\"] did not return a queryset for %s but for %s"
 msgstr "ตั้งค่า.REPORT_FILTERS[\"%s\"] ไม่ได้ส่งคืนชุดการสืบค้นสำหรับ %s แต่สำหรับ %s"
 
-#: bread/contrib/reports/models.py:86
+#: bread/contrib/reports/models.py:84
 msgid "Report"
 msgstr "รายงาน"
 
-#: bread/contrib/reports/models.py:87 bread/contrib/reports/urls.py:71
+#: bread/contrib/reports/models.py:85 bread/contrib/reports/urls.py:71
 #: bread/contrib/reports/urls.py:74
 msgid "Reports"
 msgstr "รายงาน"
 
-#: bread/contrib/reports/models.py:97 bread/contrib/reports/models.py:104
+#: bread/contrib/reports/models.py:95 bread/contrib/reports/models.py:102
 msgid "Column"
 msgstr "ช่อง"
 
-#: bread/contrib/reports/models.py:100
+#: bread/contrib/reports/models.py:98
 msgid "Aggregation"
 msgstr "สูตรรวม"
 
-#: bread/contrib/reports/models.py:105
+#: bread/contrib/reports/models.py:103
 msgid "Columns"
 msgstr "ช่อง"
 
 #: bread/contrib/reports/urls.py:23
-#: bread/layout/components/forms/__init__.py:312 bread/views/browse.py:56
+#: bread/layout/components/forms/__init__.py:341 bread/views/browse.py:57
+#: bread/views/browse.py:320 bread/views/util.py:39
 msgid "Delete"
 msgstr "ลบ"
 
-#: bread/contrib/reports/urls.py:27
+#: bread/contrib/reports/urls.py:27 bread/views/util.py:48
 msgid "Copy"
 msgstr "คัดลอก"
 
-#: bread/contrib/reports/urls.py:38 bread/views/read.py:59
-#: bread/views/userprofile.py:100 bread/views/userprofile.py:128
-#: bread/views/userprofile.py:160
+#: bread/contrib/reports/urls.py:38 bread/views/browse.py:309
+#: bread/views/read.py:60 bread/views/userprofile.py:100
+#: bread/views/userprofile.py:128 bread/views/userprofile.py:160
+#: bread/views/util.py:26
 msgid "Edit"
 msgstr "แก้ไข"
 
-#: bread/contrib/reports/urls.py:43 bread/contrib/reports/views.py:136
-#: bread/views/browse.py:49
+#: bread/contrib/reports/urls.py:43 bread/contrib/reports/views.py:130
+#: bread/views/browse.py:50
 msgid "Excel"
 msgstr "Excel"
 
-#: bread/contrib/reports/views.py:45
+#: bread/contrib/reports/views.py:33
 msgid "Base model"
 msgstr "โมเดลพื้นฐาน"
 
-#: bread/contrib/reports/views.py:67
-msgid "Help"
-msgstr "ช่วยเหลือ"
+#: bread/contrib/triggers/models.py:47
+msgid "Action"
+msgstr "ดำเนินการ"
 
-#: bread/contrib/reports/views.py:205
-msgid "Unknown"
-msgstr "ไม่รู้จัก"
+#: bread/contrib/triggers/models.py:48
+msgid "Actions"
+msgstr "ดำเนินการ"
 
-#: bread/contrib/reports/views.py:207
-msgid "Available columns"
-msgstr "คอลัมน์ที่มีอยู่"
+#: bread/contrib/triggers/models.py:52
+msgid "Email"
+msgstr "อีเมล์"
 
-#: bread/contrib/reports/views.py:209
-msgid "Bold text marks valid column names"
-msgstr "ใช้ข้อความตัวหนาระบุชื่อคอลัมน์ที่ถูกต้อง"
+#: bread/contrib/triggers/models.py:54
+msgid "Subject"
+msgstr "หัวเรื่อง"
 
-#: bread/contrib/reports/views.py:213
-msgid "Column name"
-msgstr "ชื่อคอลัมน์"
+#: bread/contrib/triggers/models.py:57 bread/contrib/triggers/models.py:63
+msgid ""
+"Will be rendered as a Django template with the name 'object' in the context"
+msgstr "จะแสดงผลเป็นเทมเพลต Django ที่มีชื่อ 'object' ในบริบท"
 
-#: bread/contrib/reports/views.py:217
-msgid "Description"
-msgstr "คำอธิบาย"
+#: bread/contrib/triggers/models.py:61
+msgid "Message"
+msgstr "ข้อความ"
 
-#: bread/contrib/reports/views.py:220
+#: bread/contrib/triggers/models.py:97
+msgid "Send Email Action"
+msgstr "ดำเนินการส่งอีเมล์"
+
+#: bread/contrib/triggers/models.py:98
+msgid "Send Email Actions"
+msgstr "ดำเนินการส่งอีเมล์"
+
+#: bread/contrib/triggers/models.py:117 bread/layout/utils.py:206
 msgid "Type"
 msgstr "ประเภท"
 
-#: bread/contrib/reports/views.py:223
-msgid "Extended columns"
-msgstr "ขยายคอลัมน์"
+#: bread/contrib/triggers/models.py:119
+msgid "Added"
+msgstr "เพิ่ม"
+
+#: bread/contrib/triggers/models.py:120
+msgid "Changed"
+msgstr "เปลี่ยน"
+
+#: bread/contrib/triggers/models.py:121
+msgid "Deleted"
+msgstr "ลบ"
+
+#: bread/contrib/triggers/models.py:129
+msgid "Data change trigger"
+msgstr "ทริกเกอร์เปลี่ยนแปลงข้อมูล"
+
+#: bread/contrib/triggers/models.py:130
+msgid "Data change triggers"
+msgstr "ทริกเกอร์เปลี่ยนแปลงข้อมูล"
+
+#: bread/contrib/triggers/models.py:134
+msgid "Minutes"
+msgstr "นาที"
+
+#: bread/contrib/triggers/models.py:135
+msgid "Hours"
+msgstr "ชั่วโมง"
+
+#: bread/contrib/triggers/models.py:136
+msgid "Days"
+msgstr "วัน"
+
+#: bread/contrib/triggers/models.py:137
+msgid "Weeks"
+msgstr "สัปดาห์"
+
+#: bread/contrib/triggers/models.py:138
+msgid "Months"
+msgstr "เดือน"
+
+#: bread/contrib/triggers/models.py:139
+msgid "Years"
+msgstr "ปี"
+
+#: bread/contrib/triggers/models.py:145 bread/views/read.py:41
+msgid "Field"
+msgstr "ฟิลด์"
+
+#: bread/contrib/triggers/models.py:147
+msgid "The field of the selected model which should trigger an action"
+msgstr "ฟิลด์ของโมเดลที่เลือกซึ่งควรดำเนินการทริกเกอร์"
+
+#: bread/contrib/triggers/models.py:150
+msgid "Offset type"
+msgstr "ประเภทของการชดเชย"
+
+#: bread/contrib/triggers/models.py:155
+msgid "Offset amount"
+msgstr "จำนวนที่ชดเชย"
+
+#: bread/contrib/triggers/models.py:155
+msgid "Can be negative (before) or positive (after)"
+msgstr "เป็นลบ (ก่อน) หรือบวก (หลัง)"
+
+#: bread/contrib/triggers/models.py:158
+msgid "Ignore year"
+msgstr "ละเว้นปี"
+
+#: bread/contrib/triggers/models.py:160
+msgid "Check this in order to trigger every year"
+msgstr "ตรวจสอบสิ่งนี้เพื่อทริกเกอร์ทุกปี"
+
+#: bread/contrib/triggers/models.py:186
+msgid "Date field trigger"
+msgstr "ทริกเกอร์ฟิลด์วันที่"
+
+#: bread/contrib/triggers/models.py:187
+msgid "Date field triggers"
+msgstr "ทริกเกอร์ฟิลด์วันที่"
 
 #: bread/contrib/workflows/views.py:20
 msgid "Workflow Diagram"
@@ -164,92 +305,68 @@ msgstr "เลือกใช้ภาษา"
 msgid "Timezone"
 msgstr "เขตเวลา"
 
-#: bread/layout/admin.py:31
-#, fuzzy
-#| msgid "Table Action Bar"
-msgid "unable to load"
-msgstr "แถบงาน"
+#: bread/formatters.py:79
+msgid "File not found"
+msgstr "ไม่พบไฟล์"
 
-#: bread/layout/admin.py:44
-msgid "Package"
+#: bread/layout/componentpreview.py:123
+msgid "Table of Contents"
+msgstr "สารบัญ"
+
+#: bread/layout/componentpreview.py:976 bread/views/administration.py:259
+msgid ""
+"This is some tooltip text. This box shows the maximum amount of text that "
+"should appear inside. If more room is needed please use a modal instead."
 msgstr ""
+"นี่คือข้อความคำแนะนำเครื่องมือบางส่วน "
+"กล่องนี้แสดงจำนวนตัวอักษรสูงสุดที่ควรปรากฏอยู่ภายใน หากต้องการพื้นที่เพิ่ม "
+"โปรดใช้โมดุลแทน"
 
-#: bread/layout/admin.py:48
-msgid "Current"
-msgstr ""
+#: bread/layout/componentpreview.py:1039
+msgid "This is a server message in the ToastNotification."
+msgstr "นี่คือข้อความเซิร์ฟเวอร์ ToastNotification"
 
-#: bread/layout/admin.py:52
-msgid "Latest"
-msgstr ""
+#: bread/layout/componentpreview.py:1173
+msgid "Click to see ToastNotification in action"
+msgstr "คลิกเพื่อดูการทำงานของ ToastNotification"
 
-#: bread/layout/admin.py:95
-#, python-format
-msgid "The database size has been minimized from %.2f kB to %.2f kB."
-msgstr ""
-
-#: bread/layout/admin.py:100
-#, python-format
-msgid "Previous Size: %.2f kB"
-msgstr ""
-
-#: bread/layout/admin.py:110
-msgid "Optimize"
-msgstr ""
-
-#: bread/layout/admin.py:115
-#, python-format
-msgid "Current Size: %.2f kB"
-msgstr ""
-
-#: bread/layout/admin.py:142
-msgid "Rebuilt search index"
-msgstr ""
-
-#: bread/layout/admin.py:151
-msgid "Rebuild"
-msgstr ""
-
-#: bread/layout/admin.py:172
-msgid "Log from the server"
-msgstr ""
-
-#: bread/layout/components/button.py:77
+#: bread/layout/components/button.py:78
 msgid "Print"
 msgstr "พิมพ์"
 
-#: bread/layout/components/datatable.py:239
-#: bread/layout/components/modal.py:106 bread/views/auth.py:28
+#: bread/layout/components/datatable.py:246
+#: bread/layout/components/modal.py:105 bread/views/auth.py:28
 msgid "Cancel"
 msgstr "ยกเลิก"
 
-#: bread/layout/components/datatable.py:250
+#: bread/layout/components/datatable.py:257
 msgid " items selected"
 msgstr " เลือกรายการ"
 
-#: bread/layout/components/datatable.py:256
+#: bread/layout/components/datatable.py:263
 msgid "Table Action Bar"
 msgstr "แถบงาน"
 
-#: bread/layout/components/datatable.py:356 bread/views/add.py:38
+#: bread/layout/components/datatable.py:352 bread/views/add.py:38
 #: bread/views/add.py:45
 #, python-format
 msgid "Add %s"
 msgstr "เพิ่ม %s"
 
-#: bread/layout/components/forms/__init__.py:53
+#: bread/layout/components/forms/__init__.py:57
 msgid "Form error"
 msgstr "เกิดข้อผิดพลาด"
 
-#: bread/layout/components/forms/__init__.py:67
+#: bread/layout/components/forms/__init__.py:71
 msgid "Hidden field error: "
-msgstr ""
+msgstr "ข้อผิดพลาดของฟิลด์ที่ซ่อนอยู่: "
 
-#: bread/layout/components/forms/__init__.py:198
-#: bread/layout/components/forms/__init__.py:218
+#: bread/layout/components/forms/__init__.py:210
+#: bread/layout/components/forms/__init__.py:230
 msgid "Add"
 msgstr "เพิ่ม"
 
-#: bread/layout/components/forms/__init__.py:265
+#: bread/layout/components/forms/__init__.py:293
 msgid "Order"
 msgstr "คำสั่ง"
 
@@ -258,11 +375,11 @@ msgstr "คำสั่ง"
 msgid "Save"
 msgstr "บันทึก"
 
-#: bread/layout/components/forms/widgets.py:237
+#: bread/layout/components/forms/widgets.py:238
 msgid "Show password"
 msgstr "เห็นรหัสผ่าน"
 
-#: bread/layout/components/forms/widgets.py:863
+#: bread/layout/components/forms/widgets.py:871
 msgid "Select file"
 msgstr "เลือกไฟล์"
 
@@ -291,11 +408,11 @@ msgstr "หน้า"
 msgid "Optional"
 msgstr "ตัวเลือกเพิ่มเติม"
 
-#: bread/layout/components/search.py:47 bread/layout/components/search.py:64
+#: bread/layout/components/search.py:47 bread/layout/components/search.py:66
 msgid "Search"
 msgstr "ค้นหา"
 
-#: bread/layout/components/search.py:111 bread/layout/components/search.py:112
+#: bread/layout/components/search.py:116 bread/layout/components/search.py:117
 msgid "Clear search input"
 msgstr "ล้างข้อมูลการค้นหา"
 
@@ -320,82 +437,202 @@ msgstr "ปิด"
 msgid "On"
 msgstr "เปิด"
 
-#: bread/menu.py:138
+#: bread/layout/utils.py:192
+msgid "Unknown"
+msgstr "ไม่รู้จัก"
+
+#: bread/layout/utils.py:194
+msgid "Available columns"
+msgstr "คอลัมน์ที่มีอยู่"
+
+#: bread/layout/utils.py:196
+msgid "Bold text marks valid column names"
+msgstr "ใช้ข้อความตัวหนาระบุชื่อคอลัมน์ที่ถูกต้อง"
+
+#: bread/layout/utils.py:200
+msgid "Column name"
+msgstr "ชื่อคอลัมน์"
+
+#: bread/layout/utils.py:204
+msgid "Description"
+msgstr "คำอธิบาย"
+
+#: bread/layout/utils.py:207
+msgid "Extended columns"
+msgstr "ขยายคอลัมน์"
+
+#: bread/menu.py:137
+msgid "Settings"
+msgstr "ตั้งค่า"
+
+#: bread/menu.py:143 bread/views/globalpreferences.py:33
+msgid "Global preferences"
+msgstr "การตั้งค่าส่วนกลาง"
+
+#: bread/menu.py:150
 msgid "Administration"
-msgstr ""
+msgstr "บริหารระบบ"
 
-#: bread/menu.py:143
+#: bread/menu.py:155
 msgid "Background Jobs"
-msgstr ""
+msgstr "งานพื้นฐาน"
 
-#: bread/menu.py:149
+#: bread/menu.py:161
 msgid "Django Admin"
-msgstr ""
+msgstr "Django แอดมิน"
 
-#: bread/menu.py:155 bread/views/admin.py:27
+#: bread/menu.py:167 bread/views/administration.py:40
 msgid "Maintenance"
-msgstr ""
+msgstr "บำรุงรักษา"
 
-#: bread/menu.py:165
-#, fuzzy
-#| msgid "System information"
+#: bread/menu.py:177
 msgid "System Information"
 msgstr "ข้อมูลระบบ"
 
-#: bread/menu.py:174
-msgid "Form widgets preview"
-msgstr ""
+#: bread/menu.py:186
+msgid "Component Preview"
+msgstr "การแสดงตัวอย่างส่วนประกอบ"
+
+#: bread/querysetfield/__init__.py:103
+#, python-format
+msgid "Invalid model '%s' selected"
+msgstr "เลือกโมเดล '%s'ที่ไม่ถูกต้อง"
 
 #: bread/views/add.py:23
 #, python-format
 msgid "Added %s"
 msgstr "เพิ่ม %s"
 
-#: bread/views/admin.py:33
-#, fuzzy
-#| msgid "pages"
+#: bread/views/administration.py:46
 msgid "Packages"
-msgstr "หน้า"
+msgstr "แพ็คเกจ"
 
-#: bread/views/admin.py:37
+#: bread/views/administration.py:50
 msgid "Optimize database"
-msgstr ""
+msgstr "ปรับฐานข้อมูลให้เหมาะสม"
 
-#: bread/views/admin.py:39
+#: bread/views/administration.py:52
 msgid "Rebuild search index"
-msgstr ""
+msgstr "สร้างดัชนีการค้นหาใหม่"
 
-#: bread/views/admin.py:127
+#: bread/views/administration.py:156
+msgid "Back to top"
+msgstr "กลับสู่ด้านบนสุด"
+
+#: bread/views/administration.py:164
+msgid "Layout"
+msgstr "เค้าโครง"
+
+#: bread/views/administration.py:168
+msgid "Informational"
+msgstr "ข้อมูล"
+
+#: bread/views/administration.py:172
+msgid "Interactive"
+msgstr "เชิงโต้ตอบ"
+
+#: bread/views/administration.py:176
+msgid "Datatable"
+msgstr "ตารางข้อมูล"
+
+#: bread/views/administration.py:180
+msgid "Form"
+msgstr "แบบฟอร์ม"
+
+#: bread/views/administration.py:182
 msgid "Widget preview"
-msgstr ""
+msgstr "แสดงตัวอย่างวิดเจ็ต"
 
-#: bread/views/admin.py:131
+#: bread/views/administration.py:186
 msgid "Widgets"
-msgstr ""
+msgstr "วิดเจ็ต"
 
-#: bread/views/admin.py:145
+#: bread/views/administration.py:202
 msgid "Configure preview"
-msgstr ""
+msgstr "กำหนดค่าการแสดงตัวอย่าง"
 
-#: bread/views/admin.py:152
+#: bread/views/administration.py:209
 msgid "Apply"
-msgstr ""
+msgstr "นำมาใช้"
 
-#: bread/views/admin.py:178
-#, fuzzy
-#| msgid "Created"
+#: bread/views/administration.py:216
+msgid "Tooltips"
+msgstr "เคล็ดลับเครื่องมือ"
+
+#: bread/views/administration.py:217
+msgid "Definition tooltip"
+msgstr "คำจำกัดความแนะนำเครื่องมือ"
+
+#: bread/views/administration.py:239
+msgid "Icon tooltip"
+msgstr "ไอคอนเคล็ดลับเครื่องมือ"
+
+#: bread/views/administration.py:253
+msgid "Interactive tooltip"
+msgstr "แบบโต้ตอบเคล็ดลับเครื่องมือ"
+
+#: bread/views/administration.py:298
 msgid "Date Created"
-msgstr "สร้าง"
+msgstr "วันที่สร้าง"
 
-#: bread/views/admin.py:185
-#, fuzzy
-#| msgid "Complete"
+#: bread/views/administration.py:305
 msgid "Date Completed"
-msgstr "เรียบร้อย"
+msgstr "วันที่เสร็จเรียบร้อย"
 
-#: bread/views/admin.py:195
+#: bread/views/administration.py:315
 msgid "Metadata"
-msgstr ""
+msgstr "ข้อมูลเมตา"
+
+#: bread/views/administration.py:333
+msgid "unable to load"
+msgstr "ไม่สามารถโหลดได้"
+
+#: bread/views/administration.py:346
+msgid "Package"
+msgstr "แพ็คเกจ"
+
+#: bread/views/administration.py:350
+msgid "Current"
+msgstr "ปัจจุบัน"
+
+#: bread/views/administration.py:354
+msgid "Latest"
+msgstr "ล่าสุด"
+
+#: bread/views/administration.py:397
+#, python-format
+msgid "The database size has been minimized from %.2f kB to %.2f kB."
+msgstr "ขนาดฐานข้อมูลถูกย่อจาก %.2f kB เป็น %.2f kB"
+
+#: bread/views/administration.py:402
+#, python-format
+msgid "Previous Size: %.2f kB"
+msgstr "ขนาดก่อนหน้า: %.2f kB"
+
+#: bread/views/administration.py:412
+msgid "Optimize"
+msgstr "เพิ่มประสิทธิภาพ"
+
+#: bread/views/administration.py:417
+#, python-format
+msgid "Current Size: %.2f kB"
+msgstr "ขนาดปัจจุบัน: %.2f kB"
+
+#: bread/views/administration.py:444
+msgid "Rebuilt search index"
+msgstr "สร้างดัชนีการค้นหาใหม่"
+
+#: bread/views/administration.py:453
+msgid "Rebuild"
+msgstr "สร้างใหม่"
+
+#: bread/views/administration.py:474
+msgid "Log from the server"
+msgstr "บันทึกจากเซิร์ฟเวอร์"
+
+#: bread/views/administration.py:502
+msgid "System information"
+msgstr "ข้อมูลระบบ"
 
 #: bread/views/auth.py:57 bread/views/auth.py:83 bread/views/userprofile.py:115
 #: bread/views/userprofile.py:121
@@ -454,37 +691,42 @@ msgstr "เปลี่ยนรหัสผ่านสำเร็จ"
 msgid "Please login again"
 msgstr "กรุณาเข้าสู่ระบบอีกครั้ง"
 
-#: bread/views/browse.py:195
+#: bread/views/browse.py:224
 #, python-format
 msgid "Action '%s' is not configured for this view"
 msgstr "ไม่ได้กำหนดค่าการกระทำ '%s' สำหรับมุมมองนี้"
 
-#: bread/views/browse.py:328
+#: bread/views/browse.py:269
+#, python-format
+msgid "Bad filter string '%s': '%s'"
+msgstr "สตริงตัวกรองไม่ถูกต้อง '%s': '%s'"
+
+#: bread/views/browse.py:370
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่สามารถทำการลบได้%s"
 
-#: bread/views/browse.py:341
+#: bread/views/browse.py:383
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s ไม่ควรลบเพราะ: %s"
 
-#: bread/views/browse.py:346
+#: bread/views/browse.py:388
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "ลบ %(count)s %(modelname)s"
 
-#: bread/views/browse.py:368
+#: bread/views/browse.py:410
 #, python-format
 msgid "Your user has not the permissions to restore %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่มีสิทธิ์กู้คืน%s"
 
-#: bread/views/browse.py:377
+#: bread/views/browse.py:419
 #, python-format
 msgid "%s could not be restored: %s"
 msgstr "%s ไม่ควรกู้คืนเพราะ: %s"
 
-#: bread/views/browse.py:382
+#: bread/views/browse.py:424
 #, python-format
 msgid "Restored %(count)s %(modelname)s"
 msgstr "กู้คืน %(count)s %(modelname)s"
@@ -499,37 +741,66 @@ msgstr "คืนค่า %(modelname)s %(objectname)s"
 msgid "Deleted %(modelname)s %(objectname)s"
 msgstr "ลบ %(modelname)s %(objectname)s"
 
-#: bread/views/edit.py:49
+#: bread/views/edit.py:51
 #, python-format
 msgid "Saved %s"
 msgstr "บันทึก %s"
 
-#: bread/views/edit.py:77
+#: bread/views/edit.py:82
 #, python-format
 msgid "Created copy %s"
 msgstr "สร้างสำเนา %s"
 
-#: bread/views/edit.py:101
+#: bread/views/edit.py:107
 #, python-format
 msgid "Created %s copies"
 msgstr "สร้าง %s สำเนา"
 
-#: bread/views/edit.py:144
+#: bread/views/edit.py:150
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "คัดลอก"
 
-#: bread/views/read.py:40
-msgid "lbl_field"
-msgstr ""
+#: bread/views/error.py:42
+msgid "Back to homepage"
+msgstr "กลับเข้าสู่หน้าหลัก"
 
-#: bread/views/read.py:43
-msgid "lbl_value"
-msgstr ""
+#: bread/views/error.py:53
+msgid "Bad request"
+msgstr "คำขอที่ไม่ถูกต้อง"
 
-#: bread/views/system.py:31
-msgid "System information"
-msgstr "ข้อมูลระบบ"
+#: bread/views/error.py:54
+msgid "The server cannot process the request due to a client error."
+msgstr "เซิร์ฟเวอร์ไม่สามารถดำเนินการตามคำขอได้เนื่องจากข้อผิดพลาดของไคลเอ็นต์"
+
+#: bread/views/error.py:66
+msgid "Forbidden"
+msgstr "ไม่ได้รับอนุญาต"
+
+#: bread/views/error.py:67
+msgid "You do not have permission to access this resource."
+msgstr "คุณไม่ได้รับอนุญาตให้เข้าถึงทรัพยากรนี้"
+
+#: bread/views/error.py:79
+msgid "Page not found"
+msgstr "ไม่พบหน้านี้"
+
+#: bread/views/error.py:82
+#, python-format
+msgid "The path %s could not be found."
+msgstr "ไม่พบเส้นทาง %s"
+
+#: bread/views/error.py:98
+msgid "Internal Server Error"
+msgstr "ข้อผิดพลาดภายในเซิร์ฟเวอร์"
+
+#: bread/views/error.py:102
+#, python-format
+msgid ""
+"A problem has occurred while loading the page at %s.<br>If the problem "
+"persists, please contact an administrator."
+msgstr ""
+"เกิดปัญหาขณะโหลดหน้าเว็บที่ %s<br>หากปัญหายังคงอยู่ โปรดติดต่อผู้ดูแลระบบ"
 
 #: bread/views/userprofile.py:36
 msgid "Manage Profile"
@@ -567,29 +838,37 @@ msgstr "เปิดใช้งานก็ต่อเมื่อคุณร
 msgid "<from browser>"
 msgstr "<จากบราวเซอร์>"
 
-#: bread/views/userprofile.py:263
+#: bread/views/userprofile.py:278
 msgid "Confirm changes with current password"
 msgstr "ยืนยันการเปลี่ยนแปลงด้วยรหัสผ่านปัจจุบัน"
 
-#: bread/views/userprofile.py:267
+#: bread/views/userprofile.py:282
 msgid "Please enter your current password to confirm these changes"
 msgstr "โปรดป้อนรหัสผ่านปัจจุบันของคุณเพื่อยืนยันการเปลี่ยนแปลง"
 
-#: bread/views/userprofile.py:276
+#: bread/views/userprofile.py:291
 msgid "Your current password was entered incorrectly. Please enter it again."
 msgstr "รหัสผ่านปัจจุบันของคุณไม่ถูกต้อง โปรดลองอีกครั้ง"
 
-#: bread/views/userprofile.py:325
+#: bread/views/userprofile.py:340
 msgid "Request reset"
 msgstr "คำขอตั้งค่าใหม่"
 
-#: bread/views/userprofile.py:356
+#: bread/views/userprofile.py:371
 msgid "Enabled developer mode"
 msgstr "เปิดใช้งานโหมดนักพัฒนา"
 
-#: bread/views/userprofile.py:358
+#: bread/views/userprofile.py:373
 msgid "Disabled developer mode"
 msgstr "ปิดใช้งานโหมดนักพัฒนา"
+
+#: bread/views/util.py:32
+msgid "Read"
+msgstr "อ่าน"
+
+#: bread/views/util.py:74
+msgid "Add {}"
+msgstr "เพิ่ม {}"
 
 #: bread/views/wizard.py:50
 msgid "Back"
@@ -791,9 +1070,6 @@ msgstr "ต่อไป"
 
 #~ msgid "Change Password"
 #~ msgstr "เปลี่ยนรหัสผ่าน"
-
-#~ msgid "System Settings"
-#~ msgstr "ตั้งค่าระบบ"
 
 #~ msgid "New report: "
 #~ msgstr "รายงานใหม่ "

@@ -152,7 +152,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             or default_bulkactions(self.model, self.columns)
         )
 
-    def get_layout(self):
+    def get_layout(self, **datatable_kwargs):
         qs = self.get_queryset()
         # re-mapping the Links because the URL is not supposed to be a real URL but an identifier
         # for the bulk action
@@ -189,6 +189,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             backurl=self.backurl,
             primary_button=self.primary_button,
             search_urlparameter=self.search_urlparameter,
+            **datatable_kwargs,
         )
 
     def get_context_data(self, *args, **kwargs):

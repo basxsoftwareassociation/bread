@@ -8,7 +8,7 @@ from bread.utils import filter_fieldlist, pretty_modelname, resolve_modellookup
 from bread.utils.links import Link, ModelHref
 from bread.utils.urls import link_with_urlparameters
 
-from ..base import ObjectFieldLabel, ObjectFieldValue, aslink_attributes
+from ..utils import ObjectFieldLabel, ObjectFieldValue, aslink_attributes
 from .button import Button
 from .icon import Icon
 from .overflow_menu import OverflowMenu
@@ -109,6 +109,7 @@ class DataTable(hg.TABLE):
         rowvariable: str = "row",
         spacing: str = "default",
         zebra: bool = False,
+        sticky: bool = False,
         **kwargs: Any,
     ):
         """A carbon DataTable element
@@ -134,7 +135,7 @@ class DataTable(hg.TABLE):
                 row_iterator, rowvariable, DataTable.row(columns)
             )
         kwargs["_class"] = kwargs.get("_class", "") + " ".join(
-            DataTable.tableclasses(spacing, zebra)
+            DataTable.tableclasses(spacing, zebra, sticky)
         )
         super().__init__(hg.THEAD(self.head), hg.TBODY(self.iterator), **kwargs)
 
@@ -400,6 +401,7 @@ event.stopPropagation()""",
                 }
             # convert simple string (modelfield) to column definition
             if isinstance(col, str):
+
                 col = DataTableColumn.from_modelfield(
                     col,
                     model,
@@ -472,7 +474,7 @@ event.stopPropagation()""",
         )
 
     @staticmethod
-    def tableclasses(spacing, zebra):
+    def tableclasses(spacing, zebra, sticky):
         if spacing not in DataTable.SPACINGS:
             raise ValueError(
                 f"argument 'spacin' is {spacing} but needs to be one of {DataTable.SPACINGS}"
@@ -482,6 +484,8 @@ event.stopPropagation()""",
             classes.append(f" bx--data-table--{spacing}")
         if zebra:
             classes.append(" bx--data-table--zebra")
+        if sticky:
+            classes.append(" bx--data-table--sticky-header")
         return classes
 
 
@@ -594,7 +598,7 @@ def sortingname_for_column(model, column):
     for field in resolve_modellookup(model, column):
         if hasattr(field, "sorting_name"):
             components.append(field.sorting_name)
-        elif isinstance(field, models.Field):
+        elif isinstance(field, (models.Field, models.ForeignObjectRel)):
             components.append(field.name)
         else:
             return None

@@ -20,10 +20,8 @@ class Report(models.Model):
     created = models.DateField(_("Created"), auto_now_add=True)
     name = models.CharField(_("Name"), max_length=255)
     model = models.ForeignKey(
-        ContentType,
-        on_delete=models.PROTECT,
+        ContentType, on_delete=models.PROTECT, verbose_name=_("Model")
     )
-    model.verbose_name = _("Model")
     filter = QuerysetField(_("Filter"), modelfieldname="model")
     custom_queryset = models.CharField(
         _("Custom Filter"),
@@ -34,20 +32,29 @@ class Report(models.Model):
         blank=True,
     )
     custom_queryset.lazy_choices = available_report_filters
+    pagination = models.PositiveIntegerField(
+        _("Pagination"),
+        default=0,
+        help_text=_(
+            "How many items to display per page when viewing the "
+            "report in the browser, 0 for everything on one page"
+        ),
+    )
 
     @property
     def preview(self):
         columns = []
         for column in self.columns.all():
             columns.append(
-                DataTableColumn(column.name, layout.FC(f"row.{column.column}"))
+                DataTableColumn(column.header, layout.FC(f"row.{column.column}"))
             )
         qs = self.queryset
         if qs is None:
             return hg.BaseElement("Model does no longer exists!")
 
         return hg.BaseElement(
-            hg.H3(_("Preview")),
+            hg.HR(),
+            hg.H3(_("Preview"), style="margin-top: 1rem"),
             layout.datatable.DataTable.from_queryset(
                 qs[:25], columns=columns, primary_button=""
             ),
@@ -94,8 +101,16 @@ class ReportColumn(models.Model):
         "sum": "",
     }
     report = models.ForeignKey(Report, on_delete=models.CASCADE, related_name="columns")
-    column = models.CharField(_("Column"), max_length=255)
-    name = models.CharField(_("Name"), max_length=255)
+    header = models.CharField(_("Header"), max_length=255)
+    column = models.CharField(
+        _("Column"), max_length=255, help_text=_("Value expression (see 'Help')")
+    )
+    sortingname = models.CharField(
+        _("Sortingname"),
+        max_length=255,
+        blank=True,
+        help_text=_("Django sorting expression"),
+    )
     aggregation = models.CharField(
         _("Aggregation"), max_length=64, choices=tuple(AGGREGATIONS.items()), blank=True
     )

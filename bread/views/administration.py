@@ -1272,7 +1272,7 @@ def componentpreview(request):
                 """
             )
         ),
-        layout.button.Button.fromlink(
+        layout.button.Button.from_link(
             Link(href="#", label=_("Back to top")),
             buttontype="secondary",
             icon="arrow--up",

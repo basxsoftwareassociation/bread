@@ -2,7 +2,7 @@ import htmlgenerator as hg
 
 import bread
 
-from .. import HasBreadCookieValue
+from ..utils import HasBreadCookieValue
 from .icon import Icon
 
 

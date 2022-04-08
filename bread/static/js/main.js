@@ -5,12 +5,22 @@ document.addEventListener(
     () => bread_load_elements()
 );
 
-htmx.onLoad(function(content) { bread_load_elements(); })
+// same for ajax content
+htmx.onLoad(function(content) {
+    bread_load_elements();
+});
 
 function bread_load_elements() {
     $$('[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)')._.fire("load")
 }
 
+// make sure to display content from faild ajax requests
+htmx.on('htmx:responseError', function(event) {
+    console.log(event);
+    event.detail.target.innerHTML = event.detail.xhr.responseText;
+});
+
+// some helper which are used for the multiselect widget
 function updateMultiselect(e) {
     let elem = $('.bx--list-box__selection', e);
     if (elem) {
@@ -38,54 +48,7 @@ function clearMultiselect(e) {
     updateMultiselect(e);
 }
 
-function makeChoices(selectElem) {
-    // prevent initialization in template forms for django formsets
-    if(selectElem.closest(".template-form")) {
-        return null;
-    }
-    var choices = new Choices(selectElem, {
-        removeItemButton: true,
-        position: 'bottom',
-        itemSelectText: '',
-        classNames: {
-            containerOuter: 'choices',
-            containerInner: 'choices__inner',
-            input: 'choices__input',
-            inputCloned: 'choices__input--cloned bx--text-input',
-            list: 'choices__list',
-            listItems: 'choices__list--multiple',
-            listSingle: 'choices__list--single',
-            listDropdown: 'choices__list--dropdown',
-            item: 'choices__item bx--tag',
-            itemSelectable: 'choices__item--selectable',
-            itemDisabled: 'choices__item--disabled',
-            itemChoice: 'choices__item--choice',
-            placeholder: 'choices__placeholder',
-            group: 'choices__group',
-            groupHeading: 'choices__heading',
-            button: 'choices__button',
-            activeState: 'is-active',
-            focusState: 'is-focused',
-            openState: 'is-open',
-            disabledState: 'is-disabled',
-            highlightedState: 'is-highlighted',
-            selectedState: 'is-selected',
-            flippedState: 'is-flipped',
-            loadingState: 'is-loading',
-            noResults: 'has-no-results',
-            noChoices: 'has-no-choices'
-        },
-    });
-    // check readonly
-    if(selectElem.hasAttribute("readonly")) {
-        $(selectElem.parentNode)._.style({cursor: "not-allowed", pointerEvents: "none"});
-        $(selectElem.parentNode.parentNode)._.style({cursor: "not-allowed", pointerEvents: "none"});
-        $(selectElem.parentNode.parentNode.parentNode)._.style({cursor: "not-allowed"});
-    }
-    return choices;
-}
-
-
+// function which make the django inline-formset mechanism work dynamically
 function init_formset(form_prefix) {
     update_add_button(form_prefix);
 }
@@ -124,21 +87,6 @@ function formset_add(form_prefix, list_container) {
 
     bread_load_elements();
     htmx.process(container_elem);
-}
-
-function validate_fields() {
-    var error = false;
-    for(input of $$("input")) {
-        if(!input.checkValidity()) {
-            var label = $("label[for=" + input.id + "]");
-            if(!label)
-                label = input;
-            console.log("Field " + label.innerText + " is not valid")
-            error = true;
-        }
-    }
-    if(error)
-        console.log("There are errors in some fields")
 }
 
 // Function which is used to collect checkboxes from a datatable and submit the selected checkboxes to a URL for bulk processing
@@ -181,46 +129,6 @@ function getBreadCookie(key, _default=null) {
     ret = ret.split('=')[1];
     return ret ? decodeURIComponent(ret) : _default;
 }
-
-// added a temporary bug fix for expandable tiles before getting carbon library updated.
-window.setExpandableTileMaxHeight = target => {
-    // note: atf = above the fold,
-    // btf = below the fold
-    const atf = target.querySelector("[data-tile-atf]");
-    const btf = target.querySelector(".bx--tile-content__below-the-fold");
-    const atfHeight = atf.getBoundingClientRect().height;
-    const btfHeight = btf.getBoundingClientRect().height;
-    if (target.classList.contains("bx--tile--is-expanded"))
-        target.style.maxHeight = `${atfHeight + btfHeight}px`;
-    else
-        target.style.maxHeight = `${atfHeight}px`;
-};
-const expandableTileObserver = new MutationObserver(mutations => {
-    for (let mutation of mutations) {
-        if (mutation.attributeName === "class") {
-            window.setExpandableTileMaxHeight(mutation.target);
-        }
-    }
-});
-const expandableTileDOMObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        window.setExpandableTileMaxHeight(entry.target);
-    });
-}, {
-    root: null,
-    rootMargin: "0px",
-    threshold: 0.1,
-})
-document.addEventListener("load", function() {
-    const expandableTiles = document.querySelectorAll(".bx--tile.bx--tile--expandable");
-    for (let tile of expandableTiles) {
-        expandableTileObserver.observe(tile, { attributes: true, });
-        expandableTileDOMObserver.observe(tile);
-    }
-});
-document.addEventListener("unload", function() {
-    expandableTileDOMObserver.disconnect();
-});
 
 // js code for menu picker
 function menuPickerLabel(target) {

@@ -14,6 +14,7 @@ from .fields import (
     FormField,
     FormFieldMarker,
 )
+from .helpers import HelpText
 
 
 class Form(hg.FORM):
@@ -106,8 +107,8 @@ class FormsetField(hg.Iterator):
     ):
         self.fieldname = fieldname
         self.formname = formname
-        self.formsetfactory_kwargs = formsetfactory_kwargs  # used in bread.forms.forms._generate_formset_class, maybe refactor this?
-        self.formsetinitial = formsetinitial  # used in bread.forms.forms._generate_formset_class, maybe refactor this?
+        self.formsetfactory_kwargs = formsetfactory_kwargs
+        self.formsetinitial = formsetinitial
         self.content = content
         if isinstance(self.content, FormFieldMarker):
             self.content = hg.BaseElement(self.content)
@@ -131,6 +132,7 @@ class FormsetField(hg.Iterator):
                             formname=DEFAULT_FORMSET_CONTEXTNAME,
                             no_wrapper=True,
                             no_label=True,
+                            no_helptext=True,
                         )
                         for field in c[self.formname][
                             self.fieldname
@@ -159,7 +161,7 @@ class FormsetField(hg.Iterator):
                 lambda c: Form(
                     c[self.formname][self.fieldname].formset.management_form,
                     *[
-                        FormField(f, no_wrapper=True, no_label=True)
+                        FormField(f, no_wrapper=True, no_label=True, no_helptext=True)
                         for f in c[self.formname][
                             self.fieldname
                         ].formset.management_form.fields
@@ -252,8 +254,10 @@ class FormsetField(hg.Iterator):
         from ..datatable import DataTable, DataTableColumn
 
         """
-        :param str fieldname: The fieldname which should be used for an formset, in general a one-to-many or many-to-many field
-        :param list fields: A list of strings or objects. Strings are converted to DataTableColumn, objects are passed on as they are
+        :param str fieldname: The fieldname which should be used for an
+                              formset, in general a one-to-many or many-to-many field
+        :param list fields: A list of strings or objects. Strings are converted
+                            to DataTableColumn, objects are passed on as they are
         :param str title: Datatable title, automatically generated from form if None
         :param str formname: Name of the surounding django-form object in the context
         :param dict formsetfield_kwargs: Arguments to be passed to the FormSetField constructor
@@ -265,11 +269,19 @@ class FormsetField(hg.Iterator):
         columns = []
         for f in fields:
             if isinstance(f, str):
-                f = FormField(f, no_wrapper=True, no_label=True)
+                f = FormField(f, no_wrapper=True, no_label=True, no_helptext=True)
             if isinstance(f, FormFieldMarker):
                 f = DataTableColumn(
-                    hg.C(
-                        f"{formname}.{fieldname}.formset.form.base_fields.{f.fieldname}.label"
+                    hg.BaseElement(
+                        hg.C(
+                            f"{formname}.{fieldname}.formset.form.base_fields.{f.fieldname}.label"
+                        ),
+                        HelpText(
+                            hg.C(
+                                f"{formname}.{fieldname}.formset.form.base_fields."
+                                f"{f.fieldname}.help_text"
+                            )
+                        ),
                     ),
                     f,
                 )
@@ -328,15 +340,19 @@ class FormsetField(hg.Iterator):
 class InlineDeleteButton(Button):
     def __init__(self, parentcontainerselector, label=_("Delete"), **kwargs):
         """
-        Show a delete button for the current inline form. This element needs to be inside a FormsetField
-        parentcontainerselector: CSS-selector which will be passed to element.closest in order to select the parent container which should be hidden on delete
+        Show a delete button for the current inline form. This element needs to
+        be inside a FormsetField.
+        parentcontainerselector: CSS-selector which will be passed to
+                                 element.closest in order to select the parent
+                                 container which should be hidden on delete.
         """
         defaults = {
             "notext": True,
             "small": True,
             "icon": "trash-can",
             "buttontype": "ghost",
-            "onclick": f"delete_inline_element(this.querySelector('input[type=checkbox]'), this.closest('{parentcontainerselector}'))",
+            "onclick": f"delete_inline_element(this.querySelector('input[type=checkbox]'), "
+            f"this.closest('{parentcontainerselector}'))",
         }
         defaults.update(kwargs)
         super().__init__(

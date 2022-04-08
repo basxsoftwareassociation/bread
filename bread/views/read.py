@@ -11,7 +11,7 @@ from ..forms.fields import FormsetField
 from ..forms.forms import breadmodelform_factory
 from ..utils import ModelHref, expand_ALL_constant
 from .edit import EditView
-from .util import BreadView
+from .util import BreadView, header
 
 
 class ReadView(
@@ -32,32 +32,34 @@ class ReadView(
         super().__init__(*args, **kwargs)
 
     def get_layout(self):
-        return hg.BaseElement(
-            hg.H3(self.object),
-            _layout.datatable.DataTable(
-                columns=[
-                    _layout.datatable.DataTableColumn(
-                        header=_("Field"), cell=hg.C("row.0")
-                    ),
-                    _layout.datatable.DataTableColumn(
-                        header=_("Value"), cell=hg.C("row.1")
-                    ),
-                ],
-                row_iterator=(
-                    (
-                        field
-                        if isinstance(field, tuple)
-                        else (
-                            _layout.ObjectFieldLabel(field),
-                            _layout.ObjectFieldValue(field, formatter=format_value),
+        return hg.DIV(
+            header(),
+            _layout.tile.Tile(
+                _layout.datatable.DataTable(
+                    columns=[
+                        _layout.datatable.DataTableColumn(
+                            header=_("Field"), cell=hg.C("row.0")
+                        ),
+                        _layout.datatable.DataTableColumn(
+                            header=_("Value"), cell=hg.C("row.1")
+                        ),
+                    ],
+                    row_iterator=(
+                        (
+                            field
+                            if isinstance(field, tuple)
+                            else (
+                                _layout.ObjectFieldLabel(field),
+                                _layout.ObjectFieldValue(field, formatter=format_value),
+                            )
                         )
-                    )
-                    for field in self.fields
+                        for field in self.fields
+                    ),
+                    style="width: auto",
                 ),
-                style="width: auto",
-            ),
-            _layout.button.Button(_("Edit"), style="margin-top: 2rem").as_href(
-                ModelHref.from_object(self.object, "edit")
+                _layout.button.Button(_("Edit"), style="margin-top: 2rem").as_href(
+                    ModelHref.from_object(self.object, "edit")
+                ),
             ),
         )
 

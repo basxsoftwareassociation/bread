@@ -33,9 +33,10 @@ class Button(hg.BUTTON):
         if notext or not children:
             attributes["_class"] += " bx--btn--icon-only"
             if children:
-                attributes[
-                    "_class"
-                ] += " bx--btn--icon-only bx--tooltip__trigger bx--tooltip--a11y bx--tooltip--bottom bx--tooltip--align-center"
+                attributes["_class"] += (
+                    " bx--btn--icon-only bx--tooltip__trigger bx--tooltip--a11y "
+                    "bx--tooltip--bottom bx--tooltip--align-center"
+                )
                 children = (hg.SPAN(*children, _class="bx--assistive-text"),)
 
         if icon is not None:
@@ -47,13 +48,6 @@ class Button(hg.BUTTON):
                 )
             children += (icon,)
         super().__init__(*children, **attributes)
-
-    @staticmethod
-    def fromlink(*args, **kwargs):
-        import warnings
-
-        warnings.warn("use of Button.fromlink is deprecated, use Button.from_link")
-        return Button.from_link(*args, **kwargs)
 
     @staticmethod
     def from_link(link, **kwargs):

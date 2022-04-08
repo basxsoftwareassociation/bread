@@ -47,18 +47,18 @@ class Modal(hg.DIV):
             *content,
             _class="bx--modal-content"
             + (" bx--modal-content--with-form" if with_form else ""),
-            tabindex="0",
+            tabindex=0,
         )
         super().__init__(
             hg.DIV(
                 hg.DIV(
                     hg.P(
                         label,
-                        _class="bx--modal-header__label bx--type-delta",
+                        _class="bx--modal-header__label",
                     ),
                     hg.P(
                         heading,
-                        _class="bx--modal-header__heading bx--type-beta",
+                        _class="bx--modal-header__heading",
                     ),
                     hg.BUTTON(
                         Icon(
@@ -83,8 +83,6 @@ class Modal(hg.DIV):
                 else "",
                 _class=f"bx--modal-container  bx--modal-container--{size}",
             ),
-            #  Note: focusable span allows for focus wrap feature within Modals ,
-            hg.SPAN(tabindex="0"),
             data_modal=True,
             id=self.id,
             role="dialog",
@@ -123,7 +121,8 @@ class Modal(hg.DIV):
         )
         if submitlabel:
             buttons[1].attributes["hx_post"] = url
-            # note: we always use multipart forms, avoids some issues, see ./forms/__init__.py:Form.__init__
+            # note: we always use multipart forms, avoids some issues
+            # see ./forms/__init__.py:Form.__init__
             buttons[1].attributes["hx_encoding"] = "multipart/form-data"
             buttons[1].attributes["hx_target"] = hg.format(
                 "#{} .bx--modal-content", modal.id
