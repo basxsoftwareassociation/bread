@@ -1,5 +1,4 @@
 import htmlgenerator as hg
-from django.forms import widgets
 
 from bread import layout
 from bread.layout.components.button import Button

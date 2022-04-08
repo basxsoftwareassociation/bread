@@ -1,13 +1,12 @@
 import django
 import django_celery_results.models
 from django.apps import apps
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group as DjangoGroupModel
 from django.urls import include, path
 
 from bread.utils import autopath, default_model_paths, model_urlname
 
-from .views import administration, auth, userprofile
+from .views import administration, auth, delete, userprofile
 from .views.globalpreferences import PreferencesView
 
 DjangoUserModel = django.contrib.auth.models.User
@@ -98,6 +97,7 @@ urlpatterns = [
         browseview=administration.UserBrowseView,
         readview=administration.UserReadView,
         addview=administration.UserAddView,
+        deleteview=delete.DeleteView,
     ),
     *default_model_paths(
         DjangoGroupModel,
