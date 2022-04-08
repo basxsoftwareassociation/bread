@@ -202,20 +202,6 @@ class UserBrowseView(BrowseView):
     def _filterform(self):
         return self.FilterForm({"status": ["active"], **self.request.GET})
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.checkboxcounterid = hg.html_id(self, "checkbox-counter")
-
-    def _checkbox_count(self):
-        counter = 0
-        form = self._filterform()
-        if form.is_valid():
-            counter += 1 if form.cleaned_data["types"] else 0
-            counter += 1 if form.cleaned_data["groups"] else 0
-            counter += 1 if form.cleaned_data["permissions"] else 0
-            counter += 1 if "inactive" in form.cleaned_data["status"] else 0
-        return counter
-
     def get_queryset(self):
         form = self._filterform()
         qs = super().get_queryset()
@@ -274,6 +260,7 @@ class UserBrowseView(BrowseView):
                                 layout.forms.FormField(
                                     "types",
                                 ),
+                                layout.forms.FormField("status"),
                                 style="margin-right: 16px",
                             ),
                             hg.DIV(
@@ -287,12 +274,6 @@ class UserBrowseView(BrowseView):
                             ),
                             style="display: flex",
                         ),
-                        style="border-right: #ccc solid 1px; margin: 0 16px 0 0",
-                    ),
-                    hg.DIV(
-                        hg.DIV(layout.forms.FormField("status"), style="flex-grow: 0"),
-                        hg.DIV(style="flex-grow: 1"),
-                        style="display: flex; flex-direction: column",
                     ),
                     style="display: flex; max-height: 50vh; padding: 24px 32px 0 32px",
                 ),
@@ -412,7 +393,7 @@ class UserAddView(AddView):
                     R(C(F(field, widgetclass=MenuPicker)))
                     for field in ("groups", "user_permissions")
                 ),
-                R(C(layout.forms.helpers.Submit(_("Add Group")))),
+                R(C(layout.forms.helpers.Submit(_("Create this user")))),
             )
         )
 
@@ -421,6 +402,36 @@ class GroupBrowseView(BrowseView):
     columns = [
         "id",
         "name",
+        DataTableColumn(
+            _("Members"),
+            hg.BaseElement(
+                hg.Iterator(
+                    hg.C("row").user_set.values(),
+                    "member",
+                    hg.If(
+                        hg.F(lambda context: context["member_index"] < 3),
+                        hg.DIV(
+                            hg.C("member.first_name"),
+                            " ",
+                            hg.C("member.last_name"),
+                            " (",
+                            hg.C("member.username"),
+                            ")",
+                            style="margin-bottom: 0.25rem;",  # for ones that may have a long name
+                        ),
+                    ),
+                ),
+                hg.If(
+                    hg.F(lambda context: len(context["row"].user_set.values()) >= 3),
+                    hg.SPAN(
+                        hg.F(
+                            lambda context: f"... and {len(context['row'].permissions.values()) - 3} more"
+                        ),
+                        style="font-style: italic;" "font-weight: bold;",
+                    ),
+                ),
+            ),
+        ),
         DataTableColumn(
             _("Permissions"),
             hg.BaseElement(
@@ -456,6 +467,92 @@ class GroupBrowseView(BrowseView):
     title = "Groups"
     rowclickaction = BrowseView.gen_rowclickaction("read")
     viewstate_sessionkey = "adminusermanagement"
+
+    class FilterForm(forms.Form):
+        members = forms.ModelMultipleChoiceField(
+            DjangoUserModel.objects.all(),
+            label=_("members"),
+            help_text=_("Specific users that belong to this group."),
+            required=False,
+        )
+        permissions = forms.ModelMultipleChoiceField(
+            auth.models.Permission.objects.all(),
+            label=_("permissions"),
+            help_text=_("Specific permissions for this group."),
+            required=False,
+        )
+
+    def _filterform(self):
+        return self.FilterForm(self.request.GET)
+
+    def get_queryset(self):
+        form = self._filterform()
+        qs = super().get_queryset()
+
+        q = Q()
+
+        if form.is_valid():
+            user_pks = [user["id"] for user in form.cleaned_data["members"].values()]
+            permission_pks = [
+                permission["id"]
+                for permission in form.cleaned_data["permissions"].values()
+            ]
+
+            if user_pks:
+                q &= Q(user__pk__in=user_pks)
+            if permission_pks:
+                q &= Q(permissions__pk__in=permission_pks)
+
+        qs = qs.filter(q)
+        return qs
+
+    def get_settingspanel(self):
+        return hg.DIV(
+            layout.forms.Form(
+                self._filterform(),
+                hg.DIV(
+                    hg.DIV(
+                        hg.DIV(
+                            hg.DIV(
+                                layout.forms.FormField(
+                                    "members",
+                                ),
+                                layout.forms.FormField(
+                                    "permissions",
+                                ),
+                                style="margin-right: 16px",
+                            ),
+                            style="display: flex",
+                        ),
+                    ),
+                    style="display: flex; max-height: 50vh; padding: 24px 32px 0 32px",
+                ),
+                hg.DIV(
+                    layout.button.Button(
+                        _("Cancel"),
+                        buttontype="ghost",
+                        onclick="this.parentElement.parentElement.parentElement.parentElement.parentElement.style.display = 'none'",
+                    ),
+                    layout.button.Button.fromlink(
+                        Link(
+                            label=_("Reset"),
+                            href=self.request.path + "?reset=1",
+                            iconname=None,
+                        ),
+                        buttontype="secondary",
+                    ),
+                    layout.button.Button(
+                        pgettext_lazy("apply filter", "Filter"),
+                        type="submit",
+                    ),
+                    style="display: flex; justify-content: flex-end; margin-top: 24px",
+                    _class="bx--modal-footer",
+                ),
+                method="GET",
+            ),
+            style="background-color: #fff",
+            onclick="updateCheckboxCounter(this)",
+        )
 
 
 class GroupAddView(AddView):
@@ -503,7 +600,7 @@ class GroupAddView(AddView):
                     R(C(F(field, widgetclass=MenuPicker)))
                     for field in ("user_set", "permissions")
                 ),
-                R(C(layout.forms.helpers.Submit(_("Add User")))),
+                R(C(layout.forms.helpers.Submit(_("Create this group")))),
             )
         )
 
@@ -941,13 +1038,13 @@ class UserEditPassword(EditView):
 class UserEditView(EditView):
     model = DjangoUserModel
     fields = [
+        "is_active",
         "username",
         "first_name",
         "last_name",
         "email",
         "is_superuser",
         "is_staff",
-        "is_active",
     ]
 
     def get_layout(self):
