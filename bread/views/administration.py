@@ -213,39 +213,39 @@ class UserBrowseView(BrowseView):
             counter += 1 if "inactive" in form.cleaned_data["status"] else 0
         return counter
 
-    def get_queryset(self):
-        form = self._filterform()
-        qs = super().get_queryset()
-        if form.is_valid():
-            ret = (
-                (qs.filter(deleted=form.cleaned_data.get("trash", False)))
-                .select_related(
-                    "primary_email_address", "primary_postal_address", "_type"
-                )
-                .prefetch_related("tags")
-            )
-            if any(
-                [
-                    form.cleaned_data[i]
-                    for i in (
-                        "naturalperson",
-                        "legalperson",
-                        "personassociation",
-                        "naturalperson_subtypes",
-                        "legalperson_subtypes",
-                        "personassociation_subtypes",
-                    )
-                ]
-            ):
-                q = Q()
-                for i in ("naturalperson", "legalperson", "personassociation"):
-                    # setup some logic descriptors
-                    maintype_selected = bool(form.cleaned_data[i])
-                    subtype_selected = bool(form.cleaned_data[f"{i}_subtypes"])
-                    all_subtypes_selected = bool(
-                        form.cleaned_data[f"{i}_subtypes"].count()
-                        == form.fields[f"{i}_subtypes"].queryset.count()
-                    )
+    # def get_queryset(self):
+    #     form = self._filterform()
+    #     qs = super().get_queryset()
+    #     if form.is_valid():
+    #         ret = (
+    #             (qs.filter(deleted=form.cleaned_data.get("trash", False)))
+    #             .select_related(
+    #                 "primary_email_address", "primary_postal_address", "_type"
+    #             )
+    #             .prefetch_related("tags")
+    #         )
+    #         if any(
+    #             [
+    #                 form.cleaned_data[i]
+    #                 for i in (
+    #                     "naturalperson",
+    #                     "legalperson",
+    #                     "personassociation",
+    #                     "naturalperson_subtypes",
+    #                     "legalperson_subtypes",
+    #                     "personassociation_subtypes",
+    #                 )
+    #             ]
+    #         ):
+    #             q = Q()
+    #             for i in ("naturalperson", "legalperson", "personassociation"):
+    #                 # setup some logic descriptors
+    #                 maintype_selected = bool(form.cleaned_data[i])
+    #                 subtype_selected = bool(form.cleaned_data[f"{i}_subtypes"])
+    #                 all_subtypes_selected = bool(
+    #                     form.cleaned_data[f"{i}_subtypes"].count()
+    #                     == form.fields[f"{i}_subtypes"].queryset.count()
+    #                 )
 
     def get_settingspanel(self):
         return hg.DIV(
@@ -410,6 +410,224 @@ class GroupBrowseView(BrowseView):
     title = "Groups"
     rowclickaction = BrowseView.gen_rowclickaction("read")
     viewstate_sessionkey = "adminusermanagement"
+
+
+class GroupReadView(ReadView):
+    model = auth.models.Group
+    fields = [
+        "id",
+        "name",
+        "permissions",
+    ]
+
+    def get_layout(self):
+        return hg.BaseElement(
+            hg.H3(
+                hg.SPAN(self.object),
+                edituser_toolbar(self.request),
+            ),
+            layout.tile.Tile(
+                layout.grid.Grid(
+                    R(C(hg.H3(_("Information")))),
+                    R(
+                        C(
+                            *(
+                                display_label_and_value(
+                                    ObjectFieldLabel(field), ObjectFieldValue(field)
+                                )
+                                for field in self.fields[:-1]
+                            ),
+                        ),
+                    ),
+                    R(
+                        C(
+                            open_modal_popup_button(
+                                self.object,
+                                self.model,
+                                "ajax_edit_group_info",
+                                "md",
+                                _("Rename the group"),
+                            ),
+                        )
+                    ),
+                ),
+                style="padding: 3rem; margin-bottom: 2rem;",
+            ),
+            layout.tile.Tile(
+                layout.grid.Grid(
+                    R(C(hg.H3(_("Members")))),
+                    R(
+                        C(
+                            DataTable(
+                                columns=[
+                                    DataTableColumn(_("ID"), hg.C("row.id")),
+                                    DataTableColumn(
+                                        _("Username"), hg.C("row.username")
+                                    ),
+                                    DataTableColumn(
+                                        _("First Name"), hg.C("row.first_name")
+                                    ),
+                                    DataTableColumn(
+                                        _("Last Name"), hg.C("row.last_name")
+                                    ),
+                                ],
+                                row_iterator=[
+                                    {
+                                        "id": row["id"],
+                                        "username": row["username"],
+                                        "first_name": row["first_name"],
+                                        "last_name": row["last_name"],
+                                    }
+                                    for row in self.object.user_set.values()
+                                ],
+                            )
+                        )
+                    ),
+                    R(
+                        C(
+                            open_modal_popup_button(
+                                self.object,
+                                self.model,
+                                "ajax_edit_group_user",
+                                "lg",
+                            )
+                        )
+                    ),
+                ),
+                style="padding: 3rem; margin-bottom: 2rem;",
+            ),
+            layout.tile.Tile(
+                layout.grid.Grid(
+                    R(C(hg.H3(_("Permissions")))),
+                    R(
+                        C(
+                            DataTable(
+                                columns=[
+                                    DataTableColumn(
+                                        header=_("ID"),
+                                        cell=hg.DIV(hg.C("row.id")),
+                                    ),
+                                    DataTableColumn(
+                                        header=_("App"),
+                                        cell=hg.DIV(hg.C("row.app_label")),
+                                    ),
+                                    DataTableColumn(
+                                        header=_("Model"),
+                                        cell=hg.DIV(hg.C("row.model")),
+                                    ),
+                                    DataTableColumn(
+                                        header=_("Codename"),
+                                        cell=hg.DIV(hg.C("row.codename")),
+                                    ),
+                                    DataTableColumn(
+                                        header=_("Permission"),
+                                        cell=hg.DIV(hg.C("row.permissions")),
+                                    ),
+                                ],
+                                row_iterator=[
+                                    {
+                                        "id": row["id"],
+                                        "app_label": contenttypes.models.ContentType.objects.get(
+                                            pk=row["content_type_id"]
+                                        ).app_label,
+                                        "model": contenttypes.models.ContentType.objects.get(
+                                            pk=row["content_type_id"]
+                                        ).model,
+                                        "permissions": row["name"],
+                                        "codename": row["codename"],
+                                    }
+                                    for row in self.object.permissions.values()
+                                ],
+                            )
+                        )
+                    ),
+                    R(
+                        C(
+                            open_modal_popup_button(
+                                self.object,
+                                self.model,
+                                "ajax_edit_group_permissions",
+                                "lg",
+                            )
+                        )
+                    ),
+                ),
+                style="padding: 3rem;",
+            ),
+        )
+
+
+class GroupEditView(EditView):
+    model = auth.models.Group
+
+    def get_layout(self):
+        return layout.grid.Grid(
+            layout.components.forms.Form(hg.C("form"), R(C(F("name")))),
+        )
+
+
+class GroupEditUser(EditView):
+    model = auth.models.Group
+
+    def get_edit_user_form_for(self, pk=None, *args, **kwargs):
+        class EditUserForm(forms.ModelForm):
+            id = forms.DecimalField(
+                widget=forms.HiddenInput,
+                initial=pk,
+            )
+            user_set = forms.ModelMultipleChoiceField(
+                queryset=DjangoUserModel.objects.all(),
+                label=_("Users"),
+                widget=forms.SelectMultiple(),
+                initial=DjangoUserModel.objects.filter(groups__pk=pk),
+                required=False,
+            )
+
+            class Meta:
+                model = auth.models.Group
+                fields = ("id", "user_set")
+
+        return EditUserForm(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        group = self.object
+
+        form = self.get_edit_user_form_for(group, request.POST)
+        if form.is_valid():
+            user_set = form.cleaned_data["user_set"]
+            form = group.save()
+            for user in user_set.values():
+                group.user_set.add(user["id"])
+
+            group.save()
+        else:
+            messages.error(
+                request,
+                _("An unexpected error occured. Please try again."),
+            )
+
+        return super().post(request, *args, **kwargs)
+
+    def get_layout(self):
+        form = self.get_edit_user_form_for(pk=self.object.pk)
+
+        return layout.grid.Grid(
+            layout.components.forms.Form(
+                form, F("id"), R(C(F("user_set", widgetclass=MenuPicker)))
+            ),
+        )
+
+
+class GroupEditPermission(EditView):
+    model = auth.models.Group
+
+    def get_layout(self):
+        return layout.grid.Grid(
+            layout.components.forms.Form(
+                hg.C("form"), R(C(F("permissions", widgetclass=MenuPicker)))
+            ),
+        )
 
 
 class UserReadView(ReadView):

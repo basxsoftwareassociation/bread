@@ -102,6 +102,7 @@ urlpatterns = [
     *default_model_paths(
         DjangoGroupModel,
         browseview=administration.GroupBrowseView,
+        readview=administration.GroupReadView,
     ),
     autopath(
         administration.UserEditView.as_view(),
@@ -118,6 +119,18 @@ urlpatterns = [
     autopath(
         administration.UserEditPassword.as_view(),
         urlname=model_urlname(DjangoUserModel, "ajax_edit_user_password"),
+    ),
+    autopath(
+        administration.GroupEditView.as_view(),
+        urlname=model_urlname(DjangoGroupModel, "ajax_edit_group_info"),
+    ),
+    autopath(
+        administration.GroupEditUser.as_view(),
+        urlname=model_urlname(DjangoGroupModel, "ajax_edit_group_user"),
+    ),
+    autopath(
+        administration.GroupEditPermission.as_view(),
+        urlname=model_urlname(DjangoGroupModel, "ajax_edit_group_permissions"),
     ),
 ] + external_urlpatterns
 
