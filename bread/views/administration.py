@@ -16,6 +16,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core import management
 from django.db import connection
 from django.db.models import Q
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django_celery_results.models import TaskResult
@@ -505,6 +506,25 @@ class GroupReadView(ReadView):
                                     ),
                                     DataTableColumn(
                                         _("Last Name"), hg.C("row.last_name")
+                                    ),
+                                    DataTableColumn(
+                                        "",
+                                        hg.F(
+                                            lambda context: Button.from_link(
+                                                Link(
+                                                    label=context["row"]["username"],
+                                                    href=reverse(
+                                                        "auth.user.read",
+                                                        kwargs={
+                                                            "pk": context["row"]["id"]
+                                                        },
+                                                    ),
+                                                ),
+                                                buttontype="ghost",
+                                                icon="link",
+                                                notext=True,
+                                            )
+                                        ),
                                     ),
                                 ],
                                 row_iterator=[
