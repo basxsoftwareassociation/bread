@@ -13,8 +13,6 @@ class MenuPicker(BaseWidget):
     that solve a problem when there are a large number of items to choose from
     """
 
-    django_widget = widgets.CheckboxSelectMultiple
-
     def __init__(
         self,
         label=None,
