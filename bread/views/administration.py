@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.forms import UserCreationForm
 from django.core import management
 from django.db import connection
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django_celery_results.models import TaskResult
@@ -405,11 +406,46 @@ class GroupBrowseView(BrowseView):
     columns = [
         "id",
         "name",
-        "permissions",
+        DataTableColumn(
+            _("Permissions"),
+            hg.BaseElement(
+                hg.Iterator(
+                    hg.C("row").permissions.values(),
+                    "permission",
+                    hg.If(
+                        hg.F(lambda context: context["permission_index"] < 3),
+                        hg.DIV(
+                            hg.F(
+                                lambda c: contenttypes.models.ContentType.objects.get(
+                                    pk=c["permission"]["content_type_id"]
+                                ).app_label
+                            ),
+                            ".",
+                            hg.C("permission.codename"),
+                            style="margin-bottom: 0.25rem;",  # for ones that may have a long name
+                        ),
+                    ),
+                ),
+                hg.If(
+                    hg.F(lambda context: len(context["row"].permissions.values()) >= 3),
+                    hg.SPAN(
+                        hg.F(
+                            lambda context: f"... and {len(context['row'].permissions.values()) - 3} more"
+                        ),
+                        style="font-style: italic;" "font-weight: bold;",
+                    ),
+                ),
+            ),
+        ),
     ]
     title = "Groups"
     rowclickaction = BrowseView.gen_rowclickaction("read")
     viewstate_sessionkey = "adminusermanagement"
+
+
+class GroupAddView(AddView):
+    model = auth.models.Group
+    fields = ["name", "user_set", "permissions"]
 
 
 class GroupReadView(ReadView):
@@ -571,10 +607,6 @@ class GroupEditUser(EditView):
 
     def get_edit_user_form_for(self, pk=None, *args, **kwargs):
         class EditUserForm(forms.ModelForm):
-            id = forms.DecimalField(
-                widget=forms.HiddenInput,
-                initial=pk,
-            )
             user_set = forms.ModelMultipleChoiceField(
                 queryset=DjangoUserModel.objects.all(),
                 label=_("Users"),
@@ -593,12 +625,18 @@ class GroupEditUser(EditView):
         self.object = self.get_object()
         group = self.object
 
-        form = self.get_edit_user_form_for(group, request.POST)
+        form = self.get_edit_user_form_for(self.object.pk, request.POST)
         if form.is_valid():
-            user_set = form.cleaned_data["user_set"]
-            form = group.save()
-            for user in user_set.values():
+            user_set_pks = [
+                user["id"] for user in form.cleaned_data["user_set"].values()
+            ]
+            added_user = DjangoUserModel.objects.filter(pk__in=user_set_pks)
+            removed_user = group.user_set.filter(~Q(pk__in=user_set_pks))
+
+            for user in added_user.values():
                 group.user_set.add(user["id"])
+            for user in removed_user.values():
+                group.user_set.remove(user["id"])
 
             group.save()
         else:
@@ -614,7 +652,7 @@ class GroupEditUser(EditView):
 
         return layout.grid.Grid(
             layout.components.forms.Form(
-                form, F("id"), R(C(F("user_set", widgetclass=MenuPicker)))
+                form, R(C(F("user_set", widgetclass=MenuPicker)))
             ),
         )
 

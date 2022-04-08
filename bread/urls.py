@@ -101,6 +101,7 @@ urlpatterns = [
     ),
     *default_model_paths(
         DjangoGroupModel,
+        addview=administration.GroupAddView,
         browseview=administration.GroupBrowseView,
         readview=administration.GroupReadView,
     ),
