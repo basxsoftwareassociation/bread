@@ -14,6 +14,7 @@ class MenuPicker(BaseWidget):
 
     def __init__(
         self,
+        max_height=20,  # the maximum height of the widget (in rem)
         label=None,
         help_text=None,
         errors=None,
@@ -105,6 +106,7 @@ class MenuPicker(BaseWidget):
                                     spacing="short",
                                     zebra=True,
                                 ),
+                                style=f"max-height: {max_height}rem;",
                                 _class="bread--menupicker__table-container",
                             ),
                             breakpoint="lg",
@@ -156,6 +158,7 @@ class MenuPicker(BaseWidget):
                                     spacing="short",
                                     zebra=True,
                                 ),
+                                style=f"max-height: {max_height}rem;",
                                 _class="bread--menupicker__table-container",
                             ),
                             breakpoint="lg",
