@@ -104,6 +104,7 @@ urlpatterns = [
         addview=administration.GroupAddView,
         browseview=administration.GroupBrowseView,
         readview=administration.GroupReadView,
+        deleteview=delete.DeleteView,
     ),
     autopath(
         administration.UserEditView.as_view(),
