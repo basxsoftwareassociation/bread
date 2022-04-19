@@ -9,6 +9,9 @@ from bread.utils import Link, autopath, default_model_paths, model_urlname, urls
 urlpatterns = [
     *default_model_paths(
         DocumentTemplate,
+        browseview=views.BrowseView._with(
+            rowclickaction=views.BrowseView.gen_rowclickaction("edit")
+        ),
         editview=DocumentTemplateEditView,
         readview=DocumentTemplateEditView,
         addview=views.AddView._with(fields=["name", "model", "file"]),
