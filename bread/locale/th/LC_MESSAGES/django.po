@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-28 09:32+0000\n"
+"POT-Creation-Date: 2022-04-19 06:56+0000\n"
 "PO-Revision-Date: 2022-03-30 09:12+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: bread/contrib/document_templates/models.py:14
 #: bread/contrib/document_templates/models.py:67
-#: bread/contrib/reports/models.py:21 bread/contrib/reports/models.py:96
+#: bread/contrib/reports/models.py:21
 msgid "Name"
 msgstr "ชื่อ"
 
@@ -29,8 +29,7 @@ msgstr "ชื่อ"
 msgid ""
 "Must be a *.docx file, use '{{ variable-name }}' to insert variables from "
 "below"
-msgstr ""
-"ต้องเป็นไฟล์ *.docx ใช้ '{{ variable-name }}' เพื่อแทรกตัวแปรจากด้านล่าง"
+msgstr "ต้องเป็นไฟล์ *.docx ใช้ '{{ variable-name }}' เพื่อแทรกตัวแปรจากด้านล่าง"
 
 #: bread/contrib/document_templates/models.py:23
 #: bread/contrib/reports/models.py:23 bread/contrib/triggers/models.py:104
@@ -82,7 +81,7 @@ msgid "Variables defined below but not used in document: "
 msgstr "ตัวแปรที่กำหนดต่อไปนี้ไม่ถูกใช้ในเอกสาร "
 
 #: bread/contrib/document_templates/views.py:54
-#: bread/contrib/reports/views.py:54
+#: bread/contrib/reports/views.py:41
 msgid "Help"
 msgstr "ช่วยเหลือ"
 
@@ -103,46 +102,74 @@ msgid ""
 "Key in 'settings.REPORT_FILTERS' must be a function returning a queryset"
 msgstr "คีย์ใน 'settings.REPORT_FILTERS' ต้องเป็นฟังก์ชันที่ส่งคืนชุดข้อความค้นหา"
 
-#: bread/contrib/reports/models.py:48
+#: bread/contrib/reports/models.py:36
+msgid "Pagination"
+msgstr ""
+
+#: bread/contrib/reports/models.py:39
+msgid ""
+"How many items to display per page when viewing the report in the browser, 0 "
+"for everything on one page"
+msgstr ""
+
+#: bread/contrib/reports/models.py:57
 msgid "Preview"
 msgstr "มุมมอง"
 
-#: bread/contrib/reports/models.py:66
+#: bread/contrib/reports/models.py:75
 #, python-format
 msgid ""
 "settings.REPORT_FILTERS[\"%s\"] did not return a queryset but returned: %s"
 msgstr "คีย์ใน 'settings.REPORT_FILTERS'[\"%s\"] ต้องเป็นฟังก์ชันที่ส่งคืนชุดข้อความค้นหา %s"
 
-#: bread/contrib/reports/models.py:73
+#: bread/contrib/reports/models.py:82
 #, python-format
 msgid ""
 "settings.REPORT_FILTERS[\"%s\"] did not return a queryset for %s but for %s"
 msgstr "ตั้งค่า.REPORT_FILTERS[\"%s\"] ไม่ได้ส่งคืนชุดการสืบค้นสำหรับ %s แต่สำหรับ %s"
 
-#: bread/contrib/reports/models.py:84
+#: bread/contrib/reports/models.py:93
 msgid "Report"
 msgstr "รายงาน"
 
-#: bread/contrib/reports/models.py:85 bread/contrib/reports/urls.py:71
+#: bread/contrib/reports/models.py:94 bread/contrib/reports/urls.py:71
 #: bread/contrib/reports/urls.py:74
 msgid "Reports"
 msgstr "รายงาน"
 
-#: bread/contrib/reports/models.py:95 bread/contrib/reports/models.py:102
+#: bread/contrib/reports/models.py:104
+msgid "Header"
+msgstr ""
+
+#: bread/contrib/reports/models.py:106 bread/contrib/reports/models.py:119
 msgid "Column"
 msgstr "ช่อง"
 
-#: bread/contrib/reports/models.py:98
+#: bread/contrib/reports/models.py:106
+msgid "Value expression (see 'Help')"
+msgstr ""
+
+#: bread/contrib/reports/models.py:109
+#, fuzzy
+#| msgid "Column name"
+msgid "Sortingname"
+msgstr "ชื่อคอลัมน์"
+
+#: bread/contrib/reports/models.py:112
+msgid "Django sorting expression"
+msgstr ""
+
+#: bread/contrib/reports/models.py:115
 msgid "Aggregation"
 msgstr "สูตรรวม"
 
-#: bread/contrib/reports/models.py:103
+#: bread/contrib/reports/models.py:120
 msgid "Columns"
 msgstr "ช่อง"
 
 #: bread/contrib/reports/urls.py:23
 #: bread/layout/components/forms/__init__.py:341 bread/views/browse.py:57
-#: bread/views/browse.py:320 bread/views/util.py:39
+#: bread/views/browse.py:321 bread/views/util.py:39
 msgid "Delete"
 msgstr "ลบ"
 
@@ -150,21 +177,27 @@ msgstr "ลบ"
 msgid "Copy"
 msgstr "คัดลอก"
 
-#: bread/contrib/reports/urls.py:38 bread/views/browse.py:309
+#: bread/contrib/reports/urls.py:38 bread/views/browse.py:310
 #: bread/views/read.py:60 bread/views/userprofile.py:100
 #: bread/views/userprofile.py:128 bread/views/userprofile.py:160
 #: bread/views/util.py:26
 msgid "Edit"
 msgstr "แก้ไข"
 
-#: bread/contrib/reports/urls.py:43 bread/contrib/reports/views.py:130
+#: bread/contrib/reports/urls.py:43 bread/contrib/reports/views.py:153
 #: bread/views/browse.py:50
 msgid "Excel"
 msgstr "Excel"
 
-#: bread/contrib/reports/views.py:33
+#: bread/contrib/reports/views.py:50
 msgid "Base model"
 msgstr "โมเดลพื้นฐาน"
+
+#: bread/contrib/reports/views.py:63
+#, fuzzy
+#| msgid "Extended columns"
+msgid "Extended settings"
+msgstr "ขยายคอลัมน์"
 
 #: bread/contrib/triggers/models.py:47
 msgid "Action"
@@ -199,7 +232,7 @@ msgstr "ดำเนินการส่งอีเมล์"
 msgid "Send Email Actions"
 msgstr "ดำเนินการส่งอีเมล์"
 
-#: bread/contrib/triggers/models.py:117 bread/layout/utils.py:206
+#: bread/contrib/triggers/models.py:117 bread/layout/utils.py:209
 msgid "Type"
 msgstr "ประเภท"
 
@@ -318,9 +351,8 @@ msgid ""
 "This is some tooltip text. This box shows the maximum amount of text that "
 "should appear inside. If more room is needed please use a modal instead."
 msgstr ""
-"นี่คือข้อความคำแนะนำเครื่องมือบางส่วน "
-"กล่องนี้แสดงจำนวนตัวอักษรสูงสุดที่ควรปรากฏอยู่ภายใน หากต้องการพื้นที่เพิ่ม "
-"โปรดใช้โมดุลแทน"
+"นี่คือข้อความคำแนะนำเครื่องมือบางส่วน กล่องนี้แสดงจำนวนตัวอักษรสูงสุดที่ควรปรากฏอยู่ภายใน "
+"หากต้องการพื้นที่เพิ่ม โปรดใช้โมดุลแทน"
 
 #: bread/layout/componentpreview.py:1039
 msgid "This is a server message in the ToastNotification."
@@ -334,20 +366,20 @@ msgstr "คลิกเพื่อดูการทำงานของ Toast
 msgid "Print"
 msgstr "พิมพ์"
 
-#: bread/layout/components/datatable.py:246
+#: bread/layout/components/datatable.py:247
 #: bread/layout/components/modal.py:105 bread/views/auth.py:28
 msgid "Cancel"
 msgstr "ยกเลิก"
 
-#: bread/layout/components/datatable.py:257
+#: bread/layout/components/datatable.py:258
 msgid " items selected"
 msgstr " เลือกรายการ"
 
-#: bread/layout/components/datatable.py:263
+#: bread/layout/components/datatable.py:264
 msgid "Table Action Bar"
 msgstr "แถบงาน"
 
-#: bread/layout/components/datatable.py:352 bread/views/add.py:38
+#: bread/layout/components/datatable.py:353 bread/views/add.py:38
 #: bread/views/add.py:45
 #, python-format
 msgid "Add %s"
@@ -383,7 +415,7 @@ msgstr "เห็นรหัสผ่าน"
 msgid "Select file"
 msgstr "เลือกไฟล์"
 
-#: bread/layout/components/notification.py:130
+#: bread/layout/components/notification.py:131
 msgid "Time stamp"
 msgstr "บันทึกเวลา"
 
@@ -437,27 +469,27 @@ msgstr "ปิด"
 msgid "On"
 msgstr "เปิด"
 
-#: bread/layout/utils.py:192
+#: bread/layout/utils.py:195
 msgid "Unknown"
 msgstr "ไม่รู้จัก"
 
-#: bread/layout/utils.py:194
+#: bread/layout/utils.py:197
 msgid "Available columns"
 msgstr "คอลัมน์ที่มีอยู่"
 
-#: bread/layout/utils.py:196
+#: bread/layout/utils.py:199
 msgid "Bold text marks valid column names"
 msgstr "ใช้ข้อความตัวหนาระบุชื่อคอลัมน์ที่ถูกต้อง"
 
-#: bread/layout/utils.py:200
+#: bread/layout/utils.py:203
 msgid "Column name"
 msgstr "ชื่อคอลัมน์"
 
-#: bread/layout/utils.py:204
+#: bread/layout/utils.py:207
 msgid "Description"
 msgstr "คำอธิบาย"
 
-#: bread/layout/utils.py:207
+#: bread/layout/utils.py:210
 msgid "Extended columns"
 msgstr "ขยายคอลัมน์"
 
@@ -691,42 +723,42 @@ msgstr "เปลี่ยนรหัสผ่านสำเร็จ"
 msgid "Please login again"
 msgstr "กรุณาเข้าสู่ระบบอีกครั้ง"
 
-#: bread/views/browse.py:224
+#: bread/views/browse.py:225
 #, python-format
 msgid "Action '%s' is not configured for this view"
 msgstr "ไม่ได้กำหนดค่าการกระทำ '%s' สำหรับมุมมองนี้"
 
-#: bread/views/browse.py:269
+#: bread/views/browse.py:270
 #, python-format
 msgid "Bad filter string '%s': '%s'"
 msgstr "สตริงตัวกรองไม่ถูกต้อง '%s': '%s'"
 
-#: bread/views/browse.py:370
+#: bread/views/browse.py:371
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่สามารถทำการลบได้%s"
 
-#: bread/views/browse.py:383
+#: bread/views/browse.py:384
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s ไม่ควรลบเพราะ: %s"
 
-#: bread/views/browse.py:388
+#: bread/views/browse.py:389
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "ลบ %(count)s %(modelname)s"
 
-#: bread/views/browse.py:410
+#: bread/views/browse.py:411
 #, python-format
 msgid "Your user has not the permissions to restore %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่มีสิทธิ์กู้คืน%s"
 
-#: bread/views/browse.py:419
+#: bread/views/browse.py:420
 #, python-format
 msgid "%s could not be restored: %s"
 msgstr "%s ไม่ควรกู้คืนเพราะ: %s"
 
-#: bread/views/browse.py:424
+#: bread/views/browse.py:425
 #, python-format
 msgid "Restored %(count)s %(modelname)s"
 msgstr "กู้คืน %(count)s %(modelname)s"
@@ -799,8 +831,7 @@ msgstr "ข้อผิดพลาดภายในเซิร์ฟเวอ
 msgid ""
 "A problem has occurred while loading the page at %s.<br>If the problem "
 "persists, please contact an administrator."
-msgstr ""
-"เกิดปัญหาขณะโหลดหน้าเว็บที่ %s<br>หากปัญหายังคงอยู่ โปรดติดต่อผู้ดูแลระบบ"
+msgstr "เกิดปัญหาขณะโหลดหน้าเว็บที่ %s<br>หากปัญหายังคงอยู่ โปรดติดต่อผู้ดูแลระบบ"
 
 #: bread/views/userprofile.py:36
 msgid "Manage Profile"
@@ -1056,11 +1087,6 @@ msgstr "ต่อไป"
 #~| msgid "Continue"
 #~ msgid "Sentinel"
 #~ msgstr "ต่อไป"
-
-#, fuzzy
-#~| msgid "Column name"
-#~ msgid "Cotoname"
-#~ msgstr "ชื่อคอลัมน์"
 
 #~ msgid "Form error: "
 #~ msgstr "แบบฟอร์มผิดพลาด: "
