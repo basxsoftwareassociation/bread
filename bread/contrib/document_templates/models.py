@@ -4,6 +4,8 @@ from typing import Union
 import htmlgenerator as hg
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.utils.dateformat import DateFormat
+from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from docxtpl import DocxTemplate
 
@@ -23,14 +25,17 @@ class DocumentTemplate(models.Model):
         ContentType, on_delete=models.PROTECT, verbose_name=_("Model")
     )
 
+    def default_context(self):
+        return {"now": DateFormat(now())}
+
     def render_with(self, object):
         docxtpl_template = DocxTemplate(self.file.path)
-        docxtpl_template.render(
-            {
-                variable.name: hg.resolve_lookup(object, variable.value)
-                for variable in self.variables.all()
-            }
-        )
+        context = {
+            variable.name: hg.resolve_lookup(object, variable.value)
+            for variable in self.variables.all()
+        }
+        context.update(self.default_context())
+        docxtpl_template.render(context)
 
         buf = io.BytesIO()
         docxtpl_template.save(buf)
@@ -39,7 +44,9 @@ class DocumentTemplate(models.Model):
 
     def missing_variables(self):
         """Returns (variables_only_in_template, variables_only_in_definition)"""
-        intemplate = DocxTemplate(self.file.path).get_undeclared_template_variables()
+        intemplate = DocxTemplate(
+            self.file.path
+        ).get_undeclared_template_variables() - set(self.default_context().keys())
         declared = {v.name for v in self.variables.all()}
         both = intemplate | declared
         return declared ^ both, intemplate ^ both

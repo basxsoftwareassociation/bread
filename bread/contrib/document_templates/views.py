@@ -3,7 +3,8 @@ from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
 
 from bread import layout, views
-from bread.contrib.document_templates.models import DocumentTemplate
+
+from .models import DocumentTemplate
 
 
 class DocumentTemplateEditView(views.EditView):

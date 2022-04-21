@@ -1,5 +1,6 @@
 import re
 import urllib
+import urllib.parse
 from typing import Iterable, List, Optional, Tuple, Type, Union
 
 import htmlgenerator as hg
