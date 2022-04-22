@@ -14,9 +14,7 @@ from .icon import Icon
 
 class PaginationConfig(NamedTuple):
     paginator: Paginator
-    items_per_page_options: Iterator = getattr(  # type: ignore
-        settings, "DEFAULT_PAGINATION_CHOICES", [25, 50, 100]
-    )
+    items_per_page_options: Iterator
     page_urlparameter: str = (
         "page"  # URL parameter which holds value for current page selection
     )
@@ -54,7 +52,7 @@ class Pagination(hg.DIV):
                                 page_urlparameter,
                                 itemsperpage=i,
                             ),
-                            i,
+                            _("All") if i == -1 else i,
                         )
                         for i in items_per_page_options
                     ],

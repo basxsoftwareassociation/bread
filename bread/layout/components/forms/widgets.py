@@ -17,7 +17,6 @@ from .helpers import REQUIRED_LABEL, Label, to_php_formatstr
 
 # Missing widget implementations:
 # DateTimeInput
-# RadioSelect
 
 
 # A plain, largely unstyled input element

@@ -129,7 +129,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         self.items_per_page_options = (
             kwargs.get("items_per_page_options")
             or self.items_per_page_options
-            or getattr(settings, "DEFAULT_PAGINATION_CHOICES", [25, 100, 500])
+            or getattr(settings, "DEFAULT_PAGINATION_CHOICES")
         )
         self.search_urlparameter = (
             kwargs.get("search_urlparameter") or self.search_urlparameter
@@ -169,8 +169,11 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             if action.has_permission(self.request)
         ]
         qs = self.get_queryset()
+        paginate_by = self.get_paginate_by(qs)
+        if paginate_by is None:
+            paginate_by = qs.count()
         return layout.datatable.DataTable.from_queryset(
-            self.paginate_queryset(qs, self.get_paginate_by(qs))[2],
+            self.paginate_queryset(qs, paginate_by)[2],
             columns=self.columns,
             bulkactions=bulkactions,
             rowactions=self.rowactions,
@@ -180,7 +183,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
             pagination_config=layout.pagination.PaginationConfig(
                 items_per_page_options=self.items_per_page_options,
                 page_urlparameter=self.page_kwarg,
-                paginator=self.get_paginator(qs, self.get_paginate_by(qs)),
+                paginator=self.get_paginator(qs, paginate_by),
                 itemsperpage_urlparameter=self.itemsperpage_urlparameter,
             ),
             checkbox_for_bulkaction_name=self.objectids_urlparameter,
@@ -252,9 +255,13 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         return super().get(*args, **kwargs)
 
     def get_paginate_by(self, queryset):
-        return self.request.GET.get(
+        ret = self.request.GET.get(
             self.itemsperpage_urlparameter, self.items_per_page_options[0]
         )
+        if str(ret) == "-1":
+            return None
+
+        return ret
 
     def get_queryset(self):
         """Prefetch related tables to speed up queries. Also order result by get-parameters."""

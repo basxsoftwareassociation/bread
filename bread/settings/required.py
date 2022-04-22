@@ -132,11 +132,13 @@ HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"
 SIMPLE_HISTORY_FILEFIELD_TO_CHARFIELD = True
 
 ########################## BREAD customization settings ###############################
+##########################         ALL REQUIRED         ###############################
 
 DEFAULT_PAGINATION_CHOICES = [
     25,
     50,
     100,
+    -1,
 ]  # Defines what the default options for pagination are
 
 DEFAULT_PAGE_LAYOUT = "bread.layout.default_page_layout"
