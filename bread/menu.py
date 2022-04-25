@@ -96,7 +96,8 @@ class Menu:
     def registeritem(self, menuitem):
         """
         If menuitem.group is None this will be a top-level menu item.
-        Otherwise the group will be created (if a group with the same label does not exists yet) and the menuitem appended to the group
+        Otherwise the group will be created (if a group with the same
+        label does not exists yet) and the menuitem appended to the group
         """
         if menuitem.group is None:
             if menuitem.link.label in self._registry:
