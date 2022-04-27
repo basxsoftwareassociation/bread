@@ -185,7 +185,9 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
                 page_urlparameter=self.page_kwarg,
                 paginator=self.get_paginator(qs, paginate_by),
                 itemsperpage_urlparameter=self.itemsperpage_urlparameter,
-            ),
+            )
+            if paginate_by > 0
+            else None,
             checkbox_for_bulkaction_name=self.objectids_urlparameter,
             title=self.title,
             settingspanel=self.get_settingspanel(),
