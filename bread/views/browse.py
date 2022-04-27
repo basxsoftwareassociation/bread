@@ -173,7 +173,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         if paginate_by is None:
             paginate_by = qs.count()
         return layout.datatable.DataTable.from_queryset(
-            self.paginate_queryset(qs, paginate_by)[2],
+            self.paginate_queryset(qs, paginate_by)[2] if paginate_by > 0 else qs,
             columns=self.columns,
             bulkactions=bulkactions,
             rowactions=self.rowactions,
