@@ -201,7 +201,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         return {
             **super().get_context_data(*args, **kwargs),
             "layout": self._get_layout_cached(),
-            "pagetitle": pretty_modelname(self.model, plural=True),
+            "pagetitle": self.title or pretty_modelname(self.model, plural=True),
         }
 
     def get_settingspanel(self):
@@ -263,7 +263,7 @@ class BrowseView(BreadView, LoginRequiredMixin, PermissionListMixin, ListView):
         if str(ret) == "-1":
             return None
 
-        return ret
+        return int(ret)
 
     def get_queryset(self):
         """Prefetch related tables to speed up queries. Also order result by get-parameters."""

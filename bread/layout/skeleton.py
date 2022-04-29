@@ -17,7 +17,11 @@ def default_page_layout(menu, *content):
         hg.HEAD(
             hg.TITLE(
                 hg.F(
-                    lambda c: strip_tags(c.get("pagetitle", c.get("PLATFORMNAME")))
+                    lambda c: strip_tags(
+                        hg.render(
+                            hg.BaseElement(c.get("pagetitle", c.get("PLATFORMNAME"))), c
+                        )
+                    )
                     + " | "
                     + strip_tags(c.get("PLATFORMNAME"))
                 )
