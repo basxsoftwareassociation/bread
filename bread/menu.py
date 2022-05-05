@@ -15,6 +15,7 @@ class Group:
         permissions=[],
         order=None,
         sort_alphabetically=False,
+        force_show=False,
     ):
         self.label = label
         self.iconname = iconname or "folder"
@@ -22,6 +23,7 @@ class Group:
         self._order = order
         self.items = []
         self.sort_alphabetically = sort_alphabetically
+        self.force_show = force_show
 
     def __lt__(self, other):
         if self._order is None:

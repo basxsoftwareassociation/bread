@@ -38,7 +38,10 @@ class SideNav(hg.ASIDE):
                         "menugroup",
                         hg.LI(
                             hg.If(
-                                hg.F(lambda c: len(c["menugroup"].items) > 1),
+                                hg.F(
+                                    lambda c: len(c["menugroup"].items) > 1
+                                    or c["menugroup"].force_show
+                                ),
                                 hg.BaseElement(
                                     hg.BUTTON(
                                         hg.DIV(
