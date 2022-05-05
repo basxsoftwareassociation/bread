@@ -1,7 +1,6 @@
 from typing import Iterator, NamedTuple
 
 import htmlgenerator as hg
-from django.conf import settings
 from django.core.paginator import Paginator
 from django.utils.translation import gettext_lazy as _
 
