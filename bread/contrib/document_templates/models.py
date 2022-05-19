@@ -3,13 +3,14 @@ import io
 from typing import Union
 
 import htmlgenerator as hg
-from bread.utils import ModelHref
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.dateformat import DateFormat
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from docxtpl import DocxTemplate
+
+from bread.utils import ModelHref
 
 
 class DocumentTemplate(models.Model):
