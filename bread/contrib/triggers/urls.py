@@ -1,11 +1,10 @@
 import typing
 
 import htmlgenerator as hg
-from django.urls import path
-
 from bread import layout
 from bread.utils import quickregister
 from bread.views import AddView, EditView
+from django.urls import path
 
 from .models import DataChangeTrigger, DateFieldTrigger, SendEmail
 
@@ -24,7 +23,7 @@ quickregister(
             "enable",
         ]
     ),
-    addview=AddView._with(fields=["model", "type", "action"]),
+    addview=AddView._with(fields=["description", "model", "type", "action"]),
 )
 quickregister(
     urlpatterns,
@@ -43,7 +42,14 @@ quickregister(
         ]
     ),
     addview=AddView._with(
-        fields=["model", "action", "offset_type", "offset_amount", "field"]
+        fields=[
+            "description",
+            "model",
+            "action",
+            "offset_type",
+            "offset_amount",
+            "field",
+        ]
     ),
 )
 quickregister(urlpatterns, SendEmail)

@@ -2,6 +2,8 @@ import datetime
 import typing
 
 import htmlgenerator as hg
+from bread.formatters import is_email_simple
+from bread.querysetfield import QuerysetField
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
@@ -10,9 +12,6 @@ from django.db import models
 from django.template import engines
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
-from bread.formatters import is_email_simple
-from bread.querysetfield import QuerysetField
 
 syntax_email_field = """
 Syntax:
@@ -37,11 +36,11 @@ changed, @reminder.date in 2 weeks
 class Action(models.Model):
     description = models.CharField(max_length=255)
 
-    def __str__(self):
-        return self.description
-
     def run(self, object):
         raise NotImplementedError()
+
+    def __str__(self):
+        return self.description
 
     class Meta:
         verbose_name = _("Action")
@@ -99,6 +98,7 @@ class SendEmail(Action):
 
 
 class Trigger(models.Model):
+    description = models.CharField(max_length=255)
     model = models.ForeignKey(
         ContentType,
         verbose_name=_("Model"),
@@ -107,6 +107,9 @@ class Trigger(models.Model):
     filter = QuerysetField(_("Filter"), modelfieldname="model")
     enable = models.BooleanField(default=True)
     action = models.ForeignKey(Action, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.description
 
     class Meta:
         abstract = True
@@ -121,9 +124,6 @@ class DataChangeTrigger(Trigger):
             ("deleted", _("Deleted")),
         ),
     )
-
-    def __str__(self):
-        return f"{self.model} Trigger: {self.action} when {self.type})"
 
     class Meta:
         verbose_name = _("Data change trigger")
@@ -174,13 +174,6 @@ class DateFieldTrigger(Trigger):
             field_value = field_value.replace(year=datetime.date.today().year)
 
         return field_value + INTERVAL_CHOICES[self.offset_type][0] * self.offset_amount
-
-    def __str__(self):
-        return (
-            f"{self.model} Trigger: {self.action} on: {abs(self.offset_amount)} "
-            "{self.get_offset_type_display()} {'before' if self.offset_amount < 0 else 'after'} "
-            "{self.model}.{self.field})"
-        )
 
     class Meta:
         verbose_name = _("Date field trigger")
