@@ -2,8 +2,6 @@ import datetime
 import typing
 
 import htmlgenerator as hg
-from bread.formatters import is_email_simple
-from bread.querysetfield import QuerysetField
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
@@ -12,6 +10,9 @@ from django.db import models
 from django.template import engines
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+from bread.formatters import is_email_simple
+from bread.querysetfield import QuerysetField
 
 syntax_email_field = """
 Syntax:
