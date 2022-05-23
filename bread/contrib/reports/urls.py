@@ -7,7 +7,7 @@ from bread import menu, views
 from bread.utils import urls
 from bread.utils.links import Link, ModelHref
 from bread.views.browse import delete
-from bread.views.edit import bulkcopy
+from bread.views.edit import bulkcopy, generate_copyview
 
 from .models import Report
 from .views import EditView, ReadView, exceldownload
@@ -52,6 +52,9 @@ urlpatterns = [
         ),
         editview=EditView,
         readview=ReadView,
+        copyview=generate_copyview(
+            Report, labelfield="name", copy_related_fields=("columns",)
+        ),
     ),
     urls.autopath(
         exceldownload,
