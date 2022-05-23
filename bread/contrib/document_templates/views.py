@@ -18,8 +18,18 @@ class DocumentTemplateEditView(views.EditView):
             )
         column_helper = layout.get_attribute_description_modal(modelclass)
 
-        only_template, only_definition = self.object.missing_variables()
+        only_template, only_definition = None, None
         warnings = hg.BaseElement()
+        try:
+            only_template, only_definition = self.object.missing_variables()
+        except Exception as e:
+            warnings.append(
+                layout.notification.InlineNotification(
+                    _("Error in template: "),
+                    str(e),
+                    kind="error",
+                )
+            )
         if only_template:
             warnings.append(
                 layout.notification.InlineNotification(
@@ -39,7 +49,7 @@ class DocumentTemplateEditView(views.EditView):
 
         F = layout.forms.FormField
         ret = hg.BaseElement(
-            hg.H3(self.object),
+            views.header(),
             warnings,
             layout.forms.Form(
                 hg.C("form"),
@@ -47,7 +57,17 @@ class DocumentTemplateEditView(views.EditView):
                 F("file"),
                 layout.forms.FormsetField.as_datatable(
                     "variables",
-                    ["name", "value"],
+                    [
+                        "name",
+                        "value",
+                        F(
+                            "template",
+                            no_wrapper=True,
+                            no_label=True,
+                            no_helptext=True,
+                            inputelement_attrs={"rows": 1},
+                        ),
+                    ],
                     formsetfield_kwargs={"extra": 1},
                 ),
                 column_helper,

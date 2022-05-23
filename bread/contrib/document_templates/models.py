@@ -3,12 +3,14 @@ import io
 from typing import Union
 
 import htmlgenerator as hg
+import jinja2
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.dateformat import DateFormat
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from docxtpl import DocxTemplate
+from jinja2.sandbox import SandboxedEnvironment
 
 from bread.utils import ModelHref
 
@@ -36,14 +38,25 @@ class DocumentTemplate(models.Model):
             return value
 
         docxtpl_template = DocxTemplate(self.file.path)
-        context = {
-            variable.name: ensure_localized_date(
+        context = {}
+        for variable in self.variables.all():
+            context[variable.name] = ensure_localized_date(
                 hg.resolve_lookup(object, variable.value)
             )
-            for variable in self.variables.all()
-        }
+            if variable.template:
+                # breakpoint()
+                value_env = SandboxedEnvironment()
+                value_env.filters["map"] = lambda value, map: map.get(value, value)
+                context[variable.name] = value_env.from_string(
+                    variable.template
+                ).render(
+                    value=context[variable.name],
+                )
+
         context.update(self.default_context())
-        docxtpl_template.render(context)
+        env = SandboxedEnvironment()
+        env.filters["map"] = lambda value, map: map.get(value, value)
+        docxtpl_template.render(context, env)
 
         buf = io.BytesIO()
         docxtpl_template.save(buf)
@@ -83,6 +96,11 @@ class DocumentTemplateVariable(models.Model):
     )
     value = models.CharField(
         _("Value"), max_length=255, help_text=_("Path to the desired value (see help)")
+    )
+    template = models.TextField(
+        _("Template"),
+        blank=True,
+        help_text=_("Jinja template with 'value' in context"),
     )
     raw_value = models.BooleanField(_("Raw value"), default=False)
 
