@@ -23,7 +23,9 @@ class EditView(views.EditView):
                 f"Model '{self.object.model}' does no longer exist.",
                 kind="error",
             )
-        column_helper = layout.get_attribute_description_modal(modelclass)
+        column_helper = layout.modal.Modal(
+            _("Field explorer"), layout.fieldexplorer.field_help(modelclass), size="lg"
+        )
 
         F = layout.forms.FormField
 

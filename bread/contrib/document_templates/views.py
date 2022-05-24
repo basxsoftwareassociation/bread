@@ -16,7 +16,9 @@ class DocumentTemplateEditView(views.EditView):
                 f"Model '{self.object.model}' does no longer exist.",
                 kind="error",
             )
-        column_helper = layout.get_attribute_description_modal(modelclass)
+        column_helper = layout.modal.Modal(
+            _("Field explorer"), layout.fieldexplorer.field_help(modelclass), size="lg"
+        )
 
         only_template, only_definition = None, None
         warnings = hg.BaseElement()
@@ -48,6 +50,30 @@ class DocumentTemplateEditView(views.EditView):
             )
 
         F = layout.forms.FormField
+        fieldstable = layout.forms.FormsetField.as_datatable(
+            "variables",
+            [
+                "name",
+                "value",
+                F(
+                    "template",
+                    no_wrapper=True,
+                    no_label=True,
+                    no_helptext=True,
+                    inputelement_attrs={"rows": 1},
+                ),
+            ],
+            formsetfield_kwargs={"extra": 1},
+        )
+        fieldstable[0][1].insert(
+            0,
+            layout.button.Button(
+                _("Help"),
+                buttontype="ghost",
+                **column_helper.openerattributes,
+            ),
+        )
+
         ret = hg.BaseElement(
             views.header(),
             warnings,
@@ -55,28 +81,8 @@ class DocumentTemplateEditView(views.EditView):
                 hg.C("form"),
                 F("name"),
                 F("file"),
-                layout.forms.FormsetField.as_datatable(
-                    "variables",
-                    [
-                        "name",
-                        "value",
-                        F(
-                            "template",
-                            no_wrapper=True,
-                            no_label=True,
-                            no_helptext=True,
-                            inputelement_attrs={"rows": 1},
-                        ),
-                    ],
-                    formsetfield_kwargs={"extra": 1},
-                ),
+                fieldstable,
                 column_helper,
-                layout.button.Button(
-                    _("Help"),
-                    buttontype="ghost",
-                    style="margin-top: 1rem",
-                    **column_helper.openerattributes,
-                ),
                 layout.forms.helpers.Submit(),
             ),
         )
