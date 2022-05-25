@@ -3,11 +3,12 @@ import io
 from typing import Union
 
 import htmlgenerator as hg
-import jinja2
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.utils import formats
 from django.utils.dateformat import DateFormat
 from django.utils.timezone import now
+from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 from docxtpl import DocxTemplate
 from jinja2.sandbox import SandboxedEnvironment
@@ -44,7 +45,6 @@ class DocumentTemplate(models.Model):
                 hg.resolve_lookup(object, variable.value)
             )
             if variable.template:
-                # breakpoint()
                 value_env = SandboxedEnvironment()
                 value_env.filters["map"] = lambda value, map: map.get(value, value)
                 context[variable.name] = value_env.from_string(
@@ -52,6 +52,11 @@ class DocumentTemplate(models.Model):
                 ).render(
                     value=context[variable.name],
                 )
+            else:
+                if isinstance(context[variable.name], DateFormat):
+                    context[variable.name] = context[variable.name].format(
+                        formats.get_format("DATE_FORMAT", lang=get_language())
+                    )
 
         context.update(self.default_context())
         env = SandboxedEnvironment()
