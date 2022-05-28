@@ -3,6 +3,7 @@ import io
 from typing import Union
 
 import htmlgenerator as hg
+from bread.utils import ModelHref
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils import formats
@@ -12,8 +13,6 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 from docxtpl import DocxTemplate
 from jinja2.sandbox import SandboxedEnvironment
-
-from bread.utils import ModelHref
 
 
 class DocumentTemplate(models.Model):
@@ -47,11 +46,14 @@ class DocumentTemplate(models.Model):
             if variable.template:
                 value_env = SandboxedEnvironment()
                 value_env.filters["map"] = lambda value, map: map.get(value, value)
-                context[variable.name] = value_env.from_string(
-                    variable.template
-                ).render(
-                    value=context[variable.name],
-                )
+                try:
+                    context[variable.name] = value_env.from_string(
+                        variable.template
+                    ).render(
+                        value=context[variable.name],
+                    )
+                except Exception as e:
+                    context[variable.name] = f"### ERROR: {e} ###"
             else:
                 if isinstance(context[variable.name], DateFormat):
                     context[variable.name] = context[variable.name].format(
