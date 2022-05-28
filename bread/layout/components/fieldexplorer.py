@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from .button import Button
 
 
-def field_help(model):
+def field_help(model, max_depth=4):
     return hg.BaseElement(
         hg.DIV(
             hg.format(_("Base model: ")),
@@ -24,7 +24,7 @@ def field_help(model):
         hg.DIV(
             get_field_list(
                 model,
-                4,
+                max_depth,
                 list(
                     set([model, model.__mro__[-3], *_all_subclasses(model.__mro__[-3])])
                 ),
@@ -38,9 +38,8 @@ def field_help(model):
 def get_field_list(model, depth, excludemodels, display="none", parent_accessor=[]):
     fields = {}
     for f in model._meta.get_fields():
-        if f.related_model in excludemodels or f.one_to_many or f.many_to_many:
+        if not f.concrete and (f.one_to_many or f.many_to_many):
             continue
-
         fields[f] = hg.DIV(
             hg.SPAN(
                 ".".join(parent_accessor + [_field_attname(f)]),
@@ -67,7 +66,6 @@ def get_field_list(model, depth, excludemodels, display="none", parent_accessor=
         )
         if (
             f.related_model
-            and not f.one_to_many
             and not f.many_to_many
             and f.related_model not in excludemodels
             and depth > 0
