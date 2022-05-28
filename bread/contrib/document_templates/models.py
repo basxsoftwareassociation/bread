@@ -3,7 +3,6 @@ import io
 from typing import Union
 
 import htmlgenerator as hg
-from bread.utils import ModelHref
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils import formats
@@ -13,6 +12,8 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 from docxtpl import DocxTemplate
 from jinja2.sandbox import SandboxedEnvironment
+
+from bread.utils import ModelHref
 
 
 class DocumentTemplate(models.Model):
