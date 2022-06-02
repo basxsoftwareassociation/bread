@@ -1,13 +1,18 @@
 from collections import namedtuple
 
 from django.contrib.auth.models import User
+from django.db.models.fields.proxy import OrderWrt
 from django.test import Client
 from hypothesis import given, settings
-from hypothesis.extra.django import TestCase, from_model
+from hypothesis.extra.django import TestCase, from_model, register_field_strategy
+from hypothesis.strategies import integers
 
 from bread.utils.urls import reverse_model
 
 FormField = namedtuple("FormField", ["name", "value", "element", "generators"])
+
+
+register_field_strategy(OrderWrt, integers(-2147483648, 2147483647))
 
 
 def authenticate(client):

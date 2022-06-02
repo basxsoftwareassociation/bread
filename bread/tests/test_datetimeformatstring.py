@@ -26,9 +26,13 @@ class ToPHPFormatstrTest(TestCase):
                 microseconds=random.randint(0, max_delta.microseconds),  # nosec
             )
             for f in self.ALL_FORMATS:
-                if "y" not in f:
+                # Ignore some cases: Django zero-pads %Y, but Python does not
+                # (since Python is using ctime). Django has zero-padding
+                # because PHP does, also according to Django docs
+                if d.year >= 1000 or "%Y" not in f:
                     self.assertEqual(
                         format(d, to_php_formatstr(f)),
                         d.strftime(f),
-                        f"({d}): input was {d.strftime(f)} ({f}), output was {format(d, to_php_formatstr(f))} ({to_php_formatstr(f)})",
+                        f"({d}): input was {d.strftime(f)} ({f}), "
+                        "output was {format(d, to_php_formatstr(f))} ({to_php_formatstr(f)})",
                     )
