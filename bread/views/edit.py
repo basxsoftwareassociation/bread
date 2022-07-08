@@ -7,6 +7,7 @@ import htmlgenerator as hg
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.utils.translation import pgettext_lazy
 from django.views.decorators.cache import never_cache
@@ -52,7 +53,9 @@ class EditView(
         return _("Saved %s" % self.object)
 
     # prevent browser caching edit views
-    @never_cache
+    never_cache
+
+    @method_decorator(never_cache, name="dispatch")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 

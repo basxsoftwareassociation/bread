@@ -673,9 +673,8 @@ def _tile_py():
                         ),
                         hg.DIV(
                             hg.P("This is a hidden part of ExpandableTile."),
+                            style="height: 100px;",
                         ),
-                        {"style": "height: 100px;"},
-                        {"style": "height: 100px;"},
                     ),
                 ),
             ),
