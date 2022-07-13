@@ -22,10 +22,13 @@ msgstr ""
 #: bread/contrib/document_templates/models.py:20
 #: bread/contrib/document_templates/models.py:103
 #: bread/contrib/publicurls/models.py:27 bread/contrib/reports/models.py:21
+#: bread/contrib/document_templates/models.py:19
+#: bread/contrib/document_templates/models.py:95
 msgid "Name"
 msgstr "Nom"
 
 #: bread/contrib/document_templates/models.py:24
+#: bread/contrib/document_templates/models.py:23
 msgid ""
 "Must be a *.docx file, use '{{ variable-name }}' to insert variables from "
 "below"
@@ -33,46 +36,57 @@ msgstr ""
 
 #: bread/contrib/document_templates/models.py:29
 #: bread/contrib/reports/models.py:23 bread/contrib/triggers/models.py:105
+#: bread/contrib/document_templates/models.py:28
 msgid "Model"
 msgstr "Modèle"
 
 #: bread/contrib/document_templates/models.py:94
+#: bread/contrib/document_templates/models.py:86
 msgid "Document Template"
 msgstr ""
 
 #: bread/contrib/document_templates/models.py:95
+#: bread/contrib/document_templates/models.py:87
 msgid "Document Templates"
 msgstr ""
 
 #: bread/contrib/document_templates/models.py:103
+#: bread/contrib/document_templates/models.py:95
 msgid "Name to use in the template document"
 msgstr ""
 
 #: bread/contrib/document_templates/models.py:106 bread/views/read.py:44
+#: bread/contrib/document_templates/models.py:98
 msgid "Value"
 msgstr ""
 
 #: bread/contrib/document_templates/models.py:106
+#: bread/contrib/document_templates/models.py:98
 msgid "Path to the desired value (see help)"
 msgstr ""
 
 #: bread/contrib/document_templates/models.py:109
+#: bread/contrib/document_templates/models.py:101
 msgid "Template"
 msgstr ""
 
 #: bread/contrib/document_templates/models.py:111
+#: bread/contrib/document_templates/models.py:103
 msgid "Jinja template with 'value' in context"
 msgstr ""
 
 #: bread/contrib/document_templates/models.py:113
+#: bread/contrib/document_templates/models.py:105
 msgid "Raw value"
 msgstr ""
 
 #: bread/contrib/document_templates/models.py:116
+#: bread/contrib/document_templates/models.py:108
 msgid "Variable"
 msgstr ""
 
 #: bread/contrib/document_templates/models.py:117
+#: bread/contrib/document_templates/models.py:109
 msgid "Variables"
 msgstr ""
 
@@ -85,8 +99,6 @@ msgstr "Supprimer"
 #: bread/contrib/document_templates/urls.py:24 bread/contrib/reports/urls.py:27
 #: bread/views/util.py:48
 #, fuzzy
-#| msgctxt "this is a copy"
-#| msgid "Copy"
 msgid "Copy"
 msgstr "Copier"
 
@@ -240,7 +252,6 @@ msgstr ""
 
 #: bread/contrib/reports/models.py:109
 #, fuzzy
-#| msgid "Column"
 msgid "Sortingname"
 msgstr "Colonne"
 
@@ -315,19 +326,16 @@ msgstr ""
 
 #: bread/contrib/triggers/models.py:123
 #, fuzzy
-#| msgid "Added %s"
 msgid "Added"
 msgstr "%s a été ajouté"
 
 #: bread/contrib/triggers/models.py:124
 #, fuzzy
-#| msgid "Show password"
 msgid "Changed"
 msgstr "Afficher le mot de passe"
 
 #: bread/contrib/triggers/models.py:125
 #, fuzzy
-#| msgid "Delete"
 msgid "Deleted"
 msgstr "Supprimer"
 
@@ -409,7 +417,7 @@ msgstr ""
 
 #: bread/dynamic_preferences_registry.py:6
 msgid "General"
-msgstr ""
+msgstr "Général"
 
 #: bread/dynamic_preferences_registry.py:14 bread/views/userprofile.py:56
 #: bread/views/userprofile.py:218
@@ -430,16 +438,17 @@ msgid "Table of Contents"
 msgstr ""
 
 #: bread/layout/componentpreview.py:975 bread/views/administration.py:259
+#: bread/layout/componentpreview.py:976
 msgid ""
 "This is some tooltip text. This box shows the maximum amount of text that "
 "should appear inside. If more room is needed please use a modal instead."
 msgstr ""
 
-#: bread/layout/componentpreview.py:1038
+#: bread/layout/componentpreview.py:1038 bread/layout/componentpreview.py:1039
 msgid "This is a server message in the ToastNotification."
 msgstr ""
 
-#: bread/layout/componentpreview.py:1172
+#: bread/layout/componentpreview.py:1172 bread/layout/componentpreview.py:1173
 msgid "Click to see ToastNotification in action"
 msgstr ""
 
@@ -468,7 +477,6 @@ msgstr "Ajouter %s"
 
 #: bread/layout/components/fieldexplorer.py:10
 #, fuzzy
-#| msgid "Base model"
 msgid "Base model: "
 msgstr "Modèle de base"
 
@@ -485,11 +493,13 @@ msgid "Fields"
 msgstr ""
 
 #: bread/layout/components/fieldexplorer.py:105
+#: bread/layout/components/fieldexplorer.py:107
 #, python-format
 msgid " reference to \"%s\""
 msgstr ""
 
 #: bread/layout/components/fieldexplorer.py:108
+#: bread/layout/components/fieldexplorer.py:110
 #, python-format
 msgid " reference to multiple \"%s\""
 msgstr ""
@@ -584,7 +594,6 @@ msgstr "Activé"
 
 #: bread/menu.py:140
 #, fuzzy
-#| msgid "System Settings"
 msgid "Settings"
 msgstr "Paramètres du système"
 
@@ -610,7 +619,6 @@ msgstr ""
 
 #: bread/menu.py:180
 #, fuzzy
-#| msgid "System information"
 msgid "System Information"
 msgstr "Informations système"
 
@@ -630,7 +638,6 @@ msgstr "%s a été ajouté"
 
 #: bread/views/administration.py:46
 #, fuzzy
-#| msgid "pages"
 msgid "Packages"
 msgstr "pages"
 
@@ -652,7 +659,6 @@ msgstr ""
 
 #: bread/views/administration.py:168
 #, fuzzy
-#| msgid "System information"
 msgid "Informational"
 msgstr "Informations système"
 
@@ -702,13 +708,11 @@ msgstr ""
 
 #: bread/views/administration.py:298
 #, fuzzy
-#| msgid "Created"
 msgid "Date Created"
 msgstr "Créé le"
 
 #: bread/views/administration.py:305
 #, fuzzy
-#| msgid "Complete"
 msgid "Date Completed"
 msgstr "Terminer"
 
@@ -718,7 +722,6 @@ msgstr ""
 
 #: bread/views/administration.py:333
 #, fuzzy
-#| msgid "Table Action Bar"
 msgid "unable to load"
 msgstr "Barre d'actions de la table"
 
@@ -776,7 +779,6 @@ msgstr "Se connecter"
 
 #: bread/views/auth.py:65 bread/views/auth.py:119
 #, fuzzy
-#| msgid "Show password"
 msgid "Lost password?"
 msgstr "Afficher le mot de passe"
 
@@ -790,7 +792,6 @@ msgstr ""
 
 #: bread/views/auth.py:132
 #, fuzzy
-#| msgid "Show password"
 msgid "Reset password"
 msgstr "Afficher le mot de passe"
 
@@ -810,7 +811,6 @@ msgstr ""
 
 #: bread/views/auth.py:166 bread/views/auth.py:186 bread/views/auth.py:210
 #, fuzzy
-#| msgid "Show password"
 msgid "Change password"
 msgstr "Afficher le mot de passe"
 
@@ -859,19 +859,16 @@ msgstr "%(count)s%(modelname)s supprimé(s)"
 
 #: bread/views/browse.py:420
 #, fuzzy, python-format
-#| msgid "Your user has not the permissions to delete %s"
 msgid "Your user has not the permissions to restore %s"
 msgstr "Vous n'avez pas l'autorisation de supprimer %s"
 
 #: bread/views/browse.py:429
 #, fuzzy, python-format
-#| msgid "%s could not be deleted: %s"
 msgid "%s could not be restored: %s"
 msgstr "%s n'a pas pu être supprimé : %s"
 
 #: bread/views/browse.py:434
 #, fuzzy, python-format
-#| msgid "Deleted %(count)s %(modelname)s"
 msgid "Restored %(count)s %(modelname)s"
 msgstr "%(count)s%(modelname)s supprimé(s)"
 
@@ -885,23 +882,22 @@ msgstr "%(modelname)s %(objectname)s a été restauré"
 msgid "Deleted %(modelname)s %(objectname)s"
 msgstr "%(modelname)s %(objectname)s a été supprimé"
 
-#: bread/views/edit.py:53
+#: bread/views/edit.py:53 bread/views/edit.py:52
 #, fuzzy, python-format
-#| msgid "Save"
 msgid "Saved %s"
 msgstr "Enregistrer"
 
-#: bread/views/edit.py:86
+#: bread/views/edit.py:86 bread/views/edit.py:83
 #, python-format
 msgid "Created copy %s"
 msgstr "Copie %s créée"
 
-#: bread/views/edit.py:111
+#: bread/views/edit.py:111 bread/views/edit.py:108
 #, python-format
 msgid "Created %s copies"
 msgstr "%s copies créées"
 
-#: bread/views/edit.py:154
+#: bread/views/edit.py:154 bread/views/edit.py:151
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "Copier"
@@ -924,7 +920,6 @@ msgstr ""
 
 #: bread/views/error.py:67
 #, fuzzy
-#| msgid "Your user has not the permissions to delete %s"
 msgid "You do not have permission to access this resource."
 msgstr "Vous n'avez pas l'autorisation de supprimer %s"
 
@@ -934,7 +929,6 @@ msgstr ""
 
 #: bread/views/error.py:82
 #, fuzzy, python-format
-#| msgid "%s could not be deleted: %s"
 msgid "The path %s could not be found."
 msgstr "%s n'a pas pu être supprimé : %s"
 
@@ -955,7 +949,6 @@ msgstr ""
 
 #: bread/views/userprofile.py:49 bread/views/userprofile.py:93
 #, fuzzy
-#| msgid "System information"
 msgid "Personal Information"
 msgstr "Informations système"
 
@@ -1015,9 +1008,8 @@ msgstr ""
 msgid "Read"
 msgstr ""
 
-#: bread/views/util.py:80
+#: bread/views/util.py:80 bread/views/util.py:74
 #, fuzzy
-#| msgid "Add %s"
 msgid "Add {}"
 msgstr "Ajouter %s"
 
@@ -1030,122 +1022,98 @@ msgid "Continue"
 msgstr "Continuer"
 
 #, fuzzy
-#~| msgid "Column"
 #~ msgid "Column name"
 #~ msgstr "Colonne"
 
 #, fuzzy
-#~| msgid "Add"
 #~ msgid "Adi"
 #~ msgstr "Ajouter"
 
 #, fuzzy
-#~| msgid "Column"
 #~ msgid "Con"
 #~ msgstr "Colonne"
 
 #, fuzzy
-#~| msgid "Column"
 #~ msgid "Cun"
 #~ msgstr "Colonne"
 
 #, fuzzy
-#~| msgid "Logout"
 #~ msgid "Loo"
 #~ msgstr "Se déconnecter"
 
 #, fuzzy
-#~| msgid "Logout"
 #~ msgid "Logorik"
 #~ msgstr "Se déconnecter"
 
 #, fuzzy
-#~| msgid "Column"
 #~ msgid "Col"
 #~ msgstr "Colonne"
 
 #, fuzzy
-#~| msgid "Logout"
 #~ msgid "Logol"
 #~ msgstr "Se déconnecter"
 
 #, fuzzy
-#~| msgid "Logout"
 #~ msgid "Logo"
 #~ msgstr "Se déconnecter"
 
 #, fuzzy
-#~| msgid "Logout"
 #~ msgid "Lou"
 #~ msgstr "Se déconnecter"
 
 #, fuzzy
-#~| msgid "Search"
 #~ msgid "Sar"
 #~ msgstr "Rechercher"
 
 #, fuzzy
-#~| msgid "Name"
 #~ msgid "Na"
 #~ msgstr "Nom"
 
 #, fuzzy
-#~| msgid "Cancel"
 #~ msgid "Nancere"
 #~ msgstr "Annuler"
 
 #, fuzzy
-#~| msgid "Off"
 #~ msgid "Ofo"
 #~ msgstr "Désactivé"
 
 #, fuzzy
-#~| msgid "On"
 #~ msgid "Ona"
 #~ msgstr "Activé"
 
 #, fuzzy
-#~| msgid "On"
 #~ msgid "Ono"
 #~ msgstr "Activé"
 
 #, fuzzy
-#~| msgid "On"
 #~ msgid "Ong"
 #~ msgstr "Activé"
 
 #, fuzzy
-#~| msgid "Preview"
 #~ msgid "Pei"
 #~ msgstr "Aperçu"
 
 #, fuzzy
-#~| msgid "Logout"
 #~ msgid "Logooli"
 #~ msgstr "Se déconnecter"
 
 #, fuzzy
-#~| msgid "Remove"
 #~ msgid "Remo"
 #~ msgstr "Supprimer"
 
 #, fuzzy
-#~| msgid "Save"
 #~ msgid "Sa"
 #~ msgstr "Enregistrer"
 
 #, fuzzy
-#~| msgid "Optional"
 #~ msgid "Siona"
 #~ msgstr "Facultatif"
 
 #, fuzzy
-#~| msgid "Select file"
 #~ msgid "Selee"
 #~ msgstr "Sélectionner un fichier"
 
 #, fuzzy
-#~| msgid "Continue"
 #~ msgid "Sentinel"
 #~ msgstr "Continuer"
 
@@ -1156,7 +1124,6 @@ msgstr "Continuer"
 #~ msgstr "Préférences mises à jour"
 
 #, fuzzy
-#~| msgid "Show password"
 #~ msgid "Change Password"
 #~ msgstr "Afficher le mot de passe"
 
