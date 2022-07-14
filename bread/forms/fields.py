@@ -60,6 +60,8 @@ class FormsetField(forms.Field):
         super().__init__(*args, **kwargs)
 
     def to_python(self, value):
+        if isinstance(value, self.formsetclass):
+            return value
         return self.formsetclass(**value)
 
     def validate(self, value):
