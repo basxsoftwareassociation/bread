@@ -57,18 +57,24 @@ def header():
                 hg.C("object"),
                 hg.BaseElement(
                     hg.SPAN(hg.C("object")),
-                    hg.SPAN(
-                        hg.If(
-                            hg.C("request").resolver_match.url_name.endswith(".read"),
-                            editbutton,
-                            readbutton,
+                    hg.If(
+                        hg.C(f"request.GET.{settings.HIDEMENUS_URLPARAMETER}"),
+                        None,
+                        hg.SPAN(
+                            hg.If(
+                                hg.C("request").resolver_match.url_name.endswith(
+                                    ".read"
+                                ),
+                                editbutton,
+                                readbutton,
+                            ),
+                            copybutton,
+                            breadlayout.button.PrintPageButton(buttontype="ghost"),
+                            deletebutton,
+                            _class="no-print",
+                            style="margin-bottom: 1rem; margin-left: 1rem",
+                            width=3,
                         ),
-                        copybutton,
-                        breadlayout.button.PrintPageButton(buttontype="ghost"),
-                        deletebutton,
-                        _class="no-print",
-                        style="margin-bottom: 1rem; margin-left: 1rem",
-                        width=3,
                     ),
                 ),
                 hg.SPAN(hg.format(_("Add {}"), hg.C("view").model._meta.verbose_name)),
