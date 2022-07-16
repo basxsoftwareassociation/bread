@@ -375,7 +375,6 @@ event.stopPropagation()""",
                             notext=True,
                             small=True,
                             buttontype="ghost",
-                            _class="bx--overflow-menu",
                         )
                         if isinstance(c["link"], Link)
                         else c["link"]

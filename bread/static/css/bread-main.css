@@ -18807,3 +18807,9 @@ a.bx--header__name {
 .bx--modal-content {
   padding-bottom: 2rem; }
 
+.bx--data-table td .bx--btn--ghost:hover {
+  background-color: #cacaca; }
+
+.bx--data-table--selected td .bx--btn--ghost:hover {
+  background-color: #e5e5e5; }
+

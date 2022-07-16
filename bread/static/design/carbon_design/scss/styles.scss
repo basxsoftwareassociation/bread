@@ -295,3 +295,10 @@ a.bx--header__name {
     padding-bottom: 2rem;
 }
 
+.bx--data-table td .bx--btn--ghost:hover {
+    background-color: $hover-selected-ui;
+}
+
+.bx--data-table--selected td .bx--btn--ghost:hover {
+    background-color: $hover-field;
+}

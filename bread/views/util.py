@@ -195,8 +195,9 @@ class BreadView:
     layout: typing.Optional[hg.BaseElement] = None
     _layout_cached: typing.Optional[hg.BaseElement] = None
     ajax_urlparameter = settings.AJAX_URLPARAMETER
+    hidemenus_urlparameter = settings.HIDEMENUS_URLPARAMETER
     page_layout: typing.Optional[
-        typing.Callable[[menu.Menu, hg.BaseElement], hg.BaseElement]
+        typing.Callable[[menu.Menu, hg.BaseElement, bool], hg.BaseElement]
     ] = None
     urlparams: typing.Iterable[typing.Tuple[str, typing.Type]] = ()
 
@@ -210,8 +211,12 @@ class BreadView:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.ajax_urlparameter = kwargs.get(
             "ajax_urlparameter", getattr(self, "ajax_urlparameter")
+        )
+        self.hidemenus_urlparameter = kwargs.get(
+            "hidemenus_urlparameter", getattr(self, "hidemenus_urlparameter")
         )
 
         self.page_layout = (
@@ -232,7 +237,11 @@ class BreadView:
         response_kwargs.setdefault("content_type", self.content_type)
         ret = self._get_layout_cached()
         if self.ajax_urlparameter not in self.request.GET:
-            ret = self.page_layout(menu.main, ret)
+            ret = self.page_layout(
+                menu.main,
+                ret,
+                hidemenus=self.hidemenus_urlparameter in self.request.GET,
+            )
 
         return breadlayout.render(self.request, ret, context, **response_kwargs)
 

@@ -45,7 +45,9 @@ class RequireAuthenticationMiddleware:
             "password_reset_done",
             "password_reset_confirm",
             "password_reset_complete",
+            "publicurl",  # for bread.contrib.publicurls
         )
+
         if request.user.is_authenticated:
             return None
         if request.resolver_match.url_name in whitelisted_urlnames:

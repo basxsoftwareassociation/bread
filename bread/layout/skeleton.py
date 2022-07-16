@@ -12,7 +12,7 @@ from .components.sidenav import SideNav
 _static = staticfiles_storage.url
 
 
-def default_page_layout(menu, *content):
+def default_page_layout(menu, *content, hidemenus=False):
     return hg.HTML(
         hg.HEAD(
             hg.TITLE(
@@ -39,18 +39,23 @@ def default_page_layout(menu, *content):
             ),
         ),
         hg.BODY(
-            ShellHeader(
-                hg.C("PLATFORMNAME"),
-                hg.C("COMPANYNAME"),
-                searchbar=hg.If(
-                    hg.C("request.user.is_authenticated"),
-                    hg.C("SEARCHBAR"),
-                    "",
-                ),
-            ),
             hg.If(
-                hg.C("request.user.is_authenticated"),
-                SideNav(menu),
+                not hidemenus,
+                hg.BaseElement(
+                    ShellHeader(
+                        hg.C("PLATFORMNAME"),
+                        hg.C("COMPANYNAME"),
+                        searchbar=hg.If(
+                            hg.C("request.user.is_authenticated"),
+                            hg.C("SEARCHBAR"),
+                            "",
+                        ),
+                    ),
+                    hg.If(
+                        hg.C("request.user.is_authenticated"),
+                        SideNav(menu),
+                    ),
+                ),
             ),
             hg.DIV(
                 hg.Iterator(
