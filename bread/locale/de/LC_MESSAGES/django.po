@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-24 05:52+0000\n"
+"POT-Creation-Date: 2022-07-16 13:02+0000\n"
 "PO-Revision-Date: 2021-09-21 12:39+0000\n"
 "Last-Translator: Beat Schnyder <schnyder@basx.ch>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -19,13 +19,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.9-dev\n"
 
-#: bread/contrib/document_templates/models.py:19
-#: bread/contrib/document_templates/models.py:95
-#: bread/contrib/reports/models.py:21
+#: bread/contrib/document_templates/models.py:20
+#: bread/contrib/document_templates/models.py:103
+#: bread/contrib/publicurls/models.py:27 bread/contrib/reports/models.py:21
 msgid "Name"
 msgstr "Name"
 
-#: bread/contrib/document_templates/models.py:23
+#: bread/contrib/document_templates/models.py:24
 msgid ""
 "Must be a *.docx file, use '{{ variable-name }}' to insert variables from "
 "below"
@@ -33,48 +33,48 @@ msgstr ""
 "Muss eine *.docx Datei sein, '{{ variable-name}}' kann benutzt werden um "
 "Platzhalter von unten einzusetzen"
 
-#: bread/contrib/document_templates/models.py:28
+#: bread/contrib/document_templates/models.py:29
 #: bread/contrib/reports/models.py:23 bread/contrib/triggers/models.py:105
 msgid "Model"
 msgstr "Model"
 
-#: bread/contrib/document_templates/models.py:86
+#: bread/contrib/document_templates/models.py:94
 msgid "Document Template"
 msgstr "Dokumentvorlage"
 
-#: bread/contrib/document_templates/models.py:87
+#: bread/contrib/document_templates/models.py:95
 msgid "Document Templates"
 msgstr "Dokumentvorlagen"
 
-#: bread/contrib/document_templates/models.py:95
+#: bread/contrib/document_templates/models.py:103
 msgid "Name to use in the template document"
 msgstr "Name welcher in der Dokumentvorlage verwendet wird"
 
-#: bread/contrib/document_templates/models.py:98 bread/views/read.py:44
+#: bread/contrib/document_templates/models.py:106 bread/views/read.py:44
 msgid "Value"
 msgstr "Wert"
 
-#: bread/contrib/document_templates/models.py:98
+#: bread/contrib/document_templates/models.py:106
 msgid "Path to the desired value (see help)"
 msgstr "Pfad zum gewünschten Wert (siehe Hilfe)"
 
-#: bread/contrib/document_templates/models.py:101
+#: bread/contrib/document_templates/models.py:109
 msgid "Template"
 msgstr "Vorlage"
 
-#: bread/contrib/document_templates/models.py:103
+#: bread/contrib/document_templates/models.py:111
 msgid "Jinja template with 'value' in context"
 msgstr "Jinja Template mit 'value' im Kontext"
 
-#: bread/contrib/document_templates/models.py:105
+#: bread/contrib/document_templates/models.py:113
 msgid "Raw value"
 msgstr "Roher Wert"
 
-#: bread/contrib/document_templates/models.py:108
+#: bread/contrib/document_templates/models.py:116
 msgid "Variable"
 msgstr "Platzhalter"
 
-#: bread/contrib/document_templates/models.py:109
+#: bread/contrib/document_templates/models.py:117
 msgid "Variables"
 msgstr "Platzhalter"
 
@@ -117,9 +117,67 @@ msgstr ""
 msgid "Help"
 msgstr "Hilfe"
 
-#: bread/contrib/reports/models.py:20
+#: bread/contrib/publicurls/models.py:15
+#, python-format
+msgid "%(value)s is not a valid internal URL"
+msgstr "%(value)s ist keine gültige interne URL"
+
+#: bread/contrib/publicurls/models.py:29
+msgid "URL"
+msgstr "URL"
+
+#: bread/contrib/publicurls/models.py:32
+msgid "Internal URL"
+msgstr "Interne URL"
+
+#: bread/contrib/publicurls/models.py:34
+msgid "Salt"
+msgstr "Salt"
+
+#: bread/contrib/publicurls/models.py:35 bread/contrib/reports/models.py:20
 msgid "Created"
 msgstr "Erstellt"
+
+#: bread/contrib/publicurls/models.py:36
+msgid "Valid for"
+msgstr "Gültig für"
+
+#: bread/contrib/publicurls/models.py:37
+msgid "Has form"
+msgstr "Hat Form"
+
+#: bread/contrib/publicurls/models.py:39
+msgid "Thank-you text"
+msgstr "Dankeschön-Text"
+
+#: bread/contrib/publicurls/models.py:40
+msgid "Thank you"
+msgstr "Vielen Dank"
+
+#: bread/contrib/publicurls/models.py:41
+msgid "Will be shown if a form has successfully been submitted."
+msgstr "Wird angezeigt nachdem eine Form erfolgreich übermittelt wurde"
+
+#: bread/contrib/publicurls/models.py:52 bread/contrib/publicurls/models.py:68
+#: bread/contrib/publicurls/urls.py:69
+msgid "Public URL"
+msgstr "Öffentliche URL"
+
+#: bread/contrib/publicurls/models.py:69
+msgid "Public URLs"
+msgstr "Öffentliche URLs"
+
+#: bread/contrib/publicurls/urls.py:30
+msgid "Link has expired"
+msgstr "Link ist abgelaufen"
+
+#: bread/contrib/publicurls/urls.py:48
+msgid "Data has been submitted"
+msgstr "Daten wurden übermittelt"
+
+#: bread/contrib/publicurls/urls.py:50 bread/views/wizard.py:50
+msgid "Back"
+msgstr "Zurück"
 
 #: bread/contrib/reports/models.py:25 bread/contrib/triggers/models.py:108
 msgid "Filter"
@@ -372,20 +430,20 @@ msgstr "Datei nicht gefunden"
 msgid "Table of Contents"
 msgstr "Inhaltsübersicht"
 
-#: bread/layout/componentpreview.py:976 bread/views/administration.py:259
+#: bread/layout/componentpreview.py:975 bread/views/administration.py:259
 msgid ""
 "This is some tooltip text. This box shows the maximum amount of text that "
 "should appear inside. If more room is needed please use a modal instead."
 msgstr ""
-"Dies ist ein Tooltip text. Diese Box zeigt den maximalen Text an, welcher"
-"angezeigt sollte. Falls mehr Platz benötigt wird sollte ein Modal verwendet"
-"werden stattdessen."
+"Dies ist ein Tooltip text. Diese Box zeigt den maximalen Text an, "
+"welcherangezeigt sollte. Falls mehr Platz benötigt wird sollte ein Modal "
+"verwendetwerden stattdessen."
 
-#: bread/layout/componentpreview.py:1039
+#: bread/layout/componentpreview.py:1038
 msgid "This is a server message in the ToastNotification."
 msgstr "Dies ist eine Servernachricht in der ToastNotification"
 
-#: bread/layout/componentpreview.py:1173
+#: bread/layout/componentpreview.py:1172
 msgid "Click to see ToastNotification in action"
 msgstr "Klicken um die ToastNotification in Aktion zu sehen"
 
@@ -418,7 +476,7 @@ msgstr "Basis Model: "
 
 #: bread/layout/components/fieldexplorer.py:15
 msgid "Click "
-msgstr ""
+msgstr "Klicken auf "
 
 #: bread/layout/components/fieldexplorer.py:20
 msgid " to copy the accessor"
@@ -428,11 +486,12 @@ msgstr " klicken um den Feldzugriffswert zu kopieren"
 msgid "Fields"
 msgstr "Felder"
 
-#: bread/layout/components/fieldexplorer.py:107
+#: bread/layout/components/fieldexplorer.py:105
+#, python-format
 msgid " reference to \"%s\""
 msgstr " Referenz zu \"%s\""
 
-#: bread/layout/components/fieldexplorer.py:110
+#: bread/layout/components/fieldexplorer.py:108
 #, python-format
 msgid " reference to multiple \"%s\""
 msgstr " Referenz zu mehreren \"%s\""
@@ -811,22 +870,22 @@ msgstr "%(modelname)s %(objectname)s wurde wiederhergestellt"
 msgid "Deleted %(modelname)s %(objectname)s"
 msgstr "%(modelname)s %(objectname)s wurde gelöscht"
 
-#: bread/views/edit.py:52
+#: bread/views/edit.py:53
 #, python-format
 msgid "Saved %s"
 msgstr "%s wurde gespeichert"
 
-#: bread/views/edit.py:83
+#: bread/views/edit.py:86
 #, python-format
 msgid "Created copy %s"
 msgstr "Kopie von %s erstellt"
 
-#: bread/views/edit.py:108
+#: bread/views/edit.py:111
 #, python-format
 msgid "Created %s copies"
 msgstr "%s Kopien erstellt"
 
-#: bread/views/edit.py:151
+#: bread/views/edit.py:154
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "Kopie"
@@ -943,13 +1002,9 @@ msgstr "Entwickler-Modus deaktiviert"
 msgid "Read"
 msgstr "Lesen"
 
-#: bread/views/util.py:74
+#: bread/views/util.py:80
 msgid "Add {}"
 msgstr "{} hinzufügen"
-
-#: bread/views/wizard.py:50
-msgid "Back"
-msgstr "Zurück"
 
 #: bread/views/wizard.py:61
 msgid "Complete"

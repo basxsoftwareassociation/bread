@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-24 05:52+0000\n"
+"POT-Creation-Date: 2022-07-16 13:02+0000\n"
 "PO-Revision-Date: 2022-03-30 09:12+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -19,62 +19,62 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.12-dev\n"
 
-#: bread/contrib/document_templates/models.py:19
-#: bread/contrib/document_templates/models.py:95
-#: bread/contrib/reports/models.py:21
+#: bread/contrib/document_templates/models.py:20
+#: bread/contrib/document_templates/models.py:103
+#: bread/contrib/publicurls/models.py:27 bread/contrib/reports/models.py:21
 msgid "Name"
 msgstr "ชื่อ"
 
-#: bread/contrib/document_templates/models.py:23
+#: bread/contrib/document_templates/models.py:24
 msgid ""
 "Must be a *.docx file, use '{{ variable-name }}' to insert variables from "
 "below"
 msgstr "ต้องเป็นไฟล์ *.docx ใช้ '{{ variable-name }}' เพื่อแทรกตัวแปรจากด้านล่าง"
 
-#: bread/contrib/document_templates/models.py:28
+#: bread/contrib/document_templates/models.py:29
 #: bread/contrib/reports/models.py:23 bread/contrib/triggers/models.py:105
 msgid "Model"
 msgstr "โมเดล"
 
-#: bread/contrib/document_templates/models.py:86
+#: bread/contrib/document_templates/models.py:94
 msgid "Document Template"
 msgstr "แบบฟอร์มเอกสาร"
 
-#: bread/contrib/document_templates/models.py:87
+#: bread/contrib/document_templates/models.py:95
 msgid "Document Templates"
 msgstr "แบบฟอร์มเอกสาร"
 
-#: bread/contrib/document_templates/models.py:95
+#: bread/contrib/document_templates/models.py:103
 msgid "Name to use in the template document"
 msgstr "ชื่อแบบฟอร์ม"
 
-#: bread/contrib/document_templates/models.py:98 bread/views/read.py:44
+#: bread/contrib/document_templates/models.py:106 bread/views/read.py:44
 msgid "Value"
 msgstr "ขนาด"
 
-#: bread/contrib/document_templates/models.py:98
+#: bread/contrib/document_templates/models.py:106
 msgid "Path to the desired value (see help)"
 msgstr "การตั้งค่าตามที่ต้องการ(ดูที่ช่วยเหลือ)"
 
-#: bread/contrib/document_templates/models.py:101
+#: bread/contrib/document_templates/models.py:109
 #, fuzzy
 #| msgid "Document Template"
 msgid "Template"
 msgstr "แบบฟอร์มเอกสาร"
 
-#: bread/contrib/document_templates/models.py:103
+#: bread/contrib/document_templates/models.py:111
 msgid "Jinja template with 'value' in context"
 msgstr ""
 
-#: bread/contrib/document_templates/models.py:105
+#: bread/contrib/document_templates/models.py:113
 msgid "Raw value"
 msgstr "ตั้งค่าขนาดของแถว"
 
-#: bread/contrib/document_templates/models.py:108
+#: bread/contrib/document_templates/models.py:116
 msgid "Variable"
 msgstr "ค่าตัวแปร"
 
-#: bread/contrib/document_templates/models.py:109
+#: bread/contrib/document_templates/models.py:117
 msgid "Variables"
 msgstr "ตัวแปร"
 
@@ -115,9 +115,67 @@ msgstr "ตัวแปรที่กำหนดต่อไปนี้ไม
 msgid "Help"
 msgstr "ช่วยเหลือ"
 
-#: bread/contrib/reports/models.py:20
+#: bread/contrib/publicurls/models.py:15
+#, python-format
+msgid "%(value)s is not a valid internal URL"
+msgstr ""
+
+#: bread/contrib/publicurls/models.py:29
+msgid "URL"
+msgstr ""
+
+#: bread/contrib/publicurls/models.py:32
+msgid "Internal URL"
+msgstr ""
+
+#: bread/contrib/publicurls/models.py:34
+msgid "Salt"
+msgstr ""
+
+#: bread/contrib/publicurls/models.py:35 bread/contrib/reports/models.py:20
 msgid "Created"
 msgstr "สร้าง"
+
+#: bread/contrib/publicurls/models.py:36
+msgid "Valid for"
+msgstr ""
+
+#: bread/contrib/publicurls/models.py:37
+msgid "Has form"
+msgstr ""
+
+#: bread/contrib/publicurls/models.py:39
+msgid "Thank-you text"
+msgstr ""
+
+#: bread/contrib/publicurls/models.py:40
+msgid "Thank you"
+msgstr ""
+
+#: bread/contrib/publicurls/models.py:41
+msgid "Will be shown if a form has successfully been submitted."
+msgstr ""
+
+#: bread/contrib/publicurls/models.py:52 bread/contrib/publicurls/models.py:68
+#: bread/contrib/publicurls/urls.py:69
+msgid "Public URL"
+msgstr ""
+
+#: bread/contrib/publicurls/models.py:69
+msgid "Public URLs"
+msgstr ""
+
+#: bread/contrib/publicurls/urls.py:30
+msgid "Link has expired"
+msgstr ""
+
+#: bread/contrib/publicurls/urls.py:48
+msgid "Data has been submitted"
+msgstr ""
+
+#: bread/contrib/publicurls/urls.py:50 bread/views/wizard.py:50
+msgid "Back"
+msgstr "กลับ"
 
 #: bread/contrib/reports/models.py:25 bread/contrib/triggers/models.py:108
 msgid "Filter"
@@ -366,7 +424,7 @@ msgstr "ไม่พบไฟล์"
 msgid "Table of Contents"
 msgstr "สารบัญ"
 
-#: bread/layout/componentpreview.py:976 bread/views/administration.py:259
+#: bread/layout/componentpreview.py:975 bread/views/administration.py:259
 msgid ""
 "This is some tooltip text. This box shows the maximum amount of text that "
 "should appear inside. If more room is needed please use a modal instead."
@@ -374,11 +432,11 @@ msgstr ""
 "นี่คือข้อความคำแนะนำเครื่องมือบางส่วน กล่องนี้แสดงจำนวนตัวอักษรสูงสุดที่ควรปรากฏอยู่ภายใน "
 "หากต้องการพื้นที่เพิ่ม โปรดใช้โมดุลแทน"
 
-#: bread/layout/componentpreview.py:1039
+#: bread/layout/componentpreview.py:1038
 msgid "This is a server message in the ToastNotification."
 msgstr "นี่คือข้อความเซิร์ฟเวอร์ ToastNotification"
 
-#: bread/layout/componentpreview.py:1173
+#: bread/layout/componentpreview.py:1172
 msgid "Click to see ToastNotification in action"
 msgstr "คลิกเพื่อดูการทำงานของ ToastNotification"
 
@@ -425,13 +483,13 @@ msgstr ""
 msgid "Fields"
 msgstr "ฟิลด์"
 
-#: bread/layout/components/fieldexplorer.py:107
+#: bread/layout/components/fieldexplorer.py:105
 #, fuzzy, python-format
 #| msgid "Global preferences"
 msgid " reference to \"%s\""
 msgstr "การตั้งค่าส่วนกลาง"
 
-#: bread/layout/components/fieldexplorer.py:110
+#: bread/layout/components/fieldexplorer.py:108
 #, python-format
 msgid " reference to multiple \"%s\""
 msgstr ""
@@ -804,22 +862,22 @@ msgstr "คืนค่า %(modelname)s %(objectname)s"
 msgid "Deleted %(modelname)s %(objectname)s"
 msgstr "ลบ %(modelname)s %(objectname)s"
 
-#: bread/views/edit.py:52
+#: bread/views/edit.py:53
 #, python-format
 msgid "Saved %s"
 msgstr "บันทึก %s"
 
-#: bread/views/edit.py:83
+#: bread/views/edit.py:86
 #, python-format
 msgid "Created copy %s"
 msgstr "สร้างสำเนา %s"
 
-#: bread/views/edit.py:108
+#: bread/views/edit.py:111
 #, python-format
 msgid "Created %s copies"
 msgstr "สร้าง %s สำเนา"
 
-#: bread/views/edit.py:151
+#: bread/views/edit.py:154
 msgctxt "this is a copy"
 msgid "Copy"
 msgstr "คัดลอก"
@@ -928,13 +986,9 @@ msgstr "ปิดใช้งานโหมดนักพัฒนา"
 msgid "Read"
 msgstr "อ่าน"
 
-#: bread/views/util.py:74
+#: bread/views/util.py:80
 msgid "Add {}"
 msgstr "เพิ่ม {}"
-
-#: bread/views/wizard.py:50
-msgid "Back"
-msgstr "กลับ"
 
 #: bread/views/wizard.py:61
 msgid "Complete"
