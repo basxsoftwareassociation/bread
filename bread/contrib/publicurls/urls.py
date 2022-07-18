@@ -31,12 +31,13 @@ def publicurlview(request, token):
             )
 
     # call actual view
-    match = resolve(url.url)
-    request.resolver_match = match  # make sure view uses correct resolver_match
+    parsed = urlparse(url.url)
+    match_ = resolve(parsed.path)
+    request.resolver_match = match_  # make sure view uses correct resolver_match
     request.user = get_anonymous_user()
-    request.GET = QueryDict(urlparse(url.url).query, mutable=True)
+    request.GET = QueryDict(parsed.query, mutable=True)
     request.GET[settings.HIDEMENUS_URLPARAMETER] = True
-    response = match.func(request, *match.args, **match.kwargs)  # call view function
+    response = match_.func(request, *match_.args, **match_.kwargs)  # call view function
 
     # check if a form has successfully been submited, if so return a thank you page
     if (
