@@ -1,4 +1,5 @@
 import random
+from urllib.parse import urlparse
 
 from django.core.exceptions import ValidationError
 from django.core.signing import TimestampSigner
@@ -9,7 +10,7 @@ from django.utils.translation import gettext as _
 
 def validate_url(value):
     try:
-        resolve(value)
+        resolve(urlparse(value).path)
     except Resolver404:
         raise ValidationError(
             _("%(value)s is not a valid internal URL"),
