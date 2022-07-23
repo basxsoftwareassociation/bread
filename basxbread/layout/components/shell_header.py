@@ -12,12 +12,14 @@ class ShellHeader(hg.HEADER):
         super().__init__(
             hg.If(
                 HasBasxBreadCookieValue("sidenav-hidden", "true"),
-                variable_size_header_part(hg.BaseElement(), company, searchbar, "5rem"),
+                variable_size_header_part(
+                    hg.BaseElement(), company, searchbar, hide=True
+                ),
                 variable_size_header_part(
                     hg.SPAN(platform, _class="bx--header__name--prefix"),
                     company,
                     searchbar,
-                    "18rem",
+                    hide=False,
                 ),
             ),
             hg.DIV(
@@ -73,7 +75,7 @@ def logo():
     )
 
 
-def variable_size_header_part(platform, company, searchbar, searchbar_position):
+def variable_size_header_part(platform, company, searchbar, hide):
     return hg.BaseElement(
         hg.A(
             logo(),
@@ -86,19 +88,15 @@ def variable_size_header_part(platform, company, searchbar, searchbar_position):
             searchbar,
             hg.SPAN(
                 searchbar,
-                style=f"position: absolute; left: {searchbar_position}",
+                # style=f"position: absolute; left: 3rem",
                 _class="theme-gray-100",
             ),
             "",
         ),
-        hg.A(
-            hg.SPAN(
-                company,
-                style=hg.format(
-                    "position: absolute; left: {}",
-                    hg.If(searchbar, "50%", searchbar_position),
-                ),
-            ),
+        None
+        if hide
+        else hg.A(
+            hg.SPAN(company),
             _class="bx--header__name",
             style="font-weight: 400",  # override carbon design
             href=hg.F(lambda c: c["request"].META["SCRIPT_NAME"] or "/"),

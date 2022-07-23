@@ -15,7 +15,6 @@ from django.utils.functional import Promise
 from django.utils.http import urlencode
 from django.utils.text import format_lazy
 
-from ..layout.skeleton import default_page_layout
 from .model_helpers import get_concrete_instance
 
 
@@ -72,6 +71,8 @@ def link_with_urlparameters(request, **kwargs):
 def aslayout(view):
     """Helper function which wraps functions who return a layout to be full django views.
     Non-htmlgenerator.BaseElement responses will simply be passed through."""
+    from ..layout.skeleton import default_page_layout
+
     baselayout = getattr(view, "baselayout", default_page_layout)
 
     @wraps(view)

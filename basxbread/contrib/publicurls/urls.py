@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 import htmlgenerator as hg
 from django.conf import settings
 from django.core.signing import SignatureExpired, TimestampSigner
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.http.request import QueryDict
 from django.urls import path, resolve
 from django.utils.translation import gettext as _
@@ -18,6 +18,8 @@ from . import models
 @aslayout
 def publicurlview(request, token):
     # unpack and verify token
+    if ":" not in token:
+        return HttpResponseNotFound()
     token, salt = token.rsplit(":", 1)
     signer = TimestampSigner(salt=salt)
     pk = int(signer.unsign(token))

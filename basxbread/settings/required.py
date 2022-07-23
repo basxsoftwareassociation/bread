@@ -150,6 +150,7 @@ BASXBREAD_PUBLIC_FILES_PREFIX = (
 
 AJAX_URLPARAMETER = "asajax"
 HIDEMENUS_URLPARAMETER = "hidemenus"
+PLATFORMNAME = mark_safe('Basx<span style="font-weight: 600">Bread</span>')
 
 
 # custom unicode symbols, used for some formatting
