@@ -5,8 +5,8 @@ from django.conf import settings
 from django.db import models
 from django.db.models import ManyToOneRel
 from django.template.defaultfilters import linebreaksbr
-from django.utils.formats import localize
-from django.utils.timezone import localtime
+from django.utils.formats import localize as djangolocalize
+from django.utils.timezone import localtime as djangolocaltime
 
 from ..formatters import format_value
 from ..utils import resolve_modellookup, reverse_model
@@ -135,15 +135,18 @@ class ObjectFieldValue(hg.Lazy):
                 # e.g. for non-existing OneToOneField related value
                 pass
         if isinstance(value, datetime.datetime):
-            value = localtime(value)
+            value = djangolocaltime(value)
         if self.formatter:
             value = self.formatter(value)
-        value = localize(value, use_l10n=settings.USE_L10N)
+        value = djangolocalize(value, use_l10n=settings.USE_L10N)
         if isinstance(value, models.Manager):
             value = ", ".join([str(x) for x in value.all()])
         if isinstance(value, str):
             value = linebreaksbr(value)
         return value
 
+
+localize = hg.lazify(djangolocalize)
+localtime = hg.lazify(djangolocaltime)
 
 FC = FormattedContextValue

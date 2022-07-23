@@ -547,7 +547,8 @@ def searchbar(search_urlparameter: str):
             "name": search_urlparameter,
             "value": hg.F(lambda c: c["request"].GET.get(search_urlparameter, "")),
             "onfocus": "this.setSelectionRange(this.value.length, this.value.length);",
-        }
+        },
+        width="100%",
     )
     searchinput.close_button.attributes[
         "onclick"
