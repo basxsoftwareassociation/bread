@@ -11,7 +11,7 @@ from django.utils.html import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .. import layout, menu
-from ..forms.forms import breadmodelform_factory
+from ..forms.forms import modelform_factory
 from ..layout.skeleton import default_page_layout
 from ..utils import ModelHref, filter_fieldlist, reverse_model
 
@@ -97,7 +97,7 @@ class CustomFormMixin:
         return ret
 
     def get_form_class(self, form=forms.models.ModelForm):
-        return breadmodelform_factory(
+        return modelform_factory(
             request=self.request,
             model=self.model,
             layout=self._get_layout_cached(),

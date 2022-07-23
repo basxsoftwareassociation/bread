@@ -8,7 +8,7 @@ from guardian.mixins import PermissionRequiredMixin
 from .. import layout as _layout  # prevent name clashing
 from ..formatters import format_value
 from ..forms.fields import FormsetField
-from ..forms.forms import breadmodelform_factory
+from ..forms.forms import modelform_factory
 from ..utils import ModelHref, expand_ALL_constant
 from .edit import EditView
 from .util import BaseView, header
@@ -85,7 +85,7 @@ class FormReadView(EditView):
         return HttpResponseNotAllowed(["GET"])
 
     def get_form_class(self, form=forms.models.ModelForm):
-        return breadmodelform_factory(
+        return modelform_factory(
             request=self.request,
             model=self.model,
             layout=self._get_layout_cached(),

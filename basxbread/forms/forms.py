@@ -16,19 +16,14 @@ from .fields import FormsetField, GenericForeignKeyField
 
 # shortcut, actually this should always be used but class based views wanted the class separately
 def generate_form(request, model, layout, instance, **kwargs):
-    return breadmodelform_factory(
-        request,
-        model=model,
-        layout=layout,
-        instance=instance,
-    )(
+    return modelform_factory(request, model=model, layout=layout, instance=instance,)(
         *([request.POST, request.FILES] if request.method == "POST" else []),
         instance=instance,
         **kwargs,
     )
 
 
-def breadmodelform_factory(  # noqa
+def modelform_factory(  # noqa
     request,
     model,
     layout,
@@ -41,7 +36,7 @@ def breadmodelform_factory(  # noqa
     formfieldelements = _get_form_fields_from_layout(layout)
     baseinlineformclass = baseinlineformclass or {}
 
-    class BreadModelFormBase(baseformclass):
+    class ModelFormBase(baseformclass):
         field_order = baseformclass.field_order or [
             f.fieldname for f in formfieldelements
         ]
@@ -129,9 +124,7 @@ def breadmodelform_factory(  # noqa
                 instance,
                 formfieldelement.formsetinitial,
             )
-    patched_formclass = type(
-        f"{model.__name__}BreadModelForm", (BreadModelFormBase,), attribs
-    )
+    patched_formclass = type(f"{model.__name__}ModelForm", (ModelFormBase,), attribs)
     modelfields = {f.name for f in model._meta.get_fields()}
     ret = forms.modelform_factory(
         model,
@@ -182,7 +175,7 @@ def _generate_formset_class(
         hg.BaseElement(*formsetfieldelement)
     )  # make sure the _layout.forms.FormsetField does not be considered recursively
 
-    formclass = breadmodelform_factory(
+    formclass = modelform_factory(
         request=request,
         model=modelfield.related_model,
         layout=formfieldelements,
