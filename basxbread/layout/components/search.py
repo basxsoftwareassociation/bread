@@ -28,6 +28,7 @@ class Search(hg.DIV):
         show_result_container=True,
         resultcontainer_onload_js=None,
         disabled=False,
+        width="25rem",
         **kwargs,
     ):
         """
@@ -36,9 +37,7 @@ class Search(hg.DIV):
         kwargs["_class"] = kwargs.get("_class", "") + f" bx--search bx--search--{size}"
         kwargs["data_search"] = True
         kwargs["role"] = "search"
-        width = kwargs.get("width", None)
-        if width:
-            kwargs["style"] = kwargs.get("style", "") + f"width:{width};"
+        kwargs["style"] = kwargs.get("style", "") + f";width:{width};"
 
         widgetattributes = {
             "id": "search__" + hg.html_id(self),

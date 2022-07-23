@@ -84,15 +84,6 @@ def variable_size_header_part(platform, company, searchbar, hide):
             style="font-weight: 400",  # override carbon design
             href=hg.F(lambda c: c["request"].META["SCRIPT_NAME"] or "/"),
         ),
-        hg.If(
-            searchbar,
-            hg.SPAN(
-                searchbar,
-                # style=f"position: absolute; left: 3rem",
-                _class="theme-gray-100",
-            ),
-            "",
-        ),
         None
         if hide
         else hg.A(
@@ -100,5 +91,9 @@ def variable_size_header_part(platform, company, searchbar, hide):
             _class="bx--header__name",
             style="font-weight: 400",  # override carbon design
             href=hg.F(lambda c: c["request"].META["SCRIPT_NAME"] or "/"),
+        ),
+        hg.If(
+            searchbar,
+            hg.SPAN(searchbar, _class="theme-gray-100", style="padding-left: 0.5rem"),
         ),
     )
