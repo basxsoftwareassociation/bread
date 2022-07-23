@@ -9,11 +9,11 @@ Documentation
 Documentation is hosted at [readthedocs.io](https://basx-bread.readthedocs.io/en/latest/)
 
 
-BREAD Engine
+BasxBread Engine
 ------------
 
 This package provides functionality to create django database applications in a quick and customizable way. Similar concept are CRUD (create-read-update-delete) frameworks or RAD (rapid application development) tools.
-BREAD is also partly a replacement of the django-admin interface, however, there is no API compatability to it.
+BasxBread is also partly a replacement of the django-admin interface, however, there is no API compatability to it.
 
 Installation
 ------------
@@ -36,7 +36,7 @@ In that case only the section *Registering the UI* might be worth reading.
     python3 -m venv .venv
     . .venv/bin/activate # this is for bash, for windows use the script .venv/bin/Activate.ps1, there are also scripts for csh and fish
     pip install basx-bread # should run without problems, but users reported problems in some Mac setups due to native libraries missing
-    django-admin startproject --template $( pip show basx-bread | grep '^Location: ' | cut -c 11- )/bread/resources/project_template/ myproject . # template-project for bread
+    django-admin startproject --template $( pip show basx-bread | grep '^Location: ' | cut -c 11- )/basxbread/resources/project_template/ myproject . # template-project for basxbread
 
     # adding a Django "app", Django projects consist of different apps with different models, pretty standard
     # can also be achieved with "python manage.py startapp mymodels" but it would create a few unnecessary files
@@ -53,7 +53,7 @@ In order to get started with the UI quickly the following code can be put into `
 The code below assumes there exists a single model inside ```mymodels/models.py``` called ```MyModel```.
 
 ```python
-    from bread.utils import quickregister
+    from basxbread.utils import quickregister
     from . import models
 
     urlpatterns = []

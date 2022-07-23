@@ -1,7 +1,7 @@
-BREAD is licensed under the three-clause BSD license; see the file
+BasxBread is licensed under the three-clause BSD license; see the file
 LICENSE for details.
 
-BREAD includes code from the Carbon Design System, which is licensed under
+BasxBread includes code from the Carbon Design System, which is licensed under
 the Apache License 2.0, a permissive free software license. The copyright and license
 is included below for compliance with Carbon's terms.
 

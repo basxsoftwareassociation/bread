@@ -6,7 +6,7 @@ def readme():
         return f.read()
 
 
-with open("bread/__init__.py") as f:
+with open("basxbread/__init__.py") as f:
     # magic n stuff
     version = (
         [i for i in f.readlines() if "__version__" in i][-1]

@@ -5,7 +5,7 @@ import sys
 
 import django
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bread.tests.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "basxbread.tests.settings")
 django.setup()
 
 if __name__ == "__main__":
