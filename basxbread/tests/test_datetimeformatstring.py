@@ -34,5 +34,5 @@ class ToPHPFormatstrTest(TestCase):
                         format(d, to_php_formatstr(f)),
                         d.strftime(f),
                         f"({d}): input was {d.strftime(f)} ({f}), "
-                        "output was {format(d, to_php_formatstr(f))} ({to_php_formatstr(f)})",
+                        f"output was {format(d, to_php_formatstr(f))} ({to_php_formatstr(f)})",
                     )
