@@ -58,4 +58,4 @@ jobs:
       run: ./manage.py test
 
     - name: Check types
-      run: mypy bread
+      run: mypy basxbread
