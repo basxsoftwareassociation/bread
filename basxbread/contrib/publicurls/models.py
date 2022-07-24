@@ -1,4 +1,5 @@
 import random
+from secrets import token_hex
 from urllib.parse import urlparse
 
 from django.core.exceptions import ValidationError
@@ -16,12 +17,6 @@ def validate_url(value):
             _("%(value)s is not a valid internal URL"),
             params={"value": value},
         )
-
-
-def generate_salt(nbytes=16):
-    strlen = nbytes * 2
-    value = random.randint(0, 2 ** (strlen * 8))
-    return ("0" * strlen + hex(value)[2:])[-strlen:]  # leftpad with zero
 
 
 class PublicURL(models.Model):
@@ -59,7 +54,7 @@ class PublicURL(models.Model):
         if not self.pk:  # prevent to resuse salt when object is copied
             self.salt = None
         if not self.salt:
-            self.salt = generate_salt()
+            self.salt = token_hex(16)
         super().save(*args, **kwargs)
 
     def __str__(self):
