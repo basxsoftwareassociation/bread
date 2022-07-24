@@ -21,9 +21,10 @@ def get_real_url(view, urlname, urlpattern):
             # likely an ID which is required url argument
             if len(arguments) == 1:
                 model = view.view_initkwargs.get("model") or view.view_class.model
-                urlargname = arguments[0].strip("<>").split(":")[-1]
-                obj = G(model)
-                return reverse(urlname, kwargs={urlargname: obj.id})
+                if model is not None:
+                    urlargname = arguments[0].strip("<>").split(":")[-1]
+                    obj = G(model)
+                    return reverse(urlname, kwargs={urlargname: obj.id})
     return None
 
 

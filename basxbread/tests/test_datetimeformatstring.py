@@ -4,6 +4,7 @@ import random
 from django.conf import settings
 from django.test import TestCase
 from django.utils.dateformat import format
+from django.utils.translation import activate
 
 from ..layout.components.forms.widgets import to_php_formatstr
 
@@ -17,6 +18,7 @@ class ToPHPFormatstrTest(TestCase):
     RANDOM_ROUNDS = 100
 
     def test_format_conversion(self):
+        activate("en")  # datetime.strftime cannot handle locale easily
         max_delta = datetime.datetime.max - datetime.datetime.min
 
         for _ in range(self.RANDOM_ROUNDS):
