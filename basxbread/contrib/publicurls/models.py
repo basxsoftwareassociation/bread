@@ -1,4 +1,3 @@
-import random
 from secrets import token_hex
 from urllib.parse import urlparse
 
