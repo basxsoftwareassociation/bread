@@ -1,6 +1,8 @@
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
 
+from basxbread.utils import get_all_subclasses
+
 from .button import Button
 
 
@@ -26,7 +28,13 @@ def field_help(model, max_depth=4):
                 model,
                 max_depth,
                 list(
-                    set([model, model.__mro__[-3], *_all_subclasses(model.__mro__[-3])])
+                    set(
+                        [
+                            model,
+                            model.__mro__[-3],
+                            *get_all_subclasses(model.__mro__[-3]),
+                        ]
+                    )
                 ),
                 display="block",
             ),
@@ -126,10 +134,4 @@ def _js_toggle_display(element_accessor):
     return (
         f"{element_accessor}.style.display = "
         f"{element_accessor}.style.display == 'none' ? 'block': 'none'"
-    )
-
-
-def _all_subclasses(cls):
-    return set(cls.__subclasses__()).union(
-        [s for c in cls.__subclasses__() for s in _all_subclasses(c)]
     )

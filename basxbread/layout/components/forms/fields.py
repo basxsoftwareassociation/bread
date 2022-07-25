@@ -4,6 +4,8 @@ from typing import List, Optional, Type, Union
 import htmlgenerator as hg
 from django import forms
 
+from basxbread.utils import get_all_subclasses
+
 from .helpers import ErrorList, HelpText, Label
 from .widgets import BaseWidget, HiddenInput, TextInput
 
@@ -170,7 +172,7 @@ FormField = generate_widget_element
 
 def _guess_widget(fieldname, form, suggested_widgetclass) -> hg.Lazy:
     widget_map: dict = {}
-    for cls in _all_subclasses(BaseWidget):
+    for cls in get_all_subclasses(BaseWidget):
         if cls.django_widget not in widget_map:
             widget_map[cls.django_widget] = []
         widget_map[cls.django_widget].append(cls)
@@ -201,9 +203,3 @@ def _guess_widget(fieldname, form, suggested_widgetclass) -> hg.Lazy:
         return TextInput
 
     return hg.F(wrapper)
-
-
-def _all_subclasses(cls):
-    return set(cls.__subclasses__()).union(
-        [s for c in cls.__subclasses__() for s in _all_subclasses(c)]
-    )
