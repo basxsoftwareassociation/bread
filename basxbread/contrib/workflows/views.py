@@ -70,12 +70,13 @@ class WorkflowReadView(views.ReadView):
         return hg.BaseElement(
             hg.H1(self.object, style="margin-bottom: 2rem"),
             hg.DIV(
-                layout.button.Button(
-                    "Edit",
-                    **layout.aslink_attributes(
-                        layout.objectaction(self.object, "edit")
-                    ),
-                ),
+                # TODO: take care of this (maybe not necessary, use bread.views.header)
+                # layout.button.Button(
+                # "Edit",
+                # **layout.aslink_attributes(
+                # layout.objectaction(self.object, "edit")
+                # ),
+                # ),
                 views.layoutasreadonly(
                     hg.DIV(
                         hg.DIV(
