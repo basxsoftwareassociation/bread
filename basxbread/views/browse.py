@@ -93,6 +93,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
     items_per_page_options: Optional[Iterable[int]] = None
     itemsperpage_urlparameter: str = "itemsperpage"
     search_urlparameter: str = "q"
+    filter_urlparameter: str = "filter"
 
     title: Union[hg.BaseElement, str] = ""
     columns: Iterable[Union[str, layout.datatable.DataTableColumn]] = ("__all__",)
@@ -133,6 +134,9 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         )
         self.search_urlparameter = (
             kwargs.get("search_urlparameter") or self.search_urlparameter
+        )
+        self.filter_urlparameter = (
+            kwargs.get("filter_urlparameter") or self.filter_urlparameter
         )
         self.title = kwargs.get("title") or self.title
         self.rowactions = kwargs.get("rowactions") or self.rowactions
@@ -194,6 +198,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
             backurl=self.backurl,
             primary_button=self.primary_button,
             search_urlparameter=self.search_urlparameter,
+            filter_urlparameter=self.filter_urlparameter,
             **datatable_kwargs,
         )
 
@@ -286,6 +291,12 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
                         searchquery,
                     )
                 )
+
+        if self.filter_urlparameter and self.filter_urlparameter in self.request.GET:
+            filterquery = self.request.GET[self.filter_urlparameter].strip()
+            if filterquery:
+                print(filterquery)
+                qs = apply_search(qs, filterquery)
 
         selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
         if selectedobjects and "all" not in selectedobjects:

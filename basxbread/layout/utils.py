@@ -9,7 +9,7 @@ from django.utils.formats import localize as djangolocalize
 from django.utils.timezone import localtime as djangolocaltime
 
 from ..formatters import format_value
-from ..utils import resolve_modellookup, reverse_model
+from ..utils import resolve_modellookup
 
 DEVMODE_KEY = "DEVMODE"
 
@@ -38,18 +38,6 @@ class DevModeOnly(hg.BaseElement):
         if context["request"].session.get(DEVMODE_KEY, False):
             return super().render(context)
         return ""
-
-
-def objectaction(object, action, *args, **kwargs):
-    kwargs["kwargs"] = {"pk": object.pk}
-    return str(
-        reverse_model(
-            object,
-            action,
-            *args,
-            **kwargs,
-        )
-    )
 
 
 def aslink_attributes(href):

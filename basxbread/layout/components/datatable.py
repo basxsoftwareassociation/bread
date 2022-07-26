@@ -1,15 +1,20 @@
 from typing import Any, Iterable, List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
+from django import forms
 from django.db import models
+from django.db.models.constants import LOOKUP_SEP
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
+from django_countries.fields import CountryField
 
-from basxbread.utils import filter_fieldlist, resolve_modellookup
+from basxbread.utils import filter_fieldlist, get_all_subclasses, resolve_modellookup
 from basxbread.utils.links import Link, ModelHref
 from basxbread.utils.urls import link_with_urlparameters
 
 from ..utils import ObjectFieldLabel, ObjectFieldValue, aslink_attributes
 from .button import Button
+from .forms import Form, FormField
 from .icon import Icon
 from .overflow_menu import OverflowMenu
 from .pagination import Pagination, PaginationConfig
@@ -288,7 +293,7 @@ event.stopPropagation()""",
                         style="margin: 0; padding: 0",
                     ),
                     _class="settingscontainer",
-                    style="position: absolute; z-index: 999; right: 0; display: none",
+                    style="position: absolute; z-index: 999; right: 0; display: none; max-width: 80%",
                     onload="document.addEventListener('click', (e) => {this.style.display = 'none'})",
                 ),
                 style="position: relative",
@@ -306,6 +311,7 @@ event.stopPropagation()""",
         # column behaviour
         columns: Iterable[Union[str, "DataTableColumn"]] = (),
         prevent_automatic_sortingnames=False,
+        prevent_automatic_filternames=False,
         # row behaviour
         rowvariable="row",
         rowactions: Iterable[Link] = (),
@@ -321,6 +327,7 @@ event.stopPropagation()""",
         pagination_config: Optional[PaginationConfig] = None,
         search_urlparameter: Optional[str] = None,
         model=None,  # required if queryset is Lazy
+        filter_urlparameter: Optional[str] = None,
         **kwargs,
     ):
         """TODO: Write Docs!!!!
@@ -400,12 +407,12 @@ event.stopPropagation()""",
                 }
             # convert simple string (modelfield) to column definition
             if isinstance(col, str):
-
                 col = DataTableColumn.from_modelfield(
-                    col,
-                    model,
-                    prevent_automatic_sortingnames,
-                    rowvariable,
+                    col=col,
+                    model=model,
+                    prevent_automatic_sortingnames=prevent_automatic_sortingnames,
+                    prevent_automatic_filternames=prevent_automatic_filternames,
+                    rowvariable=rowvariable,
                     td_attributes=td_attributes,
                 )
             else:
@@ -413,6 +420,15 @@ event.stopPropagation()""",
                     col = col._replace(td_attributes=td_attributes)  # type: ignore
 
             column_definitions.append(col)
+
+        settingspanel = build_filter_ui(
+            model,
+            ("AND",)
+            + tuple(
+                i.filtername for i in column_definitions if i.filtername is not None
+            ),
+            filter_urlparameter,
+        )
 
         return DataTable(
             column_definitions
@@ -488,6 +504,9 @@ event.stopPropagation()""",
         return classes
 
 
+# Helpers for building columns ###################################################################
+
+
 class DataTableColumn(NamedTuple):
     header: Any
     cell: Any
@@ -495,6 +514,7 @@ class DataTableColumn(NamedTuple):
     enable_row_click: bool = True
     th_attributes: Optional[Union[hg.F, dict]] = None
     td_attributes: Optional[Union[hg.F, dict]] = None
+    filtername: Optional[str] = None
 
     @staticmethod
     def from_modelfield(
@@ -504,12 +524,16 @@ class DataTableColumn(NamedTuple):
         rowvariable="row",
         th_attributes=None,
         td_attributes=None,
+        prevent_automatic_filternames=False,
     ) -> "DataTableColumn":
         return DataTableColumn(
-            ObjectFieldLabel(col, model),
-            ObjectFieldValue(col, rowvariable),
-            sortingname_for_column(model, col)
+            header=ObjectFieldLabel(col, model),
+            cell=ObjectFieldValue(col, rowvariable),
+            sortingname=sortingname_for_column(model, col)
             if not prevent_automatic_sortingnames
+            else None,
+            filtername=filtername_for_column(model, col)
+            if not prevent_automatic_filternames
             else None,
             th_attributes=th_attributes,
             td_attributes=td_attributes,
@@ -534,6 +558,263 @@ class DataTableColumn(NamedTuple):
                 **sortinglink_for_column(orderingurlparameter, self.sortingname),
             )
         return hg.TH(headcontent, lazy_attributes=self.th_attributes)
+
+
+def sortingclass_for_column(orderingurlparameter, columnname):
+    def extracturlparameter(context):
+        value = context["request"].GET.get(orderingurlparameter, "")
+        if not value:
+            return ""
+        if value == columnname:
+            return "bx--table-sort--active"
+        if value == "-" + columnname:
+            return "bx--table-sort--active bx--table-sort--ascending"
+        return ""
+
+    return hg.F(extracturlparameter)
+
+
+def sortingname_for_column(model, column):
+    components = []
+    for field in resolve_modellookup(model, column):
+        if hasattr(field, "sorting_name"):
+            components.append(field.sorting_name)
+        elif isinstance(field, (models.Field, models.ForeignObjectRel)):
+            components.append(field.name)
+        else:
+            return None
+    return LOOKUP_SEP.join(components)
+
+
+def filtername_for_column(model, column):
+    components = []
+    for field in resolve_modellookup(model, column):
+        components.append(field.name)
+    return LOOKUP_SEP.join(components)
+
+
+def sortinglink_for_column(orderingurlparameter, columnname):
+    ORDERING_VALUES = {
+        None: columnname,
+        columnname: "-" + columnname,
+        "-" + columnname: None,
+    }
+
+    def extractsortinglink(context):
+        currentordering = context["request"].GET.get(orderingurlparameter, None)
+        nextordering = ORDERING_VALUES.get(currentordering, columnname)
+        ret = link_with_urlparameters(
+            context["request"], **{orderingurlparameter: nextordering}
+        )
+        # workaround to allow reseting session-stored table state
+        if nextordering is None and "?" not in ret:
+            ret = ret + "?reset"
+        return ret
+
+    return aslink_attributes(hg.F(extractsortinglink))
+
+
+# Helpers for building a filter panel #######################################
+
+
+def build_filter_ui(basemodel, filterconfig, filter_urlparameter):
+    return hg.DIV(
+        hg.DIV(
+            hg.DIV(
+                hg.DIV(_("Filter"), style="margin-bottom: 1rem"),
+                hg.DIV(
+                    Form(
+                        _build_form(_build_formclass(basemodel, filterconfig)),
+                        _build_filter_ui_recursive(basemodel, filterconfig),
+                        _class="filterform",
+                    ),
+                    style="display: flex",
+                ),
+                style="border-right: #ccc solid 1px; margin: 0 16px 0 0",
+            ),
+            style="display: flex; padding: 24px 32px 0 32px",
+        ),
+        hg.DIV(
+            Button(
+                _("Cancel"),
+                buttontype="ghost",
+                onclick="this.closest('.settingscontainer').style.display = 'none'",
+            ),
+            Button.from_link(
+                Link(
+                    label=_("Reset"),
+                    href=hg.format("{}?reset=1", hg.C("request").path),
+                    iconname=None,
+                ),
+                buttontype="secondary",
+            ),
+            hg.SCRIPT(
+                hg.mark_safe(
+                    """
+function build_filter_expression(formElement) {
+    return build_filter_expression_recursive(formElement, new FormData(formElement));
+}
+function build_filter_expression_recursive(filterformElement, formdata) {
+    grouptype = filterformElement.getAttribute("data-filtergroup");
+    var ret = [];
+    for(element of filterformElement.querySelectorAll(":scope > div[data-filterfield]")) {
+        let key = element.getAttribute("data-filterfield");
+        if(formdata.has(key) && formdata.get(key) !== "")
+            ret.push(key.replaceAll("__", ".") + " " + element.getAttribute("data-operator") +' "' + formdata.get(key).replaceAll('"', '\\"') + '"');
+    }
+    for(element of filterformElement.querySelectorAll(":scope > div[data-filtergroup]")) {
+        let subgroup = build_filter_expression_recursive(element, formdata);
+        if(subgroup !== "")
+            ret.push(subgroup);
+    }
+    if(ret.length > 0)
+        return "( " + ret.join(" " + grouptype.toLowerCase() + " ") + " )";
+    return ""
+}"""
+                )
+            ),
+            hg.FORM(
+                Button(
+                    pgettext_lazy("apply filter", "Filter"),
+                    type="submit",
+                    name=filter_urlparameter,
+                    value=hg.C("request").GET.get(filter_urlparameter, ""),
+                    onclick="""this.value = build_filter_expression(this.closest('.filterpanel').querySelector('.filterform'));""",
+                ),
+                method="GET",
+            ),
+            style="display: flex; justify-content: flex-end; margin-top: 24px",
+            _class="bx--modal-footer",
+        ),
+        _class="filterpanel",
+        style="background-color: #fff",
+    )
+
+
+def _build_filter_ui_recursive(basemodel, filterconfig):
+    """
+    filterconfig: Tree in the form of
+                  ("and"
+                      ("or", fieldname1, fieldname2),
+                      ("or", fieldname3, fieldname4),
+                  )
+    """
+    if isinstance(filterconfig, tuple):
+        if len(filterconfig) <= 1:
+            return None
+        if filterconfig[0].lower() not in ("and", "or"):
+            raise RuntimeError(
+                'Filtergroups need to have "AND" or "OR" as the first argument'
+            )
+        return hg.DIV(
+            data_filtergroup=filterconfig[0].lower(),
+            *[_build_filter_ui_recursive(basemodel, i) for i in filterconfig[1:]],
+        )
+    elif isinstance(filterconfig, str):
+        return hg.DIV(
+            FormField(filterconfig),
+            data_filterfield=filterconfig,
+            data_operator=_djangql_operator(basemodel, filterconfig),
+        )
+    raise RuntimeError(f"Invalid value inside filterconfig: {filterconfig}")
+
+
+def _build_formclass(basemodel, filterconfig):
+    def all_fields(config):
+        for i in config:
+            if isinstance(i, str):
+                if i.lower() not in ("and", "or"):
+                    yield i
+            else:
+                yield from all_fields(i)
+
+    allfields = {
+        field: _related_field(basemodel, _without_lookup(field))
+        for field in all_fields(filterconfig)
+    }
+
+    fields = {
+        fieldname: _formfield(fieldname, field)
+        for fieldname, field in allfields.items()
+    }
+    attrs = {**fields}
+
+    return type("CustomFilterForm", (forms.Form,), attrs)
+
+
+def _build_form(form_class):
+    def params(context):
+        print(form_class.declared_fields)
+        return form_class({})
+
+    return hg.F(params)
+
+
+def _related_field(model, fieldname):
+    if LOOKUP_SEP in fieldname:
+        field = model._meta.get_field(fieldname.split(LOOKUP_SEP, 1)[0])
+        return _related_field(field.related_model, fieldname.split(LOOKUP_SEP, 1)[1])
+    return model._meta.get_field(fieldname)
+
+
+def _formfield(fieldname, field):
+    kwargs = {"required": False}
+
+    # prevent use of TextArea
+    if isinstance(field, models.TextField):
+        kwargs["widget"] = forms.TextInput()
+
+    return field.formfield(**kwargs)
+
+
+def _lookup(fieldname):
+    lookups = set()
+    for cls in get_all_subclasses(models.query_utils.RegisterLookupMixin):
+        lookups |= set(cls.get_lookups().keys())
+
+    if any(fieldname.endswith("{LOOKUP_SEP}{lookup}") for lookup in lookups):
+        return fieldname.rsplit(LOOKUP_SEP, 1)[1]
+    return None
+
+
+def _djangql_operator(basemodel, fieldname):
+    # possible DjangoQL operators:
+    # = != < <= > >=
+    # startswith, not startswith, endswith, not endswith
+    # ~ !~
+    # in          not in
+    customlookup = {
+        "gt": ">",
+        "gte": ">=",
+        "lt": "<",
+        "lte": "<=",
+        "icontains": "~",
+        "contains": "~",
+        "in": "in",
+        "istartswith": "startswith",
+        "startswith": "startswith",
+        "iendswith": "endswith",
+        "endswith": "endswith",
+    }.get(_lookup(fieldname), None)
+    if customlookup is not None:
+        return customlookup
+
+    field = _related_field(basemodel, _without_lookup(fieldname))
+    if isinstance(field, CountryField):
+        return " = "
+    if isinstance(field, (models.CharField, models.TextField)):
+        return " ~ "
+    return " = "
+
+
+def _without_lookup(fieldname):
+    lookuppart = _lookup(fieldname)
+    if lookuppart is not None:
+        return fieldname[: -len(lookuppart)]
+    return fieldname
+
+
+# Helper for building a searchbar ##############################################
 
 
 def searchbar(search_urlparameter: str):
@@ -577,50 +858,3 @@ def searchbar(search_urlparameter: str):
         ),
         _class="bx--toolbar-search-container-persistent",
     )
-
-
-def sortingclass_for_column(orderingurlparameter, columnname):
-    def extracturlparameter(context):
-        value = context["request"].GET.get(orderingurlparameter, "")
-        if not value:
-            return ""
-        if value == columnname:
-            return "bx--table-sort--active"
-        if value == "-" + columnname:
-            return "bx--table-sort--active bx--table-sort--ascending"
-        return ""
-
-    return hg.F(extracturlparameter)
-
-
-def sortingname_for_column(model, column):
-    components = []
-    for field in resolve_modellookup(model, column):
-        if hasattr(field, "sorting_name"):
-            components.append(field.sorting_name)
-        elif isinstance(field, (models.Field, models.ForeignObjectRel)):
-            components.append(field.name)
-        else:
-            return None
-    return "__".join(components)
-
-
-def sortinglink_for_column(orderingurlparameter, columnname):
-    ORDERING_VALUES = {
-        None: columnname,
-        columnname: "-" + columnname,
-        "-" + columnname: None,
-    }
-
-    def extractsortinglink(context):
-        currentordering = context["request"].GET.get(orderingurlparameter, None)
-        nextordering = ORDERING_VALUES.get(currentordering, columnname)
-        ret = link_with_urlparameters(
-            context["request"], **{orderingurlparameter: nextordering}
-        )
-        # workaround to allow reseting session-stored table state
-        if nextordering is None and "?" not in ret:
-            ret = ret + "?reset"
-        return ret
-
-    return aslink_attributes(hg.F(extractsortinglink))
