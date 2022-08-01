@@ -1,3 +1,5 @@
+import html
+
 import htmlgenerator as hg
 from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
@@ -17,9 +19,14 @@ def default_page_layout(menu, *content, hidemenus=False):
         hg.HEAD(
             hg.TITLE(
                 hg.F(
-                    lambda c: strip_tags(
-                        hg.render(
-                            hg.BaseElement(c.get("pagetitle", settings.PLATFORMNAME)), c
+                    lambda c: html.unescape(
+                        strip_tags(
+                            hg.render(
+                                hg.BaseElement(
+                                    c.get("pagetitle", settings.PLATFORMNAME)
+                                ),
+                                c,
+                            )
                         )
                     )
                     + " | "
