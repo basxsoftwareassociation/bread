@@ -616,8 +616,29 @@ def sortinglink_for_column(orderingurlparameter, columnname):
 
 # Helpers for building a filter panel #######################################
 
+"""
+
+"""
+
+
+def build_filterset(basemodel, filterconfig):
+    if filterconfig[0] == "and":
+        pass
+    elif filterconfig[0] == "or":
+        pass
+    raise RuntimeError(
+        f"Invalid filter group specified '{filterconfig[0]}', must be 'and' or 'or'"
+    )
+
 
 def build_filter_ui(basemodel, filterconfig, filter_urlparameter):
+    """
+    filterconfig: Tree in the form of
+                  ("and"
+                      ("or", fieldname1, fieldname2),
+                      ("or", fieldname3, fieldname4),
+                  )
+    """
     return hg.DIV(
         hg.DIV(
             hg.DIV(
@@ -692,13 +713,6 @@ function build_filter_expression_recursive(filterformElement, formdata) {
 
 
 def _build_filter_ui_recursive(basemodel, filterconfig):
-    """
-    filterconfig: Tree in the form of
-                  ("and"
-                      ("or", fieldname1, fieldname2),
-                      ("or", fieldname3, fieldname4),
-                  )
-    """
     if isinstance(filterconfig, tuple):
         if len(filterconfig) <= 1:
             return None
