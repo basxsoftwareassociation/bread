@@ -115,7 +115,7 @@ class CustomFormMixin:
                 for_form=True,
             )
             ret = hg.BaseElement()
-            for field in expand_ALL_constant(self.model, self.fields) or formfields:
+            for field in self.fields or formfields:
                 if field in formfields:
                     ret.append(layout.forms.FormField(field))
                 else:
