@@ -7,6 +7,7 @@ from django.db.models.constants import LOOKUP_SEP
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django_countries.fields import CountryField
+from django_filters import FilterSet
 
 from basxbread.utils import filter_fieldlist, get_all_subclasses, resolve_modellookup
 from basxbread.utils.links import Link, ModelHref
@@ -616,16 +617,56 @@ def sortinglink_for_column(orderingurlparameter, columnname):
 
 # Helpers for building a filter panel #######################################
 
-"""
 
-"""
+class AndGroup(FilterSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.subgroups = []
+
+    def filter_queryset(self, queryset):
+        for name, value in self.form.cleaned_data.items():
+            queryset = self.filters[name].filter(queryset, value)
+            assert isinstance(
+                queryset, models.QuerySet
+            ), "Expected '%s.%s' to return a QuerySet, but got a %s instead." % (
+                type(self).__name__,
+                name,
+                type(queryset).__name__,
+            )
+
+        for group in self.subgroups:
+            queryset = group.filter_queryset(queryset)
+
+        return queryset
+
+
+class OrGroup(FilterSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.subgroups = []
+
+    def filter_queryset(self, queryset):
+        for name, value in self.form.cleaned_data.items():
+            queryset |= self.filters[name].filter(queryset, value)
+            assert isinstance(
+                queryset, models.QuerySet
+            ), "Expected '%s.%s' to return a QuerySet, but got a %s instead." % (
+                type(self).__name__,
+                name,
+                type(queryset).__name__,
+            )
+        for group in self.subgroups:
+            queryset |= group.filter_queryset(queryset)
+        return queryset
 
 
 def build_filterset(basemodel, filterconfig):
+    fields = []
+    meta = type("Meta", (), {"model": basemodel, "fields": fields})
     if filterconfig[0] == "and":
-        pass
+        return type(f"{type(basemodel).__name__}FilterSet", (AndGroup,), {"Meta": meta})
     elif filterconfig[0] == "or":
-        pass
+        return type(f"{type(basemodel).__name__}FilterSet", (OrGroup,), {"Meta": meta})
     raise RuntimeError(
         f"Invalid filter group specified '{filterconfig[0]}', must be 'and' or 'or'"
     )
