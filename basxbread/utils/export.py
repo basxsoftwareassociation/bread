@@ -55,8 +55,11 @@ def generate_excel(rows, columns):
             value = columns[columnname](rows[i])
             if isinstance(value, hg.BaseElement):
                 value = hg.render(value, {})
+
             cleaned = html.unescape(
                 strip_tags(newline_regex.sub(r"\n", str(value or "")))
+                .replace("\n\n", "\n")
+                .strip()
             )
             cell.value = cleaned
     return workbook

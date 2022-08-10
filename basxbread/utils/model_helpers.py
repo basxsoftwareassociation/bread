@@ -1,5 +1,8 @@
+import itertools
+
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
+from django.db.models.fields import Field
 
 
 def quickregister(
@@ -126,10 +129,27 @@ def expand_ALL_constant(model, fieldnames):
     """Replaces the constant ``__all__`` with all concrete fields of the model"""
     fieldnames = list(fieldnames)
     if "__all__" in fieldnames:
-        concrete_fields = [f.name for f in model._meta.get_fields() if f.concrete]
+        concrete_fields = get_sorted_modelfields(model)
         i = fieldnames.index("__all__")
         return fieldnames[:i] + concrete_fields + fieldnames[i + 1 :]
     return fieldnames
+
+
+def get_sorted_modelfields(model):
+    # better than model._meta.get_fields because it keeps declared order of fields
+    sortable_private_fields = [
+        f for f in model._meta.private_fields if isinstance(f, Field)
+    ]
+    return [
+        f.name
+        for f in sorted(
+            itertools.chain(
+                model._meta.concrete_fields,
+                sortable_private_fields,
+                model._meta.many_to_many,
+            )
+        )
+    ]
 
 
 def _is_internal_field(model, field):

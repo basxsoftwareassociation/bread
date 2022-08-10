@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from .. import layout, menu
 from ..forms.forms import modelform_factory
 from ..layout.skeleton import default_page_layout
-from ..utils import ModelHref, expand_ALL_constant, filter_fieldlist, reverse_model
+from ..utils import ModelHref, filter_fieldlist, reverse_model
 
 R = layout.grid.Row
 C = layout.grid.Col
@@ -115,7 +115,7 @@ class CustomFormMixin:
                 for_form=True,
             )
             ret = hg.BaseElement()
-            for field in expand_ALL_constant(self.model, self.fields) or formfields:
+            for field in self.fields or formfields:
                 if field in formfields:
                     ret.append(layout.forms.FormField(field))
                 else:
