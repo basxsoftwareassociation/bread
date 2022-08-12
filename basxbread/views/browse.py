@@ -1,6 +1,8 @@
 from typing import Callable, Iterable, List, NamedTuple, Optional, Union
 
+import django_filters
 import htmlgenerator as hg
+from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,6 +10,7 @@ from django.db import models
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 from django.views.generic import ListView
 from djangoql.exceptions import DjangoQLError
 from djangoql.queryset import apply_search
@@ -93,7 +96,6 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
     items_per_page_options: Optional[Iterable[int]] = None
     itemsperpage_urlparameter: str = "itemsperpage"
     search_urlparameter: str = "q"
-    filter_urlparameter: str = "filter"
 
     title: Union[hg.BaseElement, str] = ""
     columns: Iterable[Union[str, layout.datatable.DataTableColumn]] = ("__all__",)
@@ -135,19 +137,27 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         self.search_urlparameter = (
             kwargs.get("search_urlparameter") or self.search_urlparameter
         )
-        self.filter_urlparameter = (
-            kwargs.get("filter_urlparameter") or self.filter_urlparameter
-        )
         self.title = kwargs.get("title") or self.title
         self.rowactions = kwargs.get("rowactions") or self.rowactions
+        self.model = kwargs.get("model") or self.model
         self.columns = expand_ALL_constant(
-            kwargs.get("model") or self.model, kwargs.get("columns") or self.columns
+            self.model, kwargs.get("columns") or self.columns
         )
         self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
         self.backurl = kwargs.get("backurl") or self.backurl
         self.primary_button = kwargs.get("primary_button") or self.primary_button
         self.viewstate_sessionkey = (
             kwargs.get("viewstate_sessionkey") or self.viewstate_sessionkey
+        )
+        self.filterset_class = parse_filterconfig(
+            self.model,
+            ("AND",)
+            + tuple(
+                get_filtername(column)
+                for column in self.columns
+                if get_filtername(column)
+            ),
+            prefix="filter",
         )
         super().__init__(*args, **kwargs)
         self.bulkactions = (
@@ -176,8 +186,10 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         paginate_by = self.get_paginate_by(qs)
         if paginate_by is None:
             paginate_by = qs.count()
+        qs = self.paginate_queryset(qs, paginate_by)[2] if paginate_by > 0 else qs
+
         return layout.datatable.DataTable.from_queryset(
-            self.paginate_queryset(qs, paginate_by)[2] if paginate_by > 0 else qs,
+            queryset=qs,
             columns=self.columns,
             bulkactions=bulkactions,
             rowactions=self.rowactions,
@@ -198,7 +210,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
             backurl=self.backurl,
             primary_button=self.primary_button,
             search_urlparameter=self.search_urlparameter,
-            filter_urlparameter=self.filter_urlparameter,
+            filterset_class=self.filterset_class,
             **datatable_kwargs,
         )
 
@@ -210,7 +222,9 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         }
 
     def get_settingspanel(self):
-        return None
+        return build_filterpanel(
+            self.filterset_class(self.request.GET, queryset=self.get_queryset())
+        )
 
     def get_required_permissions(self, request):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
@@ -292,11 +306,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
                     )
                 )
 
-        if self.filter_urlparameter and self.filter_urlparameter in self.request.GET:
-            filterquery = self.request.GET[self.filter_urlparameter].strip()
-            if filterquery:
-                print(filterquery)
-                qs = apply_search(qs, filterquery)
+        qs = self.filterset_class(self.request.GET, queryset=qs).qs
 
         selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
         if selectedobjects and "all" not in selectedobjects:
@@ -452,3 +462,213 @@ def restore(request, queryset, softdeletefield, required_permissions=None):
             else queryset.model._meta.verbose_name,
         },
     )
+
+
+class AndGroup(django_filters.FilterSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.subgroups = []
+        for group in self.subgroup_classes:
+            self.subgroups.append(group(*args, **kwargs))
+
+    def filter_queryset(self, queryset):
+        for name, value in self.form.cleaned_data.items():
+            queryset = self.filters[name].filter(queryset, value)
+            assert isinstance(
+                queryset, models.QuerySet
+            ), "Expected '%s.%s' to return a QuerySet, but got a %s instead." % (
+                type(self).__name__,
+                name,
+                type(queryset).__name__,
+            )
+
+        for group in self.subgroups:
+            queryset = group.filter_queryset(queryset)
+
+        return queryset
+
+
+class OrGroup(django_filters.FilterSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.subgroups = []
+        for group in self.subgroup_classes:
+            self.subgroups.append(group(*args, **kwargs))
+
+    def filter_queryset(self, queryset):
+        for name, value in self.form.cleaned_data.items():
+            queryset |= self.filters[name].filter(queryset, value)
+            assert isinstance(
+                queryset, models.QuerySet
+            ), "Expected '%s.%s' to return a QuerySet, but got a %s instead." % (
+                type(self).__name__,
+                name,
+                type(queryset).__name__,
+            )
+        for group in self.subgroups:
+            queryset |= group.filter_queryset(queryset)
+        return queryset
+
+
+def parse_filterconfig(basemodel, filterconfig, prefix):
+    FILTERSETTYPE = {"and": AndGroup, "or": OrGroup}
+    grouptype, *subfields = filterconfig
+    if grouptype.lower() not in FILTERSETTYPE:
+        raise ValueError(
+            f"Invalid filter group specified '{filterconfig[0]}', must be 'and' or 'or'"
+        )
+
+    fields = []
+    subgroups = []
+    n = 0
+    for f in subfields:
+        if isinstance(f, str):
+            fields.append(f)
+        elif isinstance(f, Iterable):
+            subgroups.append(parse_filterconfig(basemodel, f, prefix + str(n)))
+            n += 1
+        else:
+            raise ValueError(
+                f"Declared filter field '{f}' is not of type {(str, OrGroup, AndGroup)} but {type(f)}"
+            )
+
+    formclass = type(
+        f"{type(basemodel).__name__}FilterForm",
+        (forms.Form,),
+        {"prefix": f"filter_{prefix}"},
+    )
+    meta = type(
+        "Meta",
+        (),
+        {
+            "model": basemodel,
+            "fields": fields,
+            "form": formclass,
+            "filter_overrides": FILTER_OVERRIDES,
+        },
+    )
+
+    return type(
+        f"{type(basemodel).__name__}FilterSet",
+        (FILTERSETTYPE[grouptype.lower()],),
+        {
+            "Meta": meta,
+            "subgroup_classes": subgroups,
+        },
+    )
+
+
+def get_filtername(column):
+    if isinstance(column, str):
+        return column.replace(".", "__")
+    if isinstance(column, layout.datatable.DataTableColumn):
+        return column.filtername
+    return None
+
+
+def build_filterpanel(filterset):
+    """
+    filterconfig: Tree in the form of
+                  ("and"
+                      ("or", fieldname1, fieldname2),
+                      ("or", fieldname3, fieldname4),
+                  )
+    """
+    return hg.DIV(
+        hg.DIV(
+            hg.DIV(
+                hg.DIV(_("Filter"), style="margin-bottom: 1rem"),
+                hg.DIV(
+                    layout.components.forms.Form(
+                        forms.Form(),
+                        _build_filter_ui_recursive(filterset),
+                        _class="filterform",
+                        method="GET",
+                    ),
+                    style="display: flex",
+                ),
+            ),
+            style="display: flex; padding: 24px 32px 0 32px",
+        ),
+        hg.DIV(
+            layout.button.Button(
+                _("Cancel"),
+                buttontype="ghost",
+                onclick="this.closest('.settingscontainer').style.display = 'none'",
+            ),
+            layout.button.Button.from_link(
+                Link(
+                    label=_("Reset"),
+                    href=hg.format("{}?reset=1", hg.C("request").path),
+                    iconname=None,
+                ),
+                buttontype="secondary",
+            ),
+            layout.button.Button(
+                pgettext_lazy("apply filter", "Filter"),
+                onclick="""this.closest('.filterpanel').querySelector('.filterform').submit();""",
+            ),
+            style="display: flex; justify-content: flex-end; margin-top: 24px",
+            _class="bx--modal-footer",
+        ),
+        _class="filterpanel",
+        style="background-color: #fff",
+    )
+
+
+def _build_filter_ui_recursive(filterset):
+    dir = ""
+    if isinstance(filterset, AndGroup):
+        dir = "column"
+    elif isinstance(filterset, OrGroup):
+        dir = "row"
+    return hg.DIV(
+        layout.components.forms.Form(
+            filterset.form,
+            *[
+                layout.components.forms.FormField(
+                    f, no_wrapper=True, style="margin-bottom: 1rem; margin-right: 1rem"
+                )
+                for f in filterset.form.fields
+            ],
+            standalone=False,
+            *[_build_filter_ui_recursive(f) for f in filterset.subgroups],
+        ),
+        style="display: flex; flex-direction: " + dir,
+    )
+
+
+FILTER_OVERRIDES = {
+    models.CharField: {
+        "filter_class": django_filters.CharFilter,
+        "extra": lambda f: {"lookup_expr": "icontains"},
+    },
+    models.TextField: {
+        "filter_class": django_filters.CharFilter,
+        "extra": lambda f: {"lookup_expr": "icontains"},
+    },
+    models.EmailField: {
+        "filter_class": django_filters.CharFilter,
+        "extra": lambda f: {"lookup_expr": "icontains"},
+    },
+    models.URLField: {
+        "filter_class": django_filters.CharFilter,
+        "extra": lambda f: {"lookup_expr": "icontains"},
+    },
+    models.DateField: {
+        "filter_class": django_filters.DateFromToRangeFilter,
+        "extra": lambda f: {
+            "widget": django_filters.widgets.DateRangeWidget(
+                attrs={"type": "text", "class": "validate datepicker"}
+            )
+        },
+    },
+    models.DateTimeField: {
+        "filter_class": django_filters.DateFromToRangeFilter,
+        "extra": lambda f: {
+            "widget": django_filters.widgets.DateRangeWidget(
+                attrs={"type": "text", "class": "validate datepicker"}
+            )
+        },
+    },
+}

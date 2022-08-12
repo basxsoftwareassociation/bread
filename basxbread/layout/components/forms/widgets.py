@@ -2,6 +2,7 @@ import os
 from typing import Optional
 
 import django_countries.widgets
+import django_filters
 import htmlgenerator as hg
 from _strptime import TimeRE
 from django.conf import settings
@@ -1004,6 +1005,43 @@ class ClearableFileInput(FileInput):
 
 class LazySelect(Select):
     django_widget = django_countries.widgets.LazySelect
+
+
+class DateRangeInput(DatePicker):
+    django_widget = django_filters.widgets.DateRangeWidget
+
+    def __init__(
+        self,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
+        boundfield=None,
+        style_short=False,
+        style_simple=False,
+        **attributes,
+    ):
+        start = DatePicker(
+            label=label,
+            help_text=help_text,
+            errors=errors,
+            inputelement_attrs=inputelement_attrs,
+            boundfield=boundfield,
+            style_short=style_short,
+            style_simple=style_simple,
+            **attributes,
+        )
+        end = DatePicker(
+            label=label,
+            help_text=help_text,
+            errors=errors,
+            inputelement_attrs=inputelement_attrs,
+            boundfield=boundfield,
+            style_short=style_short,
+            style_simple=style_simple,
+            **attributes,
+        )
+        super().__init__(start, end)
 
 
 def _append_classes(lazy_attrs, *_classes):
