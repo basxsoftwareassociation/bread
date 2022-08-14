@@ -15317,6 +15317,9 @@ td .bx--modal .bx--form-item {
       width: 100%;
       max-width: 100%; }
 
+.bx--col .bx--form-item .bx--toggle-input {
+  width: 1px; }
+
 .bx--col .bx--form-item > * {
   width: 100%; }
 
