@@ -14,12 +14,14 @@ class Toggle(hg.DIV):
         errors=None,
         disabled=None,
         required=None,
-        widgetattributes={},
+        widgetattributes=None,
         **attributes,
     ):
+        if widgetattributes is None:
+            widgetattributes = {}
         attributes["_class"] = attributes.get("_class", "") + " bx--form-item"
-        widgetattributes["_class"] = (
-            widgetattributes.get("_class", "") + " bx--toggle-input"
+        widgetattributes["_class"] = hg.BaseElement(
+            widgetattributes.get("_class", ""), " bx--toggle-input"
         )
         widgetattributes["type"] = "checkbox"
         widgetattributes["id"] = widgetattributes.get("id", None) or hg.html_id(self)

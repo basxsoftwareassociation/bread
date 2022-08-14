@@ -222,7 +222,7 @@ def _generate_formset_class(
 
 
 def _formfield_callback_with_request(field, request, model, instance, cache_querysets):
-    kwargs = {}
+    kwargs = getattr(field, "formfield_kwargs", {})
     choices = None
     if hasattr(field, "lazy_choices"):
         choices = field.lazy_choices(field, request, instance)

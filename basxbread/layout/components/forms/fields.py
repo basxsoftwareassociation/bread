@@ -1,13 +1,10 @@
-import warnings
 from typing import List, Optional, Type, Union
 
 import htmlgenerator as hg
 from django import forms
 
-from basxbread.utils import get_all_subclasses
-
 from .helpers import ErrorList, HelpText, Label
-from .widgets import BaseWidget, HiddenInput, TextInput
+from .widgets import BaseWidget, HiddenInput, TextInput, django2bread_widgetclass
 
 DEFAULT_FORM_CONTEXTNAME = "__basxbread_form"
 DEFAULT_FORMSET_CONTEXTNAME = "__basxbread_formset_form"
@@ -76,18 +73,6 @@ def generate_widget_element(
     inputelement_attrs = inputelement_attrs or {}
     boundfield = None
 
-    # warnings for deprecated API usage
-    if "widgetattributes" in attributes:
-        warnings.warn(
-            "FormField does no longer support the parameter 'widgetattributes'. "
-            "The parameter 'inputelement_attrs' serves the same purpose'"
-        )
-    if "elementattributes" in attributes:
-        warnings.warn(
-            "FormField does no longer support the parameter 'elementattributes'. "
-            "attributes can now be directly passed as kwargs."
-        )
-
     # check if this field will be used with a django form if yes, derive the
     # according values lazyly from the context
     if fieldname is not None and form is not None:
@@ -138,8 +123,8 @@ def generate_widget_element(
     help_text = HelpText(help_text, disabled=inputelement_attrs.get("disabled"))
     errors = ErrorList(errors)
 
-    # instantiate field (might create a lazy element when using _guess_widget)
-    widgetclass = _guess_widget(fieldname, form, widgetclass)
+    # instantiate field (might create a lazy element when using guess_widgetclass)
+    widgetclass = guess_widgetclass(fieldname, form, widgetclass)
     ret = widgetclass(
         label=None if no_label else label,
         help_text=None if no_helptext else help_text,
@@ -170,36 +155,23 @@ def generate_widget_element(
 FormField = generate_widget_element
 
 
-def _guess_widget(fieldname, form, suggested_widgetclass) -> hg.Lazy:
-    widget_map: dict = {}
-    for cls in get_all_subclasses(BaseWidget):
-        if cls.django_widget not in widget_map:
-            widget_map[cls.django_widget] = []
-        widget_map[cls.django_widget].append(cls)
-
+def guess_widgetclass(fieldname, form, suggested_widgetclass) -> hg.Lazy:
     def wrapper(context):
         realform = hg.resolve_lazy(form, context)
         widgetclass = type(realform[fieldname].field.widget)
-        fieldclass = type(realform[fieldname].field)
 
         # Hidden widgets have highest priority
         if issubclass(widgetclass, forms.HiddenInput):
             return HiddenInput
+
         # Manually passed widgets have second priority
         if suggested_widgetclass is not None:
             return suggested_widgetclass
 
-        # Automated detection via django-basxbread-widget-mapp have lowest priority
-        if fieldclass in widget_map:
-            return widget_map[fieldclass][0]
-        if widgetclass in widget_map:
-            return widget_map[widgetclass][0]
-
-        # Fallback for unknown widgets
-        warnings.warn(
-            f"Form field {type(realform).__name__}.{fieldname} ({fieldclass}) uses widget {widgetclass} but "
-            "basxbread has no implementation, default to TextInput"
+        # Auto-detection declared by the bread widget has third priority
+        return (
+            django2bread_widgetclass(widgetclass, type(realform[fieldname].field))
+            or TextInput
         )
-        return TextInput
 
     return hg.F(wrapper)

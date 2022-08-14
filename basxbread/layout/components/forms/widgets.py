@@ -1,4 +1,5 @@
 import os
+import warnings
 from typing import Optional
 
 import django_countries.widgets
@@ -10,6 +11,8 @@ from django.forms import widgets
 from django.utils import formats
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.formfields import PhoneNumberField
+
+from basxbread.utils import get_all_subclasses
 
 from ..button import Button
 from ..icon import Icon
@@ -770,13 +773,17 @@ class DatePicker(BaseWidget):
         boundfield=None,
         style_short=False,
         style_simple=False,
+        format=None,
+        formatkey=None,
         **attributes,
     ):
         inputelement_attrs = inputelement_attrs or {}
 
         def format_date_value(context):
             bfield = hg.resolve_lazy(boundfield, context)
-            return bfield.field.widget.format_value(bfield.value())
+            return bfield.field.widget.format_value(
+                hg.resolve_lazy(inputelement_attrs, context).get("value")
+            )
 
         super().__init__(
             hg.DIV(
@@ -786,14 +793,18 @@ class DatePicker(BaseWidget):
                     self.get_input_element(
                         inputelement_attrs,
                         errors,
-                        data_invalid=hg.If(getattr(errors, "condition"), True),
+                        data_invalid=hg.If(getattr(errors, "condition", False), True),
                         pattern=hg.F(
                             lambda c: (
                                 TimeRE()
                                 .compile(
-                                    hg.resolve_lazy(boundfield, c).field.widget.format
+                                    format
+                                    or hg.resolve_lazy(
+                                        boundfield, c
+                                    ).field.widget.format
                                     or formats.get_format(
-                                        hg.resolve_lazy(
+                                        formatkey
+                                        or hg.resolve_lazy(
                                             boundfield, c
                                         ).field.widget.format_key
                                     )[0]
@@ -808,11 +819,19 @@ class DatePicker(BaseWidget):
                             inputelement_attrs,
                             errors,
                             data_date_picker_input=True,
-                            data_invalid=hg.If(getattr(errors, "condition"), True),
+                            data_invalid=hg.If(
+                                getattr(errors, "condition", False), True
+                            ),
                             data_date_format=hg.F(
                                 lambda c: to_php_formatstr(
-                                    hg.resolve_lazy(boundfield, c).field.widget.format,
-                                    hg.resolve_lazy(
+                                    format
+                                    or getattr(
+                                        hg.resolve_lazy(boundfield, c).field.widget,
+                                        "format",
+                                        None,
+                                    ),
+                                    formatkey
+                                    or hg.resolve_lazy(
                                         boundfield, c
                                     ).field.widget.format_key,
                                 )
@@ -1007,8 +1026,8 @@ class LazySelect(Select):
     django_widget = django_countries.widgets.LazySelect
 
 
-class DateRangeInput(DatePicker):
-    django_widget = django_filters.widgets.DateRangeWidget
+class MultiWidget(BaseWidget):
+    django_widget = widgets.MultiWidget
 
     def __init__(
         self,
@@ -1017,31 +1036,57 @@ class DateRangeInput(DatePicker):
         errors=None,
         inputelement_attrs=None,
         boundfield=None,
-        style_short=False,
-        style_simple=False,
         **attributes,
     ):
-        start = DatePicker(
-            label=label,
-            help_text=help_text,
-            errors=errors,
-            inputelement_attrs=inputelement_attrs,
+        def _subwidgets(context):
+            ret = []
+            if boundfield:
+                realboundfield = hg.resolve_lazy(boundfield, context)
+                for widget, data in zip(
+                    realboundfield.subwidgets[0].parent_widget.widgets,
+                    realboundfield.subwidgets[0].data["subwidgets"],
+                ):
+                    ret.append(self.subwidget(realboundfield, widget, data))
+            return hg.BaseElement(*ret)
+
+        super().__init__(label, help_text, errors, hg.F(_subwidgets), **attributes)
+
+    def subwidget(self, boundfield, djangowidget, djangodata):
+        widgetclass = django2bread_widgetclass(type(djangowidget))
+        return widgetclass(
+            label=None,
+            help_text=None,
+            errors=None,
+            inputelement_attrs={
+                "name": djangodata["name"],
+                "value": djangodata["value"],
+                "required": djangodata["required"],
+                **djangodata["attrs"],
+            },
             boundfield=boundfield,
-            style_short=style_short,
-            style_simple=style_simple,
-            **attributes,
         )
-        end = DatePicker(
-            label=label,
-            help_text=help_text,
-            errors=errors,
-            inputelement_attrs=inputelement_attrs,
-            boundfield=boundfield,
-            style_short=style_short,
-            style_simple=style_simple,
-            **attributes,
-        )
-        super().__init__(start, end)
+
+
+class SplitDateTimeWidget(MultiWidget):
+    django_widget = widgets.SplitDateTimeWidget
+
+    def subwidget(self, boundfield, djangowidget, djangodata):
+        if isinstance(djangowidget, widgets.DateInput):
+            return DatePicker(
+                label=None,
+                help_text=None,
+                errors=None,
+                inputelement_attrs={
+                    "name": djangodata["name"],
+                    "value": djangodata["value"],
+                    "required": djangodata["required"],
+                    **djangodata["attrs"],
+                },
+                boundfield=boundfield,
+                format=djangowidget.format,
+                formatkey=djangowidget.format_key,
+            )
+        return super().subwidget(boundfield, djangowidget, djangodata)
 
 
 def _append_classes(lazy_attrs, *_classes):
@@ -1114,3 +1159,35 @@ def _optgroups_from_choices(optchoices, name, value):
             if subindex is not None:
                 subindex += 1
     return groups
+
+
+def django2bread_widgetclass(widgetclass, fieldclass=None) -> Optional[hg.Lazy]:
+    if django2bread_widgetclass.widget_map is None:  # type: ignore
+        django2bread_widgetclass.widget_map: dict = {}  # type: ignore
+        for cls in get_all_subclasses(BaseWidget):
+            if cls.django_widget not in django2bread_widgetclass.widget_map:  # type: ignore
+                django2bread_widgetclass.widget_map[cls.django_widget] = []  # type: ignore
+            django2bread_widgetclass.widget_map[cls.django_widget].append(cls)  # type: ignore
+        for key, widgetclasses in django2bread_widgetclass.widget_map.items():  # type: ignore
+            if len(widgetclasses) > 1:
+                warnings.warn(
+                    "There are more than one basxbread widget implementations "
+                    f"available for the django widget {key}: {widgetclasses}"
+                )
+
+    # the fieldclass is rarelly used to register something, but a few 3rd
+    # party fields can only be distinguished this way, e.g.
+    # django-phonenumber-field
+    if fieldclass is not None and fieldclass in django2bread_widgetclass.widget_map:  # type: ignore
+        return django2bread_widgetclass.widget_map[fieldclass][0]  # type: ignore
+    for widgetbaseclass in widgetclass.mro():
+        if widgetbaseclass in django2bread_widgetclass.widget_map:  # type: ignore
+            return django2bread_widgetclass.widget_map[widgetbaseclass][0]  # type: ignore
+    warnings.warn(
+        f"Form field {fieldclass} uses widget {widgetclass} but "
+        "basxbread has no implementation, will default to TextInput"
+    )
+    return None
+
+
+django2bread_widgetclass.widget_map: Optional[dict] = None  # type: ignore
