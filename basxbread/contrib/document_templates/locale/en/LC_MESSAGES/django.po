@@ -1,0 +1,109 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-08-15 10:04+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: basxbread/contrib/document_templates/models.py:21
+#: basxbread/contrib/document_templates/models.py:104
+msgid "Name"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:25
+msgid ""
+"Must be a *.docx file, use '{{ variable-name }}' to insert variables from "
+"below"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:30
+msgid "Model"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:32
+msgid "Filename template"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:95
+msgid "Document Template"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:96
+msgid "Document Templates"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:104
+msgid "Name to use in the template document"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:107
+msgid "Value"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:107
+msgid "Path to the desired value (see help)"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:110
+msgid "Template"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:112
+msgid "Jinja template with 'value' in context"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:114
+msgid "Raw value"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:117
+msgid "Variable"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:118
+msgid "Variables"
+msgstr ""
+
+#: basxbread/contrib/document_templates/urls.py:20
+msgid "Delete"
+msgstr ""
+
+#: basxbread/contrib/document_templates/urls.py:24
+msgid "Copy"
+msgstr ""
+
+#: basxbread/contrib/document_templates/views.py:16
+msgid "Error"
+msgstr ""
+
+#: basxbread/contrib/document_templates/views.py:21
+msgid "Field explorer"
+msgstr ""
+
+#: basxbread/contrib/document_templates/views.py:31
+msgid "Error in template: "
+msgstr ""
+
+#: basxbread/contrib/document_templates/views.py:39
+msgid "Variables in document but not defined below: "
+msgstr ""
+
+#: basxbread/contrib/document_templates/views.py:47
+msgid "Variables defined below but not used in document: "
+msgstr ""
+
+#: basxbread/contrib/document_templates/views.py:72
+msgid "Help"
+msgstr ""
