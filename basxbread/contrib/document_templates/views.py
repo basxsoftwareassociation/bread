@@ -1,6 +1,7 @@
 import htmlgenerator as hg
 from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
+from jinja2.sandbox import SandboxedEnvironment
 
 from basxbread import layout, views
 
@@ -81,6 +82,7 @@ class DocumentTemplateEditView(views.EditView):
                 hg.C("form"),
                 F("name"),
                 F("file"),
+                F("filename_template"),
                 fieldstable,
                 column_helper,
                 layout.forms.helpers.Submit(),
@@ -95,11 +97,24 @@ class DocumentTemplateEditView(views.EditView):
 def generate_document(request, pk: int, object_pk: int):
     template = DocumentTemplate.objects.get(pk=pk)
     object = template.model.get_object_for_this_type(pk=object_pk)
+    filename = f'{template.name}_{str(object).replace(" ", "-")}'
+
+    if template.filename_template:
+        value_env = SandboxedEnvironment()
+        value_env.filters["map"] = lambda value, map: map.get(value, value)
+        try:
+            filename = value_env.from_string(template.filename_template).render(
+                template.context(object)
+            )
+        except Exception:
+            filename = "FILENAME_ERROR.docx"
+
+    if not filename.endswith(".docx"):
+        filename = filename + ".docx"
+
     response = HttpResponse(
         template.render_with(object),
         content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     )
-    response[
-        "Content-Disposition"
-    ] = f'attachment; filename="{template.name}_{str(object).replace(" ", "-")}.docx"'
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
     return response
