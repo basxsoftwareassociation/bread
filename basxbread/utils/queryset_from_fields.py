@@ -1,6 +1,7 @@
 import django_countries
 from django.db import models
 from django.db.models import Q
+from django.db.models.constants import LOOKUP_SEP
 from django_countries.fields import CountryField
 
 
@@ -63,7 +64,7 @@ def get_field_queryset(fields, searchquery, prefix="", follow_relationships=1):
             else:
                 foreign_fields = foreignkey_field._meta.fields
 
-            new_prefix = prefix + "__".join([foreignkey_field.name, ""])
+            new_prefix = prefix + LOOKUP_SEP.join([foreignkey_field.name, ""])
             qs |= get_field_queryset(
                 foreign_fields, searchquery, new_prefix, follow_relationships - 1
             )

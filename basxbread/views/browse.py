@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import models
+from django.db.models.constants import LOOKUP_SEP
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
@@ -157,7 +158,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
                 for column in self.columns
                 if get_filtername(column)
             ),
-            prefix="filter",
+            prefix="f",
         )
         super().__init__(*args, **kwargs)
         self.bulkactions = (
@@ -210,7 +211,6 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
             backurl=self.backurl,
             primary_button=self.primary_button,
             search_urlparameter=self.search_urlparameter,
-            filterset_class=self.filterset_class,
             **datatable_kwargs,
         )
 
@@ -465,11 +465,14 @@ def restore(request, queryset, softdeletefield, required_permissions=None):
 
 
 class AndGroup(django_filters.FilterSet):
+    prefix = None
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.subgroups = []
         for group in self.subgroup_classes:
             self.subgroups.append(group(*args, **kwargs))
+        self.form_prefix = self.prefix
 
     def filter_queryset(self, queryset):
         for name, value in self.form.cleaned_data.items():
@@ -489,11 +492,14 @@ class AndGroup(django_filters.FilterSet):
 
 
 class OrGroup(django_filters.FilterSet):
+    prefix = None
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.subgroups = []
         for group in self.subgroup_classes:
             self.subgroups.append(group(*args, **kwargs))
+        self.form_prefix = self.prefix
 
     def filter_queryset(self, queryset):
         for name, value in self.form.cleaned_data.items():
@@ -511,6 +517,13 @@ class OrGroup(django_filters.FilterSet):
 
 
 def parse_filterconfig(basemodel, filterconfig, prefix):
+    """
+    filterconfig: Tree in the form of
+                  ("and"
+                      ("or", fieldname1, fieldname2),
+                      ("or", fieldname3, fieldname4),
+                  )
+    """
     FILTERSETTYPE = {"and": AndGroup, "or": OrGroup}
     grouptype, *subfields = filterconfig
     if grouptype.lower() not in FILTERSETTYPE:
@@ -523,7 +536,10 @@ def parse_filterconfig(basemodel, filterconfig, prefix):
     n = 0
     for f in subfields:
         if isinstance(f, str):
-            fields.append(f)
+            modelfield = get_field(basemodel, f)
+            # ignore filefields
+            if not isinstance(modelfield, (models.FileField)):
+                fields.append(f)
         elif isinstance(f, Iterable):
             subgroups.append(parse_filterconfig(basemodel, f, prefix + str(n)))
             n += 1
@@ -532,48 +548,43 @@ def parse_filterconfig(basemodel, filterconfig, prefix):
                 f"Declared filter field '{f}' is not of type {(str, OrGroup, AndGroup)} but {type(f)}"
             )
 
-    formclass = type(
-        f"{type(basemodel).__name__}FilterForm",
-        (forms.Form,),
-        {"prefix": f"filter_{prefix}"},
-    )
     meta = type(
         "Meta",
         (),
         {
             "model": basemodel,
             "fields": fields,
-            "form": formclass,
             "filter_overrides": FILTER_OVERRIDES,
         },
     )
 
-    return type(
+    ret = type(
         f"{type(basemodel).__name__}FilterSet",
         (FILTERSETTYPE[grouptype.lower()],),
-        {
-            "Meta": meta,
-            "subgroup_classes": subgroups,
-        },
+        {"Meta": meta, "subgroup_classes": subgroups, "prefix": f"filter_{prefix}"},
     )
+    # for fieldname, filter in ret.base_filters.items():
+    # filter.label = get_field(basemodel, fieldname).verbose_name
+    # print(filter)
+    return ret
 
 
 def get_filtername(column):
     if isinstance(column, str):
-        return column.replace(".", "__")
+        return column.replace(".", LOOKUP_SEP)
     if isinstance(column, layout.datatable.DataTableColumn):
         return column.filtername
     return None
 
 
+def get_field(basemodel, fieldname):
+    if LOOKUP_SEP in fieldname:
+        relatedfield, rest = fieldname.split(LOOKUP_SEP, 1)
+        return get_field(basemodel._meta.get_field(relatedfield).related_model, rest)
+    return basemodel._meta.get_field(fieldname)
+
+
 def build_filterpanel(filterset):
-    """
-    filterconfig: Tree in the form of
-                  ("and"
-                      ("or", fieldname1, fieldname2),
-                      ("or", fieldname3, fieldname4),
-                  )
-    """
     return hg.DIV(
         hg.DIV(
             hg.DIV(
@@ -617,11 +628,12 @@ def build_filterpanel(filterset):
 
 
 def _build_filter_ui_recursive(filterset):
-    dir = ""
+    flexdir = ""
     if isinstance(filterset, AndGroup):
-        dir = "column"
+        flexdir = "column"
     elif isinstance(filterset, OrGroup):
-        dir = "row"
+        flexdir = "row"
+
     return hg.DIV(
         layout.components.forms.Form(
             filterset.form,
@@ -634,7 +646,7 @@ def _build_filter_ui_recursive(filterset):
             standalone=False,
             *[_build_filter_ui_recursive(f) for f in filterset.subgroups],
         ),
-        style="display: flex; flex-direction: " + dir,
+        style="display: flex; flex-direction: " + flexdir,
     )
 
 
