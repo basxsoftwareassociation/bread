@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-24 09:08+0000\n"
+"POT-Creation-Date: 2022-08-15 10:04+0000\n"
 "PO-Revision-Date: 2022-07-26 04:17+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -19,154 +19,60 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.14-dev\n"
 
-#: basxbread/contrib/document_templates/models.py:20
-#: basxbread/contrib/document_templates/models.py:103
-#: basxbread/contrib/publicurls/models.py:28
-#: basxbread/contrib/reports/models.py:21
-msgid "Name"
-msgstr "ชื่อ"
-
-#: basxbread/contrib/document_templates/models.py:24
-msgid ""
-"Must be a *.docx file, use '{{ variable-name }}' to insert variables from "
-"below"
-msgstr "ต้องเป็นไฟล์ *.docx ใช้ '{{ variable-name }}' เพื่อแทรกตัวแปรจากด้านล่าง"
-
-#: basxbread/contrib/document_templates/models.py:29
-#: basxbread/contrib/reports/models.py:23
-#: basxbread/contrib/triggers/models.py:105
-msgid "Model"
-msgstr "โมเดล"
-
-#: basxbread/contrib/document_templates/models.py:94
-msgid "Document Template"
-msgstr "แบบฟอร์มเอกสาร"
-
-#: basxbread/contrib/document_templates/models.py:95
-msgid "Document Templates"
-msgstr "แบบฟอร์มเอกสาร"
-
-#: basxbread/contrib/document_templates/models.py:103
-msgid "Name to use in the template document"
-msgstr "ชื่อแบบฟอร์ม"
-
-#: basxbread/contrib/document_templates/models.py:106
-#: basxbread/views/read.py:44
-msgid "Value"
-msgstr "ขนาด"
-
-#: basxbread/contrib/document_templates/models.py:106
-msgid "Path to the desired value (see help)"
-msgstr "การตั้งค่าตามที่ต้องการ(ดูที่ช่วยเหลือ)"
-
-#: basxbread/contrib/document_templates/models.py:109
-msgid "Template"
-msgstr "แบบฟอร์มเอกสาร"
-
-#: basxbread/contrib/document_templates/models.py:111
-msgid "Jinja template with 'value' in context"
-msgstr "เทมเพลต Jinja พร้อม 'value' ในบริบท"
-
-#: basxbread/contrib/document_templates/models.py:113
-msgid "Raw value"
-msgstr "ตั้งค่าขนาดของแถว"
-
-#: basxbread/contrib/document_templates/models.py:116
-msgid "Variable"
-msgstr "ค่าตัวแปร"
-
-#: basxbread/contrib/document_templates/models.py:117
-msgid "Variables"
-msgstr "ตัวแปร"
-
-#: basxbread/contrib/document_templates/urls.py:20
-#: basxbread/contrib/reports/urls.py:23
-#: basxbread/layout/components/forms/__init__.py:341
-#: basxbread/views/browse.py:57 basxbread/views/browse.py:330
-#: basxbread/views/util.py:38
-msgid "Delete"
-msgstr "ลบ"
-
-#: basxbread/contrib/document_templates/urls.py:24
-#: basxbread/contrib/reports/urls.py:27 basxbread/views/util.py:47
-msgid "Copy"
-msgstr "คัดลอก"
-
-#: basxbread/contrib/document_templates/views.py:15
-msgid "Error"
-msgstr "เกิดข้อผิดพลาด"
-
-#: basxbread/contrib/document_templates/views.py:20
-#: basxbread/contrib/reports/views.py:27
-msgid "Field explorer"
-msgstr "ฟิลด์เอ็กเพอร์เรอ"
-
-#: basxbread/contrib/document_templates/views.py:30
-msgid "Error in template: "
-msgstr "ข้อผิดพลาดในเทมเพลต "
-
-#: basxbread/contrib/document_templates/views.py:38
-msgid "Variables in document but not defined below: "
-msgstr "ตัวแปรเอกสารแต่ไม่ได้กำหนดต่อไปนี้ "
-
-#: basxbread/contrib/document_templates/views.py:46
-msgid "Variables defined below but not used in document: "
-msgstr "ตัวแปรที่กำหนดต่อไปนี้ไม่ถูกใช้ในเอกสาร "
-
-#: basxbread/contrib/document_templates/views.py:71
-#: basxbread/contrib/reports/views.py:43
-msgid "Help"
-msgstr "ช่วยเหลือ"
-
 #: basxbread/contrib/publicurls/models.py:16
 #, python-format
 msgid "%(value)s is not a valid internal URL"
 msgstr "%(value)s ไม่ใช่ URL ภายในที่ถูกต้อง"
 
-#: basxbread/contrib/publicurls/models.py:30
+#: basxbread/contrib/publicurls/models.py:22
+#: basxbread/contrib/reports/models.py:21
+msgid "Name"
+msgstr "ชื่อ"
+
+#: basxbread/contrib/publicurls/models.py:24
 msgid "URL"
 msgstr "URL"
 
-#: basxbread/contrib/publicurls/models.py:33
+#: basxbread/contrib/publicurls/models.py:27
 msgid "Internal URL"
 msgstr "URLภายใน"
 
-#: basxbread/contrib/publicurls/models.py:35
+#: basxbread/contrib/publicurls/models.py:29
 msgid "Salt"
 msgstr "ซอลท์"
 
-#: basxbread/contrib/publicurls/models.py:36
+#: basxbread/contrib/publicurls/models.py:30
 #: basxbread/contrib/reports/models.py:20
 msgid "Created"
 msgstr "สร้าง"
 
-#: basxbread/contrib/publicurls/models.py:37
+#: basxbread/contrib/publicurls/models.py:31
 msgid "Valid for"
 msgstr "ใช้ได้สำหรับ"
 
-#: basxbread/contrib/publicurls/models.py:38
+#: basxbread/contrib/publicurls/models.py:32
 msgid "Has form"
 msgstr "มีรูปแบบ"
 
-#: basxbread/contrib/publicurls/models.py:40
+#: basxbread/contrib/publicurls/models.py:34
 msgid "Thank-you text"
 msgstr "ข้อความขอบคุณ"
 
-#: basxbread/contrib/publicurls/models.py:41
+#: basxbread/contrib/publicurls/models.py:35
 msgid "Thank you"
 msgstr "ขอบคุณ"
 
-#: basxbread/contrib/publicurls/models.py:42
+#: basxbread/contrib/publicurls/models.py:36
 msgid "Will be shown if a form has successfully been submitted."
 msgstr "จะแสดงขึ้นหากส่งแบบฟอร์มสำเร็จแล้ว"
 
-#: basxbread/contrib/publicurls/models.py:53
-#: basxbread/contrib/publicurls/models.py:69
+#: basxbread/contrib/publicurls/models.py:47
+#: basxbread/contrib/publicurls/models.py:63
 #: basxbread/contrib/publicurls/urls.py:72
 msgid "Public URL"
 msgstr "URL สาธารณะ"
 
-#: basxbread/contrib/publicurls/models.py:70
+#: basxbread/contrib/publicurls/models.py:64
 msgid "Public URLs"
 msgstr "URL สาธารณะ"
 
@@ -181,6 +87,11 @@ msgstr "ส่งข้อมูลแล้ว"
 #: basxbread/contrib/publicurls/urls.py:53 basxbread/views/wizard.py:50
 msgid "Back"
 msgstr "กลับ"
+
+#: basxbread/contrib/reports/models.py:23
+#: basxbread/contrib/triggers/models.py:105
+msgid "Model"
+msgstr "โมเดล"
 
 #: basxbread/contrib/reports/models.py:25
 #: basxbread/contrib/triggers/models.py:108
@@ -204,9 +115,7 @@ msgstr "การแบ่งหน้า"
 msgid ""
 "How many items to display per page when viewing the report in the browser, 0 "
 "for everything on one page"
-msgstr ""
-"จำนวนรายการที่จะแสดงต่อหน้าเมื่อดูรายงานในเบราว์เซอร์, 0 "
-"สำหรับทุกอย่างในหนึ่งหน้า"
+msgstr "จำนวนรายการที่จะแสดงต่อหน้าเมื่อดูรายงานในเบราว์เซอร์, 0 สำหรับทุกอย่างในหนึ่งหน้า"
 
 #: basxbread/contrib/reports/models.py:57
 msgid "Preview"
@@ -262,6 +171,17 @@ msgstr "สูตรรวม"
 msgid "Columns"
 msgstr "ช่อง"
 
+#: basxbread/contrib/reports/urls.py:23
+#: basxbread/layout/components/forms/__init__.py:341
+#: basxbread/views/browse.py:57 basxbread/views/browse.py:330
+#: basxbread/views/util.py:38
+msgid "Delete"
+msgstr "ลบ"
+
+#: basxbread/contrib/reports/urls.py:27 basxbread/views/util.py:47
+msgid "Copy"
+msgstr "คัดลอก"
+
 #: basxbread/contrib/reports/urls.py:38 basxbread/views/browse.py:319
 #: basxbread/views/read.py:60 basxbread/views/userprofile.py:100
 #: basxbread/views/userprofile.py:128 basxbread/views/userprofile.py:160
@@ -273,6 +193,14 @@ msgstr "แก้ไข"
 #: basxbread/views/browse.py:50
 msgid "Excel"
 msgstr "Excel"
+
+#: basxbread/contrib/reports/views.py:27
+msgid "Field explorer"
+msgstr "ฟิลด์เอ็กเพอร์เรอ"
+
+#: basxbread/contrib/reports/views.py:43
+msgid "Help"
+msgstr "ช่วยเหลือ"
 
 #: basxbread/contrib/reports/views.py:52
 msgid "Base model"
@@ -474,28 +402,28 @@ msgstr "แถบงาน"
 msgid "Add %s"
 msgstr "เพิ่ม %s"
 
-#: basxbread/layout/components/fieldexplorer.py:10
+#: basxbread/layout/components/fieldexplorer.py:12
 msgid "Base model: "
 msgstr "โมเดลพื้นฐาน: "
 
-#: basxbread/layout/components/fieldexplorer.py:15
+#: basxbread/layout/components/fieldexplorer.py:17
 msgid "Click "
 msgstr "คลิ๊ก "
 
-#: basxbread/layout/components/fieldexplorer.py:20
+#: basxbread/layout/components/fieldexplorer.py:22
 msgid " to copy the accessor"
 msgstr " เพื่อคัดลอก accessor"
 
-#: basxbread/layout/components/fieldexplorer.py:23
+#: basxbread/layout/components/fieldexplorer.py:25
 msgid "Fields"
 msgstr "ฟิลด์"
 
-#: basxbread/layout/components/fieldexplorer.py:105
+#: basxbread/layout/components/fieldexplorer.py:113
 #, python-format
 msgid " reference to \"%s\""
 msgstr " อ้างอิงถึง \"%s\""
 
-#: basxbread/layout/components/fieldexplorer.py:108
+#: basxbread/layout/components/fieldexplorer.py:116
 #, python-format
 msgid " reference to multiple \"%s\""
 msgstr " อ้างอิงถึง \"%s\" หลายรายการ"
@@ -523,11 +451,11 @@ msgstr "คำสั่ง"
 msgid "Save"
 msgstr "บันทึก"
 
-#: basxbread/layout/components/forms/widgets.py:237
+#: basxbread/layout/components/forms/widgets.py:240
 msgid "Show password"
 msgstr "เห็นรหัสผ่าน"
 
-#: basxbread/layout/components/forms/widgets.py:870
+#: basxbread/layout/components/forms/widgets.py:889
 msgid "Select file"
 msgstr "เลือกไฟล์"
 
@@ -579,7 +507,7 @@ msgstr "ลงชื่อออก"
 msgid "Close"
 msgstr "ปิด"
 
-#: basxbread/layout/components/tag.py:19
+#: basxbread/layout/components/tag.py:37
 msgid "Remove"
 msgstr "ลบออก"
 
@@ -933,6 +861,10 @@ msgid ""
 "persists, please contact an administrator."
 msgstr "เกิดปัญหาขณะโหลดหน้าเว็บที่ %s<br>หากปัญหายังคงอยู่ โปรดติดต่อผู้ดูแลระบบ"
 
+#: basxbread/views/read.py:44
+msgid "Value"
+msgstr "ขนาด"
+
 #: basxbread/views/userprofile.py:36
 msgid "Manage Profile"
 msgstr "จัดการบัญชีผู้ใช้"
@@ -1008,6 +940,55 @@ msgstr "เรียบร้อย"
 #: basxbread/views/wizard.py:64
 msgid "Continue"
 msgstr "ต่อไป"
+
+#~ msgid ""
+#~ "Must be a *.docx file, use '{{ variable-name }}' to insert variables from "
+#~ "below"
+#~ msgstr "ต้องเป็นไฟล์ *.docx ใช้ '{{ variable-name }}' เพื่อแทรกตัวแปรจากด้านล่าง"
+
+#, fuzzy
+#~| msgid "Error in template: "
+#~ msgid "Filename template"
+#~ msgstr "ข้อผิดพลาดในเทมเพลต "
+
+#~ msgid "Document Template"
+#~ msgstr "แบบฟอร์มเอกสาร"
+
+#~ msgid "Document Templates"
+#~ msgstr "แบบฟอร์มเอกสาร"
+
+#~ msgid "Name to use in the template document"
+#~ msgstr "ชื่อแบบฟอร์ม"
+
+#~ msgid "Path to the desired value (see help)"
+#~ msgstr "การตั้งค่าตามที่ต้องการ(ดูที่ช่วยเหลือ)"
+
+#~ msgid "Template"
+#~ msgstr "แบบฟอร์มเอกสาร"
+
+#~ msgid "Jinja template with 'value' in context"
+#~ msgstr "เทมเพลต Jinja พร้อม 'value' ในบริบท"
+
+#~ msgid "Raw value"
+#~ msgstr "ตั้งค่าขนาดของแถว"
+
+#~ msgid "Variable"
+#~ msgstr "ค่าตัวแปร"
+
+#~ msgid "Variables"
+#~ msgstr "ตัวแปร"
+
+#~ msgid "Error"
+#~ msgstr "เกิดข้อผิดพลาด"
+
+#~ msgid "Error in template: "
+#~ msgstr "ข้อผิดพลาดในเทมเพลต "
+
+#~ msgid "Variables in document but not defined below: "
+#~ msgstr "ตัวแปรเอกสารแต่ไม่ได้กำหนดต่อไปนี้ "
+
+#~ msgid "Variables defined below but not used in document: "
+#~ msgstr "ตัวแปรที่กำหนดต่อไปนี้ไม่ถูกใช้ในเอกสาร "
 
 #~ msgid "Unknown"
 #~ msgstr "ไม่รู้จัก"

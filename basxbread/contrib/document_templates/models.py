@@ -3,6 +3,7 @@ import io
 from typing import Union
 
 import htmlgenerator as hg
+from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils import formats
@@ -28,17 +29,13 @@ class DocumentTemplate(models.Model):
     model = models.ForeignKey(
         ContentType, on_delete=models.PROTECT, verbose_name=_("Model")
     )
+    filename_template = models.TextField(_("Filename template"), blank=True)
+    filename_template.formfield_kwargs = {"widget": forms.Textarea(attrs={"rows": 1})}
 
     def default_context(self):
         return {"now": DateFormat(now())}
 
-    def render_with(self, object):
-        def ensure_localized_date(value):
-            if isinstance(value, (datetime.datetime, datetime.date)):
-                return DateFormat(value)
-            return value
-
-        docxtpl_template = DocxTemplate(self.file.path)
+    def context(self, object):
         context = {}
         for variable in self.variables.all():
             context[variable.name] = ensure_localized_date(
@@ -62,9 +59,13 @@ class DocumentTemplate(models.Model):
                     )
 
         context.update(self.default_context())
+        return context
+
+    def render_with(self, object):
+        docxtpl_template = DocxTemplate(self.file.path)
         env = SandboxedEnvironment()
         env.filters["map"] = lambda value, map: map.get(value, value)
-        docxtpl_template.render(context, env)
+        docxtpl_template.render(self.context(object), env)
 
         buf = io.BytesIO()
         docxtpl_template.save(buf)
@@ -115,3 +116,9 @@ class DocumentTemplateVariable(models.Model):
     class Meta:
         verbose_name = _("Variable")
         verbose_name_plural = _("Variables")
+
+
+def ensure_localized_date(value):
+    if isinstance(value, (datetime.datetime, datetime.date)):
+        return DateFormat(value)
+    return value

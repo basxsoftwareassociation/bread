@@ -1,0 +1,111 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-08-15 10:04+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: basxbread/contrib/document_templates/models.py:21
+#: basxbread/contrib/document_templates/models.py:104
+msgid "Name"
+msgstr "Name"
+
+#: basxbread/contrib/document_templates/models.py:25
+msgid ""
+"Must be a *.docx file, use '{{ variable-name }}' to insert variables from "
+"below"
+msgstr ""
+"Muss eine *.docx Datei sein, '{{ variable-name }}' kann im Dokument verwendet "
+"werden um die unten definierten Variablen einzufügen"
+
+#: basxbread/contrib/document_templates/models.py:30
+msgid "Model"
+msgstr "Model"
+
+#: basxbread/contrib/document_templates/models.py:32
+msgid "Filename template"
+msgstr "Dateinamen-Vorlage"
+
+#: basxbread/contrib/document_templates/models.py:95
+msgid "Document Template"
+msgstr "Dokumentvorlage"
+
+#: basxbread/contrib/document_templates/models.py:96
+msgid "Document Templates"
+msgstr "Dokumentvorlagen"
+
+#: basxbread/contrib/document_templates/models.py:104
+msgid "Name to use in the template document"
+msgstr "Name welcher in der Dokumentvorlage verwendet werden soll"
+
+#: basxbread/contrib/document_templates/models.py:107
+msgid "Value"
+msgstr "Wert"
+
+#: basxbread/contrib/document_templates/models.py:107
+msgid "Path to the desired value (see help)"
+msgstr "Pfad zum gewünschten Wert (siehe Hilfe)"
+
+#: basxbread/contrib/document_templates/models.py:110
+msgid "Template"
+msgstr "Vorlage"
+
+#: basxbread/contrib/document_templates/models.py:112
+msgid "Jinja template with 'value' in context"
+msgstr "Jinja Vorlage mit 'value' im Kontext"
+
+#: basxbread/contrib/document_templates/models.py:114
+msgid "Raw value"
+msgstr "Roher Wert"
+
+#: basxbread/contrib/document_templates/models.py:117
+msgid "Variable"
+msgstr "Variable"
+
+#: basxbread/contrib/document_templates/models.py:118
+msgid "Variables"
+msgstr "Variablen"
+
+#: basxbread/contrib/document_templates/urls.py:20
+msgid "Delete"
+msgstr "Löschen"
+
+#: basxbread/contrib/document_templates/urls.py:24
+msgid "Copy"
+msgstr "Kopieren"
+
+#: basxbread/contrib/document_templates/views.py:16
+msgid "Error"
+msgstr "Fehler"
+
+#: basxbread/contrib/document_templates/views.py:21
+msgid "Field explorer"
+msgstr "Feldexplorer"
+
+#: basxbread/contrib/document_templates/views.py:31
+msgid "Error in template: "
+msgstr "Fehler in der Vorlage: "
+
+#: basxbread/contrib/document_templates/views.py:39
+msgid "Variables in document but not defined below: "
+msgstr "Variablen in der Dokumentvorlage verwendet aber nicht definiert unten: "
+
+#: basxbread/contrib/document_templates/views.py:47
+msgid "Variables defined below but not used in document: "
+msgstr "Variablen unten definiert aber nicht verwendet in der Dokumentvorlage: "
+
+#: basxbread/contrib/document_templates/views.py:72
+msgid "Help"
+msgstr "Hilfe"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-24 09:08+0000\n"
+"POT-Creation-Date: 2022-08-15 10:04+0000\n"
 "PO-Revision-Date: 2021-05-15 05:32+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
@@ -19,157 +19,60 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.7-dev\n"
 
-#: basxbread/contrib/document_templates/models.py:20
-#: basxbread/contrib/document_templates/models.py:103
-#: basxbread/contrib/publicurls/models.py:28
-#: basxbread/contrib/reports/models.py:21
-msgid "Name"
-msgstr "Navn"
-
-#: basxbread/contrib/document_templates/models.py:24
-msgid ""
-"Must be a *.docx file, use '{{ variable-name }}' to insert variables from "
-"below"
-msgstr ""
-
-#: basxbread/contrib/document_templates/models.py:29
-#: basxbread/contrib/reports/models.py:23
-#: basxbread/contrib/triggers/models.py:105
-msgid "Model"
-msgstr "Modell"
-
-#: basxbread/contrib/document_templates/models.py:94
-msgid "Document Template"
-msgstr ""
-
-#: basxbread/contrib/document_templates/models.py:95
-msgid "Document Templates"
-msgstr ""
-
-#: basxbread/contrib/document_templates/models.py:103
-msgid "Name to use in the template document"
-msgstr ""
-
-#: basxbread/contrib/document_templates/models.py:106
-#: basxbread/views/read.py:44
-msgid "Value"
-msgstr ""
-
-#: basxbread/contrib/document_templates/models.py:106
-msgid "Path to the desired value (see help)"
-msgstr ""
-
-#: basxbread/contrib/document_templates/models.py:109
-msgid "Template"
-msgstr ""
-
-#: basxbread/contrib/document_templates/models.py:111
-msgid "Jinja template with 'value' in context"
-msgstr ""
-
-#: basxbread/contrib/document_templates/models.py:113
-msgid "Raw value"
-msgstr ""
-
-#: basxbread/contrib/document_templates/models.py:116
-msgid "Variable"
-msgstr ""
-
-#: basxbread/contrib/document_templates/models.py:117
-msgid "Variables"
-msgstr ""
-
-#: basxbread/contrib/document_templates/urls.py:20
-#: basxbread/contrib/reports/urls.py:23
-#: basxbread/layout/components/forms/__init__.py:341
-#: basxbread/views/browse.py:57 basxbread/views/browse.py:330
-#: basxbread/views/util.py:38
-msgid "Delete"
-msgstr "Slett"
-
-#: basxbread/contrib/document_templates/urls.py:24
-#: basxbread/contrib/reports/urls.py:27 basxbread/views/util.py:47
-#, fuzzy
-#| msgctxt "this is a copy"
-#| msgid "Copy"
-msgid "Copy"
-msgstr "Kopier"
-
-#: basxbread/contrib/document_templates/views.py:15
-msgid "Error"
-msgstr ""
-
-#: basxbread/contrib/document_templates/views.py:20
-#: basxbread/contrib/reports/views.py:27
-msgid "Field explorer"
-msgstr ""
-
-#: basxbread/contrib/document_templates/views.py:30
-msgid "Error in template: "
-msgstr ""
-
-#: basxbread/contrib/document_templates/views.py:38
-msgid "Variables in document but not defined below: "
-msgstr ""
-
-#: basxbread/contrib/document_templates/views.py:46
-msgid "Variables defined below but not used in document: "
-msgstr ""
-
-#: basxbread/contrib/document_templates/views.py:71
-#: basxbread/contrib/reports/views.py:43
-msgid "Help"
-msgstr ""
-
 #: basxbread/contrib/publicurls/models.py:16
 #, python-format
 msgid "%(value)s is not a valid internal URL"
 msgstr ""
 
-#: basxbread/contrib/publicurls/models.py:30
+#: basxbread/contrib/publicurls/models.py:22
+#: basxbread/contrib/reports/models.py:21
+msgid "Name"
+msgstr "Navn"
+
+#: basxbread/contrib/publicurls/models.py:24
 msgid "URL"
 msgstr ""
 
-#: basxbread/contrib/publicurls/models.py:33
+#: basxbread/contrib/publicurls/models.py:27
 msgid "Internal URL"
 msgstr ""
 
-#: basxbread/contrib/publicurls/models.py:35
+#: basxbread/contrib/publicurls/models.py:29
 msgid "Salt"
 msgstr ""
 
-#: basxbread/contrib/publicurls/models.py:36
+#: basxbread/contrib/publicurls/models.py:30
 #: basxbread/contrib/reports/models.py:20
 msgid "Created"
 msgstr "Opprettet"
 
-#: basxbread/contrib/publicurls/models.py:37
+#: basxbread/contrib/publicurls/models.py:31
 msgid "Valid for"
 msgstr ""
 
-#: basxbread/contrib/publicurls/models.py:38
+#: basxbread/contrib/publicurls/models.py:32
 msgid "Has form"
 msgstr ""
 
-#: basxbread/contrib/publicurls/models.py:40
+#: basxbread/contrib/publicurls/models.py:34
 msgid "Thank-you text"
 msgstr ""
 
-#: basxbread/contrib/publicurls/models.py:41
+#: basxbread/contrib/publicurls/models.py:35
 msgid "Thank you"
 msgstr ""
 
-#: basxbread/contrib/publicurls/models.py:42
+#: basxbread/contrib/publicurls/models.py:36
 msgid "Will be shown if a form has successfully been submitted."
 msgstr ""
 
-#: basxbread/contrib/publicurls/models.py:53
-#: basxbread/contrib/publicurls/models.py:69
+#: basxbread/contrib/publicurls/models.py:47
+#: basxbread/contrib/publicurls/models.py:63
 #: basxbread/contrib/publicurls/urls.py:72
 msgid "Public URL"
 msgstr ""
 
-#: basxbread/contrib/publicurls/models.py:70
+#: basxbread/contrib/publicurls/models.py:64
 msgid "Public URLs"
 msgstr ""
 
@@ -184,6 +87,11 @@ msgstr ""
 #: basxbread/contrib/publicurls/urls.py:53 basxbread/views/wizard.py:50
 msgid "Back"
 msgstr "Tilbake"
+
+#: basxbread/contrib/reports/models.py:23
+#: basxbread/contrib/triggers/models.py:105
+msgid "Model"
+msgstr "Modell"
 
 #: basxbread/contrib/reports/models.py:25
 #: basxbread/contrib/triggers/models.py:108
@@ -267,6 +175,20 @@ msgstr ""
 msgid "Columns"
 msgstr "Kolonner"
 
+#: basxbread/contrib/reports/urls.py:23
+#: basxbread/layout/components/forms/__init__.py:341
+#: basxbread/views/browse.py:57 basxbread/views/browse.py:330
+#: basxbread/views/util.py:38
+msgid "Delete"
+msgstr "Slett"
+
+#: basxbread/contrib/reports/urls.py:27 basxbread/views/util.py:47
+#, fuzzy
+#| msgctxt "this is a copy"
+#| msgid "Copy"
+msgid "Copy"
+msgstr "Kopier"
+
 #: basxbread/contrib/reports/urls.py:38 basxbread/views/browse.py:319
 #: basxbread/views/read.py:60 basxbread/views/userprofile.py:100
 #: basxbread/views/userprofile.py:128 basxbread/views/userprofile.py:160
@@ -277,6 +199,14 @@ msgstr ""
 #: basxbread/contrib/reports/urls.py:43 basxbread/contrib/reports/views.py:155
 #: basxbread/views/browse.py:50
 msgid "Excel"
+msgstr ""
+
+#: basxbread/contrib/reports/views.py:27
+msgid "Field explorer"
+msgstr ""
+
+#: basxbread/contrib/reports/views.py:43
+msgid "Help"
 msgstr ""
 
 #: basxbread/contrib/reports/views.py:52
@@ -483,30 +413,30 @@ msgstr ""
 msgid "Add %s"
 msgstr "Legg til %s"
 
-#: basxbread/layout/components/fieldexplorer.py:10
+#: basxbread/layout/components/fieldexplorer.py:12
 #, fuzzy
 #| msgid "Base model"
 msgid "Base model: "
 msgstr "Grunnmodell"
 
-#: basxbread/layout/components/fieldexplorer.py:15
+#: basxbread/layout/components/fieldexplorer.py:17
 msgid "Click "
 msgstr ""
 
-#: basxbread/layout/components/fieldexplorer.py:20
+#: basxbread/layout/components/fieldexplorer.py:22
 msgid " to copy the accessor"
 msgstr ""
 
-#: basxbread/layout/components/fieldexplorer.py:23
+#: basxbread/layout/components/fieldexplorer.py:25
 msgid "Fields"
 msgstr ""
 
-#: basxbread/layout/components/fieldexplorer.py:105
+#: basxbread/layout/components/fieldexplorer.py:113
 #, python-format
 msgid " reference to \"%s\""
 msgstr ""
 
-#: basxbread/layout/components/fieldexplorer.py:108
+#: basxbread/layout/components/fieldexplorer.py:116
 #, python-format
 msgid " reference to multiple \"%s\""
 msgstr ""
@@ -534,11 +464,11 @@ msgstr ""
 msgid "Save"
 msgstr "Lagre"
 
-#: basxbread/layout/components/forms/widgets.py:237
+#: basxbread/layout/components/forms/widgets.py:240
 msgid "Show password"
 msgstr "Vis passord"
 
-#: basxbread/layout/components/forms/widgets.py:870
+#: basxbread/layout/components/forms/widgets.py:889
 msgid "Select file"
 msgstr "Velg fil"
 
@@ -592,7 +522,7 @@ msgstr "Logg ut"
 msgid "Close"
 msgstr ""
 
-#: basxbread/layout/components/tag.py:19
+#: basxbread/layout/components/tag.py:37
 msgid "Remove"
 msgstr "Fjern"
 
@@ -971,6 +901,10 @@ msgstr ""
 msgid ""
 "A problem has occurred while loading the page at %s.<br>If the problem "
 "persists, please contact an administrator."
+msgstr ""
+
+#: basxbread/views/read.py:44
+msgid "Value"
 msgstr ""
 
 #: basxbread/views/userprofile.py:36
