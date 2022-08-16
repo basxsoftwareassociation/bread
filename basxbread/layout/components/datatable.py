@@ -4,7 +4,6 @@ import htmlgenerator as hg
 from django.db import models
 from django.db.models.constants import LOOKUP_SEP
 from django.utils.translation import gettext_lazy as _
-from django_filters import FilterSet
 
 from basxbread.utils import filter_fieldlist, resolve_modellookup
 from basxbread.utils.links import Link, ModelHref
