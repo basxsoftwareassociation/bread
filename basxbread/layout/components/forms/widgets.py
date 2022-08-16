@@ -3,6 +3,7 @@ import warnings
 from typing import Optional
 
 import django_countries.widgets
+import django_filters
 import htmlgenerator as hg
 from _strptime import TimeRE
 from django.conf import settings
@@ -1045,6 +1046,12 @@ class MultiWidget(BaseWidget):
                     realboundfield.subwidgets[0].parent_widget.widgets,
                     realboundfield.subwidgets[0].data["subwidgets"],
                 ):
+                    # required because bread uses _class instead of "class"
+                    # otherwise "class" will override "_class" when rendering
+                    if "class" in data["attrs"]:
+                        data = dict(data)
+                        data["attrs"]["_class"] = data["attrs"]["class"]
+                        del data["attrs"]["class"]
                     ret.append(self.subwidget(realboundfield, widget, data))
             return hg.BaseElement(*ret)
 
@@ -1086,6 +1093,25 @@ class SplitDateTimeWidget(MultiWidget):
                 formatkey=djangowidget.format_key,
             )
         return super().subwidget(boundfield, djangowidget, djangodata)
+
+
+class DateRangeWidget(MultiWidget):
+    django_widget = django_filters.widgets.DateRangeWidget
+
+    def subwidget(self, boundfield, djangowidget, djangodata):
+        return DatePicker(
+            label=None,
+            help_text=None,
+            errors=None,
+            inputelement_attrs={
+                "name": djangodata["name"],
+                "value": djangodata["value"],
+                "required": djangodata["required"],
+                **djangodata["attrs"],
+            },
+            boundfield=boundfield,
+            formatkey="DATE_INPUT_FORMATS",
+        )
 
 
 def _append_classes(lazy_attrs, *_classes):
