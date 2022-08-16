@@ -6,6 +6,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.db.models.constants import LOOKUP_SEP
 from django.http import HttpRequest, HttpResponse
@@ -536,7 +537,10 @@ def parse_filterconfig(basemodel, filterconfig, prefix):
     n = 0
     for f in subfields:
         if isinstance(f, str):
-            modelfield = get_field(basemodel, f)
+            try:
+                modelfield = get_field(basemodel, f)
+            except FieldDoesNotExist:
+                continue
             # ignore filefields
             if not isinstance(modelfield, (models.FileField)):
                 fields.append(f)
@@ -563,9 +567,6 @@ def parse_filterconfig(basemodel, filterconfig, prefix):
         (FILTERSETTYPE[grouptype.lower()],),
         {"Meta": meta, "subgroup_classes": subgroups, "prefix": f"filter_{prefix}"},
     )
-    # for fieldname, filter in ret.base_filters.items():
-    # filter.label = get_field(basemodel, fieldname).verbose_name
-    # print(filter)
     return ret
 
 
