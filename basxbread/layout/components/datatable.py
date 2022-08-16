@@ -324,8 +324,6 @@ event.stopPropagation()""",
         pagination_config: Optional[PaginationConfig] = None,
         search_urlparameter: Optional[str] = None,
         model=None,  # required if queryset is Lazy
-        filter_urlparameter: Optional[str] = None,
-        filterset_class: Optional[FilterSet] = None,
         **kwargs,
     ):
         """TODO: Write Docs!!!!
