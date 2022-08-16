@@ -119,9 +119,9 @@ class ReadView(views.ReadView):
                 pass
             columns.append(
                 layout.datatable.DataTableColumn(
-                    col.header,
-                    layout.FC(f"row.{col.column}"),
-                    col.sortingname or sortingname,
+                    header=col.header,
+                    cell=layout.FC(f"row.{col.column}"),
+                    sortingname=col.sortingname or sortingname,
                 )
             )
         if not columns:
@@ -165,7 +165,7 @@ def exceldownload(request, pk: int):
         return HttpResponseNotFound()
 
     columns = {
-        column.name: lambda row, c=column.column: formatters.format_value(
+        column.header: lambda row, c=column.column: formatters.format_value(
             hg.resolve_lookup(row, c)
         )
         for column in report.columns.all()
