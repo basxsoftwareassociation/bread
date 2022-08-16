@@ -3,7 +3,6 @@ import warnings
 from typing import Optional
 
 import django_countries.widgets
-import django_filters
 import htmlgenerator as hg
 from _strptime import TimeRE
 from django.conf import settings
@@ -1169,7 +1168,7 @@ def django2bread_widgetclass(widgetclass, fieldclass=None) -> Optional[hg.Lazy]:
                 django2bread_widgetclass.widget_map[cls.django_widget] = []  # type: ignore
             django2bread_widgetclass.widget_map[cls.django_widget].append(cls)  # type: ignore
         for key, widgetclasses in django2bread_widgetclass.widget_map.items():  # type: ignore
-            if len(widgetclasses) > 1:
+            if key is not None and len(widgetclasses) > 1:
                 warnings.warn(
                     "There are more than one basxbread widget implementations "
                     f"available for the django widget {key}: {widgetclasses}"
