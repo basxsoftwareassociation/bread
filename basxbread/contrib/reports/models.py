@@ -49,7 +49,10 @@ class Report(models.Model):
         columns = []
         for column in self.columns.all():
             columns.append(
-                DataTableColumn(column.header, layout.FC(f"row.{column.column}"))
+                DataTableColumn(
+                    header=column.header,
+                    cell=layout.ObjectFieldValue(column.column, "row"),
+                )
             )
         qs = self.queryset
         if qs is None:

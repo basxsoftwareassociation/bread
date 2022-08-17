@@ -8,7 +8,6 @@ from django.template.defaultfilters import linebreaksbr
 from django.utils.formats import localize as djangolocalize
 from django.utils.timezone import localtime as djangolocaltime
 
-from ..formatters import format_value
 from ..utils import resolve_modellookup
 
 DEVMODE_KEY = "DEVMODE"
@@ -50,11 +49,6 @@ def aslink_attributes(href):
         "onauxclick": hg.BaseElement("window.open('", href, "', '_blank')"),
         "style": "cursor: pointer",
     }
-
-
-class FormattedContextValue(hg.ContextValue):
-    def resolve(self, context):
-        return str(format_value(super().resolve(context)))
 
 
 class ObjectFieldLabel(hg.ContextValue):
@@ -136,5 +130,3 @@ class ObjectFieldValue(hg.Lazy):
 
 localize = hg.lazify(djangolocalize)
 localtime = hg.lazify(djangolocaltime)
-
-FC = FormattedContextValue

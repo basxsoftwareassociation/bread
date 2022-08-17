@@ -120,7 +120,7 @@ class ReadView(views.ReadView):
             columns.append(
                 layout.datatable.DataTableColumn(
                     header=col.header,
-                    cell=layout.FC(f"row.{col.column}"),
+                    cell=layout.ObjectFieldValue(col.column, "row"),
                     sortingname=col.sortingname or sortingname,
                 )
             )
