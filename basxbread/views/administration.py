@@ -328,8 +328,11 @@ def maintainance_package_layout(request):
     package_current = []
     package_latest = []
     for package_name in PACKAGE_NAMES:
-        current_version = pkg_resources.get_distribution(package_name).version
         newer_version = _("unable to load")
+        try:
+            current_version = pkg_resources.get_distribution(package_name).version
+        except pkg_resources.DistributionNotFound:
+            continue
 
         # load the latest package info from the PyPI API
         pkg_info_req = requests.get(PYPI_API.format(package_name))
