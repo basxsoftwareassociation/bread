@@ -105,6 +105,9 @@ class Trigger(models.Model):
         verbose_name=_("Model"),
         on_delete=models.PROTECT,
     )
+    model.formfield_kwargs = {
+        "queryset": ContentType.objects.all().order_by("app_label", "model")
+    }
     filter = QuerysetField(_("Filter"), modelfieldname="model")
     enable = models.BooleanField(default=True)
     action = models.ForeignKey(Action, on_delete=models.PROTECT)

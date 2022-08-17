@@ -22,6 +22,9 @@ class Report(models.Model):
     model = models.ForeignKey(
         ContentType, on_delete=models.PROTECT, verbose_name=_("Model")
     )
+    model.formfield_kwargs = {
+        "queryset": ContentType.objects.all().order_by("app_label", "model")
+    }
     filter = QuerysetField(_("Filter"), modelfieldname="model")
     custom_queryset = models.CharField(
         _("Custom Filter"),

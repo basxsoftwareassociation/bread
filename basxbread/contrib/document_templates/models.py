@@ -25,10 +25,12 @@ class DocumentTemplate(models.Model):
             "Must be a *.docx file, use '{{ variable-name }}' to insert variables from below"
         ),
     )
-
     model = models.ForeignKey(
         ContentType, on_delete=models.PROTECT, verbose_name=_("Model")
     )
+    model.formfield_kwargs = {
+        "queryset": ContentType.objects.all().order_by("app_label", "model")
+    }
     filename_template = models.TextField(_("Filename template"), blank=True)
     filename_template.formfield_kwargs = {"widget": forms.Textarea(attrs={"rows": 1})}
 
