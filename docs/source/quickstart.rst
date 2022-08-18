@@ -114,13 +114,13 @@ However, for this quickstart we will try to keep the complexity low.
 URLs
 ****
 
-Creating the |project| user interface for the application is done by registering the default views with the shortcut :py:func:`bread.utils.urls.default_model_paths`::
+Creating the |project| user interface for the application is done by registering the default views with the shortcut :py:func:`basxbread.utils.urls.default_model_paths`::
 
     # eventmanagement/urls.py
 
-    from bread import views, menu
+    from basxbread import views, menu
     from django.views.generic import RedirectView
-    from bread.utils.urls import default_model_paths, reverse_model
+    from basxbread.utils.urls import default_model_paths, reverse_model
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
     from django.urls import include, path
 
@@ -128,7 +128,7 @@ Creating the |project| user interface for the application is done by registering
 
     urlpatterns = (
         [
-            path("", include("bread.urls")),
+            path("", include("basxbread.urls")),
             path("", RedirectView.as_view(url="/accounts/login/")),
         ]
         + default_model_paths(
@@ -142,7 +142,7 @@ Creating the |project| user interface for the application is done by registering
         menu.Item(menu.Link(reverse_model(models.Event, "browse"), "Events"), "Events")
     )
 
-The :py:func:`bread.utils.urls.default_model_paths` shortcut does only require a single argument, the desired model to generate URLs for.
+The :py:func:`basxbread.utils.urls.default_model_paths` shortcut does only require a single argument, the desired model to generate URLs for.
 We add here an optional argument ``browseview`` to parameterize the browse view. By setting ``rowclickaction`` to ``"edit"`` a click on an entry in the browse list will open the according edit-form of the clicked item.
 
 
@@ -150,7 +150,7 @@ Settings
 ********
 
 In order to get |project| working correctly we need to make a few changes to the django settings file at ``eventmanagement/settings.py``.
-There is a full list of recommended settings inside the module :py:mod:`bread.settings.required`.
+There is a full list of recommended settings inside the module :py:mod:`basxbread.settings.required`.
 
 ::
 
@@ -162,7 +162,7 @@ There is a full list of recommended settings inside the module :py:mod:`bread.se
         # our custom event app
         "events",
         # required 3rd party dependencies
-        "bread",
+        "basxbread",
         "djangoql",
         "guardian",
         "compressor",
@@ -179,32 +179,11 @@ There is a full list of recommended settings inside the module :py:mod:`bread.se
 
     ...
 
-    # The TEMPLATE setting should already be in the pre-generated settings.py file
-    # Only the additional context processor needs to be added
-    TEMPLATES = [
-        {
-            "BACKEND": "django.template.backends.django.DjangoTemplates",
-            "APP_DIRS": True,
-            "OPTIONS": {
-                "context_processors": [
-                    "django.template.context_processors.debug",
-                    "django.template.context_processors.request",
-                    "django.contrib.auth.context_processors.auth",
-                    "django.contrib.messages.context_processors.messages",
-                     # the following line needs to be appended to the existing entries
-                    "bread.context_processors.bread_context",
-                ]
-            },
-        }
-    ]
-
-    ...
-
     # Setup for django-compressor to compress and serve SCSS and other
     # static files
     STATIC_ROOT="static"
 
-    from bread.settings.required import LIBSASS_ADDITIONAL_INCLUDE_PATHS
+    from basxbread.settings.required import LIBSASS_ADDITIONAL_INCLUDE_PATHS
     COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
     STATICFILES_FINDERS = [
         "django.contrib.staticfiles.finders.FileSystemFinder",

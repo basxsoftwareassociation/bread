@@ -18,16 +18,7 @@ from django.conf import settings
 
 sys.path.insert(0, os.path.abspath("../.."))
 import sphinx_rtd_theme  # noqa
-
-INSTALLED_APPS = [
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sites",
-    "guardian",
-    "bread",
-    "bread.contrib.reports",
-    "bread.contrib.workflows",
-]
+from basxbread.tests.settings import HAYSTACK_CONNECTIONS, INSTALLED_APPS
 
 settings.configure(  # nosec because this is only for local development
     DEBUG=True,
@@ -43,13 +34,16 @@ settings.configure(  # nosec because this is only for local development
     ),
     SECRET_KEY="SECRET_KEY_FOR_TESTING",
     STATIC_URL="static/",
+    AJAX_URLPARAMETER="asajax",
+    HIDEMENUS_URLPARAMETER="hidemenus",
+    HAYSTACK_CONNECTIONS=HAYSTACK_CONNECTIONS,
 )
 
 django.setup()
 
 # -- Project information -----------------------------------------------------
 
-project = "*bread*"
+project = "*basxBread*"
 copyright = "2021, basx Software Association"
 author = "basx Software Association"
 

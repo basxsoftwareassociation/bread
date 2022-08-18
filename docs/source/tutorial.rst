@@ -28,7 +28,7 @@ To get a fresh project up and running we run the following commands in a termina
     python3 -m venv .venv
     . .venv/bin/activate
     pip install basx-bread
-    django-admin startproject --template .venv/lib/python3.9/site-packages/bread/resources/project_template todo .
+    django-admin startproject --template .venv/lib/python3.9/site-packages/basxbread/resources/project_template todo .
 
 In case you are not familiar with a standard Python or Django setup here are some explanations:
 
@@ -168,7 +168,7 @@ The most simple CRUD-views can easily be added by creating the file ``mytodos/ur
 
 ::
 
-    from bread.utils import quickregister
+    from basxbread.utils import quickregister
     from . import models
 
     urlpatterns = []
