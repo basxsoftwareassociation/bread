@@ -543,7 +543,6 @@ def parse_filterconfig(basemodel, filterconfig, prefix):
             except FieldDoesNotExist:
                 continue
             # ignore filefields
-            print(type(modelfield))
             if not isinstance(
                 modelfield, (models.FileField, GenericForeignKey, GenericRelation)
             ):
