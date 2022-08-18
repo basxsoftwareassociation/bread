@@ -18,7 +18,7 @@ from django.conf import settings
 
 sys.path.insert(0, os.path.abspath("../.."))
 import sphinx_rtd_theme  # noqa
-from basxbread.tests.settings import HAYSTACK_CONNECTIONS, INSTALLED_APPS
+from basxbread.tests.settings import HAYSTACK_CONNECTIONS, INSTALLED_APPS  # noqa
 
 settings.configure(  # nosec because this is only for local development
     DEBUG=True,
