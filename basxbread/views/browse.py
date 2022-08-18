@@ -6,6 +6,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.db.models.constants import LOOKUP_SEP
@@ -542,7 +543,7 @@ def parse_filterconfig(basemodel, filterconfig, prefix):
             except FieldDoesNotExist:
                 continue
             # ignore filefields
-            if not isinstance(modelfield, (models.FileField)):
+            if not isinstance(modelfield, (models.FileField, GenericForeignKey)):
                 fields.append(f)
         elif isinstance(f, Iterable):
             subgroups.append(parse_filterconfig(basemodel, f, prefix + str(n)))
