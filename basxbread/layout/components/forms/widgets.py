@@ -1042,9 +1042,11 @@ class MultiWidget(BaseWidget):
             ret = []
             if boundfield:
                 realboundfield = hg.resolve_lazy(boundfield, context)
-                for widget, data in zip(
-                    realboundfield.subwidgets[0].parent_widget.widgets,
-                    realboundfield.subwidgets[0].data["subwidgets"],
+                for i, (widget, data) in enumerate(
+                    zip(
+                        realboundfield.subwidgets[0].parent_widget.widgets,
+                        realboundfield.subwidgets[0].data["subwidgets"],
+                    )
                 ):
                     # required because bread uses _class instead of "class"
                     # otherwise "class" will override "_class" when rendering
@@ -1052,12 +1054,12 @@ class MultiWidget(BaseWidget):
                         data = dict(data)
                         data["attrs"]["_class"] = data["attrs"]["class"]
                         del data["attrs"]["class"]
-                    ret.append(self.subwidget(realboundfield, widget, data))
+                    ret.append(self.subwidget(realboundfield, widget, data, i))
             return hg.BaseElement(*ret)
 
         super().__init__(label, help_text, errors, hg.F(_subwidgets), **attributes)
 
-    def subwidget(self, boundfield, djangowidget, djangodata):
+    def subwidget(self, boundfield, djangowidget, djangodata, i):
         widgetclass = django2bread_widgetclass(type(djangowidget))
         return widgetclass(
             label=None,
@@ -1076,7 +1078,7 @@ class MultiWidget(BaseWidget):
 class SplitDateTimeWidget(MultiWidget):
     django_widget = widgets.SplitDateTimeWidget
 
-    def subwidget(self, boundfield, djangowidget, djangodata):
+    def subwidget(self, boundfield, djangowidget, djangodata, i):
         if isinstance(djangowidget, widgets.DateInput):
             return DatePicker(
                 label=None,
@@ -1092,15 +1094,16 @@ class SplitDateTimeWidget(MultiWidget):
                 format=djangowidget.format,
                 formatkey=djangowidget.format_key,
             )
-        return super().subwidget(boundfield, djangowidget, djangodata)
+        return super().subwidget(boundfield, djangowidget, djangodata, i)
 
 
 class DateRangeWidget(MultiWidget):
     django_widget = django_filters.widgets.DateRangeWidget
 
-    def subwidget(self, boundfield, djangowidget, djangodata):
+    def subwidget(self, boundfield, djangowidget, djangodata, i):
+        labelmap = {0: _("From"), 1: _("To")}
         return DatePicker(
-            label=None,
+            label=Label(labelmap[i]),
             help_text=None,
             errors=None,
             inputelement_attrs={
