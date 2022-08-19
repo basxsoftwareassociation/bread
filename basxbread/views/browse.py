@@ -103,6 +103,8 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
     title: Union[hg.BaseElement, str] = ""
     columns: Iterable[Union[str, layout.datatable.DataTableColumn]] = ("__all__",)
     rowclickaction: Optional[Link] = None
+    filterconfig: Optional[tuple] = None
+    filterset_class: Optional[django_filters.FilterSet] = None
 
     # bulkactions: List[(Link, function(request, queryset))]
     # - link.js should be a slug and not a URL
@@ -152,13 +154,17 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         self.viewstate_sessionkey = (
             kwargs.get("viewstate_sessionkey") or self.viewstate_sessionkey
         )
-        self.filterset_class = parse_filterconfig(
+        self.filterconfig = kwargs.get("filterconfig") or self.filterconfig
+        self.filterset_class = self.filterset_class or parse_filterconfig(
             self.model,
-            ("AND",)
-            + tuple(
-                get_filtername(column)
-                for column in self.columns
-                if get_filtername(column)
+            self.filterconfig
+            or (
+                ("AND",)
+                + tuple(
+                    get_filtername(column)
+                    for column in self.columns
+                    if get_filtername(column)
+                )
             ),
             prefix="f",
         )
@@ -308,7 +314,8 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
                     )
                 )
 
-        qs = self.filterset_class(self.request.GET, queryset=qs).qs
+        filterset = self.filterset_class(self.request.GET, queryset=qs)
+        qs = filterset.qs
 
         selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
         if selectedobjects and "all" not in selectedobjects:
@@ -492,6 +499,13 @@ class AndGroup(django_filters.FilterSet):
 
         return queryset
 
+    @property
+    def errors(self):
+        ret = django_filters.FilterSet.errors.fget(self)
+        for subgroup in self.subgroups:
+            ret.update(subgroup.errors)
+        return ret
+
 
 class OrGroup(django_filters.FilterSet):
     prefix = None
@@ -504,18 +518,32 @@ class OrGroup(django_filters.FilterSet):
         self.form_prefix = self.prefix
 
     def filter_queryset(self, queryset):
+        if (
+            len([i for i in self.subgroups if i.form.has_changed()]) == 0
+            and len(self.form.cleaned_data) == 0
+        ):
+            return queryset
+        basefilterset = queryset.none()
         for name, value in self.form.cleaned_data.items():
-            queryset |= self.filters[name].filter(queryset, value)
+            basefilterset |= self.filters[name].filter(queryset, value)
             assert isinstance(
-                queryset, models.QuerySet
+                basefilterset, models.QuerySet
             ), "Expected '%s.%s' to return a QuerySet, but got a %s instead." % (
                 type(self).__name__,
                 name,
-                type(queryset).__name__,
+                type(basefilterset).__name__,
             )
         for group in self.subgroups:
-            queryset |= group.filter_queryset(queryset)
-        return queryset
+            if group.form.has_changed():  # ignore subgroup with no changes
+                basefilterset |= group.filter_queryset(queryset)
+        return basefilterset
+
+    @property
+    def errors(self):
+        ret = django_filters.FilterSet.errors.fget(self)
+        for subgroup in self.subgroups:
+            ret.update(subgroup.errors)
+        return ret
 
 
 def parse_filterconfig(basemodel, filterconfig, prefix):
