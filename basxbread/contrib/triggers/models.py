@@ -1,18 +1,22 @@
 import datetime
 import typing
+from importlib import import_module
 
 import htmlgenerator as hg
+from basxbread.formatters import is_email_simple
+from basxbread.querysetfield import QuerysetField
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.messages.storage import default_storage
+from django.contrib.sessions.models import Session
 from django.core.mail import send_mail
 from django.db import models
 from django.template import engines
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
-from basxbread.formatters import is_email_simple
-from basxbread.querysetfield import QuerysetField
 
 syntax_email_field = """
 Syntax:
@@ -94,8 +98,40 @@ class SendEmail(Action):
             )
 
     class Meta:
-        verbose_name = _("Send Email Action")
-        verbose_name_plural = _("Send Email Actions")
+        verbose_name = _("Send email action")
+        verbose_name_plural = _("Send email actions")
+
+
+class SystemNotification(Action):
+    message = models.TextField(
+        _("Message"),
+        help_text=_(
+            "Will be rendered as a Django template with the name 'object' in the context"
+        ),
+    )
+
+    def run(self, instance):
+        class DummyRequest:
+            def __init__(self, session):
+                self.session = session
+                self._messages = None
+
+        SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+        for session in Session.objects.filter(expire_date__gte=timezone.now()):
+            request = DummyRequest(
+                session=SessionStore(session.session_key),
+            )
+            request._messages = default_storage(request)
+            messages.info(
+                request,
+                message=engines["django"]
+                .from_string(self.message)
+                .render({"object": instance}),
+            )
+
+    class Meta:
+        verbose_name = _("System notification")
+        verbose_name_plural = _("System notifications")
 
 
 class Trigger(models.Model):
@@ -111,6 +147,12 @@ class Trigger(models.Model):
     filter = QuerysetField(_("Filter"), modelfieldname="model")
     enable = models.BooleanField(default=True)
     action = models.ForeignKey(Action, on_delete=models.PROTECT)
+    field = models.CharField(
+        _("Field"),
+        max_length=255,
+        blank=True,
+        help_text=_("Only trigger when a certain field has changed"),
+    )
 
     def __str__(self):
         return self.description

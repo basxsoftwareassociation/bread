@@ -1,11 +1,10 @@
 import datetime
 
+from basxbread.utils import get_concrete_instance
 from celery import shared_task
 from django.apps import AppConfig
 from django.conf import settings
 from django.utils import timezone
-
-from basxbread.utils import get_concrete_instance
 
 TRIGGER_PERIOD = getattr(settings, "TRIGGER_PERIOD", datetime.timedelta(hours=1))
 
@@ -16,9 +15,8 @@ class TriggersConfig(AppConfig):
 
     def ready(self):
 
-        from django.db.models.signals import post_delete, post_save
-
         from basxbread.utils.celery import RepeatedTask
+        from django.db.models.signals import post_delete, post_save
 
         post_save.connect(save_handler, dispatch_uid="trigger_save")
         post_delete.connect(delete_handler, dispatch_uid="trigger_delete")
@@ -39,13 +37,18 @@ def datachange_trigger(model, instance, type):
 
     from .models import DataChangeTrigger
 
-    model = ContentType.objects.filter(
+    contenttypes = ContentType.objects.filter(
         app_label=model._meta.app_label, model=model._meta.model_name
     )
-    if model.exists():
+    for contenttype in contenttypes:
         for trigger in DataChangeTrigger.objects.filter(
-            model=model.first(), type=type, enable=True
+            model=contenttype, type=type, enable=True
         ):
+            if type == "changed" and trigger.field:
+                if getattr(instance, trigger.field) == getattr(
+                    model.objects.filter(pk=instance.pk), trigger.field
+                ):
+                    continue
             if trigger.filter.queryset.filter(pk=instance.pk).exists():
                 # delay execution a bit as the trigger may run immediately even though
                 # the current request has not finished (and therefore not commited to DB yet)

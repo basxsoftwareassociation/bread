@@ -1,13 +1,12 @@
 import typing
 
 import htmlgenerator as hg
-from django.urls import path
-
 from basxbread import layout
 from basxbread.utils import quickregister
 from basxbread.views import AddView, EditView
+from django.urls import path
 
-from .models import DataChangeTrigger, DateFieldTrigger, SendEmail
+from .models import DataChangeTrigger, DateFieldTrigger, SendEmail, SystemNotification
 
 urlpatterns: typing.List[path] = []
 quickregister(
@@ -21,6 +20,7 @@ quickregister(
             "action",
             "type",
             "filter",
+            "field",
             "enable",
         ]
     ),
@@ -54,3 +54,4 @@ quickregister(
     ),
 )
 quickregister(urlpatterns, SendEmail)
+quickregister(urlpatterns, SystemNotification)
