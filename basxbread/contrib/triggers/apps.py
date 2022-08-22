@@ -1,10 +1,11 @@
 import datetime
 
-from basxbread.utils import get_concrete_instance
 from celery import shared_task
 from django.apps import AppConfig
 from django.conf import settings
 from django.utils import timezone
+
+from basxbread.utils import get_concrete_instance
 
 TRIGGER_PERIOD = getattr(settings, "TRIGGER_PERIOD", datetime.timedelta(hours=1))
 
@@ -15,8 +16,9 @@ class TriggersConfig(AppConfig):
 
     def ready(self):
 
-        from basxbread.utils.celery import RepeatedTask
         from django.db.models.signals import post_delete, post_save
+
+        from basxbread.utils.celery import RepeatedTask
 
         post_save.connect(save_handler, dispatch_uid="trigger_save")
         post_delete.connect(delete_handler, dispatch_uid="trigger_delete")

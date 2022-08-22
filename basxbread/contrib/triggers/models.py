@@ -3,8 +3,6 @@ import typing
 from importlib import import_module
 
 import htmlgenerator as hg
-from basxbread.formatters import is_email_simple
-from basxbread.querysetfield import QuerysetField
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -17,6 +15,9 @@ from django.db import models
 from django.template import engines
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+from basxbread.formatters import is_email_simple
+from basxbread.querysetfield import QuerysetField
 
 syntax_email_field = """
 Syntax:
