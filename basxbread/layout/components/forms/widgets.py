@@ -1055,7 +1055,7 @@ class MultiWidget(BaseWidget):
                         data["attrs"]["_class"] = data["attrs"]["class"]
                         del data["attrs"]["class"]
                     ret.append(self.subwidget(realboundfield, widget, data, i))
-            return hg.BaseElement(*ret)
+            return hg.DIV(*ret, style="display: flex")
 
         super().__init__(label, help_text, errors, hg.F(_subwidgets), **attributes)
 
@@ -1110,6 +1110,7 @@ class DateRangeWidget(MultiWidget):
                 "name": djangodata["name"],
                 "value": djangodata["value"],
                 "required": djangodata["required"],
+                "style": "max-width: 8rem",
                 **djangodata["attrs"],
             },
             boundfield=boundfield,
