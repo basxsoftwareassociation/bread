@@ -1,4 +1,5 @@
 import htmlgenerator as hg
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.utils.translation import gettext_lazy as _
 
 from basxbread.utils import get_all_subclasses
@@ -116,6 +117,9 @@ def _field_type_repr(field):
                 _(' reference to multiple "%s"')
                 % field.related_model._meta.verbose_name_plural
             )
+    if isinstance(field, GenericForeignKey):
+        return f"{type(field).__name__}"
+
     return f"{type(field).__name__}({field.verbose_name})"
 
 
