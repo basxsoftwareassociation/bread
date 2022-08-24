@@ -31,7 +31,7 @@ class EditView(views.EditView):
 
         fieldstable = layout.forms.FormsetField.as_datatable(
             "columns",
-            ["header", "column", "sortingname"],
+            ["header", "column", "cell_template", "sortingname"],
             formsetfield_kwargs={
                 "extra": 1,
                 "can_order": True,
@@ -81,7 +81,6 @@ class EditView(views.EditView):
 
 class ReadView(views.ReadView):
     def get_layout(self):
-
         # ordering, copied from basxbread.views.browse.BrowseView.get_queryset
         qs = self.object.queryset
         if not qs:
@@ -120,7 +119,7 @@ class ReadView(views.ReadView):
             columns.append(
                 layout.datatable.DataTableColumn(
                     header=col.header,
-                    cell=layout.ObjectFieldValue(col.column, "row"),
+                    cell=col.render_element("row"),
                     sortingname=col.sortingname or sortingname,
                 )
             )
@@ -165,8 +164,8 @@ def exceldownload(request, pk: int):
         return HttpResponseNotFound()
 
     columns = {
-        column.header: lambda row, c=column.column: formatters.format_value(
-            hg.resolve_lookup(row, c)
+        column.header: lambda row, c=column: hg.render(
+            c.render_element("row"), {"row": row}
         )
         for column in report.columns.all()
     }

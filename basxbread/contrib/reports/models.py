@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from jinja2.sandbox import SandboxedEnvironment
 
 from basxbread import layout
 from basxbread.querysetfield import QuerysetField, parsequeryexpression
@@ -51,19 +52,19 @@ class Report(models.Model):
             columns.append(
                 DataTableColumn(
                     header=column.header,
-                    cell=layout.ObjectFieldValue(column.column, "row"),
+                    cell=column.render_element("row"),
                 )
             )
         qs = self.queryset
         if qs is None:
             return hg.BaseElement("Model does no longer exists!")
 
-        return hg.BaseElement(
-            hg.HR(),
-            hg.H3(_("Preview"), style="margin-top: 1rem"),
-            layout.datatable.DataTable.from_queryset(
-                qs[:25], columns=columns, primary_button=""
-            ),
+        return layout.datatable.DataTable.from_queryset(
+            title=_("Preview"),
+            helper_text="",
+            queryset=qs[:10],
+            columns=columns,
+            primary_button="",
         )
 
     @property
@@ -111,6 +112,11 @@ class ReportColumn(models.Model):
     column = models.CharField(
         _("Column"), max_length=255, help_text=_("Value expression (see 'Help')")
     )
+    cell_template = models.TextField(
+        _("Cell template"),
+        blank=True,
+        help_text=_("Jinja template with 'value' in context"),
+    )
     sortingname = models.CharField(
         _("Sortingname"),
         max_length=255,
@@ -120,6 +126,23 @@ class ReportColumn(models.Model):
     aggregation = models.CharField(
         _("Aggregation"), max_length=64, choices=tuple(AGGREGATIONS.items()), blank=True
     )
+
+    def render_element(self, rowvariable):
+        if self.cell_template:
+
+            def render(context):
+                elementenv = SandboxedEnvironment()
+                elementenv.filters["map"] = lambda value, map: map.get(value, value)
+                try:
+                    return elementenv.from_string(self.cell_template).render(
+                        value=hg.resolve_lookup(context[rowvariable], self.column),
+                    )
+                except Exception as e:
+                    return f"### ERROR: {e} ###"
+
+            return hg.BaseElement(hg.F(render))
+
+        return layout.ObjectFieldValue(self.column, rowvariable)
 
     class Meta:
         verbose_name = _("Column")
