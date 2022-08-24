@@ -443,14 +443,17 @@ event.stopPropagation()""",
             **kwargs,
         ).with_toolbar(
             title,
-            helper_text=hg.format(
-                "{} {}",
-                hg.F(
-                    lambda c: len(hg.resolve_lazy(queryset, c))
-                    if pagination_config is None
-                    else pagination_config.paginator.count
+            helper_text=kwargs.get(
+                "helper_text",
+                hg.format(
+                    "{} {}",
+                    hg.F(
+                        lambda c: len(hg.resolve_lazy(queryset, c))
+                        if pagination_config is None
+                        else pagination_config.paginator.count
+                    ),
+                    model._meta.verbose_name_plural,
                 ),
-                model._meta.verbose_name_plural,
             ),
             primary_button=primary_button,
             bulkactions=bulkactions,
