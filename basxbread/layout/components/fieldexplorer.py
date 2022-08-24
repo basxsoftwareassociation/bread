@@ -47,8 +47,8 @@ def field_help(model, max_depth=4):
 def get_field_list(model, depth, excludemodels, display="none", parent_accessor=[]):
     fields = {}
     for f in model._meta.get_fields():
-        if not f.concrete and (f.one_to_many or f.many_to_many):
-            continue
+        # if not f.concrete and (f.one_to_many or f.many_to_many):
+        # continue
         fields[f] = hg.DIV(
             hg.SPAN(
                 ".".join(parent_accessor + [_field_attname(f)]),

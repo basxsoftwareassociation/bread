@@ -1,4 +1,5 @@
 import htmlgenerator as hg
+from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -115,8 +116,13 @@ class ReportColumn(models.Model):
     cell_template = models.TextField(
         _("Cell template"),
         blank=True,
-        help_text=_("Jinja template with 'value' in context"),
+        help_text=hg.mark_safe(
+            _(
+                "Optional Jinja template with 'value' in context.<br/>Use e.g. {{ value }} to simply display the value."
+            )
+        ),
     )
+    cell_template.formfield_kwargs = {"widget": forms.Textarea(attrs={"rows": 1})}
     sortingname = models.CharField(
         _("Sortingname"),
         max_length=255,
