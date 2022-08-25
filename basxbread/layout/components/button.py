@@ -64,6 +64,20 @@ class Button(hg.BUTTON):
     def as_href(self, href):
         return hg.A(*self, **{**self.attributes, "href": href})
 
+    def as_submit(self, href, **kwargs):
+        from django.forms import Form as DjangoForm
+
+        from .forms import Form
+
+        newbutton = self.copy()
+        newbutton.attributes["type"] = "submit"
+        return Form(
+            DjangoForm(),
+            newbutton,
+            action=href,
+            **hg.merge_html_attrs(kwargs, {"style": "display: inline"}),
+        )
+
 
 class ButtonSet(hg.DIV):
     def __init__(self, *buttons, **attributes):

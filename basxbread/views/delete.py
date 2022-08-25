@@ -32,7 +32,7 @@ class DeleteView(BaseView, PermissionRequiredMixin, RedirectView):
             ]
         return [f"{self.model._meta.app_label}.delete_{self.model.__name__.lower()}"]
 
-    def get(self, *args, **kwargs):
+    def post(self, *args, **kwargs):
         instance = get_object_or_404(self.model, pk=self.kwargs.get("pk"))
         restore = "restore" in self.request.GET
         if self.softdeletefield:
@@ -54,7 +54,7 @@ class DeleteView(BaseView, PermissionRequiredMixin, RedirectView):
                 "modelname": self.model._meta.verbose_name,
             },
         )
-        ret = super().get(*args, **kwargs)
+        ret = super().post(*args, **kwargs)
         if self.ajax_urlparameter in self.request.GET:
             ret = HttpResponse("OK")
             # This header will be processed by htmx
