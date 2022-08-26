@@ -1,5 +1,4 @@
 import htmlgenerator as hg
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.utils.translation import gettext_lazy as _
 
 from basxbread.utils import get_all_subclasses
@@ -109,6 +108,8 @@ def get_field_list(model, depth, excludemodels, display="none", parent_accessor=
 
 
 def _field_type_repr(field):
+    from django.contrib.contenttypes.fields import GenericForeignKey
+
     if field.related_model:
         if field.one_to_one or field.many_to_one:
             return _(' reference to "%s"') % field.related_model._meta.verbose_name
