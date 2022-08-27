@@ -96,17 +96,18 @@ class Form(hg.FORM):
         return super().render_children(context)
 
 
-class FormsetField(hg.Iterator):
+class Formset(hg.Iterator):
     def __init__(
         self,
-        fieldname,
+        formset,
         content,
-        formname,
         formsetinitial=None,
+        fieldname=None,  # required for inline-formsets
         **formsetfactory_kwargs,
     ):
-        self.fieldname = fieldname
-        self.formname = formname
+        self.formset = formset
+        if fieldname is not None:
+            self.fieldname = fieldname
         self.formsetfactory_kwargs = formsetfactory_kwargs
         self.formsetinitial = formsetinitial
         self.content = content
@@ -134,9 +135,7 @@ class FormsetField(hg.Iterator):
                             no_label=True,
                             no_helptext=True,
                         )
-                        for field in c[self.formname][
-                            self.fieldname
-                        ].formset.empty_form.fields
+                        for field in hg.resolve_lazy(self.formset, c).empty_form.fields
                         if field not in declared_fields
                         and field != forms.formsets.DELETION_FIELD_NAME
                     ]
@@ -145,7 +144,7 @@ class FormsetField(hg.Iterator):
         )
 
         super().__init__(
-            iterator=hg.C(f"{self.formname}.{self.fieldname}.formset"),
+            iterator=self.formset,
             loopvariable=DEFAULT_FORMSET_CONTEXTNAME,
             content=Form(
                 hg.C(DEFAULT_FORMSET_CONTEXTNAME), self.content, standalone=False
@@ -159,12 +158,10 @@ class FormsetField(hg.Iterator):
             # management forms, for housekeeping of inline forms
             hg.F(
                 lambda c: Form(
-                    c[self.formname][self.fieldname].formset.management_form,
+                    hg.resolve_lazy(self.formset, c).management_form,
                     *[
                         FormField(f, no_wrapper=True, no_label=True, no_helptext=True)
-                        for f in c[self.formname][
-                            self.fieldname
-                        ].formset.management_form.fields
+                        for f in hg.resolve_lazy(self.formset, c).management_form.fields
                     ],
                     standalone=False,
                 )
@@ -173,55 +170,40 @@ class FormsetField(hg.Iterator):
             # for this since we need a single, raw, unescaped HTML string
             hg.SCRIPT(
                 Form(
-                    hg.C(f"{self.formname}.{self.fieldname}.formset.empty_form"),
+                    self.formset.empty_form,
                     hg.WithContext(
                         self.content,
-                        **{
-                            DEFAULT_FORMSET_CONTEXTNAME: hg.C(
-                                f"{self.formname}.{self.fieldname}.formset.empty_form"
-                            )
-                        },
+                        **{DEFAULT_FORMSET_CONTEXTNAME: self.formset.empty_form},
                     ),
                     standalone=False,
                 ),
                 id=hg.BaseElement(
                     "empty_",
-                    hg.C(f"{self.formname}.{self.fieldname}.formset.prefix"),
+                    self.formset.prefix,
                     "_form",
                 ),
                 type="text/plain",
             ),
             hg.SCRIPT(
-                mark_safe(
-                    "document.addEventListener('DOMContentLoaded', e => init_formset('"
-                ),
-                hg.C(f"{self.formname}.{self.fieldname}.formset.prefix"),
-                mark_safe("'));"),
-            ),
-            hg.SPAN(
-                onload=hg.BaseElement(
-                    mark_safe("init_formset('"),
-                    hg.C(f"{self.formname}.{self.fieldname}.formset.prefix"),
-                    mark_safe("');"),
+                hg.format(
+                    mark_safe(
+                        "document.addEventListener('DOMContentLoaded', e => init_formset('{}'))"
+                    ),
+                    self.formset.prefix,
                 ),
             ),
+            hg.SPAN(onload=hg.format("init_formset('{}')", self.formset.prefix)),
         )
 
     def add_button(self, container_css_selector, label=_("Add"), **kwargs):
-        prefix = hg.C(f"{self.formname}.{self.fieldname}.formset.prefix")
+        prefix = self.formset.prefix
         defaults = {
             "icon": "add",
             "notext": True,
             "buttontype": "tertiary",
-            "id": hg.BaseElement(
-                "add_", prefix, "_button"
-            ),  # required for javascript to work correctly
-            "onclick": hg.BaseElement(
-                "formset_add('",
-                prefix,
-                "', '",
-                container_css_selector,
-                "');",
+            "id": hg.format("add_{}_button", prefix),
+            "onclick": hg.format(
+                "formset_add('{}', '{}')", prefix, container_css_selector
             ),
         }
         return Button(label, **{**defaults, **kwargs})
@@ -229,7 +211,7 @@ class FormsetField(hg.Iterator):
     @staticmethod
     def as_plain(*args, add_label=_("Add"), **kwargs):
         """Shortcut to render a complete formset with add-button"""
-        formset = FormsetField(*args, **kwargs)
+        formset = Formset(*args, **kwargs)
         id = hg.html_id(formset, prefix="formset-")
         return hg.BaseElement(
             hg.DIV(formset, id=id),
@@ -244,22 +226,19 @@ class FormsetField(hg.Iterator):
 
     @staticmethod
     def as_datatable(
-        fieldname: str,
+        formset,
         fields: List,
         title: typing.Optional[str] = None,
-        formname: str = "form",
         formsetfield_kwargs: dict = None,
+        fieldname=None,  # required for inline-formsets
         **kwargs,
     ) -> hg.BaseElement:
         from ..datatable import DataTable, DataTableColumn
 
         """
-        :param str fieldname: The fieldname which should be used for an
-                              formset, in general a one-to-many or many-to-many field
         :param list fields: A list of strings or objects. Strings are converted
                             to DataTableColumn, objects are passed on as they are
         :param str title: Datatable title, automatically generated from form if None
-        :param str formname: Name of the surounding django-form object in the context
         :param dict formsetfield_kwargs: Arguments to be passed to the FormSetField constructor
         :param kwargs: Arguments to be passed to the DataTable constructor
         :return: A datatable with inline-editing capabilities
@@ -273,15 +252,8 @@ class FormsetField(hg.Iterator):
             if isinstance(f, FormFieldMarker):
                 f = DataTableColumn(
                     hg.BaseElement(
-                        hg.C(
-                            f"{formname}.{fieldname}.formset.form.base_fields.{f.fieldname}.label"
-                        ),
-                        HelpText(
-                            hg.C(
-                                f"{formname}.{fieldname}.formset.form.base_fields."
-                                f"{f.fieldname}.help_text"
-                            )
-                        ),
+                        formset.form.base_fields[f.fieldname].label,
+                        HelpText(formset.form.base_fields[f.fieldname].help_text),
                     ),
                     f,
                 )
@@ -289,11 +261,11 @@ class FormsetField(hg.Iterator):
         columns.append(
             DataTableColumn(
                 hg.If(
-                    hg.C(f"{formname}.{fieldname}.formset.can_order"),
+                    formset.can_order,
                     _("Order"),
                 ),
                 hg.If(
-                    hg.C(f"{formname}.{fieldname}.formset.can_order"),
+                    formset.can_order,
                     FormField(
                         forms.formsets.ORDERING_FIELD_NAME,
                         no_wrapper=True,
@@ -306,34 +278,34 @@ class FormsetField(hg.Iterator):
             DataTableColumn(
                 "",
                 hg.If(
-                    hg.C(f"{formname}.{fieldname}.formset.can_delete"),
+                    formset.can_delete,
                     InlineDeleteButton(parentcontainerselector="tr"),
                 ),
             )
         )
 
-        formset = FormsetField(
-            fieldname,
+        formsetelem = Formset(
+            formset,
             DataTable.row(columns),
-            formname=formname,
+            **({"fieldname": fieldname} if fieldname else {}),
             **(formsetfield_kwargs or {}),
         )
-        id = hg.html_id(formset, prefix="formset-")
+        id = hg.html_id(formsetelem, prefix="formset-")
 
         return hg.BaseElement(
             DataTable(
-                row_iterator=formset,
+                row_iterator=formsetelem,
                 rowvariable="",
                 columns=columns,
                 id=id,
                 **kwargs,
             ).with_toolbar(
-                title=title or hg.C(f"{formname}.{fieldname}.label"),
-                primary_button=formset.add_button(
+                title=title,
+                primary_button=formsetelem.add_button(
                     buttontype="primary", container_css_selector=f"#{id} tbody"
                 ),
             ),
-            formset.management_form,
+            formsetelem.management_form,
         )
 
 
@@ -341,7 +313,7 @@ class InlineDeleteButton(Button):
     def __init__(self, parentcontainerselector, label=_("Delete"), **kwargs):
         """
         Show a delete button for the current inline form. This element needs to
-        be inside a FormsetField.
+        be inside a Formset.
         parentcontainerselector: CSS-selector which will be passed to
                                  element.closest in order to select the parent
                                  container which should be hidden on delete.

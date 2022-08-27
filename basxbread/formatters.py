@@ -56,7 +56,7 @@ def as_url(value):
 
 
 def as_text(value):
-    return mark_safe(linebreaks(value, autoescape=True))
+    return mark_safe(linebreaks(value))
 
 
 def as_duration(value):
