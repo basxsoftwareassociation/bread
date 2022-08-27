@@ -225,6 +225,18 @@ class Formset(hg.Iterator):
         )
 
     @staticmethod
+    def as_inline_datatable(
+        fieldname: str, fields: List, formname: str = "form", **kwargs
+    ):
+        return Formset.as_datatable(
+            formset=hg.C(f"{formname}.{fieldname}").formset,
+            fields=fields,
+            title=hg.C(f"{formname}.{fieldname}").label,
+            fieldname=fieldname,
+            **kwargs,
+        )
+
+    @staticmethod
     def as_datatable(
         formset,
         fields: List,
