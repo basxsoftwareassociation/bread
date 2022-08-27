@@ -29,9 +29,11 @@ class EditView(views.EditView):
 
         F = layout.forms.FormField
 
-        fieldstable = layout.forms.FormsetField.as_datatable(
-            "columns",
-            ["header", "column", "cell_template", "sortingname"],
+        fieldstable = layout.forms.Formset.as_datatable(
+            hg.C("form")["columns"].formset,
+            fieldname="columns",
+            title=hg.C("form")["columns"].label,
+            fields=["header", "column", "cell_template", "sortingname"],
             formsetfield_kwargs={
                 "extra": 1,
                 "can_order": True,

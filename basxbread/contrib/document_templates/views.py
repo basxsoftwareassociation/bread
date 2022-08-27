@@ -51,9 +51,10 @@ class DocumentTemplateEditView(views.EditView):
             )
 
         F = layout.forms.FormField
-        fieldstable = layout.forms.FormsetField.as_datatable(
-            "variables",
-            [
+        fieldstable = layout.forms.Formset.as_datatable(
+            hg.C("form.variables.formset"),
+            fieldname="variables",
+            fields=[
                 "name",
                 "value",
                 F(
