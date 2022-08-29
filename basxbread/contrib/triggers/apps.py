@@ -30,7 +30,10 @@ class TriggersConfig(AppConfig):
 # make sure we have access to the old value so we can change for field changes
 def get_old_object(sender, instance, **kwargs):
     if instance.pk:
-        instance._old = type(instance).objects.get(pk=instance.pk)
+        try:
+            instance._old = type(instance).objects.get(pk=instance.pk)
+        except type(instance).DoesNotExist:
+            pass
 
 
 def save_handler(sender, instance, created, **kwargs):
