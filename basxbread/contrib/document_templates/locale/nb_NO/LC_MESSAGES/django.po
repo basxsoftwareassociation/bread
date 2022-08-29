@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-15 10:04+0000\n"
+"POT-Creation-Date: 2022-08-29 09:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: basxbread/contrib/document_templates/models.py:21
-#: basxbread/contrib/document_templates/models.py:104
+#: basxbread/contrib/document_templates/models.py:106
 msgid "Name"
 msgstr ""
 
@@ -28,51 +28,51 @@ msgid ""
 "below"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:30
+#: basxbread/contrib/document_templates/models.py:29
 msgid "Model"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:32
+#: basxbread/contrib/document_templates/models.py:34
 msgid "Filename template"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:95
+#: basxbread/contrib/document_templates/models.py:97
 msgid "Document Template"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:96
+#: basxbread/contrib/document_templates/models.py:98
 msgid "Document Templates"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:104
+#: basxbread/contrib/document_templates/models.py:106
 msgid "Name to use in the template document"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:107
+#: basxbread/contrib/document_templates/models.py:109
 msgid "Value"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:107
+#: basxbread/contrib/document_templates/models.py:109
 msgid "Path to the desired value (see help)"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:110
+#: basxbread/contrib/document_templates/models.py:112
 msgid "Template"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:112
+#: basxbread/contrib/document_templates/models.py:114
 msgid "Jinja template with 'value' in context"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:114
+#: basxbread/contrib/document_templates/models.py:116
 msgid "Raw value"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:117
+#: basxbread/contrib/document_templates/models.py:119
 msgid "Variable"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:118
+#: basxbread/contrib/document_templates/models.py:120
 msgid "Variables"
 msgstr ""
 
@@ -104,6 +104,6 @@ msgstr ""
 msgid "Variables defined below but not used in document: "
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:72
+#: basxbread/contrib/document_templates/views.py:73
 msgid "Help"
 msgstr ""
