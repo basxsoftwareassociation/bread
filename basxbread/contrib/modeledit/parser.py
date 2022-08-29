@@ -4,13 +4,54 @@ import astor
 import black
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Field
 from django.utils.translation import gettext_lazy as _
+
+from basxbread.utils import get_all_subclasses
+
+
+def validate_choices(value):
+    val = ast.literal_eval(value)
+    if not isinstance(val, (tuple, list)):
+        raise ValidationError(
+            _("%(value)s is not a list or tuple"), params={"value": value}
+        )
+    for i in val:
+        if len(i) != 2:
+            raise ValidationError(
+                _("%(value)s does not only contain 2-tuples"), params={"value": value}
+            )
+
+
+def valid_ordering(value):
+    val = ast.literal_eval(value)
+    for i in val:
+        if not isinstance(i, str):
+            raise ValidationError(
+                _("%(value)s does not only contain list of fields"),
+                params={"value": value},
+            )
+        i = i[1:] if i.startswith("-") else i
+        if not i.isidentifier():
+            raise ValidationError(
+                _("%(value)s does not only contain list of fields"),
+                params={"value": value},
+            )
 
 
 def validate_identifier(value):
     if not value.isidentifier():
         raise ValidationError(
             _("%(value)s is not a valid Python identifier"), params={"value": value}
+        )
+
+
+def validate_literal(value):
+    try:
+        ast.literal_eval(value)
+    except Exception:
+        raise ValidationError(
+            _("%(value)s is not a valid Python literal"), params={"value": value}
         )
 
 
@@ -46,24 +87,99 @@ class ModelForm(forms.Form):
         ),
         max_length=1024,
         strip=True,
+        validators=[validate_literal, valid_ordering],
     )
 
 
+def fieldtypes():
+    return {
+        f"{fieldtype.__module__}.{fieldtype.__qualname__}": fieldtype
+        for fieldtype in get_all_subclasses(Field)
+    }
+
+
+def typechoices():
+    return tuple(fieldtypes().items())
+
+
+def typecoerce(value):
+    return fieldtypes().get(value, None)
+
+
 class FieldForm(forms.Form):
-    pass
-    # Formset form "Field"
-    # name: identifier
-    # type_: Selection
-    # null: bool
-    # blank: bool
-    # choice: JSON
-    # default: literal
-    # editable: bool
-    # help_text: string
-    # primary_key: bool
-    # unique: bool
-    # verbose_name: string
-    #
+    name = forms.CharField(
+        label=_("Field name"),
+        help_text=_(
+            "Python identifier for the field (no spaces and special characters). Only used internally."
+        ),
+        required=True,
+        max_length=255,
+        strip=True,
+        validators=[validate_identifier],
+    )
+    type = forms.TypedChoiceField(
+        choices=typechoices, coerce=typecoerce, empty_value=None
+    )
+    verbose_name = forms.CharField(
+        label=_("Verbose name"),
+        help_text=_("Name that will be used as label for the field."),
+        required=False,
+        max_length=255,
+        strip=True,
+    )
+    null = forms.BooleanField(
+        label=_("Null"),
+        help_text=_("Allo this field to be null (not same as empty string)"),
+        initial=False,
+        required=False,
+    )
+    blank = forms.BooleanField(
+        label=_("Blank"),
+        help_text=_("Do not require this field to be filled out on forms"),
+        initial=False,
+        required=False,
+    )
+    editable = forms.BooleanField(
+        label=_("Editable"),
+        help_text=_("Allow this field to be edited via forms"),
+        initial=True,
+        required=False,
+    )
+    primary_key = forms.BooleanField(
+        label=_("Primary key"),
+        help_text=_("Make this field the primary key"),
+        initial=False,
+        required=False,
+    )
+    unique = forms.BooleanField(
+        label=_("Unique"),
+        help_text=_("Ensure this field is unique over all instances of the model"),
+        initial=False,
+        required=False,
+    )
+    help_text = forms.CharField(
+        label=_("Help text"),
+        help_text=_("Additional text to be displayed with the field"),
+        max_length=1024,
+        required=False,
+    )
+    default = forms.CharField(
+        label=_("Default"),
+        help_text=_("Default value for this field, must be a Python literal"),
+        required=False,
+        max_length=1024,
+        validators=[validate_literal],
+    )
+    choices = forms.CharField(
+        label=_("Choices"),
+        help_text=_(
+            "Iterable of 2-tuples with (value, label) literals, generates a select input"
+        ),
+        required=False,
+        max_length=1024,
+        validators=[validate_literal, validate_choices],
+    )
+
     # Special, depending on field:
     # max_length: int (BinaryField, CharField, EmailField, FileField)
     # auto_now: bool (DateField, DateTimeField)
@@ -73,23 +189,14 @@ class FieldForm(forms.Form):
     # upload_to: path (FileField)
 
 
+def serialize(ast_module):
+    return black.format_file_contents(
+        astor.to_source(ast_module), fast=True, mode=black.FileMode()
+    )
+
+
 def parse(model):
     module = ast.parse(model)
     for stm in module.body:
         if isinstance(stm, ast.ClassDef):
             stm.name = stm.name + "Modified"
-
-    return black.format_file_contents(
-        astor.to_source(module), fast=True, mode=black.FileMode()
-    )
-
-
-def main(modelfile):
-    with open(modelfile) as f:
-        print(parse(f.read()))
-
-
-if __name__ == "__main__":
-    import sys
-
-    main(*sys.argv[1:])
