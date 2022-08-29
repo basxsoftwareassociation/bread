@@ -7,7 +7,7 @@ from basxbread import layout
 from basxbread.utils import quickregister
 from basxbread.views import AddView, EditView
 
-from .models import DataChangeTrigger, DateFieldTrigger, SendEmail, SystemNotification
+from .models import DataChangeTrigger, DateFieldTrigger, SendEmail
 
 urlpatterns: typing.List[path] = []
 quickregister(
@@ -55,4 +55,3 @@ quickregister(
     ),
 )
 quickregister(urlpatterns, SendEmail)
-quickregister(urlpatterns, SystemNotification)

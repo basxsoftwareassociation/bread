@@ -1,15 +1,10 @@
 import datetime
 import typing
-from importlib import import_module
 
 import htmlgenerator as hg
-from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.messages.storage import default_storage
-from django.contrib.sessions.models import Session
 from django.core.mail import send_mail
 from django.db import models
 from django.template import engines
@@ -87,13 +82,15 @@ class SendEmail(Action):
                 if is_email_simple(extracted_email):
                     recipients.append(extracted_email)
         if recipients:
+            subject = (
+                engines["django"].from_string(self.subject).render({"object": object})
+            )
+            message = (
+                engines["django"].from_string(self.message).render({"object": object})
+            )
             send_mail(
-                subject=engines["django"]
-                .from_string(self.subject)
-                .render({"object": object}),
-                message=engines["django"]
-                .from_string(self.message)
-                .render({"object": object}),
+                subject=subject,
+                message=message,
                 from_email=None,
                 recipient_list=recipients,
             )
@@ -101,38 +98,6 @@ class SendEmail(Action):
     class Meta:
         verbose_name = _("Send email action")
         verbose_name_plural = _("Send email actions")
-
-
-class SystemNotification(Action):
-    message = models.TextField(
-        _("Message"),
-        help_text=_(
-            "Will be rendered as a Django template with the name 'object' in the context"
-        ),
-    )
-
-    def run(self, instance):
-        class DummyRequest:
-            def __init__(self, session):
-                self.session = session
-                self._messages = None
-
-        SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
-        for session in Session.objects.filter(expire_date__gte=timezone.now()):
-            request = DummyRequest(
-                session=SessionStore(session.session_key),
-            )
-            request._messages = default_storage(request)
-            messages.info(
-                request,
-                message=engines["django"]
-                .from_string(self.message)
-                .render({"object": instance}),
-            )
-
-    class Meta:
-        verbose_name = _("System notification")
-        verbose_name_plural = _("System notifications")
 
 
 class Trigger(models.Model):

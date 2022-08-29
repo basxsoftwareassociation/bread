@@ -16,14 +16,21 @@ class TriggersConfig(AppConfig):
 
     def ready(self):
 
-        from django.db.models.signals import post_delete, post_save
+        from django.db.models.signals import post_delete, post_save, pre_save
 
         from basxbread.utils.celery import RepeatedTask
 
+        pre_save.connect(get_old_object, dispatch_uid="trigger_get_old_object")
         post_save.connect(save_handler, dispatch_uid="trigger_save")
         post_delete.connect(delete_handler, dispatch_uid="trigger_delete")
 
         shared_task(base=RepeatedTask, run_every=TRIGGER_PERIOD)(periodic_trigger)
+
+
+# make sure we have access to the old value so we can change for field changes
+def get_old_object(sender, instance, **kwargs):
+    if instance.pk:
+        instance._old = type(instance).objects.get(pk=instance.pk)
 
 
 def save_handler(sender, instance, created, **kwargs):
@@ -46,12 +53,13 @@ def datachange_trigger(model, instance, type):
         for trigger in DataChangeTrigger.objects.filter(
             model=contenttype, type=type, enable=True
         ):
-            if type == "changed" and trigger.field:
+            if type == "changed" and trigger.field and instance._old is not None:
                 if getattr(instance, trigger.field) == getattr(
-                    model.objects.filter(pk=instance.pk), trigger.field
+                    instance._old, trigger.field
                 ):
                     continue
             if trigger.filter.queryset.filter(pk=instance.pk).exists():
+                print(instance, trigger.action)
                 # delay execution a bit as the trigger may run immediately even though
                 # the current request has not finished (and therefore not commited to DB yet)
                 run_action.apply_async(
