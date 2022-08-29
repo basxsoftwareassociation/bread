@@ -133,22 +133,24 @@ class ReportColumn(models.Model):
         _("Aggregation"), max_length=64, choices=tuple(AGGREGATIONS.items()), blank=True
     )
 
-    def render_element(self, rowvariable):
+    def render_element(self, rowvariable: str) -> hg.BaseElement:
         if self.cell_template:
 
             def render(context):
                 elementenv = SandboxedEnvironment()
                 elementenv.filters["map"] = lambda value, map: map.get(value, value)
                 try:
-                    return elementenv.from_string(self.cell_template).render(
-                        value=hg.resolve_lookup(context[rowvariable], self.column),
+                    return hg.BaseElement(
+                        elementenv.from_string(self.cell_template).render(
+                            value=hg.resolve_lookup(context[rowvariable], self.column),
+                        )
                     )
                 except Exception as e:
-                    return f"### ERROR: {e} ###"
+                    return hg.BaseElement(f"### ERROR: {e} ###")
 
             return hg.BaseElement(hg.F(render))
 
-        return layout.ObjectFieldValue(self.column, rowvariable)
+        return hg.BaseElement(layout.ObjectFieldValue(self.column, rowvariable))
 
     class Meta:
         verbose_name = _("Column")
