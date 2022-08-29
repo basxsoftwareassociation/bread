@@ -40,8 +40,10 @@ def header():
         icon="trash-can",
         notext=True,
         style="border-color: red; background-color: inherit",
-    ).as_href(ModelHref.from_object(hg.C("object"), "delete"))
-    deletebutton[1].attributes["style"] = "fill: red; color: red;"
+    ).as_submit(ModelHref.from_object(hg.C("object"), "delete"))
+    deletebutton[0][3].attributes = hg.merge_html_attrs(
+        deletebutton[0][3].attributes, {"style": "fill: red; color: red;"}
+    )
 
     copybutton = layout.button.Button(
         _("Copy"),

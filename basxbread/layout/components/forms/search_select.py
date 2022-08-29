@@ -66,19 +66,20 @@ class SearchSelect(BaseWidget):
 
 def _resultcontainer_onload_js(backend, resultcontainerid, tag_id, widget_id):
     on_click = hg.format(
-        """function(evt) {{
-        let label = $('{}', this).innerHTML;
-        let value = $('{}', this).innerHTML;
-        $('#{}').value = value;
-        $('#{}').innerHTML = label;
-        $('#{}').style = 'display: inline-block;';
-        }}""",
+        hg.mark_safe(
+            """function(evt) {{
+            let label = $('{}', this).innerHTML;
+            let value = $('{}', this).innerHTML;
+            $('#{}').value = value;
+            $('#{}').innerHTML = label;
+            $('#{}').style = 'display: inline-block;';
+        }}"""
+        ),
         backend.result_label_selector,
         backend.result_value_selector,
         widget_id,
         tag_id,
         tag_id,
-        autoescape=False,
     )
 
     return hg.format(

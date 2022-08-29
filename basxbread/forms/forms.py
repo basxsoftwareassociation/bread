@@ -108,7 +108,7 @@ def modelform_factory(  # noqa
             attribs[modelfield.name] = GenericForeignKeyField(
                 required=not model._meta.get_field(modelfield.fk_field).blank
             )
-        elif isinstance(formfieldelement, _layout.forms.FormsetField):
+        elif isinstance(formfieldelement, _layout.forms.Formset):
             attribs[modelfield.name] = FormsetField(
                 _generate_formset_class(
                     request=request,
@@ -260,7 +260,7 @@ def _get_form_fields_from_layout(layout):
 
     def walk(element):
         # do not descend into formsets, they need to be gathered separately
-        if isinstance(element, _layout.forms.FormsetField):
+        if isinstance(element, _layout.forms.Formset):
             yield element
             return
         # do not descend into script tags because we keep formset-empty form templates there

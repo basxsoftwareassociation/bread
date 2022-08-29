@@ -114,7 +114,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         Union[Link, Callable[[HttpRequest, models.QuerySet], Union[None, HttpResponse]]]
     ] = ()
 
-    rowactions = ()  # list of links
+    rowactions: Iterable[Link] = ()  # list of links
     backurl = None
     primary_button = None
 

@@ -46,8 +46,8 @@ def field_help(model, max_depth=4):
 def get_field_list(model, depth, excludemodels, display="none", parent_accessor=[]):
     fields = {}
     for f in model._meta.get_fields():
-        if not f.concrete and (f.one_to_many or f.many_to_many):
-            continue
+        # if not f.concrete and (f.one_to_many or f.many_to_many):
+        # continue
         fields[f] = hg.DIV(
             hg.SPAN(
                 ".".join(parent_accessor + [_field_attname(f)]),
@@ -108,6 +108,8 @@ def get_field_list(model, depth, excludemodels, display="none", parent_accessor=
 
 
 def _field_type_repr(field):
+    from django.contrib.contenttypes.fields import GenericForeignKey
+
     if field.related_model:
         if field.one_to_one or field.many_to_one:
             return _(' reference to "%s"') % field.related_model._meta.verbose_name
@@ -116,6 +118,9 @@ def _field_type_repr(field):
                 _(' reference to multiple "%s"')
                 % field.related_model._meta.verbose_name_plural
             )
+    if isinstance(field, GenericForeignKey):
+        return f"{type(field).__name__}"
+
     return f"{type(field).__name__}({field.verbose_name})"
 
 

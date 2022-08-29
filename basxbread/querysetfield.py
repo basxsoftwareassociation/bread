@@ -135,10 +135,12 @@ class QuerysetFormWidget(layout.forms.widgets.Textarea):
         )
 
         def introspections(context):
-            return json.dumps(
-                DjangoQLSchemaSerializer().serialize(
-                    DjangoQLSchema(
-                        hg.resolve_lazy(boundfield, context).value().queryset.model
+            return hg.mark_safe(
+                json.dumps(
+                    DjangoQLSchemaSerializer().serialize(
+                        DjangoQLSchema(
+                            hg.resolve_lazy(boundfield, context).value().queryset.model
+                        )
                     )
                 )
             )
@@ -147,20 +149,20 @@ class QuerysetFormWidget(layout.forms.widgets.Textarea):
             self.append(
                 hg.SCRIPT(
                     hg.format(
-                        """
-                        document.addEventListener("DOMContentLoaded", () => DjangoQL.DOMReady(function () {{
-                            new DjangoQL({{
-                            introspections: {},
-                            selector: 'textarea[name={}]',
-                            syntaxHelp: '{}',
-                            autoResize: false
-                            }});
-                        }}));
-                    """,
+                        hg.mark_safe(
+                            """
+document.addEventListener("DOMContentLoaded", () => DjangoQL.DOMReady(function () {{
+    new DjangoQL({{
+    introspections: {},
+    selector: 'textarea[name={}]',
+    syntaxHelp: '{}',
+    autoResize: false
+    }});
+}}));"""
+                        ),
                         hg.F(introspections),
                         inputelement_attrs.get("name"),
                         reverse("reporthelp"),
-                        autoescape=False,
                     ),
                 )
             )
