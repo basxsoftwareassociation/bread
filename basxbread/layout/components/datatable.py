@@ -514,16 +514,24 @@ class DataTableColumn(NamedTuple):
         th_attributes=None,
         td_attributes=None,
         prevent_automatic_filternames=False,
+        sortingname=None,
+        filtername=None,
     ) -> "DataTableColumn":
         return DataTableColumn(
             header=ObjectFieldLabel(col, model),
             cell=ObjectFieldValue(col, rowvariable),
-            sortingname=sortingname_for_column(model, col)
-            if not prevent_automatic_sortingnames
-            else None,
-            filtername=filtername_for_column(model, col)
-            if not prevent_automatic_filternames
-            else None,
+            sortingname=sortingname
+            or (
+                sortingname_for_column(model, col)
+                if not prevent_automatic_sortingnames
+                else None
+            ),
+            filtername=filtername
+            or (
+                filtername_for_column(model, col)
+                if not prevent_automatic_filternames
+                else None
+            ),
             th_attributes=th_attributes,
             td_attributes=td_attributes,
         )
