@@ -6237,7 +6237,9 @@ var CarbonComponents = (function (exports) {
                   (configPosHorizontal != null && configPosHorizontal === "center"
                       ? (calendarWidth - inputBounds.width) / 2
                       : 0);
-              var right = window.document.body.offsetWidth - inputBounds.right;
+              // Fixes https://github.com/flatpickr/flatpickr/issues/1805
+              // var right = window.document.body.offsetWidth - inputBounds.right;
+              var right = window.document.body.offsetWidth - (window.pageXOffset + inputBounds.right);
               var rightMost = left + calendarWidth > window.document.body.offsetWidth;
               var centerMost = right + calendarWidth > window.document.body.offsetWidth;
               toggleClass(self.calendarContainer, "rightMost", rightMost);
