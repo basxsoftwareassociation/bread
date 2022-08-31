@@ -459,7 +459,6 @@ class SelectMultiple(BaseWidget):
             options = [o for og in hg.resolve_lazy(optgroups, context) for o in og[1]]
             return len([o for o in options if o and o["selected"]])
 
-        searchfieldid = hg.html_id(self)
         super().__init__(
             label,
             hg.If(
@@ -492,7 +491,6 @@ class SelectMultiple(BaseWidget):
                             title="Clear all selected items",
                         ),
                         hg.INPUT(
-                            id=searchfieldid,
                             _class="bx--text-input",
                             placeholder="Filter...",
                             onclick="this.parentElement.nextElementSibling.style.display = 'block'",
@@ -1145,7 +1143,7 @@ def _gen_optgroup(boundfield):
     def wrapper(context):
         bfield = hg.resolve_lazy(boundfield, context)
         return bfield.field.widget.optgroups(
-            bfield.name,
+            bfield.html_name,
             bfield.field.widget.format_value(bfield.value()),
         )
 
