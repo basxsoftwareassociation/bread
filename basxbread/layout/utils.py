@@ -33,9 +33,9 @@ class HasBasxBreadCookieValue(hg.Lazy):
 
 
 class DevModeOnly(hg.BaseElement):
-    def render(self, context):
+    def render(self, context, stringify=True, fragment=None):
         if context["request"].session.get(DEVMODE_KEY, False):
-            return super().render(context)
+            return super().render(context, stringify=stringify, fragment=fragment)
         return ""
 
 

@@ -6,11 +6,17 @@ from basxbread import layout
 from basxbread.layout.components import forms
 from basxbread.utils import aslayout
 
-from .parser import FieldForm, ModelForm
+from .parser import FieldForm, ModelForm, parse
 
 
 @aslayout
 def test(request):
+
+    with open(
+        "/home/sam/p/pythonpackages/bread/basxbread/contrib/reports/models.py"
+    ) as f:
+        print(parse(f.read()))
+
     modelforms = {
         "a1": [ModelForm(prefix="a1"), formset_factory(FieldForm)(prefix="a1")],
         "a2": [ModelForm(prefix="a2"), formset_factory(FieldForm)(prefix="a2")],

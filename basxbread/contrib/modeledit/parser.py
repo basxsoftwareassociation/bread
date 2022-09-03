@@ -195,8 +195,53 @@ def serialize(ast_module):
     )
 
 
-def parse(model):
-    module = ast.parse(model)
-    for stm in module.body:
-        if isinstance(stm, ast.ClassDef):
-            stm.name = stm.name + "Modified"
+def field_ast2formdata(astfieldnode):
+    pass
+
+
+def is_variable_assignment(statement, name):
+    return (
+        isinstance(statement, ast.Assign)
+        and len(statement.targets) == 1
+        and statement.targets[0].id == name
+    )
+
+
+def is_single_param_call(statement):
+    return (
+        isinstance(statement, ast.Call)
+        and len(statement.args) == 1
+        and isinstance(statement.args[0], ast.Constant)
+    )
+
+
+def model_ast2formdata(astclassnode):
+    modelname = astclassnode.name.lower()
+    data = {"name": astclassnode.name}
+    for statement in astclassnode.body:
+        if isinstance(statement, ast.ClassDef) and statement.name == "Meta":
+            for substatement in statement.body:
+                if is_variable_assignment(substatement, "verbose_name"):
+                    if is_single_param_call(substatement.value):
+                        data["verbose_name"] = substatement.value.args[0].value
+                    else:
+                        data["verbose_name"] = substatement.value.value
+                elif is_variable_assignment(substatement, "verbose_name_plural"):
+                    if is_single_param_call(substatement.value):
+                        data["verbose_name_plural"] = substatement.value.args[0].value
+                    else:
+                        data["verbose_name_plural"] = substatement.value.value
+                elif is_variable_assignment(substatement, "ordering"):
+                    data["ordering"] = astor.to_source(substatement.value).strip()
+
+    return modelname, data
+
+
+def parse(modelfilecontent):
+    ret = {}
+    module = ast.parse(modelfilecontent)
+    for statement in module.body:
+        if isinstance(statement, ast.ClassDef):
+            modelname, data = model_ast2formdata(statement)
+            ret[modelname] = data
+    return ret

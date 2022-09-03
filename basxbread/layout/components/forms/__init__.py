@@ -90,10 +90,10 @@ class Form(hg.FORM):
     def append(self, obj):
         self[0].append(obj)
 
-    def render(self, context):
+    def render(self, context, stringify=True, fragment=None):
         if self.standalone:
-            return super().render(context)
-        return super().render_children(context)
+            return super().render(context, stringify=stringify, fragment=fragment)
+        return super().render_children(context, stringify=stringify, fragment=fragment)
 
 
 class Formset(hg.Iterator):

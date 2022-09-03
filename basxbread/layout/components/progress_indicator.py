@@ -15,16 +15,19 @@ class ProgressStep(hg.LI):
     def __init__(
         self, label, status, optional=False, tooltip=None, disabled=False, **kwargs
     ):
-        if status not in ProgressStep.STATUS:
+        if status not in ProgressStep.STATUS and not isinstance(status, hg.Lazy):
             raise ValueError(f"{status} must be one of {ProgressStep.STATUS}")
-        kwargs["_class"] = (
-            kwargs.get("_class", "") + f" bx--progress-step bx--progress-step--{status}"
+        kwargs["_class"] = hg.format(
+            "{} bx--progress-step bx--progress-step--{} {}",
+            kwargs.get("_class", ""),
+            status,
+            hg.If(disabled, "bx--progress-step--disabled"),
         )
-        if disabled:
-            kwargs["aria_disabled"] = "true"
-            kwargs["_class"] += "  bx--progress-step--disabled"
+        kwargs["aria_disabled"] = hg.If(disabled, "true")
         elements = [
-            Icon(ProgressStep.STATUS[status], size=16),
+            hg.F(
+                lambda c: Icon(ProgressStep.STATUS[hg.resolve_lazy(status, c)], size=16)
+            ),
             hg.P(label, tabindex=0, _class="bx--progress-label"),
             hg.SPAN(_class="bx--progress-line"),
         ]
@@ -61,10 +64,7 @@ class ProgressIndicator(hg.UL):
             + " bx--progress"
             + (" bx--progress--vertical" if vertical else "")
         )
-        self.steps = steps
-        super().__init__(**kwargs)
-
-    def render(self, context):
-        steps = hg.resolve_lazy(self.steps, context)
-        self.extend((ProgressStep(label, status) for label, status in steps))
-        return super().render(context)
+        super().__init__(
+            hg.Iterator(steps, "step", ProgressStep(hg.C("step")[0], hg.C("step")[1])),
+            **kwargs,
+        )

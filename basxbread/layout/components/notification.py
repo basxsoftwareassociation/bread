@@ -159,9 +159,9 @@ class ToastNotification(hg.DIV):
         )
         super().__init__(*children, **attributes)
 
-    def render(self, context):
+    def render(self, context, stringify=True, fragment=None):
         if not self.hidetimestamp:
             self[1][2].append(
                 "[" + datetime.datetime.now().time().isoformat()[:8] + "]"
             )
-        return super().render(context)
+        return super().render(context, stringify=stringify, fragment=fragment)
