@@ -176,7 +176,6 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         )
 
     def get_layout(self, **datatable_kwargs):
-        qs = self.get_queryset()
         # re-mapping the Links because the URL is not supposed to be a real URL but an identifier
         # for the bulk action
         # TODO: This is a bit ugly but we can reuse the Link type for icon, label and permissions
