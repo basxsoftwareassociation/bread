@@ -191,14 +191,18 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
             for action in self.bulkactions
             if action.has_permission(self.request)
         ]
-        qs = self.get_queryset()
-        paginate_by = self.get_paginate_by(qs)
+        fullqueryset = self.get_queryset()
+        paginate_by = self.get_paginate_by(fullqueryset)
         if paginate_by is None:
-            paginate_by = qs.count()
-        qs = self.paginate_queryset(qs, paginate_by)[2] if paginate_by > 0 else qs
+            paginate_by = fullqueryset.count()
+        paged_qs = (
+            self.paginate_queryset(fullqueryset, paginate_by)[2]
+            if paginate_by > 0
+            else fullqueryset
+        )
 
         return layout.datatable.DataTable.from_queryset(
-            queryset=qs,
+            queryset=paged_qs,
             columns=self.columns,
             bulkactions=bulkactions,
             rowactions=self.rowactions,
@@ -208,7 +212,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
             pagination_config=layout.pagination.PaginationConfig(
                 items_per_page_options=self.items_per_page_options,
                 page_urlparameter=self.page_kwarg,
-                paginator=self.get_paginator(qs, paginate_by),
+                paginator=self.get_paginator(fullqueryset, paginate_by),
                 itemsperpage_urlparameter=self.itemsperpage_urlparameter,
             )
             if paginate_by > 0
