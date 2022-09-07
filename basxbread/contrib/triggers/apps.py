@@ -62,7 +62,6 @@ def datachange_trigger(model, instance, type):
                 ):
                     continue
             if trigger.filter.queryset.filter(pk=instance.pk).exists():
-                print(instance, trigger.action)
                 # delay execution a bit as the trigger may run immediately even though
                 # the current request has not finished (and therefore not commited to DB yet)
                 run_action.apply_async(
