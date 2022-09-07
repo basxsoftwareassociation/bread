@@ -356,12 +356,15 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
 
     @staticmethod
     def deletelink(return_to_current=True):
-        return Link(
+        return layout.button.Button(
+            icon="delete",
+            notext=True,
+            small=True,
+            buttontype="ghost",
+        ).as_submit(
             href=ModelHref.from_object(
                 hg.C("row"), "delete", return_to_current=return_to_current
-            ),
-            label=_("Delete"),
-            iconname="delete",
+            )
         )
 
 
