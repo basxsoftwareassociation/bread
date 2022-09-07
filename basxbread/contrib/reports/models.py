@@ -122,6 +122,13 @@ class ReportColumn(models.Model):
             )
         ),
     )
+    allow_html = models.BooleanField(
+        _("Allow HTML"),
+        default=False,
+        help_text=_(
+            "Do render HTML code inside the cell template instead of escaping it."
+        ),
+    )
     cell_template.formfield_kwargs = {"widget": forms.Textarea(attrs={"rows": 1})}
     sortingname = models.CharField(
         _("Sortingname"),
@@ -140,10 +147,11 @@ class ReportColumn(models.Model):
                 elementenv = SandboxedEnvironment()
                 elementenv.filters["map"] = lambda value, map: map.get(value, value)
                 try:
+                    cellcontent = elementenv.from_string(self.cell_template).render(
+                        value=hg.resolve_lookup(context[rowvariable], self.column),
+                    )
                     return hg.BaseElement(
-                        elementenv.from_string(self.cell_template).render(
-                            value=hg.resolve_lookup(context[rowvariable], self.column),
-                        )
+                        hg.mark_safe(cellcontent) if self.allow_html else cellcontent
                     )
                 except Exception as e:
                     return hg.BaseElement(f"### ERROR: {e} ###")

@@ -33,7 +33,7 @@ class EditView(views.EditView):
             hg.C("form")["columns"].formset,
             fieldname="columns",
             title=hg.C("form")["columns"].label,
-            fields=["header", "column", "cell_template", "sortingname"],
+            fields=["header", "column", "cell_template", "allow_html", "sortingname"],
             formsetfield_kwargs={
                 "extra": 1,
                 "can_order": True,
