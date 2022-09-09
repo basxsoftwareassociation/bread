@@ -439,7 +439,7 @@ event.stopPropagation()""",
                 else []
             ),
             # querysets are cached, the call to all will make sure a new query is used in every request
-            hg.F(lambda c: queryset),
+            hg.F(lambda c: hg.resolve_lazy(queryset, c)),
             **kwargs,
         ).with_toolbar(
             title,
@@ -452,7 +452,11 @@ event.stopPropagation()""",
                         if pagination_config is None
                         else pagination_config.paginator.count
                     ),
-                    model._meta.verbose_name_plural,
+                    hg.If(
+                        hg.F(lambda c: hg.resolve_lazy(queryset.count(), c) == 1),
+                        model._meta.verbose_name,
+                        model._meta.verbose_name_plural,
+                    ),
                 ),
             ),
             primary_button=primary_button,
@@ -586,6 +590,7 @@ def sortingname_for_column(model, column):
 def filtername_for_column(model, column):
     components = []
     for field in resolve_modellookup(model, column):
+        print(field, column)
         if isinstance(field, (models.Field, models.ForeignObjectRel)):
             components.append(field.name)
     return LOOKUP_SEP.join(components)
