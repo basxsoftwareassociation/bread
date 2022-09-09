@@ -590,7 +590,6 @@ def sortingname_for_column(model, column):
 def filtername_for_column(model, column):
     components = []
     for field in resolve_modellookup(model, column):
-        print(field, column)
         if isinstance(field, (models.Field, models.ForeignObjectRel)):
             components.append(field.name)
     return LOOKUP_SEP.join(components)
