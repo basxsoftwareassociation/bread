@@ -145,7 +145,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         self.title = kwargs.get("title") or self.title
         self.rowactions = kwargs.get("rowactions") or self.rowactions
         self.model = kwargs.get("model") or self.model
-        self.columns = expand_ALL_constant(
+        self.columns = filter_fieldlist(
             self.model, kwargs.get("columns") or self.columns
         )
         self.rowclickaction = kwargs.get("rowclickaction") or self.rowclickaction
