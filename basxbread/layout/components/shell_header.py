@@ -24,7 +24,7 @@ class ShellHeader(hg.HEADER):
             ),
             hg.DIV(
                 hg.If(
-                    hg.F(lambda c: c["request"].user.is_authenticated),
+                    hg.C("request.user.is_authenticated"),
                     hg.A(
                         hg.SPAN(
                             hg.C("request.user.get_username"),
@@ -37,7 +37,7 @@ class ShellHeader(hg.HEADER):
                     ),
                 ),
                 hg.If(
-                    hg.F(lambda c: c["request"].user.is_authenticated),
+                    hg.C("request.user.is_authenticated"),
                     hg.BUTTON(
                         Icon(
                             "logout",

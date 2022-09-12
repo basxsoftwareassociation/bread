@@ -16,7 +16,11 @@ def error_layout(
     description: Union[str, hg.BaseElement],
     exception_detail: str = None,
 ):
-    if not request.user.is_authenticated:
+    if (
+        not hasattr(request, "user")
+        or request.user is None
+        or not request.user.is_authenticated
+    ):
         return hg.BaseElement(f"{status_code} {status_title}")
     return hg.BaseElement(
         hg.H1(f"{status_code}: {status_title}", style="margin-bottom: 1rem;"),
