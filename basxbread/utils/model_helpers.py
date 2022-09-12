@@ -101,8 +101,11 @@ def filter_fieldlist(model, fieldlist, for_form=False):
     return [
         f
         for f in expand_ALL_constant(model, fieldlist)
-        if not _is_internal_field(model, f)
-        and (not for_form or _can_use_in_form(model, f))
+        if not isinstance(f, str)
+        or (
+            not _is_internal_field(model, f)
+            and (not for_form or _can_use_in_form(model, f))
+        )
     ]
 
 

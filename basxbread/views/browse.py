@@ -23,7 +23,6 @@ from .. import layout
 from ..utils import (
     Link,
     ModelHref,
-    expand_ALL_constant,
     filter_fieldlist,
     generate_excel,
     link_with_urlparameters,
