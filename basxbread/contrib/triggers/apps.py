@@ -20,8 +20,8 @@ class TriggersConfig(AppConfig):
 
         from basxbread.utils.celery import RepeatedTask
 
-        pre_save.connect(get_old_object, dispatch_uid="trigger_get_old_object")
-        post_save.connect(save_handler, dispatch_uid="trigger_save")
+        pre_save.connect(get_old_object)
+        post_save.connect(save_handler)
         post_delete.connect(delete_handler, dispatch_uid="trigger_delete")
 
         shared_task(base=RepeatedTask, run_every=TRIGGER_PERIOD)(periodic_trigger)
@@ -29,6 +29,7 @@ class TriggersConfig(AppConfig):
 
 # make sure we have access to the old value so we can change for field changes
 def get_old_object(sender, instance, **kwargs):
+    instance._old = None
     if instance.pk:
         try:
             instance._old = type(instance).objects.get(pk=instance.pk)
@@ -67,6 +68,7 @@ def datachange_trigger(model, instance, type):
                 run_action.apply_async(
                     (trigger.action.pk, instance._meta.label, instance.pk), countdown=5
                 )
+    instance._old = None
 
 
 @shared_task
