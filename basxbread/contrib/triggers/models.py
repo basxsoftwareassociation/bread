@@ -113,12 +113,6 @@ class Trigger(models.Model):
     filter = QuerysetField(_("Filter"), modelfieldname="model")
     enable = models.BooleanField(default=True)
     action = models.ForeignKey(Action, on_delete=models.PROTECT)
-    field = models.CharField(
-        _("Field"),
-        max_length=255,
-        blank=True,
-        help_text=_("Only trigger when a certain field has changed"),
-    )
 
     def __str__(self):
         return self.description
@@ -136,10 +130,18 @@ class DataChangeTrigger(Trigger):
             ("deleted", _("Deleted")),
         ),
     )
+    field = models.CharField(
+        _("Field"),
+        max_length=255,
+        blank=True,
+        help_text=_(
+            "Only trigger when a certain field has changed. Use comma to add multiple fields."
+        ),
+    )
 
     class Meta:
-        verbose_name = _("Data change trigger")
-        verbose_name_plural = _("Data change triggers")
+        verbose_name = _("Change trigger")
+        verbose_name_plural = _("Change triggers")
 
 
 INTERVAL_CHOICES = {
@@ -188,5 +190,5 @@ class DateFieldTrigger(Trigger):
         return field_value + INTERVAL_CHOICES[self.offset_type][0] * self.offset_amount
 
     class Meta:
-        verbose_name = _("Date field trigger")
-        verbose_name_plural = _("Date field triggers")
+        verbose_name = _("Date trigger")
+        verbose_name_plural = _("Date triggers")

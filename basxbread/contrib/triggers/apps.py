@@ -58,15 +58,17 @@ def datachange_trigger(model, instance, type):
             model=contenttype, type=type, enable=True
         ):
             if type == "changed" and trigger.field and instance._old is not None:
-                if getattr(instance, trigger.field) == getattr(
-                    instance._old, trigger.field
+                fields = [i.strip() for i in trigger.field.split(",")]
+                if all(  # if none of the fields has changed, skip this trigger
+                    getattr(instance, field) == getattr(instance._old, field)
+                    for field in fields
                 ):
                     continue
             if trigger.filter.queryset.filter(pk=instance.pk).exists():
                 # delay execution a bit as the trigger may run immediately even though
                 # the current request has not finished (and therefore not commited to DB yet)
                 run_action.apply_async(
-                    (trigger.action.pk, instance._meta.label, instance.pk), countdown=5
+                    (trigger.action.pk, instance._meta.label, instance.pk), countdown=1
                 )
     instance._old = None
 
