@@ -5,7 +5,7 @@ from django.apps import AppConfig
 from django.conf import settings
 from django.utils import timezone
 
-from basxbread.utils import get_concrete_instance
+from .tasks import run_action
 
 TRIGGER_PERIOD = getattr(settings, "TRIGGER_PERIOD", datetime.timedelta(hours=1))
 
@@ -69,17 +69,6 @@ def datachange_trigger(model, instance, type):
                     (trigger.action.pk, instance._meta.label, instance.pk), countdown=5
                 )
     instance._old = None
-
-
-@shared_task
-def run_action(action_pk, modelname, instance_pk):
-    from django.apps import apps
-
-    from .models import Action
-
-    get_concrete_instance(Action.objects.get(pk=action_pk)).run(
-        apps.get_model(modelname).objects.get(pk=instance_pk)
-    )
 
 
 def periodic_trigger():
