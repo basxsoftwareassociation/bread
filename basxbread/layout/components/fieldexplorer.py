@@ -5,42 +5,53 @@ from basxbread.utils import get_all_subclasses
 
 from .button import Button
 
+_CACHE = {}
+
 
 def field_help(model, max_depth=4):
-    return hg.BaseElement(
-        hg.DIV(
-            hg.format(_("Base model: ")),
-            model._meta.verbose_name,
-            style="margin-top: 2rem",
-        ),
-        hg.DIV(
-            _("Click "),
-            hg.SPAN(
-                " ... ", style="width: 1rem; height: 1rem; background-color: lightgray;"
-            ),
-            " ",
-            _(" to copy the accessor"),
-            style="margin-top: 2rem",
-        ),
-        hg.DIV(_("Fields"), style="margin-top: 2rem"),
-        hg.DIV(
-            get_field_list(
-                model,
-                max_depth,
-                list(
-                    set(
-                        [
+    if model not in _CACHE:
+        print("cache miss")
+        _CACHE[model] = hg.mark_safe(
+            hg.render(
+                hg.BaseElement(
+                    hg.DIV(
+                        hg.format(_("Base model: ")),
+                        model._meta.verbose_name,
+                        style="margin-top: 2rem",
+                    ),
+                    hg.DIV(
+                        _("Click "),
+                        hg.SPAN(
+                            " ... ",
+                            style="width: 1rem; height: 1rem; background-color: lightgray;",
+                        ),
+                        " ",
+                        _(" to copy the accessor"),
+                        style="margin-top: 2rem",
+                    ),
+                    hg.DIV(_("Fields"), style="margin-top: 2rem"),
+                    hg.DIV(
+                        get_field_list(
                             model,
-                            model.__mro__[-3],
-                            *get_all_subclasses(model.__mro__[-3]),
-                        ]
-                    )
+                            max_depth,
+                            list(
+                                set(
+                                    [
+                                        model,
+                                        model.__mro__[-3],
+                                        *get_all_subclasses(model.__mro__[-3]),
+                                    ]
+                                )
+                            ),
+                            display="block",
+                        ),
+                        style="line-height: 2rem",
+                    ),
                 ),
-                display="block",
-            ),
-            style="line-height: 2rem",
-        ),
-    )
+                {},
+            )
+        )
+    return _CACHE[model]
 
 
 def get_field_list(model, depth, excludemodels, display="none", parent_accessor=[]):
