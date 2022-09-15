@@ -131,7 +131,6 @@ class CustomFormMixin:
             header(),
             layout.tile.Tile(
                 layout.forms.Form(hg.C("form"), ret, layout.forms.helpers.Submit()),
-                _class="theme-white",
             ),
         )
 
