@@ -1,3 +1,4 @@
+import re
 from secrets import token_hex
 from urllib.parse import urlparse
 
@@ -6,6 +7,16 @@ from django.core.signing import TimestampSigner
 from django.db import models
 from django.urls import Resolver404, resolve, reverse
 from django.utils.translation import gettext as _
+
+
+def validate_regex(value):
+    try:
+        re.compile(value)
+    except re.error:
+        raise ValidationError(
+            _("%(value)s is not a valid regex"),
+            params={"value": value},
+        )
 
 
 def validate_url(value):
@@ -30,6 +41,15 @@ class PublicURL(models.Model):
     created = models.DateTimeField(_("Created"), auto_now_add=True, editable=False)
     valid_for = models.DurationField(_("Valid for"), null=True, blank=True)
     has_form = models.BooleanField(_("Has form"), default=False)
+    create_new_entry_from_response = models.CharField(
+        _("Create new entry from response"),
+        max_length=2048,
+        blank=True,
+        help_text=_(
+            "If 'Has Form' is set and the response is a redirect, the redirect URL is checked against this field (as regex). If it matches, a new public URL entry will automatically be created which allows the user to access the newly created and redirecte-to resource."
+        ),
+        validators=[validate_regex],
+    )
     thankyou_text = models.TextField(
         _("Thank-you text"),
         default=_("Thank you"),

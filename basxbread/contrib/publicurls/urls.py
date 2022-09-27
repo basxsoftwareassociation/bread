@@ -1,3 +1,4 @@
+import re
 from urllib.parse import urlparse
 
 import htmlgenerator as hg
@@ -5,6 +6,7 @@ from django.conf import settings
 from django.core.signing import SignatureExpired, TimestampSigner
 from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.http.request import QueryDict
+from django.shortcuts import redirect
 from django.urls import path, resolve
 from django.utils.translation import gettext as _
 from guardian.utils import get_anonymous_user
@@ -47,16 +49,25 @@ def publicurlview(request, token):
         and url.has_form
         and isinstance(response, HttpResponseRedirect)
     ):
-        return hg.DIV(
-            hg.H2(_("Data has been submitted")),
-            hg.H4(url.thankyou_text),
-            hg.A(_("Back"), href=request.get_full_path()),
-            hg.SCRIPT(
-                "if (window.history.replaceState)"
-                "{window.history.replaceState(null, null, window.location.href);}"
-            ),
-            style="margin: auto auto; text-align: center",
-        )
+        # check if a new entry for public URLs should be generated
+        if url.create_new_entry_from_response and re.match(
+            url.create_new_entry_from_response, response.url
+        ):
+            newentry = models.PublicURL.objects.create(
+                name=_("Created from %s") % url.name, url=response.url, has_form=True
+            )
+            return redirect(newentry.publicurl())
+        else:
+            return hg.DIV(
+                hg.H2(_("Data has been submitted")),
+                hg.H4(url.thankyou_text),
+                hg.A(_("Back"), href=request.get_full_path()),
+                hg.SCRIPT(
+                    "if (window.history.replaceState)"
+                    "{window.history.replaceState(null, null, window.location.href);}"
+                ),
+                style="margin: auto auto; text-align: center",
+            )
     return response
 
 
