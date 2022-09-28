@@ -16,7 +16,7 @@ urlpatterns = [
     *urls.default_model_paths(
         Report,
         browseview=views.BrowseView._with(
-            columns=["name", "created"],
+            columns=["name", "created", "model"],
             rowclickaction=views.BrowseView.gen_rowclickaction("read"),
             bulkactions=[
                 views.browse.BulkAction(
