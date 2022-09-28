@@ -191,20 +191,23 @@ class DateFieldTrigger(Trigger):
         help_text=_("Check this in order to trigger every year"),
     )
 
-    def triggerdate(self, object) -> typing.Optional[datetime.datetime]:
-        field_value = getattr(object, self.field)
-        if field_value is None:
-            return None
-        if isinstance(field_value, datetime.date) and not isinstance(
-            field_value, datetime.datetime
-        ):
-            field_value = timezone.make_aware(
-                datetime.datetime.combine(field_value, datetime.time())
-            )
-        if self.ignore_year:
-            field_value = field_value.replace(year=datetime.date.today().year)
+    def triggerdates(self, object) -> typing.Optional[datetime.datetime]:
+        for field in (f.strip() for f in self.field.split(",")):
+            field_value = getattr(object, field)
+            if field_value is None:
+                return None
+            if isinstance(field_value, datetime.date) and not isinstance(
+                field_value, datetime.datetime
+            ):
+                field_value = timezone.make_aware(
+                    datetime.datetime.combine(field_value, datetime.time())
+                )
+            if self.ignore_year:
+                field_value = field_value.replace(year=datetime.date.today().year)
 
-        return field_value + INTERVAL_CHOICES[self.offset_type][0] * self.offset_amount
+            yield (
+                field_value + INTERVAL_CHOICES[self.offset_type][0] * self.offset_amount
+            )
 
     class Meta:
         verbose_name = _("Date trigger")

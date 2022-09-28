@@ -2,12 +2,28 @@ import typing
 
 import htmlgenerator as hg
 from django.urls import path
+from django.utils.translation import gettext_lazy as _
 
 from basxbread import layout
 from basxbread.utils import quickregister
 from basxbread.views import AddView, EditView
 
 from .models import DataChangeTrigger, DateFieldTrigger, SendEmail
+
+
+def help_button(context):
+    column_helper = layout.modal.Modal(
+        _("Field explorer"),
+        layout.fieldexplorer.field_help(context["object"].model.model_class()),
+        size="lg",
+    )
+    return hg.BaseElement(
+        layout.button.Button(
+            _("Help"), buttontype="ghost", **column_helper.openerattributes
+        ),
+        column_helper,
+    )
+
 
 urlpatterns: typing.List[path] = []
 quickregister(
@@ -47,6 +63,8 @@ quickregister(
     ),
     addview=AddView._with(fields=["description", "model"]),
 )
+
+
 quickregister(
     urlpatterns,
     SendEmail,
@@ -55,6 +73,7 @@ quickregister(
             hg.H4(
                 layout.ObjectFieldLabel("model"), ": ", layout.ObjectFieldValue("model")
             ),
+            hg.F(help_button),
             "description",
             "email",
             "subject",

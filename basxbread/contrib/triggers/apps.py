@@ -82,11 +82,11 @@ def periodic_trigger():
 
     for trigger in DateFieldTrigger.objects.filter(enable=True):
         for instance in trigger.filter.queryset.all():
-            td = trigger.triggerdate(instance)
-            if (
-                td is not None
-                and timezone.now() <= td < timezone.now() + TRIGGER_PERIOD
-            ) and trigger.action:
-                run_action.apply_async(
-                    (trigger.action.pk, instance._meta.label, instance.pk)
-                )
+            for td in trigger.triggerdates(instance):
+                if (
+                    td is not None
+                    and timezone.now() <= td < timezone.now() + TRIGGER_PERIOD
+                ) and trigger.action:
+                    run_action.apply_async(
+                        (trigger.action.pk, instance._meta.label, instance.pk)
+                    )
