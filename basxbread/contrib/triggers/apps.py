@@ -64,7 +64,10 @@ def datachange_trigger(model, instance, type):
                     for field in fields
                 ):
                     continue
-            if trigger.filter.queryset.filter(pk=instance.pk).exists():
+            if (
+                trigger.action
+                and trigger.filter.queryset.filter(pk=instance.pk).exists()
+            ):
                 # delay execution a bit as the trigger may run immediately even though
                 # the current request has not finished (and therefore not commited to DB yet)
                 run_action.apply_async(
@@ -83,7 +86,7 @@ def periodic_trigger():
             if (
                 td is not None
                 and timezone.now() <= td < timezone.now() + TRIGGER_PERIOD
-            ):
+            ) and trigger.action:
                 run_action.apply_async(
                     (trigger.action.pk, instance._meta.label, instance.pk)
                 )

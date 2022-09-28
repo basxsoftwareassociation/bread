@@ -36,6 +36,15 @@ changed, @reminder.date in 2 weeks
 
 class Action(models.Model):
     description = models.CharField(max_length=255)
+    model = models.ForeignKey(
+        ContentType,
+        verbose_name=_("Model"),
+        on_delete=models.PROTECT,
+        null=True,  # just for backwards-compatability
+    )
+    model.formfield_kwargs = {
+        "queryset": ContentType.objects.all().order_by("app_label", "model")
+    }
 
     def run(self, object):
         raise NotImplementedError()
@@ -112,7 +121,12 @@ class Trigger(models.Model):
     }
     filter = QuerysetField(_("Filter"), modelfieldname="model")
     enable = models.BooleanField(default=True)
-    action = models.ForeignKey(Action, on_delete=models.PROTECT)
+    action = models.ForeignKey(Action, on_delete=models.PROTECT, null=True)
+    action.lazy_choices = (
+        lambda field, request, instance: Action.objects.all()
+        if not instance or not instance.id
+        else Action.objects.filter(model=instance.model)
+    )
 
     def __str__(self):
         return self.description
@@ -164,9 +178,12 @@ class DateFieldTrigger(Trigger):
         _("Offset type"),
         max_length=255,
         choices=tuple((name, value[1]) for name, value in INTERVAL_CHOICES.items()),
+        default="days",
     )
     offset_amount = models.IntegerField(
-        _("Offset amount"), help_text=_("Can be negative (before) or positive (after)")
+        _("Offset amount"),
+        help_text=_("Can be negative (before) or positive (after)"),
+        default=0,
     )
     ignore_year = models.BooleanField(
         _("Ignore year"),

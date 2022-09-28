@@ -18,6 +18,7 @@ quickregister(
             hg.H4(
                 layout.ObjectFieldLabel("model"), ": ", layout.ObjectFieldValue("model")
             ),
+            "description",
             "action",
             "type",
             "filter",
@@ -25,7 +26,7 @@ quickregister(
             "enable",
         ]
     ),
-    addview=AddView._with(fields=["description", "model", "type", "action"]),
+    addview=AddView._with(fields=["description", "model"]),
 )
 quickregister(
     urlpatterns,
@@ -35,6 +36,7 @@ quickregister(
             hg.H4(
                 layout.ObjectFieldLabel("model"), ": ", layout.ObjectFieldValue("model")
             ),
+            "description",
             "action",
             "offset_type",
             "offset_amount",
@@ -43,15 +45,21 @@ quickregister(
             "enable",
         ]
     ),
-    addview=AddView._with(
+    addview=AddView._with(fields=["description", "model"]),
+)
+quickregister(
+    urlpatterns,
+    SendEmail,
+    editview=EditView._with(
         fields=[
+            hg.H4(
+                layout.ObjectFieldLabel("model"), ": ", layout.ObjectFieldValue("model")
+            ),
             "description",
-            "model",
-            "action",
-            "offset_type",
-            "offset_amount",
-            "field",
+            "email",
+            "subject",
+            "message",
         ]
     ),
+    addview=AddView._with(fields=["description", "model"]),
 )
-quickregister(urlpatterns, SendEmail)
