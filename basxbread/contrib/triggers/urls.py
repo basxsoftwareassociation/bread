@@ -5,7 +5,7 @@ from django.urls import path
 from django.utils.translation import gettext_lazy as _
 
 from basxbread import layout
-from basxbread.utils import quickregister
+from basxbread.utils import quickregister, reverse_model
 from basxbread.views import AddView, EditView
 
 from .models import DataChangeTrigger, DateFieldTrigger, SendEmail
@@ -57,9 +57,14 @@ quickregister(
             hg.F(field_help_button),
             "field",
             "enable",
-        ]
+        ],
     ),
-    addview=AddView._with(fields=["description", "model"]),
+    addview=AddView._with(
+        fields=["description", "model"],
+        get_success_url=lambda s: reverse_model(
+            s.model, "edit", kwargs={"pk": s.object.pk}
+        ),
+    ),
 )
 quickregister(
     urlpatterns,
@@ -79,7 +84,12 @@ quickregister(
             "enable",
         ]
     ),
-    addview=AddView._with(fields=["description", "model"]),
+    addview=AddView._with(
+        fields=["description", "model"],
+        get_success_url=lambda s: reverse_model(
+            s.model, "edit", kwargs={"pk": s.object.pk}
+        ),
+    ),
 )
 
 
@@ -98,5 +108,10 @@ quickregister(
             "message",
         ]
     ),
-    addview=AddView._with(fields=["description", "model"]),
+    addview=AddView._with(
+        fields=["description", "model"],
+        get_success_url=lambda s: reverse_model(
+            s.model, "edit", kwargs={"pk": s.object.pk}
+        ),
+    ),
 )
