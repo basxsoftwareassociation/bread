@@ -8,9 +8,8 @@ from .button import Button
 _CACHE = {}
 
 
-def field_help(model, max_depth=4):
+def field_help(model, max_depth=3):
     if model not in _CACHE:
-        print("cache miss")
         _CACHE[model] = hg.mark_safe(
             hg.render(
                 hg.BaseElement(
