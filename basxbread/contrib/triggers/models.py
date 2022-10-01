@@ -191,7 +191,7 @@ class DateFieldTrigger(Trigger):
         help_text=_("Check this in order to trigger every year"),
     )
 
-    def triggerdates(self, object) -> typing.Optional[datetime.datetime]:
+    def triggerdates(self, object) -> typing.Generator[datetime.datetime, None, None]:
         for field in (f.strip() for f in self.field.split(",")):
             field_value = getattr(object, field)
             if field_value is None:
