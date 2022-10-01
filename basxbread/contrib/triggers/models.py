@@ -18,7 +18,7 @@ syntax_email_field = """
 Syntax:
 - Email: example@example.com
 - User/Group: @username
-- From object: manager.email (actually object.manager.email)
+- From object: object.manager.email
 
 Multiple values van be separated by comma , e.g.
 boss@example.com, @adminuser, @reviewteam, primary_email_address.email
@@ -87,7 +87,7 @@ class SendEmail(Action):
             elif is_email_simple(email):
                 recipients.append(email)
             else:  # try to get value from object via accessor
-                extracted_email = hg.resolve_lookup(object, email) or ""
+                extracted_email = hg.resolve_lookup({"object": object}, email) or ""
                 if is_email_simple(extracted_email):
                     recipients.append(extracted_email)
         if recipients:
