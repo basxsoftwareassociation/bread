@@ -25,6 +25,22 @@ def help_button(context):
     )
 
 
+def field_help_button(context):
+    column_helper = layout.modal.Modal(
+        _("Available fields"),
+        layout.fieldexplorer.field_help(context["object"].model.model_class(), 0),
+        size="sm",
+    )
+    return hg.BaseElement(
+        layout.button.Button(
+            _("Show available fields"),
+            buttontype="ghost",
+            **column_helper.openerattributes
+        ),
+        column_helper,
+    )
+
+
 urlpatterns: typing.List[path] = []
 quickregister(
     urlpatterns,
@@ -38,6 +54,7 @@ quickregister(
             "action",
             "type",
             "filter",
+            hg.F(field_help_button),
             "field",
             "enable",
         ]
@@ -56,6 +73,7 @@ quickregister(
             "action",
             "offset_type",
             "offset_amount",
+            hg.F(help_button),
             "field",
             "filter",
             "enable",

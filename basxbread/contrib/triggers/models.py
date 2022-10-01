@@ -159,6 +159,7 @@ class DataChangeTrigger(Trigger):
 
 
 INTERVAL_CHOICES = {
+    "seconds": (datetime.timedelta(seconds=1), _("Seconds")),
     "minutes": (datetime.timedelta(minutes=1), _("Minutes")),
     "hours": (datetime.timedelta(hours=1), _("Hours")),
     "days": (datetime.timedelta(days=1), _("Days")),

@@ -80,9 +80,11 @@ def periodic_trigger():
 
     from .models import DateFieldTrigger
 
+    print(f"Trigger-range: {timezone.now()} - {timezone.now() + TRIGGER_PERIOD}")
     for trigger in DateFieldTrigger.objects.filter(enable=True):
         for instance in trigger.filter.queryset.all():
             for td in trigger.triggerdates(instance):
+                print(td)
                 if (
                     td is not None
                     and timezone.now() <= td < timezone.now() + TRIGGER_PERIOD
