@@ -79,15 +79,9 @@ def as_download(value, label=None):
     if label is None:
         label = hg.SPAN(os.path.basename(value.name))
     return hg.A(
-        layout.icon.Icon(
-            "launch",
-            size=16,
-            style="vertical-align: middle; margin-right: 0.25rem;",
-        ),
         label,
         newtab=True,
         href=value.url,
-        style="margin-right: 0.5rem; margin-left: 0.5rem",
         onclick="event.stopPropagation();",
     )
 

@@ -8,6 +8,7 @@ from django.template.defaultfilters import linebreaksbr
 from django.utils.formats import localize as djangolocalize
 from django.utils.timezone import localtime as djangolocaltime
 
+from ..formatters import as_download
 from ..utils import resolve_modellookup
 
 DEVMODE_KEY = "DEVMODE"
@@ -116,8 +117,13 @@ class ObjectFieldValue(hg.Lazy):
             except AttributeError:
                 # e.g. for non-existing OneToOneField related value
                 pass
+
+        if isinstance(value, models.fields.files.FieldFile):
+            return as_download(value)
+
         if isinstance(value, datetime.datetime):
             value = djangolocaltime(value)
+
         if self.formatter:
             value = self.formatter(value)
         value = djangolocalize(value, use_l10n=settings.USE_L10N)
