@@ -10,7 +10,6 @@ from django.utils.functional import Promise
 from django.utils.html import linebreaks, mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from . import layout
 from .settings.required import HTML_FALSE, HTML_NONE, HTML_TRUE
 
 
