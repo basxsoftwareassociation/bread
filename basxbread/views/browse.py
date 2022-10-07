@@ -71,24 +71,28 @@ def default_bulkactions(model, columns=["__all__"]):
 def order_queryset_by_urlparameter(qs, order):
     """Can used to order a queryset by a user-provided string, e.g. through a GET query parameter"""
     if order:
-        orderfield = order[1:] if order.startswith("-") else order
+        fieldname = order[1:] if order.startswith("-") else order
 
         if order.endswith("__int"):
             order = order[: -len("__int")]
             qs = qs.order_by(
-                models.functions.Cast(orderfield, models.IntegerField()).desc()
+                models.functions.Cast(fieldname, models.IntegerField()).desc()
                 if order.startswith("-")
-                else models.functions.Cast(orderfield, models.IntegerField())
+                else models.functions.Cast(fieldname, models.IntegerField())
             )
         else:
-            field = resolve_modellookup(qs.model, orderfield.replace(LOOKUP_SEP, "."))[
-                -1
-            ]
+            try:
+                field = resolve_modellookup(
+                    qs.model, fieldname.replace(LOOKUP_SEP, ".")
+                )[-1]
+            except AttributeError:
+                # check if the field to order from is an annotation
+                field = qs.query.annotations[fieldname]
             if isinstance(field, (models.TextField, models.CharField)):
                 qs = qs.order_by(
-                    models.functions.Lower(orderfield).desc()
+                    models.functions.Lower(fieldname).desc()
                     if order.startswith("-")
-                    else models.functions.Lower(orderfield)
+                    else models.functions.Lower(fieldname)
                 )
             else:
                 qs = qs.order_by(order)
@@ -198,7 +202,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
             for action in self.bulkactions
             if action.has_permission(self.request)
         ]
-        fullqueryset = self.get_queryset()
+        fullqueryset = self.get_final_queryset()
         paginate_by = self.get_paginate_by(fullqueryset)
         if paginate_by is None:
             paginate_by = fullqueryset.count()
@@ -242,7 +246,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
 
     def get_settingspanel(self):
         return build_filterpanel(
-            self.filterset_class(self.request.GET, queryset=self.get_queryset())
+            self.filterset_class(self.request.GET, queryset=self.get_final_queryset())
         )
 
     def get_required_permissions(self, request):
@@ -270,7 +274,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
                 )
             else:
                 ret = bulkactions[self.request.GET[self.bulkaction_urlparameter]](
-                    self.request, self.get_queryset()
+                    self.request, self.get_final_queryset()
                 )
                 params = self.request.GET.copy()
                 del params[self.bulkaction_urlparameter]
@@ -303,9 +307,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
 
         return int(ret)
 
-    def get_queryset(self):
-        """Prefetch related tables to speed up queries. Also order result by get-parameters."""
-        qs = super().get_queryset()
+    def filter_queryset_by_search(self, qs):
         if self.search_urlparameter and self.search_urlparameter in self.request.GET:
             searchquery = self.request.GET[self.search_urlparameter].strip()
             if searchquery.startswith("="):
@@ -324,18 +326,37 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
                         searchquery,
                     )
                 )
+        return qs
 
+    def filter_queryset_by_formfilter(self, qs):
         filterset = self.filterset_class(self.request.GET, queryset=qs)
-        qs = filterset.qs
+        return filterset.qs
 
+    def filter_queryset_by_selection(self, qs):
         selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
         if selectedobjects and "all" not in selectedobjects:
             qs &= super().get_queryset().filter(pk__in=selectedobjects)
+        return qs
 
-        qs = order_queryset_by_urlparameter(
+    def get_filtered_queryset(self, qs):
+        """Prefetch related tables to speed up queries. Also order result by get-parameters."""
+        qs = self.filter_queryset_by_search(qs)
+        qs = self.filter_queryset_by_formfilter(qs)
+        qs = self.filter_queryset_by_selection(qs)
+        return qs
+
+    def get_ordred_queryset(self, qs):
+        return order_queryset_by_urlparameter(
             qs, self.request.GET.get(self.orderingurlparameter)
         )
-        return qs
+
+    def get_final_queryset(self):
+        # use this instead of get_queryset so we get the correct queryset when subclassing
+        if not hasattr(self, "_final_queryset"):
+            self._final_queryset = self.get_ordred_queryset(
+                self.get_filtered_queryset(self.get_queryset())
+            )
+        return self._final_queryset
 
     @staticmethod
     def gen_rowclickaction(modelaction, **kwargs):
