@@ -72,8 +72,8 @@ menu.registeritem(
         Link(
             urls.reverse_model(Report, "browse"),
             label=_("Reports"),
-            iconname="document",
+            iconname="report",
         ),
-        menu.Group(_("Reports"), iconname="document"),
+        menu.Group(_("Reports"), iconname="report"),
     )
 )
