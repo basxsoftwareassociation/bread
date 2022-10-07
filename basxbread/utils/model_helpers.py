@@ -63,7 +63,10 @@ def resolve_modellookup(model, accessor):
             try:
                 attrib = attrib._meta.get_field(attribstr)
             except FieldDoesNotExist:
-                attrib = getattr(attrib, attribstr)
+                if attribstr in attrib.objects.none().query.annotations:
+                    attrib = attribstr
+                else:
+                    attrib = getattr(attrib, attribstr)
         elif isinstance(attrib, models.fields.reverse_related.ForeignObjectRel):
             try:
                 attrib = attrib.related_model._meta.get_field(attribstr)

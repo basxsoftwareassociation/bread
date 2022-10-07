@@ -91,11 +91,7 @@ def order_queryset_by_urlparameter(qs, order):
                     else models.functions.Lower(orderfield)
                 )
             else:
-                qs = qs.order_by(
-                    models.functions.Lower(orderfield).desc()
-                    if order.startswith("-")
-                    else models.functions.Lower(orderfield)
-                )
+                qs = qs.order_by(order)
     return qs
 
 
