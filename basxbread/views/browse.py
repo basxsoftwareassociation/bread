@@ -27,6 +27,7 @@ from ..utils import (
     generate_excel,
     link_with_urlparameters,
     queryset_from_fields,
+    resolve_modellookup,
     xlsxresponse,
 )
 from .util import BaseView
@@ -70,19 +71,31 @@ def default_bulkactions(model, columns=["__all__"]):
 def order_queryset_by_urlparameter(qs, order):
     """Can used to order a queryset by a user-provided string, e.g. through a GET query parameter"""
     if order:
+        orderfield = order[1:] if order.startswith("-") else order
+
         if order.endswith("__int"):
             order = order[: -len("__int")]
             qs = qs.order_by(
-                models.functions.Cast(order[1:], models.IntegerField()).desc()
+                models.functions.Cast(orderfield, models.IntegerField()).desc()
                 if order.startswith("-")
-                else models.functions.Cast(order, models.IntegerField())
+                else models.functions.Cast(orderfield, models.IntegerField())
             )
         else:
-            qs = qs.order_by(
-                models.functions.Lower(order[1:]).desc()
-                if order.startswith("-")
-                else models.functions.Lower(order)
-            )
+            field = resolve_modellookup(qs.model, orderfield.replace(LOOKUP_SEP, "."))[
+                -1
+            ]
+            if isinstance(field, (models.TextField, models.CharField)):
+                qs = qs.order_by(
+                    models.functions.Lower(orderfield).desc()
+                    if order.startswith("-")
+                    else models.functions.Lower(orderfield)
+                )
+            else:
+                qs = qs.order_by(
+                    models.functions.Lower(orderfield).desc()
+                    if order.startswith("-")
+                    else models.functions.Lower(orderfield)
+                )
     return qs
 
 
