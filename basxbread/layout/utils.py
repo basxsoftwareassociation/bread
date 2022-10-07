@@ -70,6 +70,12 @@ class ObjectFieldLabel(hg.ContextValue):
             object = resolve_modellookup(context, self.object)[0]
         object = hg.resolve_lazy(object, context)
         label = resolve_modellookup(object._meta.model, self.fieldname)[-1]
+        label = getattr(
+            object.objects.get_queryset().query.annotations.get(self.fieldname, None),
+            "output_field",
+            label,
+        )  # test for annotated ("dynamic") fields
+
         if hasattr(label, "verbose_name"):
             return label.verbose_name
         if isinstance(label, property):
