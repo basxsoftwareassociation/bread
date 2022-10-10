@@ -46,9 +46,11 @@ menu.registeritem(
     menu.Item(
         Link(
             href=urls.reverse_model(DocumentTemplate, "browse"),
-            label="Document Templates",
+            label=DocumentTemplate._meta.verbose_name_plural,
             iconname="document--blank",
         ),
-        menu.Group("Document Templates", iconname="document--blank"),
+        menu.Group(
+            DocumentTemplate._meta.verbose_name_plural, iconname="document--blank"
+        ),
     )
 )
