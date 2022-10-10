@@ -459,6 +459,18 @@ class SelectMultiple(BaseWidget):
             options = [o for og in hg.resolve_lazy(optgroups, context) for o in og[1]]
             return len([o for o in options if o and o["selected"]])
 
+        values = hg.UL(
+            hg.Iterator(
+                hg.F(
+                    lambda c: hg.resolve_lazy(boundfield, c).field.to_python(
+                        hg.resolve_lazy(boundfield, c).value()
+                    )
+                ),
+                "value",
+                hg.LI(Tag(hg.C("value"))),
+            ),
+        )
+
         super().__init__(
             label,
             hg.If(
@@ -472,7 +484,7 @@ class SelectMultiple(BaseWidget):
                             "option",
                             hg.If(hg.C("option.selected"), Tag(hg.C("option.label"))),
                         ),
-                    )
+                    ),
                 ),
                 hg.DIV(
                     hg.DIV(
@@ -564,6 +576,7 @@ class SelectMultiple(BaseWidget):
                 ),
             ),
             help_text,
+            values,
             errors,
             **hg.merge_html_attrs(
                 attributes,
