@@ -126,7 +126,7 @@ class ObjectFieldValue(hg.Lazy):
                 # e.g. for non-existing OneToOneField related value
                 pass
 
-        if isinstance(value, models.fields.files.FieldFile):
+        if isinstance(value, models.fields.files.FieldFile) and not self.formatter:
             return as_download(value)
 
         if isinstance(value, datetime.datetime):
