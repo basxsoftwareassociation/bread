@@ -1,8 +1,11 @@
+import datetime
+
 import htmlgenerator as hg
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.utils.dateformat import DateFormat
 from django.utils.translation import gettext_lazy as _
 from jinja2.sandbox import SandboxedEnvironment
 
@@ -148,7 +151,9 @@ class ReportColumn(models.Model):
                 elementenv.filters["map"] = lambda value, map: map.get(value, value)
                 try:
                     cellcontent = elementenv.from_string(self.cell_template).render(
-                        value=hg.resolve_lookup(context[rowvariable], self.column),
+                        value=ensure_localized_date(
+                            hg.resolve_lookup(context[rowvariable], self.column)
+                        ),
                         object=context[rowvariable],
                     )
                     return hg.BaseElement(
@@ -165,3 +170,9 @@ class ReportColumn(models.Model):
         verbose_name = _("Column")
         verbose_name_plural = _("Columns")
         order_with_respect_to = "report"
+
+
+def ensure_localized_date(value):
+    if isinstance(value, (datetime.datetime, datetime.date)):
+        return DateFormat(value)
+    return value
