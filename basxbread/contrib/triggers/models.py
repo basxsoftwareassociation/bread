@@ -195,6 +195,8 @@ class DateFieldTrigger(Trigger):
     def triggerdates(self, object) -> typing.Generator[datetime.datetime, None, None]:
         for field in (f.strip() for f in self.field.split(",")):
             field_value = getattr(object, field)
+            # not sure if doing calls here is a good idea, will see...
+            field_value = field_value() if callable(field_value) else field_value
             if field_value is None:
                 return None
             if isinstance(field_value, datetime.date) and not isinstance(
