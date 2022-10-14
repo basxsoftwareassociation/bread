@@ -4,6 +4,7 @@ from celery import shared_task
 from django.apps import AppConfig
 from django.conf import settings
 from django.utils import timezone
+from kombu.utils.uuid import uuid
 
 from .tasks import run_action
 
@@ -24,7 +25,11 @@ class TriggersConfig(AppConfig):
         post_save.connect(save_handler)
         post_delete.connect(delete_handler, dispatch_uid="trigger_delete")
 
-        shared_task(base=RepeatedTask, run_every=TRIGGER_PERIOD)(periodic_trigger)
+        shared_task(
+            base=RepeatedTask,
+            run_every=TRIGGER_PERIOD,
+            name="basxbread.contrib.triggers.apps.periodic_trigger",
+        )(periodic_trigger)
 
 
 # make sure we have access to the old value so we can change for field changes
@@ -70,8 +75,12 @@ def datachange_trigger(model, instance, type):
             ):
                 # delay execution a bit as the trigger may run immediately even though
                 # the current request has not finished (and therefore not commited to DB yet)
+                name = f"Trigger '{trigger}': Action '{trigger.action}'"
                 run_action.apply_async(
-                    (trigger.action.pk, instance._meta.label, instance.pk), countdown=1
+                    (trigger.action.pk, instance._meta.label, instance.pk),
+                    countdown=1,
+                    shadow=name,
+                    task_id=f"{name}-{uuid()}",
                 )
     instance._old = None
 
@@ -80,15 +89,19 @@ def periodic_trigger():
 
     from .models import DateFieldTrigger
 
-    print(f"Trigger-range: {timezone.now()} - {timezone.now() + TRIGGER_PERIOD}")
+    print(
+        f"Running trigger in range: {timezone.now()} - {timezone.now() + TRIGGER_PERIOD}"
+    )
     for trigger in DateFieldTrigger.objects.filter(enable=True):
         for instance in trigger.filter.queryset.all():
             for td in trigger.triggerdates(instance):
-                print(td)
                 if (
                     td is not None
                     and timezone.now() <= td < timezone.now() + TRIGGER_PERIOD
                 ) and trigger.action:
+                    name = f"Trigger '{trigger}': Action '{trigger.action}'"
                     run_action.apply_async(
-                        (trigger.action.pk, instance._meta.label, instance.pk)
+                        (trigger.action.pk, instance._meta.label, instance.pk),
+                        shadow=name,
+                        task_id=f"{name}-{uuid()}",
                     )
