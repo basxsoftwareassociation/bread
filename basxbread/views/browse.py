@@ -320,7 +320,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
                     )
 
             else:
-                qs = self.model.objects.filter(
+                qs = qs.filter(
                     queryset_from_fields.get_field_queryset(
                         [*self.model._meta.fields, *self.model._meta.many_to_many],
                         searchquery,
