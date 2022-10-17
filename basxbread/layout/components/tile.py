@@ -23,8 +23,10 @@ class Tile(hg.DIV):
         **attributes : optional
             keyword arguments representing the specific HTML attributes for the tile
         """
-        hg.merge_html_attrs(attributes, {"_class": "bx--tile"})
-        super().__init__(*children, **attributes)
+
+        super().__init__(
+            *children, **hg.merge_html_attrs(attributes, {"_class": "bx--tile"})
+        )
 
 
 class ExpandableTile(hg.DIV):
