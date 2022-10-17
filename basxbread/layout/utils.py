@@ -134,6 +134,14 @@ class ObjectFieldValue(hg.Lazy):
 
         if self.formatter:
             value = self.formatter(value)
+
+        if value in (True, False, None):
+            value = {
+                True: settings.HTML_TRUE,
+                False: settings.HTML_FALSE,
+                None: settings.HTML_NONE,
+            }[value]
+
         value = djangolocalize(value, use_l10n=settings.USE_L10N)
         if isinstance(value, models.Manager):
             value = ", ".join([str(x) for x in value.all()])
