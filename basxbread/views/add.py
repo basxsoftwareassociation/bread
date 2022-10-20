@@ -4,6 +4,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 from guardian.mixins import PermissionRequiredMixin
 
+from ..utils import filter_fieldlist
 from .util import BaseView, CustomFormMixin
 
 
@@ -22,7 +23,11 @@ class AddView(
         return _("Added %s") % self.object
 
     def __init__(self, *args, **kwargs):
-        self.fields = kwargs.get("fields", getattr(self, "fields", ["__all__"]))
+        all = filter_fieldlist(
+            kwargs.get("model", getattr(self, "model")), ["__all__"], for_form=True
+        )
+        self.fields = kwargs.get("fields", getattr(self, "fields", None))
+        self.fields = all if self.fields is None else self.fields
         super().__init__(*args, **kwargs)
 
     def get_required_permissions(self, request):
