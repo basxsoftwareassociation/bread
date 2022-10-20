@@ -165,7 +165,7 @@ def _is_internal_field(model, field):
     """Filter generic foreign key, parent link of multi-table inheritance and id"""
     from django.contrib.contenttypes.fields import GenericForeignKey
 
-    exclude = {"id"}
+    exclude = {model._meta.pk.name}
     for f in model._meta.get_fields():
         if isinstance(f, GenericForeignKey):
             exclude.add(f.ct_field)
