@@ -4,6 +4,7 @@ import htmlgenerator as hg
 from django.conf import settings
 from django.db import models
 from django.db.models import ManyToOneRel
+from django.db.models.fields.related_descriptors import ReverseManyToOneDescriptor
 from django.template.defaultfilters import linebreaksbr
 from django.utils.formats import localize as djangolocalize
 from django.utils.timezone import localtime as djangolocaltime
@@ -77,6 +78,9 @@ class ObjectFieldLabel(hg.ContextValue):
             "output_field",
             label,
         )  # test for annotated ("dynamic") fields
+
+        if isinstance(label, ReverseManyToOneDescriptor):
+            label = label.rel.field.remote_field
 
         if hasattr(label, "verbose_name"):
             return label.verbose_name
