@@ -32,6 +32,8 @@ from ..utils import (
 )
 from .util import BaseView
 
+FILTER_PREFIX = "filter_"
+
 
 class BulkAction(NamedTuple):
     name: str
@@ -245,8 +247,16 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         }
 
     def get_settingspanel(self):
+        existing_params = {}
+        for paramname in self.request.GET:
+            if not paramname.startswith(FILTER_PREFIX):
+                existing_params[paramname] = forms.CharField(widget=forms.HiddenInput())
+
+        ExistingParamsForm = type("ExistingParamsForm", (forms.Form,), existing_params)
+
         return build_filterpanel(
-            self.filterset_class(self.request.GET, queryset=self.get_final_queryset())
+            self.filterset_class(self.request.GET, queryset=self.get_final_queryset()),
+            ExistingParamsForm(self.request.GET),
         )
 
     def get_required_permissions(self, request):
@@ -631,7 +641,11 @@ def parse_filterconfig(basemodel, filterconfig, prefix):
     ret = type(
         f"{basemodel.__name__}FilterSet",
         (FILTERSETTYPE[grouptype.lower()],),
-        {"Meta": meta, "subgroup_classes": subgroups, "prefix": f"filter_{prefix}"},
+        {
+            "Meta": meta,
+            "subgroup_classes": subgroups,
+            "prefix": f"{FILTER_PREFIX}{prefix}",
+        },
     )
     return ret
 
@@ -651,15 +665,21 @@ def get_field(basemodel, fieldname):
     return basemodel._meta.get_field(fieldname)
 
 
-def build_filterpanel(filterset):
+def build_filterpanel(filterset, hiddenparams_form):
     return hg.DIV(
         hg.DIV(
             hg.DIV(
                 hg.DIV(_("Filter"), style="margin-bottom: 1rem"),
                 hg.DIV(
                     layout.components.forms.Form(
-                        forms.Form(),
-                        _build_filter_ui_recursive(filterset),
+                        hiddenparams_form,
+                        hg.BaseElement(
+                            *[
+                                layout.components.forms.FormField(hidden)
+                                for hidden in hiddenparams_form.fields
+                            ],
+                            _build_filter_ui_recursive(filterset),
+                        ),
                         _class="filterform",
                         method="GET",
                     ),
