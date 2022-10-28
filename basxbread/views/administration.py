@@ -372,6 +372,10 @@ def maintainance_package_layout(request):
 
 def maintenance_database_optimization(request):
     database_path = settings.DATABASES["default"]["NAME"]
+    if not os.path.isfile(database_path):
+        return _(
+            "Database optimization is currently only available for sqlite databases"
+        )
     current_db_size = os.stat(database_path).st_size / 1000
 
     class OptimizeForm(forms.Form):
