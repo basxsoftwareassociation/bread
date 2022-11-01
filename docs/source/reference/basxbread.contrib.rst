@@ -14,6 +14,8 @@ Subpackages
 
    basxbread.contrib.document_templates
    basxbread.contrib.languages
+   basxbread.contrib.modeledit
    basxbread.contrib.publicurls
    basxbread.contrib.reports
+   basxbread.contrib.taxonomy
    basxbread.contrib.workflows
