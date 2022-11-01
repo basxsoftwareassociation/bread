@@ -250,7 +250,9 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         existing_params = {}
         for paramname in self.request.GET:
             if not paramname.startswith(FILTER_PREFIX):
-                existing_params[paramname] = forms.CharField(widget=forms.HiddenInput())
+                existing_params[paramname] = forms.CharField(
+                    widget=forms.HiddenInput(), required=False
+                )
 
         ExistingParamsForm = type("ExistingParamsForm", (forms.Form,), existing_params)
 

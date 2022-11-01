@@ -276,10 +276,14 @@ def default_model_paths(
             copyview = generate_copyview(model)
         ret.append(autopath(copyview, model_urlname(model, "copy")))
 
-    for viewname, viewclass in kwargs.items():
-        ret.append(
-            autopath(viewclass.as_view(model=model), model_urlname(model, viewname))
-        )
+    for viewname, view in kwargs.items():
+        if isinstance(view, type):
+            ret.append(
+                autopath(view.as_view(model=model), model_urlname(model, viewname))
+            )
+        else:
+            ret.append(autopath(view, model_urlname(model, viewname)))
+
     return ret
 
 
