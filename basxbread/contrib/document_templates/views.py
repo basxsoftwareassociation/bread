@@ -82,6 +82,7 @@ class DocumentTemplateEditView(views.EditView):
             layout.forms.Form(
                 hg.C("form"),
                 F("name"),
+                F("model"),
                 F("file"),
                 F("filename_template"),
                 fieldstable,
@@ -105,9 +106,11 @@ def generate_document(request, pk: int, object_pk: int):
         value_env.filters["map"] = lambda value, map: map.get(value, value)
         try:
             filename = value_env.from_string(template.filename_template).render(
-                template.context(object)
+                **{attr: getattr(object, attr, "") for attr in dir(object)},
+                **template.default_context(),
             )
-        except Exception:
+        except Exception as e:
+            print(e)
             filename = "FILENAME_ERROR.docx"
 
     if not filename.endswith(".docx"):
