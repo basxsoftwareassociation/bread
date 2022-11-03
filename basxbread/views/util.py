@@ -40,7 +40,12 @@ def header():
         icon="trash-can",
         notext=True,
         style="border-color: red; background-color: inherit",
-    ).as_submit(ModelHref.from_object(hg.C("object"), "delete"))
+    ).as_submit(
+        ModelHref.from_object(hg.C("object"), "delete"),
+        confirm_text=hg.format(
+            _("Are you sure you want to delete {}?"), hg.EM(hg.C("object"))
+        ),
+    )
     deletebutton[0][3].attributes = hg.merge_html_attrs(
         deletebutton[0][3].attributes, {"style": "fill: red; color: red;"}
     )
@@ -50,7 +55,12 @@ def header():
         buttontype="ghost",
         icon="copy",
         notext=True,
-    ).as_href(ModelHref.from_object(hg.C("object"), "copy"))
+    ).as_submit(
+        ModelHref.from_object(hg.C("object"), "copy"),
+        confirm_text=hg.format(
+            _("Are you sure you want to copy {}?"), hg.EM(hg.C("object"))
+        ),
+    )
 
     return hg.DIV(
         hg.H3(

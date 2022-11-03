@@ -7,6 +7,7 @@ from django.db.models import ManyToOneRel
 from django.db.models.fields.related_descriptors import ReverseManyToOneDescriptor
 from django.template.defaultfilters import linebreaksbr
 from django.utils.formats import localize as djangolocalize
+from django.utils.text import slugify as djangoslufigy
 from django.utils.timezone import localtime as djangolocaltime
 
 from ..formatters import as_download
@@ -156,3 +157,4 @@ class ObjectFieldValue(hg.Lazy):
 
 localize = hg.lazify(djangolocalize)
 localtime = hg.lazify(djangolocaltime)
+slugify = hg.lazify(djangoslufigy)

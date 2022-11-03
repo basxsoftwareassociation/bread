@@ -405,7 +405,10 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         ).as_submit(
             href=ModelHref.from_object(
                 hg.C("row"), "delete", return_to_current=return_to_current
-            )
+            ),
+            confirm_text=hg.format(
+                _("Are you sure you want to delete {}?"), hg.EM(hg.C("row"))
+            ),
         )
 
 

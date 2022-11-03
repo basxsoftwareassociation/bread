@@ -64,16 +64,36 @@ class Button(hg.BUTTON):
     def as_href(self, href):
         return hg.A(*self, **{**self.attributes, "href": href})
 
-    def as_submit(self, href, **kwargs):
+    def as_submit(self, href, confirm_text=None, **kwargs):
         from django.forms import Form as DjangoForm
 
+        from ..utils import slugify
         from .forms import Form
+        from .modal import Modal
+
+        confirm_dialog = Modal(
+            _("Please confirm"),
+            _("Are you sure?") if confirm_text is None else confirm_text,
+            buttons=(
+                Button(_("No..."), buttontype="ghost", data_modal_close=True),
+                Button(_("Yes!"), type="submit"),
+            ),
+            id=hg.format("modal-{}", slugify(href)),
+            size="xs",
+        )
 
         newbutton = self.copy()
-        newbutton.attributes["type"] = "submit"
+        newbutton.attributes = hg.merge_html_attrs(
+            newbutton.attributes,
+            {
+                **confirm_dialog.openerattributes,
+                **{"onclick": "event.preventDefault(); return false;"},
+            },
+        )
         return Form(
             DjangoForm(),
             newbutton,
+            confirm_dialog,
             action=href,
             **hg.merge_html_attrs(kwargs, {"style": "display: inline"}),
         )
