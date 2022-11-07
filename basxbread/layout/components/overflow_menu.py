@@ -1,25 +1,73 @@
 import htmlgenerator as hg
+from django.utils.translation import gettext_lazy as _
 
+from .button import Button
 from .icon import Icon
 
 
 def asoverflowbutton(context):
     link = context["link"]
-    return hg.A(
-        hg.DIV(
-            hg.If(
-                link.iconname,
-                Icon(link.iconname, size=16),
+
+    # This is not working, overflow-menus with link.is_submit will not work
+    if link.is_submit:
+        from django.forms import Form as DjangoForm
+
+        from ..utils import slugify
+        from .forms import Form
+        from .modal import Modal
+
+        confirm_dialog = Modal(
+            _("Please confirm"),
+            link.confirm_text,
+            buttons=(
+                Button(_("No..."), buttontype="ghost", data_modal_close=True),
+                Button(_("Yes!"), type="submit"),
             ),
-            link.label,
-            _class="bx--overflow-menu-options__option-content",
-        ),
-        _class="bx--overflow-menu-options__btn",
-        role="menuitem",
-        title=link.label,
-        href=link.href,
-        **link.attributes,
-    )
+            id=hg.format("modal-{}", slugify(link.href)),
+            size="xs",
+        )
+
+        return hg.BaseElement(
+            Form(
+                DjangoForm(),
+                hg.DIV(
+                    hg.If(
+                        link.iconname,
+                        Icon(link.iconname, size=16),
+                    ),
+                    link.label,
+                    _class="bx--overflow-menu-options__option-content",
+                ),
+                action=link.href,
+                _class="bx--overflow-menu-options__btn",
+                role="menuitem",
+                title=link.label,
+                **hg.merge_html_attrs(
+                    link.attributes,
+                    {
+                        **confirm_dialog.openerattributes,
+                        "style": "text-decoration: underline",
+                    },
+                ),
+            ),
+            confirm_dialog,
+        )
+    else:
+        return hg.A(
+            hg.DIV(
+                hg.If(
+                    link.iconname,
+                    Icon(link.iconname, size=16),
+                ),
+                link.label,
+                _class="bx--overflow-menu-options__option-content",
+            ),
+            _class="bx--overflow-menu-options__btn",
+            role="menuitem",
+            title=link.label,
+            href=link.href,
+            **link.attributes,
+        )
 
 
 class OverflowMenu(hg.DIV):

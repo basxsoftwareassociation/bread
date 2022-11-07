@@ -56,10 +56,14 @@ class Button(hg.BUTTON):
             "notext": not link.label,
             "disabled": hg.F(lambda c: not link.has_permission(c["request"])),
         }
-        return Button(
+        button = Button(
             *([link.label] if link.label else []),
             **{**buttonargs, **link.attributes, **kwargs},
-        ).as_href(link.href)
+        )
+        if link.is_submit:
+            return button.as_submit(link.href, confirm_text=link.confirm_text)
+        else:
+            return button.as_href(link.href)
 
     def as_href(self, href):
         return hg.A(*self, **{**self.attributes, "href": href})

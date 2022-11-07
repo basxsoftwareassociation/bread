@@ -128,7 +128,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         Union[Link, Callable[[HttpRequest, models.QuerySet], Union[None, HttpResponse]]]
     ] = ()
 
-    rowactions: Iterable[Link] = ()  # list of links
+    rowactions: Optional[Iterable[Link]] = None  # list of links
     backurl = None
     primary_button = None
 
@@ -157,6 +157,8 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
             kwargs.get("search_urlparameter") or self.search_urlparameter
         )
         self.title = kwargs.get("title") or self.title
+        if self.rowactions is None:
+            self.rowactions = (BrowseView.editlink(), BrowseView.deletelink())
         self.rowactions = kwargs.get("rowactions") or self.rowactions
         self.model = kwargs.get("model") or self.model
         self.columns = filter_fieldlist(
@@ -219,8 +221,8 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
             columns=self.columns,
             bulkactions=bulkactions,
             rowactions=self.rowactions,
-            rowactions_dropdown=len(self.rowactions)
-            > 2,  # recommendation from carbon design
+            # rowactions_dropdown=len(self.rowactions) > 2,  # recommendation from carbon design
+            rowactions_dropdown=False,  # will not work with submit-actions, which trigger a modal
             rowclickaction=self.rowclickaction,
             pagination_config=layout.pagination.PaginationConfig(
                 items_per_page_options=self.items_per_page_options,
@@ -396,19 +398,15 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         )
 
     @staticmethod
-    def deletelink(return_to_current=True):
-        return layout.button.Button(
-            icon="delete",
-            notext=True,
-            small=True,
-            buttontype="ghost",
-        ).as_submit(
+    def deletelink(return_to_current=True, **attributes):
+        return Link(
             href=ModelHref.from_object(
                 hg.C("row"), "delete", return_to_current=return_to_current
             ),
-            confirm_text=hg.format(
-                _("Are you sure you want to delete {}?"), hg.EM(hg.C("row"))
-            ),
+            label=_("Delete"),
+            iconname="delete",
+            attributes=attributes,
+            is_submit=True,
         )
 
 

@@ -2,6 +2,7 @@ from typing import List, NamedTuple, Optional, Union
 
 import htmlgenerator as hg
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from .urls import model_urlname
 from .urls import reverse as urlreverse
@@ -103,6 +104,8 @@ class Link(NamedTuple):
     iconname: Optional[str] = "fade"
     permissions: List[str] = []
     attributes: dict = {}
+    is_submit: bool = False
+    confirm_text: str = _("Are you sure?")  # only used when is_submit = True
 
     def has_permission(self, request, obj=None):
         return all(
