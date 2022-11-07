@@ -121,17 +121,41 @@ class CustomFormMixin:
         if hasattr(self, "layout") and self.layout is not None:
             ret = self.layout
         else:
-            formfields = filter_fieldlist(
+            direct_model_formfields = filter_fieldlist(
                 self.model,
                 [f for f in self.fields if isinstance(f, str)]
                 if (self.fields is not None)
                 else None,
                 for_form=True,
             )
+            declared_formfields = self.fields or direct_model_formfields
+            inlineforms = {}
+            for i, field in enumerate(list(declared_formfields)):
+                if "." in field:
+                    declared_formfields.remove(field)
+                    basefield, inlinefield = field.split(".", 1)
+                    if basefield not in inlineforms:
+                        inlineforms[basefield] = []
+                        declared_formfields.insert(i, basefield)
+                    inlineforms[basefield].append(inlinefield)
+
             ret = hg.BaseElement()
-            for field in self.fields or formfields:
-                if field in formfields:
+            for field in declared_formfields:
+                if field in direct_model_formfields:
                     ret.append(layout.forms.FormField(field))
+                elif isinstance(field, str) and field in inlineforms:
+                    ret.append(
+                        layout.forms.Formset.as_datatable(
+                            hg.C("form")[field].formset,
+                            fieldname=field,
+                            title=hg.C("form")[field].label,
+                            fields=inlineforms[field],
+                            formsetfield_kwargs={
+                                "extra": 1,
+                                # "can_order": True,
+                            },
+                        )
+                    )
                 else:
                     ret.append(field)
 

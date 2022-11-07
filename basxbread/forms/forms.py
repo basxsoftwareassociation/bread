@@ -100,6 +100,7 @@ def modelform_factory(  # noqa
     # GenericForeignKey and one-to-n fields need to be added separatly to the form class
     attribs = {}
     for formfieldelement in formfieldelements:
+        modelfield = None
         try:
             modelfield = model._meta.get_field(formfieldelement.fieldname)
         except FieldDoesNotExist:
