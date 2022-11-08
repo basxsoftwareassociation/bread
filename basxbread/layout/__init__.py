@@ -48,6 +48,24 @@ def render(request, layout, context=None, **response_kwargs):
     for processor in render.CONTEXT_PROCESSORS:
         defaultcontext.update(processor(request))
     defaultcontext.update(context or {})
+
+    # unstring to measure performance gains (or loss ;() with prerendering
+    """
+    from time import time
+
+    import htmlgenerator as hg
+
+    pre = hg.prerender(layout)
+    t_0 = time()
+    str(hg.render(layout, defaultcontext))
+    t_normal = time() - t_0
+    str(hg.render(pre, defaultcontext))
+    t_prerendered = time() - t_0 - t_normal
+    print(f"Normal:{t_normal:.3f}")
+    print(f"Prerendred:{t_prerendered:.3f}")
+    return HttpResponse(hg.prerender(layout).render(defaultcontext), **response_kwargs)
+    """
+
     return HttpResponse(layout.render(defaultcontext), **response_kwargs)
 
 

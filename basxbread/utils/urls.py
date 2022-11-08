@@ -3,6 +3,7 @@ import itertools
 import logging
 import uuid
 from functools import wraps
+from typing import Optional
 
 import htmlgenerator as hg
 from django.conf import settings
@@ -18,7 +19,7 @@ from django.utils.text import format_lazy
 from .model_helpers import get_concrete_instance
 
 
-def reverse(*args, query: dict = None, **kwargs):
+def reverse(*args, query: Optional[dict] = None, **kwargs):
     """Extended version of the django function ``reverse`` by just adding support
     for an additional parameter ``query`` which can contain query parameters and
     will be encoded automatically.

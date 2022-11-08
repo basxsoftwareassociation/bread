@@ -20,7 +20,9 @@ class FormFieldMarker(hg.BaseElement):
 
 
 def generate_widget_element(
-    fieldname: str = None,  # required to derive the widget from a django form field
+    fieldname: Optional[
+        str
+    ] = None,  # required to derive the widget from a django form field
     form: Union[
         forms.Form, hg.Lazy, str
     ] = DEFAULT_FORM_CONTEXTNAME,  # required to derive the widget from a django form field
@@ -37,11 +39,11 @@ def generate_widget_element(
     widgetclass: Optional[
         Union[Type[BaseWidget], hg.Lazy]
     ] = None,  # normally be taken from the django form field, will be carbon-ized
-    label: Union[
-        str, hg.BaseElement
+    label: Optional[
+        Union[str, hg.BaseElement]
     ] = None,  # normally be taken from the django form field, will be carbon-ized
-    help_text: Union[
-        str, hg.BaseElement
+    help_text: Optional[
+        Union[str, hg.BaseElement]
     ] = None,  # normally be taken from the django form field, will be carbon-ized
     errors: Optional[
         List[str]

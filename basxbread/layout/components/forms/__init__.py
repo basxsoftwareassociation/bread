@@ -1,5 +1,4 @@
-import typing
-from typing import List
+from typing import List, Optional
 
 import htmlgenerator as hg
 from django import forms
@@ -240,8 +239,8 @@ class Formset(hg.Iterator):
     def as_datatable(
         formset,
         fields: List,
-        title: typing.Optional[str] = None,
-        formsetfield_kwargs: dict = None,
+        title: Optional[str] = None,
+        formsetfield_kwargs: Optional[dict] = None,
         fieldname=None,  # required for inline-formsets
         **kwargs,
     ) -> hg.BaseElement:

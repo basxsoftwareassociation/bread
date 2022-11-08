@@ -1,5 +1,5 @@
 import sys
-from typing import Union
+from typing import Optional, Union
 
 import htmlgenerator as hg
 from django.utils.translation import gettext_lazy as _
@@ -14,7 +14,7 @@ def error_layout(
     status_code: int,
     status_title: str,
     description: Union[str, hg.BaseElement],
-    exception_detail: str = None,
+    exception_detail: Optional[str] = None,
 ):
     if (
         not hasattr(request, "user")
