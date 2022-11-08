@@ -3,6 +3,7 @@ import datetime
 from celery import shared_task
 from django.apps import AppConfig
 from django.conf import settings
+from django.db import transaction
 from django.utils import timezone
 from kombu.utils.uuid import uuid
 
@@ -17,13 +18,13 @@ class TriggersConfig(AppConfig):
 
     def ready(self):
 
-        from django.db.models.signals import post_delete, post_save, pre_save
+        from django.db.models.signals import post_save, pre_delete, pre_save
 
         from basxbread.utils.celery import RepeatedTask
 
         pre_save.connect(get_old_object)
         post_save.connect(save_handler)
-        post_delete.connect(delete_handler, dispatch_uid="trigger_delete")
+        pre_delete.connect(delete_handler, dispatch_uid="trigger_delete")
 
         shared_task(
             base=RepeatedTask,
@@ -73,15 +74,20 @@ def datachange_trigger(model, instance, type):
                 trigger.action
                 and trigger.filter.queryset.filter(pk=instance.pk).exists()
             ):
-                # delay execution a bit as the trigger may run immediately even though
-                # the current request has not finished (and therefore not commited to DB yet)
                 name = f"Trigger '{trigger}': Action '{trigger.action}'"
-                run_action.apply_async(
-                    (trigger.action.pk, instance._meta.label, instance.pk),
-                    countdown=1,
-                    shadow=name,
-                    task_id=f"{name}-{uuid()}",
-                )
+                if type == "deleted":
+                    # if we want to still have access to the database object
+                    # while the action is performed, we need to execute the action
+                    # immediately and cannot do it in the background with celery
+                    run_action(trigger.action.pk, instance._meta.label, instance.pk)
+                else:
+                    transaction.on_commit(
+                        lambda: run_action.apply_async(
+                            (trigger.action.pk, instance._meta.label, instance.pk),
+                            shadow=name,
+                            task_id=f"{name}-{uuid()}",
+                        )
+                    )
     instance._old = None
 
 
