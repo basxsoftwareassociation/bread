@@ -131,7 +131,7 @@ class CustomFormMixin:
             declared_formfields = self.fields or direct_model_formfields
             inlineforms = {}
             for i, field in enumerate(list(declared_formfields)):
-                if "." in field:
+                if isinstance(field, str) and "." in field:
                     declared_formfields.remove(field)
                     basefield, inlinefield = field.split(".", 1)
                     if basefield not in inlineforms:
