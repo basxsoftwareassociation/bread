@@ -103,6 +103,10 @@ class SendEmail(Action):
                 from_email=None,
                 recipient_list=recipients,
             )
+        else:
+            raise RuntimeError(
+                f"No recipients found for {self} (email: '{self.email}')"
+            )
 
     class Meta:
         verbose_name = _("Send email action")
