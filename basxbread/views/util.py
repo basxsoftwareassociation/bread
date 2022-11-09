@@ -118,6 +118,40 @@ class CustomFormMixin:
             baseformclass=form,
         )
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+
+        # hide or disable predefined fields passed in GET parameters
+        # if self.request.method != "POST":
+        for fieldelement in self._get_layout_cached().filter(
+            lambda element, ancestors: isinstance(
+                element, layout.forms.fields.FormFieldMarker
+            )
+        ):
+            if (
+                fieldelement.fieldname in self.request.GET
+                and fieldelement.fieldname + "_nohide" not in self.request.GET
+            ):
+                form.fields[fieldelement.fieldname].widget = forms.HiddenInput(
+                    attrs=form.fields[fieldelement.fieldname].widget.attrs
+                )
+        if self.request.method == "POST":
+            if form.errors and self.ajax_urlparameter not in self.request.GET:
+                messages.error(
+                    self.request,
+                    mark_safe(
+                        "<br/>".join(
+                            [
+                                f"<em>{form.fields[field].label}</em>: "
+                                f"{', '.join(msg if isinstance(msg, list) else [msg])}"
+                                for field, msg in form.errors.items()
+                                if field != "__all__"
+                            ]
+                        )
+                    ),
+                )
+        return form
+
     def get_layout(self):
         if hasattr(self, "layout") and self.layout is not None:
             ret = self.layout
@@ -169,40 +203,6 @@ class CustomFormMixin:
                 layout.forms.Form(hg.C("form"), ret, layout.forms.helpers.Submit()),
             ),
         )
-
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-
-        # hide or disable predefined fields passed in GET parameters
-        # if self.request.method != "POST":
-        for fieldelement in self._get_layout_cached().filter(
-            lambda element, ancestors: isinstance(
-                element, layout.forms.fields.FormFieldMarker
-            )
-        ):
-            if (
-                fieldelement.fieldname in self.request.GET
-                and fieldelement.fieldname + "_nohide" not in self.request.GET
-            ):
-                form.fields[fieldelement.fieldname].widget = forms.HiddenInput(
-                    attrs=form.fields[fieldelement.fieldname].widget.attrs
-                )
-        if self.request.method == "POST":
-            if form.errors and self.ajax_urlparameter not in self.request.GET:
-                messages.error(
-                    self.request,
-                    mark_safe(
-                        "<br/>".join(
-                            [
-                                f"<em>{form.fields[field].label}</em>: "
-                                f"{', '.join(msg if isinstance(msg, list) else [msg])}"
-                                for field, msg in form.errors.items()
-                                if field != "__all__"
-                            ]
-                        )
-                    ),
-                )
-        return form
 
     def form_valid(self, *args, **kwargs):
         ret = super().form_valid(*args, **kwargs)
