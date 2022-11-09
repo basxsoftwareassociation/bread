@@ -1,6 +1,8 @@
+import fitz
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 
@@ -34,6 +36,7 @@ class CustomFormField(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_("Custom form"),
         related_name="customformfields",
+        editable=False,
     )
     fieldname = models.CharField(
         _("Field name"),
@@ -59,3 +62,62 @@ class CustomFormField(models.Model):
     class Meta:
         verbose_name = _("Custom form field")
         verbose_name_plural = _("Custom form fields")
+
+
+def pdf_fields(pdffile):
+    fields = {}
+    pdf = fitz.Document(stream=pdffile)
+    for page in pdf:
+        widget = page.first_widget
+        while widget:
+            fields[widget.field_name] = widget.field_value
+            widget = widget.next
+    pdf.close()
+    return fields
+
+
+class PDFImport(models.Model):
+    pdf = models.FileField(_("PDF form"), upload_to="pdf_import")
+    customform = models.ForeignKey(CustomForm, on_delete=models.PROTECT)
+
+    @cached_property
+    def pdf_fields(self):
+        with self.pdf.open() as file:
+            return pdf_fields(file.read())
+
+    def __str__(self):
+        return _("PDF import for %s") % self.customform
+
+    class Meta:
+        verbose_name = _("PDF import")
+        verbose_name_plural = _("PDF imports")
+
+
+class PDFFormField(models.Model):
+    pdfimport = models.ForeignKey(
+        PDFImport,
+        on_delete=models.CASCADE,
+        verbose_name=_("PDF form field"),
+        related_name="fields",
+        editable=False,
+    )
+    pdf_field_name = models.CharField(_("PDF field name"), max_length=256)
+    pdf_field_name.lazy_choices = lambda field, request, instance: [
+        (f, f) for f in instance.pdf_fields.keys()
+    ]
+    customform_field = models.ForeignKey(
+        CustomFormField,
+        on_delete=models.CASCADE,
+        limit_choices_to={"customform": models.F("customform")},
+    )
+
+    def __str__(self):
+        return self.pdf_field_name
+
+    class Meta:
+        verbose_name = _("PDF import field")
+        verbose_name_plural = _("PDF import fields")
+        unique_together = [
+            ["pdfimport", "customform_field"],
+            ["pdfimport", "pdf_field_name"],
+        ]
