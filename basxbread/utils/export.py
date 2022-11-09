@@ -3,33 +3,8 @@ import io
 import re
 
 import htmlgenerator as hg
-from django.conf import settings
 from django.http import HttpResponse
 from django.utils.html import strip_tags
-
-
-def html_to_pdf(html, as_http_response=False, name=None):
-    """
-    Renders html to PDF
-
-        html: html string
-        as_http_response: If True return PDF as HttpResponse with attachment
-        name: Filename without extension, only used when as_http_response == True
-        returns: PDF content or HttpResponse with attachment
-    """
-    # weasyprint is an extra dependency
-    import weasyprint
-
-    def url_fetcher(url, timeout=10, ssl_context=None):
-        return weasyprint.default_url_fetcher(
-            "file://" + url.replace("file://", settings.BASE_DIR), timeout, ssl_context
-        )
-
-    ret = weasyprint.HTML(string=html, base_url="", url_fetcher=url_fetcher).write_pdf()
-    if as_http_response:
-        ret = HttpResponse(ret, content_type="application/pdf")
-        ret["Content-Disposition"] = f"inline; filename={name}.pdf"
-    return ret
 
 
 def generate_excel(rows, columns):
