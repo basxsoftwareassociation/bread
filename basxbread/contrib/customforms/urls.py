@@ -50,13 +50,6 @@ urlpatterns = [
                     label=_("Import new PDF"),
                     iconname="new-tab",
                 ),
-                menu.Link(
-                    href=utils.ModelHref.from_object(
-                        hg.C("row"), "use", return_to_current=False
-                    ),
-                    label=_("Import new PDF"),
-                    iconname="new-tab",
-                ),
             ),
         ),
         addview=breadviews.AddView._with(
