@@ -101,6 +101,7 @@ class CustomFormMixin:
     - Converts n-to-many fields into inline forms
     - Set GenericForeignKey fields before saving (not supported by default in django)
     - If "next" is in the GET query redirect to that location on success
+    - If default_success_page
     """
 
     def get_initial(self, *args, **kwargs):
@@ -152,7 +153,6 @@ class CustomFormMixin:
                             fields=inlineforms[field],
                             formsetfield_kwargs={
                                 "extra": 1,
-                                # "can_order": True,
                             },
                         )
                     )
@@ -220,7 +220,11 @@ class CustomFormMixin:
             return urllib.parse.unquote(self.request.GET["next"])
 
         try:
-            ret = str(reverse_model(self.model, "read", kwargs={"pk": self.object.pk}))
+            ret = str(
+                reverse_model(
+                    self.model, self.default_success_page, kwargs={"pk": self.object.pk}
+                )
+            )
         except NoReverseMatch:
             ret = self.request.get_full_path()
 

@@ -18,6 +18,7 @@ class AddView(
     """TODO: documentation"""
 
     accept_global_perms = True
+    default_success_page = "read"
 
     def get_success_message(self, cleaned_data):
         return _("Added %s") % self.object

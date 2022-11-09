@@ -30,6 +30,7 @@ class EditView(
     accept_global_perms = True
     fields: Optional[List[Union[hg.BaseElement, str]]] = None
     urlparams: Iterable[Tuple[str, Type]] = (("pk", int),)
+    default_success_page = "read"
 
     def __init__(self, *args, **kwargs):
         all = filter_fieldlist(
