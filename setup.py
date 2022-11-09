@@ -50,12 +50,13 @@ setup(
         "whoosh",
         "docxtpl",
         # TODO: review whether we can or should remove these
-        "WeasyPrint",  # creating PDFs
         "backports.zoneinfo; python_version < '3.9'",
     ],
     extras_require={
+        "all": ["docxtpl", "pymupdf", "hypothesis[django]", "django_dynamic_fixture"],
         "testing": ["hypothesis[django]", "django_dynamic_fixture"],
         "document_templates": ["docxtpl"],
+        "pdf": ["pymupdf"],
     },
     packages=find_packages(),
     setup_requires=["setuptools_scm"],
