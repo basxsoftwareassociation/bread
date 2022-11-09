@@ -5,7 +5,7 @@ from .icon import Icon
 
 
 def isactive(itemaccessor):
-    return hg.F(lambda c: c[itemaccessor].active(c["request"]))
+    return hg.F(lambda c: c[itemaccessor].active(c))
 
 
 class SideNav(hg.ASIDE):

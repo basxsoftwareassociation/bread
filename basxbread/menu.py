@@ -1,3 +1,4 @@
+import htmlgenerator as hg
 from django.apps import apps
 from django.utils.functional import Promise
 from django.utils.translation import gettext_lazy as _
@@ -82,9 +83,9 @@ class Item:
     def has_permission(self, request):
         return self.link.has_permission(request)
 
-    def active(self, request):
-        path = str(self.link.href)
-        return request.path.startswith(path) and path != "/"
+    def active(self, context):
+        path = str(hg.resolve_lazy(self.link.href, context))
+        return context["request"].path.startswith(path) and path != "/"
 
 
 class Menu:
