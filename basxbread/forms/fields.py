@@ -39,6 +39,7 @@ class BoundFormsetField(forms.BoundField):
             self.form.files if self.form.is_bound else None,
             instance=self.field.parent_instance,
             prefix=prefix,
+            initial=self.field.initial,
             **(self.field.formsetargs or {}),
         )
 

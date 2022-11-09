@@ -49,6 +49,7 @@ def modelform_factory(  # noqa
                     formsetinitial[name] = {
                         "instance": inst,
                     }
+                    field.initial = initial.get(name, [])
                 if isinstance(field, GenericForeignKeyField):
                     modelfield = model._meta.get_field(name)
                     if hasattr(modelfield, "lazy_choices"):
