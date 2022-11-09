@@ -204,6 +204,7 @@ def _generate_formset_class(
             ct_field=modelfield.content_type_field_name,
             fk_field=modelfield.object_id_field_name,
             formset=GenericInlineFormSetWithLimits,
+            # BUG: instance for the callback is the parent instance, not the instance of the inline object
             formfield_callback=lambda field: _formfield_callback_with_request(
                 field, request, modelfield.related_model, instance, cache_querysets
             ),
@@ -214,6 +215,7 @@ def _generate_formset_class(
             model,
             modelfield.related_model,
             formset=InlineFormSetWithLimits,
+            # BUG: instance for the callback is the parent instance, not the instance of the inline object
             formfield_callback=lambda field: _formfield_callback_with_request(
                 field, request, model, instance, cache_querysets
             ),
