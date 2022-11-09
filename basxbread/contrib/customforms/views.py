@@ -90,7 +90,17 @@ def pdfimportview(request, pk):
                     uploadform.cleaned_data["importfile"].read()
                 ).items():
                     if field in defined_formfields:
-                        initial[defined_formfields[field]] = value
+                        if "." in defined_formfields[field]:
+                            inlinefield, subfield = defined_formfields[field].split(
+                                ".", 1
+                            )
+                            if inlinefield not in initial:
+                                initial[inlinefield] = [{}]
+                            if subfield in initial[inlinefield][-1]:
+                                initial[inlinefield].append({})
+                            initial[inlinefield][-1][subfield] = value
+                        else:
+                            initial[defined_formfields[field]] = value
                 request.method = "GET"
                 return formview_processing(
                     request, form=pdfimporter.customform, initial=initial
