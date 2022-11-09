@@ -9,9 +9,9 @@ REQUIRED_LABEL = getattr(settings, "REQUIRED_LABEL", " *")
 
 
 class Submit(hg.DIV):
-    def __init__(self, label=None, **attributes):
+    def __init__(self, label=None, name="submit", **attributes):
         super().__init__(
-            Button(label or _("Save"), type="submit"),
+            Button(label or _("Save"), type="submit", name=name),
             _class="bx--form-item",
             **attributes,
         )
