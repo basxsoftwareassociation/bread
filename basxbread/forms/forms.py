@@ -49,7 +49,8 @@ def modelform_factory(  # noqa
                     formsetinitial[name] = {
                         "instance": inst,
                     }
-                    field.initial = initial.get(name, [])
+                    if initial is not None:
+                        field.initial = initial.get(name, [])
                 if isinstance(field, GenericForeignKeyField):
                     modelfield = model._meta.get_field(name)
                     if hasattr(modelfield, "lazy_choices"):
@@ -61,7 +62,7 @@ def modelform_factory(  # noqa
                         formsetinitial[name] = GenericForeignKeyField.object_to_choice(
                             init
                         )[0]
-            if initial:
+            if initial is not None:
                 formsetinitial.update(initial)
             super().__init__(
                 data=data,
