@@ -14,7 +14,7 @@ from django.utils.translation import gettext_lazy as _
 from docxtpl import DocxTemplate
 from jinja2.sandbox import SandboxedEnvironment
 
-from basxbread.utils import ModelHref
+from basxbread import utils
 
 
 class DocumentTemplate(models.Model):
@@ -44,13 +44,13 @@ class DocumentTemplate(models.Model):
                 hg.resolve_lookup(object, variable.value)
             )
             if variable.template:
-                value_env = SandboxedEnvironment()
-                value_env.filters["map"] = lambda value, map: map.get(value, value)
                 try:
-                    context[variable.name] = value_env.from_string(
-                        variable.template
-                    ).render(
-                        value=context[variable.name],
+                    context[variable.name] = (
+                        utils.jinja_env()
+                        .from_string(variable.template)
+                        .render(
+                            value=context[variable.name],
+                        )
                     )
                 except Exception as e:
                     context[variable.name] = f"### ERROR: {e} ###"
@@ -84,7 +84,7 @@ class DocumentTemplate(models.Model):
         return declared ^ both, intemplate ^ both
 
     def generate_document_url(self, obj: Union[hg.Lazy, models.Model]):
-        return ModelHref.from_object(
+        return utils.ModelHref.from_object(
             self,
             "generate_document",
             kwargs={"object_pk": obj.pk},

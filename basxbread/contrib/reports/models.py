@@ -7,9 +7,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.dateformat import DateFormat
 from django.utils.translation import gettext_lazy as _
-from jinja2.sandbox import SandboxedEnvironment
 
-from basxbread import layout
+from basxbread import layout, utils
 from basxbread.querysetfield import QuerysetField, parsequeryexpression
 
 from ...layout.components.datatable import DataTableColumn
@@ -147,14 +146,16 @@ class ReportColumn(models.Model):
         if self.cell_template:
 
             def render(context):
-                elementenv = SandboxedEnvironment()
-                elementenv.filters["map"] = lambda value, map: map.get(value, value)
                 try:
-                    cellcontent = elementenv.from_string(self.cell_template).render(
-                        value=ensure_localized_date(
-                            hg.resolve_lookup(context[rowvariable], self.column)
-                        ),
-                        object=context[rowvariable],
+                    cellcontent = (
+                        utils.jinja_env()
+                        .from_string(self.cell_template)
+                        .render(
+                            value=ensure_localized_date(
+                                hg.resolve_lookup(context[rowvariable], self.column)
+                            ),
+                            object=context[rowvariable],
+                        )
                     )
                     return hg.BaseElement(
                         hg.mark_safe(cellcontent) if self.allow_html else cellcontent

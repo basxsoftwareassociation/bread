@@ -1,4 +1,5 @@
 from .export import *  # noqa
+from .jinja2 import *  # noqa
 from .links import *  # noqa
 from .model_helpers import *  # noqa
 from .urls import *  # noqa

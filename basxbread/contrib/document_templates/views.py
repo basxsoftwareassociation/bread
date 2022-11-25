@@ -1,9 +1,8 @@
 import htmlgenerator as hg
 from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
-from jinja2.sandbox import SandboxedEnvironment
 
-from basxbread import layout, views
+from basxbread import layout, utils, views
 
 from .models import DocumentTemplate
 
@@ -102,12 +101,14 @@ def generate_document(request, pk: int, object_pk: int):
     filename = f'{template.name}_{str(object).replace(" ", "-")}'
 
     if template.filename_template:
-        value_env = SandboxedEnvironment()
-        value_env.filters["map"] = lambda value, map: map.get(value, value)
         try:
-            filename = value_env.from_string(template.filename_template).render(
-                **{attr: getattr(object, attr, "") for attr in dir(object)},
-                **template.default_context(),
+            filename = (
+                utils.jinja_env()
+                .from_string(template.filename_template)
+                .render(
+                    **{attr: getattr(object, attr, "") for attr in dir(object)},
+                    **template.default_context(),
+                )
             )
         except Exception as e:
             print(e)
