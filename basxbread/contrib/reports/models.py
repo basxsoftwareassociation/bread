@@ -151,9 +151,7 @@ class ReportColumn(models.Model):
                         utils.jinja_env()
                         .from_string(self.cell_template)
                         .render(
-                            value=ensure_localized_date(
-                                hg.resolve_lookup(context[rowvariable], self.column)
-                            ),
+                            value=hg.resolve_lookup(context[rowvariable], self.column),
                             object=context[rowvariable],
                         )
                     )
@@ -171,9 +169,3 @@ class ReportColumn(models.Model):
         verbose_name = _("Column")
         verbose_name_plural = _("Columns")
         order_with_respect_to = "report"
-
-
-def ensure_localized_date(value):
-    if isinstance(value, (datetime.datetime, datetime.date)):
-        return DateFormat(value)
-    return value

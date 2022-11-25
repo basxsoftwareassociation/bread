@@ -40,9 +40,7 @@ class DocumentTemplate(models.Model):
     def context(self, object):
         context = {}
         for variable in self.variables.all():
-            context[variable.name] = ensure_localized_date(
-                hg.resolve_lookup(object, variable.value)
-            )
+            context[variable.name] = hg.resolve_lookup(object, variable.value)
             if variable.template:
                 try:
                     context[variable.name] = (
@@ -118,9 +116,3 @@ class DocumentTemplateVariable(models.Model):
     class Meta:
         verbose_name = _("Variable")
         verbose_name_plural = _("Variables")
-
-
-def ensure_localized_date(value):
-    if isinstance(value, (datetime.datetime, datetime.date)):
-        return DateFormat(value)
-    return value
