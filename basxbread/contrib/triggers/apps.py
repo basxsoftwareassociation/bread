@@ -82,8 +82,8 @@ def datachange_trigger(model, instance, type):
                     run_action(trigger.action.pk, instance._meta.label, instance.pk)
                 else:
                     transaction.on_commit(
-                        lambda: run_action.apply_async(
-                            (trigger.action.pk, instance._meta.label, instance.pk),
+                        lambda action_pk=trigger.action.pk: run_action.apply_async(
+                            (action_pk, instance._meta.label, instance.pk),
                             shadow=name,
                             task_id=f"{name}-{uuid()}",
                         )
