@@ -140,7 +140,7 @@ class ObjectFieldValue(hg.Lazy):
         if self.formatter:
             value = self.formatter(value)
 
-        if value in (True, False, None):
+        if isinstance(value, (type(None), bool)):
             value = {
                 True: settings.HTML_TRUE,
                 False: settings.HTML_FALSE,
