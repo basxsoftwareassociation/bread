@@ -84,14 +84,14 @@ class EditView(views.EditView):
 class ReadView(views.ReadView):
     def get_layout(self):
         # ordering, copied from basxbread.views.browse.BrowseView.get_queryset
-        qs = self.object.queryset
-        if not qs:
+        if self.object.model.model_class() is None:
             return layout.notification.InlineNotification(
                 "Error",
                 f"Model '{self.object.model}' does no longer exist.",
                 kind="error",
             )
 
+        qs = self.object.queryset
         order = self.request.GET.get("ordering")
         if order:
             if order.endswith("__int"):
