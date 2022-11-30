@@ -132,12 +132,6 @@ class ReportColumn(models.Model):
         ),
     )
     cell_template.formfield_kwargs = {"widget": forms.Textarea(attrs={"rows": 1})}
-    sortingname = models.CharField(
-        _("Sortingname"),
-        max_length=255,
-        blank=True,
-        help_text=_("Django sorting expression"),
-    )
     aggregation = models.CharField(
         _("Aggregation"), max_length=64, choices=tuple(AGGREGATIONS.items()), blank=True
     )

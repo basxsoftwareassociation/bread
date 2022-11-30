@@ -33,7 +33,7 @@ class EditView(views.EditView):
             hg.C("form")["columns"].formset,
             fieldname="columns",
             title=hg.C("form")["columns"].label,
-            fields=["header", "column", "cell_template", "allow_html", "sortingname"],
+            fields=["header", "column", "cell_template", "allow_html"],
             formsetfield_kwargs={
                 "extra": 1,
                 "can_order": True,
@@ -122,7 +122,7 @@ class ReadView(views.ReadView):
                 layout.datatable.DataTableColumn(
                     header=col.header,
                     cell=col.render_element("row"),
-                    sortingname=col.sortingname or sortingname,
+                    sortingname=sortingname,
                 )
             )
         if not columns:

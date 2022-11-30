@@ -201,11 +201,13 @@ class Formset(hg.Iterator):
             "notext": True,
             "buttontype": "tertiary",
             "id": hg.format("add_{}_button", prefix),
+        }
+        click_arg = {
             "onclick": hg.format(
                 "formset_add('{}', '{}')", prefix, container_css_selector
             ),
         }
-        return Button(label, **{**defaults, **kwargs})
+        return Button(label, **{**defaults, **hg.merge_html_attrs(click_arg, kwargs)})
 
     @staticmethod
     def as_plain(*args, add_label=_("Add"), **kwargs):
