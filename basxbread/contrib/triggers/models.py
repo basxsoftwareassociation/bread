@@ -7,10 +7,10 @@ from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
 from django.db import models
-from django.template import engines
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from basxbread import utils
 from basxbread.formatters import is_email_simple
 from basxbread.querysetfield import QuerysetField
 
@@ -90,16 +90,11 @@ class SendEmail(Action):
                 extracted_email = hg.resolve_lookup({"object": object}, email) or ""
                 if is_email_simple(extracted_email):
                     recipients.append(extracted_email)
+
         if recipients:
-            subject = (
-                engines["django"].from_string(self.subject).render({"object": object})
-            )
-            message = (
-                engines["django"].from_string(self.message).render({"object": object})
-            )
             send_mail(
-                subject=subject,
-                message=message,
+                subject=utils.jinja_render(self.subject, object=object),
+                message=utils.jinja_render(self.message, object=object),
                 from_email=None,
                 recipient_list=recipients,
             )

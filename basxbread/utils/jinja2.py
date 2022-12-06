@@ -10,3 +10,7 @@ def jinja_env():
     environment.filters["date"] = formats.date_format
     environment.filters["time"] = formats.time_format
     return environment
+
+
+def jinja_render(template, **kwargs):
+    return jinja_env().from_string(template).render(**kwargs)

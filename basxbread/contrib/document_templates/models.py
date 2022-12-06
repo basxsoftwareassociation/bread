@@ -42,12 +42,8 @@ class DocumentTemplate(models.Model):
             context[variable.name] = hg.resolve_lookup(object, variable.value)
             if variable.template:
                 try:
-                    context[variable.name] = (
-                        utils.jinja_env()
-                        .from_string(variable.template)
-                        .render(
-                            value=context[variable.name],
-                        )
+                    context[variable.name] = utils.jinja_render(
+                        variable.template, value=context[variable.name]
                     )
                 except Exception as e:
                     context[variable.name] = f"### ERROR: {e} ###"
