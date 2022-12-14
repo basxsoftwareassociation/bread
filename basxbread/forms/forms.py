@@ -79,11 +79,17 @@ def modelform_factory(  # noqa
                 for fieldname, field in self.fields.items():
                     if isinstance(field, GenericForeignKeyField):
                         setattr(forminstance, fieldname, self.cleaned_data[fieldname])
+                    elif isinstance(field, FormsetField) and issubclass(
+                        field.formsetclass, BaseGenericInlineFormSet
+                    ):
+                        self.cleaned_data.pop(fieldname).save()
                 forminstance.save()
                 self.save_m2m()
 
                 for fieldname, field in self.fields.items():
-                    if isinstance(field, FormsetField):
+                    if isinstance(field, FormsetField) and not issubclass(
+                        field.formsetclass, BaseGenericInlineFormSet
+                    ):
                         self.cleaned_data[fieldname].instance = forminstance
                         self.cleaned_data[fieldname].save()
                         if self.cleaned_data[fieldname].can_order:

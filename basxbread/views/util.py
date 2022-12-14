@@ -219,12 +219,17 @@ class CustomFormMixin:
         if self.request.GET.get("next"):
             return urllib.parse.unquote(self.request.GET["next"])
 
+        success_url = getattr(self, "success_url", "")
+        if success_url:
+            return success_url
+
         try:
             ret = str(
                 reverse_model(
                     self.model, self.default_success_page, kwargs={"pk": self.object.pk}
                 )
             )
+
         except NoReverseMatch:
             ret = self.request.get_full_path()
 

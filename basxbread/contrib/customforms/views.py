@@ -51,7 +51,7 @@ def formview_processing(request, form, initial=None):
                 ),
             )
         if instance.count() == 1:  # show an edit view
-            view_class = views.EditView
+            view_class = views.EditView._with(success_url=request.get_full_path())
             view_kwargs["pk"] = instance.first().pk
 
     request.GET = GET
