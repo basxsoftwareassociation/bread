@@ -138,13 +138,10 @@ class ReportColumn(models.Model):
 
             def render(context):
                 try:
-                    cellcontent = (
-                        utils.jinja_env()
-                        .from_string(self.cell_template)
-                        .render(
-                            value=hg.resolve_lookup(context[rowvariable], self.column),
-                            object=context[rowvariable],
-                        )
+                    cellcontent = utils.jinja_render(
+                        self.cell_template,
+                        value=hg.resolve_lookup(context[rowvariable], self.column),
+                        object=context[rowvariable],
                     )
                     return hg.BaseElement(
                         hg.mark_safe(cellcontent) if self.allow_html else cellcontent
