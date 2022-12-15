@@ -334,12 +334,13 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
                     )
 
             else:
+                # distinct clause might be necessary in other places too to prevent duplicates
                 qs = qs.filter(
                     queryset_from_fields.get_field_queryset(
                         [*self.model._meta.fields, *self.model._meta.many_to_many],
                         searchquery,
                     )
-                )
+                ).distinct()
         return qs
 
     def filter_queryset_by_formfilter(self, qs):
