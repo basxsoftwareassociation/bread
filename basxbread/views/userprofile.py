@@ -31,7 +31,6 @@ class UserProfileView(ReadView):
         return self.request.user
 
     def get_layout(self):
-
         return hg.BaseElement(
             hg.H4(_("Manage Profile")),
             hg.DIV(
@@ -241,6 +240,9 @@ class EditPersonalDataView(EditView):
     def get_object(self):
         return self.request.user
 
+    def get_required_permissions(self, request):
+        return []
+
     def form_valid(self, form):
         ret = super().form_valid(form)
         if (
@@ -303,6 +305,9 @@ class EditLoginView(EditView):
     def get_object(self):
         return self.request.user
 
+    def get_required_permissions(self, request):
+        return []
+
 
 class EditPermissionsView(EditView):
     model = get_user_model()
@@ -315,6 +320,9 @@ class EditPermissionsView(EditView):
 
     def get_object(self):
         return self.request.user
+
+    def get_required_permissions(self, request):
+        return []
 
 
 def profile_field(fieldname):
