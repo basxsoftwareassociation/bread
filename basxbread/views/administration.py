@@ -1,5 +1,6 @@
 import os
 import re
+import signal
 import subprocess  # nosec because we covered everything
 from io import StringIO
 
@@ -12,6 +13,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.core import management
 from django.db import connection
+from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django_celery_results.models import TaskResult
 
@@ -38,6 +40,10 @@ def maintenancesettings(request):
     # Add the view's header
     ret = layout.grid.Grid(R(C(hg.H3(_("Maintenance")))), gutter=False)
 
+    restart_result = restart_app_server(request)
+    if not isinstance(restart_result, hg.BaseElement):
+        return restart_result
+
     # Add the Package Information modal
     ret.append(
         R(
@@ -50,6 +56,8 @@ def maintenancesettings(request):
                 maintenance_database_optimization(request),
                 hg.H4(_("Rebuild search index"), _style="margin-top: 3rem;"),
                 maintenance_search_reindex(request),
+                hg.H4(_("Restart application server"), _style="margin-top: 3rem;"),
+                restart_result,
             ),
         )
     )
@@ -481,6 +489,31 @@ def maintenance_search_reindex(request):
                 hg.SAMP(hg.mark_safe(logmsg), style="font-family: monospace;"),
             ),
         ),
+    )
+
+
+def restart_app_server(request):
+    class RestartForm(forms.Form):
+        pass
+
+    if request.method == "POST":
+        form = RestartForm(request.POST)
+        if form.is_valid():
+            os.kill(os.getpid(), signal.SIGHUP)
+            messages.info(request, _("Restarted application server"))
+            return redirect(request.get_full_path())
+    else:
+        form = RestartForm()
+
+    return hg.BaseElement(
+        Form(
+            form,
+            Button(
+                _("Restart"),
+                type="submit",
+                style="margin-bottom: 1rem;",
+            ),
+        )
     )
 
 
