@@ -1,6 +1,5 @@
 import os
 import re
-import signal
 import subprocess  # nosec because we covered everything
 from io import StringIO
 
@@ -13,17 +12,15 @@ from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.core import management
 from django.db import connection
-from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django_celery_results.models import TaskResult
 
-from .. import layout
+from .. import layout, utils
 from ..layout.components import tabs
 from ..layout.components.button import Button
 from ..layout.components.datatable import DataTable, DataTableColumn
 from ..layout.components.forms import Form, FormField
 from ..layout.components.icon import Icon
-from ..utils import Link, aslayout
 from ..views import BrowseView
 
 R = layout.grid.Row
@@ -35,7 +32,7 @@ TD = layout.datatable.DataTableColumn
 
 
 @user_passes_test(lambda user: user.is_superuser)
-@aslayout
+@utils.aslayout
 def maintenancesettings(request):
     # Add the view's header
     ret = layout.grid.Grid(R(C(hg.H3(_("Maintenance")))), gutter=False)
@@ -65,7 +62,7 @@ def maintenancesettings(request):
     return ret
 
 
-@aslayout
+@utils.aslayout
 def componentpreview(request):
     class ConfigForm(forms.Form):
         with_label = forms.BooleanField(required=False)
@@ -160,7 +157,7 @@ def componentpreview(request):
             )
         ),
         layout.button.Button.from_link(
-            Link(href="#", label=_("Back to top")),
+            utils.Link(href="#", label=_("Back to top")),
             buttontype="secondary",
             icon="arrow--up",
             notext=True,
@@ -271,7 +268,7 @@ def componentpreview(request):
                                         button=(
                                             layout.components.button.Button("Button")
                                         ),
-                                        link=Link(href="#", label="link"),
+                                        link=utils.Link(href="#", label="link"),
                                     ),
                                 ),
                             ),
@@ -499,9 +496,8 @@ def restart_app_server(request):
     if request.method == "POST":
         form = RestartForm(request.POST)
         if form.is_valid():
-            os.kill(os.getpid(), signal.SIGHUP)
             messages.info(request, _("Restarted application server"))
-            return redirect(request.get_full_path())
+            return utils.HttpResponseRestartUWSGIServer(request.get_full_path())
     else:
         form = RestartForm()
 
@@ -517,7 +513,7 @@ def restart_app_server(request):
     )
 
 
-@aslayout
+@utils.aslayout
 def systeminformation(request):
     git_status = ""
     try:
