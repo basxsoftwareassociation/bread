@@ -101,6 +101,7 @@ Refactorings:
 
 (Maybe move this stuff into Github issues)
 
+- [ ] We should really go over our documentation...
 - [ ] Change implementation of some things where not the HTML/REST-paradigm is
   used but a custom javascript hack. This might reduce some of the "asthetical"
   behaviour, like clickable table rows. However, for customization and
