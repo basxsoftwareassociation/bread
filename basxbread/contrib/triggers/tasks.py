@@ -1,6 +1,9 @@
-from celery import shared_task
+import celery
 
-from basxbread.utils import get_concrete_instance
+print(celery.__file__)
+from celery import shared_task  # noqa
+
+from basxbread.utils import get_concrete_instance  # noqa
 
 
 @shared_task
