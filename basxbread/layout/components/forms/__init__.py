@@ -244,6 +244,7 @@ class Formset(hg.Iterator):
         title: Optional[str] = None,
         formsetfield_kwargs: Optional[dict] = None,
         fieldname=None,  # required for inline-formsets
+        can_add=True,
         **kwargs,
     ) -> hg.BaseElement:
         from ..datatable import DataTable, DataTableColumn
@@ -316,7 +317,9 @@ class Formset(hg.Iterator):
                 title=title,
                 primary_button=formsetelem.add_button(
                     buttontype="primary", container_css_selector=f"#{id} tbody"
-                ),
+                )
+                if can_add
+                else None,
             ),
             formsetelem.management_form,
         )
