@@ -12,6 +12,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   basxbread.contrib.customforms
    basxbread.contrib.document_templates
    basxbread.contrib.languages
    basxbread.contrib.modeledit

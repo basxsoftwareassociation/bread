@@ -5,6 +5,7 @@ import htmlgenerator as hg
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
@@ -32,6 +33,15 @@ Date field from object: field:reminder.date 2 weeks ago
 Multiple values van be separated by comma , e.g.
 changed, @reminder.date in 2 weeks
 """
+
+
+def validate_direct_attributes(value):
+    for v in value.split(","):
+        if not v.strip().isidentifier():
+            raise ValidationError(
+                _("%(v)s is not an allowed field"),
+                params={"v": v},
+            )
 
 
 class Action(models.Model):
@@ -150,6 +160,7 @@ class DataChangeTrigger(Trigger):
         help_text=_(
             "Only trigger when a certain field has changed. Use comma to add multiple fields."
         ),
+        validators=[validate_direct_attributes],
     )
 
     class Meta:
@@ -173,6 +184,7 @@ class DateFieldTrigger(Trigger):
         _("Field"),
         max_length=255,
         help_text=_("The field of the selected model which should trigger an action"),
+        validators=[validate_direct_attributes],
     )
     offset_type = models.CharField(
         _("Offset type"),

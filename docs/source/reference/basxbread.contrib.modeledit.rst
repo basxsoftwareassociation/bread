@@ -24,3 +24,11 @@ basxbread.contrib.modeledit.urls module
    :members:
    :undoc-members:
    :show-inheritance:
+
+basxbread.contrib.modeledit.views module
+----------------------------------------
+
+.. automodule:: basxbread.contrib.modeledit.views
+   :members:
+   :undoc-members:
+   :show-inheritance:

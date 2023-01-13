@@ -33,6 +33,14 @@ basxbread.utils.inheritancemanager module
    :undoc-members:
    :show-inheritance:
 
+basxbread.utils.jinja2 module
+-----------------------------
+
+.. automodule:: basxbread.utils.jinja2
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 basxbread.utils.links module
 ----------------------------
 
