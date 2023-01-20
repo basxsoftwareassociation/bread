@@ -141,6 +141,10 @@ registeritem(
         Link(
             reverse("preferences:global"),
             _("Global preferences"),
+            permissions=[
+                "dynamic_preferences.change_globalpreferencemodel",
+                "dynamic_preferences.view_globalpreferencemodel",
+            ],
         ),
         settingsgroup,
     )

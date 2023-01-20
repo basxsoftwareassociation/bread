@@ -4,17 +4,25 @@ from django.utils.translation import gettext_lazy as _
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.forms import GlobalPreferenceForm
 from dynamic_preferences.registries import global_preferences_registry
+from guardian.mixins import PermissionRequiredMixin
 
 from .. import layout
 from ..views import BaseView
 
 
 class PreferencesView(
-    SuccessMessageMixin, BaseView, preferences_views.PreferenceFormView
+    BaseView,
+    SuccessMessageMixin,
+    PermissionRequiredMixin,
+    preferences_views.PreferenceFormView,
 ):
     success_message = "Preferences updated"
     form_class = GlobalPreferenceForm
     registry = global_preferences_registry
+    permission_required = [
+        "dynamic_preferences.change_globalpreferencemodel",
+        "dynamic_preferences.view_globalpreferencemodel",
+    ]
 
     def get_layout(self):
         if self.section_name:
