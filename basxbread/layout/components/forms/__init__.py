@@ -13,7 +13,7 @@ from .fields import (
     FormField,
     FormFieldMarker,
 )
-from .helpers import HelpText
+from .helpers import *  # noqa
 
 
 class Form(hg.FORM):
