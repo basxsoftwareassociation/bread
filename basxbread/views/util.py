@@ -181,9 +181,13 @@ class CustomFormMixin:
                 elif isinstance(field, str) and field in inlineforms:
                     ret.append(
                         layout.forms.Formset.as_datatable(
-                            hg.C("form")[field].formset,
+                            hg.C(layout.forms.fields.DEFAULT_FORM_CONTEXTNAME)[
+                                field
+                            ].formset,
                             fieldname=field,
-                            title=hg.C("form")[field].label,
+                            title=hg.C(layout.forms.fields.DEFAULT_FORM_CONTEXTNAME)[
+                                field
+                            ].label,
                             fields=inlineforms[field],
                             formsetfield_kwargs={
                                 "extra": 1,

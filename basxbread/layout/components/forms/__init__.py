@@ -7,23 +7,27 @@ from django.utils.translation import gettext_lazy as _
 
 from ..button import Button
 from ..notification import InlineNotification
-from .fields import (
-    DEFAULT_FORM_CONTEXTNAME,
-    DEFAULT_FORMSET_CONTEXTNAME,
-    FormField,
-    FormFieldMarker,
-)
+from .fields import DEFAULT_FORM_CONTEXTNAME, FormField, FormFieldMarker
 from .helpers import *  # noqa
 
 
 class Form(hg.FORM):
-    def __init__(self, form, *children, use_csrf=True, standalone=True, **kwargs):
+    def __init__(
+        self,
+        form,
+        *children,
+        use_csrf=True,
+        standalone=True,
+        formname=None,
+        **kwargs,
+    ):
         """
         form: lazy evaluated value which should resolve to the form object
         children: any child elements, can be formfields or other
         use_csrf: add a CSRF input, but only for POST submission and standalone forms
         standalone: if true, will add a CSRF token and will render enclosing FORM-element
         """
+        formname = formname or DEFAULT_FORM_CONTEXTNAME
         self.standalone = standalone
         attributes = {"method": "POST", "autocomplete": "off"}
         attributes.update(kwargs)
@@ -79,7 +83,7 @@ class Form(hg.FORM):
                     ),
                 ),
                 *children,
-                **{DEFAULT_FORM_CONTEXTNAME: form},
+                **{formname: form, DEFAULT_FORM_CONTEXTNAME: form},
             ),
             **attributes,
         )
@@ -129,7 +133,7 @@ class Formset(hg.Iterator):
                     *[
                         FormField(
                             field,
-                            formname=DEFAULT_FORMSET_CONTEXTNAME,
+                            formname=DEFAULT_FORM_CONTEXTNAME,
                             no_wrapper=True,
                             no_label=True,
                             no_helptext=True,
@@ -144,27 +148,29 @@ class Formset(hg.Iterator):
 
         super().__init__(
             iterator=self.formset,
-            loopvariable=DEFAULT_FORMSET_CONTEXTNAME,
+            loopvariable="__current_formset_form",
             content=Form(
-                hg.C(DEFAULT_FORMSET_CONTEXTNAME), self.content, standalone=False
+                hg.C("__current_formset_form"), self.content, standalone=False
             ),
         )
 
     @property
     def management_form(self):
         # the management form is required for Django formsets
+        def lazy_form(context):
+            form = hg.resolve_lazy(self.formset, context).management_form
+            return Form(
+                form,
+                *[
+                    FormField(f, no_wrapper=True, no_label=True, no_helptext=True)
+                    for f in form.fields
+                ],
+                standalone=False,
+            )
+
         return hg.BaseElement(
             # management forms, for housekeeping of inline forms
-            hg.F(
-                lambda c: Form(
-                    hg.resolve_lazy(self.formset, c).management_form,
-                    *[
-                        FormField(f, no_wrapper=True, no_label=True, no_helptext=True)
-                        for f in hg.resolve_lazy(self.formset, c).management_form.fields
-                    ],
-                    standalone=False,
-                )
-            ),
+            hg.F(lazy_form),
             # Empty form as template for new entries. The script tag works very well
             # for this since we need a single, raw, unescaped HTML string
             hg.SCRIPT(
@@ -172,7 +178,7 @@ class Formset(hg.Iterator):
                     self.formset.empty_form,
                     hg.WithContext(
                         self.content,
-                        **{DEFAULT_FORMSET_CONTEXTNAME: self.formset.empty_form},
+                        **{DEFAULT_FORM_CONTEXTNAME: self.formset.empty_form},
                     ),
                     standalone=False,
                 ),
@@ -210,9 +216,9 @@ class Formset(hg.Iterator):
         return Button(label, **{**defaults, **hg.merge_html_attrs(click_arg, kwargs)})
 
     @staticmethod
-    def as_plain(*args, add_label=_("Add"), **kwargs):
+    def as_plain(formset, content, add_label=_("Add"), **kwargs):
         """Shortcut to render a complete formset with add-button"""
-        formset = Formset(*args, **kwargs)
+        formset = Formset(formset, content, **kwargs)
         id = hg.html_id(formset, prefix="formset-")
         return hg.BaseElement(
             hg.DIV(formset, id=id),
@@ -227,12 +233,13 @@ class Formset(hg.Iterator):
 
     @staticmethod
     def as_inline_datatable(
-        fieldname: str, fields: List, formname: str = "form", **kwargs
+        fieldname: str, fields: List, outerform_name: str = "form", **kwargs
     ):
+        """when used in view the outerform_name can be "form" as it is set in the context by the view for the top-level form"""
         return Formset.as_datatable(
-            formset=hg.C(f"{formname}.{fieldname}").formset,
+            formset=hg.C(outerform_name)[fieldname].formset,
             fields=fields,
-            title=hg.C(f"{formname}.{fieldname}").label,
+            title=hg.C(outerform_name)[fieldname].label,
             fieldname=fieldname,
             **kwargs,
         )
