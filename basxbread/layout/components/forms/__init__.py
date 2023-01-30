@@ -221,6 +221,16 @@ class Formset(hg.Iterator):
         formset = Formset(formset, content, **kwargs)
         id = hg.html_id(formset, prefix="formset-")
         return hg.BaseElement(
+            hg.If(
+                formset.non_form_errors(),
+                hg.Iterator(
+                    formset.non_form_errors(),
+                    "formerror",
+                    InlineNotification(
+                        _("Form error"), hg.C("formerror"), kind="error"
+                    ),
+                ),
+            ),
             hg.DIV(formset, id=id),
             formset.management_form,
             formset.add_button(
@@ -314,6 +324,16 @@ class Formset(hg.Iterator):
         id = hg.html_id(formsetelem, prefix="formset-")
 
         return hg.BaseElement(
+            hg.If(
+                formset.non_form_errors(),
+                hg.Iterator(
+                    formset.non_form_errors(),
+                    "formerror",
+                    InlineNotification(
+                        _("Form error"), hg.C("formerror"), kind="error"
+                    ),
+                ),
+            ),
             DataTable(
                 row_iterator=formsetelem,
                 rowvariable="",
