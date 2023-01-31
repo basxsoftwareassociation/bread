@@ -68,8 +68,14 @@ class ShellHeader(hg.HEADER):
 def logo():
     from django.contrib.staticfiles.storage import staticfiles_storage
 
+    src = hg.If(
+        hg.F(lambda c: c["global_preferences"].get("general__logo")),
+        hg.F(lambda c: c["global_preferences"].get("general__logo").url),
+        staticfiles_storage.url("logo.png"),
+    )
+
     return hg.IMG(
-        src=staticfiles_storage.url("logo.png"),
+        src=src,
         _class="bx--header__name--prefix",
         style="width: 1.7rem; height: 1.7rem; margin-right: 0.5rem",
     )

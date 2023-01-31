@@ -78,6 +78,9 @@ menu.registeritem(
         link=menu.Link(
             href=utils.ModelHref(models.CustomForm, "browse"),
             label=models.CustomForm._meta.verbose_name_plural,
+            permissions=[
+                f"{models.CustomForm._meta.app_label}.view_{models.CustomForm._meta.model_name}"
+            ],
         ),
     )
 )
@@ -88,6 +91,9 @@ menu.registeritem(
             href=utils.ModelHref(models.PDFImport, "browse"),
             label=models.PDFImport._meta.verbose_name_plural,
             iconname="document--import",
+            permissions=[
+                f"{models.PDFImport._meta.app_label}.view_{models.PDFImport._meta.model_name}"
+            ],
         ),
     )
 )

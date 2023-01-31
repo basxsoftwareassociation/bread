@@ -73,6 +73,7 @@ menu.registeritem(
             urls.reverse_model(Report, "browse"),
             label=Report._meta.verbose_name_plural,
             iconname="report",
+            permissions=[f"{Report._meta.app_label}.view_{Report._meta.model_name}"],
         ),
         menu.Group(Report._meta.verbose_name_plural, iconname="report"),
     )

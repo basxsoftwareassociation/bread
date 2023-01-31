@@ -48,6 +48,9 @@ menu.registeritem(
             href=urls.reverse_model(DocumentTemplate, "browse"),
             label=DocumentTemplate._meta.verbose_name_plural,
             iconname="document--blank",
+            permissions=[
+                f"{DocumentTemplate._meta.app_label}.view_{DocumentTemplate._meta.model_name}"
+            ],
         ),
         menu.Group(
             DocumentTemplate._meta.verbose_name_plural, iconname="document--blank"

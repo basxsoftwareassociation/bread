@@ -113,6 +113,9 @@ menu.registeritem(
         link=menu.Link(
             href=ModelHref(models.PublicURL, "browse"),
             label=models.PublicURL._meta.verbose_name_plural,
+            permissions=[
+                f"{models.PublicURL._meta.app_label}.view_{models.PublicURL._meta.model_name}"
+            ],
             iconname="link",
         ),
     )

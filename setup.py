@@ -41,6 +41,7 @@ setup(
         "djangoql",
         "requests",
         "django-filter",
+        "Pillow",
         # required for task scheduling
         "celery",
         "django-celery-results",

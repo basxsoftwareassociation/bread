@@ -37,6 +37,9 @@ def quickregister(
                 Link(
                     ModelHref(model, "browse"),
                     model._meta.verbose_name_plural.title(),
+                    permissions=[
+                        f"{model._meta.app_label}.view_{model._meta.model_name}"
+                    ],
                 ),
                 model._meta.app_label.title() if menugroup is None else menugroup,
             )
