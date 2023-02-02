@@ -5,11 +5,21 @@ try:
 except ImportError:
     from backports import zoneinfo  # type: ignore
 
+from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import activate, get_language
+
+URL_WHITELIST = (
+    "login",
+    "password_reset",
+    "password_reset_done",
+    "password_reset_confirm",
+    "password_reset_complete",
+    "publicurl",  # for basxbread.contrib.publicurls
+) + tuple(getattr(settings, "PUBLIC_URLS", []))
 
 
 class RequireAuthenticationMiddleware:
@@ -39,18 +49,10 @@ class RequireAuthenticationMiddleware:
         return self.get_response(request)
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        whitelisted_urlnames = (
-            "login",
-            "password_reset",
-            "password_reset_done",
-            "password_reset_confirm",
-            "password_reset_complete",
-            "publicurl",  # for basxbread.contrib.publicurls
-        )
 
         if request.user.is_authenticated:
             return None
-        if request.resolver_match.url_name in whitelisted_urlnames:
+        if request.resolver_match.url_name in URL_WHITELIST:
             return None
         if "Authorization" in request.headers:
             user = authenticate(request)

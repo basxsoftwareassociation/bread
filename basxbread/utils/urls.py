@@ -127,10 +127,7 @@ def generate_path(view, urlname=None, check_function=None, _DISABLE_WARNING=Fals
             stacklevel=2,
         )
 
-    def default_check(user):
-        return user.is_authenticated and user.is_active
-
-    check_function = check_function or default_check
+    check_function = check_function or (lambda user: True)
     pathcomponents = [_viewbasepath(view, urlname)]
     for param, paramtype in _get_view_params(view):
         if paramtype is not None:
