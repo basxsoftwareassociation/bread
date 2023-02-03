@@ -18,8 +18,9 @@ class TriggersConfig(AppConfig):
 
     def ready(self):
 
-        from basxbread.utils.celery import RepeatedTask
         from django.db.models.signals import post_save, pre_delete, pre_save
+
+        from basxbread.utils.celery import RepeatedTask
 
         pre_save.connect(get_old_object)
         post_save.connect(save_handler)
@@ -69,9 +70,9 @@ def datachange_trigger(model, instance, type):
                     for field in fields
                 ):
                     continue
-            if (
-                trigger.action
-                and (trigger.filter.queryset.filter(pk=instance.pk).exists() or type == "added")
+            if trigger.action and (
+                trigger.filter.queryset.filter(pk=instance.pk).exists()
+                or type == "added"
             ):
                 name = f"Trigger '{trigger}': Action '{trigger.action}'"
                 if type == "deleted":

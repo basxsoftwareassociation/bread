@@ -1,5 +1,6 @@
-from basxbread.utils import get_concrete_instance
 from celery import shared_task
+
+from basxbread.utils import get_concrete_instance
 
 
 @shared_task
