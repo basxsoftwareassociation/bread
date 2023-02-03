@@ -19,7 +19,6 @@ class ReadView(
     PermissionRequiredMixin,
     DjangoReadView,
 ):
-
     accept_global_perms = True
     fields = ["__all__"]
     urlparams = (("pk", int),)

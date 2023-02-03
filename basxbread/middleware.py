@@ -49,7 +49,6 @@ class RequireAuthenticationMiddleware:
         return self.get_response(request)
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-
         if request.user.is_authenticated:
             return None
         if request.resolver_match.url_name in URL_WHITELIST:

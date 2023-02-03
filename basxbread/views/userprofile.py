@@ -275,7 +275,6 @@ class EditLoginView(EditView):
 
     def get_form_class(self, *args, **kwargs):
         class EditLoginForm(super().get_form_class(*args, **kwargs)):
-
             current_password = forms.CharField(
                 label=_("Confirm changes with current password"),
                 strip=False,

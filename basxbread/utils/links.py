@@ -70,7 +70,6 @@ class ModelHref(LazyHref):
         return_to_current: bool = False,
         **kwargs
     ):
-
         # if this is an instance of a model, we can extract the pk URL argument directly
         # TODO: instance-specific routes which don't use the pk argument will fail
         if isinstance(model, hg.Lazy):

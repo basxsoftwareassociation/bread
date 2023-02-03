@@ -16,7 +16,12 @@ from .fields import FormsetField, GenericForeignKeyField
 
 # shortcut, actually this should always be used but class based views wanted the class separately
 def generate_form(request, model, layout, instance, **kwargs):
-    return modelform_factory(request, model=model, layout=layout, instance=instance,)(
+    return modelform_factory(
+        request,
+        model=model,
+        layout=layout,
+        instance=instance,
+    )(
         *([request.POST, request.FILES] if request.method == "POST" else []),
         instance=instance,
         **kwargs,

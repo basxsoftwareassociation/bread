@@ -10,6 +10,7 @@ def generate_wizard_form(wizardview, wizardtitle, steptitle, formlayout):
     title: Title of the current page
     steps: list of 2-tuples with (step_title, status) where status must be one of ["incomplete", "complete", "current"]
     """
+
     # needs to be rendered in view of type NamedUrlSessionWizardView in order to work correctly
     def go_back_url(context):
         url = reverse(

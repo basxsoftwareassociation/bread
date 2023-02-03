@@ -17,7 +17,6 @@ class TriggersConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
 
     def ready(self):
-
         from django.db.models.signals import post_save, pre_delete, pre_save
 
         from basxbread.utils.celery import RepeatedTask
@@ -92,7 +91,6 @@ def datachange_trigger(model, instance, type):
 
 
 def periodic_trigger():
-
     from .models import DateFieldTrigger
 
     print(

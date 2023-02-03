@@ -14,7 +14,6 @@ def quickregister(
     with_menuitem=True,
     **kwargs,
 ):
-
     from .. import menu
     from ..views import BrowseView
     from .links import Link, ModelHref

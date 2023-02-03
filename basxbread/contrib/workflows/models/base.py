@@ -256,7 +256,8 @@ def dot2svg(dot: str):
 
 def generate_workflowdiagram(model):  # noqa
     """Method which does the magic of converting a graph from simple dict format to
-    full fledged activity diagram and do quite a bit of verification. Requires an attribute ``WORKFLOW`` of type ``dict``"""
+    full fledged activity diagram and do quite a bit of verification. Requires an attribute ``WORKFLOW`` of type ``dict``
+    """
 
     def allnodes(graph):
         return set(sum((list(i[:2]) for i in graph), []))

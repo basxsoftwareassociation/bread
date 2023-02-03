@@ -4,7 +4,6 @@ from django.utils.translation import gettext as _
 
 
 class BasxBreadConfig(AppConfig):
-
     name = "basxbread"
     verbose_name = "basx BREAD Engine"
 

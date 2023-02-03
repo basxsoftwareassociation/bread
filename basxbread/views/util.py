@@ -20,7 +20,6 @@ C = layout.grid.Col
 
 
 def header():
-
     editbutton = layout.button.Button(
         _("Edit"),
         buttontype="ghost",
