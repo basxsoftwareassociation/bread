@@ -36,7 +36,6 @@ jobs:
         pip install --upgrade "${{ matrix.django-version }}"
         pip install --upgrade flake8 flake8-black pytest pytest-custom_exit_code black isort bandit safety mypy types-setuptools types-python-dateutil types-requests types-backports setuptools
         pip install --upgrade -e .[all]
-        mypy --install-types --non-interactive
 
     - name: Lint with flake8
       run: flake8 . 
@@ -57,4 +56,4 @@ jobs:
       run: ./manage.py test
 
     - name: Check types
-      run: mypy basxbread
+      run: mypy --install-types --non-interactive basxbread
