@@ -1,10 +1,10 @@
 import ast
+import inspect
+import re
 
-import astor
-import black
 from django import forms
 from django.core.exceptions import ValidationError
-from django.db.models import Field
+from django.db.models import Field, fields
 from django.utils.translation import gettext_lazy as _
 
 from basxbread.utils import get_all_subclasses
@@ -86,24 +86,70 @@ class ModelForm(forms.Form):
             "List of space separated fields that determine the default ordering for the objects of this model type"
         ),
         max_length=1024,
+        initial="[]",
+        required=False,
         strip=True,
         validators=[validate_literal, valid_ordering],
     )
+    order_with_respect_to = forms.CharField(
+        label=_("Order with respect to"),
+        help_text=_("Order with respect to foreign key field"),
+        max_length=1024,
+        required=False,
+        strip=True,
+        validators=[validate_literal],
+    )
+
+    def apply_changes(self, model):
+        filename = inspect.getfile(model)
+        with open(filename) as modelfile:
+            source = modelfile.read()
+            sourcelines = source.splitlines()
+            a = ast.parse(source, filename=filename)
+            for node in ast.walk(a):
+                if isinstance(node, ast.ClassDef) and node.name == model.__name__:
+                    classsource = sourcelines[node.lineno - 1][
+                        node.col_offset : node.end_col_offset
+                    ]
+                    print(
+                        re.sub(
+                            rf"class {model.__name__}\((.*)\):",
+                            rf"class {self.cleaned_data['name']}(\1)",
+                            classsource,
+                        )
+                    )
+
+
+def fieldtypename(fieldtype):
+    return f"{fieldtype.__module__}.{fieldtype.__qualname__}"
 
 
 def fieldtypes():
     return {
-        f"{fieldtype.__module__}.{fieldtype.__qualname__}": fieldtype
-        for fieldtype in get_all_subclasses(Field)
+        fieldtypename(fieldtype): fieldtype for fieldtype in get_all_subclasses(Field)
     }
 
 
 def typechoices():
-    return tuple(fieldtypes().items())
+    return tuple((value, type.__name__) for value, type in fieldtypes().items())
 
 
 def typecoerce(value):
-    return fieldtypes().get(value, None)
+    if isinstance(value, str):
+        return fieldtypes().get(value, None)
+    return value
+
+
+class DefaultField(forms.CharField):
+    def _coerce(self, value):
+        if isinstance(value, str):
+            if value == "":
+                return fields.NOT_PROVIDED
+        return value
+
+    def clean(self, value):
+        value = super().clean(value)
+        return self._coerce(value)
 
 
 class FieldForm(forms.Form):
@@ -163,7 +209,7 @@ class FieldForm(forms.Form):
         max_length=1024,
         required=False,
     )
-    default = forms.CharField(
+    default = DefaultField(
         label=_("Default"),
         help_text=_("Default value for this field, must be a Python literal"),
         required=False,
@@ -188,60 +234,36 @@ class FieldForm(forms.Form):
     # decimal_places: int (DecimalField)
     # upload_to: path (FileField)
 
-
-def serialize(ast_module):
-    return black.format_file_contents(
-        astor.to_source(ast_module), fast=True, mode=black.FileMode()
-    )
+    def apply_changes(self, model):
+        pass
 
 
-def field_ast2formdata(astfieldnode):
-    pass
+def model2formdata(model):
+    return {
+        "name": model.__name__,
+        "verbose_name": getattr(model._meta, "verbose_name"),
+        "verbose_name_plural": getattr(model._meta, "verbose_name_plural"),
+        "ordering": getattr(model._meta, "ordering") or "",
+        "order_with_respect_to": getattr(model._meta, "order_with_respect_to"),
+    }
 
 
-def is_variable_assignment(statement, name):
-    return (
-        isinstance(statement, ast.Assign)
-        and len(statement.targets) == 1
-        and statement.targets[0].id == name
-    )
+def field2formdata(field):
+    default = getattr(field, "default")
+    return {
+        "type": fieldtypename(type(field)),
+        "name": getattr(field, "name"),
+        "verbose_name": getattr(field, "verbose_name"),
+        "null": getattr(field, "null"),
+        "blank": getattr(field, "blank"),
+        "editable": getattr(field, "editable"),
+        "primary_key": getattr(field, "primary_key"),
+        "unique": getattr(field, "unique"),
+        "help_text": getattr(field, "help_text"),
+        "default": "" if default == fields.NOT_PROVIDED else default,
+        "choices": getattr(field, "choices"),
+    }
 
 
-def is_single_param_call(statement):
-    return (
-        isinstance(statement, ast.Call)
-        and len(statement.args) == 1
-        and isinstance(statement.args[0], ast.Constant)
-    )
-
-
-def model_ast2formdata(astclassnode):
-    modelname = astclassnode.name.lower()
-    data = {"name": astclassnode.name}
-    for statement in astclassnode.body:
-        if isinstance(statement, ast.ClassDef) and statement.name == "Meta":
-            for substatement in statement.body:
-                if is_variable_assignment(substatement, "verbose_name"):
-                    if is_single_param_call(substatement.value):
-                        data["verbose_name"] = substatement.value.args[0].value
-                    else:
-                        data["verbose_name"] = substatement.value.value
-                elif is_variable_assignment(substatement, "verbose_name_plural"):
-                    if is_single_param_call(substatement.value):
-                        data["verbose_name_plural"] = substatement.value.args[0].value
-                    else:
-                        data["verbose_name_plural"] = substatement.value.value
-                elif is_variable_assignment(substatement, "ordering"):
-                    data["ordering"] = astor.to_source(substatement.value).strip()
-
-    return modelname, data
-
-
-def parse(modelfilecontent):
-    ret = {}
-    module = ast.parse(modelfilecontent)
-    for statement in module.body:
-        if isinstance(statement, ast.ClassDef):
-            modelname, data = model_ast2formdata(statement)
-            ret[modelname] = data
-    return ret
+def parse():
+    return None
