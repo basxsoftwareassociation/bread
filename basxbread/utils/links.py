@@ -103,7 +103,12 @@ class Link(NamedTuple):
     iconname: Optional[str] = "fade"
     permissions: List[str] = []
     attributes: dict = {}
-    is_submit: bool = False
+    is_submit: bool = (
+        False  # will create a popup and convert the link to an HTTP-post request
+    )
+    formfields: dict = (
+        {}
+    )  # allows to specify hidden, prefilled formfields, if is_submit == True
     confirm_text: str = _("Are you sure?")  # only used when is_submit = True
 
     def has_permission(self, request, obj=None):

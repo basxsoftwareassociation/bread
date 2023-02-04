@@ -61,14 +61,16 @@ class Button(hg.BUTTON):
             **{**buttonargs, **link.attributes, **kwargs},
         )
         if link.is_submit:
-            return button.as_submit(link.href, confirm_text=link.confirm_text)
+            return button.as_submit(
+                link.href, formfields=link.formfields, confirm_text=link.confirm_text
+            )
         else:
             return button.as_href(link.href)
 
     def as_href(self, href):
         return hg.A(*self, **{**self.attributes, "href": href})
 
-    def as_submit(self, href, confirm_text=None, **kwargs):
+    def as_submit(self, href, formfields={}, confirm_text=None, **kwargs):
         from django.forms import Form as DjangoForm
 
         from ..utils import slugify
@@ -97,6 +99,10 @@ class Button(hg.BUTTON):
         return Form(
             DjangoForm(),
             newbutton,
+            *[
+                hg.INPUT(type="hidden", name=name, value=value)
+                for name, value in formfields.items()
+            ],
             confirm_dialog,
             action=href,
             **hg.merge_html_attrs(kwargs, {"style": "display: inline"}),

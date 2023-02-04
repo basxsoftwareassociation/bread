@@ -43,7 +43,11 @@ def auth_page(content, submitname, show_cancelbutton=False):
             style="margin: auto; width: 25rem",
             _class="bx--tile",
         ),
-        style="background-image: linear-gradient(#0F62FE, #0008C9); position: absolute; left: 0; top: 0; bottom: 0; right: 0; display: flex; flex-direction: column",
+        style=hg.If(
+            hg.C("request").user.is_authenticated,
+            None,
+            "background-image: linear-gradient(#0F62FE, #0008C9); position: absolute; left: 0; top: 0; bottom: 0; right: 0; display: flex; flex-direction: column",
+        ),
     )
 
 
@@ -157,7 +161,7 @@ class PasswordResetDoneView(BaseView, DjangoPasswordResetView):
                 ),
                 hg.FORM(action=reverse("login"), id="authform"),
             ),
-            _("Back to Login"),
+            _("Finish"),
         )
 
 

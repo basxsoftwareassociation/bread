@@ -1,9 +1,10 @@
 import django_celery_results.models
 from django.apps import apps
+from django.contrib.auth.models import Group, User
 from django.urls import include, path
 
 from .utils import autopath, default_model_paths
-from .views import administration, auth, userprofile
+from .views import administration, auth, userprofile, users
 from .views.globalpreferences import PreferencesView
 
 urlpatterns = [
@@ -84,6 +85,17 @@ urlpatterns = [
     *default_model_paths(
         django_celery_results.models.TaskResult,
         browseview=administration.TaskResultBrowseView,
+    ),
+    *default_model_paths(
+        User,
+        browseview=users.UserBrowseView,
+        editview=users.UserEditView,
+        readview=users.UserReadView,
+    ),
+    *default_model_paths(
+        Group,
+        browseview=users.GroupBrowseView,
+        editview=users.GroupEditView,
     ),
 ]
 

@@ -1,10 +1,11 @@
 import htmlgenerator as hg
+from django.contrib.auth.models import Group as DjangoGroup
+from django.contrib.auth.models import User
 from django.utils.functional import Promise
 from django.utils.translation import gettext_lazy as _
 
+from . import utils
 from .layout import DEVMODE_KEY
-from .utils import reverse
-from .utils.links import Link
 
 
 class Group:
@@ -52,9 +53,9 @@ class Group:
 
 class Item:
     def __init__(self, link, group, order=None):
-        if not isinstance(link, Link):
+        if not isinstance(link, utils.Link):
             raise ValueError(
-                f"argument 'link' must be of type {Link} but is of type {type(link)}"
+                f"argument 'link' must be of type {utils.Link} but is of type {type(link)}"
             )
         self.link = link
         self.group = group
@@ -126,11 +127,32 @@ def registeritem(item):
 main = Menu()
 
 settingsgroup = Group(_("Settings"), iconname="settings", order=100)
+usergroup = Group(_("Users"), iconname="user", order=101)
 
 registeritem(
     Item(
-        Link(
-            reverse("preferences:global"),
+        utils.Link(
+            utils.reverse_model(User, "browse"),
+            User._meta.verbose_name_plural,
+            permissions=[utils.permissionname(User, "view")],
+        ),
+        usergroup,
+    )
+)
+registeritem(
+    Item(
+        utils.Link(
+            utils.reverse_model(DjangoGroup, "browse"),
+            DjangoGroup._meta.verbose_name_plural,
+            permissions=[utils.permissionname(DjangoGroup, "view")],
+        ),
+        usergroup,
+    )
+)
+registeritem(
+    Item(
+        utils.Link(
+            utils.reverse("preferences:global"),
             _("Global preferences"),
             permissions=[
                 "dynamic_preferences.change_globalpreferencemodel",
@@ -145,20 +167,24 @@ registeritem(
 admingroup = DevGroup(_("Administration"), iconname="network--3--reference", order=500)
 registeritem(
     Item(
-        Link(
-            reverse("django_celery_results.taskresult.browse"),
+        utils.Link(
+            utils.reverse("django_celery_results.taskresult.browse"),
             _("Background Jobs"),
         ),
         admingroup,
     )
 )
 
-registeritem(SuperUserItem(Link(reverse("admin:index"), _("Django Admin")), admingroup))
+registeritem(
+    SuperUserItem(
+        utils.Link(utils.reverse("admin:index"), _("Django Admin")), admingroup
+    )
+)
 
 registeritem(
     SuperUserItem(
-        Link(
-            reverse("basxbreadadmin.maintenance"),
+        utils.Link(
+            utils.reverse("basxbreadadmin.maintenance"),
             _("Maintenance"),
         ),
         admingroup,
@@ -167,8 +193,8 @@ registeritem(
 
 registeritem(
     Item(
-        Link(
-            reverse("systeminformation"),
+        utils.Link(
+            utils.reverse("systeminformation"),
             _("System Information"),
         ),
         admingroup,
@@ -176,8 +202,8 @@ registeritem(
 )
 registeritem(
     Item(
-        Link(
-            reverse("basxbreadadmin.componentpreview"),
+        utils.Link(
+            utils.reverse("basxbreadadmin.componentpreview"),
             _("Component Preview"),
         ),
         admingroup,

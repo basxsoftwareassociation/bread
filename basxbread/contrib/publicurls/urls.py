@@ -12,7 +12,7 @@ from django.utils.translation import gettext as _
 from guardian.utils import get_anonymous_user
 
 from basxbread import layout, menu, views
-from basxbread.utils import ModelHref, aslayout, default_model_paths
+from basxbread.utils import Link, ModelHref, aslayout, default_model_paths
 
 from . import models
 
@@ -110,7 +110,7 @@ urlpatterns = [
 menu.registeritem(
     menu.Item(
         group=models.PublicURL._meta.verbose_name_plural,
-        link=menu.Link(
+        link=Link(
             href=ModelHref(models.PublicURL, "browse"),
             label=models.PublicURL._meta.verbose_name_plural,
             permissions=[

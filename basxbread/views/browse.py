@@ -408,6 +408,10 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
             iconname="delete",
             attributes=attributes,
             is_submit=True,
+            confirm_text=hg.format(
+                _("Are you sure you want to delete {}?"),
+                hg.SPAN(hg.STRONG(hg.C("row"))),
+            ),
         )
 
 

@@ -14,7 +14,7 @@ urlpatterns = [
             rowactions=(
                 breadviews.BrowseView.editlink(),
                 breadviews.BrowseView.deletelink(),
-                menu.Link(
+                utils.Link(
                     href=utils.ModelHref.from_object(
                         hg.C("row"), "use", return_to_current=False
                     ),
@@ -43,7 +43,7 @@ urlpatterns = [
             rowactions=(
                 breadviews.BrowseView.editlink(),
                 breadviews.BrowseView.deletelink(),
-                menu.Link(
+                utils.Link(
                     href=utils.ModelHref.from_object(
                         hg.C("row"), "use", return_to_current=False
                     ),
@@ -75,7 +75,7 @@ group = menu.Group(
 menu.registeritem(
     menu.Item(
         group=group,
-        link=menu.Link(
+        link=utils.Link(
             href=utils.ModelHref(models.CustomForm, "browse"),
             label=models.CustomForm._meta.verbose_name_plural,
             permissions=[
@@ -87,7 +87,7 @@ menu.registeritem(
 menu.registeritem(
     menu.Item(
         group=group,
-        link=menu.Link(
+        link=utils.Link(
             href=utils.ModelHref(models.PDFImport, "browse"),
             label=models.PDFImport._meta.verbose_name_plural,
             iconname="document--import",
