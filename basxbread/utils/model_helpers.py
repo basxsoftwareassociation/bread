@@ -36,9 +36,7 @@ def quickregister(
                 Link(
                     ModelHref(model, "browse"),
                     model._meta.verbose_name_plural.title(),
-                    permissions=[
-                        f"{model._meta.app_label}.view_{model._meta.model_name}"
-                    ],
+                    permissions=[permissionname(model, "view")],
                 ),
                 model._meta.app_label.title() if menugroup is None else menugroup,
             )
@@ -94,10 +92,8 @@ def has_permission(user, operation, instance):
             f"argument 'operation' must be one of {operations} but was {operation}"
         )
     return user.has_perm(
-        f"{instance._meta.app_label}.{operation}_{instance._meta.model_name}", instance
-    ) or user.has_perm(
-        f"{instance._meta.app_label}.{operation}_{instance._meta.model_name}"
-    )
+        permissionname(instance, operation), instance
+    ) or user.has_perm(permissionname(instance, operation))
 
 
 def filter_fieldlist(model, fieldlist, for_form=False):
@@ -220,3 +216,7 @@ def get_concrete_instance(instance):
             if child_object:
                 return get_concrete_instance(child_object)
     return instance
+
+
+def permissionname(model, name):
+    return f"{model._meta.app_label}.{name}_{model._meta.model_name}"

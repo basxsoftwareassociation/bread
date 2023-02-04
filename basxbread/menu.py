@@ -1,5 +1,4 @@
 import htmlgenerator as hg
-from django.apps import apps
 from django.utils.functional import Promise
 from django.utils.translation import gettext_lazy as _
 
@@ -45,14 +44,6 @@ class Group:
             all((request.user.has_perm(perm) for perm in self.permissions))
             and self.items
             and any((item.has_permission(request) for item in self.items))
-        )
-
-    def active_in_current_app(self, request):
-        return request.resolver_match.app_names and (
-            self.label
-            == apps.get_app_config(
-                request.resolver_match.app_names[0]
-            ).verbose_name.title()
         )
 
     def active(self, request):
