@@ -1,10 +1,13 @@
 import htmlgenerator as hg
+from django import forms
+from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import Group, User
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from basxbread import layout, utils
 
-from . import BrowseView, EditView, ReadView
+from . import AddView, BrowseView, EditView, ReadView
 
 
 class UserBrowseView(BrowseView):
@@ -67,6 +70,76 @@ class UserEditView(EditView):
         ),
         style="display: flex",
     )
+
+
+class UserAddView(AddView):
+    model = User
+    fields = [
+        "is_active",
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "is_superuser",
+        "groups",
+        "user_permissions",
+    ]
+
+    layout = hg.BaseElement(
+        hg.DIV(
+            hg.DIV(
+                layout.forms.FormField("is_active"),
+                layout.forms.FormField("username"),
+                layout.forms.FormField("first_name"),
+                layout.forms.FormField("last_name"),
+                layout.forms.FormField("email"),
+                layout.forms.FormField("is_superuser"),
+                style="width: 100%",
+            ),
+            hg.DIV(
+                layout.forms.FormField("groups"),
+                layout.forms.FormField("user_permissions"),
+                style="width: 100%",
+            ),
+            style="display: flex",
+        ),
+        hg.HR(),
+        layout.forms.FormField("send_password_reset"),
+    )
+
+    def get_form_class(self):
+        request = self.request
+
+        class CustomForm(super().get_form_class()):
+            send_password_reset = forms.BooleanField(
+                required=False,
+                label=_("Send password reset to user"),
+                help_text=_(
+                    "When checking this, a link will be sent to the user "
+                    "which allows him to set his password"
+                ),
+            )
+
+            def clean(self):
+                clean = super().clean()
+                if clean["send_password_reset"] and not clean["email"]:
+                    raise ValidationError(
+                        _(
+                            "Please enter the user's email address in order "
+                            "to send a password reset"
+                        )
+                    )
+                return clean
+
+            def save(self):
+                ret = super().save()
+                if self.cleaned_data["send_password_reset"]:
+                    f = PasswordResetForm({"email": self.cleaned_data["email"]})
+                    if f.is_valid():
+                        f.save(request=request, use_https=request.is_secure())
+                return ret
+
+        return CustomForm
 
 
 class UserReadView(ReadView):

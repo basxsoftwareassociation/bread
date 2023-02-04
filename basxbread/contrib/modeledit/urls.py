@@ -11,7 +11,7 @@ urlpatterns = [
 
 menu.registeritem(
     menu.Item(
-        menu.Link(
+        utils.Link(
             utils.reverse("modeledit.test"),
             _("Modeledit"),
         ),

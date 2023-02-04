@@ -91,6 +91,7 @@ urlpatterns = [
         browseview=users.UserBrowseView,
         editview=users.UserEditView,
         readview=users.UserReadView,
+        addview=users.UserAddView,
     ),
     *default_model_paths(
         Group,
