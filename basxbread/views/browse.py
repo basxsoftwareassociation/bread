@@ -350,7 +350,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
     def filter_queryset_by_selection(self, qs):
         selectedobjects = self.request.GET.getlist(self.objectids_urlparameter)
         if selectedobjects and "all" not in selectedobjects:
-            qs &= super().get_queryset().filter(pk__in=selectedobjects)
+            qs &= self.get_queryset().filter(pk__in=selectedobjects)
         return qs
 
     def get_filtered_queryset(self, qs):
