@@ -66,8 +66,8 @@ class DocumentTemplateEditView(views.EditView):
             ],
             formsetfield_kwargs={"extra": 1},
         )
-        fieldstable[0][1].insert(
-            0,
+        fieldstable[1][0].insert(
+            1,
             layout.button.Button(
                 _("Help"),
                 buttontype="ghost",

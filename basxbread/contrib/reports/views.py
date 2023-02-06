@@ -39,8 +39,8 @@ class EditView(views.EditView):
                 "can_order": True,
             },
         )
-        fieldstable[0][1].insert(
-            0,
+        fieldstable[1][0].insert(
+            1,
             layout.button.Button(
                 _("Help"), buttontype="ghost", **column_helper.openerattributes
             ),
