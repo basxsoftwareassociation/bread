@@ -1,5 +1,6 @@
 from django.utils import formats
 from django.utils.formats import localize
+from django.utils.timezone import now
 from jinja2.sandbox import SandboxedEnvironment
 
 
@@ -9,6 +10,7 @@ def jinja_env():
     environment.filters["localize"] = localize
     environment.filters["date"] = formats.date_format
     environment.filters["time"] = formats.time_format
+    environment.globals["now"] = now
     return environment
 
 
