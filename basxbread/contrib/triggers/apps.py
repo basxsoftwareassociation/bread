@@ -69,6 +69,9 @@ def datachange_trigger(model, instance, type):
                     for field in fields
                 ):
                     continue
+
+            # the filter for new objects will be run in the on_commit code, as
+            # we need the value to be inside the database
             if trigger.action and (
                 trigger.filter.queryset.filter(pk=instance.pk).exists()
                 or type == "added"
@@ -79,7 +82,7 @@ def datachange_trigger(model, instance, type):
                     # while the action is performed, we need to execute the action
                     # immediately and cannot do it in the background with celery
                     run_action(trigger.action.pk, instance._meta.label, instance.pk)
-                else:
+                elif type == "changed":
                     transaction.on_commit(
                         lambda action_pk=trigger.action.pk: run_action.apply_async(
                             (action_pk, instance._meta.label, instance.pk),
@@ -87,6 +90,23 @@ def datachange_trigger(model, instance, type):
                             task_id=f"{name}-{uuid()}",
                         )
                     )
+                elif type == "added":
+
+                    def post_commit(thetrigger=trigger, theinstance=instance):
+                        if thetrigger.filter.queryset.filter(
+                            pk=theinstance.pk
+                        ).exists():
+                            run_action.apply_async(
+                                (
+                                    thetrigger.action.pk,
+                                    theinstance._meta.label,
+                                    theinstance.pk,
+                                ),
+                                shadow=name,
+                                task_id=f"{name}-{uuid()}",
+                            )
+
+                    transaction.on_commit(post_commit)
     instance._old = None
 
 
