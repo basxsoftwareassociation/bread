@@ -11,6 +11,7 @@ from django.forms.formsets import DELETION_FIELD_NAME, ORDERING_FIELD_NAME
 from guardian.shortcuts import get_objects_for_user
 
 from .. import layout as _layout  # prevent name clashing
+from ..utils import permissionname
 from .fields import FormsetField, GenericForeignKeyField
 
 
@@ -256,7 +257,7 @@ def _formfield_callback_with_request(field, request, model, instance, cache_quer
     if hasattr(ret, "queryset"):
         ret.queryset = get_objects_for_user(
             request.user,
-            f"view_{ret.queryset.model.__name__.lower()}",
+            permissionname(ret.queryset.model, "view"),
             ret.queryset,
             with_superuser=True,
         )
