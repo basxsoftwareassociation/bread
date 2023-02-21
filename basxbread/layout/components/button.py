@@ -54,7 +54,7 @@ class Button(hg.BUTTON):
         buttonargs = {
             "icon": link.iconname,
             "notext": not link.label,
-            "disabled": hg.F(lambda c: not link.has_permission(c["request"])),
+            "disabled": hg.F(lambda c: not link.has_permission(c)),
         }
         button = Button(
             *([link.label] if link.label else []),

@@ -26,6 +26,7 @@ from ..utils import (
     filter_fieldlist,
     generate_excel,
     link_with_urlparameters,
+    permissionname,
     queryset_from_fields,
     resolve_modellookup,
     xlsxresponse,
@@ -396,6 +397,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
             label=_("Edit"),
             iconname="edit",
             attributes=attributes,
+            permissions=[hg.F(lambda c: permissionname(c["row"], "change"))],
         )
 
     @staticmethod
@@ -412,6 +414,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
                 _("Are you sure you want to delete {}?"),
                 hg.SPAN(hg.STRONG(hg.C("row"))),
             ),
+            permissions=[hg.F(lambda c: permissionname(c["row"], "delete"))],
         )
 
 

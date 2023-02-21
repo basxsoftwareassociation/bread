@@ -81,21 +81,6 @@ def resolve_modellookup(model, accessor):
     return attribchain
 
 
-def has_permission(user, operation, instance):
-    """
-    instance: can be model instance or a model
-    operation is one of ["view", "add", "change", "delete"] (django defaults)
-    """
-    operations = ["view", "add", "change", "delete"]
-    if operation not in operations:
-        raise RuntimeError(
-            f"argument 'operation' must be one of {operations} but was {operation}"
-        )
-    return user.has_perm(
-        permissionname(instance, operation), instance
-    ) or user.has_perm(permissionname(instance, operation))
-
-
 def filter_fieldlist(model, fieldlist, for_form=False):
     if fieldlist is None:
         fieldlist = ["__all__"]

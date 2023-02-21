@@ -40,11 +40,11 @@ class Group:
             return self.label
         return str(self._order) if self._order >= 0 else str(self._order)
 
-    def has_permission(self, request):
+    def has_permission(self, context):
         return (
-            all((request.user.has_perm(perm) for perm in self.permissions))
+            all((context["request"].user.has_perm(perm) for perm in self.permissions))
             and self.items
-            and any((item.has_permission(request) for item in self.items))
+            and any((item.has_permission(context) for item in self.items))
         )
 
     def active(self, request):
@@ -72,8 +72,8 @@ class Item:
             return self._order < 0
         return self._order < other._order
 
-    def has_permission(self, request):
-        return self.link.has_permission(request)
+    def has_permission(self, context):
+        return self.link.has_permission(context)
 
     def active(self, context):
         path = str(hg.resolve_lazy(self.link.href, context))
@@ -107,15 +107,15 @@ class Menu:
 
 
 class DevGroup(Group):
-    def has_permission(self, request):
-        return super().has_permission(request) and request.session.get(
+    def has_permission(self, context):
+        return super().has_permission(context) and context["request"].session.get(
             DEVMODE_KEY, False
         )
 
 
 class SuperUserItem(Item):
-    def has_permission(self, request):
-        return super().has_permission(request) and request.user.is_superuser
+    def has_permission(self, context):
+        return super().has_permission(context) and context["request"].user.is_superuser
 
 
 def registeritem(item):

@@ -5,9 +5,14 @@ from django.db import models
 from django.db.models.constants import LOOKUP_SEP
 from django.utils.translation import gettext_lazy as _
 
-from basxbread.utils import filter_fieldlist, resolve_modellookup
-from basxbread.utils.links import Link, ModelHref
-from basxbread.utils.urls import link_with_urlparameters
+from basxbread.utils import (
+    Link,
+    ModelHref,
+    filter_fieldlist,
+    link_with_urlparameters,
+    permissionname,
+    resolve_modellookup,
+)
 
 from ..utils import ObjectFieldLabel, ObjectFieldValue, aslink_attributes
 from .button import Button
@@ -353,9 +358,7 @@ event.stopPropagation()""",
                 Link(
                     href=ModelHref(model, "add"),
                     label=_("Add %s") % model._meta.verbose_name,
-                    permissions=[
-                        f"{model._meta.app_label}.add_{model._meta.model_name}"
-                    ],
+                    permissions=[permissionname(model, "add")],
                 ),
                 icon=Icon("add", size=20),
             )
@@ -416,6 +419,19 @@ event.stopPropagation()""",
 
             column_definitions.append(col)
 
+        from guardian.shortcuts import get_objects_for_user
+
+        def queryset_func(context):
+            orig_queryset = hg.resolve_lazy(queryset, context)
+            if orig_queryset.query.is_sliced:  # cannot filter sliced querysets
+                return orig_queryset
+            return get_objects_for_user(
+                context["request"].user,
+                permissionname(orig_queryset.model, "view"),
+                orig_queryset,
+                with_superuser=True,
+            )
+
         return DataTable(
             column_definitions
             + (
@@ -439,7 +455,7 @@ event.stopPropagation()""",
                 else []
             ),
             # querysets are cached, the call to all will make sure a new query is used in every request
-            hg.F(lambda c: hg.resolve_lazy(queryset, c)),
+            hg.F(queryset_func),
             **kwargs,
         ).with_toolbar(
             title,

@@ -30,7 +30,7 @@ class SideNav(hg.ASIDE):
                                 for i in sorted(
                                     hg.resolve_lazy(menu, c)._registry.values()
                                 )
-                                if i.has_permission(c["request"])
+                                if i.has_permission(c)
                             )
                         ),
                         "menugroup",
@@ -69,7 +69,7 @@ class SideNav(hg.ASIDE):
                                                     for i in sorted(
                                                         c["menugroup"].items
                                                     )
-                                                    if i.has_permission(c["request"])
+                                                    if i.has_permission(c)
                                                 )
                                             ),
                                             "menuitem",

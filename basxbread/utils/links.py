@@ -111,10 +111,11 @@ class Link(NamedTuple):
     )  # allows to specify hidden, prefilled formfields, if is_submit == True
     confirm_text: str = _("Are you sure?")  # only used when is_submit = True
 
-    def has_permission(self, request, obj=None):
-        return all(
-            [
-                request.user.has_perm(perm, obj) or request.user.has_perm(perm)
-                for perm in self.permissions
-            ]
-        )
+    def has_permission(self, context, obj=None):
+        for perm in self.permissions:
+            perm = hg.resolve_lazy(perm, context)
+            if not context["request"].user.has_perm(perm, obj) and not context[
+                "request"
+            ].user.has_perm(perm):
+                return False
+        return True
