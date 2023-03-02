@@ -115,6 +115,9 @@ class TextInput(BaseWidget):
         **attributes,
     ):
         inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = hg.merge_html_attrs(
+            inputelement_attrs, {"style": "padding-right: 2.5rem"}
+        )
         super().__init__(
             label,
             hg.DIV(
