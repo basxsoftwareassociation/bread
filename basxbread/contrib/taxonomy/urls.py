@@ -1,7 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 
 from basxbread import menu
-from basxbread.utils import Link, default_model_paths, reverse_model
+from basxbread.utils import Link, default_model_paths, permissionname, reverse_model
 from basxbread.views import AddView, DeleteView, EditView
 
 from .models import Term, Vocabulary
@@ -31,6 +31,7 @@ menu.registeritem(
         Link(
             reverse_model(Vocabulary, "browse"),
             label=_("Taxonomy"),
+            permissions=permissionname(Vocabulary, "view"),
         ),
         menu.settingsgroup,
     )
