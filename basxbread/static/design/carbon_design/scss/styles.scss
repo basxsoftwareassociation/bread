@@ -294,3 +294,7 @@ a.bx--header__name {
 .bx--data-table--selected td .bx--btn--ghost:hover {
     background-color: $hover-field;
 }
+
+.bx--text-input__field-wrapper.text-input-with-icon {
+    width: 120%;
+}
