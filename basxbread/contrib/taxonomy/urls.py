@@ -31,7 +31,7 @@ menu.registeritem(
         Link(
             reverse_model(Vocabulary, "browse"),
             label=_("Taxonomy"),
-            permissions=permissionname(Vocabulary, "view"),
+            permissions=[permissionname(Vocabulary, "view")],
         ),
         menu.settingsgroup,
     )
