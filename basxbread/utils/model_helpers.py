@@ -146,13 +146,15 @@ def get_sorted_modelfields(model):
 
 def _is_internal_field(model, field):
     """Filter generic foreign key, parent link of multi-table inheritance and id"""
-    from django.contrib.contenttypes.fields import GenericForeignKey
+    from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 
     exclude = {model._meta.pk.name}
     for f in model._meta.get_fields():
         if isinstance(f, GenericForeignKey):
             exclude.add(f.ct_field)
             exclude.add(f.fk_field)
+        elif isinstance(f, GenericRelation):
+            exclude.add(f.name)
     modelfield = {
         f.get_accessor_name() if hasattr(f, "get_accessor_name") else f.name: f
         for f in model._meta.get_fields()
