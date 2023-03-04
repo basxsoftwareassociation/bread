@@ -162,7 +162,7 @@ class CustomFormMixin:
                 else None,
                 for_form=True,
             )
-            declared_formfields = self.fields or direct_model_formfields
+            declared_formfields = list(self.fields or direct_model_formfields)
             inlineforms = {}
             for i, field in enumerate(list(declared_formfields)):
                 if isinstance(field, str) and "." in field:
