@@ -189,7 +189,6 @@ class CustomFormMixin:
                             },
                         )
                     )
-                    breakpoint()
                 else:
                     ret.append(field)
 
