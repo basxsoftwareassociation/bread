@@ -340,7 +340,7 @@ def maintainance_package_layout(request):
             continue
 
         # load the latest package info from the PyPI API
-        pkg_info_req = requests.get(PYPI_API.format(package_name))
+        pkg_info_req = requests.get(PYPI_API.format(package_name), timeout=10)
         if pkg_info_req.status_code == requests.codes.ok:
             newer_version = pkg_info_req.json()["info"]["version"]
 
