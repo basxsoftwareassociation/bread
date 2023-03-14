@@ -137,6 +137,12 @@ class Modal(hg.DIV):
         )
         return modal
 
+    def with_trigger(self, triggerelement):
+        triggerelement.attributes = hg.merge_html_attrs(
+            triggerelement.attributes, self.openerattributes
+        )
+        return hg.BaseElement(triggerelement, self)
+
 
 def modal_with_trigger(modal: Modal, triggerclass: type, *args, **kwargs):
     return hg.BaseElement(
