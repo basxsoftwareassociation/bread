@@ -39,7 +39,7 @@ class DocumentTemplate(models.Model):
     def context(self, object):
         context = {}
         for variable in self.variables.all():
-            context[variable.name] = hg.resolve_lookup(object, variable.value)
+            context[variable.name] = hg.resolve_lookup(object, variable.value) or ""
             if variable.template:
                 try:
                     context[variable.name] = utils.jinja_render(
@@ -83,6 +83,11 @@ class DocumentTemplate(models.Model):
             kwargs={"object_pk": obj.pk},
         )
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for missing in self.missing_variables()[0]:
+            self.variables.create(name=missing)
+
     def __str__(self):
         return self.name
 
@@ -99,7 +104,10 @@ class DocumentTemplateVariable(models.Model):
         _("Name"), max_length=255, help_text=_("Name to use in the template document")
     )
     value = models.CharField(
-        _("Value"), max_length=255, help_text=_("Path to the desired value (see help)")
+        _("Value"),
+        max_length=255,
+        help_text=_("Path to the desired value (see help)"),
+        blank=True,
     )
     template = models.TextField(
         _("Template"),
