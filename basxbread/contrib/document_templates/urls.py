@@ -1,14 +1,14 @@
+import shutil
+
 from django.utils.translation import gettext_lazy as _
 
 from basxbread import menu, views
-from basxbread.contrib.document_templates.models import DocumentTemplate
-from basxbread.contrib.document_templates.views import (
-    DocumentTemplateEditView,
-    generate_document,
-)
 from basxbread.utils import Link, autopath, default_model_paths, model_urlname, urls
 from basxbread.views.browse import delete
 from basxbread.views.edit import bulkcopy, generate_copyview
+
+from .models import DocumentTemplate
+from .views import DocumentTemplateEditView, generate_document, generate_document_pdf
 
 urlpatterns = [
     *default_model_paths(
@@ -41,6 +41,13 @@ urlpatterns = [
     ),
     autopath(generate_document, model_urlname(DocumentTemplate, "generate_document")),
 ]
+if shutil.which("libreoffice") is not None:
+    urlpatterns.append(
+        autopath(
+            generate_document_pdf,
+            model_urlname(DocumentTemplate, "generate_document_pdf"),
+        )
+    )
 
 menu.registeritem(
     menu.Item(

@@ -76,10 +76,10 @@ class DocumentTemplate(models.Model):
         both = intemplate | declared
         return declared ^ both, intemplate ^ both
 
-    def generate_document_url(self, obj: Union[hg.Lazy, models.Model]):
+    def generate_document_url(self, obj: Union[hg.Lazy, models.Model], pdf=False):
         return utils.ModelHref.from_object(
             self,
-            "generate_document",
+            "generate_document_pdf" if pdf else "generate_document",
             kwargs={"object_pk": obj.pk},
         )
 
