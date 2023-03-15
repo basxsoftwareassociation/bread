@@ -87,7 +87,7 @@ class DocumentTemplate(models.Model):
             for key, value in i.attrib.items():
                 if key.endswith("name"):
                     fonts.add(value)
-        return [f for f in fonts if f is not None]
+        return sorted([f for f in fonts if f is not None])
 
     def generate_document_url(self, obj: Union[hg.Lazy, models.Model], pdf=False):
         return utils.ModelHref.from_object(
