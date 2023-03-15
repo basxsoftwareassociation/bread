@@ -11,5 +11,7 @@ def systemfonts():
         .stdout.decode()
         .splitlines()
     ):
-        result.extend(fontentry.split(":", 1)[1].split(":", 1)[0].split(","))
+        result.extend(
+            [i.strip() for i in fontentry.split(":", 1)[1].split(":", 1)[0].split(",")]
+        )
     return result
