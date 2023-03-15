@@ -156,7 +156,7 @@ def generate_document_pdf(request, pk: int, object_pk: int):
                     tmpdir,
                 ],
                 shell=False,
-            )
+            )  # nosec
             outfilename = os.path.basename(file.name)[:-4] + "pdf"
         with open(os.path.join(tmpdir, outfilename), "rb") as pdffile:
             response = HttpResponse(pdffile, content_type="application/pdf")
