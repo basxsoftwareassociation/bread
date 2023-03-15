@@ -1,6 +1,6 @@
 import os
 import shutil
-import subprocess
+import subprocess  # nosec
 import tempfile
 
 import htmlgenerator as hg
@@ -154,7 +154,8 @@ def generate_document_pdf(request, pk: int, object_pk: int):
                     file.name,
                     "--outdir",
                     tmpdir,
-                ]
+                ],
+                shell=False,
             )
             outfilename = os.path.basename(file.name)[:-4] + "pdf"
         with open(os.path.join(tmpdir, outfilename), "rb") as pdffile:
