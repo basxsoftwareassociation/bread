@@ -10,6 +10,12 @@ from django.utils.dateformat import DateFormat
 from django.utils.timezone import now
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
+from docx.api import Document as DocumentOpener
+from docx.document import Document
+from docx.oxml.table import CT_Tbl
+from docx.oxml.text.paragraph import CT_P
+from docx.table import Table, _Cell
+from docx.text.paragraph import Paragraph
 from docxtpl import DocxTemplate
 from jinja2.sandbox import SandboxedEnvironment
 
@@ -76,6 +82,16 @@ class DocumentTemplate(models.Model):
         both = intemplate | declared
         return declared ^ both, intemplate ^ both
 
+    def all_used_fonts(self):
+        with self.file.open() as docfile:
+            document = DocumentOpener(docfile)
+            fonts = set()
+            for item in iter_block_items(document):
+                for run in item.runs:
+                    if run.font.name is not None:
+                        fonts.add(run.font.name)
+        return fonts
+
     def generate_document_url(self, obj: Union[hg.Lazy, models.Model], pdf=False):
         return utils.ModelHref.from_object(
             self,
@@ -119,3 +135,24 @@ class DocumentTemplateVariable(models.Model):
     class Meta:
         verbose_name = _("Variable")
         verbose_name_plural = _("Variables")
+
+
+def iter_block_items(parent):
+    if isinstance(parent, Document):
+        parent_elm = parent.element.body
+    elif isinstance(parent, _Cell):
+        parent_elm = parent._tc
+    else:
+        raise ValueError("something's not right")
+
+    for child in parent_elm.iterchildren():
+        if isinstance(child, CT_P):
+            yield Paragraph(child, parent)
+        elif isinstance(child, CT_Tbl):
+            # yeild paragraphs from table cells
+            # Note, it works for single level table (not nested tables)
+            table = Table(child, parent)
+            for row in table.rows:
+                for cell in row.cells:
+                    for paragraph in cell.paragraphs:
+                        yield paragraph

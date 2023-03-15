@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from basxbread import layout, utils, views
 
+from .fontfinder import systemfonts
 from .models import DocumentTemplate
 
 
@@ -35,6 +36,24 @@ class DocumentTemplateEditView(views.EditView):
                     _("Error in template: "),
                     str(e),
                     kind="error",
+                )
+            )
+        allsystemfonts = set(systemfonts())
+        documentfonts = set(self.object.all_used_fonts())
+        missingfonts = documentfonts.difference(allsystemfonts)
+        if missingfonts:
+            warnings.append(
+                layout.notification.InlineNotification(
+                    _("Missing fonts, used in the docx template: "),
+                    f"{', '.join(missingfonts)}",
+                    kind="warning",
+                )
+            )
+            warnings.append(
+                layout.notification.InlineNotification(
+                    _("Available fonts are:"),
+                    f"{', '.join(allsystemfonts)}",
+                    kind="info",
                 )
             )
         if only_template:
