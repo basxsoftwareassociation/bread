@@ -86,6 +86,9 @@ class DocumentTemplate(models.Model):
         with self.file.open() as docfile:
             document = DocumentOpener(docfile)
             fonts = set()
+            for style in document.styles:
+                if hasattr(style, "font") and style.font.name is not None:
+                    fonts.add(style.font.name)
             for item in iter_block_items(document):
                 for run in item.runs:
                     if run.font.name is not None:
