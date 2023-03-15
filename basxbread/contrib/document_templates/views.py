@@ -49,13 +49,6 @@ class DocumentTemplateEditView(views.EditView):
                     kind="warning",
                 )
             )
-            warnings.append(
-                layout.notification.InlineNotification(
-                    _("Available fonts are:"),
-                    f"{', '.join(allsystemfonts)}",
-                    kind="info",
-                )
-            )
         if only_template:
             warnings.append(
                 layout.notification.InlineNotification(
