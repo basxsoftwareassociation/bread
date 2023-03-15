@@ -44,7 +44,7 @@ class DocumentTemplateEditView(views.EditView):
         if missingfonts:
             warnings.append(
                 layout.notification.InlineNotification(
-                    _("Missing fonts, used in the docx template: "),
+                    _("Missing system fonts, used in the docx template: "),
                     f"{', '.join(missingfonts)}",
                     kind="warning",
                 )
