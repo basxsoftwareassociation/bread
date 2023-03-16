@@ -5355,8 +5355,7 @@ svg {
   background-color: #ffffff;
   border: none;
   border-bottom: 1px solid #8d8d8d;
-  transition: background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9), outline 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
-  resize: vertical; }
+  transition: background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9), outline 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
 
 .bx--text-area:focus,
 .bx--text-area:active {
@@ -17037,8 +17036,7 @@ svg {
   background-color: #f4f4f4;
   border: none;
   border-bottom: 1px solid #8d8d8d;
-  transition: background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9), outline 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
-  resize: vertical; }
+  transition: background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9), outline 70ms cubic-bezier(0.2, 0, 0.38, 0.9); }
 
 .theme-white .bx--text-area:focus,
 .theme-white .bx--text-area:active {
