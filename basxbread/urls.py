@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group, User
 from django.urls import include, path
 
 from .utils import autopath, default_model_paths
-from .views import administration, auth, userprofile, users
+from .views import administration, auth, datamodel, userprofile, users
 from .views.globalpreferences import PreferencesView
 
 urlpatterns = [
@@ -98,6 +98,7 @@ urlpatterns = [
         browseview=users.GroupBrowseView,
         editview=users.GroupEditView,
     ),
+    autopath(datamodel.datamodel, urlname="datamodel"),
 ]
 
 for app in apps.get_app_configs():

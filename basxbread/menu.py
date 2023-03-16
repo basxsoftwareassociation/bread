@@ -174,6 +174,15 @@ registeritem(
         admingroup,
     )
 )
+registeritem(
+    Item(
+        utils.Link(
+            utils.reverse("datamodel"),
+            _("Data model"),
+        ),
+        admingroup,
+    )
+)
 
 registeritem(
     SuperUserItem(
