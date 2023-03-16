@@ -5,6 +5,7 @@ from django.apps import AppConfig
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from kombu.utils.uuid import uuid
 
 from .tasks import run_action
@@ -15,6 +16,7 @@ TRIGGER_PERIOD = getattr(settings, "TRIGGER_PERIOD", datetime.timedelta(hours=1)
 class TriggersConfig(AppConfig):
     name = "basxbread.contrib.triggers"
     default_auto_field = "django.db.models.BigAutoField"
+    verbose_name = _("Triggered actions")
 
     def ready(self):
         from django.db.models.signals import post_save, pre_delete, pre_save

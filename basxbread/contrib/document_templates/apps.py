@@ -2,11 +2,13 @@ import shutil
 
 from django.apps import AppConfig
 from django.core.checks import Warning, register
+from django.utils.translation import gettext_lazy as _
 
 
 class DocumentTemplatesConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "basxbread.contrib.document_templates"
+    verbose_name = _("Document templates")
 
 
 @register()
