@@ -39,16 +39,24 @@ class DocumentTemplateEditView(views.EditView):
                 )
             )
         allsystemfonts = set(systemfonts())
-        documentfonts = set(self.object.all_used_fonts())
-        missingfonts = documentfonts.difference(allsystemfonts)
-        if missingfonts:
+        try:
+            documentfonts = set(self.object.all_used_fonts())
+            missingfonts = documentfonts.difference(allsystemfonts)
+            if missingfonts:
+                warnings.append(
+                    layout.notification.InlineNotification(
+                        _("Missing system fonts, used in the docx template: "),
+                        f"{', '.join(missingfonts)}",
+                        kind="warning",
+                    )
+                )
+        except Exception as e:
             warnings.append(
                 layout.notification.InlineNotification(
-                    _("Missing system fonts, used in the docx template: "),
-                    f"{', '.join(missingfonts)}",
-                    kind="warning",
+                    _("Unable to detect document fonts: "), e, kind="error"
                 )
             )
+
         if only_template:
             warnings.append(
                 layout.notification.InlineNotification(
@@ -157,7 +165,7 @@ def generate_document_pdf(request, pk: int, object_pk: int):
     with tempfile.TemporaryDirectory() as tmpdir:
         with tempfile.NamedTemporaryFile(mode="wb", suffix=".docx") as file:
             file.write(content.read())
-            subprocess.run(
+            subprocess.run(  # nosec
                 [
                     shutil.which("libreoffice")
                     or "false",  # statisfies mypy, since which may return None
@@ -168,7 +176,7 @@ def generate_document_pdf(request, pk: int, object_pk: int):
                     tmpdir,
                 ],
                 shell=False,
-            )  # nosec
+            )
             outfilename = os.path.basename(file.name)[:-4] + "pdf"
         with open(os.path.join(tmpdir, outfilename), "rb") as pdffile:
             response = HttpResponse(pdffile, content_type="application/pdf")

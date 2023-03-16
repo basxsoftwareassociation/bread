@@ -53,9 +53,15 @@ setup(
         "backports.zoneinfo; python_version < '3.9'",
     ],
     extras_require={
-        "all": ["docxtpl", "pymupdf", "hypothesis[django]", "django_dynamic_fixture"],
+        "all": [
+            "docxtpl",
+            "pymupdf",
+            "hypothesis[django]",
+            "django_dynamic_fixture",
+            "defusedxml",
+        ],
         "testing": ["hypothesis[django]", "django_dynamic_fixture"],
-        "document_templates": ["docxtpl"],
+        "document_templates": ["docxtpl", "defusedxml"],
         "pdf": ["pymupdf"],
     },
     packages=find_packages(),

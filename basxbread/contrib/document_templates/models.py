@@ -3,6 +3,7 @@ from typing import Union
 from zipfile import ZipFile
 
 import htmlgenerator as hg
+from defusedxml.ElementTree import parse
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -13,7 +14,6 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 from docxtpl import DocxTemplate
 from jinja2.sandbox import SandboxedEnvironment
-from lxml import etree
 
 from basxbread import utils
 
@@ -81,7 +81,7 @@ class DocumentTemplate(models.Model):
     def all_used_fonts(self):
         with ZipFile(self.file, "r") as myzip:
             with myzip.open("word/fontTable.xml") as f:
-                fontsxml = etree.parse(f)
+                fontsxml = parse(f)
         fonts = set()
         for i in fontsxml.findall("{*}font"):
             for key, value in i.attrib.items():

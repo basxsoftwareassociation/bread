@@ -5,9 +5,9 @@ import subprocess  # nosec
 def systemfonts():
     result = []
     for fontentry in (
-        subprocess.run(
+        subprocess.run(  # nosec
             [shutil.which("fc-list") or "false"], shell=False, capture_output=True
-        )  # nosec
+        )
         .stdout.decode()
         .splitlines()
     ):
