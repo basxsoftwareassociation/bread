@@ -67,7 +67,8 @@ def datachange_trigger(model, instance, type):
             if type == "changed" and trigger.field and instance._old is not None:
                 fields = [i.strip() for i in trigger.field.split(",")]
                 if all(  # if none of the fields has changed, skip this trigger
-                    getattr(instance, field) == getattr(instance._old, field)
+                    getattr(instance, field, None)
+                    == getattr(instance._old, field, None)
                     for field in fields
                 ):
                     continue
