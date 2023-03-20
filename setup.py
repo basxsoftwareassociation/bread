@@ -49,6 +49,7 @@ setup(
         "django-haystack",
         "celery-haystack-ng",
         "whoosh",
+        "jinja2",
         # TODO: review whether we can or should remove these
         "backports.zoneinfo; python_version < '3.9'",
     ],
