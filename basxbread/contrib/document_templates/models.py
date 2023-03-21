@@ -2,6 +2,7 @@ import io
 from typing import Union
 from zipfile import ZipFile
 
+import docx
 import htmlgenerator as hg
 from defusedxml.ElementTree import parse
 from django import forms
@@ -71,6 +72,8 @@ class DocumentTemplate(models.Model):
 
     def missing_variables(self):
         """Returns (variables_only_in_template, variables_only_in_definition)"""
+        if not self.file:
+            return set(), set()
         intemplate = DocxTemplate(
             self.file.path
         ).get_undeclared_template_variables() - set(self.default_context().keys())
@@ -98,8 +101,11 @@ class DocumentTemplate(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        for missing in self.missing_variables()[0]:
-            self.variables.create(name=missing)
+        try:
+            for missing in self.missing_variables()[0]:
+                self.variables.create(name=missing)
+        except docx.opc.exceptions.PackageNotFoundError:
+            pass
 
     def __str__(self):
         return self.name
