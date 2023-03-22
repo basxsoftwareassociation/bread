@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-13 04:03+0000\n"
+"POT-Creation-Date: 2023-03-22 04:21+0000\n"
 "PO-Revision-Date: 2022-07-26 04:17+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -18,6 +18,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.14-dev\n"
+
+#: basxbread/contrib/customforms/apps.py:8
+#: basxbread/contrib/customforms/models.py:30
+#, fuzzy
+#| msgid "Custom Filter"
+msgid "Custom forms"
+msgstr "ตัวกรองแบบกำหนดเอง"
 
 #: basxbread/contrib/customforms/models.py:10
 msgid "Title"
@@ -48,12 +55,6 @@ msgstr ""
 #, fuzzy
 #| msgid "Custom Filter"
 msgid "Custom form"
-msgstr "ตัวกรองแบบกำหนดเอง"
-
-#: basxbread/contrib/customforms/models.py:30
-#, fuzzy
-#| msgid "Custom Filter"
-msgid "Custom forms"
 msgstr "ตัวกรองแบบกำหนดเอง"
 
 #: basxbread/contrib/customforms/models.py:42
@@ -182,6 +183,12 @@ msgstr ""
 #| msgid "Report"
 msgid "Import"
 msgstr "รายงาน"
+
+#: basxbread/contrib/modeledit/apps.py:8
+#, fuzzy
+#| msgid "Model"
+msgid "Model editing (WIP)"
+msgstr "โมเดล"
 
 #: basxbread/contrib/modeledit/parser.py:17
 #, fuzzy, python-format
@@ -356,6 +363,11 @@ msgstr ""
 msgid "Add new field"
 msgstr "เพิ่ม %s"
 
+#: basxbread/contrib/publicurls/apps.py:8
+#: basxbread/contrib/publicurls/models.py:84
+msgid "Public URLs"
+msgstr "URL สาธารณะ"
+
 #: basxbread/contrib/publicurls/models.py:17
 #, fuzzy, python-format
 #| msgid "%(value)s is not a valid internal URL"
@@ -369,7 +381,7 @@ msgstr "%(value)s ไม่ใช่ URL ภายในที่ถูกต้
 
 #: basxbread/contrib/publicurls/models.py:33
 #: basxbread/contrib/reports/models.py:22
-#: basxbread/contrib/taxonomy/models.py:7
+#: basxbread/contrib/taxonomy/models.py:20
 msgid "Name"
 msgstr "ชื่อ"
 
@@ -428,10 +440,6 @@ msgstr "จะแสดงขึ้นหากส่งแบบฟอร์ม
 msgid "Public URL"
 msgstr "URL สาธารณะ"
 
-#: basxbread/contrib/publicurls/models.py:84
-msgid "Public URLs"
-msgstr "URL สาธารณะ"
-
 #: basxbread/contrib/publicurls/urls.py:34
 msgid "Link has expired"
 msgstr "ลิงค์หมดอายุ"
@@ -446,12 +454,16 @@ msgstr "สร้างสำเนา %s"
 msgid "Data has been submitted"
 msgstr "ส่งข้อมูลแล้ว"
 
-#: basxbread/contrib/publicurls/urls.py:64 basxbread/views/wizard.py:50
+#: basxbread/contrib/publicurls/urls.py:64 basxbread/views/wizard.py:51
 msgid "Back"
 msgstr "กลับ"
 
+#: basxbread/contrib/reports/apps.py:8 basxbread/contrib/reports/models.py:101
+msgid "Reports"
+msgstr "รายงาน"
+
 #: basxbread/contrib/reports/models.py:29
-#: basxbread/contrib/triggers/models.py:131 basxbread/views/browse.py:676
+#: basxbread/contrib/triggers/models.py:131 basxbread/views/browse.py:685
 msgid "Filter"
 msgstr "ค้นหา"
 
@@ -492,10 +504,6 @@ msgstr "ตั้งค่า.REPORT_FILTERS[\"%s\"] ไม่ได้ส่ง
 
 #: basxbread/contrib/reports/models.py:100
 msgid "Report"
-msgstr "รายงาน"
-
-#: basxbread/contrib/reports/models.py:101
-msgid "Reports"
 msgstr "รายงาน"
 
 #: basxbread/contrib/reports/models.py:111
@@ -540,25 +548,25 @@ msgid "Columns"
 msgstr "ช่อง"
 
 #: basxbread/contrib/reports/urls.py:23
-#: basxbread/layout/components/forms/__init__.py:329
-#: basxbread/views/browse.py:65 basxbread/views/browse.py:407
-#: basxbread/views/util.py:38
+#: basxbread/layout/components/forms/__init__.py:356
+#: basxbread/views/browse.py:66 basxbread/views/browse.py:411
+#: basxbread/views/util.py:37
 msgid "Delete"
 msgstr "ลบ"
 
-#: basxbread/contrib/reports/urls.py:27 basxbread/views/util.py:54
+#: basxbread/contrib/reports/urls.py:27 basxbread/views/util.py:53
 msgid "Copy"
 msgstr "คัดลอก"
 
-#: basxbread/contrib/reports/urls.py:38 basxbread/views/browse.py:396
-#: basxbread/views/read.py:60 basxbread/views/userprofile.py:99
-#: basxbread/views/userprofile.py:127 basxbread/views/userprofile.py:159
-#: basxbread/views/util.py:25
+#: basxbread/contrib/reports/urls.py:38 basxbread/views/browse.py:399
+#: basxbread/views/read.py:54 basxbread/views/userprofile.py:119
+#: basxbread/views/userprofile.py:147 basxbread/views/userprofile.py:179
+#: basxbread/views/util.py:24
 msgid "Edit"
 msgstr "แก้ไข"
 
 #: basxbread/contrib/reports/urls.py:43 basxbread/contrib/reports/views.py:156
-#: basxbread/views/browse.py:58
+#: basxbread/views/browse.py:59
 msgid "Excel"
 msgstr "Excel"
 
@@ -578,43 +586,78 @@ msgstr "โมเดลพื้นฐาน"
 msgid "Extended settings"
 msgstr "การตั้งค่าเพิ่มเติม"
 
-#: basxbread/contrib/taxonomy/models.py:9
-#: basxbread/contrib/taxonomy/models.py:27
-msgid "Slug"
+#: basxbread/contrib/taxonomy/apps.py:8
+msgid "Taxonomies"
 msgstr ""
 
-#: basxbread/contrib/taxonomy/models.py:11
-msgid "slug is human-readable, to make referencing easier"
-msgstr ""
-
-#: basxbread/contrib/taxonomy/models.py:19
-#: basxbread/contrib/taxonomy/models.py:25
-msgid "Vocabulary"
-msgstr ""
-
-#: basxbread/contrib/taxonomy/models.py:20
-msgid "Vocabularies"
-msgstr ""
-
-#: basxbread/contrib/taxonomy/models.py:26
-#: basxbread/contrib/taxonomy/models.py:38
-msgid "Term"
-msgstr ""
-
-#: basxbread/contrib/taxonomy/models.py:39
+#: basxbread/contrib/taxonomy/models.py:13
+#: basxbread/contrib/taxonomy/models.py:69
 msgid "Terms"
 msgstr ""
 
-#: basxbread/contrib/taxonomy/views.py:25
-#: basxbread/layout/components/datatable.py:355 basxbread/views/add.py:43
+#: basxbread/contrib/taxonomy/models.py:22
+#: basxbread/contrib/taxonomy/models.py:50
+msgid "Slug"
+msgstr ""
+
+#: basxbread/contrib/taxonomy/models.py:24
+msgid "slug is human-readable, to make referencing easier"
+msgstr ""
+
+#: basxbread/contrib/taxonomy/models.py:34
+#: basxbread/contrib/taxonomy/models.py:48
+msgid "Vocabulary"
+msgstr ""
+
+#: basxbread/contrib/taxonomy/models.py:35
+msgid "Vocabularies"
+msgstr ""
+
+#: basxbread/contrib/taxonomy/models.py:49
+#: basxbread/contrib/taxonomy/models.py:68
+msgid "Term"
+msgstr ""
+
+#: basxbread/contrib/taxonomy/models.py:52 basxbread/views/userprofile.py:192
+msgid "Disabled"
+msgstr "ปิดการใช้งาน"
+
+#: basxbread/contrib/taxonomy/models.py:54
+msgid "Do not allow this term to be selected"
+msgstr ""
+
+#: basxbread/contrib/taxonomy/urls.py:33
+msgid "Taxonomy"
+msgstr ""
+
+#: basxbread/contrib/taxonomy/views.py:33
+#, fuzzy
+#| msgid "Disabled"
+msgid "Hide disabled"
+msgstr "ปิดการใช้งาน"
+
+#: basxbread/contrib/taxonomy/views.py:33
+#, fuzzy
+#| msgid "Disabled"
+msgid "Show disabled"
+msgstr "ปิดการใช้งาน"
+
+#: basxbread/contrib/taxonomy/views.py:54
+#: basxbread/layout/components/datatable.py:360 basxbread/views/add.py:43
 #: basxbread/views/add.py:50
 #, python-format
 msgid "Add %s"
 msgstr "เพิ่ม %s"
 
-#: basxbread/contrib/taxonomy/views.py:46
+#: basxbread/contrib/taxonomy/views.py:79
 msgid "Terms of vocabulary"
 msgstr ""
+
+#: basxbread/contrib/triggers/apps.py:19
+#, fuzzy
+#| msgid "Aggregation"
+msgid "Triggered actions"
+msgstr "สูตรรวม"
 
 #: basxbread/contrib/triggers/models.py:42
 #, fuzzy, python-format
@@ -677,7 +720,7 @@ msgid "Deleted"
 msgstr "ลบ"
 
 #: basxbread/contrib/triggers/models.py:157
-#: basxbread/contrib/triggers/models.py:184 basxbread/views/read.py:41
+#: basxbread/contrib/triggers/models.py:184 basxbread/views/read.py:35
 msgid "Field"
 msgstr "ฟิลด์"
 
@@ -751,13 +794,13 @@ msgstr "ละเว้นปี"
 msgid "Check this in order to trigger every year"
 msgstr "ตรวจสอบสิ่งนี้เพื่อทริกเกอร์ทุกปี"
 
-#: basxbread/contrib/triggers/models.py:227
+#: basxbread/contrib/triggers/models.py:230
 #, fuzzy
 #| msgid "Date field trigger"
 msgid "Date trigger"
 msgstr "ทริกเกอร์ฟิลด์วันที่"
 
-#: basxbread/contrib/triggers/models.py:228
+#: basxbread/contrib/triggers/models.py:231
 #, fuzzy
 #| msgid "Date field triggers"
 msgid "Date triggers"
@@ -773,31 +816,29 @@ msgstr "คอลัมน์ที่มีอยู่"
 msgid "Show available fields"
 msgstr ""
 
-#: basxbread/contrib/workflows/views.py:20
-msgid "Workflow Diagram"
-msgstr "ผังแสดงลำดับขั้นตอนการทำงาน"
-
-#: basxbread/contrib/workflows/views.py:28
-msgid "Explain Workflow"
-msgstr "อธิบายผังขั้นตอนการทำงาน"
-
-#: basxbread/dynamic_preferences_registry.py:7
+#: basxbread/dynamic_preferences_registry.py:8
 msgid "General"
 msgstr "ทั่วไป"
 
-#: basxbread/dynamic_preferences_registry.py:15
-#: basxbread/views/userprofile.py:55 basxbread/views/userprofile.py:217
+#: basxbread/dynamic_preferences_registry.py:16
+#: basxbread/views/userprofile.py:58 basxbread/views/userprofile.py:237
 msgid "Preferred Language"
 msgstr "เลือกใช้ภาษา"
 
-#: basxbread/dynamic_preferences_registry.py:23
-#: basxbread/views/userprofile.py:75 basxbread/views/userprofile.py:225
+#: basxbread/dynamic_preferences_registry.py:24
+#: basxbread/views/userprofile.py:95 basxbread/views/userprofile.py:246
 msgid "Timezone"
 msgstr "เขตเวลา"
 
-#: basxbread/dynamic_preferences_registry.py:31
+#: basxbread/dynamic_preferences_registry.py:32
 msgid "Organization Name"
 msgstr "ชื่อองค์กร"
+
+#: basxbread/dynamic_preferences_registry.py:41
+#, fuzzy
+#| msgid "Logout"
+msgid "Logo"
+msgstr "ลงชื่อออก"
 
 #: basxbread/formatters.py:77
 msgid "File not found"
@@ -824,42 +865,42 @@ msgstr "นี่คือข้อความเซิร์ฟเวอร์
 msgid "Click to see ToastNotification in action"
 msgstr "คลิกเพื่อดูการทำงานของ ToastNotification"
 
-#: basxbread/layout/components/button.py:79
+#: basxbread/layout/components/button.py:81
 #: basxbread/layout/components/overflow_menu.py:20
 #, fuzzy
 #| msgid "Please login again"
 msgid "Please confirm"
 msgstr "กรุณาเข้าสู่ระบบอีกครั้ง"
 
-#: basxbread/layout/components/button.py:80 basxbread/utils/links.py:108
+#: basxbread/layout/components/button.py:82 basxbread/utils/links.py:112
 msgid "Are you sure?"
 msgstr ""
 
-#: basxbread/layout/components/button.py:82
+#: basxbread/layout/components/button.py:84
 #: basxbread/layout/components/overflow_menu.py:23
 msgid "No..."
 msgstr ""
 
-#: basxbread/layout/components/button.py:83
+#: basxbread/layout/components/button.py:85
 #: basxbread/layout/components/overflow_menu.py:24
 msgid "Yes!"
 msgstr ""
 
-#: basxbread/layout/components/button.py:116
+#: basxbread/layout/components/button.py:122
 msgid "Print"
 msgstr "พิมพ์"
 
-#: basxbread/layout/components/datatable.py:248
+#: basxbread/layout/components/datatable.py:253
 #: basxbread/layout/components/modal.py:105 basxbread/views/auth.py:30
-#: basxbread/views/browse.py:697
+#: basxbread/views/browse.py:706
 msgid "Cancel"
 msgstr "ยกเลิก"
 
-#: basxbread/layout/components/datatable.py:259
+#: basxbread/layout/components/datatable.py:264
 msgid " items selected"
 msgstr " เลือกรายการ"
 
-#: basxbread/layout/components/datatable.py:265
+#: basxbread/layout/components/datatable.py:270
 msgid "Table Action Bar"
 msgstr "แถบงาน"
 
@@ -885,42 +926,44 @@ msgstr " อ้างอิงถึง \"%s\""
 msgid " reference to multiple \"%s\""
 msgstr " อ้างอิงถึง \"%s\" หลายรายการ"
 
-#: basxbread/layout/components/forms/__init__.py:56
+#: basxbread/layout/components/forms/__init__.py:60
+#: basxbread/layout/components/forms/__init__.py:230
+#: basxbread/layout/components/forms/__init__.py:333
 msgid "Form error"
 msgstr "เกิดข้อผิดพลาด"
 
-#: basxbread/layout/components/forms/__init__.py:70
+#: basxbread/layout/components/forms/__init__.py:74
 msgid "Hidden field error: "
 msgstr "ข้อผิดพลาดของฟิลด์ที่ซ่อนอยู่: "
 
-#: basxbread/layout/components/forms/__init__.py:197
-#: basxbread/layout/components/forms/__init__.py:213
+#: basxbread/layout/components/forms/__init__.py:203
+#: basxbread/layout/components/forms/__init__.py:219
 msgid "Add"
 msgstr "เพิ่ม"
 
-#: basxbread/layout/components/forms/__init__.py:279
+#: basxbread/layout/components/forms/__init__.py:296
 msgid "Order"
 msgstr "คำสั่ง"
 
 #: basxbread/layout/components/forms/helpers.py:14
-#: basxbread/views/userprofile.py:96 basxbread/views/userprofile.py:124
-#: basxbread/views/userprofile.py:156
+#: basxbread/views/userprofile.py:116 basxbread/views/userprofile.py:144
+#: basxbread/views/userprofile.py:176
 msgid "Save"
 msgstr "บันทึก"
 
-#: basxbread/layout/components/forms/widgets.py:241
+#: basxbread/layout/components/forms/widgets.py:244
 msgid "Show password"
 msgstr "เห็นรหัสผ่าน"
 
-#: basxbread/layout/components/forms/widgets.py:901
+#: basxbread/layout/components/forms/widgets.py:904
 msgid "Select file"
 msgstr "เลือกไฟล์"
 
-#: basxbread/layout/components/forms/widgets.py:1115
+#: basxbread/layout/components/forms/widgets.py:1118
 msgid "From"
 msgstr ""
 
-#: basxbread/layout/components/forms/widgets.py:1115
+#: basxbread/layout/components/forms/widgets.py:1118
 msgid "To"
 msgstr ""
 
@@ -964,7 +1007,7 @@ msgid "Clear search input"
 msgstr "ล้างข้อมูลการค้นหา"
 
 #: basxbread/layout/components/shell_header.py:55
-#: basxbread/layout/components/shell_header.py:56 basxbread/views/auth.py:102
+#: basxbread/layout/components/shell_header.py:56 basxbread/views/auth.py:106
 msgid "Logout"
 msgstr "ลงชื่อออก"
 
@@ -984,35 +1027,45 @@ msgstr "ปิด"
 msgid "On"
 msgstr "เปิด"
 
-#: basxbread/menu.py:137
+#: basxbread/menu.py:129
 msgid "Settings"
 msgstr "ตั้งค่า"
 
-#: basxbread/menu.py:143 basxbread/views/globalpreferences.py:32
+#: basxbread/menu.py:130
+msgid "Users"
+msgstr ""
+
+#: basxbread/menu.py:156 basxbread/views/globalpreferences.py:40
 msgid "Global preferences"
 msgstr "การตั้งค่าส่วนกลาง"
 
-#: basxbread/menu.py:150
+#: basxbread/menu.py:167
 msgid "Administration"
 msgstr "บริหารระบบ"
 
-#: basxbread/menu.py:155
+#: basxbread/menu.py:172
 msgid "Background Jobs"
 msgstr "งานพื้นฐาน"
 
-#: basxbread/menu.py:161
+#: basxbread/menu.py:181
+#, fuzzy
+#| msgid "Base model"
+msgid "Data model"
+msgstr "โมเดลพื้นฐาน"
+
+#: basxbread/menu.py:189
 msgid "Django Admin"
 msgstr "Django แอดมิน"
 
-#: basxbread/menu.py:167 basxbread/views/administration.py:38
+#: basxbread/menu.py:197 basxbread/views/administration.py:38
 msgid "Maintenance"
 msgstr "บำรุงรักษา"
 
-#: basxbread/menu.py:177
+#: basxbread/menu.py:207
 msgid "System Information"
 msgstr "ข้อมูลระบบ"
 
-#: basxbread/menu.py:186
+#: basxbread/menu.py:216
 msgid "Component Preview"
 msgstr "การแสดงตัวอย่างส่วนประกอบ"
 
@@ -1098,189 +1151,192 @@ msgstr "ไอคอนเคล็ดลับเครื่องมือ"
 msgid "Interactive tooltip"
 msgstr "แบบโต้ตอบเคล็ดลับเครื่องมือ"
 
-#: basxbread/views/administration.py:302
-msgid "Date Created"
-msgstr "วันที่สร้าง"
-
-#: basxbread/views/administration.py:309
-msgid "Date Completed"
-msgstr "วันที่เสร็จเรียบร้อย"
-
-#: basxbread/views/administration.py:319
-msgid "Metadata"
-msgstr "ข้อมูลเมตา"
-
-#: basxbread/views/administration.py:336
+#: basxbread/views/administration.py:308
 msgid "unable to load"
 msgstr "ไม่สามารถโหลดได้"
 
-#: basxbread/views/administration.py:353
+#: basxbread/views/administration.py:325
 msgid "Package"
 msgstr "แพ็คเกจ"
 
-#: basxbread/views/administration.py:357
+#: basxbread/views/administration.py:329
 msgid "Current"
 msgstr "ปัจจุบัน"
 
-#: basxbread/views/administration.py:361
+#: basxbread/views/administration.py:333
 msgid "Latest"
 msgstr "ล่าสุด"
 
-#: basxbread/views/administration.py:382
+#: basxbread/views/administration.py:354
 msgid "Database optimization is currently only available for sqlite databases"
 msgstr ""
 
-#: basxbread/views/administration.py:408
+#: basxbread/views/administration.py:380
 #, python-format
 msgid "The database size has been minimized from %.2f kB to %.2f kB."
 msgstr "ขนาดฐานข้อมูลถูกย่อจาก %.2f kB เป็น %.2f kB"
 
-#: basxbread/views/administration.py:413
+#: basxbread/views/administration.py:385
 #, python-format
 msgid "Previous Size: %.2f kB"
 msgstr "ขนาดก่อนหน้า: %.2f kB"
 
-#: basxbread/views/administration.py:423
+#: basxbread/views/administration.py:395
 msgid "Optimize"
 msgstr "เพิ่มประสิทธิภาพ"
 
-#: basxbread/views/administration.py:428
+#: basxbread/views/administration.py:400
 #, python-format
 msgid "Current Size: %.2f kB"
 msgstr "ขนาดปัจจุบัน: %.2f kB"
 
-#: basxbread/views/administration.py:455
+#: basxbread/views/administration.py:427
 msgid "Rebuilt search index"
 msgstr "สร้างดัชนีการค้นหาใหม่"
 
-#: basxbread/views/administration.py:464
+#: basxbread/views/administration.py:436
 msgid "Rebuild"
 msgstr "สร้างใหม่"
 
-#: basxbread/views/administration.py:485
+#: basxbread/views/administration.py:457
 msgid "Log from the server"
 msgstr "บันทึกจากเซิร์ฟเวอร์"
 
-#: basxbread/views/administration.py:499
+#: basxbread/views/administration.py:471
 msgid "Restarted application server"
 msgstr ""
 
-#: basxbread/views/administration.py:508
+#: basxbread/views/administration.py:480
 msgid "Restart"
 msgstr ""
 
-#: basxbread/views/administration.py:537
+#: basxbread/views/administration.py:509
 msgid "System information"
 msgstr "ข้อมูลระบบ"
 
-#: basxbread/views/auth.py:59 basxbread/views/auth.py:85
-#: basxbread/views/userprofile.py:114 basxbread/views/userprofile.py:120
+#: basxbread/views/auth.py:63 basxbread/views/auth.py:89
+#: basxbread/views/userprofile.py:134 basxbread/views/userprofile.py:140
 msgid "Login"
 msgstr "ลงชื่อเข้าใช้"
 
-#: basxbread/views/auth.py:67 basxbread/views/auth.py:121
+#: basxbread/views/auth.py:71 basxbread/views/auth.py:125
 msgid "Lost password?"
 msgstr "ลืมรหัสผ่าน?"
 
-#: basxbread/views/auth.py:106
+#: basxbread/views/auth.py:110
 msgid "Logged out"
 msgstr "ออกจากระบบ"
 
-#: basxbread/views/auth.py:113 basxbread/views/auth.py:143
+#: basxbread/views/auth.py:117 basxbread/views/auth.py:147
 msgid "Password reset"
 msgstr "ตั้งค่ารหัสใหม่"
 
-#: basxbread/views/auth.py:134
+#: basxbread/views/auth.py:138
 msgid "Reset password"
 msgstr "ตั้งค่ารหัสผ่านใหม่"
 
-#: basxbread/views/auth.py:150
+#: basxbread/views/auth.py:154
 msgid "Email instructions sent"
 msgstr "ส่งคำแนะนำการใช้งานทางอีเมลแล้ว"
 
-#: basxbread/views/auth.py:152
+#: basxbread/views/auth.py:156
 msgid ""
 "If the email address provided exists, you will shortly receive an email "
 "containing recovery instructions."
 msgstr "หากคุณเคยให้ที่อยู่อีเมล ไว้ คุณจะได้รับอีเมลพร้อมคำแนะนำในการกู้คืนในไม่ช้า"
 
-#: basxbread/views/auth.py:160 basxbread/views/auth.py:203
-#: basxbread/views/auth.py:227
-msgid "Back to Login"
-msgstr "กลับเข้าสู่ระบบ"
+#: basxbread/views/auth.py:164
+msgid "Finish"
+msgstr ""
 
-#: basxbread/views/auth.py:168 basxbread/views/auth.py:188
-#: basxbread/views/auth.py:212
+#: basxbread/views/auth.py:172 basxbread/views/auth.py:192
+#: basxbread/views/auth.py:216
 msgid "Change password"
 msgstr "เปลี่ยนรหัสผ่าน"
 
-#: basxbread/views/auth.py:194
+#: basxbread/views/auth.py:198
 msgid "Invalid password reset link"
 msgstr "ลิงค์รีเซ็ตรหัสผ่านไม่ถูกต้อง"
 
-#: basxbread/views/auth.py:196
+#: basxbread/views/auth.py:200
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used. Please request a new password reset."
 msgstr "ลิงก์รีเซ็ตรหัสผ่านไม่ถูกต้อง อาจเป็นเพราะเคยมีการใช้งานแล้ว โปรดขอรีเซ็ตรหัสผ่านใหม่"
 
-#: basxbread/views/auth.py:219
+#: basxbread/views/auth.py:207 basxbread/views/auth.py:231
+msgid "Back to Login"
+msgstr "กลับเข้าสู่ระบบ"
+
+#: basxbread/views/auth.py:223
 msgid "Password successfully changed"
 msgstr "เปลี่ยนรหัสผ่านสำเร็จ"
 
-#: basxbread/views/auth.py:220
+#: basxbread/views/auth.py:224
 msgid "Please login again"
 msgstr "กรุณาเข้าสู่ระบบอีกครั้ง"
 
-#: basxbread/views/browse.py:286
+#: basxbread/views/browse.py:287
 #, python-format
 msgid "Action '%s' is not configured for this view"
 msgstr "ไม่ได้กำหนดค่าการกระทำ '%s' สำหรับมุมมองนี้"
 
-#: basxbread/views/browse.py:333
+#: basxbread/views/browse.py:334
 #, python-format
 msgid "Bad filter string '%s': '%s'"
 msgstr "สตริงตัวกรองไม่ถูกต้อง '%s': '%s'"
 
-#: basxbread/views/browse.py:459
+#: basxbread/views/browse.py:416 basxbread/views/util.py:45
+#, fuzzy
+#| msgid "Are you sure you want to delete"
+msgid "Are you sure you want to delete {}?"
+msgstr "คุณแน่ใจว่าต้องการลบข้อมูล"
+
+#: basxbread/views/browse.py:468
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่สามารถทำการลบได้%s"
 
-#: basxbread/views/browse.py:472
+#: basxbread/views/browse.py:481
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s ไม่ควรลบเพราะ: %s"
 
-#: basxbread/views/browse.py:477
+#: basxbread/views/browse.py:486
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "ลบ %(count)s %(modelname)s"
 
-#: basxbread/views/browse.py:501
+#: basxbread/views/browse.py:510
 #, python-format
 msgid "Your user has not the permissions to restore %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่มีสิทธิ์กู้คืน%s"
 
-#: basxbread/views/browse.py:510
+#: basxbread/views/browse.py:519
 #, python-format
 msgid "%s could not be restored: %s"
 msgstr "%s ไม่ควรกู้คืนเพราะ: %s"
 
-#: basxbread/views/browse.py:515
+#: basxbread/views/browse.py:524
 #, python-format
 msgid "Restored %(count)s %(modelname)s"
 msgstr "กู้คืน %(count)s %(modelname)s"
 
-#: basxbread/views/browse.py:703
+#: basxbread/views/browse.py:712
 msgid "Reset"
 msgstr ""
 
-#: basxbread/views/browse.py:710
+#: basxbread/views/browse.py:719
 #, fuzzy
 #| msgid "Filter"
 msgctxt "apply filter"
 msgid "Filter"
+msgstr "ค้นหา"
+
+#: basxbread/views/datamodel.py:156
+#, fuzzy
+#| msgid "Search"
+msgid "Search..."
 msgstr "ค้นหา"
 
 #: basxbread/views/delete.py:42
@@ -1353,97 +1409,134 @@ msgid ""
 "persists, please contact an administrator."
 msgstr "เกิดปัญหาขณะโหลดหน้าเว็บที่ %s<br>หากปัญหายังคงอยู่ โปรดติดต่อผู้ดูแลระบบ"
 
-#: basxbread/views/read.py:44
+#: basxbread/views/read.py:38
 msgid "Value"
 msgstr "ขนาด"
 
-#: basxbread/views/userprofile.py:35
+#: basxbread/views/userprofile.py:38
 msgid "Manage Profile"
 msgstr "จัดการบัญชีผู้ใช้"
 
-#: basxbread/views/userprofile.py:48 basxbread/views/userprofile.py:92
+#: basxbread/views/userprofile.py:51 basxbread/views/userprofile.py:112
 msgid "Personal Information"
 msgstr "ข้อมูลส่วนบุคคล"
 
-#: basxbread/views/userprofile.py:145 basxbread/views/userprofile.py:151
-msgid "Permissions"
-msgstr "กำหนดสิทธิ์การเข้าถึง"
-
-#: basxbread/views/userprofile.py:171
-msgid "Developer Mode"
-msgstr "โหมดสำหรับนักพัฒนา"
-
-#: basxbread/views/userprofile.py:172
-msgid "Disabled"
-msgstr "ปิดการใช้งาน"
-
-#: basxbread/views/userprofile.py:173
-msgid "Enabled"
-msgstr "เปิดใช้งาน"
-
-#: basxbread/views/userprofile.py:176
-msgid "Warning: This is a dangerous option!"
-msgstr "คำเตือน: นี่เป็นตัวเลือกที่อันตราย!"
-
-#: basxbread/views/userprofile.py:180
-msgid "Enable it only if you know what you are doing!"
-msgstr "เปิดใช้งานก็ต่อเมื่อคุณรู้ว่าคุณกำลังจะทำอะไร!"
-
-#: basxbread/views/userprofile.py:219
+#: basxbread/views/userprofile.py:78 basxbread/views/userprofile.py:239
 msgid "<from browser>"
 msgstr "<จากบราวเซอร์>"
 
-#: basxbread/views/userprofile.py:280
+#: basxbread/views/userprofile.py:165 basxbread/views/userprofile.py:171
+msgid "Permissions"
+msgstr "กำหนดสิทธิ์การเข้าถึง"
+
+#: basxbread/views/userprofile.py:191
+msgid "Developer Mode"
+msgstr "โหมดสำหรับนักพัฒนา"
+
+#: basxbread/views/userprofile.py:193
+msgid "Enabled"
+msgstr "เปิดใช้งาน"
+
+#: basxbread/views/userprofile.py:196
+msgid "Warning: This is a dangerous option!"
+msgstr "คำเตือน: นี่เป็นตัวเลือกที่อันตราย!"
+
+#: basxbread/views/userprofile.py:200
+msgid "Enable it only if you know what you are doing!"
+msgstr "เปิดใช้งานก็ต่อเมื่อคุณรู้ว่าคุณกำลังจะทำอะไร!"
+
+#: basxbread/views/userprofile.py:300
 msgid "Confirm changes with current password"
 msgstr "ยืนยันการเปลี่ยนแปลงด้วยรหัสผ่านปัจจุบัน"
 
-#: basxbread/views/userprofile.py:284
+#: basxbread/views/userprofile.py:304
 msgid "Please enter your current password to confirm these changes"
 msgstr "โปรดป้อนรหัสผ่านปัจจุบันของคุณเพื่อยืนยันการเปลี่ยนแปลง"
 
-#: basxbread/views/userprofile.py:293
+#: basxbread/views/userprofile.py:313
 msgid "Your current password was entered incorrectly. Please enter it again."
 msgstr "รหัสผ่านปัจจุบันของคุณไม่ถูกต้อง โปรดลองอีกครั้ง"
 
-#: basxbread/views/userprofile.py:348
+#: basxbread/views/userprofile.py:368
 msgid "Request reset"
 msgstr "คำขอตั้งค่าใหม่"
 
-#: basxbread/views/userprofile.py:379
+#: basxbread/views/userprofile.py:399
 msgid "Enabled developer mode"
 msgstr "เปิดใช้งานโหมดนักพัฒนา"
 
-#: basxbread/views/userprofile.py:381
+#: basxbread/views/userprofile.py:401
 msgid "Disabled developer mode"
 msgstr "ปิดใช้งานโหมดนักพัฒนา"
 
-#: basxbread/views/util.py:31
+#: basxbread/views/users.py:29
+#, fuzzy
+#| msgid "Password reset"
+msgid "Send password reset"
+msgstr "ตั้งค่ารหัสใหม่"
+
+#: basxbread/views/users.py:29
+msgid "User has no email"
+msgstr ""
+
+#: basxbread/views/users.py:36
+#, fuzzy
+#| msgid "Are you sure you want to delete"
+msgid "Are you sure you want to send a password reset email to {}?"
+msgstr "คุณแน่ใจว่าต้องการลบข้อมูล"
+
+#: basxbread/views/users.py:116
+#, fuzzy
+#| msgid "Invalid password reset link"
+msgid "Send password reset to user"
+msgstr "ลิงค์รีเซ็ตรหัสผ่านไม่ถูกต้อง"
+
+#: basxbread/views/users.py:118
+msgid ""
+"When checking this, a link will be sent to the user which allows him to set "
+"his password"
+msgstr ""
+
+#: basxbread/views/users.py:128
+msgid "Please enter the user's email address in order to send a password reset"
+msgstr ""
+
+#: basxbread/views/util.py:30
 msgid "Read"
 msgstr "อ่าน"
 
-#: basxbread/views/util.py:46
-#, fuzzy
-#| msgid "Are you sure you want to delete"
-msgid "Are you sure you want to delete {}?"
-msgstr "คุณแน่ใจว่าต้องการลบข้อมูล"
-
-#: basxbread/views/util.py:61
+#: basxbread/views/util.py:60
 #, fuzzy
 #| msgid "Are you sure you want to delete"
 msgid "Are you sure you want to copy {}?"
 msgstr "คุณแน่ใจว่าต้องการลบข้อมูล"
 
-#: basxbread/views/util.py:91
+#: basxbread/views/util.py:90
 msgid "Add {}"
 msgstr "เพิ่ม {}"
 
-#: basxbread/views/wizard.py:61
+#: basxbread/views/wizard.py:62
 msgid "Complete"
 msgstr "เรียบร้อย"
 
-#: basxbread/views/wizard.py:64
+#: basxbread/views/wizard.py:65
 msgid "Continue"
 msgstr "ต่อไป"
+
+#~ msgid "Workflow Diagram"
+#~ msgstr "ผังแสดงลำดับขั้นตอนการทำงาน"
+
+#~ msgid "Explain Workflow"
+#~ msgstr "อธิบายผังขั้นตอนการทำงาน"
+
+#~ msgid "Date Created"
+#~ msgstr "วันที่สร้าง"
+
+#~ msgid "Date Completed"
+#~ msgstr "วันที่เสร็จเรียบร้อย"
+
+#~ msgid "Metadata"
+#~ msgstr "ข้อมูลเมตา"
 
 #~ msgid "Sortingname"
 #~ msgstr "ชื่อการเรียงลำดับ"
@@ -1575,11 +1668,6 @@ msgstr "ต่อไป"
 #, fuzzy
 #~| msgid "Logout"
 #~ msgid "Logol"
-#~ msgstr "ลงชื่อออก"
-
-#, fuzzy
-#~| msgid "Logout"
-#~ msgid "Logo"
 #~ msgstr "ลงชื่อออก"
 
 #, fuzzy

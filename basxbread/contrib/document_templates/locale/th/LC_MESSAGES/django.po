@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-13 04:03+0000\n"
+"POT-Creation-Date: 2023-03-22 04:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,62 +18,66 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: basxbread/contrib/document_templates/models.py:20
-#: basxbread/contrib/document_templates/models.py:99
+#: basxbread/contrib/document_templates/apps.py:11
+msgid "Document templates"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:23
+#: basxbread/contrib/document_templates/models.py:123
 msgid "Name"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:24
+#: basxbread/contrib/document_templates/models.py:27
 msgid ""
 "Must be a *.docx file, use '{{ variable-name }}' to insert variables from "
 "below"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:28
+#: basxbread/contrib/document_templates/models.py:31
 msgid "Model"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:33
+#: basxbread/contrib/document_templates/models.py:36
 msgid "Filename template"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:90
+#: basxbread/contrib/document_templates/models.py:114
 msgid "Document Template"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:91
+#: basxbread/contrib/document_templates/models.py:115
 msgid "Document Templates"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:99
+#: basxbread/contrib/document_templates/models.py:123
 msgid "Name to use in the template document"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:102
+#: basxbread/contrib/document_templates/models.py:126
 msgid "Value"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:102
+#: basxbread/contrib/document_templates/models.py:128
 msgid "Path to the desired value (see help)"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:105
+#: basxbread/contrib/document_templates/models.py:132
 msgid "Template"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:107
+#: basxbread/contrib/document_templates/models.py:134
 msgid "Jinja template with 'value' in context"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:109
+#: basxbread/contrib/document_templates/models.py:136
 msgid "Raw value"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:112
+#: basxbread/contrib/document_templates/models.py:139
 msgid "Variable"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:113
+#: basxbread/contrib/document_templates/models.py:140
 msgid "Variables"
 msgstr ""
 
@@ -85,26 +89,34 @@ msgstr ""
 msgid "Copy"
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:15
+#: basxbread/contrib/document_templates/views.py:21
 msgid "Error"
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:20
+#: basxbread/contrib/document_templates/views.py:26
 msgid "Field explorer"
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:30
+#: basxbread/contrib/document_templates/views.py:36
 msgid "Error in template: "
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:38
+#: basxbread/contrib/document_templates/views.py:48
+msgid "Missing system fonts, used in the docx template: "
+msgstr ""
+
+#: basxbread/contrib/document_templates/views.py:56
+msgid "Unable to detect document fonts: "
+msgstr ""
+
+#: basxbread/contrib/document_templates/views.py:63
 msgid "Variables in document but not defined below: "
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:46
+#: basxbread/contrib/document_templates/views.py:71
 msgid "Variables defined below but not used in document: "
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:72
+#: basxbread/contrib/document_templates/views.py:97
 msgid "Help"
 msgstr ""
