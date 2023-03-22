@@ -284,45 +284,17 @@ def componentpreview(request):
 
 class TaskResultBrowseView(BrowseView):
     columns = [
-        DataTableColumn(
-            layout.ObjectFieldLabel("task_id", TaskResult),
-            hg.DIV(
-                hg.C("row.task_id"),
-            ),
-            "task_id",
-        ),
-        DataTableColumn(
-            layout.ObjectFieldLabel("task_name", TaskResult),
-            hg.DIV(
-                hg.C("row.task_name"),
-            ),
-            "task_name",
-        ),
-        DataTableColumn(
-            _("Date Created"),
-            hg.DIV(
-                hg.C("row.date_created"),
-            ),
-            "date_created",
-        ),
-        DataTableColumn(
-            _("Date Completed"),
-            hg.DIV(
-                hg.C("row.date_done"),
-            ),
-            "date_done",
-        ),
+        "task_id",
+        "task_name",
+        "date_created",
+        "date_done",
         "status",
-        "worker",
-        "content_type",
-        DataTableColumn(
-            _("Metadata"),
-            hg.DIV(
-                hg.C("row.meta"),
-            ),
-        ),
+        "task_args",
+        "task_kwargs",
+        "meta",
     ]
     rowclickaction = BrowseView.gen_rowclickaction("read")
+    rowactions = ()
     title = "Background Jobs"
 
 

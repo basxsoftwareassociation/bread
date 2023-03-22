@@ -13,12 +13,15 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect
 from django.utils.timezone import get_current_timezone
-from django.utils.translation import get_language, get_language_info
+from django.utils.translation import get_language
+from django.utils.translation import get_language_info as get_language_info_original
 from django.utils.translation import gettext_lazy as _
 
 from .. import layout
 from ..utils import reverse
 from . import EditView, ReadView
+
+get_language_info = hg.lazify(get_language_info_original)
 
 R = layout.grid.Row
 C = layout.grid.Col
@@ -58,14 +61,31 @@ class UserProfileView(ReadView):
                                     width=4,
                                 ),
                                 C(
-                                    hg.F(
-                                        lambda c: get_language_info(
-                                            c["request"].user.preferences.get(
-                                                "general__preferred_language"
+                                    hg.If(
+                                        hg.C(
+                                            "request.user.preferences.general__preferred_language"
+                                        ),
+                                        get_language_info(
+                                            hg.C(
+                                                "request.user.preferences.general__preferred_language"
                                             )
-                                            or get_language()
-                                        )["name_translated"]
-                                    )
+                                        )["name_translated"],
+                                        hg.BaseElement(
+                                            get_language_info(get_language())[
+                                                "name_translated"
+                                            ],
+                                            " ",
+                                            _("<from browser>"),
+                                        ),
+                                    ),
+                                    # hg.F(
+                                    # lambda c: get_language_info(
+                                    # c["request"].user.preferences.get(
+                                    # "general__preferred_language"
+                                    # )
+                                    # or get_language()
+                                    # )["name_translated"]
+                                    # ),
                                 ),
                                 style="margin-bottom: 2rem",
                             ),
@@ -218,8 +238,9 @@ class EditPersonalDataView(EditView):
                 required=False,
                 choices=[("", _("<from browser>"))]
                 + [(code, _(lang)) for code, lang in settings.LANGUAGES],
-                initial=self.request.user.preferences.get("general__preferred_language")
-                or get_language(),
+                initial=self.request.user.preferences.get(
+                    "general__preferred_language"
+                ),
             )
             timezone = forms.ChoiceField(
                 label=_("Timezone"),
