@@ -13,7 +13,6 @@ from django.contrib.auth.decorators import user_passes_test
 from django.core import management
 from django.db import connection
 from django.utils.translation import gettext_lazy as _
-from django_celery_results.models import TaskResult
 
 from .. import layout, utils
 from ..layout.components import tabs
