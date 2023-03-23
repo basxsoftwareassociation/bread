@@ -79,9 +79,9 @@ def order_queryset_by_urlparameter(qs, order):
         if order.endswith("__int"):
             order = order[: -len("__int")]
             qs = qs.order_by(
-                models.functions.Cast(fieldname, models.IntegerField()).desc()
+                models.functions.Cast(order[1:], models.IntegerField()).desc()
                 if order.startswith("-")
-                else models.functions.Cast(fieldname, models.IntegerField())
+                else models.functions.Cast(order, models.IntegerField())
             )
         else:
             try:
