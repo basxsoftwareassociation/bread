@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-22 04:21+0000\n"
-"PO-Revision-Date: 2022-07-26 04:17+0000\n"
+"PO-Revision-Date: 2023-03-23 10:36+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
 "th/>\n"
@@ -17,18 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14-dev\n"
+"X-Generator: Weblate 4.16.2-dev\n"
 
 #: basxbread/contrib/customforms/apps.py:8
 #: basxbread/contrib/customforms/models.py:30
-#, fuzzy
-#| msgid "Custom Filter"
 msgid "Custom forms"
-msgstr "ตัวกรองแบบกำหนดเอง"
+msgstr "กำหนดแบบฟอร์มด้วยตนเอง"
 
 #: basxbread/contrib/customforms/models.py:10
 msgid "Title"
-msgstr ""
+msgstr "หัวเรื่อง"
 
 #: basxbread/contrib/customforms/models.py:12
 #: basxbread/contrib/reports/models.py:24
@@ -38,10 +36,8 @@ msgid "Model"
 msgstr "โมเดล"
 
 #: basxbread/contrib/customforms/models.py:15
-#, fuzzy
-#| msgid "Fields"
 msgid "PK fields"
-msgstr "ฟิลด์"
+msgstr "PK ฟิลด์"
 
 #: basxbread/contrib/customforms/models.py:19
 msgid ""
@@ -49,98 +45,89 @@ msgid ""
 "this fields specifies the fields that are used to\n"
 "filter for the instance to update"
 msgstr ""
+"หากควรใช้แบบฟอร์มเพื่ออัปเดตรายการ\n"
+"ฟิลด์นี้ระบุฟิลด์ที่ใช้\n"
+"ตัวกรองสำหรับอินสแตนซ์ที่จะอัปเดต"
 
 #: basxbread/contrib/customforms/models.py:29
 #: basxbread/contrib/customforms/models.py:37
-#, fuzzy
-#| msgid "Custom Filter"
 msgid "Custom form"
-msgstr "ตัวกรองแบบกำหนดเอง"
+msgstr "กำหนดแบบฟอร์มด้วยตนเอง"
 
 #: basxbread/contrib/customforms/models.py:42
 #: basxbread/contrib/modeledit/parser.py:157
-#, fuzzy
-#| msgid "Field"
 msgid "Field name"
-msgstr "ฟิลด์"
+msgstr "ชื่อฟิลด์"
 
 #: basxbread/contrib/customforms/models.py:44
 msgid "See help for list of possible fiel name"
-msgstr ""
+msgstr "ดูวิธีใช้ เพื่อค้นหาชื่อฟิลด์ที่เป็นไปได้"
 
 #: basxbread/contrib/customforms/models.py:47
 msgid "Label"
-msgstr ""
+msgstr "ป้ายกำกับ"
 
 #: basxbread/contrib/customforms/models.py:49
 msgid "Only use to override default label"
-msgstr ""
+msgstr "ใช้เพื่อแทนที่ป้ายกำกับจากการตั้งค่าเริ่มต้นเท่านั้น"
 
 #: basxbread/contrib/customforms/models.py:53
 #: basxbread/contrib/modeledit/parser.py:207
-#, fuzzy
-#| msgid "Help"
 msgid "Help text"
-msgstr "ช่วยเหลือ"
+msgstr "ข้อความช่วยเหลือ"
 
 #: basxbread/contrib/customforms/models.py:54
 msgid "Only use to override default help text"
-msgstr ""
+msgstr "ใช้เพื่อแทนที่ข้อความช่วยเหลือจากค่าเริ่มต้นเท่านั้น"
 
 #: basxbread/contrib/customforms/models.py:63
-#, fuzzy
-#| msgid "Custom Filter"
 msgid "Custom form field"
-msgstr "ตัวกรองแบบกำหนดเอง"
+msgstr "กำหนดแบบฟอร์มด้วยตนเอง"
 
 #: basxbread/contrib/customforms/models.py:64
 msgid "Custom form fields"
-msgstr ""
+msgstr "กำหนดแบบฟอร์มด้วยตนเอง"
 
 #: basxbread/contrib/customforms/models.py:80
-#, fuzzy
-#| msgid "Has form"
 msgid "PDF form"
-msgstr "มีรูปแบบ"
+msgstr "แบบฟอร์มPDF"
 
 #: basxbread/contrib/customforms/models.py:89
 #, python-format
 msgid "PDF import for %s"
-msgstr ""
+msgstr "นำเข้าPDFเพื่อ%s"
 
 #: basxbread/contrib/customforms/models.py:92
 msgid "PDF import"
-msgstr ""
+msgstr "นำเข้า PDF"
 
 #: basxbread/contrib/customforms/models.py:93
 msgid "PDF imports"
-msgstr ""
+msgstr "ไฟล์ PDF ที่นำเข้า"
 
 #: basxbread/contrib/customforms/models.py:100
 msgid "PDF form field"
-msgstr ""
+msgstr "ฟิลด์แบบฟอร์ม PDF"
 
 #: basxbread/contrib/customforms/models.py:104
-#, fuzzy
-#| msgid "Field"
 msgid "PDF field name"
-msgstr "ฟิลด์"
+msgstr "ชื่อฟิลด์ PDF"
 
 #: basxbread/contrib/customforms/models.py:118
 msgid "PDF import field"
-msgstr ""
+msgstr "ฟิลด์นำเข้า PDF"
 
 #: basxbread/contrib/customforms/models.py:119
 msgid "PDF import fields"
-msgstr ""
+msgstr "ฟิลด์นำเข้า PDF"
 
 #: basxbread/contrib/customforms/urls.py:21
 msgid "Add form entry"
-msgstr ""
+msgstr "เพิ่มรายการแบบฟอร์ม"
 
 #: basxbread/contrib/customforms/urls.py:50
 msgid "Import new PDF"
-msgstr ""
+msgstr "ฯำเข้า PDF ใหม่"
 
 #: basxbread/contrib/customforms/views.py:33
 msgid "Error"
@@ -148,205 +135,190 @@ msgstr "เกิดข้อผิดพลาด"
 
 #: basxbread/contrib/customforms/views.py:34
 msgid "More than one instance was selected by the query elements"
-msgstr ""
+msgstr "องค์ประกอบแบบสอบถามที่มีตัวเลือกมากกว่า 1 กรณี"
 
 #: basxbread/contrib/customforms/views.py:37
 msgid "The following arguments were passed to the query:"
-msgstr ""
+msgstr "ข้อโต้แย้งต่อไปนี้ถูกส่งไปยังแบบสอบถาม:"
 
 #: basxbread/contrib/customforms/views.py:41
-#, fuzzy
-#| msgid "Field"
 msgid "Query field name"
-msgstr "ฟิลด์"
+msgstr "ชื่อฟิลด์แบบสอบถาม"
 
 #: basxbread/contrib/customforms/views.py:44
 msgid "Query field value"
-msgstr ""
+msgstr "ค่าเขตข้อมูลแบบสอบถาม"
 
 #: basxbread/contrib/customforms/views.py:48
-#, fuzzy
-#| msgid "Model"
 msgid "Model: "
-msgstr "โมเดล"
+msgstr "ตัวอย่างl: "
 
 #: basxbread/contrib/customforms/views.py:50
 msgid "Produced results (should only produce 1)"
-msgstr ""
+msgstr "ผลลัพท์ที่ได้(ควรมีเพียง1ผลลัพท์เท่านั้น)"
 
 #: basxbread/contrib/customforms/views.py:115
 msgid "Import filled out version of {}"
-msgstr ""
+msgstr "นำเข้าเวอร์ชันที่กรอกข้อมูลแล้วของ {}"
 
 #: basxbread/contrib/customforms/views.py:123
-#, fuzzy
-#| msgid "Report"
 msgid "Import"
-msgstr "รายงาน"
+msgstr "นำเข้า"
 
 #: basxbread/contrib/modeledit/apps.py:8
-#, fuzzy
-#| msgid "Model"
 msgid "Model editing (WIP)"
-msgstr "โมเดล"
+msgstr "การแก้ไขตัวอย่าง(WPI)"
 
 #: basxbread/contrib/modeledit/parser.py:17
-#, fuzzy, python-format
-#| msgid "%(value)s is not a valid internal URL"
+#, python-format
 msgid "%(value)s is not a list or tuple"
-msgstr "%(value)s ไม่ใช่ URL ภายในที่ถูกต้อง"
+msgstr "%(value)s ไม่ใช่รายการหรือทูเพิล"
 
 #: basxbread/contrib/modeledit/parser.py:22
 #, python-format
 msgid "%(value)s does not only contain 2-tuples"
-msgstr ""
+msgstr "%(value)s ไม่ได้มีเพียง2-ทูเพิล"
 
 #: basxbread/contrib/modeledit/parser.py:31
 #: basxbread/contrib/modeledit/parser.py:37
 #, python-format
 msgid "%(value)s does not only contain list of fields"
-msgstr ""
+msgstr "%(value)s ไม่ได้มีเฉพาะรายการฟิลด์เท่านั้น"
 
 #: basxbread/contrib/modeledit/parser.py:45
-#, fuzzy, python-format
-#| msgid "%(value)s is not a valid internal URL"
+#, python-format
 msgid "%(value)s is not a valid Python identifier"
-msgstr "%(value)s ไม่ใช่ URL ภายในที่ถูกต้อง"
+msgstr "%(value)s ไม่ใช่ตัวระบุ Python ที่ถูกต้อง"
 
 #: basxbread/contrib/modeledit/parser.py:54
-#, fuzzy, python-format
-#| msgid "%(value)s is not a valid internal URL"
+#, python-format
 msgid "%(value)s is not a valid Python literal"
-msgstr "%(value)s ไม่ใช่ URL ภายในที่ถูกต้อง"
+msgstr "%(value)s ไม่ใช่ตัวอักษร Python ที่ถูกต้อง"
 
 #: basxbread/contrib/modeledit/parser.py:60
-#, fuzzy
-#| msgid "Model"
 msgid "Model name"
-msgstr "โมเดล"
+msgstr "ชื่อโมเดล"
 
 #: basxbread/contrib/modeledit/parser.py:62
 msgid ""
 "Python identifier for the model (no spaces and special characters). Only "
 "used internally."
 msgstr ""
+"ตัวระบุ Python สำหรับโมเดล (ไม่มีช่องว่างและอักขระพิเศษ) ใช้ภายในเท่านั้น"
 
 #: basxbread/contrib/modeledit/parser.py:70
 #: basxbread/contrib/modeledit/parser.py:170
 msgid "Verbose name"
-msgstr ""
+msgstr "ชื่อละเอียด"
 
 #: basxbread/contrib/modeledit/parser.py:71
 msgid "Name that will be used as label for the model."
-msgstr ""
+msgstr "ชื่อที่จะใช้เป็นป้ายกำกับสำหรับโมเดล"
 
 #: basxbread/contrib/modeledit/parser.py:77
 msgid "Verbose name plural"
-msgstr ""
+msgstr "verbose ชื่อพหูพจน์"
 
 #: basxbread/contrib/modeledit/parser.py:78
 msgid "Name that will be used as label for the model in plural form."
-msgstr ""
+msgstr "ชื่อที่จะใช้เป็นป้ายกำกับสำหรับโมเดลในรูปแบบพหูพจน์"
 
 #: basxbread/contrib/modeledit/parser.py:84
-#, fuzzy
-#| msgid "Order"
 msgid "Ordering"
-msgstr "คำสั่ง"
+msgstr "การสั่งซื้อ"
 
 #: basxbread/contrib/modeledit/parser.py:86
 msgid ""
 "List of space separated fields that determine the default ordering for the "
 "objects of this model type"
 msgstr ""
+"รายการฟิลด์ที่คั่นด้วยช่องว่างที่กำหนดลำดับเริ่มต้นสำหรับออบเจกต์ของโมเดลประเ"
+"ภทนี้"
 
 #: basxbread/contrib/modeledit/parser.py:95
 msgid "Order with respect to"
-msgstr ""
+msgstr "สั่งพร้อมแสดงความนับถือถึง"
 
 #: basxbread/contrib/modeledit/parser.py:96
 msgid "Order with respect to foreign key field"
-msgstr ""
+msgstr " "
 
 #: basxbread/contrib/modeledit/parser.py:159
 msgid ""
 "Python identifier for the field (no spaces and special characters). Only "
 "used internally."
 msgstr ""
+"ตัวระบุ Python สำหรับฟิลด์ (ไม่มีช่องว่างและอักขระพิเศษ) ใช้ภายในเท่านั้น"
 
 #: basxbread/contrib/modeledit/parser.py:171
 msgid "Name that will be used as label for the field."
-msgstr ""
+msgstr "ชื่อที่จะใช้เป็นป้ายกำกับสำหรับฟิลด์"
 
 #: basxbread/contrib/modeledit/parser.py:177
 msgid "Null"
-msgstr ""
+msgstr "โมฆะ"
 
 #: basxbread/contrib/modeledit/parser.py:178
 msgid "Allo this field to be null (not same as empty string)"
-msgstr ""
+msgstr "Allo ฟิลด์นี้เป็นโมฆะ(ไม่เหมือนกับสตริงว่าง)"
 
 #: basxbread/contrib/modeledit/parser.py:183
 msgid "Blank"
-msgstr ""
+msgstr "ว่าง"
 
 #: basxbread/contrib/modeledit/parser.py:184
 msgid "Do not require this field to be filled out on forms"
-msgstr ""
+msgstr "ไม่ต้องกรอกฟิลด์นี้ในแบบฟอร์ม"
 
 #: basxbread/contrib/modeledit/parser.py:189
-#, fuzzy
-#| msgid "Edit"
 msgid "Editable"
-msgstr "แก้ไข"
+msgstr "แก้ไขได้"
 
 #: basxbread/contrib/modeledit/parser.py:190
 msgid "Allow this field to be edited via forms"
-msgstr ""
+msgstr "อนุญาตให้แก้ไขฟิลด์นี้ผ่านแบบฟอร์ม"
 
 #: basxbread/contrib/modeledit/parser.py:195
 msgid "Primary key"
-msgstr ""
+msgstr "คีย์หลัก"
 
 #: basxbread/contrib/modeledit/parser.py:196
 msgid "Make this field the primary key"
-msgstr ""
+msgstr "ทำให้ฟิลด์นี้เป็นคีย์หลัก"
 
 #: basxbread/contrib/modeledit/parser.py:201
 msgid "Unique"
-msgstr ""
+msgstr "มีเอกลักษณ์"
 
 #: basxbread/contrib/modeledit/parser.py:202
 msgid "Ensure this field is unique over all instances of the model"
-msgstr ""
+msgstr "ตรวจสอบให้แน่ใจว่าฟิลด์นี้ไม่ซ้ำกันในทุกอินสแตนซ์ของโมเดล"
 
 #: basxbread/contrib/modeledit/parser.py:208
 msgid "Additional text to be displayed with the field"
-msgstr ""
+msgstr "ข้อความเพิ่มเติมที่จะแสดงพร้อมกับฟิลด์"
 
 #: basxbread/contrib/modeledit/parser.py:213
 msgid "Default"
-msgstr ""
+msgstr "ค่าเริ่มต้น"
 
 #: basxbread/contrib/modeledit/parser.py:214
 msgid "Default value for this field, must be a Python literal"
-msgstr ""
+msgstr "ค่าเริ่มต้นสำหรับฟิลด์นี้ ต้องเป็นตัวอักษร Python"
 
 #: basxbread/contrib/modeledit/parser.py:220
 msgid "Choices"
-msgstr ""
+msgstr "ตัวเลือก"
 
 #: basxbread/contrib/modeledit/parser.py:222
 msgid ""
 "Iterable of 2-tuples with (value, label) literals, generates a select input"
-msgstr ""
+msgstr "ทำซ้ำได้ 2 ทูเพิลด้วยตัวอักษร (ค่า, ป้ายกำกับ) สร้างอินพุตที่เลือก"
 
 #: basxbread/contrib/modeledit/urls.py:16
 #: basxbread/contrib/modeledit/urls.py:18
-#, fuzzy
-#| msgid "Model"
 msgid "Modeledit"
-msgstr "โมเดล"
+msgstr "แก้ไขโมเดล"
 
 #: basxbread/contrib/modeledit/views.py:136
 #: basxbread/layout/components/fieldexplorer.py:31
@@ -355,13 +327,11 @@ msgstr "ฟิลด์"
 
 #: basxbread/contrib/modeledit/views.py:147
 msgid "<New field>"
-msgstr ""
+msgstr "<ฟิลด์หม่>"
 
 #: basxbread/contrib/modeledit/views.py:160
-#, fuzzy
-#| msgid "Add %s"
 msgid "Add new field"
-msgstr "เพิ่ม %s"
+msgstr "เพิ่มฟิลด์ใหม่"
 
 #: basxbread/contrib/publicurls/apps.py:8
 #: basxbread/contrib/publicurls/models.py:84
@@ -369,10 +339,9 @@ msgid "Public URLs"
 msgstr "URL สาธารณะ"
 
 #: basxbread/contrib/publicurls/models.py:17
-#, fuzzy, python-format
-#| msgid "%(value)s is not a valid internal URL"
+#, python-format
 msgid "%(value)s is not a valid regex"
-msgstr "%(value)s ไม่ใช่ URL ภายในที่ถูกต้อง"
+msgstr "%(value)s ไม่ใช่ regex ที่ถูกต้อง"
 
 #: basxbread/contrib/publicurls/models.py:27
 #, python-format
@@ -412,7 +381,7 @@ msgstr "มีรูปแบบ"
 
 #: basxbread/contrib/publicurls/models.py:45
 msgid "Create new entry from response"
-msgstr ""
+msgstr "สร้างรายการใหม่จากการตอบกลับ"
 
 #: basxbread/contrib/publicurls/models.py:49
 msgid ""
@@ -421,6 +390,10 @@ msgid ""
 "will automatically be created which allows the user to access the newly "
 "created and redirecte-to resource."
 msgstr ""
+"หากมีการตั้งค่า 'มีแบบฟอร์ม' และการตอบสนองเป็นการเปลี่ยนเส้นทาง URL "
+"การเปลี่ยนเส้นทางจะถูกตรวจสอบกับฟิลด์นี้ (เป็น regex) หากตรงกัน รายการ URL "
+"สาธารณะใหม่จะถูกสร้างขึ้นโดยอัตโนมัติ ซึ่งอนุญาตให้ผู้ใช้เข้าถึงทรัพยากรที่สร"
+"้างขึ้นใหม่และเปลี่ยนเส้นทางไปยังทรัพยากร"
 
 #: basxbread/contrib/publicurls/models.py:54
 msgid "Thank-you text"
@@ -445,10 +418,9 @@ msgid "Link has expired"
 msgstr "ลิงค์หมดอายุ"
 
 #: basxbread/contrib/publicurls/urls.py:57
-#, fuzzy, python-format
-#| msgid "Created copy %s"
+#, python-format
 msgid "Created from %s"
-msgstr "สร้างสำเนา %s"
+msgstr "สร้างจาก %s"
 
 #: basxbread/contrib/publicurls/urls.py:62
 msgid "Data has been submitted"
@@ -520,24 +492,24 @@ msgid "Value expression (see 'Help')"
 msgstr "การแสดงออกของค่า (ดู 'ความช่วยเหลือ')"
 
 #: basxbread/contrib/reports/models.py:116
-#, fuzzy
-#| msgid "Error in template: "
 msgid "Cell template"
-msgstr "ข้อผิดพลาดในเทมเพลต "
+msgstr "เทมเพลตเซลล์"
 
 #: basxbread/contrib/reports/models.py:120
 msgid ""
 "Optional Jinja template with 'value' in context.<br/>Use e.g. {{ value }} to "
 "simply display the value."
 msgstr ""
+"เทมเพลต Jinja เสริมที่มี 'value' ในบริบท<br/>ใช้ เช่น {{ value }} "
+"เพื่อแสดงค่า"
 
 #: basxbread/contrib/reports/models.py:125
 msgid "Allow HTML"
-msgstr ""
+msgstr "อนุญาต HTML"
 
 #: basxbread/contrib/reports/models.py:128
 msgid "Do render HTML code inside the cell template instead of escaping it."
-msgstr ""
+msgstr "แสดงโค้ด HTML ภายในเทมเพลตเซลล์แทนการ Escape"
 
 #: basxbread/contrib/reports/models.py:133
 msgid "Aggregation"
@@ -545,7 +517,7 @@ msgstr "สูตรรวม"
 
 #: basxbread/contrib/reports/models.py:158
 msgid "Columns"
-msgstr "ช่อง"
+msgstr "คอลัมน์"
 
 #: basxbread/contrib/reports/urls.py:23
 #: basxbread/layout/components/forms/__init__.py:356
@@ -588,35 +560,35 @@ msgstr "การตั้งค่าเพิ่มเติม"
 
 #: basxbread/contrib/taxonomy/apps.py:8
 msgid "Taxonomies"
-msgstr ""
+msgstr "อนุกรมวิธาน"
 
 #: basxbread/contrib/taxonomy/models.py:13
 #: basxbread/contrib/taxonomy/models.py:69
 msgid "Terms"
-msgstr ""
+msgstr "ข้อกำหนด"
 
 #: basxbread/contrib/taxonomy/models.py:22
 #: basxbread/contrib/taxonomy/models.py:50
 msgid "Slug"
-msgstr ""
+msgstr "Slug"
 
 #: basxbread/contrib/taxonomy/models.py:24
 msgid "slug is human-readable, to make referencing easier"
-msgstr ""
+msgstr "slugสามารถอ่านได้โดยมนุษย์ เพื่อให้การอ้างอิงง่ายขึ้น"
 
 #: basxbread/contrib/taxonomy/models.py:34
 #: basxbread/contrib/taxonomy/models.py:48
 msgid "Vocabulary"
-msgstr ""
+msgstr "คำศัพท์"
 
 #: basxbread/contrib/taxonomy/models.py:35
 msgid "Vocabularies"
-msgstr ""
+msgstr "คำศัพท์"
 
 #: basxbread/contrib/taxonomy/models.py:49
 #: basxbread/contrib/taxonomy/models.py:68
 msgid "Term"
-msgstr ""
+msgstr "ข้อกำหนด"
 
 #: basxbread/contrib/taxonomy/models.py:52 basxbread/views/userprofile.py:192
 msgid "Disabled"
@@ -624,23 +596,19 @@ msgstr "ปิดการใช้งาน"
 
 #: basxbread/contrib/taxonomy/models.py:54
 msgid "Do not allow this term to be selected"
-msgstr ""
+msgstr "ไม่อนุญาตให้เลือกข้อกำหนดนี้"
 
 #: basxbread/contrib/taxonomy/urls.py:33
 msgid "Taxonomy"
-msgstr ""
+msgstr "อนุกรมวิธาน"
 
 #: basxbread/contrib/taxonomy/views.py:33
-#, fuzzy
-#| msgid "Disabled"
 msgid "Hide disabled"
-msgstr "ปิดการใช้งาน"
+msgstr "ซ่อนปิดการใช้งาน"
 
 #: basxbread/contrib/taxonomy/views.py:33
-#, fuzzy
-#| msgid "Disabled"
 msgid "Show disabled"
-msgstr "ปิดการใช้งาน"
+msgstr "แสดงปิดการใช้งาน"
 
 #: basxbread/contrib/taxonomy/views.py:54
 #: basxbread/layout/components/datatable.py:360 basxbread/views/add.py:43
@@ -651,19 +619,16 @@ msgstr "เพิ่ม %s"
 
 #: basxbread/contrib/taxonomy/views.py:79
 msgid "Terms of vocabulary"
-msgstr ""
+msgstr "ศัพท์บัญญัติ"
 
 #: basxbread/contrib/triggers/apps.py:19
-#, fuzzy
-#| msgid "Aggregation"
 msgid "Triggered actions"
-msgstr "สูตรรวม"
+msgstr "การกระทำที่ทริกเกอร์"
 
 #: basxbread/contrib/triggers/models.py:42
-#, fuzzy, python-format
-#| msgid "%(value)s is not a valid internal URL"
+#, python-format
 msgid "%(v)s is not an allowed field"
-msgstr "%(value)s ไม่ใช่ URL ภายในที่ถูกต้อง"
+msgstr "%(v)s ไม่ใช่ฟิลด์ที่อนุญาต"
 
 #: basxbread/contrib/triggers/models.py:66
 msgid "Action"
@@ -692,16 +657,12 @@ msgid "Message"
 msgstr "ข้อความ"
 
 #: basxbread/contrib/triggers/models.py:117
-#, fuzzy
-#| msgid "Send Email Action"
 msgid "Send email action"
-msgstr "ดำเนินการส่งอีเมล์"
+msgstr "ส่งอีเมลการดำเนินการ"
 
 #: basxbread/contrib/triggers/models.py:118
-#, fuzzy
-#| msgid "Send Email Actions"
 msgid "Send email actions"
-msgstr "ดำเนินการส่งอีเมล์"
+msgstr "ส่งอีเมลการดำเนินการ"
 
 #: basxbread/contrib/triggers/models.py:149
 msgid "Type"
@@ -729,22 +690,20 @@ msgid ""
 "Only trigger when a certain field has changed. Use comma to add multiple "
 "fields."
 msgstr ""
+"ทริกเกอร์เฉพาะเมื่อฟิลด์ใดฟิลด์หนึ่งมีการเปลี่ยนแปลง "
+"ใช้เครื่องหมายจุลภาคเพื่อเพิ่มหลายช่อง"
 
 #: basxbread/contrib/triggers/models.py:167
-#, fuzzy
-#| msgid "Data change trigger"
 msgid "Change trigger"
-msgstr "ทริกเกอร์เปลี่ยนแปลงข้อมูล"
+msgstr "เปลี่ยนแปลงทริกเกอร์"
 
 #: basxbread/contrib/triggers/models.py:168
-#, fuzzy
-#| msgid "Data change triggers"
 msgid "Change triggers"
-msgstr "ทริกเกอร์เปลี่ยนแปลงข้อมูล"
+msgstr "เปลี่ยนแปลงทริกเกอร์"
 
 #: basxbread/contrib/triggers/models.py:172
 msgid "Seconds"
-msgstr ""
+msgstr "วินาที"
 
 #: basxbread/contrib/triggers/models.py:173
 msgid "Minutes"
@@ -795,26 +754,20 @@ msgid "Check this in order to trigger every year"
 msgstr "ตรวจสอบสิ่งนี้เพื่อทริกเกอร์ทุกปี"
 
 #: basxbread/contrib/triggers/models.py:230
-#, fuzzy
-#| msgid "Date field trigger"
 msgid "Date trigger"
-msgstr "ทริกเกอร์ฟิลด์วันที่"
+msgstr "ทริกเกอร์วันที่"
 
 #: basxbread/contrib/triggers/models.py:231
-#, fuzzy
-#| msgid "Date field triggers"
 msgid "Date triggers"
-msgstr "ทริกเกอร์ฟิลด์วันที่"
+msgstr "ทริกเกอร์ วันที่"
 
 #: basxbread/contrib/triggers/urls.py:30
-#, fuzzy
-#| msgid "Available columns"
 msgid "Available fields"
-msgstr "คอลัมน์ที่มีอยู่"
+msgstr "ฟิลด์ที่มีอยู่"
 
 #: basxbread/contrib/triggers/urls.py:36
 msgid "Show available fields"
-msgstr ""
+msgstr "แสดงฟิลด์ที่มีอยู่"
 
 #: basxbread/dynamic_preferences_registry.py:8
 msgid "General"
@@ -835,10 +788,8 @@ msgid "Organization Name"
 msgstr "ชื่อองค์กร"
 
 #: basxbread/dynamic_preferences_registry.py:41
-#, fuzzy
-#| msgid "Logout"
 msgid "Logo"
-msgstr "ลงชื่อออก"
+msgstr "โลโก้"
 
 #: basxbread/formatters.py:77
 msgid "File not found"
@@ -867,24 +818,22 @@ msgstr "คลิกเพื่อดูการทำงานของ Toast
 
 #: basxbread/layout/components/button.py:81
 #: basxbread/layout/components/overflow_menu.py:20
-#, fuzzy
-#| msgid "Please login again"
 msgid "Please confirm"
-msgstr "กรุณาเข้าสู่ระบบอีกครั้ง"
+msgstr "กรุณายืนยัน"
 
 #: basxbread/layout/components/button.py:82 basxbread/utils/links.py:112
 msgid "Are you sure?"
-msgstr ""
+msgstr "คุณแน่ใจ?"
 
 #: basxbread/layout/components/button.py:84
 #: basxbread/layout/components/overflow_menu.py:23
 msgid "No..."
-msgstr ""
+msgstr "ไม่"
 
 #: basxbread/layout/components/button.py:85
 #: basxbread/layout/components/overflow_menu.py:24
 msgid "Yes!"
-msgstr ""
+msgstr "ใช่!"
 
 #: basxbread/layout/components/button.py:122
 msgid "Print"
@@ -961,11 +910,11 @@ msgstr "เลือกไฟล์"
 
 #: basxbread/layout/components/forms/widgets.py:1118
 msgid "From"
-msgstr ""
+msgstr "จาก"
 
 #: basxbread/layout/components/forms/widgets.py:1118
 msgid "To"
-msgstr ""
+msgstr "ถึง"
 
 #: basxbread/layout/components/notification.py:131
 msgid "Time stamp"
@@ -1033,7 +982,7 @@ msgstr "ตั้งค่า"
 
 #: basxbread/menu.py:130
 msgid "Users"
-msgstr ""
+msgstr "ผู้ใช้งาน"
 
 #: basxbread/menu.py:156 basxbread/views/globalpreferences.py:40
 msgid "Global preferences"
@@ -1048,10 +997,8 @@ msgid "Background Jobs"
 msgstr "งานพื้นฐาน"
 
 #: basxbread/menu.py:181
-#, fuzzy
-#| msgid "Base model"
 msgid "Data model"
-msgstr "โมเดลพื้นฐาน"
+msgstr "แบบจำลองข้อมูล"
 
 #: basxbread/menu.py:189
 msgid "Django Admin"
@@ -1093,7 +1040,7 @@ msgstr "สร้างดัชนีการค้นหาใหม่"
 
 #: basxbread/views/administration.py:56
 msgid "Restart application server"
-msgstr ""
+msgstr "รีสตาร์ทแอพพลิเคชั่นเซิร์ฟเวอร์"
 
 #: basxbread/views/administration.py:160
 msgid "Back to top"
@@ -1169,7 +1116,7 @@ msgstr "ล่าสุด"
 
 #: basxbread/views/administration.py:354
 msgid "Database optimization is currently only available for sqlite databases"
-msgstr ""
+msgstr "ขณะนี้การเพิ่มประสิทธิภาพฐานข้อมูลใช้ได้กับฐานข้อมูล sqlite เท่านั้น"
 
 #: basxbread/views/administration.py:380
 #, python-format
@@ -1204,11 +1151,11 @@ msgstr "บันทึกจากเซิร์ฟเวอร์"
 
 #: basxbread/views/administration.py:471
 msgid "Restarted application server"
-msgstr ""
+msgstr "รีสตาร์ทแอ็พพลิเคชันเซิร์ฟเวอร์"
 
 #: basxbread/views/administration.py:480
 msgid "Restart"
-msgstr ""
+msgstr "รีสตาร์ท"
 
 #: basxbread/views/administration.py:509
 msgid "System information"
@@ -1247,7 +1194,7 @@ msgstr "หากคุณเคยให้ที่อยู่อีเมล
 
 #: basxbread/views/auth.py:164
 msgid "Finish"
-msgstr ""
+msgstr "เสร็จสิ้น"
 
 #: basxbread/views/auth.py:172 basxbread/views/auth.py:192
 #: basxbread/views/auth.py:216
@@ -1287,10 +1234,8 @@ msgid "Bad filter string '%s': '%s'"
 msgstr "สตริงตัวกรองไม่ถูกต้อง '%s': '%s'"
 
 #: basxbread/views/browse.py:416 basxbread/views/util.py:45
-#, fuzzy
-#| msgid "Are you sure you want to delete"
 msgid "Are you sure you want to delete {}?"
-msgstr "คุณแน่ใจว่าต้องการลบข้อมูล"
+msgstr "คุณแน่ใจหรือว่าต้องการลบ {}?"
 
 #: basxbread/views/browse.py:468
 #, python-format
@@ -1324,20 +1269,16 @@ msgstr "กู้คืน %(count)s %(modelname)s"
 
 #: basxbread/views/browse.py:712
 msgid "Reset"
-msgstr ""
+msgstr "รีเซ็ต"
 
 #: basxbread/views/browse.py:719
-#, fuzzy
-#| msgid "Filter"
 msgctxt "apply filter"
 msgid "Filter"
-msgstr "ค้นหา"
+msgstr "กรอง"
 
 #: basxbread/views/datamodel.py:156
-#, fuzzy
-#| msgid "Search"
 msgid "Search..."
-msgstr "ค้นหา"
+msgstr "ค้นหา..."
 
 #: basxbread/views/delete.py:42
 #, python-format
@@ -1470,46 +1411,40 @@ msgid "Disabled developer mode"
 msgstr "ปิดใช้งานโหมดนักพัฒนา"
 
 #: basxbread/views/users.py:29
-#, fuzzy
-#| msgid "Password reset"
 msgid "Send password reset"
-msgstr "ตั้งค่ารหัสใหม่"
+msgstr "ส่งรหัสผ่านเพื่อรีเซ็ต"
 
 #: basxbread/views/users.py:29
 msgid "User has no email"
-msgstr ""
+msgstr "ผู้ใช้ไม่มีอีเมล์"
 
 #: basxbread/views/users.py:36
-#, fuzzy
-#| msgid "Are you sure you want to delete"
 msgid "Are you sure you want to send a password reset email to {}?"
-msgstr "คุณแน่ใจว่าต้องการลบข้อมูล"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการส่งอีเมลรีเซ็ตรหัสผ่านไปที่ {}?"
 
 #: basxbread/views/users.py:116
-#, fuzzy
-#| msgid "Invalid password reset link"
 msgid "Send password reset to user"
-msgstr "ลิงค์รีเซ็ตรหัสผ่านไม่ถูกต้อง"
+msgstr "ส่งรหัสผ่านเพื่อรีเซ็ตไปยังผู้ใช้"
 
 #: basxbread/views/users.py:118
 msgid ""
 "When checking this, a link will be sent to the user which allows him to set "
 "his password"
 msgstr ""
+"เมื่อตรวจสอบสิ่งนี้แล้ว "
+"ลิงค์จะถูกส่งไปยังผู้ใช้ซึ่งอนุญาตให้เขาตั้งรหัสผ่านได้"
 
 #: basxbread/views/users.py:128
 msgid "Please enter the user's email address in order to send a password reset"
-msgstr ""
+msgstr "โปรดป้อนที่อยู่อีเมลของผู้ใช้เพื่อส่งการรีเซ็ตรหัสผ่าน"
 
 #: basxbread/views/util.py:30
 msgid "Read"
 msgstr "อ่าน"
 
 #: basxbread/views/util.py:60
-#, fuzzy
-#| msgid "Are you sure you want to delete"
 msgid "Are you sure you want to copy {}?"
-msgstr "คุณแน่ใจว่าต้องการลบข้อมูล"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการคัดลอก {}?"
 
 #: basxbread/views/util.py:90
 msgid "Add {}"
