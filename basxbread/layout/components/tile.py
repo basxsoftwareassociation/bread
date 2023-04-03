@@ -14,7 +14,7 @@ class Tile(hg.DIV):
     Demo: https://the-carbon-components.netlify.app/?nav=tile
     """
 
-    def __init__(self, *children, **attributes):
+    def __init__(self, *children, light=False, **attributes):
         """
         Parameters
         ----------
@@ -25,7 +25,11 @@ class Tile(hg.DIV):
         """
 
         super().__init__(
-            *children, **hg.merge_html_attrs(attributes, {"_class": "bx--tile"})
+            *children,
+            **hg.merge_html_attrs(
+                attributes,
+                {"_class": "bx--tile" + (" bx--tile--light" if light else "")},
+            )
         )
 
 
