@@ -43,7 +43,14 @@ class ReadView(
                             field
                             if isinstance(field, tuple)
                             else (
-                                _layout.ObjectFieldLabel(field),
+                                hg.BaseElement(
+                                    hg.DIV(
+                                        _layout.ObjectFieldLabel(field),
+                                        _layout.forms.helpers.HelpText(
+                                            self.model._meta.get_field(field).help_text
+                                        ),
+                                    ),
+                                ),
                                 _layout.ObjectFieldValue(field, formatter=format_value),
                             )
                         )
