@@ -155,6 +155,7 @@ class DataTable(hg.TABLE):
         checkbox_for_bulkaction_name: str = "_selected",
         search_urlparameter: Optional[str] = None,
         settingspanel: Any = None,
+        sidescrolling: bool = False,
     ):
         """
         wrap this datatable with title and toolbar
@@ -300,11 +301,14 @@ event.stopPropagation()""",
                 style="position: relative",
                 onclick="event.stopPropagation()",
             ),
-            self,
+            (self.with_sidescrolling() if sidescrolling else self),
             Pagination.from_config(pagination_config) if pagination_config else None,
             _class="bx--data-table-container",
             data_table=True,
         )
+
+    def with_sidescrolling(self):
+        return hg.DIV(self, style="overflow-x: scroll")
 
     @staticmethod
     def from_queryset(
@@ -328,6 +332,7 @@ event.stopPropagation()""",
         pagination_config: Optional[PaginationConfig] = None,
         search_urlparameter: Optional[str] = None,
         model=None,  # required if queryset is Lazy
+        sidescrolling: bool = False,
         **kwargs,
     ):
         """TODO: Write Docs!!!!
@@ -481,6 +486,7 @@ event.stopPropagation()""",
             checkbox_for_bulkaction_name=checkbox_for_bulkaction_name,
             search_urlparameter=search_urlparameter,
             settingspanel=settingspanel,
+            sidescrolling=sidescrolling,
         )
 
     # A few helper classes to make the composition in the __init__ method easier
