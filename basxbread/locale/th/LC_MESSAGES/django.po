@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-22 04:21+0000\n"
-"PO-Revision-Date: 2023-03-23 10:36+0000\n"
+"PO-Revision-Date: 2023-04-05 02:46+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
 "th/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.16.2-dev\n"
+"X-Generator: Weblate 4.17-dev\n"
 
 #: basxbread/contrib/customforms/apps.py:8
 #: basxbread/contrib/customforms/models.py:30
@@ -26,7 +26,7 @@ msgstr "กำหนดแบบฟอร์มด้วยตนเอง"
 
 #: basxbread/contrib/customforms/models.py:10
 msgid "Title"
-msgstr "หัวเรื่อง"
+msgstr "เรื่อง"
 
 #: basxbread/contrib/customforms/models.py:12
 #: basxbread/contrib/reports/models.py:24
@@ -592,11 +592,11 @@ msgstr "ข้อกำหนด"
 
 #: basxbread/contrib/taxonomy/models.py:52 basxbread/views/userprofile.py:192
 msgid "Disabled"
-msgstr "ปิดการใช้งาน"
+msgstr "ไม่มีสิทธิ์"
 
 #: basxbread/contrib/taxonomy/models.py:54
 msgid "Do not allow this term to be selected"
-msgstr "ไม่อนุญาตให้เลือกข้อกำหนดนี้"
+msgstr "ไม่อนุญาตให้เลือกคำนี้"
 
 #: basxbread/contrib/taxonomy/urls.py:33
 msgid "Taxonomy"
