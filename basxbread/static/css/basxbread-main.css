@@ -18803,3 +18803,12 @@ a.bx--header__name {
 .bx--data-table--selected td .bx--btn--ghost:hover {
   background-color: #e5e5e5; }
 
+tr td div.bx--file > * {
+  visibility: hidden; }
+
+tr:last-child td div.bx--file > * {
+  visibility: visible; }
+
+tr td div.bx--file > input[value] ~ * {
+  visibility: visible; }
+

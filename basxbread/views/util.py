@@ -184,9 +184,7 @@ class CustomFormMixin:
                             fieldname=field,
                             title=hg.C("form")[field].label,
                             fields=inlineforms[field],
-                            formsetfield_kwargs={
-                                "extra": 1,
-                            },
+                            formsetfield_kwargs={"extra": 1},
                         )
                     )
                 else:
