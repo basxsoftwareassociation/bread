@@ -72,8 +72,18 @@ class ModelHref(LazyHref):
     ):
         # if this is an instance of a model, we can extract the pk URL argument directly
         # TODO: instance-specific routes which don't use the pk argument will fail
-        if isinstance(model, hg.Lazy):
+
+        if isinstance(model, models.Model):
+            if "kwargs" not in kwargs:
+                kwargs["kwargs"] = {}
+            kwargs["kwargs"]["pk"] = model.pk
+
+        if isinstance(model, hg.Lazy):  # assuming "model" is a model instance...
             url = hg.F(lambda c: model_urlname(hg.resolve_lazy(model, c), name))
+            # not sure what happens in this case if model is not an instance but a model
+            if "kwargs" not in kwargs:
+                kwargs["kwargs"] = {}
+            kwargs["kwargs"]["pk"] = model.pk
         else:
             url = model_urlname(model, name)
         if return_to_current:
@@ -82,19 +92,6 @@ class ModelHref(LazyHref):
             kwargs["query"]["next"] = hg.C("request.get_full_path")
 
         super().__init__(url, *args, **kwargs)
-
-    @staticmethod
-    def from_object(object: Union[models.Model, hg.Lazy], name: str, *args, **kwargs):
-        """
-        name: string which denotes an object action name as generated
-              by basxbread.utils.urls.model_urlname
-        object: instance of a Model, can be lazy
-        """
-
-        if "kwargs" not in kwargs:
-            kwargs["kwargs"] = {}
-        kwargs["kwargs"]["pk"] = object.pk
-        return ModelHref(object, name, *args, **kwargs)
 
 
 class Link(NamedTuple):

@@ -9,6 +9,7 @@ INSTALLED_APPS = BASXBREAD_DEPENDENCIES + [  # noqa
     "basxbread.contrib.publicurls",
     "basxbread.contrib.taxonomy",
     "basxbread.contrib.customforms",
+    "basxbread.contrib.email_templates",
 ]
 
 SECRET_KEY = "test"  # nosec because this is only used to run tests

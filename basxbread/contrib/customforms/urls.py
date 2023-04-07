@@ -15,9 +15,7 @@ urlpatterns = [
                 breadviews.BrowseView.editlink(),
                 breadviews.BrowseView.deletelink(),
                 utils.Link(
-                    href=utils.ModelHref.from_object(
-                        hg.C("row"), "use", return_to_current=False
-                    ),
+                    href=utils.ModelHref(hg.C("row"), "use", return_to_current=False),
                     label=_("Add form entry"),
                     iconname="new-tab",
                 ),
@@ -44,9 +42,7 @@ urlpatterns = [
                 breadviews.BrowseView.editlink(),
                 breadviews.BrowseView.deletelink(),
                 utils.Link(
-                    href=utils.ModelHref.from_object(
-                        hg.C("row"), "use", return_to_current=False
-                    ),
+                    href=utils.ModelHref(hg.C("row"), "use", return_to_current=False),
                     label=_("Import new PDF"),
                     iconname="new-tab",
                 ),

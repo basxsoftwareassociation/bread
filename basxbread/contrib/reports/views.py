@@ -154,7 +154,7 @@ class ReadView(views.ReadView):
                 f"{self.object.model.model_class()._meta.verbose_name_plural}",
                 primary_button=layout.button.Button(
                     label=_("Excel"), icon="download"
-                ).as_href(ModelHref.from_object(self.object, "excel")),
+                ).as_href(ModelHref(self.object, "excel")),
                 pagination_config=pagination_config if self.object.pagination else None,
             ),
         )

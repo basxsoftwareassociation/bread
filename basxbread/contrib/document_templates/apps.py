@@ -19,7 +19,7 @@ def libreoffice_check(app_configs, **kwargs):
         warnings.append(
             Warning(
                 "the 'libreoffice' executable could not be found",
-                hint="Generating PDFs will not work. Install libreoffice or libreoffice-core-nogui (recommended) to enable this functionality.",
+                hint="Generating PDFs will not work. Install libreoffice-writer-nogui (recommended) to enable this functionality.",
                 id="document_templates.W001",
             )
         )

@@ -386,16 +386,14 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         """
         return Link(
             label="",
-            href=ModelHref.from_object(hg.C("row"), modelaction, **kwargs),
+            href=ModelHref(hg.C("row"), modelaction, **kwargs),
             iconname=None,
         )
 
     @staticmethod
     def editlink(return_to_current=True, **attributes):
         return Link(
-            href=ModelHref.from_object(
-                hg.C("row"), "edit", return_to_current=return_to_current
-            ),
+            href=ModelHref(hg.C("row"), "edit", return_to_current=return_to_current),
             label=_("Edit"),
             iconname="edit",
             attributes=attributes,
@@ -405,9 +403,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
     @staticmethod
     def deletelink(return_to_current=True, **attributes):
         return Link(
-            href=ModelHref.from_object(
-                hg.C("row"), "delete", return_to_current=return_to_current
-            ),
+            href=ModelHref(hg.C("row"), "delete", return_to_current=return_to_current),
             label=_("Delete"),
             iconname="delete",
             attributes=attributes,

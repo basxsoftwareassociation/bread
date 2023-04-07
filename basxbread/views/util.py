@@ -25,13 +25,13 @@ def header():
         buttontype="ghost",
         icon="edit",
         notext=True,
-    ).as_href(ModelHref.from_object(hg.C("object"), "edit"))
+    ).as_href(ModelHref(hg.C("object"), "edit"))
     readbutton = layout.button.Button(
         _("Read"),
         buttontype="ghost",
         icon="view",
         notext=True,
-    ).as_href(ModelHref.from_object(hg.C("object"), "read"))
+    ).as_href(ModelHref(hg.C("object"), "read"))
 
     deletebutton = layout.button.Button(
         _("Delete"),
@@ -40,7 +40,7 @@ def header():
         notext=True,
         style="border-color: red; background-color: inherit",
     ).as_submit(
-        ModelHref.from_object(hg.C("object"), "delete"),
+        ModelHref(hg.C("object"), "delete"),
         confirm_text=hg.format(
             _("Are you sure you want to delete {}?"), hg.EM(hg.C("object"))
         ),
@@ -55,7 +55,7 @@ def header():
         icon="copy",
         notext=True,
     ).as_submit(
-        ModelHref.from_object(hg.C("object"), "copy"),
+        ModelHref(hg.C("object"), "copy"),
         confirm_text=hg.format(
             _("Are you sure you want to copy {}?"), hg.EM(hg.C("object"))
         ),

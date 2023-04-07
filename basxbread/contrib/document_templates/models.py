@@ -93,7 +93,7 @@ class DocumentTemplate(models.Model):
         return sorted([f for f in fonts if f is not None])
 
     def generate_document_url(self, obj: Union[hg.Lazy, models.Model], pdf=False):
-        return utils.ModelHref.from_object(
+        return utils.ModelHref(
             self,
             "generate_document_pdf" if pdf else "generate_document",
             kwargs={"object_pk": obj.pk},
