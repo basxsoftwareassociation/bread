@@ -1,5 +1,4 @@
 import os
-import re
 import subprocess  # nosec because we covered everything
 from io import StringIO
 
@@ -15,11 +14,9 @@ from django.db import connection
 from django.utils.translation import gettext_lazy as _
 
 from .. import layout, utils
-from ..layout.components import tabs
 from ..layout.components.button import Button
 from ..layout.components.datatable import DataTable, DataTableColumn
 from ..layout.components.forms import Form, FormField
-from ..layout.components.icon import Icon
 from ..views import BrowseView
 
 R = layout.grid.Row
