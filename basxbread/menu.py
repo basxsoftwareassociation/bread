@@ -186,12 +186,6 @@ registeritem(
 
 registeritem(
     SuperUserItem(
-        utils.Link(utils.reverse("admin:index"), _("Django Admin")), admingroup
-    )
-)
-
-registeritem(
-    SuperUserItem(
         utils.Link(
             utils.reverse("basxbreadadmin.maintenance"),
             _("Maintenance"),
@@ -205,15 +199,6 @@ registeritem(
         utils.Link(
             utils.reverse("systeminformation"),
             _("System Information"),
-        ),
-        admingroup,
-    )
-)
-registeritem(
-    Item(
-        utils.Link(
-            utils.reverse("basxbreadadmin.componentpreview"),
-            _("Component Preview"),
         ),
         admingroup,
     )

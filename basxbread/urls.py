@@ -61,11 +61,6 @@ urlpatterns = [
         name="basxbreadadmin.maintenance",
     ),
     path(
-        "admin/componentpreview",
-        administration.componentpreview,
-        name="basxbreadadmin.componentpreview",
-    ),
-    path(
         "preferences/",
         include(
             (

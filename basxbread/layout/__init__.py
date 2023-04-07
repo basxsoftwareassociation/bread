@@ -4,7 +4,6 @@ from django.template.context import _builtin_context_processors
 from django.utils.module_loading import import_string
 
 from . import components  # noqa
-from .componentpreview import *  # noqa
 from .components import *  # noqa
 from .components import button  # noqa
 from .components import content_switcher  # noqa
@@ -24,6 +23,7 @@ from .components import shell_header  # noqa
 from .components import sidenav  # noqa
 from .components import tabs  # noqa
 from .components import tag  # noqa
+from .components import tile  # noqa
 from .components import toggle  # noqa
 from .components import tooltip  # noqa
 from .components.forms import helpers  # noqa
