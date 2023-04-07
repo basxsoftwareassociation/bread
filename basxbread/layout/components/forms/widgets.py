@@ -901,7 +901,10 @@ class FileInput(BaseWidget):
     ):
         inputelement_attrs = inputelement_attrs or {}
         uploadbutton = hg.LABEL(
-            hg.SPAN(_("Select file"), role="button"),
+            hg.SPAN(
+                hg.If(inputelement_attrs.get("value"), "...", _("Select file")),
+                role="button",
+            ),
             tabindex=0,
             _class=hg.BaseElement(
                 "bx--btn bx--btn--tertiary",
