@@ -218,7 +218,21 @@ class Formset(hg.Iterator):
     @staticmethod
     def as_plain(formset, content, add_label=_("Add"), **kwargs):
         """Shortcut to render a complete formset with add-button"""
-        formset = Formset(formset, content, **kwargs)
+        formsetelem = Formset(
+            formset,
+            hg.DIV(
+                content,
+                hg.If(
+                    formset.can_delete,
+                    DeleteButton(parentcontainerselector=".formset-entry"),
+                    None,
+                ),
+                _class="formset-entry",
+                style="display: flex",
+            ),
+            **kwargs,
+        )
+
         id = hg.html_id(formset, prefix="formset-")
         return hg.BaseElement(
             hg.If(
@@ -231,9 +245,9 @@ class Formset(hg.Iterator):
                     ),
                 ),
             ),
-            hg.DIV(formset, id=id),
-            formset.management_form,
-            formset.add_button(
+            hg.DIV(formsetelem, id=id),
+            formsetelem.management_form,
+            formsetelem.add_button(
                 buttontype="ghost",
                 notext=False,
                 label=add_label,
@@ -349,6 +363,34 @@ class Formset(hg.Iterator):
                 else None,
             ),
             formsetelem.management_form,
+        )
+
+
+class DeleteButton(Button):
+    def __init__(self, parentcontainerselector, label=_("Delete"), **kwargs):
+        """
+        Show a delete button for the current formset entry. This element needs to
+        be inside a Formset.
+        This should not be used on inline formsets (will not delete inline database objects)
+        parentcontainerselector: CSS-selector which will be passed to
+                                 element.closest in order to select the parent
+                                 container which should be hidden on delete.
+        """
+        defaults = {
+            "notext": True,
+            "small": True,
+            "icon": "trash-can",
+            "buttontype": "ghost",
+            "onclick": f"this.closest('{parentcontainerselector}').remove()",
+        }
+        defaults.update(kwargs)
+        super().__init__(
+            label,
+            FormField(
+                forms.formsets.DELETION_FIELD_NAME,
+                style="display: none",
+            ),
+            **defaults,
         )
 
 

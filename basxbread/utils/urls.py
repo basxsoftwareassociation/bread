@@ -92,6 +92,8 @@ def aslayout(view):
                     hidemenus=settings.HIDEMENUS_URLPARAMETER in request.GET,
                 ),
             )
+        if settings.AJAX_URLPARAMETER in request.GET and request.method == "POST":
+            response["HX-Refresh"] = "true"
         return response
 
     return wrapper
