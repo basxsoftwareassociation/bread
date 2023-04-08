@@ -8,7 +8,11 @@ from basxbread.views.browse import delete
 from basxbread.views.edit import bulkcopy, generate_copyview
 
 from .models import DocumentTemplate
-from .views import DocumentTemplateEditView, generate_document, generate_document_pdf
+from .views import (
+    DocumentTemplateEditView,
+    generate_document_download,
+    generate_document_download_pdf,
+)
 
 urlpatterns = [
     *default_model_paths(
@@ -39,12 +43,14 @@ urlpatterns = [
             DocumentTemplate, labelfield="name", copy_related_fields=("variables",)
         ),
     ),
-    autopath(generate_document, model_urlname(DocumentTemplate, "generate_document")),
+    autopath(
+        generate_document_download, model_urlname(DocumentTemplate, "generate_document")
+    ),
 ]
 if shutil.which("libreoffice") is not None:
     urlpatterns.append(
         autopath(
-            generate_document_pdf,
+            generate_document_download_pdf,
             model_urlname(DocumentTemplate, "generate_document_pdf"),
         )
     )

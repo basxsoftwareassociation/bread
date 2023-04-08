@@ -1,13 +1,9 @@
-import os
-import shutil
-import subprocess  # nosec
-import tempfile
-
 import htmlgenerator as hg
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
-from basxbread import layout, utils, views
+from basxbread import layout, views
 
 from .fontfinder import systemfonts
 from .models import DocumentTemplate
@@ -120,35 +116,10 @@ class DocumentTemplateEditView(views.EditView):
         return self.request.get_full_path()
 
 
-def _generate_document(pk: int, object_pk: int):
-    template = DocumentTemplate.objects.get(pk=pk)
+def generate_document_download(request, pk: int, object_pk: int):
+    template = get_object_or_404(DocumentTemplate, id=pk)
     object = template.model.get_object_for_this_type(pk=object_pk)
-    filename = f'{template.name}_{str(object).replace(" ", "-")}'
-
-    if template.filename_template:
-        try:
-            filename = (
-                utils.jinja_env()
-                .from_string(template.filename_template)
-                .render(
-                    **{attr: getattr(object, attr, "") for attr in dir(object)},
-                    **template.default_context(),
-                )
-            )
-        except Exception as e:
-            print(e)
-            filename = "FILENAME_ERROR.docx"
-
-    return (
-        filename,
-        template.render_with(object),
-    )
-
-
-def generate_document(request, pk: int, object_pk: int):
-    filename, content = _generate_document(pk, object_pk)
-    if not filename.endswith(".docx"):
-        filename = filename + ".docx"
+    filename, content = template.generate_document(object, "pdf")
 
     response = HttpResponse(
         content,
@@ -158,27 +129,10 @@ def generate_document(request, pk: int, object_pk: int):
     return response
 
 
-def generate_document_pdf(request, pk: int, object_pk: int):
-    filename, content = _generate_document(pk, object_pk)
-    if not filename.endswith(".pdf"):
-        filename = filename + ".pdf"
-    with tempfile.TemporaryDirectory() as tmpdir:
-        with tempfile.NamedTemporaryFile(mode="wb", suffix=".docx") as file:
-            file.write(content.read())
-            subprocess.run(  # nosec
-                [
-                    shutil.which("libreoffice")
-                    or "false",  # statisfies mypy, since which may return None
-                    "--convert-to",
-                    "pdf",
-                    file.name,
-                    "--outdir",
-                    tmpdir,
-                ],
-                shell=False,
-            )
-            outfilename = os.path.basename(file.name)[:-4] + "pdf"
-        with open(os.path.join(tmpdir, outfilename), "rb") as pdffile:
-            response = HttpResponse(pdffile, content_type="application/pdf")
-            response["Content-Disposition"] = f'attachment; filename="{filename}"'
-            return response
+def generate_document_download_pdf(request, pk: int, object_pk: int):
+    template = get_object_or_404(DocumentTemplate, id=pk)
+    object = template.model.get_object_for_this_type(pk=object_pk)
+    filename, content = template.generate_document_pdf(object)
+    response = HttpResponse(content, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response

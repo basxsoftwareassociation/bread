@@ -1,4 +1,8 @@
 import io
+import os
+import shutil
+import subprocess  # nosec
+import tempfile
 from typing import Union
 from zipfile import ZipFile
 
@@ -69,6 +73,50 @@ class DocumentTemplate(models.Model):
         docxtpl_template.save(buf)
         buf.seek(0)
         return buf
+
+    def generate_document(self, object, extension):
+        filename = f'{self.name}_{str(object).replace(" ", "-")}'
+        if self.filename_template:
+            try:
+                filename = (
+                    utils.jinja_env()
+                    .from_string(self.filename_template)
+                    .render(
+                        **{attr: getattr(object, attr, "") for attr in dir(object)},
+                        **self.default_context(),
+                    )
+                )
+            except Exception as e:
+                print(e)
+                filename = f"FILENAME_ERROR.{extension}"
+        if not filename.endswith("." + extension):
+            filename = f"{filename}.{extension}"
+
+        return (
+            filename,
+            self.render_with(object),
+        )
+
+    def generate_document_pdf(self, object):
+        filename, content = self.generate_document(object, "pdf")
+        with tempfile.TemporaryDirectory() as tmpdir:
+            with tempfile.NamedTemporaryFile(mode="wb", suffix=".docx") as file:
+                file.write(content.read())
+                subprocess.run(  # nosec
+                    [
+                        shutil.which("libreoffice")
+                        or "false",  # statisfies mypy, since which may return None
+                        "--convert-to",
+                        "pdf",
+                        file.name,
+                        "--outdir",
+                        tmpdir,
+                    ],
+                    shell=False,
+                )
+                outfilename = os.path.basename(file.name)[:-4] + "pdf"
+            with open(os.path.join(tmpdir, outfilename), "rb") as pdffile:
+                return filename, pdffile.read()
 
     def missing_variables(self):
         """Returns (variables_only_in_template, variables_only_in_definition)"""
