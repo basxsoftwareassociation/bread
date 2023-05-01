@@ -119,7 +119,7 @@ class DocumentTemplateEditView(views.EditView):
 def generate_document_download(request, pk: int, object_pk: int):
     template = get_object_or_404(DocumentTemplate, id=pk)
     object = template.model.get_object_for_this_type(pk=object_pk)
-    filename, content = template.generate_document(object, "pdf")
+    filename, content = template.generate_document(object, "docx")
 
     response = HttpResponse(
         content,
