@@ -56,9 +56,17 @@ def formview_processing(request, form, initial=None):
 
     request.GET = GET
     initial = initial or {}
+    formlayoutfields = []
+    for f in form.customformfields.all():
+        if "." in f.fieldname:
+            formlayoutfields.append(f.fieldname)
+        else:
+            formlayoutfields.append(
+                hg.DIV(layout.forms.FormField(f.fieldname), style="margin-top: 2rem")
+            )
     return view_class._with(
         model=model,
-        fields=[f.fieldname for f in form.customformfields.all()],
+        fields=formlayoutfields,
         initial=initial,
     ).as_view()(request, **view_kwargs)
 
