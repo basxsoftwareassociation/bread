@@ -5,261 +5,273 @@ $feature-flags: (
 // import files in the static directory, and for backward-compatibility with
 // django-compressor with scss support
 @function static($url) {
-    // YOU MAY REPLACE THE STATIC DIRECTORY HERE.
-    $static-dir: "/static";
-    @return "#{$static-dir}#{$url}";
+  // YOU MAY REPLACE THE STATIC DIRECTORY HERE.
+  $static-dir: "/static";
+  @return "#{$static-dir}#{$url}";
 }
 
 // for changing the theme uncomment the following two lines
-@import 'globals/scss/vendor/@carbon/themes/scss/generated/themes';
+@import "globals/scss/vendor/@carbon/themes/scss/generated/themes";
 $carbon--theme: $carbon--theme--g10;
-@import 'globals/scss/styles';
+@import "globals/scss/styles";
 
-@import 'globals/scss/vendor/@carbon/type/scss/styles';
-@import 'choices';
-@import 'carbon-tokens';
-@import 'thai-fonts';
-
+@import "globals/scss/vendor/@carbon/type/scss/styles";
+@import "choices";
+@import "carbon-tokens";
+@import "thai-fonts";
 
 .bx--content {
-    // carbon-design system sets an insignificant transform for bx--content which breaks modals
-    // removing the insignificant transform does not break anything
-    transform: none;
+  // carbon-design system sets an insignificant transform for bx--content which breaks modals
+  // removing the insignificant transform does not break anything
+  transform: none;
 }
 
 // since we sometimes display links as button we need to disable
 // pointer events to prevent opening the link
-a[disabled], a.bx--btn--disabled {
-    pointer-events: none;
+a[disabled],
+a.bx--btn--disabled {
+  pointer-events: none;
 }
 
 // get nicer prints
-@media print
-{
-    html, body {
-        background-color: white !important;
-    }
-    aside, header, button, .no-print {
-        display: none !important;
-    }
-    .bx--content {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
+@media print {
+  html,
+  body {
+    background-color: white !important;
+  }
+  aside,
+  header,
+  button,
+  .no-print {
+    display: none !important;
+  }
+  .bx--content {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 }
 
 // map styles from https://www.carbondesignsystem.com/guidelines/typography/productive
 // according to our designer to html semantic elements, might change in the future
 h3 {
-    margin-bottom: $spacing-09;
+  margin-bottom: $spacing-09;
 }
 h4 {
-    margin-bottom: $spacing-06;
-    margin-top: $spacing-04;
+  margin-bottom: $spacing-06;
+  margin-top: $spacing-04;
 }
 h5 {
-    margin-bottom: $spacing-05;
+  margin-bottom: $spacing-05;
 }
 
 // add some spacing to some elements
 .bx--form-item {
-    margin-bottom: $spacing-07;
+  margin-bottom: $spacing-07;
 }
 
 td {
+  .bx--form-item {
+    margin-bottom: 0;
+  }
+  .bx--modal {
     .bx--form-item {
-        margin-bottom: 0;
+      margin-bottom: $spacing-07;
     }
-    .bx--modal {
-        .bx--form-item {
-            margin-bottom: $spacing-07;
-        }
-    }
+  }
 }
 
 // specific padding/width for overflow menu columns
 // taken from https://the-carbon-components.netlify.app/, might be included in future releases of carbon
 .bx--data-table .bx--table-column-menu,
 .bx--data-table .bx--table-column-menu:last-of-type {
-    width: rem(52px);
-    min-width: rem(52px);
-    padding-top: $spacing-03;
-    padding-right: $spacing-03;
+  width: rem(52px);
+  min-width: rem(52px);
+  padding-top: $spacing-03;
+  padding-right: $spacing-03;
 }
 
 // make selects inside grid columns fill width
 .bx--col .bx--form-item {
-    .bx--select {
+  .bx--select {
+    width: 100%;
+    max-width: 100%;
+    .bx--select-input__wrapper {
+      width: 100%;
+      max-width: 100%;
+      select {
         width: 100%;
         max-width: 100%;
-        .bx--select-input__wrapper {
-            width: 100%;
-            max-width: 100%;
-            select {
-                width: 100%;
-                max-width: 100%;
-            }
-        }
+      }
     }
-    .bx--toggle-input {
-        width: 1px;
-    }
-    > * {
-        width: 100%;
-    }
+  }
+  .bx--toggle-input {
+    width: 1px;
+  }
+  > * {
+    width: 100%;
+  }
 }
 
 // fix position of unlabeled table bulk action buttons
 .bx--action-list .bx--btn.bx--btn--icon-only .bx--btn__icon {
-    margin-left: 0;
+  margin-left: 0;
 }
 
 // make standalone checkboxes appear better alligned:
 .bx--form-item.bx--checkbox-wrapper.standalone {
-    height: 5rem;
-    justify-content: center;
+  height: 5rem;
+  justify-content: center;
 }
 
 // prevent disabled fields form becoming unreadable
 fieldset[readonly] {
+  color: initial !important;
+  cursor: auto !important;
+  .bx--label--disabled {
     color: initial !important;
-    cursor: auto !important;
-    .bx--label--disabled {
-        color: initial !important;
-    }
+  }
 }
 
 @keyframes notification {
-    0%   {opacity: 0;}
-    10%  {opacity: 1;}
-    90% {opacity: 1;}
-    100% {opacity: 0;}
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .raised {
-    @include layer('raised');
+  @include layer("raised");
 }
 
 // for search result highlighting
 .highlighted {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 // for icons inside text inputs
 .text-input-icon {
-    position: absolute;
-    right: $carbon--spacing-05;
+  position: absolute;
+  right: $carbon--spacing-05;
 }
 
 // icon should be displayed lighter in view-only mode
-.bx--text-input:disabled
-+ .text-input-icon {
-    fill: #c6c6c6;
+.bx--text-input:disabled + .text-input-icon {
+  fill: #c6c6c6;
 }
 
 // icon should be displayed in red if data is invalid
 .text-input-with-icon[data-invalid] .text-input-icon {
-    fill: $ibm-color__red-60;
+  fill: $ibm-color__red-60;
 }
 
 // the usual exclamation mark for invalid input should not be displayed to prevent overlap with the other icon
 .text-input-with-icon .bx--text-input__invalid-icon {
-    display: none;
+  display: none;
 }
-
 
 // Sometimes we have elements inside a white box. In this case the elements should be displayed according to the white
 // theme (i.e. gray elements on white background).
 // Therefore we create a zoned theme that is applied by using a namespace class (theme-white).
 .theme-white {
-    @include carbon--theme($carbon--theme--white) {
-        @include button;
-        @include search;
-        @include select;
-        @include text-input;
-        @include multiselect;
-        @include tabs;
-        @include text-area;
-        @include content-switcher;
-        @include form;
-        @include date-picker;
-        @include data-table-core;
-        @include data-table-v2-action;
+  @include carbon--theme($carbon--theme--white) {
+    @include button;
+    @include search;
+    @include select;
+    @include text-input;
+    @include multiselect;
+    @include tabs;
+    @include text-area;
+    @include content-switcher;
+    @include form;
+    @include date-picker;
+    @include data-table-core;
+    @include data-table-v2-action;
 
-        // Makes background gray. This is how according to carbon it should look in the white theme.
-        // TODO: Pascal Wiesmann: No idea why it doesn't do it automatically
-        .bx--text-area:disabled, .bx--text-area:hover:disabled{
-            background-color: $ui-01;
-        }
-
-        // Makes background gray. This is how according to carbon it should look in the white theme.
-        // TODO: Pascal Wiesmann: No idea why it doesn't do it automatically
-        .bx--select-input:disabled, .bx--select-input:hover:disabled{
-            background-color: $ui-01;
-        }
-
-        // Makes background gray. This is how according to carbon it should look in the white theme.
-        // TODO: Pascal Wiesmann: No idea why it doesn't do it automatically
-        .bx--date-picker__input:disabled, .bx--date-picker__input:hover:disabled{
-            background-color: $ui-01;
-        }
-
+    // Makes background gray. This is how according to carbon it should look in the white theme.
+    // TODO: Pascal Wiesmann: No idea why it doesn't do it automatically
+    .bx--text-area:disabled,
+    .bx--text-area:hover:disabled {
+      background-color: $ui-01;
     }
+
+    // Makes background gray. This is how according to carbon it should look in the white theme.
+    // TODO: Pascal Wiesmann: No idea why it doesn't do it automatically
+    .bx--select-input:disabled,
+    .bx--select-input:hover:disabled {
+      background-color: $ui-01;
+    }
+
+    // Makes background gray. This is how according to carbon it should look in the white theme.
+    // TODO: Pascal Wiesmann: No idea why it doesn't do it automatically
+    .bx--date-picker__input:disabled,
+    .bx--date-picker__input:hover:disabled {
+      background-color: $ui-01;
+    }
+  }
 }
 
 .theme-gray-100 {
-    @include carbon--theme($carbon--theme--g100) {
-        // for the search in the header
-        @include search;
-    }
+  @include carbon--theme($carbon--theme--g100) {
+    // for the search in the header
+    @include search;
+  }
 }
 
 // having form elements inside datatables is our own idea, so we need some custom styling
 .bx--data-table {
-    .bx--text-area:disabled, .bx--text-area:hover:disabled{
-        border-bottom: none;
-    }
+  .bx--text-area:disabled,
+  .bx--text-area:hover:disabled {
+    border-bottom: none;
+  }
 
-    .bx--select-input:disabled, .bx--select-input:hover:disabled{
-        border-bottom: none;
-    }
+  .bx--select-input:disabled,
+  .bx--select-input:hover:disabled {
+    border-bottom: none;
+  }
 
-    .bx--date-picker__input {
-        border-bottom: none;
-    }
+  .bx--date-picker__input {
+    border-bottom: none;
+  }
 
-    .bx--select-input {
-        border-bottom: none;
-    }
-    .bx--search-input {
-        border-bottom: none;
-    }
+  .bx--select-input {
+    border-bottom: none;
+  }
+  .bx--search-input {
+    border-bottom: none;
+  }
 }
 
 .tile-container {
-    .tile-col:nth-of-type(2n) {
-        border-left: 1px solid #e0e0e0;
-    }
+  .tile-col:nth-of-type(2n) {
+    border-left: 1px solid #e0e0e0;
+  }
 
-    .tile {
-        border-top: 1px solid #e0e0e0;
-        padding: 4rem;
-        background-color: white;
+  .tile {
+    border-top: 1px solid #e0e0e0;
+    padding: 4rem;
+    background-color: white;
 
-        h4 {
-            margin-top: 0;
-        }
+    h4 {
+      margin-top: 0;
     }
+  }
 
-    .bx--data-table-container {
-        padding-top: 0;
-    }
+  .bx--data-table-container {
+    padding-top: 0;
+  }
 }
 
-
-// better alignment of header icon when sidenav collapsed 
+// better alignment of header icon when sidenav collapsed
 a.bx--header__name {
-    padding: 0 .5rem 0 .5rem;
+  padding: 0 0.5rem 0 0.5rem;
 }
 
 // modals with a single drop-down keep the dropped part
@@ -267,30 +279,34 @@ a.bx--header__name {
 // Therefore set a min-height here
 
 .bx--modal-container {
-    min-height: 20rem;
-    .bx--modal-content--overflow-indicator {
-        z-index: 9999; // drop-downs have a high z-index, this needs to be higher
-    }
+  min-height: 20rem;
+  .bx--modal-content--overflow-indicator {
+    z-index: 9999; // drop-downs have a high z-index, this needs to be higher
+  }
 }
-
 
 // achieves that file uploads in datatables fit on one line
 .bx--data-table-container .bx--file-container {
-    display: inline-block;
-    margin-top: 0;
+  display: inline-block;
+  margin-top: 0;
 }
-
 
 // helping the user to see the whole content of the modal
 // without having the overflow indicator in the way
 .bx--modal-content {
-    padding-bottom: 2rem;
+  padding-bottom: 2rem;
 }
 
 .bx--data-table td .bx--btn--ghost:hover {
-    background-color: $hover-selected-ui;
+  background-color: $hover-selected-ui;
 }
 
 .bx--data-table--selected td .bx--btn--ghost:hover {
-    background-color: $hover-field;
+  background-color: $hover-field;
+}
+
+// better visibility of table-box
+.bx--data-table-container {
+  box-shadow: #888 0px 3px 8px -1px;
+  margin-bottom: 1rem;
 }

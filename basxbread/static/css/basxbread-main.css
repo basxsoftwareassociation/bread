@@ -15267,13 +15267,18 @@ a.bx--navigation-link:focus {
 .bx--content {
   transform: none; }
 
-a[disabled], a.bx--btn--disabled {
+a[disabled],
+a.bx--btn--disabled {
   pointer-events: none; }
 
 @media print {
-  html, body {
+  html,
+  body {
     background-color: white !important; }
-  aside, header, button, .no-print {
+  aside,
+  header,
+  button,
+  .no-print {
     display: none !important; }
   .bx--content {
     margin: 0 !important;
@@ -15354,8 +15359,7 @@ fieldset[readonly] {
   position: absolute;
   right: 1rem; }
 
-.bx--text-input:disabled
-+ .text-input-icon {
+.bx--text-input:disabled + .text-input-icon {
   fill: #c6c6c6; }
 
 .text-input-with-icon[data-invalid] .text-input-icon {
@@ -18521,13 +18525,16 @@ td {
   height: 2rem;
   overflow: hidden; }
 
-.theme-white .bx--text-area:disabled, .theme-white .bx--text-area:hover:disabled {
+.theme-white .bx--text-area:disabled,
+.theme-white .bx--text-area:hover:disabled {
   background-color: #f4f4f4; }
 
-.theme-white .bx--select-input:disabled, .theme-white .bx--select-input:hover:disabled {
+.theme-white .bx--select-input:disabled,
+.theme-white .bx--select-input:hover:disabled {
   background-color: #f4f4f4; }
 
-.theme-white .bx--date-picker__input:disabled, .theme-white .bx--date-picker__input:hover:disabled {
+.theme-white .bx--date-picker__input:disabled,
+.theme-white .bx--date-picker__input:hover:disabled {
   background-color: #f4f4f4; }
 
 .theme-gray-100 .bx--search {
@@ -18754,10 +18761,12 @@ td {
   .theme-gray-100 .bx--search--sm.bx--skeleton .bx--search-input::placeholder {
     color: transparent; }
 
-.bx--data-table .bx--text-area:disabled, .bx--data-table .bx--text-area:hover:disabled {
+.bx--data-table .bx--text-area:disabled,
+.bx--data-table .bx--text-area:hover:disabled {
   border-bottom: none; }
 
-.bx--data-table .bx--select-input:disabled, .bx--data-table .bx--select-input:hover:disabled {
+.bx--data-table .bx--select-input:disabled,
+.bx--data-table .bx--select-input:hover:disabled {
   border-bottom: none; }
 
 .bx--data-table .bx--date-picker__input {
@@ -18783,7 +18792,7 @@ td {
   padding-top: 0; }
 
 a.bx--header__name {
-  padding: 0 .5rem 0 .5rem; }
+  padding: 0 0.5rem 0 0.5rem; }
 
 .bx--modal-container {
   min-height: 20rem; }
@@ -18802,4 +18811,8 @@ a.bx--header__name {
 
 .bx--data-table--selected td .bx--btn--ghost:hover {
   background-color: #e5e5e5; }
+
+.bx--data-table-container {
+  box-shadow: #888 0px 3px 8px -1px;
+  margin-bottom: 1rem; }
 
