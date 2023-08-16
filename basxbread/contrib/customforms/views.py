@@ -65,9 +65,7 @@ def formview_processing(request, form, initial=None):
                 hg.DIV(layout.forms.FormField(f.fieldname), style="margin-top: 2rem")
             )
     return view_class._with(
-        model=model,
-        fields=formlayoutfields,
-        initial=initial,
+        model=model, fields=formlayoutfields, initial=initial, extra=3
     ).as_view()(request, **view_kwargs)
 
 
@@ -89,26 +87,38 @@ def pdfimportview(request, pk):
         uploadform = UploadForm(request.POST, request.FILES)
         if uploadform.is_valid():
             if uploadform.cleaned_data.get("importfile"):
-                initial = {}
-                defined_formfields = {
-                    f.pdf_field_name: f.customform_field.fieldname
-                    for f in pdfimporter.fields.all()
-                }
-                for field, value in models.pdf_fields(
+                pdffields = models.pdf_fields(
                     uploadform.cleaned_data["importfile"].read()
-                ).items():
-                    if field in defined_formfields:
-                        if "." in defined_formfields[field]:
-                            inlinefield, subfield = defined_formfields[field].split(
-                                ".", 1
-                            )
-                            if inlinefield not in initial:
-                                initial[inlinefield] = [{}]
-                            if subfield in initial[inlinefield][-1]:
+                )
+                initial = {}
+                for pdf_formfield in pdfimporter.fields.exclude(customform_field=None):
+                    value = pdffields[pdf_formfield.pdf_field_name]
+                    if "." in pdf_formfield.fieldname:
+                        (
+                            inlinefield,
+                            subfield,
+                        ) = pdf_formfield.fieldname.split(".", 1)
+                        if inlinefield not in initial:
+                            initial[inlinefield] = [{}]
+                        if subfield in initial[inlinefield][-1]:
+                            if pdf_formfield.join == "":  # add a new inline-entry
                                 initial[inlinefield].append({})
-                            initial[inlinefield][-1][subfield] = value
-                        else:
-                            initial[defined_formfields[field]] = value
+                            else:  # join field-values
+                                value = (
+                                    initial[inlinefield][-1][subfield]
+                                    + pdf_formfield.join.replace("\\n", "\n")
+                                    + value
+                                )
+                        initial[inlinefield][-1][subfield] = value
+                    else:
+                        if pdf_formfield.fieldname in initial:
+                            value = (
+                                initial[pdf_formfield.fieldname]
+                                + pdf_formfield.join.replace("\\n", "\n")
+                                + value
+                            )
+                        initial[pdf_formfield.fieldname] = value
+
                 request.method = "GET"
                 return formview_processing(
                     request, form=pdfimporter.customform, initial=initial

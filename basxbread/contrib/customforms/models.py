@@ -85,6 +85,13 @@ class PDFImport(models.Model):
         with self.pdf.open() as file:
             return pdf_fields(file.read())
 
+    def save(self, *args, **kwargs):
+        generate_fields = self.pk is None
+        super().save(*args, **kwargs)
+        if generate_fields:
+            for i in self.pdf_fields:
+                self.fields.create(pdf_field_name=i)
+
     def __str__(self):
         return _("PDF import for %s") % self.customform
 
@@ -107,9 +114,22 @@ class PDFFormField(models.Model):
     ]
     customform_field = models.ForeignKey(
         CustomFormField,
+        null=True,
+        blank=True,
         on_delete=models.CASCADE,
         limit_choices_to={"customform": models.F("customform")},
     )
+    join = models.CharField(
+        _("Join"),
+        help_text=_("Join multiple fields with character, use \\n for newline"),
+        blank=True,
+        max_length=16,
+    )
+    join.formfield_kwargs = {"strip": False}
+
+    @property
+    def fieldname(self):
+        return self.customform_field.fieldname if self.customform_field else None
 
     def __str__(self):
         return self.pdf_field_name
@@ -117,7 +137,3 @@ class PDFFormField(models.Model):
     class Meta:
         verbose_name = _("PDF import field")
         verbose_name_plural = _("PDF import fields")
-        unique_together = [
-            ["pdfimport", "customform_field"],
-            ["pdfimport", "pdf_field_name"],
-        ]
