@@ -361,6 +361,7 @@ class Formset(hg.Iterator):
                 )
                 if can_add
                 else None,
+                useheading=False,
             ),
             formsetelem.management_form,
         )

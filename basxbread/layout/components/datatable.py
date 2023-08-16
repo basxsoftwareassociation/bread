@@ -156,6 +156,7 @@ class DataTable(hg.TABLE):
         search_urlparameter: Optional[str] = None,
         settingspanel: Any = None,
         sidescrolling: bool = False,
+        useheading: bool = True,
     ):
         """
         wrap this datatable with title and toolbar
@@ -243,8 +244,14 @@ class DataTable(hg.TABLE):
             )
 
         return hg.DIV(
-            hg.DIV(*header, _class="bx--data-table-header"),
+            hg.DIV(*header, _class="bx--data-table-header") if useheading else None,
             hg.SECTION(
+                None
+                if useheading
+                else hg.H5(
+                    title,
+                    style="align-self: center; width: 100%; padding-left: 1rem; margin-bottom: 0;",
+                ),
                 hg.DIV(
                     hg.DIV(
                         *(
