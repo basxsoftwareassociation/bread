@@ -56,7 +56,7 @@ urlpatterns = [
                 "pdf",
                 "customform",
                 layout.forms.Formset.as_inline_datatable(
-                    "fields", ["pdf_field_name", "customform_field", "join"]
+                    "fields", ["pdf_field_name", "customform_field", "join", "mapping"]
                 ),
             ],
             default_success_page="edit",

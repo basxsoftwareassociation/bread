@@ -127,6 +127,11 @@ class PDFFormField(models.Model):
     )
     join.formfield_kwargs = {"strip": False}
 
+    mapping = models.JSONField(
+        _("Map value"), help_text=_("Map PDF-field value"), default=dict, blank=True
+    )
+    mapping.formfield_kwargs = {"widget": forms.Textarea(attrs={"rows": 1})}
+
     @property
     def fieldname(self):
         return self.customform_field.fieldname if self.customform_field else None

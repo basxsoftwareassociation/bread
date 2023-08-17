@@ -93,6 +93,7 @@ def pdfimportview(request, pk):
                 initial = {}
                 for pdf_formfield in pdfimporter.fields.exclude(customform_field=None):
                     value = pdffields[pdf_formfield.pdf_field_name]
+                    value = pdf_formfield.mapping.get(value, value)
                     if "." in pdf_formfield.fieldname:
                         (
                             inlinefield,
