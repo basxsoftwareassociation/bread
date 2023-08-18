@@ -1,3 +1,5 @@
+import base64
+
 import htmlgenerator as hg
 from django import forms
 from django.shortcuts import get_object_or_404
@@ -9,7 +11,7 @@ from basxbread import formatters, layout, utils, views
 from . import models
 
 
-def formview_processing(request, form, initial=None):
+def formview_processing(request, form, initial=None, custom_layout=None):
     model = form.model.model_class()
     pk_fields = [f.strip() for f in form.pk_fields.split(",")]
     GET = request.GET.copy()
@@ -64,8 +66,19 @@ def formview_processing(request, form, initial=None):
             formlayoutfields.append(
                 hg.DIV(layout.forms.FormField(f.fieldname), style="margin-top: 2rem")
             )
+
+    def custom_layout_func(s):
+        ret = super(view_class, s).get_layout()
+        if custom_layout:
+            ret = custom_layout(ret)
+        return ret
+
     return view_class._with(
-        model=model, fields=formlayoutfields, initial=initial, extra=3
+        model=model,
+        fields=formlayoutfields,
+        initial=initial,
+        extra=3,
+        get_layout=custom_layout_func,
     ).as_view()(request, **view_kwargs)
 
 
@@ -75,21 +88,19 @@ def formview(request, pk):
     return formview_processing(request, form=form)
 
 
-class UploadForm(forms.Form):
-    importfile = forms.FileField(required=False)
-
-
 @utils.aslayout
 def pdfimportview(request, pk):
+    class UploadForm(forms.Form):
+        importfile = forms.FileField(required=False)
+
     form = UploadForm()
     pdfimporter = get_object_or_404(models.PDFImport, pk=pk)
     if request.method == "POST":
         uploadform = UploadForm(request.POST, request.FILES)
         if uploadform.is_valid():
             if uploadform.cleaned_data.get("importfile"):
-                pdffields = models.pdf_fields(
-                    uploadform.cleaned_data["importfile"].read()
-                )
+                pdfcontent = uploadform.cleaned_data["importfile"].read()
+                pdffields = models.pdf_fields(pdfcontent)
                 initial = {}
                 for pdf_formfield in pdfimporter.fields.exclude(customform_field=None):
                     value = pdffields.get(pdf_formfield.pdf_field_name, "")
@@ -121,8 +132,24 @@ def pdfimportview(request, pk):
                         initial[pdf_formfield.fieldname] = value
 
                 request.method = "GET"
+
+                def custom_layout(layout):
+                    pdf_preview = hg.IFRAME(
+                        src=f"data:application/pdf;base64,{base64.b64encode(pdfcontent).decode()}#toolbar=0",
+                        height="100%",
+                        width="100%",
+                    )
+                    layout[1].attributes[
+                        "style"
+                    ] = "display: grid; grid-template-columns: 50% 1fr; grid-gap: 1rem"
+                    layout[1].insert(0, pdf_preview)
+                    return layout
+
                 return formview_processing(
-                    request, form=pdfimporter.customform, initial=initial
+                    request,
+                    form=pdfimporter.customform,
+                    initial=initial,
+                    custom_layout=custom_layout,
                 )
             if "importfile" not in request.POST:
                 return formview_processing(request, form=pdfimporter.customform)
