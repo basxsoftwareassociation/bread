@@ -244,7 +244,7 @@ class DataTable(hg.TABLE):
             )
 
         return hg.DIV(
-            hg.DIV(*header, _class="bx--data-table-header") if useheading else None,
+            hg.DIV(*header, _class="bx--data-table-header") if useheading else hg.DIV(),
             hg.SECTION(
                 None
                 if useheading
