@@ -5,6 +5,7 @@ import htmlgenerator as hg
 from django import forms
 from django.conf import settings
 from django.contrib import messages
+from django.db import models
 from django.http import HttpResponse
 from django.urls import NoReverseMatch
 from django.utils.html import mark_safe
@@ -178,8 +179,14 @@ class CustomFormMixin:
                 if field in direct_model_formfields:
                     ret.append(layout.forms.FormField(field))
                 elif isinstance(field, str) and field in inlineforms:
+                    layout_generator = layout.forms.Formset.as_datatable
+                    if isinstance(
+                        getattr(self.model, field),
+                        models.fields.related_descriptors.ReverseOneToOneDescriptor,
+                    ):
+                        layout_generator = layout.forms.Formset.as_fieldset
                     ret.append(
-                        layout.forms.Formset.as_datatable(
+                        layout_generator(
                             hg.C("form")[field].formset,
                             fieldname=field,
                             title=hg.C("form")[field].label,

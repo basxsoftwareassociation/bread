@@ -366,6 +366,47 @@ class Formset(hg.Iterator):
             formsetelem.management_form,
         )
 
+    @staticmethod
+    def as_fieldset(
+        formset,
+        fields: List,
+        title: Optional[str] = None,
+        formsetfield_kwargs: Optional[dict] = None,
+        fieldname=None,  # required for inline-formsets
+        can_add=True,
+        **kwargs,
+    ) -> hg.BaseElement:
+        formsetelem = Formset(
+            formset,
+            hg.DIV(*[(FormField(f) if isinstance(f, str) else f) for f in fields]),
+            **({"fieldname": fieldname} if fieldname else {}),
+            **(formsetfield_kwargs or {}),
+        )
+        id = hg.html_id(formsetelem, prefix="formset-")
+
+        return hg.BaseElement(
+            hg.If(
+                formset.non_form_errors(),
+                hg.Iterator(
+                    formset.non_form_errors(),
+                    "formerror",
+                    InlineNotification(
+                        _("Form error"), hg.C("formerror"), kind="error"
+                    ),
+                ),
+            ),
+            hg.FIELDSET(hg.H4(title), formsetelem, id=id),
+            formsetelem.management_form,
+            formsetelem.add_button(
+                buttontype="ghost",
+                notext=False,
+                label="+",
+                container_css_selector=f"#{id}",
+            )
+            if can_add
+            else None,
+        )
+
 
 class DeleteButton(Button):
     def __init__(self, parentcontainerselector, label=_("Delete"), **kwargs):
