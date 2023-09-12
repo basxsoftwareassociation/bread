@@ -82,6 +82,8 @@ class PDFImport(models.Model):
 
     @cached_property
     def pdf_fields(self):
+        if not self.pdf or not self.pdf.storage.exists(self.pdf.name):
+            return {}
         with self.pdf.open() as file:
             return pdf_fields(file.read())
 
