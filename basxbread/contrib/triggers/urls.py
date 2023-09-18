@@ -78,6 +78,7 @@ quickregister(
             "action",
             "offset_type",
             "offset_amount",
+            "ignore_year",
             hg.F(help_button),
             "field",
             "filter",
