@@ -46,7 +46,9 @@ class DocumentTemplate(models.Model):
     def context(self, object):
         context = {}
         for variable in self.variables.all():
-            context[variable.name] = hg.resolve_lookup(object, variable.value) or ""
+            context[variable.name] = hg.resolve_lookup(object, variable.value)
+            if context[variable.name] is None:
+                context[variable.name] = ""
             if variable.template:
                 try:
                     context[variable.name] = utils.jinja_render(
