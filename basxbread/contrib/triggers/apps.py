@@ -123,10 +123,16 @@ def periodic_trigger():
         for instance in trigger.filter.queryset.all():
             for td in trigger.triggerdates(instance):
                 if (
+                    instance.id == 1306
+                    and trigger.description == "LT Reisegrund neue Entsendung"
+                ):
+                    print(trigger, td)
+                if (
                     td is not None
                     and timezone.now() <= td < timezone.now() + TRIGGER_PERIOD
                 ) and trigger.action:
-                    name = f"Trigger '{trigger}': Action '{trigger.action}'"
+                    name = f"trigger '{trigger}': Action '{trigger.action}'"
+                    print(f"Running {name}")
                     run_action.apply_async(
                         (trigger.action.pk, instance._meta.label, instance.pk),
                         shadow=name,
