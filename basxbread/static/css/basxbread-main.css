@@ -15308,6 +15308,9 @@ td .bx--modal .bx--form-item {
     .bx--col .bx--form-item .bx--select .bx--select-input__wrapper select {
       width: 100%;
       max-width: 100%; }
+    .bx--col .bx--form-item .bx--select .bx--select-input__wrapper input {
+      width: 100%;
+      max-width: 100%; }
 
 .bx--col .bx--form-item .bx--toggle-input {
   width: 1px; }
