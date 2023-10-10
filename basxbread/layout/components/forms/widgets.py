@@ -359,20 +359,21 @@ if(searchElem.classList.contains('hidden')) {
                 style="",
                 placeholder=_("Type to search"),
                 onkeyup="""
-let searchInputs = event.target.value.toLowerCase().split(' ').filter((term) => term.length > 0)
+let query = event.target.value.toLowerCase().split(' ').filter((term) => term.length > 0)
 let resultsElem = this.nextElementSibling
 resultsElem.innerHTML = ''
-if(searchInputs.length == 0 || searchInputs.findIndex((term) => term.length >= 2) == -1) {
+if(query.length == 0 || query.findIndex((term) => term.length >= 2) == -1) {
     return
 }
 let searchElem = this
 let selectElem = this.nextElementSibling.nextElementSibling;
+var resultList = []
 for(let opt of selectElem.childNodes) {
     let content = opt.innerHTML.toLowerCase()
-    if(searchInputs.findIndex((term) => content.includes(term)) != -1) {
-        let entry = $.create("div", {
+    if(query.findIndex((term) => content.includes(term)) != -1) {
+        resultList.push($.create("div", {
             class: 'hoverable',
-            style: 'padding: 0.5rem',
+            style: {padding: "0.5rem"},
             value: opt.getAttribute('value'),
             contents: [opt.innerText],
             onclick: (e) => {
@@ -380,16 +381,18 @@ for(let opt of selectElem.childNodes) {
                 searchElem.classList.toggle('hidden')
                 resultsElem.classList.toggle('hidden')
                 selectElem.classList.toggle('hidden')
-            }
-        })
-        resultsElem.appendChild(entry)
+            },
+            rank: searchMatchRank(query, opt.innerText)
+        }))
     }
 }
+let sorted = resultList.sort((a, b) => parseFloat(a.getAttribute('rank')) > parseFloat(b.getAttribute('rank')) ? 1 : -1).slice(0, 10)
+sorted.forEach(node => resultsElem.appendChild(node))
                 """,
             ),
             hg.DIV(
-                _class="bx--select-input hidden",
-                style="position: absolute; height: auto; min-height: 0.5rem; top: 2.5rem; z-index: 10; box-shadow: gray 0 3px 6px 3px; overflow-y: scroll; overflow-x: hidden",
+                _class="hidden",
+                style="position: absolute; height: auto; min-width: 5rem; min-height: 0.5rem; top: 2.5rem; z-index: 10; box-shadow: gray 0 3px 6px 3px; overflow-y: scroll; overflow-x: hidden; margin-left: 1.5rem",
             ),
             hg.SELECT(
                 hg.Iterator(
