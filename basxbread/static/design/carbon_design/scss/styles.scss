@@ -310,3 +310,11 @@ a.bx--header__name {
   box-shadow: #888 0px 3px 8px -1px;
   margin-bottom: 1rem;
 }
+
+.hidden {
+  display: none;
+}
+
+.hoverable:hover {
+  background-color: $hover-ui;
+}

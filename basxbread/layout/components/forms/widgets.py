@@ -317,6 +317,119 @@ class Textarea(BaseWidget):
         )
 
 
+class Select1(BaseWidget):
+    # django_widget = widgets.Select
+    carbon_input_class = "bx--select-input"
+
+    def __init__(
+        self,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
+        boundfield=None,
+        inline=False,
+        choices=None,  # for non-django-form select elements use this
+        **attributes,
+    ):
+        inputelement_attrs = inputelement_attrs or {}
+        select_wrapper = hg.DIV(
+            hg.SELECT(
+                hg.Iterator(
+                    _optgroups_from_choices(
+                        choices,
+                        name=inputelement_attrs.get("name"),
+                        value=inputelement_attrs.get("value"),
+                    )
+                    if choices
+                    else _gen_optgroup(boundfield),
+                    "optgroup",
+                    hg.If(
+                        hg.C("optgroup.0"),
+                        hg.OPTGROUP(
+                            hg.Iterator(
+                                hg.C("optgroup.1"),
+                                "option",
+                                hg.OPTION(
+                                    hg.C("option.label"),
+                                    _class="bx--select-option",
+                                    value=hg.C("option.value"),
+                                    lazy_attributes=hg.C("option.attrs"),
+                                ),
+                            ),
+                            _class="bx--select-optgroup",
+                            label=hg.C("optgroup.0"),
+                        ),
+                        hg.Iterator(
+                            hg.C("optgroup.1"),
+                            "option",
+                            hg.OPTION(
+                                hg.C("option.label"),
+                                _class="bx--select-option",
+                                value=hg.C("option.value"),
+                                lazy_attributes=hg.C("option.attrs"),
+                            ),
+                        ),
+                    ),
+                ),
+                lazy_attributes=_append_classes(
+                    inputelement_attrs,
+                    self.carbon_input_class,
+                    hg.If(
+                        getattr(errors, "condition", None),
+                        self.carbon_input_error_class,
+                    ),
+                ),
+            ),
+            Icon(
+                "chevron--down",
+                size=16,
+                _class="bx--select__arrow",
+                aria_hidden="true",
+            ),
+            hg.If(
+                getattr(errors, "condition", None),
+                Icon(
+                    "warning--filled",
+                    size=16,
+                    _class="bx--select__invalid-icon",
+                ),
+            ),
+            _class="bx--select-input__wrapper",
+            data_invalid=hg.If(getattr(errors, "condition", None), True),
+        )
+        super().__init__(
+            label,
+            hg.If(
+                inline,
+                hg.DIV(
+                    select_wrapper,
+                    errors,
+                    _class="bx--select-input--inline__wrapper",
+                ),
+                select_wrapper,
+            ),
+            help_text,
+            hg.If(inline, None, errors),  # not displayed if this is inline
+            **hg.merge_html_attrs(
+                attributes,
+                {
+                    "_class": hg.BaseElement(
+                        "bx--select",
+                        hg.If(inline, " bx--select--inline"),
+                        hg.If(
+                            getattr(errors, "condition", None), " bx--select--invalid"
+                        ),
+                        hg.If(
+                            inputelement_attrs.get("disabled"),
+                            " bx--select--disabled",
+                        ),
+                    ),
+                },
+            ),
+        )
+
+
 class Select(BaseWidget):
     django_widget = widgets.Select
     carbon_input_class = "bx--select-input"
@@ -334,6 +447,63 @@ class Select(BaseWidget):
     ):
         inputelement_attrs = inputelement_attrs or {}
         select_wrapper = hg.DIV(
+            Icon(
+                "search",
+                size=16,
+                style="height: 2rem; width: 1rem; margin-right: 0.5rem; cursor: pointer;",
+                aria_hidden="true",
+                onclick="""
+let searchElem = this.nextElementSibling;
+let resultsElem = this.nextElementSibling.nextElementSibling;
+let selectElem = this.nextElementSibling.nextElementSibling.nextElementSibling;
+searchElem.classList.toggle('hidden')
+resultsElem.classList.toggle('hidden')
+selectElem.classList.toggle('hidden')
+
+if(searchElem.classList.contains('hidden')) {
+    selectElem.focus()
+} else {
+    searchElem.focus()
+}
+""",
+            ),
+            hg.INPUT(
+                _class="bx--select-input hidden",
+                style="width: 100%; max-width: 100%",
+                placeholder=_("Type to search"),
+                onkeyup="""
+let searchInputs = event.target.value.toLowerCase().split(' ').filter((term) => term.length > 0)
+if(searchInputs.length == 0 || searchInputs.findIndex((term) => term.length >= 2) == -1) {
+    return
+}
+let searchElem = this
+let resultsElem = this.nextElementSibling
+let selectElem = this.nextElementSibling.nextElementSibling;
+resultsElem.innerHTML = ''
+for(let opt of selectElem.childNodes) {
+    let content = opt.innerHTML.toLowerCase()
+    if(searchInputs.findIndex((term) => content.includes(term)) != -1) {
+        let entry = $.create("div", {
+            class: 'hoverable',
+            style: 'padding: 0.5rem',
+            value: opt.getAttribute('value'),
+            contents: [opt.innerText],
+            onclick: (e) => {
+                selectElem.value = e.target.getAttribute('value')
+                searchElem.classList.toggle('hidden')
+                resultsElem.classList.toggle('hidden')
+                selectElem.classList.toggle('hidden')
+            }
+        })
+        resultsElem.appendChild(entry)
+    }
+}
+                """,
+            ),
+            hg.DIV(
+                _class="bx--select-input hidden",
+                style="position: absolute; height: auto; min-height: 0.5rem; top: 2.5rem; z-index: 10; box-shadow: gray 0 3px 6px 3px; overflow-y: scroll; overflow-x: hidden",
+            ),
             hg.SELECT(
                 hg.Iterator(
                     _optgroups_from_choices(
