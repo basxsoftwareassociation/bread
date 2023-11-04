@@ -78,7 +78,7 @@ def aslayout(view):
 
     @wraps(view)
     def wrapper(request, *args, **kwargs):
-        from .. import layout, menu  # needs to be imported here to avoid cyclic imports
+        from .. import layout, menu
 
         response = view(request, *args, **kwargs)
         if isinstance(response, hg.BaseElement):
@@ -97,6 +97,14 @@ def aslayout(view):
         return response
 
     return wrapper
+
+
+def aslayout_with(baselayout):
+    def decorator(view):
+        view.baselayout = baselayout
+        return aslayout(view)
+
+    return decorator
 
 
 def autopath(*args, **kwargs):
