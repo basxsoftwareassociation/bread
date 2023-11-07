@@ -11,6 +11,7 @@ from .components import datatable  # noqa
 from .components import fieldexplorer  # noqa
 from .components import forms  # noqa
 from .components import grid  # noqa
+from .components import history_table  # noqa
 from .components import icon  # noqa
 from .components import loading  # noqa
 from .components import modal  # noqa
