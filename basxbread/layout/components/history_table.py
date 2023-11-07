@@ -69,13 +69,16 @@ def oldfieldvalue(c, model):
     return c["change"].old
 
 
-def diff_table(model, historylist, showObjectLabel=None):
+def diff_table(model, historylist):
     from ...layout import localize, localtime
 
     def historyentries(c):
+        entries = historylist(c)
+        if len(entries) == 0:
+            return ()
         return (
             (i, j)
-            for i, j in pairwise(chain(historylist(c), [type(historylist(c)[0])()]))
+            for i, j in pairwise(chain(entries, [type(entries.first())()]))
             if haschanges(i, j)
         )
 
@@ -87,7 +90,8 @@ def diff_table(model, historylist, showObjectLabel=None):
                 hg.BaseElement(
                     localize(localtime(hg.C("row")[0].history_date).date()),
                     hg.If(
-                        hg.F(lambda c: c["row"][1].history_date is None), _("Created")
+                        hg.F(lambda c: c["row"][1].history_date is None),
+                        hg.BaseElement(" (", _("Created"), ")"),
                     ),
                 ),
             ),
@@ -98,16 +102,6 @@ def diff_table(model, historylist, showObjectLabel=None):
             DataTableColumn(
                 _("User"),
                 hg.C("row")[0].history_user,
-            ),
-            *(
-                [
-                    DataTableColumn(
-                        _("Object"),
-                        hg.F(lambda c: showObjectLabel(c["row"][0].instance)),
-                    )
-                ]
-                if showObjectLabel is not None
-                else []
             ),
             DataTableColumn(
                 _("Changes"),
@@ -124,12 +118,13 @@ def diff_table(model, historylist, showObjectLabel=None):
                             hg.SPAN(
                                 hg.If(
                                     hg.C("change").old,
-                                    hg.F(lambda c: oldfieldvalue(c, model(c))),
-                                    settings.HTML_NONE,
+                                    hg.BaseElement(
+                                        hg.F(lambda c: oldfieldvalue(c, model(c))),
+                                        " -> ",
+                                    ),
                                 ),
                                 style="text-decoration: line-through;",
                             ),
-                            " -> ",
                             hg.SPAN(
                                 hg.If(
                                     hg.C("change").new,
