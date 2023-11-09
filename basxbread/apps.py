@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from django.contrib.messages.constants import DEFAULT_TAGS
+from django.core.checks import Error, register
 from django.utils.translation import gettext as _
 
 
@@ -11,6 +12,24 @@ class BasxBreadConfig(AppConfig):
         # trigger translation of message tags
         [_(tag.capitalize()) for tag in DEFAULT_TAGS.values()]
         patch_django_filters_verbose_name_func()
+
+
+@register()
+def whitelisted_urls_check(app_configs, **kwargs):
+    from django.conf import settings
+    from django.urls import get_resolver
+
+    errors = []
+    for url in getattr(settings, "PUBLIC_URLS", []):
+        if url not in get_resolver().reverse_dict:
+            errors.append(
+                Error(
+                    "Whitelisted URL not found",
+                    obj=url,
+                    id="basxbread.E001",
+                )
+            )
+    return errors
 
 
 def patch_django_filters_verbose_name_func():
