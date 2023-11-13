@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.utils.html import strip_tags
 
 
-def generate_excel(rows, columns):
+def generate_excel(rows, columns, request=None):
     """
     columns: dict with {<columnname>: formatting_function(row)}
     """
@@ -29,7 +29,7 @@ def generate_excel(rows, columns):
         for i, cell in enumerate(columndata[1:]):
             value = columns[columnname](rows[i])
             if isinstance(value, hg.BaseElement):
-                value = hg.render(value, {})
+                value = hg.render(value, {"request": request})
 
             cleaned = html.unescape(
                 strip_tags(newline_regex.sub(r"\n", str(value or "")))

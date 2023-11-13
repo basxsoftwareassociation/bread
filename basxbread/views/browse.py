@@ -58,7 +58,7 @@ def default_bulkactions(model, columns=["__all__"]):
             "excel",
             label=_("Excel"),
             iconname="download",
-            action=lambda request, qs: export(qs, columns),
+            action=lambda request, qs: export(qs, columns, request=request),
             permissions=[f"{model._meta.app_label}.view_{model._meta.model_name}"],
         ),
         BulkAction(
@@ -419,7 +419,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
 
 
 # helper function to export a queryset to excel
-def export(queryset, columns):
+def export(queryset, columns, request=None):
     if "__all__" in columns:
         columns = filter_fieldlist(queryset.model, columns)
     columndefinitions = {}
@@ -439,12 +439,15 @@ def export(queryset, columns):
             )
 
         columndefinitions[
-            hg.render(hg.BaseElement(column.header), {"model": queryset.model})
+            hg.render(
+                hg.BaseElement(column.header),
+                {"model": queryset.model, "request": request},
+            )
         ] = lambda row, column=column: hg.render(
-            hg.BaseElement(column.cell), {"row": row}
+            hg.BaseElement(column.cell), {"row": row, "request": request}
         )
 
-    workbook = generate_excel(queryset, columndefinitions)
+    workbook = generate_excel(queryset, columndefinitions, request=request)
     workbook.title = queryset.model._meta.verbose_name
     return xlsxresponse(workbook, workbook.title)
 
