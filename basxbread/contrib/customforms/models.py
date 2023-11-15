@@ -64,9 +64,11 @@ class CustomFormField(models.Model):
         verbose_name_plural = _("Custom form fields")
 
 
-def pdf_fields(pdffile):
+def pdf_fields(pdffile, password=None):
     fields = {}
     pdf = fitz.Document(stream=pdffile)
+    if password is not None:
+        pdf.authenticate(password)
     for page in pdf:
         widget = page.first_widget
         while widget:

@@ -1,12 +1,11 @@
 import base64
 
 import htmlgenerator as hg
+from basxbread import formatters, layout, utils, views
 from django import forms
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_objects_for_user
-
-from basxbread import formatters, layout, utils, views
 
 from . import models
 
@@ -92,6 +91,7 @@ def formview(request, pk):
 def pdfimportview(request, pk):
     class UploadForm(forms.Form):
         importfile = forms.FileField(required=False)
+        password = forms.CharField(required=False)
 
     form = UploadForm()
     pdfimporter = get_object_or_404(models.PDFImport, pk=pk)
@@ -100,7 +100,9 @@ def pdfimportview(request, pk):
         if uploadform.is_valid():
             if uploadform.cleaned_data.get("importfile"):
                 pdfcontent = uploadform.cleaned_data["importfile"].read()
-                pdffields = models.pdf_fields(pdfcontent)
+                pdffields = models.pdf_fields(
+                    pdfcontent, uploadform.cleaned_data["password"] or None
+                )
                 initial = {}
                 for pdf_formfield in pdfimporter.fields.exclude(customform_field=None):
                     value = pdffields.get(pdf_formfield.pdf_field_name, "")
