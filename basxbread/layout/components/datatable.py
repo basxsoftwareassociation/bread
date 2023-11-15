@@ -340,6 +340,7 @@ event.stopPropagation()""",
         search_urlparameter: Optional[str] = None,
         model=None,  # required if queryset is Lazy
         sidescrolling: bool = False,
+        rowactions_first_column: bool = False,
         **kwargs,
     ):
         """TODO: Write Docs!!!!
@@ -444,28 +445,31 @@ event.stopPropagation()""",
                 with_superuser=True,
             )
 
+        row_action_column = (
+            [
+                DataTableColumn(
+                    "",
+                    objectactions_menu,
+                    td_attributes=hg.F(
+                        lambda c: {
+                            "_class": "bx--table-column-menu"
+                            if rowactions_dropdown
+                            else ""
+                        }
+                    ),
+                    th_attributes=hg.F(lambda c: {"_class": "bx--table-column-menu"}),
+                )
+            ]
+            if rowactions
+            else []
+        )
+        if rowactions_first_column:
+            all_columns = row_action_column + column_definitions
+        else:
+            all_columns = column_definitions + row_action_column
+
         return DataTable(
-            column_definitions
-            + (
-                [
-                    DataTableColumn(
-                        "",
-                        objectactions_menu,
-                        td_attributes=hg.F(
-                            lambda c: {
-                                "_class": "bx--table-column-menu"
-                                if rowactions_dropdown
-                                else ""
-                            }
-                        ),
-                        th_attributes=hg.F(
-                            lambda c: {"_class": "bx--table-column-menu"}
-                        ),
-                    )
-                ]
-                if rowactions
-                else []
-            ),
+            all_columns,
             # querysets are cached, the call to all will make sure a new query is used in every request
             hg.F(queryset_func),
             **kwargs,

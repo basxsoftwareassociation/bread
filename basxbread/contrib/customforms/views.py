@@ -1,11 +1,12 @@
 import base64
 
 import htmlgenerator as hg
-from basxbread import formatters, layout, utils, views
 from django import forms
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from guardian.shortcuts import get_objects_for_user
+
+from basxbread import formatters, layout, utils, views
 
 from . import models
 
