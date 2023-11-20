@@ -97,9 +97,12 @@ class SendEmail(Action):
             elif is_email_simple(email):
                 recipients.append(email)
             else:  # try to get value from object via accessor
-                extracted_email = hg.resolve_lookup({"object": object}, email) or ""
-                if is_email_simple(extracted_email):
-                    recipients.append(extracted_email)
+                extracted_emails = hg.resolve_lookup({"object": object}, email) or ""
+                if not isinstance(extracted_emails, (list, tuple)):
+                    extracted_emails = [extracted_emails]
+                for email in extracted_emails:
+                    if is_email_simple(email):
+                        recipients.append(email)
 
         if recipients:
             send_mail(
