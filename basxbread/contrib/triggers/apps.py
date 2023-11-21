@@ -123,11 +123,6 @@ def periodic_trigger():
         for instance in trigger.filter.queryset.all():
             for td in trigger.triggerdates(instance):
                 if (
-                    instance.id == 1306
-                    and trigger.description == "LT Reisegrund neue Entsendung"
-                ):
-                    print(trigger, td)
-                if (
                     td is not None
                     and timezone.now() <= td < timezone.now() + TRIGGER_PERIOD
                 ) and trigger.action:
