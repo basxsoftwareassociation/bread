@@ -35,6 +35,7 @@ class RequireAuthenticationMiddleware:
 
         # load the preferred language for a user and change translation system
         # and language cookie if required
+        tz = None
         if request.user and hasattr(request.user, "preferences"):
             lang = request.user.preferences.get("general__preferred_language")
             if lang and lang != get_language():
@@ -45,6 +46,12 @@ class RequireAuthenticationMiddleware:
                 timezone.activate(zoneinfo.ZoneInfo(tz))
             else:
                 timezone.deactivate()
+        if not tz and "basxbread-timezone" in request.session["basxbread-cookies"]:
+            timezone.activate(
+                zoneinfo.ZoneInfo(
+                    request.session["basxbread-cookies"]["basxbread-timezone"]
+                )
+            )
 
         return self.get_response(request)
 

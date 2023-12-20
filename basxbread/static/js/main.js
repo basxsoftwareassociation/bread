@@ -10,6 +10,8 @@ function basxbread_load_elements() {
   $$(
     "[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)"
   )._.fire("load");
+
+  setBasxBreadCookie("timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
 }
 
 // make sure to display content from faild ajax requests
@@ -195,3 +197,4 @@ function searchMatchRank(searchTerms, value) {
   }
   return score;
 }
+
