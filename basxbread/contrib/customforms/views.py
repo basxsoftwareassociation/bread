@@ -92,7 +92,7 @@ def formview(request, pk):
 def pdfimportview(request, pk):
     class UploadForm(forms.Form):
         importfile = forms.FileField(required=False)
-        password = forms.CharField(required=False)
+        password = forms.CharField(required=False, label=_("PDF password"))
 
     form = UploadForm()
     pdfimporter = get_object_or_404(models.PDFImport, pk=pk)
@@ -169,6 +169,7 @@ def pdfimportview(request, pk):
         layout.forms.Form(
             form,
             layout.forms.FormField("importfile"),
+            layout.forms.FormField("password"),
             layout.forms.helpers.Submit(label=_("Import")),
         ),
     )
