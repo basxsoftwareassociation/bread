@@ -316,7 +316,7 @@ a.bx--header__name {
 }
 
 .hidden {
-  display: none;
+  display: none!important;
 }
 
 .hoverable:hover {

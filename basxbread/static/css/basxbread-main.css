@@ -18806,7 +18806,7 @@ a.bx--header__name {
   margin-bottom: 1rem; }
 
 .hidden {
-  display: none; }
+  display: none !important; }
 
 .hoverable:hover {
   background-color: #e5e5e5; }
