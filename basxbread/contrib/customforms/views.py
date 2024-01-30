@@ -1,5 +1,6 @@
 import base64
 
+import fitz
 import htmlgenerator as hg
 from django import forms
 from django.shortcuts import get_object_or_404
@@ -88,6 +89,14 @@ def formview(request, pk):
     return formview_processing(request, form=form)
 
 
+def remove_pdf_password(pdf_content, password):
+    pdf = fitz.Document(stream=pdf_content)
+    pdf.authenticate(password)
+    ret = pdf.tobytes()
+    pdf.close()
+    return ret
+
+
 @utils.aslayout
 def pdfimportview(request, pk):
     class UploadForm(forms.Form):
@@ -101,9 +110,11 @@ def pdfimportview(request, pk):
         if uploadform.is_valid():
             if uploadform.cleaned_data.get("importfile"):
                 pdfcontent = uploadform.cleaned_data["importfile"].read()
-                pdffields = models.pdf_fields(
-                    pdfcontent, uploadform.cleaned_data["password"] or None
-                )
+                if uploadform.cleaned_data["password"]:
+                    pdfcontent = remove_pdf_password(
+                        pdfcontent, uploadform.cleaned_data["password"]
+                    )
+                pdffields = models.pdf_fields(pdfcontent)
                 initial = {}
                 for pdf_formfield in pdfimporter.fields.exclude(customform_field=None):
                     value = pdffields.get(pdf_formfield.pdf_field_name, "")
