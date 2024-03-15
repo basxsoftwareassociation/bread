@@ -157,3 +157,17 @@ PLATFORMNAME = mark_safe('Basx<span style="font-weight: 600">Bread</span>')
 HTML_TRUE = mark_safe("&#x2714;")  # ✔
 HTML_FALSE = mark_safe("&#x2716;")  # ✖
 HTML_NONE = mark_safe("&empty;")  # ∅
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
+    },
+}
