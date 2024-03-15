@@ -100,9 +100,11 @@ def generate_widget_element(
                 )
             return {
                 "id": id,
-                "name": realform[fieldname].html_initial_name
-                if show_hidden_initial
-                else realform[fieldname].html_name,
+                "name": (
+                    realform[fieldname].html_initial_name
+                    if show_hidden_initial
+                    else realform[fieldname].html_name
+                ),
                 "value": realform[fieldname].value(),
                 **realform[fieldname].build_widget_attrs({}),
                 **realform[fieldname].field.widget.attrs,

@@ -225,14 +225,16 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
             # rowactions_dropdown=len(self.rowactions) > 2,  # recommendation from carbon design
             rowactions_dropdown=False,  # will not work with submit-actions, which trigger a modal
             rowclickaction=self.rowclickaction,
-            pagination_config=layout.pagination.PaginationConfig(
-                items_per_page_options=self.items_per_page_options,
-                page_urlparameter=self.page_kwarg,
-                paginator=self.get_paginator(fullqueryset, paginate_by),
-                itemsperpage_urlparameter=self.itemsperpage_urlparameter,
-            )
-            if paginate_by > 0
-            else None,
+            pagination_config=(
+                layout.pagination.PaginationConfig(
+                    items_per_page_options=self.items_per_page_options,
+                    page_urlparameter=self.page_kwarg,
+                    paginator=self.get_paginator(fullqueryset, paginate_by),
+                    itemsperpage_urlparameter=self.itemsperpage_urlparameter,
+                )
+                if paginate_by > 0
+                else None
+            ),
             checkbox_for_bulkaction_name=self.objectids_urlparameter,
             title=self.title,
             settingspanel=self.get_settingspanel(),
@@ -307,9 +309,9 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
                     + "?"
                     + self.request.session[self.viewstate_sessionkey]
                 )
-            self.request.session[
-                self.viewstate_sessionkey
-            ] = self.request.GET.urlencode()
+            self.request.session[self.viewstate_sessionkey] = (
+                self.request.GET.urlencode()
+            )
 
         return super().get(*args, **kwargs)
 
@@ -487,9 +489,11 @@ def delete(request, queryset, softdeletefield=None, required_permissions=None):
         _("Deleted %(count)s %(modelname)s")
         % {
             "count": deleted,
-            "modelname": queryset.model._meta.verbose_name_plural
-            if deleted > 1
-            else queryset.model._meta.verbose_name,
+            "modelname": (
+                queryset.model._meta.verbose_name_plural
+                if deleted > 1
+                else queryset.model._meta.verbose_name
+            ),
         },
     )
 
@@ -525,9 +529,11 @@ def restore(request, queryset, softdeletefield, required_permissions=None):
         _("Restored %(count)s %(modelname)s")
         % {
             "count": restored,
-            "modelname": queryset.model._meta.verbose_name_plural
-            if restored > 1
-            else queryset.model._meta.verbose_name,
+            "modelname": (
+                queryset.model._meta.verbose_name_plural
+                if restored > 1
+                else queryset.model._meta.verbose_name
+            ),
         },
     )
 

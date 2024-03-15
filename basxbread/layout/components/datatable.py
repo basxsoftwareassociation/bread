@@ -246,11 +246,13 @@ class DataTable(hg.TABLE):
         return hg.DIV(
             hg.DIV(*header, _class="bx--data-table-header") if useheading else hg.DIV(),
             hg.SECTION(
-                None
-                if useheading
-                else hg.H5(
-                    title,
-                    style="align-self: center; width: 100%; padding-left: 1rem; margin-bottom: 0;",
+                (
+                    None
+                    if useheading
+                    else hg.H5(
+                        title,
+                        style="align-self: center; width: 100%; padding-left: 1rem; margin-bottom: 0;",
+                    )
                 ),
                 hg.DIV(
                     hg.DIV(
@@ -279,16 +281,18 @@ class DataTable(hg.TABLE):
                 ),
                 hg.DIV(
                     searchbar(search_urlparameter) if search_urlparameter else None,
-                    Button(
-                        icon="settings--adjust",
-                        buttontype="ghost",
-                        onclick="""
+                    (
+                        Button(
+                            icon="settings--adjust",
+                            buttontype="ghost",
+                            onclick="""
 let settings = this.parentElement.parentElement.parentElement.querySelector('.settingscontainer');
 settings.style.display = settings.style.display == 'block' ? 'none' : 'block';
 event.stopPropagation()""",
-                    )
-                    if settingspanel
-                    else None,
+                        )
+                        if settingspanel
+                        else None
+                    ),
                     primary_button or None,
                     _class="bx--toolbar-content",
                 ),
@@ -388,14 +392,16 @@ event.stopPropagation()""",
                     rowactions,
                     "link",
                     hg.F(
-                        lambda c: Button.from_link(
-                            c["link"],
-                            notext=True,
-                            small=True,
-                            buttontype="ghost",
+                        lambda c: (
+                            Button.from_link(
+                                c["link"],
+                                notext=True,
+                                small=True,
+                                buttontype="ghost",
+                            )
+                            if isinstance(c["link"], Link)
+                            else c["link"]
                         )
-                        if isinstance(c["link"], Link)
-                        else c["link"]
                     ),
                 ),
                 style="display: flex; justify-content: flex-end;",
@@ -452,9 +458,9 @@ event.stopPropagation()""",
                     objectactions_menu,
                     td_attributes=hg.F(
                         lambda c: {
-                            "_class": "bx--table-column-menu"
-                            if rowactions_dropdown
-                            else ""
+                            "_class": (
+                                "bx--table-column-menu" if rowactions_dropdown else ""
+                            )
                         }
                     ),
                     th_attributes=hg.F(lambda c: {"_class": "bx--table-column-menu"}),
@@ -480,9 +486,11 @@ event.stopPropagation()""",
                 hg.format(
                     "{} {}",
                     hg.F(
-                        lambda c: len(hg.resolve_lazy(queryset, c))
-                        if pagination_config is None
-                        else pagination_config.paginator.count
+                        lambda c: (
+                            len(hg.resolve_lazy(queryset, c))
+                            if pagination_config is None
+                            else pagination_config.paginator.count
+                        )
                     ),
                     hg.If(
                         hg.F(lambda c: hg.resolve_lazy(queryset.count(), c) == 1),
@@ -666,9 +674,9 @@ def searchbar(search_urlparameter: str):
         },
         width="100%",
     )
-    searchinput.close_button.attributes[
-        "onclick"
-    ] = "this.closest('form').querySelector('input').value = ''; this.closest('form').submit()"
+    searchinput.close_button.attributes["onclick"] = (
+        "this.closest('form').querySelector('input').value = ''; this.closest('form').submit()"
+    )
 
     return hg.DIV(
         hg.FORM(

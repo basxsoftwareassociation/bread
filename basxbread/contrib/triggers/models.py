@@ -134,8 +134,8 @@ class Trigger(models.Model):
     filter = QuerysetField(_("Filter"), modelfieldname="model")
     enable = models.BooleanField(default=True)
     action = models.ForeignKey(Action, on_delete=models.PROTECT, null=True)
-    action.lazy_choices = (
-        lambda field, request, instance: Action.objects.all()
+    action.lazy_choices = lambda field, request, instance: (
+        Action.objects.all()
         if not instance or not instance.id
         else Action.objects.filter(model=instance.model)
     )

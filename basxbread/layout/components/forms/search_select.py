@@ -32,13 +32,15 @@ class SearchSelect(BaseWidget):
         super().__init__(
             label,
             Tag(
-                hg.F(
-                    lambda c: hg.resolve_lazy(boundfield, c).field.to_python(
-                        hg.resolve_lazy(boundfield, c).value()
+                (
+                    hg.F(
+                        lambda c: hg.resolve_lazy(boundfield, c).field.to_python(
+                            hg.resolve_lazy(boundfield, c).value()
+                        )
                     )
-                )
-                if boundfield
-                else "",
+                    if boundfield
+                    else ""
+                ),
                 id=tag_id,
                 style=hg.If(
                     inputelement_attrs.get("value"),

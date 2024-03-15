@@ -356,11 +356,13 @@ class Formset(hg.Iterator):
                 **kwargs,
             ).with_toolbar(
                 title=title,
-                primary_button=formsetelem.add_button(
-                    buttontype="primary", container_css_selector=f"#{id} tbody"
-                )
-                if can_add
-                else None,
+                primary_button=(
+                    formsetelem.add_button(
+                        buttontype="primary", container_css_selector=f"#{id} tbody"
+                    )
+                    if can_add
+                    else None
+                ),
                 useheading=False,
             ),
             formsetelem.management_form,
@@ -397,14 +399,16 @@ class Formset(hg.Iterator):
             ),
             hg.FIELDSET(hg.H4(title), formsetelem, id=id),
             formsetelem.management_form,
-            formsetelem.add_button(
-                buttontype="ghost",
-                notext=False,
-                label="+",
-                container_css_selector=f"#{id}",
-            )
-            if can_add
-            else None,
+            (
+                formsetelem.add_button(
+                    buttontype="ghost",
+                    notext=False,
+                    label="+",
+                    container_css_selector=f"#{id}",
+                )
+                if can_add
+                else None
+            ),
         )
 
 

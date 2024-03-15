@@ -158,9 +158,11 @@ class CustomFormMixin:
         else:
             direct_model_formfields = filter_fieldlist(
                 self.model,
-                [f for f in self.fields if isinstance(f, str)]
-                if (self.fields is not None)
-                else None,
+                (
+                    [f for f in self.fields if isinstance(f, str)]
+                    if (self.fields is not None)
+                    else None
+                ),
                 for_form=True,
             )
             declared_formfields = list(self.fields or direct_model_formfields)

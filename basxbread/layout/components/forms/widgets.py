@@ -396,13 +396,15 @@ sorted.forEach(node => resultsElem.appendChild(node))
             ),
             hg.SELECT(
                 hg.Iterator(
-                    _optgroups_from_choices(
-                        choices,
-                        name=inputelement_attrs.get("name"),
-                        value=inputelement_attrs.get("value"),
-                    )
-                    if choices
-                    else _gen_optgroup(boundfield),
+                    (
+                        _optgroups_from_choices(
+                            choices,
+                            name=inputelement_attrs.get("name"),
+                            value=inputelement_attrs.get("value"),
+                        )
+                        if choices
+                        else _gen_optgroup(boundfield)
+                    ),
                     "optgroup",
                     hg.If(
                         hg.C("optgroup.0"),

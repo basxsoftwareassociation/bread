@@ -72,9 +72,11 @@ def test(request):
 
     content = hg.DIV(
         *[
-            layout.grid.Row(layout.grid.Col(forms.FormField(f)))
-            if f == "type"
-            else forms.FormField(f)
+            (
+                layout.grid.Row(layout.grid.Col(forms.FormField(f)))
+                if f == "type"
+                else forms.FormField(f)
+            )
             for f in FieldForm().fields
         ],
         style=hg.format(

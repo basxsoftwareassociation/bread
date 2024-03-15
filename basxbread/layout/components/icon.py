@@ -8,7 +8,6 @@ RAW_ICON_BASE_PATH = "design/carbon_design/icons/flat/raw_32/"
 
 
 class Icon(hg.SVG):
-
     """Insert the SVG for a carbon icon.
     See https://www.carbondesignsystem.com/guidelines/icons/library for a list of all icons.
     In order to see the name which should be passed to this template tag, click on "Download SVG"

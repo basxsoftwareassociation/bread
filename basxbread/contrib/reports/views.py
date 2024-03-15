@@ -143,11 +143,13 @@ class ReadView(views.ReadView):
             views.header(),
             layout.datatable.DataTable(
                 columns=columns,
-                row_iterator=paginator.get_page(
-                    self.request.GET.get(pagination_config.page_urlparameter)
-                )
-                if self.object.pagination
-                else qs,
+                row_iterator=(
+                    paginator.get_page(
+                        self.request.GET.get(pagination_config.page_urlparameter)
+                    )
+                    if self.object.pagination
+                    else qs
+                ),
             ).with_toolbar(
                 title=self.object.name,
                 helper_text=f"{self.object.queryset.count()} "

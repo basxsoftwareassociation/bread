@@ -280,9 +280,9 @@ class EditPersonalDataView(EditView):
                 httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
                 samesite=settings.LANGUAGE_COOKIE_SAMESITE,
             )
-        self.request.user.preferences[
-            "general__preferred_language"
-        ] = form.cleaned_data["preferred_language"]
+        self.request.user.preferences["general__preferred_language"] = (
+            form.cleaned_data["preferred_language"]
+        )
         self.request.user.preferences["general__timezone"] = form.cleaned_data[
             "timezone"
         ]
@@ -396,8 +396,10 @@ def set_devmode(request, enable: str):
     request.session[layout.DEVMODE_KEY] = enable.lower() in ["true", "1"]
     messages.success(
         request,
-        _("Enabled developer mode")
-        if request.session[layout.DEVMODE_KEY]
-        else _("Disabled developer mode"),
+        (
+            _("Enabled developer mode")
+            if request.session[layout.DEVMODE_KEY]
+            else _("Disabled developer mode")
+        ),
     )
     return HttpResponse("OK")

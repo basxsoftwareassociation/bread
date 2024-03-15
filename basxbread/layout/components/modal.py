@@ -75,12 +75,14 @@ class Modal(hg.DIV):
                 ),
                 self.contentcontainer,
                 hg.DIV(_class="bx--modal-content--overflow-indicator"),
-                hg.DIV(
-                    *buttons,
-                    _class="bx--modal-footer",
-                )
-                if buttons
-                else "",
+                (
+                    hg.DIV(
+                        *buttons,
+                        _class="bx--modal-footer",
+                    )
+                    if buttons
+                    else ""
+                ),
                 _class=f"bx--modal-container  bx--modal-container--{size}",
             ),
             data_modal=True,
