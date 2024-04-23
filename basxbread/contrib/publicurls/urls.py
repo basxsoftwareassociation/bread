@@ -102,7 +102,7 @@ urlpatterns = [
                 "created",
                 "valid_for",
             ],
-            rowactions=(views.BrowseView.editlink(), views.BrowseView.deletelink()),
+            rowactions=(views.editlink(), views.deletelink()),
         ),
     ),
 ]

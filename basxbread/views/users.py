@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from basxbread import layout, utils
 
-from . import AddView, BrowseView, EditView, ReadView
+from . import AddView, BrowseView, EditView, ReadView, editlink
 
 
 class UserBrowseView(BrowseView):
@@ -22,7 +22,7 @@ class UserBrowseView(BrowseView):
         "last_login",
     ]
     rowactions = (
-        BrowseView.editlink(),
+        editlink(),
         utils.Link(
             href=utils.LazyHref("password_reset", query={"email": hg.C("row").email}),
             label=hg.If(

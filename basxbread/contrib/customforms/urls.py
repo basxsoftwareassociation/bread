@@ -12,8 +12,8 @@ urlpatterns = [
         browseview=breadviews.BrowseView._with(
             columns=["__all__", "customformfields"],
             rowactions=(
-                breadviews.BrowseView.editlink(),
-                breadviews.BrowseView.deletelink(),
+                breadviews.editlink(),
+                breadviews.deletelink(),
                 utils.Link(
                     href=utils.ModelHref(hg.C("row"), "use", return_to_current=False),
                     label=_("Add form entry"),
@@ -39,8 +39,8 @@ urlpatterns = [
         models.PDFImport,
         browseview=breadviews.BrowseView._with(
             rowactions=(
-                breadviews.BrowseView.editlink(),
-                breadviews.BrowseView.deletelink(),
+                breadviews.editlink(),
+                breadviews.deletelink(),
                 utils.Link(
                     href=utils.ModelHref(hg.C("row"), "use", return_to_current=False),
                     label=_("Import new PDF"),

@@ -15,15 +15,15 @@ def quickregister(
     **kwargs,
 ):
     from .. import menu
-    from ..views import BrowseView
+    from ..views import BrowseView, deletelink, editlink
     from .links import Link, ModelHref
     from .urls import default_model_paths
 
     rowactions = []
     if with_editaction:
-        rowactions.append(BrowseView.editlink())
+        rowactions.append(editlink())
     if with_deleteaction:
-        rowactions.append(BrowseView.deletelink())
+        rowactions.append(deletelink())
 
     kwargs["browseview"] = kwargs.get("browseview", BrowseView)._with(
         rowactions=rowactions

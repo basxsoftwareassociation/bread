@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-22 04:21+0000\n"
+"POT-Creation-Date: 2024-04-23 03:27+0000\n"
 "PO-Revision-Date: 2021-06-23 11:32+0000\n"
 "Last-Translator: Nathan <bonnemainsnathan@gmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/basxconnect/"
@@ -31,9 +31,10 @@ msgid "Title"
 msgstr ""
 
 #: basxbread/contrib/customforms/models.py:12
+#: basxbread/contrib/email_templates/models.py:16
 #: basxbread/contrib/reports/models.py:24
 #: basxbread/contrib/triggers/models.py:51
-#: basxbread/contrib/triggers/models.py:125
+#: basxbread/contrib/triggers/models.py:128
 msgid "Model"
 msgstr "Modèle"
 
@@ -103,86 +104,167 @@ msgstr ""
 msgid "PDF form"
 msgstr "A un formulaire"
 
-#: basxbread/contrib/customforms/models.py:89
+#: basxbread/contrib/customforms/models.py:98
 #, python-format
 msgid "PDF import for %s"
 msgstr ""
 
-#: basxbread/contrib/customforms/models.py:92
+#: basxbread/contrib/customforms/models.py:101
 msgid "PDF import"
 msgstr ""
 
-#: basxbread/contrib/customforms/models.py:93
+#: basxbread/contrib/customforms/models.py:102
 msgid "PDF imports"
 msgstr ""
 
-#: basxbread/contrib/customforms/models.py:100
+#: basxbread/contrib/customforms/models.py:109
 msgid "PDF form field"
 msgstr ""
 
-#: basxbread/contrib/customforms/models.py:104
+#: basxbread/contrib/customforms/models.py:113
 #, fuzzy
 #| msgid "Field"
 msgid "PDF field name"
 msgstr "Champs"
 
-#: basxbread/contrib/customforms/models.py:118
+#: basxbread/contrib/customforms/models.py:125
+msgid "Join"
+msgstr ""
+
+#: basxbread/contrib/customforms/models.py:126
+msgid "Join multiple fields with character, use \\n for newline"
+msgstr ""
+
+#: basxbread/contrib/customforms/models.py:133
+#, fuzzy
+#| msgid "Raw value"
+msgid "Map value"
+msgstr "Valeur brute"
+
+#: basxbread/contrib/customforms/models.py:133
+#, fuzzy
+#| msgid "Field"
+msgid "Map PDF-field value"
+msgstr "Champs"
+
+#: basxbread/contrib/customforms/models.py:145
 msgid "PDF import field"
 msgstr ""
 
-#: basxbread/contrib/customforms/models.py:119
+#: basxbread/contrib/customforms/models.py:146
 msgid "PDF import fields"
 msgstr ""
 
-#: basxbread/contrib/customforms/urls.py:21
+#: basxbread/contrib/customforms/urls.py:19
 msgid "Add form entry"
 msgstr ""
 
-#: basxbread/contrib/customforms/urls.py:50
+#: basxbread/contrib/customforms/urls.py:46
 msgid "Import new PDF"
 msgstr ""
 
-#: basxbread/contrib/customforms/views.py:33
+#: basxbread/contrib/customforms/views.py:36
 msgid "Error"
 msgstr "Erreur"
 
-#: basxbread/contrib/customforms/views.py:34
+#: basxbread/contrib/customforms/views.py:37
 msgid "More than one instance was selected by the query elements"
 msgstr ""
 
-#: basxbread/contrib/customforms/views.py:37
+#: basxbread/contrib/customforms/views.py:40
 msgid "The following arguments were passed to the query:"
 msgstr ""
 
-#: basxbread/contrib/customforms/views.py:41
+#: basxbread/contrib/customforms/views.py:44
 #, fuzzy
 #| msgid "Field"
 msgid "Query field name"
 msgstr "Champs"
 
-#: basxbread/contrib/customforms/views.py:44
+#: basxbread/contrib/customforms/views.py:47
 msgid "Query field value"
 msgstr ""
 
-#: basxbread/contrib/customforms/views.py:48
+#: basxbread/contrib/customforms/views.py:51
 #, fuzzy
 #| msgid "Model"
 msgid "Model: "
 msgstr "Modèle"
 
-#: basxbread/contrib/customforms/views.py:50
+#: basxbread/contrib/customforms/views.py:53
 msgid "Produced results (should only produce 1)"
 msgstr ""
 
-#: basxbread/contrib/customforms/views.py:115
+#: basxbread/contrib/customforms/views.py:104
+#, fuzzy
+#| msgid "Show password"
+msgid "PDF password"
+msgstr "Afficher le mot de passe"
+
+#: basxbread/contrib/customforms/views.py:175
 msgid "Import filled out version of {}"
 msgstr ""
 
-#: basxbread/contrib/customforms/views.py:123
+#: basxbread/contrib/customforms/views.py:184
 #, fuzzy
 #| msgid "Report"
 msgid "Import"
 msgstr "Rapport"
+
+#: basxbread/contrib/email_templates/apps.py:8
+#: basxbread/contrib/email_templates/models.py:47
+#, fuzzy
+#| msgid "Error in template: "
+msgid "Email templates"
+msgstr "Erreur dans le modèle : "
+
+#: basxbread/contrib/email_templates/models.py:9
+#: basxbread/contrib/publicurls/models.py:33
+#: basxbread/contrib/reports/models.py:22
+#: basxbread/contrib/taxonomy/models.py:20
+msgid "Name"
+msgstr "Nom"
+
+#: basxbread/contrib/email_templates/models.py:10
+#: basxbread/contrib/triggers/models.py:73
+msgid "Subject"
+msgstr "Sujet"
+
+#: basxbread/contrib/email_templates/models.py:11
+msgid "Body"
+msgstr ""
+
+#: basxbread/contrib/email_templates/models.py:20
+msgid ""
+"Select a model if this template should only be used with certain model "
+"instances."
+msgstr ""
+
+#: basxbread/contrib/email_templates/models.py:29
+msgid "Generate attachment"
+msgstr ""
+
+#: basxbread/contrib/email_templates/models.py:46
+#, fuzzy
+#| msgid "Error in template: "
+msgid "Email template"
+msgstr "Erreur dans le modèle : "
+
+#: basxbread/contrib/email_templates/models.py:54
+msgid "Template"
+msgstr "Modèle"
+
+#: basxbread/contrib/email_templates/models.py:57
+msgid "File"
+msgstr ""
+
+#: basxbread/contrib/email_templates/models.py:60
+msgid "Attachment"
+msgstr ""
+
+#: basxbread/contrib/email_templates/models.py:61
+msgid "Attachments"
+msgstr ""
 
 #: basxbread/contrib/modeledit/apps.py:8
 #, fuzzy
@@ -348,16 +430,16 @@ msgstr ""
 msgid "Modeledit"
 msgstr "Modèle"
 
-#: basxbread/contrib/modeledit/views.py:136
+#: basxbread/contrib/modeledit/views.py:138
 #: basxbread/layout/components/fieldexplorer.py:31
 msgid "Fields"
 msgstr "Champs"
 
-#: basxbread/contrib/modeledit/views.py:147
+#: basxbread/contrib/modeledit/views.py:149
 msgid "<New field>"
 msgstr ""
 
-#: basxbread/contrib/modeledit/views.py:160
+#: basxbread/contrib/modeledit/views.py:162
 msgid "Add new field"
 msgstr ""
 
@@ -377,12 +459,6 @@ msgstr "%(value)s n'est pas une URL interne valide"
 msgid "%(value)s is not a valid internal URL"
 msgstr "%(value)s n'est pas une URL interne valide"
 
-#: basxbread/contrib/publicurls/models.py:33
-#: basxbread/contrib/reports/models.py:22
-#: basxbread/contrib/taxonomy/models.py:20
-msgid "Name"
-msgstr "Nom"
-
 #: basxbread/contrib/publicurls/models.py:35
 msgid "URL"
 msgstr "URL"
@@ -397,6 +473,7 @@ msgstr ""
 
 #: basxbread/contrib/publicurls/models.py:41
 #: basxbread/contrib/reports/models.py:21
+#: basxbread/layout/components/history_table.py:94
 msgid "Created"
 msgstr "Créé le"
 
@@ -461,7 +538,7 @@ msgid "Reports"
 msgstr "Rapports"
 
 #: basxbread/contrib/reports/models.py:29
-#: basxbread/contrib/triggers/models.py:131 basxbread/views/browse.py:685
+#: basxbread/contrib/triggers/models.py:134 basxbread/views/browse.py:692
 msgid "Filter"
 msgstr "Filtrer"
 
@@ -548,24 +625,25 @@ msgid "Columns"
 msgstr "Colonnes"
 
 #: basxbread/contrib/reports/urls.py:23
-#: basxbread/layout/components/forms/__init__.py:356
+#: basxbread/layout/components/forms/__init__.py:416
+#: basxbread/layout/components/forms/__init__.py:444
 #: basxbread/views/browse.py:66 basxbread/views/browse.py:411
-#: basxbread/views/util.py:37
+#: basxbread/views/util.py:38
 msgid "Delete"
 msgstr "Supprimer"
 
-#: basxbread/contrib/reports/urls.py:27 basxbread/views/util.py:53
+#: basxbread/contrib/reports/urls.py:27 basxbread/views/util.py:54
 msgid "Copy"
 msgstr "Copier"
 
-#: basxbread/contrib/reports/urls.py:38 basxbread/views/browse.py:399
-#: basxbread/views/read.py:54 basxbread/views/userprofile.py:119
+#: basxbread/contrib/reports/urls.py:38 basxbread/views/browse.py:401
+#: basxbread/views/read.py:61 basxbread/views/userprofile.py:119
 #: basxbread/views/userprofile.py:147 basxbread/views/userprofile.py:179
-#: basxbread/views/util.py:24
+#: basxbread/views/util.py:25
 msgid "Edit"
 msgstr "Modifier"
 
-#: basxbread/contrib/reports/urls.py:43 basxbread/contrib/reports/views.py:156
+#: basxbread/contrib/reports/urls.py:43 basxbread/contrib/reports/views.py:158
 #: basxbread/views/browse.py:59
 msgid "Excel"
 msgstr "Excel"
@@ -643,7 +721,7 @@ msgid "Show disabled"
 msgstr "Désactivé"
 
 #: basxbread/contrib/taxonomy/views.py:54
-#: basxbread/layout/components/datatable.py:360 basxbread/views/add.py:43
+#: basxbread/layout/components/datatable.py:377 basxbread/views/add.py:43
 #: basxbread/views/add.py:50
 #, python-format
 msgid "Add %s"
@@ -677,10 +755,6 @@ msgstr "Actions"
 msgid "Email"
 msgstr "E-mail"
 
-#: basxbread/contrib/triggers/models.py:73
-msgid "Subject"
-msgstr "Sujet"
-
 #: basxbread/contrib/triggers/models.py:76
 #: basxbread/contrib/triggers/models.py:82
 msgid ""
@@ -692,116 +766,116 @@ msgstr ""
 msgid "Message"
 msgstr "Message"
 
-#: basxbread/contrib/triggers/models.py:117
+#: basxbread/contrib/triggers/models.py:120
 #, fuzzy
 #| msgid "Send Email Action"
 msgid "Send email action"
 msgstr "Action d'envoi d'e-mail"
 
-#: basxbread/contrib/triggers/models.py:118
+#: basxbread/contrib/triggers/models.py:121
 #, fuzzy
 #| msgid "Send Email Actions"
 msgid "Send email actions"
 msgstr "Actions d'envoi d'e-mail"
 
-#: basxbread/contrib/triggers/models.py:149
+#: basxbread/contrib/triggers/models.py:152
 msgid "Type"
 msgstr "Type"
 
-#: basxbread/contrib/triggers/models.py:151
+#: basxbread/contrib/triggers/models.py:154
 msgid "Added"
 msgstr "Ajouté"
 
-#: basxbread/contrib/triggers/models.py:152
+#: basxbread/contrib/triggers/models.py:155
 msgid "Changed"
 msgstr "Modifié"
 
-#: basxbread/contrib/triggers/models.py:153
+#: basxbread/contrib/triggers/models.py:156
 msgid "Deleted"
 msgstr "Supprimé"
 
-#: basxbread/contrib/triggers/models.py:157
-#: basxbread/contrib/triggers/models.py:184 basxbread/views/read.py:35
+#: basxbread/contrib/triggers/models.py:160
+#: basxbread/contrib/triggers/models.py:187 basxbread/views/read.py:35
 msgid "Field"
 msgstr "Champs"
 
-#: basxbread/contrib/triggers/models.py:161
+#: basxbread/contrib/triggers/models.py:164
 msgid ""
 "Only trigger when a certain field has changed. Use comma to add multiple "
 "fields."
 msgstr ""
 
-#: basxbread/contrib/triggers/models.py:167
+#: basxbread/contrib/triggers/models.py:170
 #, fuzzy
 #| msgid "Data change trigger"
 msgid "Change trigger"
 msgstr "Déclencheur de changement de données"
 
-#: basxbread/contrib/triggers/models.py:168
+#: basxbread/contrib/triggers/models.py:171
 #, fuzzy
 #| msgid "Data change triggers"
 msgid "Change triggers"
 msgstr "Déclencheurs de changement de données"
 
-#: basxbread/contrib/triggers/models.py:172
+#: basxbread/contrib/triggers/models.py:175
 msgid "Seconds"
 msgstr ""
 
-#: basxbread/contrib/triggers/models.py:173
+#: basxbread/contrib/triggers/models.py:176
 msgid "Minutes"
 msgstr "Minutes"
 
-#: basxbread/contrib/triggers/models.py:174
+#: basxbread/contrib/triggers/models.py:177
 msgid "Hours"
 msgstr "Heures"
 
-#: basxbread/contrib/triggers/models.py:175
+#: basxbread/contrib/triggers/models.py:178
 msgid "Days"
 msgstr "Jours"
 
-#: basxbread/contrib/triggers/models.py:176
+#: basxbread/contrib/triggers/models.py:179
 msgid "Weeks"
 msgstr "Semaines"
 
-#: basxbread/contrib/triggers/models.py:177
+#: basxbread/contrib/triggers/models.py:180
 msgid "Months"
 msgstr "Mois"
 
-#: basxbread/contrib/triggers/models.py:178
+#: basxbread/contrib/triggers/models.py:181
 msgid "Years"
 msgstr "Années"
 
-#: basxbread/contrib/triggers/models.py:186
+#: basxbread/contrib/triggers/models.py:189
 msgid "The field of the selected model which should trigger an action"
 msgstr "Le champs du modèle sélectionné qui doit lancer une action"
 
-#: basxbread/contrib/triggers/models.py:190
+#: basxbread/contrib/triggers/models.py:193
 msgid "Offset type"
 msgstr "Type de décalage"
 
-#: basxbread/contrib/triggers/models.py:196
+#: basxbread/contrib/triggers/models.py:199
 msgid "Offset amount"
 msgstr "Quantité du décalage"
 
-#: basxbread/contrib/triggers/models.py:197
+#: basxbread/contrib/triggers/models.py:200
 msgid "Can be negative (before) or positive (after)"
 msgstr "Peut être négatif (antérieur) ou positif (postérieur)"
 
-#: basxbread/contrib/triggers/models.py:201
+#: basxbread/contrib/triggers/models.py:204
 msgid "Ignore year"
 msgstr "Ignorer l'année"
 
-#: basxbread/contrib/triggers/models.py:203
+#: basxbread/contrib/triggers/models.py:206
 msgid "Check this in order to trigger every year"
 msgstr "Veuillez vérifier ceci avant de pouvoir le déclencher chaque année"
 
-#: basxbread/contrib/triggers/models.py:230
+#: basxbread/contrib/triggers/models.py:233
 #, fuzzy
 #| msgid "Date field trigger"
 msgid "Date trigger"
 msgstr "Déclencheur de champs de date"
 
-#: basxbread/contrib/triggers/models.py:231
+#: basxbread/contrib/triggers/models.py:234
 #, fuzzy
 #| msgid "Date field triggers"
 msgid "Date triggers"
@@ -842,28 +916,6 @@ msgstr "Se déconnecter"
 msgid "File not found"
 msgstr "Fichier non trouvé"
 
-#: basxbread/layout/componentpreview.py:123
-msgid "Table of Contents"
-msgstr "Table des matières"
-
-#: basxbread/layout/componentpreview.py:975
-#: basxbread/views/administration.py:263
-msgid ""
-"This is some tooltip text. This box shows the maximum amount of text that "
-"should appear inside. If more room is needed please use a modal instead."
-msgstr ""
-"C'est une sorte de texte d'infobulle. Cette boite affiche la quantité "
-"maximale de texte qui peut apparaitre à l'intérieur. Si plus de place est "
-"nécessaire, utilisez plutôt une modale."
-
-#: basxbread/layout/componentpreview.py:1038
-msgid "This is a server message in the ToastNotification."
-msgstr "Ceci est une message du serveur dans une ToastNotification."
-
-#: basxbread/layout/componentpreview.py:1172
-msgid "Click to see ToastNotification in action"
-msgstr "Cliquez ici pour voir une ToastNotification en action"
-
 #: basxbread/layout/components/button.py:81
 #: basxbread/layout/components/overflow_menu.py:20
 #, fuzzy
@@ -871,7 +923,7 @@ msgstr "Cliquez ici pour voir une ToastNotification en action"
 msgid "Please confirm"
 msgstr "Veuillez vous reconnecter"
 
-#: basxbread/layout/components/button.py:82 basxbread/utils/links.py:112
+#: basxbread/layout/components/button.py:82 basxbread/utils/links.py:109
 msgid "Are you sure?"
 msgstr ""
 
@@ -889,17 +941,17 @@ msgstr ""
 msgid "Print"
 msgstr "Imprimer"
 
-#: basxbread/layout/components/datatable.py:253
-#: basxbread/layout/components/modal.py:105 basxbread/views/auth.py:30
-#: basxbread/views/browse.py:706
+#: basxbread/layout/components/datatable.py:263
+#: basxbread/layout/components/modal.py:107 basxbread/views/auth.py:30
+#: basxbread/views/browse.py:713
 msgid "Cancel"
 msgstr "Annuler"
 
-#: basxbread/layout/components/datatable.py:264
+#: basxbread/layout/components/datatable.py:274
 msgid " items selected"
 msgstr " éléments sélectionnés"
 
-#: basxbread/layout/components/datatable.py:270
+#: basxbread/layout/components/datatable.py:280
 msgid "Table Action Bar"
 msgstr "Barre d'actions de la table"
 
@@ -926,8 +978,9 @@ msgid " reference to multiple \"%s\""
 msgstr " référence à plusieurs « %s »"
 
 #: basxbread/layout/components/forms/__init__.py:60
-#: basxbread/layout/components/forms/__init__.py:230
-#: basxbread/layout/components/forms/__init__.py:333
+#: basxbread/layout/components/forms/__init__.py:244
+#: basxbread/layout/components/forms/__init__.py:347
+#: basxbread/layout/components/forms/__init__.py:396
 msgid "Form error"
 msgstr "Erreur dans le formulaire"
 
@@ -940,7 +993,7 @@ msgstr "Erreur de champs masqué : "
 msgid "Add"
 msgstr "Ajouter"
 
-#: basxbread/layout/components/forms/__init__.py:296
+#: basxbread/layout/components/forms/__init__.py:310
 msgid "Order"
 msgstr "Tri"
 
@@ -954,17 +1007,46 @@ msgstr "Enregistrer"
 msgid "Show password"
 msgstr "Afficher le mot de passe"
 
-#: basxbread/layout/components/forms/widgets.py:904
+#: basxbread/layout/components/forms/widgets.py:360
+msgid "Type to search"
+msgstr ""
+
+#: basxbread/layout/components/forms/widgets.py:967
 msgid "Select file"
 msgstr "Sélectionner un fichier"
 
-#: basxbread/layout/components/forms/widgets.py:1118
+#: basxbread/layout/components/forms/widgets.py:1183
 msgid "From"
 msgstr ""
 
-#: basxbread/layout/components/forms/widgets.py:1118
+#: basxbread/layout/components/forms/widgets.py:1183
 msgid "To"
 msgstr ""
+
+#: basxbread/layout/components/history_table.py:55
+#: basxbread/layout/components/history_table.py:66
+msgid "<Value has been deleted>"
+msgstr ""
+
+#: basxbread/layout/components/history_table.py:89
+msgid "Date"
+msgstr ""
+
+#: basxbread/layout/components/history_table.py:99
+#, fuzzy
+#| msgid "Timezone"
+msgid "Time"
+msgstr "Créneau horaire"
+
+#: basxbread/layout/components/history_table.py:103
+msgid "User"
+msgstr ""
+
+#: basxbread/layout/components/history_table.py:107
+#, fuzzy
+#| msgid "Changed"
+msgid "Changes"
+msgstr "Modifié"
 
 #: basxbread/layout/components/notification.py:131
 msgid "Time stamp"
@@ -1052,21 +1134,13 @@ msgstr "Tâches en arrière-plan"
 msgid "Data model"
 msgstr "Modèle de base"
 
-#: basxbread/menu.py:189
-msgid "Django Admin"
-msgstr "Administration Django"
-
-#: basxbread/menu.py:197 basxbread/views/administration.py:38
+#: basxbread/menu.py:191 basxbread/views/administration.py:34
 msgid "Maintenance"
 msgstr "Maintenance"
 
-#: basxbread/menu.py:207
+#: basxbread/menu.py:201
 msgid "System Information"
 msgstr "Informations système"
-
-#: basxbread/menu.py:216
-msgid "Component Preview"
-msgstr "Aperçu du composant"
 
 #: basxbread/querysetfield.py:103
 #, python-format
@@ -1078,138 +1152,82 @@ msgstr "Modèle « %s » sélectionné invalide"
 msgid "Added %s"
 msgstr "%s a été ajouté"
 
-#: basxbread/views/administration.py:48
+#: basxbread/views/administration.py:44
 msgid "Packages"
 msgstr "Packets"
 
-#: basxbread/views/administration.py:52
+#: basxbread/views/administration.py:48
 msgid "Optimize database"
 msgstr "Optimiser la base de données"
 
-#: basxbread/views/administration.py:54
+#: basxbread/views/administration.py:50
 msgid "Rebuild search index"
 msgstr "Reconstruire l'index de recherche"
 
-#: basxbread/views/administration.py:56
+#: basxbread/views/administration.py:52
 msgid "Restart application server"
 msgstr ""
 
-#: basxbread/views/administration.py:160
-msgid "Back to top"
-msgstr "Retour en haut"
-
-#: basxbread/views/administration.py:168
-msgid "Layout"
-msgstr "Disposition"
-
-#: basxbread/views/administration.py:172
-msgid "Informational"
-msgstr "Informelle"
-
-#: basxbread/views/administration.py:176
-msgid "Interactive"
-msgstr "Interactif"
-
-#: basxbread/views/administration.py:180
-msgid "Datatable"
-msgstr "Base de données"
-
-#: basxbread/views/administration.py:184
-msgid "Form"
-msgstr "Formulaire"
-
-#: basxbread/views/administration.py:186
-msgid "Widget preview"
-msgstr "Aperçu du gadget"
-
-#: basxbread/views/administration.py:190
-msgid "Widgets"
-msgstr "Gadgets"
-
-#: basxbread/views/administration.py:206
-msgid "Configure preview"
-msgstr "Configurer l'aperçu"
-
-#: basxbread/views/administration.py:213
-msgid "Apply"
-msgstr "Appliquer"
-
-#: basxbread/views/administration.py:220
-msgid "Tooltips"
-msgstr "Infobulles"
-
-#: basxbread/views/administration.py:221
-msgid "Definition tooltip"
-msgstr "Infobulle de définition"
-
-#: basxbread/views/administration.py:243
-msgid "Icon tooltip"
-msgstr "Infobulle avec icône"
-
-#: basxbread/views/administration.py:257
-msgid "Interactive tooltip"
-msgstr "Infobulle interactive"
-
-#: basxbread/views/administration.py:308
+#: basxbread/views/administration.py:84
 msgid "unable to load"
 msgstr "échec du chargement"
 
-#: basxbread/views/administration.py:325
+#: basxbread/views/administration.py:101
 msgid "Package"
 msgstr "Paquet"
 
-#: basxbread/views/administration.py:329
+#: basxbread/views/administration.py:105
 msgid "Current"
 msgstr "Actuelle"
 
-#: basxbread/views/administration.py:333
+#: basxbread/views/administration.py:109
 msgid "Latest"
 msgstr "Dernière"
 
-#: basxbread/views/administration.py:354
+#: basxbread/views/administration.py:130
 msgid "Database optimization is currently only available for sqlite databases"
 msgstr ""
 
-#: basxbread/views/administration.py:380
+#: basxbread/views/administration.py:156
 #, python-format
 msgid "The database size has been minimized from %.2f kB to %.2f kB."
 msgstr "La taille de la base de données de %.2f kB a été réduite à %.2f kB."
 
-#: basxbread/views/administration.py:385
+#: basxbread/views/administration.py:161
 #, python-format
 msgid "Previous Size: %.2f kB"
 msgstr "Taille précédente : %.2f kB"
 
-#: basxbread/views/administration.py:395
+#: basxbread/views/administration.py:171
 msgid "Optimize"
 msgstr "Optimiser"
 
-#: basxbread/views/administration.py:400
+#: basxbread/views/administration.py:176
 #, python-format
 msgid "Current Size: %.2f kB"
 msgstr "Taille actuelle : %.2f kB"
 
-#: basxbread/views/administration.py:427
+#: basxbread/views/administration.py:203
 msgid "Rebuilt search index"
 msgstr "Index de recherche reconstruit"
 
-#: basxbread/views/administration.py:436
+#: basxbread/views/administration.py:212
 msgid "Rebuild"
 msgstr "Reconstruire"
 
-#: basxbread/views/administration.py:457
+#: basxbread/views/administration.py:233
 msgid "Log from the server"
 msgstr "Journal du serveur"
 
-#: basxbread/views/administration.py:471
+#: basxbread/views/administration.py:247
 msgid "Restarted application server"
 msgstr ""
 
-#: basxbread/views/administration.py:480
+#: basxbread/views/administration.py:256
 msgid "Restart"
 msgstr ""
 
-#: basxbread/views/administration.py:509
+#: basxbread/views/administration.py:285
 msgid "System information"
 msgstr "Informations système"
 
@@ -1279,55 +1297,55 @@ msgstr "Mot de passe changé avec succès"
 msgid "Please login again"
 msgstr "Veuillez vous reconnecter"
 
-#: basxbread/views/browse.py:287
+#: basxbread/views/browse.py:289
 #, python-format
 msgid "Action '%s' is not configured for this view"
 msgstr "L'action « %s » n'est pas configurée pour cette vue"
 
-#: basxbread/views/browse.py:334
+#: basxbread/views/browse.py:336
 #, python-format
 msgid "Bad filter string '%s': '%s'"
 msgstr "Filtre invalide '%s' : '%s'"
 
-#: basxbread/views/browse.py:416 basxbread/views/util.py:45
+#: basxbread/views/browse.py:416 basxbread/views/util.py:46
 msgid "Are you sure you want to delete {}?"
 msgstr ""
 
-#: basxbread/views/browse.py:468
+#: basxbread/views/browse.py:471
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "Vous n'avez pas l'autorisation de supprimer %s"
 
-#: basxbread/views/browse.py:481
+#: basxbread/views/browse.py:484
 #, python-format
 msgid "%s could not be deleted: %s"
 msgstr "%s n'a pas pu être supprimé : %s"
 
-#: basxbread/views/browse.py:486
+#: basxbread/views/browse.py:489
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "%(count)s%(modelname)s supprimé(s)"
 
-#: basxbread/views/browse.py:510
+#: basxbread/views/browse.py:515
 #, python-format
 msgid "Your user has not the permissions to restore %s"
 msgstr "Vous utilisateur n'a pas l'autorisation de restaurer %s"
 
-#: basxbread/views/browse.py:519
+#: basxbread/views/browse.py:524
 #, python-format
 msgid "%s could not be restored: %s"
 msgstr "%s n'a pas pu être restauré : %s"
 
-#: basxbread/views/browse.py:524
+#: basxbread/views/browse.py:529
 #, python-format
 msgid "Restored %(count)s %(modelname)s"
 msgstr "%(count)s %(modelname)s restaurés"
 
-#: basxbread/views/browse.py:712
+#: basxbread/views/browse.py:719
 msgid "Reset"
 msgstr ""
 
-#: basxbread/views/browse.py:719
+#: basxbread/views/browse.py:726
 #, fuzzy
 #| msgid "Filter"
 msgctxt "apply filter"
@@ -1465,11 +1483,11 @@ msgstr "Votre mot de passe n'a pas été entré correctement. Veuillez réessaye
 msgid "Request reset"
 msgstr "Demander une réinitialisation"
 
-#: basxbread/views/userprofile.py:399
+#: basxbread/views/userprofile.py:400
 msgid "Enabled developer mode"
 msgstr "Mode développeur activé"
 
-#: basxbread/views/userprofile.py:401
+#: basxbread/views/userprofile.py:402
 msgid "Disabled developer mode"
 msgstr "Mode développeur désactivé"
 
@@ -1503,15 +1521,15 @@ msgstr ""
 msgid "Please enter the user's email address in order to send a password reset"
 msgstr ""
 
-#: basxbread/views/util.py:30
+#: basxbread/views/util.py:31
 msgid "Read"
 msgstr "Lire"
 
-#: basxbread/views/util.py:60
+#: basxbread/views/util.py:61
 msgid "Are you sure you want to copy {}?"
 msgstr ""
 
-#: basxbread/views/util.py:90
+#: basxbread/views/util.py:91
 msgid "Add {}"
 msgstr "Ajouter {}"
 
@@ -1522,6 +1540,71 @@ msgstr "Terminer"
 #: basxbread/views/wizard.py:65
 msgid "Continue"
 msgstr "Continuer"
+
+#~ msgid "Table of Contents"
+#~ msgstr "Table des matières"
+
+#~ msgid ""
+#~ "This is some tooltip text. This box shows the maximum amount of text that "
+#~ "should appear inside. If more room is needed please use a modal instead."
+#~ msgstr ""
+#~ "C'est une sorte de texte d'infobulle. Cette boite affiche la quantité "
+#~ "maximale de texte qui peut apparaitre à l'intérieur. Si plus de place est "
+#~ "nécessaire, utilisez plutôt une modale."
+
+#~ msgid "This is a server message in the ToastNotification."
+#~ msgstr "Ceci est une message du serveur dans une ToastNotification."
+
+#~ msgid "Click to see ToastNotification in action"
+#~ msgstr "Cliquez ici pour voir une ToastNotification en action"
+
+#~ msgid "Django Admin"
+#~ msgstr "Administration Django"
+
+#~ msgid "Component Preview"
+#~ msgstr "Aperçu du composant"
+
+#~ msgid "Back to top"
+#~ msgstr "Retour en haut"
+
+#~ msgid "Layout"
+#~ msgstr "Disposition"
+
+#~ msgid "Informational"
+#~ msgstr "Informelle"
+
+#~ msgid "Interactive"
+#~ msgstr "Interactif"
+
+#~ msgid "Datatable"
+#~ msgstr "Base de données"
+
+#~ msgid "Form"
+#~ msgstr "Formulaire"
+
+#~ msgid "Widget preview"
+#~ msgstr "Aperçu du gadget"
+
+#~ msgid "Widgets"
+#~ msgstr "Gadgets"
+
+#~ msgid "Configure preview"
+#~ msgstr "Configurer l'aperçu"
+
+#~ msgid "Apply"
+#~ msgstr "Appliquer"
+
+#~ msgid "Tooltips"
+#~ msgstr "Infobulles"
+
+#~ msgid "Definition tooltip"
+#~ msgstr "Infobulle de définition"
+
+#~ msgid "Icon tooltip"
+#~ msgstr "Infobulle avec icône"
+
+#~ msgid "Interactive tooltip"
+#~ msgstr "Infobulle interactive"
 
 #~ msgid "Date Created"
 #~ msgstr "Date créée"
@@ -1550,12 +1633,6 @@ msgstr "Continuer"
 
 #~ msgid "Path to the desired value (see help)"
 #~ msgstr "Le chemin de la valeur désirée (voir l'aide)"
-
-#~ msgid "Template"
-#~ msgstr "Modèle"
-
-#~ msgid "Raw value"
-#~ msgstr "Valeur brute"
 
 #~ msgid "Variable"
 #~ msgstr "Variable"

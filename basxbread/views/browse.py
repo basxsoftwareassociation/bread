@@ -159,7 +159,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
         )
         self.title = kwargs.get("title") or self.title
         if self.rowactions is None:
-            self.rowactions = (BrowseView.editlink(), BrowseView.deletelink())
+            self.rowactions = (editlink(), deletelink())
         self.rowactions = kwargs.get("rowactions") or self.rowactions
         self.model = kwargs.get("model") or self.model
         self.columns = filter_fieldlist(
@@ -394,30 +394,30 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
             iconname=None,
         )
 
-    @staticmethod
-    def editlink(return_to_current=True, **attributes):
-        return Link(
-            href=ModelHref(hg.C("row"), "edit", return_to_current=return_to_current),
-            label=_("Edit"),
-            iconname="edit",
-            attributes=attributes,
-            permissions=[hg.F(lambda c: permissionname(c["row"], "change"))],
-        )
 
-    @staticmethod
-    def deletelink(return_to_current=True, **attributes):
-        return Link(
-            href=ModelHref(hg.C("row"), "delete", return_to_current=return_to_current),
-            label=_("Delete"),
-            iconname="delete",
-            attributes=attributes,
-            is_submit=True,
-            confirm_text=hg.format(
-                _("Are you sure you want to delete {}?"),
-                hg.SPAN(hg.STRONG(hg.C("row"))),
-            ),
-            permissions=[hg.F(lambda c: permissionname(c["row"], "delete"))],
-        )
+def editlink(return_to_current=True, **attributes):
+    return Link(
+        href=ModelHref(hg.C("row"), "edit", return_to_current=return_to_current),
+        label=_("Edit"),
+        iconname="edit",
+        attributes=attributes,
+        permissions=[hg.F(lambda c: permissionname(c["row"], "change"))],
+    )
+
+
+def deletelink(return_to_current=True, **attributes):
+    return Link(
+        href=ModelHref(hg.C("row"), "delete", return_to_current=return_to_current),
+        label=_("Delete"),
+        iconname="delete",
+        attributes=attributes,
+        is_submit=True,
+        confirm_text=hg.format(
+            _("Are you sure you want to delete {}?"),
+            hg.SPAN(hg.STRONG(hg.C("row"))),
+        ),
+        permissions=[hg.F(lambda c: permissionname(c["row"], "delete"))],
+    )
 
 
 # helper function to export a queryset to excel

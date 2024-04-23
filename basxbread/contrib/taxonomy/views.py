@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from basxbread import layout
 from basxbread.utils import Link, ModelHref, link_with_urlparameters
-from basxbread.views import BrowseView
+from basxbread.views import BrowseView, editlink
 
 from . import models
 
@@ -71,7 +71,7 @@ class TermsBrowseView(BrowseView):
 class VocabularyBrowseView(BrowseView):
     columns = ["name", "slug", "termcount"]
     rowactions = [
-        BrowseView.editlink(),
+        editlink(),
         Link(
             href=ModelHref(
                 models.Term, "browse", query={"vocabulary_slug": hg.C("row").slug}

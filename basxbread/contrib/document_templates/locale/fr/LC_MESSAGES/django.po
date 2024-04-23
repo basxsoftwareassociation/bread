@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-22 04:21+0000\n"
+"POT-Creation-Date: 2024-04-23 03:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,101 +22,101 @@ msgstr ""
 msgid "Document templates"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:23
-#: basxbread/contrib/document_templates/models.py:123
+#: basxbread/contrib/document_templates/models.py:27
+#: basxbread/contrib/document_templates/models.py:173
 msgid "Name"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:27
+#: basxbread/contrib/document_templates/models.py:31
 msgid ""
 "Must be a *.docx file, use '{{ variable-name }}' to insert variables from "
 "below"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:31
+#: basxbread/contrib/document_templates/models.py:35
 msgid "Model"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:36
+#: basxbread/contrib/document_templates/models.py:40
 msgid "Filename template"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:114
+#: basxbread/contrib/document_templates/models.py:164
 msgid "Document Template"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:115
+#: basxbread/contrib/document_templates/models.py:165
 msgid "Document Templates"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:123
+#: basxbread/contrib/document_templates/models.py:173
 msgid "Name to use in the template document"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:126
+#: basxbread/contrib/document_templates/models.py:176
 msgid "Value"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:128
+#: basxbread/contrib/document_templates/models.py:178
 msgid "Path to the desired value (see help)"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:132
+#: basxbread/contrib/document_templates/models.py:182
 msgid "Template"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:134
+#: basxbread/contrib/document_templates/models.py:184
 msgid "Jinja template with 'value' in context"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:136
+#: basxbread/contrib/document_templates/models.py:186
 msgid "Raw value"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:139
+#: basxbread/contrib/document_templates/models.py:189
 msgid "Variable"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:140
+#: basxbread/contrib/document_templates/models.py:190
 msgid "Variables"
 msgstr ""
 
-#: basxbread/contrib/document_templates/urls.py:20
+#: basxbread/contrib/document_templates/urls.py:24
 msgid "Delete"
 msgstr ""
 
-#: basxbread/contrib/document_templates/urls.py:24
+#: basxbread/contrib/document_templates/urls.py:28
 msgid "Copy"
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:21
+#: basxbread/contrib/document_templates/views.py:17
 msgid "Error"
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:26
+#: basxbread/contrib/document_templates/views.py:22
 msgid "Field explorer"
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:36
+#: basxbread/contrib/document_templates/views.py:32
 msgid "Error in template: "
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:48
+#: basxbread/contrib/document_templates/views.py:44
 msgid "Missing system fonts, used in the docx template: "
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:56
+#: basxbread/contrib/document_templates/views.py:52
 msgid "Unable to detect document fonts: "
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:63
+#: basxbread/contrib/document_templates/views.py:59
 msgid "Variables in document but not defined below: "
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:71
+#: basxbread/contrib/document_templates/views.py:67
 msgid "Variables defined below but not used in document: "
 msgstr ""
 
-#: basxbread/contrib/document_templates/views.py:97
+#: basxbread/contrib/document_templates/views.py:93
 msgid "Help"
 msgstr ""
