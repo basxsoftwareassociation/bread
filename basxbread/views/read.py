@@ -26,6 +26,12 @@ class ReadView(
         super().__init__(*args, **kwargs)
 
     def get_layout(self):
+        def get_helptext(f):
+            try:
+                return self.model._meta.get_field(field).help_text
+            except Exception:
+                return ""
+
         return hg.DIV(
             header(),
             _layout.tile.Tile(
@@ -47,7 +53,7 @@ class ReadView(
                                     hg.DIV(
                                         _layout.ObjectFieldLabel(field),
                                         _layout.forms.helpers.HelpText(
-                                            self.model._meta.get_field(field).help_text
+                                            get_helptext(field)
                                         ),
                                     ),
                                 ),
