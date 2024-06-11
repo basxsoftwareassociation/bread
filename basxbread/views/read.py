@@ -28,7 +28,7 @@ class ReadView(
     def get_layout(self):
         def get_helptext(f):
             try:
-                return self.model._meta.get_field(field).help_text
+                return self.model._meta.get_field(f).help_text
             except Exception:
                 return ""
 
