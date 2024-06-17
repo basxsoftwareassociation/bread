@@ -189,8 +189,12 @@ def _viewname(view):
 
 
 def _can_access_media(request, path):
-    return request.user.is_staff or path.startswith(
-        getattr(settings, "BASXBREAD_PUBLIC_FILES_PREFIX", "static/")
+    return (
+        request.user.is_staff
+        or request.user.is_superuser
+        or path.startswith(
+            getattr(settings, "BASXBREAD_PUBLIC_FILES_PREFIX", "static/")
+        )
     )
 
 
