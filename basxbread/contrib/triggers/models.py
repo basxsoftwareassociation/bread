@@ -2,6 +2,7 @@ import datetime
 import typing
 
 import htmlgenerator as hg
+from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
@@ -53,7 +54,7 @@ class Action(models.Model):
         null=True,  # just for backwards-compatability
     )
     model.formfield_kwargs = {
-        "queryset": ContentType.objects.all().order_by("app_label", "model")
+        "widget": forms.Select(attrs={"_class": "autosort"}),
     }
 
     def run(self, object):
@@ -129,7 +130,7 @@ class Trigger(models.Model):
         on_delete=models.PROTECT,
     )
     model.formfield_kwargs = {
-        "queryset": ContentType.objects.all().order_by("app_label", "model")
+        "widget": forms.Select(attrs={"_class": "autosort"}),
     }
     filter = QuerysetField(_("Filter"), modelfieldname="model")
     enable = models.BooleanField(default=True)

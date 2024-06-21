@@ -10,6 +10,7 @@ function basxbread_load_elements() {
   $$(
     "[onload]:not(body):not(frame):not(iframe):not(img):not(link):not(script):not(style)"
   )._.fire("load");
+  $$("select.autosort").forEach(breadSortSelect);
 
   setBasxBreadCookie("timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
 }
@@ -198,3 +199,9 @@ function searchMatchRank(searchTerms, value) {
   return score;
 }
 
+function breadSortSelect(selectNode) {
+  optionNodes = Array.from(selectNode.children);
+  comparator = new Intl.Collator().compare;
+  optionNodes.sort((a, b) => comparator(a.textContent, b.textContent));
+  optionNodes.forEach((option) => selectNode.appendChild(option));
+}

@@ -24,7 +24,7 @@ class Report(models.Model):
         ContentType, on_delete=models.PROTECT, verbose_name=_("Model")
     )
     model.formfield_kwargs = {
-        "queryset": ContentType.objects.all().order_by("app_label", "model")
+        "widget": forms.Select(attrs={"_class": "autosort"}),
     }
     filter = QuerysetField(_("Filter"), modelfieldname="model")
     custom_queryset = models.CharField(
