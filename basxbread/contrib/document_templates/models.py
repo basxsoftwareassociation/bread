@@ -40,6 +40,13 @@ class DocumentTemplate(models.Model):
     filename_template = models.TextField(_("Filename template"), blank=True)
     filename_template.formfield_kwargs = {"widget": forms.Textarea(attrs={"rows": 1})}
 
+    pdf_password = models.CharField(
+        _("PDF-Password"),
+        blank=True,
+        max_length=2048,
+        help_text=_("An optional password that will be set on generated PDFs"),
+    )
+
     def default_context(self):
         return {"now": DateFormat(now())}
 
@@ -106,10 +113,14 @@ class DocumentTemplate(models.Model):
                 file.write(content.read())
                 subprocess.run(  # nosec
                     [
-                        shutil.which("libreoffice")
+                        shutil.which("soffice")
                         or "false",  # statisfies mypy, since which may return None
                         "--convert-to",
-                        "pdf",
+                        (
+                            f'pdf:draw_pdf_Export:{{"EncryptFile":{{"type":"boolean","value":"true"}},"DocumentOpenPassword":{{"type":"string","value":"{self.pdf_password}"}}}}'
+                            if self.pdf_password
+                            else "pdf"
+                        ),
                         file.name,
                         "--outdir",
                         tmpdir,
