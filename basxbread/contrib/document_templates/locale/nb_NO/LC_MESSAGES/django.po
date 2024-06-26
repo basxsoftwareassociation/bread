@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-23 03:27+0000\n"
+"POT-Creation-Date: 2024-06-26 05:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgid "Document templates"
 msgstr ""
 
 #: basxbread/contrib/document_templates/models.py:27
-#: basxbread/contrib/document_templates/models.py:173
+#: basxbread/contrib/document_templates/models.py:184
 msgid "Name"
 msgstr ""
 
@@ -40,43 +40,51 @@ msgstr ""
 msgid "Filename template"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:164
+#: basxbread/contrib/document_templates/models.py:44
+msgid "PDF-Password"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:47
+msgid "An optional password that will be set on generated PDFs"
+msgstr ""
+
+#: basxbread/contrib/document_templates/models.py:175
 msgid "Document Template"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:165
+#: basxbread/contrib/document_templates/models.py:176
 msgid "Document Templates"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:173
+#: basxbread/contrib/document_templates/models.py:184
 msgid "Name to use in the template document"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:176
+#: basxbread/contrib/document_templates/models.py:187
 msgid "Value"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:178
+#: basxbread/contrib/document_templates/models.py:189
 msgid "Path to the desired value (see help)"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:182
+#: basxbread/contrib/document_templates/models.py:193
 msgid "Template"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:184
+#: basxbread/contrib/document_templates/models.py:195
 msgid "Jinja template with 'value' in context"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:186
+#: basxbread/contrib/document_templates/models.py:197
 msgid "Raw value"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:189
+#: basxbread/contrib/document_templates/models.py:200
 msgid "Variable"
 msgstr ""
 
-#: basxbread/contrib/document_templates/models.py:190
+#: basxbread/contrib/document_templates/models.py:201
 msgid "Variables"
 msgstr ""
 

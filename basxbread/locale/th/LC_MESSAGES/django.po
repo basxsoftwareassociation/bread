@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-23 03:27+0000\n"
+"POT-Creation-Date: 2024-06-26 05:33+0000\n"
 "PO-Revision-Date: 2023-04-05 02:46+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -31,8 +31,8 @@ msgstr "เรื่อง"
 #: basxbread/contrib/customforms/models.py:12
 #: basxbread/contrib/email_templates/models.py:16
 #: basxbread/contrib/reports/models.py:24
-#: basxbread/contrib/triggers/models.py:51
-#: basxbread/contrib/triggers/models.py:128
+#: basxbread/contrib/triggers/models.py:52
+#: basxbread/contrib/triggers/models.py:129
 msgid "Model"
 msgstr "โมเดล"
 
@@ -207,7 +207,7 @@ msgid "Name"
 msgstr "ชื่อ"
 
 #: basxbread/contrib/email_templates/models.py:10
-#: basxbread/contrib/triggers/models.py:73
+#: basxbread/contrib/triggers/models.py:74
 msgid "Subject"
 msgstr "หัวเรื่อง"
 
@@ -508,7 +508,7 @@ msgid "Reports"
 msgstr "รายงาน"
 
 #: basxbread/contrib/reports/models.py:29
-#: basxbread/contrib/triggers/models.py:134 basxbread/views/browse.py:692
+#: basxbread/contrib/triggers/models.py:135 basxbread/views/browse.py:692
 msgid "Filter"
 msgstr "ค้นหา"
 
@@ -603,7 +603,7 @@ msgid "Copy"
 msgstr "คัดลอก"
 
 #: basxbread/contrib/reports/urls.py:38 basxbread/views/browse.py:401
-#: basxbread/views/read.py:61 basxbread/views/userprofile.py:119
+#: basxbread/views/read.py:67 basxbread/views/userprofile.py:119
 #: basxbread/views/userprofile.py:147 basxbread/views/userprofile.py:179
 #: basxbread/views/util.py:25
 msgid "Edit"
@@ -697,133 +697,133 @@ msgstr "ศัพท์บัญญัติ"
 msgid "Triggered actions"
 msgstr "การกระทำที่ทริกเกอร์"
 
-#: basxbread/contrib/triggers/models.py:42
+#: basxbread/contrib/triggers/models.py:43
 #, python-format
 msgid "%(v)s is not an allowed field"
 msgstr "%(v)s ไม่ใช่ฟิลด์ที่อนุญาต"
 
-#: basxbread/contrib/triggers/models.py:66
+#: basxbread/contrib/triggers/models.py:67
 msgid "Action"
 msgstr "ดำเนินการ"
 
-#: basxbread/contrib/triggers/models.py:67
+#: basxbread/contrib/triggers/models.py:68
 msgid "Actions"
 msgstr "ดำเนินการ"
 
-#: basxbread/contrib/triggers/models.py:71
+#: basxbread/contrib/triggers/models.py:72
 msgid "Email"
 msgstr "อีเมล์"
 
-#: basxbread/contrib/triggers/models.py:76
-#: basxbread/contrib/triggers/models.py:82
+#: basxbread/contrib/triggers/models.py:77
+#: basxbread/contrib/triggers/models.py:83
 msgid ""
 "Will be rendered as a Django template with the name 'object' in the context"
 msgstr "จะแสดงผลเป็นเทมเพลต Django ที่มีชื่อ 'object' ในบริบท"
 
-#: basxbread/contrib/triggers/models.py:80
+#: basxbread/contrib/triggers/models.py:81
 msgid "Message"
 msgstr "ข้อความ"
 
-#: basxbread/contrib/triggers/models.py:120
+#: basxbread/contrib/triggers/models.py:121
 msgid "Send email action"
 msgstr "ส่งอีเมลการดำเนินการ"
 
-#: basxbread/contrib/triggers/models.py:121
+#: basxbread/contrib/triggers/models.py:122
 msgid "Send email actions"
 msgstr "ส่งอีเมลการดำเนินการ"
 
-#: basxbread/contrib/triggers/models.py:152
+#: basxbread/contrib/triggers/models.py:153
 msgid "Type"
 msgstr "ประเภท"
 
-#: basxbread/contrib/triggers/models.py:154
+#: basxbread/contrib/triggers/models.py:155
 msgid "Added"
 msgstr "เพิ่ม"
 
-#: basxbread/contrib/triggers/models.py:155
+#: basxbread/contrib/triggers/models.py:156
 msgid "Changed"
 msgstr "เปลี่ยน"
 
-#: basxbread/contrib/triggers/models.py:156
+#: basxbread/contrib/triggers/models.py:157
 msgid "Deleted"
 msgstr "ลบ"
 
-#: basxbread/contrib/triggers/models.py:160
-#: basxbread/contrib/triggers/models.py:187 basxbread/views/read.py:35
+#: basxbread/contrib/triggers/models.py:161
+#: basxbread/contrib/triggers/models.py:188 basxbread/views/read.py:41
 msgid "Field"
 msgstr "ฟิลด์"
 
-#: basxbread/contrib/triggers/models.py:164
+#: basxbread/contrib/triggers/models.py:165
 msgid ""
 "Only trigger when a certain field has changed. Use comma to add multiple "
 "fields."
 msgstr "ทริกเกอร์เฉพาะเมื่อฟิลด์ใดฟิลด์หนึ่งมีการเปลี่ยนแปลง ใช้เครื่องหมายจุลภาคเพื่อเพิ่มหลายช่อง"
 
-#: basxbread/contrib/triggers/models.py:170
+#: basxbread/contrib/triggers/models.py:171
 msgid "Change trigger"
 msgstr "เปลี่ยนแปลงทริกเกอร์"
 
-#: basxbread/contrib/triggers/models.py:171
+#: basxbread/contrib/triggers/models.py:172
 msgid "Change triggers"
 msgstr "เปลี่ยนแปลงทริกเกอร์"
 
-#: basxbread/contrib/triggers/models.py:175
+#: basxbread/contrib/triggers/models.py:176
 msgid "Seconds"
 msgstr "วินาที"
 
-#: basxbread/contrib/triggers/models.py:176
+#: basxbread/contrib/triggers/models.py:177
 msgid "Minutes"
 msgstr "นาที"
 
-#: basxbread/contrib/triggers/models.py:177
+#: basxbread/contrib/triggers/models.py:178
 msgid "Hours"
 msgstr "ชั่วโมง"
 
-#: basxbread/contrib/triggers/models.py:178
+#: basxbread/contrib/triggers/models.py:179
 msgid "Days"
 msgstr "วัน"
 
-#: basxbread/contrib/triggers/models.py:179
+#: basxbread/contrib/triggers/models.py:180
 msgid "Weeks"
 msgstr "สัปดาห์"
 
-#: basxbread/contrib/triggers/models.py:180
+#: basxbread/contrib/triggers/models.py:181
 msgid "Months"
 msgstr "เดือน"
 
-#: basxbread/contrib/triggers/models.py:181
+#: basxbread/contrib/triggers/models.py:182
 msgid "Years"
 msgstr "ปี"
 
-#: basxbread/contrib/triggers/models.py:189
+#: basxbread/contrib/triggers/models.py:190
 msgid "The field of the selected model which should trigger an action"
 msgstr "ฟิลด์ของโมเดลที่เลือกซึ่งควรดำเนินการทริกเกอร์"
 
-#: basxbread/contrib/triggers/models.py:193
+#: basxbread/contrib/triggers/models.py:194
 msgid "Offset type"
 msgstr "ประเภทของการชดเชย"
 
-#: basxbread/contrib/triggers/models.py:199
+#: basxbread/contrib/triggers/models.py:200
 msgid "Offset amount"
 msgstr "จำนวนที่ชดเชย"
 
-#: basxbread/contrib/triggers/models.py:200
+#: basxbread/contrib/triggers/models.py:201
 msgid "Can be negative (before) or positive (after)"
 msgstr "เป็นลบ (ก่อน) หรือบวก (หลัง)"
 
-#: basxbread/contrib/triggers/models.py:204
+#: basxbread/contrib/triggers/models.py:205
 msgid "Ignore year"
 msgstr "ละเว้นปี"
 
-#: basxbread/contrib/triggers/models.py:206
+#: basxbread/contrib/triggers/models.py:207
 msgid "Check this in order to trigger every year"
 msgstr "ตรวจสอบสิ่งนี้เพื่อทริกเกอร์ทุกปี"
 
-#: basxbread/contrib/triggers/models.py:233
+#: basxbread/contrib/triggers/models.py:234
 msgid "Date trigger"
 msgstr "ทริกเกอร์วันที่"
 
-#: basxbread/contrib/triggers/models.py:234
+#: basxbread/contrib/triggers/models.py:235
 msgid "Date triggers"
 msgstr "ทริกเกอร์ วันที่"
 
@@ -1363,7 +1363,7 @@ msgid ""
 "persists, please contact an administrator."
 msgstr "เกิดปัญหาขณะโหลดหน้าเว็บที่ %s<br>หากปัญหายังคงอยู่ โปรดติดต่อผู้ดูแลระบบ"
 
-#: basxbread/views/read.py:38
+#: basxbread/views/read.py:44
 msgid "Value"
 msgstr "ขนาด"
 

@@ -105,6 +105,7 @@ class DocumentTemplateEditView(views.EditView):
                 F("model"),
                 F("file"),
                 F("filename_template"),
+                F("pdf_password"),
                 fieldstable,
                 column_helper,
                 layout.forms.helpers.Submit(),
