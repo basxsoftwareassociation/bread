@@ -405,6 +405,16 @@ def editlink(return_to_current=True, **attributes):
     )
 
 
+def readlink(return_to_current=True, **attributes):
+    return Link(
+        href=ModelHref(hg.C("row"), "read", return_to_current=return_to_current),
+        label=_("Read"),
+        iconname="view",
+        attributes=attributes,
+        permissions=[hg.F(lambda c: permissionname(c["row"], "view"))],
+    )
+
+
 def deletelink(return_to_current=True, **attributes):
     return Link(
         href=ModelHref(hg.C("row"), "delete", return_to_current=return_to_current),
