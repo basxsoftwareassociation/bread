@@ -66,7 +66,7 @@ def default_bulkactions(model, columns=["__all__"]):
             label=_("Delete"),
             iconname="trash-can",
             action=delete,
-            permissions=[f"{model._meta.app_label}.add_{model._meta.model_name}"],
+            permissions=[f"{model._meta.app_label}.delete_{model._meta.model_name}"],
         ),
     )
 
@@ -473,7 +473,9 @@ def delete(request, queryset, softdeletefield=None, required_permissions=None):
     deleted = 0
     for instance in queryset:
         try:
-            if not request.user.has_perm(required_permissions, instance):
+            if not request.user.has_perms(
+                required_permissions, instance
+            ) and not request.user.has_perms(required_permissions):
                 # we throw an exception here because the user not supposed to
                 # see the option to delete an object anyway, if he does not have the permssions
                 # the queryset should already be filtered
@@ -510,14 +512,14 @@ def delete(request, queryset, softdeletefield=None, required_permissions=None):
 
 def restore(request, queryset, softdeletefield, required_permissions=None):
     if required_permissions is None:
-        required_permissions = [
-            f"{queryset.model._meta.app_label}.change_{queryset.model.__name__.lower()}"
-        ]
+        required_permissions = [permissionname(queryset.model, "delete")]
 
     restored = 0
     for instance in queryset:
         try:
-            if not request.user.has_perm(required_permissions, instance):
+            if not request.user.has_perms(
+                required_permissions, instance
+            ) and not request.user.has_perms(required_permissions):
                 # we throw an exception here because the user not supposed to
                 # see the option to restore an object anyway, if he does not have the permssions
                 # the queryset should already be filtered
