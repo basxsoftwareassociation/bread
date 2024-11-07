@@ -50,7 +50,7 @@ class Button(hg.BUTTON):
         super().__init__(*children, **attributes)
 
     @staticmethod
-    def from_link(link, **kwargs):
+    def from_link(link, dialog=True, **kwargs):
         buttonargs = {
             "icon": link.iconname,
             "notext": not link.label,
@@ -62,7 +62,10 @@ class Button(hg.BUTTON):
         )
         if link.is_submit:
             return button.as_submit(
-                link.href, formfields=link.formfields, confirm_text=link.confirm_text
+                link.href,
+                formfields=link.formfields,
+                confirm_text=link.confirm_text,
+                dialog=dialog,
             )
         else:
             return button.as_href(link.href)
@@ -70,7 +73,7 @@ class Button(hg.BUTTON):
     def as_href(self, href):
         return hg.A(*self, **{**self.attributes, "href": href})
 
-    def as_submit(self, href, formfields={}, confirm_text=None, **kwargs):
+    def as_submit(self, href, formfields={}, confirm_text=None, dialog=True, **kwargs):
         from django.forms import Form as DjangoForm
 
         from ..utils import slugify
@@ -89,13 +92,14 @@ class Button(hg.BUTTON):
         )
 
         newbutton = self.copy()
-        newbutton.attributes = hg.merge_html_attrs(
-            newbutton.attributes,
-            {
-                **confirm_dialog.openerattributes,
-                **{"onclick": "event.preventDefault(); return false;"},
-            },
-        )
+        if dialog:
+            newbutton.attributes = hg.merge_html_attrs(
+                newbutton.attributes,
+                {
+                    **confirm_dialog.openerattributes,
+                    **{"onclick": "event.preventDefault(); return false;"},
+                },
+            )
         return Form(
             DjangoForm(),
             newbutton,
@@ -103,7 +107,7 @@ class Button(hg.BUTTON):
                 hg.INPUT(type="hidden", name=name, value=value)
                 for name, value in formfields.items()
             ],
-            confirm_dialog,
+            confirm_dialog if dialog else None,
             action=href,
             **hg.merge_html_attrs(kwargs, {"style": "display: inline"}),
         )
