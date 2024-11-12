@@ -255,38 +255,63 @@ def default_model_paths(
     if browseview is not None:
         if browseview is True:
             browseview = defaultview["browse"]
-        ret.append(
-            autopath(
-                browseview.as_view(model=model),
-                model_urlname(model, "browse"),
+        if isinstance(browseview, type):
+            ret.append(
+                autopath(
+                    browseview.as_view(model=model),
+                    model_urlname(model, "browse"),
+                )
             )
-        )
+        else:
+            ret.append(autopath(browseview, model_urlname(model, "browse")))
     if readview is not None:
         if readview is True:
             readview = defaultview["read"]
-        ret.append(
-            autopath(readview.as_view(model=model), model_urlname(model, "read"))
-        )
+        if isinstance(readview, type):
+            ret.append(
+                autopath(readview.as_view(model=model), model_urlname(model, "read"))
+            )
+        else:
+            ret.append(autopath(readview, model_urlname(model, "read")))
     if editview is not None:
         if editview is True:
             editview = defaultview["edit"]
-        ret.append(
-            autopath(editview.as_view(model=model), model_urlname(model, "edit"))
-        )
+        if isinstance(editview, type):
+            ret.append(
+                autopath(editview.as_view(model=model), model_urlname(model, "edit"))
+            )
+        else:
+            ret.append(autopath(editview, model_urlname(model, "edit")))
+
     if addview is not None:
         if addview is True:
             addview = defaultview["add"]
-        ret.append(autopath(addview.as_view(model=model), model_urlname(model, "add")))
+        if isinstance(addview, type):
+            ret.append(
+                autopath(addview.as_view(model=model), model_urlname(model, "add"))
+            )
+        else:
+            ret.append(autopath(addview, model_urlname(model, "add")))
+
     if deleteview is not None:
         if deleteview is True:
             deleteview = defaultview["delete"]
-        ret.append(
-            autopath(deleteview.as_view(model=model), model_urlname(model, "delete"))
-        )
+        if isinstance(deleteview, type):
+            ret.append(
+                autopath(
+                    deleteview.as_view(model=model), model_urlname(model, "delete")
+                )
+            )
+        else:
+            ret.append(autopath(deleteview, model_urlname(model, "delete")))
+
     if copyview is not None:
         if copyview is True:
             copyview = generate_copyview(model)
-        ret.append(autopath(copyview, model_urlname(model, "copy")))
+        if isinstance(copyview, type):
+            ret.append(autopath(copyview, model_urlname(model, "copy")))
+        else:
+            ret.append(autopath(copyview, model_urlname(model, "copy")))
 
     for viewname, view in kwargs.items():
         if isinstance(view, type):
