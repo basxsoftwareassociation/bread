@@ -46,7 +46,9 @@ class RequireAuthenticationMiddleware:
                 timezone.activate(zoneinfo.ZoneInfo(tz))
             else:
                 timezone.deactivate()
-        if not tz and "basxbread-timezone" in request.session["basxbread-cookies"]:
+        if not tz and "basxbread-timezone" in request.session.get(
+            "basxbread-cookies", {}
+        ):
             timezone.activate(
                 zoneinfo.ZoneInfo(
                     request.session["basxbread-cookies"]["basxbread-timezone"]
