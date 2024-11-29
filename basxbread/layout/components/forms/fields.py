@@ -172,6 +172,9 @@ def guess_widgetclass(fieldname, form, suggested_widgetclass) -> hg.Lazy:
         if suggested_widgetclass is not None:
             return suggested_widgetclass
 
+        if hasattr(realform[fieldname].field, "breadwidget"):
+            return realform[fieldname].field.breadwidget
+
         # Auto-detection declared by the bread widget has third priority
         return (
             django2bread_widgetclass(widgetclass, type(realform[fieldname].field))

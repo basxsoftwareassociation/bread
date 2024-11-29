@@ -240,6 +240,8 @@ def _generate_formset_class(
 
 def _formfield_callback_with_request(field, request, model, instance, cache_querysets):
     kwargs = getattr(field, "formfield_kwargs", {})
+    if hasattr(field, "widget"):
+        kwargs["widget"] = field.widget
     choices = None
     if hasattr(field, "lazy_choices"):
         choices = field.lazy_choices(field, request, instance)
@@ -250,6 +252,8 @@ def _formfield_callback_with_request(field, request, model, instance, cache_quer
         kwargs["initial"] = field.lazy_initial(field, request, instance)
 
     ret = field.formfield(**kwargs)
+    if hasattr(field, "breadwidget"):
+        ret.breadwidget = field.breadwidget
     if isinstance(choices, models.QuerySet):
         ret.queryset = choices
 

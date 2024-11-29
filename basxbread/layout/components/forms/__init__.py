@@ -9,6 +9,7 @@ from ..button import Button
 from ..notification import InlineNotification
 from .fields import DEFAULT_FORM_CONTEXTNAME, FormField, FormFieldMarker
 from .helpers import HelpText, Submit  # noqa
+from .widgets import *
 
 
 class Form(hg.FORM):

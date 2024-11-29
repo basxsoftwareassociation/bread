@@ -6,8 +6,10 @@ from functools import wraps
 from typing import Optional
 
 import htmlgenerator as hg
+from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 from django.http import HttpResponse
 from django.urls import path as djangopath
@@ -15,8 +17,10 @@ from django.urls import reverse_lazy as django_reverse
 from django.utils.functional import Promise
 from django.utils.http import urlencode
 from django.utils.text import format_lazy
+from djangoql.exceptions import DjangoQLParserError
+from guardian.shortcuts import get_objects_for_user
 
-from .model_helpers import get_concrete_instance
+from .model_helpers import get_concrete_instance, permissionname
 
 
 def reverse(*args, query: Optional[dict] = None, **kwargs):
@@ -38,7 +42,12 @@ def reverse(*args, query: Optional[dict] = None, **kwargs):
 
 def model_urlname(model, action):
     """Generates a canonical url for a certain action/view on a model"""
-    return f"{model._meta.label_lower}.{action}"
+    if isinstance(model, str):
+        modelname = model.lower()
+    else:
+        modelname = model._meta.label_lower
+
+    return f"{modelname}.{action}"
 
 
 def reverse_model(model, action, *args, **kwargs):
@@ -322,6 +331,158 @@ def default_model_paths(
             ret.append(autopath(view, model_urlname(model, viewname)))
 
     return ret
+
+
+def quicksearch_url(model):
+    return model_urlname(model, "quicksearch")
+
+
+def quicksearch_fk_url(model, field):
+    return model_urlname(model, f"quicksearch-{field}")
+
+
+def quicksearch_fk(
+    model,
+    field,
+    limit=20,
+    order_by=[],
+    result_fields=None,
+    search_fields=None,
+    formatter=None,
+):
+    if isinstance(model, str):
+        model = apps.get_model(*model.split("."))
+    f = model._meta.get_field(field)
+
+    return quicksearch(
+        f.related_model.objects.filter(f.get_limit_choices_to()),
+        limit=limit,
+        order_by=order_by,
+        result_fields=result_fields,
+        search_fields=search_fields,
+        formatter=formatter,
+        url=quicksearch_fk_url(model, field),
+    )
+
+
+def quicksearch(
+    model,
+    filter=None,
+    limit=20,
+    order_by=[],
+    result_fields=None,
+    search_fields=None,
+    formatter=None,
+    url=None,
+):
+    from .. import layout
+
+    if isinstance(model, str):
+        model = apps.get_model(*model.split("."))
+        baseqs = model.objects.all()
+    elif isinstance(model, models.QuerySet):
+        baseqs = model
+        model = model.model
+    else:
+        baseqs = model.objects.all()
+
+    if search_fields is None:
+        search_fields = [f.name for f in model._meta.get_fields()]
+
+    def view(request):
+        _limit = limit
+        _order_by = order_by
+        _result_fields = None
+        _search_fields = search_fields
+
+        query = request.GET.get("query", "")
+        if request.GET.get("limit", "").isdigit():
+            _limit = min(int(request.GET["limit"]), limit)
+        if request.GET.get("order_by") is not None:
+            _order_by = request.GET["order_by"].split(",")
+        if request.GET.get("search_fields") is not None:
+            _search_fields = request.GET["search_fields"].split(",")
+        if request.GET.get("result_fields") is not None:
+            _result_fields = request.GET["result_fields"].split(",")
+
+        result = baseqs
+
+        if len(query) > 0:
+            q = models.Q()
+            for fieldname in _search_fields:
+                field = model._meta.get_field(fieldname.split("__", 1)[0])
+                if (
+                    field.is_relation
+                    and field.related_model is not None
+                    and field.related_model != model
+                    and "__" not in fieldname
+                ):
+                    for subfield in field.related_model._meta.get_fields():
+                        # span max 1 relationship
+                        if not subfield.is_relation and not isinstance(
+                            subfield, GenericForeignKey
+                        ):
+                            q |= models.Q(
+                                **{f"{fieldname}__{subfield.name}__icontains": query}
+                            )
+                elif isinstance(field, GenericForeignKey):
+                    q |= models.Q(**{f"{fieldname}__icontains": query})
+                else:
+                    q |= models.Q(**{f"{fieldname}__icontains": query})
+            result = result.filter(q)
+        else:
+            result = result.none()
+        result = get_objects_for_user(
+            request.user,
+            permissionname(result.model, "view"),
+            result,
+            with_superuser=True,
+        )
+
+        if len(_order_by) > 0:
+            result = result.order_by(*_order_by)
+
+        def format(c):
+            # query-supplied fields have 1st priority
+            if _result_fields is not None:
+                return ", ".join(
+                    str(getattr(c["i"], field)) for field in _result_fields
+                )
+            # format_string from server-side has 2nd priority
+            if formatter is not None:
+                return formatter(c["i"])
+
+            # result_fields from server-side has 3rd priority
+            if result_fields is not None:
+                return ", ".join(str(getattr(c["i"], field)) for field in result_fields)
+
+            return c["i"]
+
+        return layout.render(
+            request,
+            hg.BaseElement(
+                hg.STYLE(
+                    ".result-item { padding: 4px; cursor: pointer } .result-item:hover { background-color: #e5e5e5; } .result-list { list-style: none; padding: 4px; }"
+                ),
+                hg.UL(
+                    hg.Iterator(
+                        result[:_limit],
+                        "i",
+                        hg.LI(
+                            hg.F(format),
+                            _class="result-item",
+                            value=hg.C("i").pk,
+                        ),
+                    ),
+                    _class="result-list",
+                ),
+            ),
+        )
+
+    return autopath(
+        view,
+        url or quicksearch_url(model),
+    )
 
 
 # Helpers for the autopath function

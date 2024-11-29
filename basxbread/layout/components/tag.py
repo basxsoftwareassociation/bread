@@ -27,17 +27,18 @@ class Tag(hg.BUTTON):
         kwargs.setdefault(
             "type", "button"
         )  # prevents this from trying to submit a form when inside a FORM element
-        kwargs["_class"] = (
-            kwargs.get("_class", "")
-            + " bx--tag"
-            + (" bx--tag--filter" if can_delete else "")
-            + (f" bx--tag--{tag_color}" if tag_color else "")
+        kwargs["_class"] = hg.BaseElement(
+            kwargs.get("_class", ""),
+            " bx--tag",
+            hg.If(can_delete, " bx--tag--filter"),
+            (f" bx--tag--{tag_color}" if tag_color else ""),
         )
-        if can_delete:
-            kwargs.setdefault("title", _("Remove"))
 
+        on_del = kwargs.pop("ondelete", None)
         super().__init__(
             hg.SPAN(*label, _class="bx--tag__label"),
-            *([Icon("close", size=16)] if can_delete else []),
+            hg.If(
+                can_delete, Icon("close", size=16, onclick=on_del, title=_("Remove"))
+            ),
             **kwargs,
         )

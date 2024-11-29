@@ -8,6 +8,7 @@ import htmlgenerator as hg
 from _strptime import TimeRE
 from django.conf import settings
 from django.forms import widgets
+from django.urls import reverse
 from django.utils import formats
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.formfields import PhoneNumberField
@@ -857,9 +858,7 @@ class DatePicker(BaseWidget):
 
         def format_date_value(context):
             bfield = hg.resolve_lazy(boundfield, context)
-            return bfield.field.widget.format_value(
-                hg.resolve_lazy(inputelement_attrs, context).get("value")
-            )
+            return bfield.field.widget.format_value(bfield.value())
 
         super().__init__(
             hg.DIV(
@@ -1103,6 +1102,112 @@ class ClearableFileInput(FileInput):
 
 class LazySelect(Select):
     django_widget = django_countries.widgets.LazySelect
+
+
+class AjaxSearchWidget(BaseWidget):
+    carbon_input_error_class = "bx--text-input--invalid"
+
+    def __init__(
+        self,
+        label=None,
+        help_text=None,
+        errors=None,
+        inputelement_attrs=None,
+        boundfield=None,
+        **attributes,
+    ):
+        inputelement_attrs = inputelement_attrs or {}
+        searchresult_id = hg.format("{}-searchresult", inputelement_attrs.get("id"))
+        super().__init__(
+            label,
+            hg.DIV(
+                hg.If(
+                    getattr(errors, "condition", None),
+                    Icon(
+                        "warning--filled",
+                        size=16,
+                        _class="bx--text-input__invalid-icon",
+                    ),
+                ),
+                hg.DIV(
+                    _("Loading..."),
+                    id=hg.format("{}-loader", inputelement_attrs.get("id")),
+                    _class="htmx-indicator",
+                    style="position: absolute;z-index: 1;right: 8px; pointer-events: none",
+                ),
+                hg.INPUT(type="hidden", lazy_attributes=inputelement_attrs),
+                hg.INPUT(
+                    _class=hg.BaseElement(
+                        "bx--text-input",
+                        hg.If(
+                            getattr(errors, "condition", False),
+                            " bx--text-input--invalid",
+                        ),
+                    ),
+                    data_invalid=hg.If(getattr(errors, "condition", False), True),
+                    name="query",
+                    type="text",
+                    hx_get=reverse(self.url),
+                    hx_trigger="input changed delay:100ms",
+                    hx_target=hg.format("#{}", searchresult_id),
+                    hx_indicator=hg.format("#{}-loader", inputelement_attrs.get("id")),
+                    onfocusin="this.parentElement.nextElementSibling.nextElementSibling.style.display = 'block'",
+                    style="padding-right: 2.5rem",
+                ),
+                hg.SCRIPT(
+                    hg.mark_safe(
+                        """
+                        let elem = document.currentScript;
+                        document.addEventListener('click', (ev) => {
+                            if(!elem.parentElement.parentElement.contains(ev.target))
+                                elem.parentElement.nextElementSibling.nextElementSibling.style.display = 'none'
+                        });
+
+                        document.addEventListener('htmx:load', (ev) => {
+                            $$('.result-item', ev.target)._.bind({'click': (e) => {
+                                elem.previousElementSibling.previousElementSibling.value = e.target.value;
+                                elem.previousElementSibling.value = '';
+                                elem.parentElement.nextElementSibling.firstElementChild.innerText = e.target.innerText;
+                                elem.parentElement.nextElementSibling.style.display = 'flex';
+                                elem.parentElement.nextElementSibling.nextElementSibling.style.display = 'none';
+                            }})
+                        })"""
+                    )
+                ),
+                _class="bx--text-input__field-wrapper",
+                data_invalid=hg.If(getattr(errors, "condition", None), True),
+            ),
+            Tag(
+                hg.F(
+                    lambda c: hg.resolve_lazy(boundfield, c).field.to_python(
+                        hg.resolve_lazy(boundfield, c).value()
+                    )
+                ),
+                can_delete=hg.F(
+                    lambda c: not hg.resolve_lazy(boundfield, c).field.required
+                ),
+                style=hg.If(
+                    hg.F(lambda c: not hg.resolve_lazy(boundfield, c).value()),
+                    "display: none",
+                ),
+                ondelete=hg.format(
+                    """document.getElementById('{}').value = ''; this.parentElement.style.display = 'none'""",
+                    inputelement_attrs.get("id"),
+                ),
+            ),
+            hg.DIV(
+                hg.SPAN("...", style="padding: 8px"),
+                id=searchresult_id,
+                style="border-left: solid 1px gray; border-right: solid 1px gray; border-bottom: solid 1px gray; background: white; z-index: 99; display: none",
+            ),
+            errors,
+            help_text,
+            **hg.merge_html_attrs(attributes, {"_class": "bx--text-input-wrapper"}),
+        )
+
+
+def AjaxSearch(url):
+    return type("SubclassedAjaxSearchWidget", (AjaxSearchWidget,), {"url": url})
 
 
 class MultiWidget(BaseWidget):
