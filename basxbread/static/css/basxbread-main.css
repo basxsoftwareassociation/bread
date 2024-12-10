@@ -18811,3 +18811,17 @@ a.bx--header__name {
 .hoverable:hover {
   background-color: #e5e5e5; }
 
+.result-item {
+  padding: 4px;
+  cursor: pointer; }
+
+.result-item:hover {
+  background-color: #e5e5e5; }
+
+.result-list {
+  list-style: none;
+  padding: 4px;
+  position: absolute;
+  background: white;
+  z-index: 999; }
+

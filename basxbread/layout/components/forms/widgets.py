@@ -1138,7 +1138,7 @@ class AjaxSearchWidget(BaseWidget):
                 hg.INPUT(type="hidden", lazy_attributes=inputelement_attrs),
                 hg.INPUT(
                     _class=hg.BaseElement(
-                        "bx--text-input",
+                        "bx--text-input bread-ajax-search",
                         hg.If(
                             getattr(errors, "condition", False),
                             " bx--text-input--invalid",
@@ -1154,33 +1154,15 @@ class AjaxSearchWidget(BaseWidget):
                     onfocusin="this.parentElement.nextElementSibling.nextElementSibling.style.display = 'block'",
                     style="padding-right: 2.5rem",
                 ),
-                hg.SCRIPT(
-                    hg.mark_safe(
-                        """
-                        let elem = document.currentScript;
-                        document.addEventListener('click', (ev) => {
-                            if(!elem.parentElement.parentElement.contains(ev.target))
-                                elem.parentElement.nextElementSibling.nextElementSibling.style.display = 'none'
-                        });
-
-                        document.addEventListener('htmx:load', (ev) => {
-                            $$('.result-item', ev.target)._.bind({'click': (e) => {
-                                elem.previousElementSibling.previousElementSibling.value = e.target.value;
-                                elem.previousElementSibling.value = '';
-                                elem.parentElement.nextElementSibling.firstElementChild.innerText = e.target.innerText;
-                                elem.parentElement.nextElementSibling.style.display = 'flex';
-                                elem.parentElement.nextElementSibling.nextElementSibling.style.display = 'none';
-                            }})
-                        })"""
-                    )
-                ),
                 _class="bx--text-input__field-wrapper",
                 data_invalid=hg.If(getattr(errors, "condition", None), True),
             ),
             Tag(
                 hg.F(
-                    lambda c: hg.resolve_lazy(boundfield, c).field.to_python(
-                        hg.resolve_lazy(boundfield, c).value()
+                    lambda c: type(self).formatter(
+                        hg.resolve_lazy(boundfield, c).field.to_python(
+                            hg.resolve_lazy(boundfield, c).value()
+                        )
                     )
                 ),
                 can_delete=hg.F(
@@ -1206,8 +1188,12 @@ class AjaxSearchWidget(BaseWidget):
         )
 
 
-def AjaxSearch(url):
-    return type("SubclassedAjaxSearchWidget", (AjaxSearchWidget,), {"url": url})
+def AjaxSearch(url, formatter=str):
+    return type(
+        "SubclassedAjaxSearchWidget",
+        (AjaxSearchWidget,),
+        {"url": url, "formatter": formatter},
+    )
 
 
 class MultiWidget(BaseWidget):
