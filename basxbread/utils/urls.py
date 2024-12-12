@@ -9,7 +9,6 @@ import htmlgenerator as hg
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 from django.http import HttpResponse
 from django.urls import path as djangopath
@@ -18,7 +17,6 @@ from django.utils.functional import Promise
 from django.utils.http import urlencode
 from django.utils.text import format_lazy
 from djangoql.exceptions import DjangoQLParserError
-from guardian.shortcuts import get_objects_for_user
 
 from .model_helpers import get_concrete_instance, permissionname
 
@@ -375,6 +373,9 @@ def quicksearch(
     formatter=None,
     url=None,
 ):
+    from django.contrib.contenttypes.fields import GenericForeignKey
+    from guardian.shortcuts import get_objects_for_user
+
     from .. import layout
 
     if isinstance(model, str):
@@ -390,6 +391,7 @@ def quicksearch(
         search_fields = [f.name for f in model._meta.get_fields()]
 
     def view(request):
+
         _limit = limit
         _order_by = order_by
         _result_fields = None
