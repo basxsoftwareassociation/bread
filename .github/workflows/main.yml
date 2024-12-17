@@ -20,8 +20,6 @@ jobs:
           - python-version: "3.13"
             django-version: "Django>=4.2"
           # django 5.0
-          - python-version: "3.9"
-            django-version: "Django>=5.0"
           - python-version: "3.10"
             django-version: "Django>=5.0"
           - python-version: "3.11"
