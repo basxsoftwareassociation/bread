@@ -16,7 +16,6 @@ from django.urls import reverse_lazy as django_reverse
 from django.utils.functional import Promise
 from django.utils.http import urlencode
 from django.utils.text import format_lazy
-from djangoql.exceptions import DjangoQLParserError
 
 from .model_helpers import get_concrete_instance, permissionname
 
@@ -228,7 +227,7 @@ def protectedMedia(request, path):
         return HttpResponse(status=404)
 
 
-def default_model_paths(
+def default_model_paths(  # noqa: C901
     model,
     browseview=True,
     readview=True,
@@ -363,7 +362,7 @@ def quicksearch_fk(
     )
 
 
-def quicksearch(
+def quicksearch(  # noqa: C901
     model,
     filter=None,
     limit=20,
