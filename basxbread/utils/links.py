@@ -96,7 +96,7 @@ class ModelHref(LazyHref):
 
 class Link(NamedTuple):
     href: Union[str, hg.Lazy]
-    label: Union[str, hg.Lazy]
+    label: Union[str, hg.Lazy, hg.BaseElement]
     iconname: Optional[str] = "fade"
     permissions: List[str] = []
     attributes: dict = {}
