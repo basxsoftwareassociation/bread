@@ -335,12 +335,15 @@ class Select(BaseWidget):
     ):
         inputelement_attrs = inputelement_attrs or {}
         select_wrapper = hg.DIV(
-            Icon(
-                "search",
-                size=16,
-                style="height: 2rem; width: 1rem; margin-right: 0.5rem; cursor: pointer;",
-                aria_hidden="true",
-                onclick="""
+            hg.If(
+                _more_choices_than(choices if choices else boundfield, 12),
+                hg.BaseElement(
+                    Icon(
+                        "search",
+                        size=16,
+                        style="height: 2rem; width: 1rem; margin-right: 0.5rem; cursor: pointer;",
+                        aria_hidden="true",
+                        onclick="""
 let searchElem = this.nextElementSibling;
 let resultsElem = this.nextElementSibling.nextElementSibling;
 let selectElem = this.nextElementSibling.nextElementSibling.nextElementSibling;
@@ -354,12 +357,12 @@ if(searchElem.classList.contains('hidden')) {
     searchElem.focus()
 }
 """,
-            ),
-            hg.INPUT(
-                _class="bx--select-input hidden",
-                style="",
-                placeholder=_("Type to search"),
-                onkeyup="""
+                    ),
+                    hg.INPUT(
+                        _class="bx--select-input hidden",
+                        style="",
+                        placeholder=_("Type to search"),
+                        onkeyup="""
 let query = event.target.value.toLowerCase().split(' ').filter((term) => term.length > 0)
 let resultsElem = this.nextElementSibling
 resultsElem.innerHTML = ''
@@ -390,10 +393,12 @@ for(let opt of selectElem.childNodes) {
 let sorted = resultList.sort((a, b) => parseFloat(a.getAttribute('rank')) > parseFloat(b.getAttribute('rank')) ? 1 : -1).slice(0, 10)
 sorted.forEach(node => resultsElem.appendChild(node))
                 """,
-            ),
-            hg.DIV(
-                _class="hidden",
-                style="position: absolute; height: auto; min-width: 5rem; min-height: 0.5rem; top: 2.5rem; z-index: 10; box-shadow: gray 0 3px 6px 3px; overflow-y: scroll; overflow-x: hidden; margin-left: 1.5rem",
+                    ),
+                    hg.DIV(
+                        _class="hidden",
+                        style="position: absolute; height: auto; min-width: 5rem; min-height: 0.5rem; top: 2.5rem; z-index: 10; box-shadow: gray 0 3px 6px 3px; overflow-y: scroll; overflow-x: hidden; margin-left: 1.5rem",
+                    ),
+                ),
             ),
             hg.SELECT(
                 hg.Iterator(
@@ -1309,6 +1314,28 @@ def _combine_lazy_dict(attrs1, attrs2):
             **(hg.resolve_lazy(attrs2, c) or {}),
         }
     )
+
+
+def _flat_count(choices):
+    count = 0
+    for key, value in choices:
+        if isinstance(value, (list, tuple)):
+            count += len(value)
+        else:
+            count += 1
+    return count
+
+
+def _more_choices_than(choices, count):
+    if isinstance(choices, hg.Lazy):
+
+        def wrapper(context):
+            bfield = hg.resolve_lazy(choices, context)
+            return _flat_count(bfield.field.widget.choices) > count
+
+        return hg.F(wrapper)
+    else:
+        return _flat_count(choices) > count
 
 
 def _gen_optgroup(boundfield):
