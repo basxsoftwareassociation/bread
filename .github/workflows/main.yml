@@ -9,8 +9,6 @@ jobs:
       matrix:
         include:
           # django 3.2
-          - python-version: "3.7"
-            django-version: "Django>=3.2,<4.0"
           - python-version: "3.8"
             django-version: "Django>=3.2,<4.0"
           - python-version: "3.9"
