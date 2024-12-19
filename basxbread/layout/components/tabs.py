@@ -117,4 +117,5 @@ class Tabs(hg.DIV):
         super().__init__(
             self.labelcontainer,
             self.tabpanels,
+            **attributes,
         )

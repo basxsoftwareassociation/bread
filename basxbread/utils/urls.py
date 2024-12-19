@@ -99,6 +99,7 @@ def aslayout(view):
                 ),
             )
         if settings.AJAX_URLPARAMETER in request.GET and request.method == "POST":
+            response.status_code = 200
             response["HX-Refresh"] = "true"
         return response
 
