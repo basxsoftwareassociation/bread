@@ -73,7 +73,9 @@ class Button(hg.BUTTON):
     def as_href(self, href):
         return hg.A(*self, **{**self.attributes, "href": href})
 
-    def as_submit(self, href, formfields={}, confirm_text=None, dialog=True, **kwargs):
+    def as_submit(
+        self, href, formfields={}, confirm_text=None, dialog=True, ajax=False, **kwargs
+    ):
         from django.forms import Form as DjangoForm
 
         from ..utils import slugify
@@ -108,8 +110,14 @@ class Button(hg.BUTTON):
                 for name, value in formfields.items()
             ],
             confirm_dialog if dialog else None,
-            action=href,
-            **hg.merge_html_attrs(kwargs, {"style": "display: inline"}),
+            **hg.merge_html_attrs(
+                kwargs,
+                (
+                    {"style": "display: inline", "hx-post": href}
+                    if ajax
+                    else {"style": "display: inline", "action": href}
+                ),
+            ),
         )
 
 

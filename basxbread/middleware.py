@@ -69,4 +69,6 @@ class RequireAuthenticationMiddleware:
                 request.user = user
                 return None
 
-        return HttpResponseRedirect(reverse("login") + "?next=" + request.path)
+        return HttpResponseRedirect(
+            reverse(settings.LOGIN_URL) + "?next=" + request.path
+        )

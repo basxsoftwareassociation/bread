@@ -67,7 +67,9 @@ def render(request, layout, context=None, **response_kwargs):
     return HttpResponse(hg.prerender(layout).render(defaultcontext), **response_kwargs)
     """
 
-    return HttpResponse(layout.render(defaultcontext), **response_kwargs)
+    response = HttpResponse(layout.render(defaultcontext), **response_kwargs)
+    response["Cache-Control"] = "no-cache"
+    return response
 
 
 render.CONTEXT_PROCESSORS = None  # type: ignore
