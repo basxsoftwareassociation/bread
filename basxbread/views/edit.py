@@ -5,6 +5,7 @@ from typing import Iterable, List, Optional, Tuple, Type, Union
 
 import htmlgenerator as hg
 from django.contrib import messages
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -12,7 +13,6 @@ from django.utils.translation import gettext as _
 from django.utils.translation import pgettext_lazy
 from django.views.decorators.cache import never_cache
 from django.views.generic import UpdateView
-from guardian.mixins import PermissionRequiredMixin
 
 from ..utils import filter_fieldlist, model_urlname, reverse_model
 from .util import BaseView, CustomFormMixin
@@ -27,7 +27,6 @@ class EditView(
 ):
     """TODO: documentation"""
 
-    accept_global_perms = True
     fields: Optional[List[Union[hg.BaseElement, str]]] = None
     urlparams: Iterable[Tuple[str, Type]] = (("pk", int),)
     default_success_page = "read"
@@ -40,7 +39,7 @@ class EditView(
         self.fields = all if self.fields is None else self.fields
         super().__init__(*args, **kwargs)
 
-    def get_required_permissions(self, request):
+    def get_permission_required(self):
         return [f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"]
 
     def get_context_data(self, *args, **kwargs):

@@ -3,13 +3,13 @@ from urllib.parse import urlparse
 
 import htmlgenerator as hg
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 from django.core.signing import SignatureExpired, TimestampSigner
 from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.http.request import QueryDict
 from django.shortcuts import redirect
 from django.urls import path, resolve
 from django.utils.translation import gettext as _
-from guardian.utils import get_anonymous_user
 
 from basxbread import layout, menu, views
 from basxbread.utils import Link, ModelHref, aslayout, default_model_paths
@@ -38,7 +38,7 @@ def publicurlview(request, token):
     parsed = urlparse(url.url)
     match_ = resolve(parsed.path)
     request.resolver_match = match_  # make sure view uses correct resolver_match
-    request.user = get_anonymous_user()
+    request.user = AnonymousUser()
     request.GET = QueryDict(parsed.query, mutable=True)
     request.GET[settings.HIDEMENUS_URLPARAMETER] = True
     response = match_.func(request, *match_.args, **match_.kwargs)  # call view function

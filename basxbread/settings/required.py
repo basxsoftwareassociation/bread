@@ -18,7 +18,6 @@ from django.utils.html import mark_safe
 
 _third_party_apps = [
     "django_extensions",  # for developer friendliness, adding management commands
-    "guardian",  # per-object permissions
     "simple_history",  # versioning
     # some additional form fields
     "djangoql",
@@ -50,10 +49,7 @@ BASXBREAD_DEPENDENCIES = (
 )
 
 # required to make per-object-permissions work
-AUTHENTICATION_BACKENDS = (
-    "django.contrib.auth.backends.ModelBackend",
-    "guardian.backends.ObjectPermissionBackend",
-)
+AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",

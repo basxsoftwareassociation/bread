@@ -3,9 +3,9 @@ import base64
 import fitz
 import htmlgenerator as hg
 from django import forms
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
-from guardian.shortcuts import get_objects_for_user
 
 from basxbread import formatters, layout, utils, views
 
@@ -18,15 +18,14 @@ def formview_processing(request, form, initial=None, custom_layout=None):
     GET = request.GET.copy()
     filter_kwargs = {field: GET.pop(field)[0] for field in pk_fields if field in GET}
     instance = (
-        get_objects_for_user(
-            request.user,
-            f"view_{model.__name__.lower()}",
-            model.objects.filter(**filter_kwargs),
-            with_superuser=True,
-        )
+        model.objects.filter(**filter_kwargs)
         if form.pk_fields and filter_kwargs
         else model.objects.none()
     )
+
+    if not request.user.has_perm(permissionname(model, "view")):
+        raise PermissionDenied()
+
     view_class = views.AddView
     view_kwargs = {}
     if pk_fields:

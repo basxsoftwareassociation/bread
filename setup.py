@@ -30,7 +30,6 @@ setup(
         "Django>=3.2",
         "htmlgenerator",  # replacement for django templates
         "django-extensions",  # bunch of usefull management commands and functions
-        "django-guardian",  # object level permissions
         "django-dynamic-preferences",  # easy handling of preferences #
         "django-countries",
         "django-money[exchange]",
@@ -50,8 +49,6 @@ setup(
         "celery-haystack-ng",
         "whoosh",
         "jinja2",
-        # TODO: review whether we can or should remove these
-        "backports.zoneinfo; python_version < '3.9'",
     ],
     extras_require={
         "all": [

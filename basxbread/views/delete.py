@@ -1,11 +1,11 @@
 import urllib
 
 from django.contrib import messages
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import RedirectView
-from guardian.mixins import PermissionRequiredMixin
 
 from ..utils import reverse_model
 from .util import BaseView
@@ -16,7 +16,6 @@ class DeleteView(BaseView, PermissionRequiredMixin, RedirectView):
 
     model = None
     softdeletefield = None  # set to a boolean field on the modle which will be set to True instead of deleting the object
-    accept_global_perms = True
     urlparams = (("pk", int),)
 
     def __init__(self, *args, **kwargs):
@@ -25,7 +24,7 @@ class DeleteView(BaseView, PermissionRequiredMixin, RedirectView):
         if self.softdeletefield:
             self.model._meta.get_field(self.softdeletefield)
 
-    def get_required_permissions(self, request):
+    def get_permission_required(self):
         if "restore" in self.request.GET:
             return [
                 f"{self.model._meta.app_label}.change_{self.model.__name__.lower()}"

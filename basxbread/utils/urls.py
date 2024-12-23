@@ -8,7 +8,7 @@ from typing import Optional
 import htmlgenerator as hg
 from django.apps import apps
 from django.conf import settings
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import permission_required, user_passes_test
 from django.db import models
 from django.http import HttpResponse
 from django.urls import path as djangopath
@@ -374,7 +374,6 @@ def quicksearch(  # noqa: C901
     url=None,
 ):
     from django.contrib.contenttypes.fields import GenericForeignKey
-    from guardian.shortcuts import get_objects_for_user
 
     from .. import layout
 
@@ -434,12 +433,6 @@ def quicksearch(  # noqa: C901
             result = result.filter(q)
         else:
             result = result.none()
-        result = get_objects_for_user(
-            request.user,
-            permissionname(result.model, "view"),
-            result,
-            with_superuser=True,
-        )
 
         if len(_order_by) > 0:
             result = result.order_by(*_order_by)
@@ -482,7 +475,7 @@ def quicksearch(  # noqa: C901
         )
 
     return autopath(
-        view,
+        permission_required(permissionname(model, "view"), raise_exception=False)(view),
         url or quicksearch_url(model),
     )
 

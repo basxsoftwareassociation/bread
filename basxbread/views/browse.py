@@ -5,7 +5,7 @@ import htmlgenerator as hg
 from django import forms
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
@@ -17,7 +17,6 @@ from django.utils.translation import pgettext_lazy
 from django.views.generic import ListView
 from djangoql.exceptions import DjangoQLError
 from djangoql.queryset import apply_search
-from guardian.mixins import PermissionListMixin
 
 from .. import layout
 from ..utils import (
@@ -102,7 +101,7 @@ def order_queryset_by_urlparameter(qs, order):
     return qs
 
 
-class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
+class BrowseView(BaseView, LoginRequiredMixin, PermissionRequiredMixin, ListView):
     """TODO: documentation"""
 
     orderingurlparameter: str = "ordering"
@@ -266,7 +265,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionListMixin, ListView):
             ExistingParamsForm(self.request.GET),
         )
 
-    def get_required_permissions(self, request):
+    def get_permission_required(self):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]
 
     def get(self, *args, **kwargs):

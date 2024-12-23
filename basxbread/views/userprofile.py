@@ -221,7 +221,7 @@ class UserProfileView(ReadView):
             ),
         )
 
-    def get_required_permissions(self, request):
+    def get_permission_required(self):
         """This method overrides the old one from ReadView because this view should be accessible to all users."""
         return []
 
@@ -261,7 +261,7 @@ class EditPersonalDataView(EditView):
     def get_object(self):
         return self.request.user
 
-    def get_required_permissions(self, request):
+    def get_permission_required(self):
         return []
 
     def form_valid(self, form):
@@ -325,7 +325,7 @@ class EditLoginView(EditView):
     def get_object(self):
         return self.request.user
 
-    def get_required_permissions(self, request):
+    def get_permission_required(self):
         return []
 
 
@@ -341,7 +341,7 @@ class EditPermissionsView(EditView):
     def get_object(self):
         return self.request.user
 
-    def get_required_permissions(self, request):
+    def get_permission_required(self):
         return []
 
 
@@ -375,7 +375,7 @@ def profile_field_password(fieldname):
 
 
 def profile_field_checkbox(fieldname):
-    return layout.forms.widgets.Checkbox(
+    return layout.forms.Checkbox(
         label=layout.ObjectFieldLabel(fieldname),
         inputelement_attrs={"checked": hg.C(f"object.{fieldname}"), "disabled": True},
     )

@@ -1,8 +1,8 @@
 import htmlgenerator as hg
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView
-from guardian.mixins import PermissionRequiredMixin
 
 from ..utils import filter_fieldlist
 from .util import BaseView, CustomFormMixin
@@ -17,7 +17,6 @@ class AddView(
 ):
     """TODO: documentation"""
 
-    accept_global_perms = True
     default_success_page = "read"
 
     def get_success_message(self, cleaned_data):
@@ -31,7 +30,7 @@ class AddView(
         self.fields = all if self.fields is None else self.fields
         super().__init__(*args, **kwargs)
 
-    def get_required_permissions(self, request):
+    def get_permission_required(self):
         return [f"{self.model._meta.app_label}.add_{self.model.__name__.lower()}"]
 
     def get_permission_object(self):

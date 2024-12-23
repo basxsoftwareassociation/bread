@@ -438,19 +438,6 @@ event.stopPropagation()""",
 
             column_definitions.append(col)
 
-        from guardian.shortcuts import get_objects_for_user
-
-        def queryset_func(context):
-            orig_queryset = hg.resolve_lazy(queryset, context)
-            if orig_queryset.query.is_sliced:  # cannot filter sliced querysets
-                return orig_queryset
-            return get_objects_for_user(
-                context["request"].user,
-                permissionname(orig_queryset.model, "view"),
-                orig_queryset,
-                with_superuser=True,
-            )
-
         row_action_column = (
             [
                 DataTableColumn(
@@ -476,8 +463,7 @@ event.stopPropagation()""",
 
         return DataTable(
             all_columns,
-            # querysets are cached, the call to all will make sure a new query is used in every request
-            hg.F(queryset_func),
+            queryset,
             **kwargs,
         ).with_toolbar(
             title,

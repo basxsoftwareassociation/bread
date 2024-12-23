@@ -1,7 +1,7 @@
 import htmlgenerator as hg
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView as DjangoReadView
-from guardian.mixins import PermissionRequiredMixin
 
 from .. import layout as _layout  # prevent name clashing
 from ..formatters import format_value
@@ -14,7 +14,6 @@ class ReadView(
     PermissionRequiredMixin,
     DjangoReadView,
 ):
-    accept_global_perms = True
     fields = ["__all__"]
     urlparams = (("pk", int),)
 
@@ -76,5 +75,5 @@ class ReadView(
             "pagetitle": str(self.object),
         }
 
-    def get_required_permissions(self, request):
+    def get_permission_required(self):
         return [f"{self.model._meta.app_label}.view_{self.model.__name__.lower()}"]

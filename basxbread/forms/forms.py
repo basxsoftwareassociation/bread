@@ -5,10 +5,9 @@ from django.contrib.contenttypes.forms import (
     BaseGenericInlineFormSet,
     generic_inlineformset_factory,
 )
-from django.core.exceptions import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist, PermissionDenied
 from django.db import models, transaction
 from django.forms.formsets import DELETION_FIELD_NAME, ORDERING_FIELD_NAME
-from guardian.shortcuts import get_objects_for_user
 
 from .. import layout as _layout  # prevent name clashing
 from ..utils import permissionname
@@ -259,12 +258,8 @@ def _formfield_callback_with_request(field, request, model, instance, cache_quer
 
     # apply permissions for querysets and chache the result
     if hasattr(ret, "queryset"):
-        ret.queryset = get_objects_for_user(
-            request.user,
-            permissionname(ret.queryset.model, "view"),
-            ret.queryset,
-            with_superuser=True,
-        )
+        if not request.user.has_perm(permissionname(ret.queryset.model, "view")):
+            raise PermissionDenied()
         if cache_querysets:
             if not hasattr(request, "formfield_cache"):
                 request.formfield_cache = {}

@@ -1,10 +1,10 @@
 import htmlgenerator as hg
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.translation import gettext_lazy as _
 from dynamic_preferences import views as preferences_views
 from dynamic_preferences.forms import GlobalPreferenceForm
 from dynamic_preferences.registries import global_preferences_registry
-from guardian.mixins import PermissionRequiredMixin
 
 from .. import layout
 from ..views import BaseView
