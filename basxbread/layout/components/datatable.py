@@ -671,7 +671,10 @@ def searchbar(search_urlparameter: str):
                 hg.C("request").GET.lists(),
                 "urlparameter",
                 hg.If(
-                    hg.F(lambda c: c["urlparameter"][0] != search_urlparameter),
+                    hg.F(
+                        lambda c: c["urlparameter"][0] != search_urlparameter
+                        and c["urlparameter"][0] != "page"
+                    ),
                     hg.Iterator(
                         hg.C("urlparameter")[1],
                         "urlvalue",
