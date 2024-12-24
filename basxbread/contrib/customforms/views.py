@@ -23,7 +23,7 @@ def formview_processing(request, form, initial=None, custom_layout=None):
         else model.objects.none()
     )
 
-    if not request.user.has_perm(permissionname(model, "view")):
+    if not request.user.has_perm(utils.permissionname(model, "view")):
         raise PermissionDenied()
 
     view_class = views.AddView

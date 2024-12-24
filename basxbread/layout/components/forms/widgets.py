@@ -4,8 +4,8 @@ from typing import Optional
 
 import django_countries.widgets
 import django_filters
+import htmlgenerator as hg
 from _strptime import TimeRE
-from basxbread.utils import get_all_subclasses
 from django.conf import settings
 from django.forms import widgets
 from django.urls import reverse
@@ -13,7 +13,7 @@ from django.utils import formats
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.formfields import PhoneNumberField
 
-import htmlgenerator as hg
+from basxbread.utils import get_all_subclasses
 
 from ..button import Button
 from ..icon import Icon

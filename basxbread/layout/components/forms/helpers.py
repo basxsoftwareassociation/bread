@@ -1,8 +1,7 @@
+import htmlgenerator as hg
 from django.conf import settings
 from django.utils import formats
 from django.utils.translation import gettext_lazy as _
-
-import htmlgenerator as hg
 
 from ..button import Button
 
