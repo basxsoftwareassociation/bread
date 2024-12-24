@@ -114,7 +114,7 @@ def aslayout_with(baselayout):
     return decorator
 
 
-def autopath(*args, **kwargs):
+def autopath(view, urlname=None, check_function=None):
     """This function can be used to automatically generate a URL for a view.
     In many situations for internal database applications we are not too conserned
     about the exact name and value of a certain URL but rather a consistent naming
@@ -131,18 +131,6 @@ def autopath(*args, **kwargs):
     be found in ``./manage.py show_urls`` or be passed directly as argument ``urlname``.
 
     """
-    return generate_path(*args, **kwargs, _DISABLE_WARNING=True)
-
-
-def generate_path(view, urlname=None, check_function=None, _DISABLE_WARNING=False):
-    if not _DISABLE_WARNING:
-        import warnings
-
-        warnings.warn(
-            "'generate_path' is deprecated, use the compatible function 'autopath' instead",
-            UserWarning,
-            stacklevel=2,
-        )
 
     check_function = check_function or (lambda user: True)
     pathcomponents = [_viewbasepath(view, urlname)]
