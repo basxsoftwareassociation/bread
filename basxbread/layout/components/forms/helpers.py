@@ -1,7 +1,8 @@
-import htmlgenerator as hg
 from django.conf import settings
 from django.utils import formats
 from django.utils.translation import gettext_lazy as _
+
+import htmlgenerator as hg
 
 from ..button import Button
 
@@ -54,7 +55,13 @@ class ErrorList(hg.If):
         super().__init__(
             errors,
             hg.DIV(
-                hg.UL(hg.Iterator(errors or (), "error", hg.LI(hg.C("error")))),
+                hg.UL(
+                    hg.Iterator(
+                        errors if errors is not None else (),
+                        "error",
+                        hg.LI(hg.C("error")),
+                    )
+                ),
                 _class="bx--form-requirement",
             ),
         )

@@ -4,8 +4,8 @@ from typing import Optional
 
 import django_countries.widgets
 import django_filters
-import htmlgenerator as hg
 from _strptime import TimeRE
+from basxbread.utils import get_all_subclasses
 from django.conf import settings
 from django.forms import widgets
 from django.urls import reverse
@@ -13,7 +13,7 @@ from django.utils import formats
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.formfields import PhoneNumberField
 
-from basxbread.utils import get_all_subclasses
+import htmlgenerator as hg
 
 from ..button import Button
 from ..icon import Icon
@@ -67,7 +67,7 @@ class BaseWidget(hg.DIV):
             type=self.input_type,
             lazy_attributes=_combine_lazy_dict(
                 _append_classes(
-                    inputelement_attrs or {},
+                    inputelement_attrs if inputelement_attrs is not None else {},
                     self.carbon_input_class,
                     hg.If(
                         getattr(errors, "condition", False),
@@ -115,7 +115,9 @@ class TextInput(BaseWidget):
         icon=None,
         **attributes,
     ):
-        inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = (
+            inputelement_attrs if inputelement_attrs is not None else {}
+        )
         inputelement_attrs = hg.merge_html_attrs(
             inputelement_attrs, {"style": "padding-right: 2.5rem"}
         )
@@ -192,7 +194,9 @@ class NumberInput(BaseWidget):
         boundfield=None,
         **attributes,
     ):
-        inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = (
+            inputelement_attrs if inputelement_attrs is not None else {}
+        )
         super().__init__(
             label,
             hg.DIV(
@@ -240,7 +244,9 @@ class PasswordInput(TextInput):
         boundfield=None,
         **attributes,
     ):
-        inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = (
+            inputelement_attrs if inputelement_attrs is not None else {}
+        )
         showhidebtn = Button(
             _("Show password"),
             icon=hg.BaseElement(
@@ -283,7 +289,9 @@ class Textarea(BaseWidget):
         boundfield=None,
         **attributes,
     ):
-        inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = (
+            inputelement_attrs if inputelement_attrs is not None else {}
+        )
         super().__init__(
             label,
             hg.DIV(
@@ -296,10 +304,10 @@ class Textarea(BaseWidget):
                     ),
                 ),
                 hg.TEXTAREA(
-                    boundfield.value() if boundfield else None,
+                    boundfield.value() if boundfield is not None else None,
                     lazy_attributes=_combine_lazy_dict(
                         _append_classes(
-                            inputelement_attrs or {},
+                            inputelement_attrs,
                             self.carbon_input_class,
                             hg.If(
                                 getattr(errors, "condition", None),
@@ -333,7 +341,9 @@ class Select(BaseWidget):
         choices=None,  # for non-django-form select elements use this
         **attributes,
     ):
-        inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = (
+            inputelement_attrs if inputelement_attrs is not None else {}
+        )
         select_wrapper = hg.DIV(
             hg.If(
                 _more_choices_than(choices if choices else boundfield, 12),
@@ -515,7 +525,9 @@ class SelectMultiple(BaseWidget):
         choices=None,  # for non-django-form select elements use this
         **attributes,  # for non-django-form select elements use this
     ):
-        inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = (
+            inputelement_attrs if inputelement_attrs is not None else {}
+        )
         optgroups = (
             _optgroups_from_choices(
                 choices,
@@ -673,9 +685,11 @@ class Checkbox(BaseWidget):
         boundfield=None,
         **attributes,
     ):
-        inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = (
+            inputelement_attrs if inputelement_attrs is not None else {}
+        )
         attrs = {}
-        if boundfield:
+        if boundfield is not None:
             attrs["checked"] = hg.F(
                 lambda c: hg.resolve_lazy(boundfield, c).field.widget.check_test(
                     hg.resolve_lazy(boundfield, c).value()
@@ -726,7 +740,9 @@ class CheckboxSelectMultiple(BaseWidget):
         boundfield=None,
         **attributes,
     ):
-        inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = (
+            inputelement_attrs if inputelement_attrs is not None else {}
+        )
         super().__init__(
             hg.FIELDSET(
                 label,
@@ -770,9 +786,11 @@ class RadioButton(BaseWidget):
         boundfield=None,
         **attributes,
     ):
-        inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = (
+            inputelement_attrs if inputelement_attrs is not None else {}
+        )
         attrs = {}
-        if boundfield:
+        if boundfield is not None:
             attrs["checked"] = hg.F(
                 lambda c: hg.resolve_lazy(boundfield, c).field.widget.check_test(
                     hg.resolve_lazy(boundfield, c).value()
@@ -808,7 +826,9 @@ class RadioSelect(BaseWidget):
         boundfield=None,
         **attributes,
     ):
-        inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = (
+            inputelement_attrs if inputelement_attrs is not None else {}
+        )
         super().__init__(
             hg.FIELDSET(
                 label,
@@ -859,7 +879,9 @@ class DatePicker(BaseWidget):
         formatkey=None,
         **attributes,
     ):
-        inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = (
+            inputelement_attrs if inputelement_attrs is not None else {}
+        )
 
         def format_date_value(context):
             bfield = hg.resolve_lazy(boundfield, context)
@@ -965,7 +987,9 @@ class FileInput(BaseWidget):
         boundfield=None,
         **attributes,
     ):
-        inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = (
+            inputelement_attrs if inputelement_attrs is not None else {}
+        )
         uploadbutton = hg.LABEL(
             hg.SPAN(
                 hg.If(inputelement_attrs.get("value"), "...", _("Select file")),
@@ -997,7 +1021,7 @@ document.addEventListener('change', (e) => {
         # we can only clear the field if it originates form a django field
         # otherwise it has no use
         clearbox = None
-        if boundfield:
+        if boundfield is not None:
             checkbox_name = hg.F(
                 lambda c: hg.resolve_lazy(
                     boundfield, c
@@ -1121,7 +1145,9 @@ class AjaxSearchWidget(BaseWidget):
         boundfield=None,
         **attributes,
     ):
-        inputelement_attrs = inputelement_attrs or {}
+        inputelement_attrs = (
+            inputelement_attrs if inputelement_attrs is not None else {}
+        )
         searchresult_id = hg.format("{}-searchresult", inputelement_attrs.get("id"))
         super().__init__(
             label,
@@ -1215,7 +1241,7 @@ class MultiWidget(BaseWidget):
     ):
         def _subwidgets(context):
             ret = []
-            if boundfield:
+            if boundfield is not None:
                 realboundfield = hg.resolve_lazy(boundfield, context)
                 for i, (widget, data) in enumerate(
                     zip(
