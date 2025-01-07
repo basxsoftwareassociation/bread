@@ -1,6 +1,7 @@
 import django_celery_results.models
 from django.apps import apps
 from django.contrib.auth.models import Group, User
+from django.contrib.auth.views import LogoutView
 from django.urls import include, path
 
 from .utils import autopath, default_model_paths
@@ -15,7 +16,7 @@ urlpatterns = [
     ),
     path(
         "accounts/logout/",
-        auth.LogoutView.as_view(),
+        LogoutView.as_view(),
         name="logout",
     ),
     path(

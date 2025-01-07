@@ -1,9 +1,11 @@
 import htmlgenerator as hg
+from django.forms import Form
 from django.utils.translation import gettext_lazy as _
 
 from basxbread.utils import reverse
 
 from ..utils import HasBasxBreadCookieValue
+from . import forms
 from .icon import Icon
 
 
@@ -38,24 +40,21 @@ class ShellHeader(hg.HEADER):
                 ),
                 hg.If(
                     hg.C("request.user.is_authenticated"),
-                    hg.BUTTON(
-                        Icon(
-                            "logout",
-                            size=20,
-                            _class="bx--navigation-menu-panel-expand-icon",
-                            aria_hidden="true",
+                    forms.Form(
+                        Form(),
+                        hg.BUTTON(
+                            Icon(
+                                "logout",
+                                size=20,
+                                _class="bx--navigation-menu-panel-expand-icon",
+                                aria_hidden="true",
+                            ),
+                            _class="bx--header__menu-trigger bx--header__action",
+                            title=_("Logout"),
+                            # onclick=f"document.location = '{reverse('logout')}'",
                         ),
-                        Icon(
-                            "logout",
-                            size=20,
-                            _class="bx--navigation-menu-panel-collapse-icon",
-                            aria_hidden="true",
-                        ),
-                        _class="bx--header__menu-trigger bx--header__action",
-                        title=_("Logout"),
-                        data_navigation_menu_panel_label_expand=_("Logout"),
-                        data_navigation_menu_panel_label_collapse=_("Close"),
-                        onclick=f"document.location = '{reverse('logout')}'",
+                        action=reverse("logout"),
+                        method="POST",
                     ),
                 ),
                 _class="bx--header__global",

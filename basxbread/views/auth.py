@@ -1,7 +1,6 @@
 import htmlgenerator as hg
 from django.conf import settings
 from django.contrib.auth.views import LoginView as DjangoLoginView
-from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from django.contrib.auth.views import (
     PasswordResetCompleteView as DjangoPasswordResetCompleteView,
 )
@@ -93,21 +92,6 @@ class LoginView(BaseView, DjangoLoginView):
         form = super().get_form(*args, **kwargs)
         form.fields["username"].widget.attrs["autofocus"] = True
         return form
-
-
-class LogoutView(BaseView, DjangoLogoutView):
-    def get(self, *args, **kwargs):
-        super().get(*args, **kwargs)
-        return redirect("login")
-
-    def get_context_data(self, *args, **kwargs):
-        return {
-            **super().get_context_data(*args, **kwargs),
-            "pagetitle": _("Logout"),
-        }
-
-    def get_layout(self):
-        return hg.DIV(_("Logged out"))
 
 
 class PasswordResetView(BaseView, DjangoPasswordResetView):
