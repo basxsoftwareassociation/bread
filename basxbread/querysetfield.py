@@ -145,7 +145,7 @@ class QuerysetFormWidget(layout.forms.widgets.Textarea):
                 )
             )
 
-        if boundfield:
+        if boundfield is not None:
             self.append(
                 hg.SCRIPT(
                     hg.format(

@@ -7,7 +7,7 @@ import django_filters
 import htmlgenerator as hg
 from _strptime import TimeRE
 from django.conf import settings
-from django.forms import widgets
+from django.forms import widgets as djangowidgets
 from django.urls import reverse
 from django.utils import formats
 from django.utils.translation import gettext_lazy as _
@@ -84,7 +84,7 @@ class BaseWidget(hg.DIV):
 
 
 class HiddenInput(BaseWidget):
-    django_widget = widgets.HiddenInput
+    django_widget = djangowidgets.HiddenInput
     input_type = "hidden"
 
     def __init__(
@@ -100,7 +100,7 @@ class HiddenInput(BaseWidget):
 
 
 class TextInput(BaseWidget):
-    django_widget = widgets.TextInput
+    django_widget = djangowidgets.TextInput
     carbon_input_class = "bx--text-input"
     carbon_input_error_class = "bx--text-input--invalid"
     input_type = "text"
@@ -166,7 +166,7 @@ class PhoneNumberInput(TextInput):
 
 
 class UrlInput(TextInput):
-    django_widget = widgets.URLInput
+    django_widget = djangowidgets.URLInput
     input_type = "url"
 
     def __init__(self, *args, **attributes):
@@ -174,7 +174,7 @@ class UrlInput(TextInput):
 
 
 class EmailInput(TextInput):
-    django_widget = widgets.EmailInput
+    django_widget = djangowidgets.EmailInput
     input_type = "email"
 
     def __init__(self, *args, **attributes):
@@ -182,7 +182,7 @@ class EmailInput(TextInput):
 
 
 class NumberInput(BaseWidget):
-    django_widget = widgets.NumberInput
+    django_widget = djangowidgets.NumberInput
     input_type = "number"
 
     def __init__(
@@ -225,12 +225,12 @@ class NumberInput(BaseWidget):
 
 
 class TimeInput(TextInput):
-    django_widget = widgets.TimeInput
+    django_widget = djangowidgets.TimeInput
     input_type = "time"
 
 
 class PasswordInput(TextInput):
-    django_widget = widgets.PasswordInput
+    django_widget = djangowidgets.PasswordInput
     carbon_input_class = "bx--password-input bx--text-input"
     carbon_input_error_class = "bx--text-input--invalid"
     input_type = "password"
@@ -276,7 +276,7 @@ class PasswordInput(TextInput):
 
 
 class Textarea(BaseWidget):
-    django_widget = widgets.Textarea
+    django_widget = djangowidgets.Textarea
     carbon_input_class = "bx--text-area bx--text-area--v2"
     carbon_input_error_class = "bx--text-area--invalid"
 
@@ -327,7 +327,7 @@ class Textarea(BaseWidget):
 
 
 class Select(BaseWidget):
-    django_widget = widgets.Select
+    django_widget = djangowidgets.Select
     carbon_input_class = "bx--select-input"
 
     def __init__(
@@ -509,11 +509,11 @@ sorted.forEach(node => resultsElem.appendChild(node))
 
 
 class NullBooleanSelect(Select):
-    django_widget = widgets.NullBooleanSelect
+    django_widget = djangowidgets.NullBooleanSelect
 
 
 class SelectMultiple(BaseWidget):
-    django_widget = widgets.SelectMultiple
+    django_widget = djangowidgets.SelectMultiple
 
     def __init__(
         self,
@@ -672,7 +672,7 @@ class SelectMultiple(BaseWidget):
 
 
 class Checkbox(BaseWidget):
-    django_widget = widgets.CheckboxInput
+    django_widget = djangowidgets.CheckboxInput
     carbon_input_class = "bx--checkbox"
     input_type = "checkbox"
 
@@ -727,7 +727,7 @@ class Checkbox(BaseWidget):
 
 
 class CheckboxSelectMultiple(BaseWidget):
-    django_widget = widgets.CheckboxSelectMultiple
+    django_widget = djangowidgets.CheckboxSelectMultiple
     carbon_input_class = "bx--checkbox"
     input_type = "checkbox"
 
@@ -813,7 +813,7 @@ class RadioButton(BaseWidget):
 
 
 class RadioSelect(BaseWidget):
-    django_widget = widgets.RadioSelect
+    django_widget = djangowidgets.RadioSelect
     carbon_input_class = "bx--radio-button"
     input_type = "radio"
 
@@ -862,7 +862,7 @@ class RadioSelect(BaseWidget):
 
 
 class DatePicker(BaseWidget):
-    django_widget = widgets.DateInput
+    django_widget = djangowidgets.DateInput
     carbon_input_class = "bx--date-picker__input"
     input_type = "text"  # prevent browser style date picker but use carbon design
 
@@ -973,7 +973,7 @@ class DatePicker(BaseWidget):
 
 
 class FileInput(BaseWidget):
-    django_widget = widgets.FileInput
+    django_widget = djangowidgets.FileInput
     carbon_input_class = "bx--file-input bx--visually-hidden"
     input_type = "file"
     clearable = False
@@ -1125,7 +1125,7 @@ document.addEventListener('change', (e) => {
 
 
 class ClearableFileInput(FileInput):
-    django_widget = widgets.ClearableFileInput
+    django_widget = djangowidgets.ClearableFileInput
     clearable = True
 
 
@@ -1228,7 +1228,7 @@ def AjaxSearch(url, formatter=str):
 
 
 class MultiWidget(BaseWidget):
-    django_widget = widgets.MultiWidget
+    django_widget = djangowidgets.MultiWidget
 
     def __init__(
         self,
@@ -1277,10 +1277,10 @@ class MultiWidget(BaseWidget):
 
 
 class SplitDateTimeWidget(MultiWidget):
-    django_widget = widgets.SplitDateTimeWidget
+    django_widget = djangowidgets.SplitDateTimeWidget
 
     def subwidget(self, boundfield, djangowidget, djangodata, i):
-        if isinstance(djangowidget, widgets.DateInput):
+        if isinstance(djangowidget, djangowidgets.DateInput):
             return DatePicker(
                 label=None,
                 help_text=None,
@@ -1416,6 +1416,7 @@ def _optgroups_from_choices(optchoices, name, value):
 
 def django2bread_widgetclass(widgetclass, fieldclass=None) -> Optional[hg.Lazy]:
     if django2bread_widgetclass.widget_map is None:  # type: ignore
+
         django2bread_widgetclass.widget_map: dict = {}  # type: ignore
         for cls in get_all_subclasses(BaseWidget):
             if cls.django_widget not in django2bread_widgetclass.widget_map:  # type: ignore
