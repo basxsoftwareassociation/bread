@@ -259,7 +259,7 @@ def _formfield_callback_with_request(field, request, model, instance, cache_quer
     # apply permissions for querysets and chache the result
     if hasattr(ret, "queryset"):
         if not request.user.has_perm(permissionname(ret.queryset.model, "view")):
-            raise PermissionDenied()
+            ret.queryset = ret.queryset.none()
         if cache_querysets:
             if not hasattr(request, "formfield_cache"):
                 request.formfield_cache = {}
