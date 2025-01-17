@@ -5,7 +5,7 @@ from django.contrib.contenttypes.forms import (
     BaseGenericInlineFormSet,
     generic_inlineformset_factory,
 )
-from django.core.exceptions import FieldDoesNotExist, PermissionDenied
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models, transaction
 from django.forms.formsets import DELETION_FIELD_NAME, ORDERING_FIELD_NAME
 
