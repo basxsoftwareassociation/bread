@@ -10,7 +10,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.decorators import permission_required, user_passes_test
 from django.db import models
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.urls import path as djangopath
 from django.urls import reverse_lazy as django_reverse
 from django.utils.functional import Promise
@@ -193,6 +193,7 @@ def _can_access_media(request, path):
     )
 
 
+# only keep this for backwards compatability, should use "protectedPath" below
 def protectedMedia(request, path):
     """
     Use to protect media files when nginx is serving the files. Usage:
@@ -213,7 +214,34 @@ def protectedMedia(request, path):
             response["X-Accel-Redirect"] = f"/protected/{path}"
             return response
     else:
-        return HttpResponse(status=404)
+        return HttpResponseNotFound()
+
+
+def protectedPath(access_func=_can_access_media):
+    """
+    Use to protect media files when nginx is serving the files. Usage:
+
+        urlpatterns += [
+            path(f"{settings.MEDIA_URL[1:]}<path:path>", protectedPath(lambda r, p: r.user.is_authenticated), name="media")
+        ]
+
+    """
+
+    def view(request, path):
+        if access_func(request, path):
+            if settings.DEBUG:
+                from django.views.static import serve
+
+                return serve(request, path, document_root=settings.MEDIA_ROOT)
+            else:
+                response = HttpResponse(status=200)
+                del response["Content-Type"]
+                response["X-Accel-Redirect"] = f"/protected/{path}"
+                return response
+        else:
+            return HttpResponseNotFound()
+
+    return view
 
 
 def default_model_paths(  # noqa: C901
