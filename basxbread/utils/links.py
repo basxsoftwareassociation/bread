@@ -65,7 +65,7 @@ class ModelHref(LazyHref):
     def __init__(
         self,
         model: Union[models.Model, hg.Lazy],
-        name: str,
+        name: Union[str, hg.Lazy],
         *args,
         return_to_current: bool = False,
         **kwargs
@@ -79,13 +79,17 @@ class ModelHref(LazyHref):
             kwargs["kwargs"]["pk"] = model.pk
 
         if isinstance(model, hg.Lazy):  # assuming "model" is a model instance...
-            url = hg.F(lambda c: model_urlname(hg.resolve_lazy(model, c), name))
+            url = hg.F(
+                lambda c: model_urlname(
+                    hg.resolve_lazy(model, c), hg.resolve_lazy(name, c)
+                )
+            )
             # not sure what happens in this case if model is not an instance but a model
             if "kwargs" not in kwargs:
                 kwargs["kwargs"] = {}
             kwargs["kwargs"]["pk"] = model.pk
         else:
-            url = model_urlname(model, name)
+            url = hg.F(lambda c: model_urlname(model, hg.resolve_lazy(name, c)))
         if return_to_current:
             if "query" not in kwargs:
                 kwargs["query"] = {}
