@@ -368,7 +368,8 @@ event.stopPropagation()""",
 
         columns = columns or filter_fieldlist(model, ["__all__"])
 
-        title = title or model._meta.verbose_name_plural
+        if title is None:
+            title = model._meta.verbose_name_plural
 
         if primary_button is None:
             primary_button = Button.from_link(

@@ -156,7 +156,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionRequiredMixin, ListView
         self.search_urlparameter = (
             kwargs.get("search_urlparameter") or self.search_urlparameter
         )
-        self.title = kwargs.get("title") or self.title
+        self.title = self.title if kwargs.get("title") is None else kwargs.get("title")
         if self.rowactions is None:
             self.rowactions = (editlink(), deletelink())
         self.rowactions = kwargs.get("rowactions") or self.rowactions
@@ -247,7 +247,11 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionRequiredMixin, ListView
         return {
             **super().get_context_data(*args, **kwargs),
             "layout": self._get_layout_cached(),
-            "pagetitle": self.title or self.model._meta.verbose_name_plural,
+            "pagetitle": (
+                self.model._meta.verbose_name_plural
+                if self.title is None
+                else self.title
+            ),
         }
 
     def get_settingspanel(self):
