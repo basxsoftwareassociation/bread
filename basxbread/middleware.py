@@ -49,11 +49,14 @@ class RequireAuthenticationMiddleware:
         if not tz and "basxbread-timezone" in request.session.get(
             "basxbread-cookies", {}
         ):
-            timezone.activate(
-                zoneinfo.ZoneInfo(
-                    request.session["basxbread-cookies"]["basxbread-timezone"]
+            try:  # empty catch for invalid timezone
+                timezone.activate(
+                    zoneinfo.ZoneInfo(
+                        request.session["basxbread-cookies"]["basxbread-timezone"]
+                    )
                 )
-            )
+            except Exception:
+                pass
 
         return self.get_response(request)
 
