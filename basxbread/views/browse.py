@@ -114,7 +114,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionRequiredMixin, ListView
     itemsperpage_urlparameter: str = "itemsperpage"
     search_urlparameter: str = "q"
 
-    title: Union[hg.BaseElement, str] = ""
+    title: Union[hg.BaseElement, str] = None
     columns: Iterable[Union[str, layout.datatable.DataTableColumn]] = ("__all__",)
     rowclickaction: Optional[Link] = None
     filterconfig: Optional[tuple] = None
@@ -191,7 +191,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionRequiredMixin, ListView
             or default_bulkactions(self.model, self.columns)
         )
 
-    def get_layout(self, **datatable_kwargs):
+    def get_layout(self):
         # re-mapping the Links because the URL is not supposed to be a real URL but an identifier
         # for the bulk action
         # TODO: This is a bit ugly but we can reuse the Link type for icon, label and permissions
@@ -240,7 +240,7 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionRequiredMixin, ListView
             backurl=self.backurl,
             primary_button=self.primary_button,
             search_urlparameter=self.search_urlparameter,
-            **datatable_kwargs,
+            **getattr(self, "datatable_kwargs", {}),
         )
 
     def get_context_data(self, *args, **kwargs):
