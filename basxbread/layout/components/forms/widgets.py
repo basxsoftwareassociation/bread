@@ -877,6 +877,7 @@ class DatePicker(BaseWidget):
         style_simple=False,
         format=None,
         formatkey=None,
+        fix_value="__NO_VALUE__",
         **attributes,
     ):
         inputelement_attrs = (
@@ -885,7 +886,9 @@ class DatePicker(BaseWidget):
 
         def format_date_value(context):
             bfield = hg.resolve_lazy(boundfield, context)
-            return bfield.field.widget.format_value(bfield.value())
+            return bfield.field.widget.format_value(
+                bfield.value() if fix_value == "__NO_VALUE__" else fix_value
+            )
 
         super().__init__(
             hg.DIV(
@@ -1317,6 +1320,7 @@ class DateRangeWidget(MultiWidget):
             boundfield=boundfield,
             formatkey="DATE_INPUT_FORMATS",
             style="padding-left: 2rem",
+            fix_value=djangodata["value"],
         )
 
 
