@@ -117,6 +117,7 @@ USE_THOUSAND_SEPARATOR = True
 
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_CACHE_BACKEND = "django-cache"
+CELERY_RESULT_EXTENDED = True
 
 ########################## haystack settings #############################
 
