@@ -1016,6 +1016,9 @@ that = this;
 document.addEventListener('change', (e) => {
     that.parentElement.querySelector('[data-file-container]').innerHTML = '';
     var widget = new CarbonComponents.FileUploader(that.parentElement);
+    if(e.target.value === "") {
+        return;
+    }
     widget._displayFilenames();
     widget.setState('edit');
 });
