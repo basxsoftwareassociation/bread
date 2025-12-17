@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 05:33+0000\n"
-"PO-Revision-Date: 2023-04-05 02:46+0000\n"
-"Last-Translator: Sam <saemideluxe@gmx.ch>\n"
+"PO-Revision-Date: 2025-01-31 05:47+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/basxconnect/bread/"
 "de/>\n"
 "Language: de\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.17-dev\n"
+"X-Generator: Weblate 5.10-dev\n"
 
 #: basxbread/contrib/customforms/apps.py:8
 #: basxbread/contrib/customforms/models.py:30
@@ -33,6 +33,8 @@ msgstr "Titel"
 #: basxbread/contrib/reports/models.py:24
 #: basxbread/contrib/triggers/models.py:52
 #: basxbread/contrib/triggers/models.py:129
+#: basxbread/contrib/triggers/models.py:51
+#: basxbread/contrib/triggers/models.py:128
 msgid "Model"
 msgstr "Model"
 
@@ -128,7 +130,6 @@ msgstr ""
 
 #: basxbread/contrib/customforms/models.py:133
 #, fuzzy
-#| msgid "Query field value"
 msgid "Map PDF-field value"
 msgstr "Datenbankabfrage-Feldwert"
 
@@ -177,10 +178,8 @@ msgid "Produced results (should only produce 1)"
 msgstr "Produzierte Resultate (sollte nur ein Resultat sein)"
 
 #: basxbread/contrib/customforms/views.py:104
-#, fuzzy
-#| msgid "Show password"
 msgid "PDF password"
-msgstr "Zeige Passwort"
+msgstr "PDF-Passwort"
 
 #: basxbread/contrib/customforms/views.py:175
 msgid "Import filled out version of {}"
@@ -192,10 +191,8 @@ msgstr "Import"
 
 #: basxbread/contrib/email_templates/apps.py:8
 #: basxbread/contrib/email_templates/models.py:47
-#, fuzzy
-#| msgid "Cell template"
 msgid "Email templates"
-msgstr "Zellenvorlage: "
+msgstr "E-Mail-Vorlagen"
 
 #: basxbread/contrib/email_templates/models.py:9
 #: basxbread/contrib/publicurls/models.py:33
@@ -206,6 +203,7 @@ msgstr "Name"
 
 #: basxbread/contrib/email_templates/models.py:10
 #: basxbread/contrib/triggers/models.py:74
+#: basxbread/contrib/triggers/models.py:73
 msgid "Subject"
 msgstr "Betreff"
 
@@ -221,31 +219,27 @@ msgstr ""
 
 #: basxbread/contrib/email_templates/models.py:29
 msgid "Generate attachment"
-msgstr ""
+msgstr "Anhang generieren"
 
 #: basxbread/contrib/email_templates/models.py:46
-#, fuzzy
-#| msgid "Cell template"
 msgid "Email template"
-msgstr "Zellenvorlage: "
+msgstr "E-Mail-Vorlage"
 
 #: basxbread/contrib/email_templates/models.py:54
-#, fuzzy
-#| msgid "Cell template"
 msgid "Template"
-msgstr "Zellenvorlage: "
+msgstr "Vorlage"
 
 #: basxbread/contrib/email_templates/models.py:57
 msgid "File"
-msgstr ""
+msgstr "Datei"
 
 #: basxbread/contrib/email_templates/models.py:60
 msgid "Attachment"
-msgstr ""
+msgstr "Anhang"
 
 #: basxbread/contrib/email_templates/models.py:61
 msgid "Attachments"
-msgstr ""
+msgstr "Anhänge"
 
 #: basxbread/contrib/modeledit/apps.py:8
 msgid "Model editing (WIP)"
@@ -519,6 +513,7 @@ msgstr "Berichte"
 
 #: basxbread/contrib/reports/models.py:29
 #: basxbread/contrib/triggers/models.py:135 basxbread/views/browse.py:692
+#: basxbread/contrib/triggers/models.py:134
 msgid "Filter"
 msgstr "Filter"
 
@@ -625,7 +620,7 @@ msgstr "Kopieren"
 #: basxbread/contrib/reports/urls.py:38 basxbread/views/browse.py:401
 #: basxbread/views/read.py:67 basxbread/views/userprofile.py:119
 #: basxbread/views/userprofile.py:147 basxbread/views/userprofile.py:179
-#: basxbread/views/util.py:25
+#: basxbread/views/util.py:25 basxbread/views/read.py:61
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -719,62 +714,78 @@ msgid "Triggered actions"
 msgstr "Getriggerte Aktionen"
 
 #: basxbread/contrib/triggers/models.py:43
+#: basxbread/contrib/triggers/models.py:42
 #, python-format
 msgid "%(v)s is not an allowed field"
 msgstr "%(v)s ist kein zugelassenes Feld"
 
 #: basxbread/contrib/triggers/models.py:67
+#: basxbread/contrib/triggers/models.py:66
 msgid "Action"
 msgstr "Action"
 
 #: basxbread/contrib/triggers/models.py:68
+#: basxbread/contrib/triggers/models.py:67
 msgid "Actions"
 msgstr "Actions"
 
 #: basxbread/contrib/triggers/models.py:72
+#: basxbread/contrib/triggers/models.py:71
 msgid "Email"
 msgstr "Email"
 
 #: basxbread/contrib/triggers/models.py:77
 #: basxbread/contrib/triggers/models.py:83
+#: basxbread/contrib/triggers/models.py:76
+#: basxbread/contrib/triggers/models.py:82
 msgid ""
 "Will be rendered as a Django template with the name 'object' in the context"
 msgstr "Wird gerendert als Django-Template mit dem namen 'object im Kontext'"
 
 #: basxbread/contrib/triggers/models.py:81
+#: basxbread/contrib/triggers/models.py:80
 msgid "Message"
 msgstr "Nachricht"
 
 #: basxbread/contrib/triggers/models.py:121
+#: basxbread/contrib/triggers/models.py:120
 msgid "Send email action"
 msgstr "Sende Email Aktion"
 
 #: basxbread/contrib/triggers/models.py:122
+#: basxbread/contrib/triggers/models.py:121
 msgid "Send email actions"
 msgstr "Sende Email Aktionen"
 
 #: basxbread/contrib/triggers/models.py:153
+#: basxbread/contrib/triggers/models.py:152
 msgid "Type"
 msgstr "Typ"
 
 #: basxbread/contrib/triggers/models.py:155
+#: basxbread/contrib/triggers/models.py:154
 msgid "Added"
 msgstr "Hinzugefügt"
 
 #: basxbread/contrib/triggers/models.py:156
+#: basxbread/contrib/triggers/models.py:155
 msgid "Changed"
 msgstr "Geändert"
 
 #: basxbread/contrib/triggers/models.py:157
+#: basxbread/contrib/triggers/models.py:156
 msgid "Deleted"
 msgstr "Gelöscht"
 
 #: basxbread/contrib/triggers/models.py:161
 #: basxbread/contrib/triggers/models.py:188 basxbread/views/read.py:41
+#: basxbread/contrib/triggers/models.py:160
+#: basxbread/contrib/triggers/models.py:187 basxbread/views/read.py:35
 msgid "Field"
 msgstr "Feld"
 
 #: basxbread/contrib/triggers/models.py:165
+#: basxbread/contrib/triggers/models.py:164
 msgid ""
 "Only trigger when a certain field has changed. Use comma to add multiple "
 "fields."
@@ -783,70 +794,87 @@ msgstr ""
 "bei mehreren Feldern zu triggern."
 
 #: basxbread/contrib/triggers/models.py:171
+#: basxbread/contrib/triggers/models.py:170
 msgid "Change trigger"
 msgstr "Änderungs-Trigger"
 
 #: basxbread/contrib/triggers/models.py:172
+#: basxbread/contrib/triggers/models.py:171
 msgid "Change triggers"
 msgstr "Änderungs-Trigger"
 
 #: basxbread/contrib/triggers/models.py:176
+#: basxbread/contrib/triggers/models.py:175
 msgid "Seconds"
 msgstr "Sekunden"
 
 #: basxbread/contrib/triggers/models.py:177
+#: basxbread/contrib/triggers/models.py:176
 msgid "Minutes"
 msgstr "Minuten"
 
 #: basxbread/contrib/triggers/models.py:178
+#: basxbread/contrib/triggers/models.py:177
 msgid "Hours"
 msgstr "Stunden"
 
 #: basxbread/contrib/triggers/models.py:179
+#: basxbread/contrib/triggers/models.py:178
 msgid "Days"
 msgstr "Tage"
 
 #: basxbread/contrib/triggers/models.py:180
+#: basxbread/contrib/triggers/models.py:179
 msgid "Weeks"
 msgstr "Wochen"
 
 #: basxbread/contrib/triggers/models.py:181
+#: basxbread/contrib/triggers/models.py:180
 msgid "Months"
 msgstr "Monate"
 
 #: basxbread/contrib/triggers/models.py:182
+#: basxbread/contrib/triggers/models.py:181
 msgid "Years"
 msgstr "Jahre"
 
 #: basxbread/contrib/triggers/models.py:190
+#: basxbread/contrib/triggers/models.py:189
 msgid "The field of the selected model which should trigger an action"
 msgstr "Das Feld des gewählten Modeles welches eine Action triggern soll"
 
 #: basxbread/contrib/triggers/models.py:194
+#: basxbread/contrib/triggers/models.py:193
 msgid "Offset type"
 msgstr "Offset-Typ"
 
 #: basxbread/contrib/triggers/models.py:200
+#: basxbread/contrib/triggers/models.py:199
 msgid "Offset amount"
 msgstr "Offset-Betrag"
 
 #: basxbread/contrib/triggers/models.py:201
+#: basxbread/contrib/triggers/models.py:200
 msgid "Can be negative (before) or positive (after)"
 msgstr "Kann negativ (vorher) or positiv (danach) sein"
 
 #: basxbread/contrib/triggers/models.py:205
+#: basxbread/contrib/triggers/models.py:204
 msgid "Ignore year"
 msgstr "Jahr ignorieren"
 
 #: basxbread/contrib/triggers/models.py:207
+#: basxbread/contrib/triggers/models.py:206
 msgid "Check this in order to trigger every year"
 msgstr "Diese Option aktvieren um jedes Jahr zu triggern"
 
 #: basxbread/contrib/triggers/models.py:234
+#: basxbread/contrib/triggers/models.py:233
 msgid "Date trigger"
 msgstr "Datumstrigger"
 
 #: basxbread/contrib/triggers/models.py:235
+#: basxbread/contrib/triggers/models.py:234
 msgid "Date triggers"
 msgstr "Datumsfeld Trigger"
 
@@ -975,7 +1003,7 @@ msgstr "Zeige Passwort"
 
 #: basxbread/layout/components/forms/widgets.py:360
 msgid "Type to search"
-msgstr ""
+msgstr "Zum Suchen tippen"
 
 #: basxbread/layout/components/forms/widgets.py:967
 msgid "Select file"
@@ -992,29 +1020,23 @@ msgstr "Für"
 #: basxbread/layout/components/history_table.py:55
 #: basxbread/layout/components/history_table.py:66
 msgid "<Value has been deleted>"
-msgstr ""
+msgstr "<Wert wurde gelöscht>"
 
 #: basxbread/layout/components/history_table.py:89
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: basxbread/layout/components/history_table.py:99
-#, fuzzy
-#| msgid "Timezone"
 msgid "Time"
-msgstr "Zeitzone"
+msgstr "Zeit"
 
 #: basxbread/layout/components/history_table.py:103
-#, fuzzy
-#| msgid "Users"
 msgid "User"
 msgstr "Benutzer"
 
 #: basxbread/layout/components/history_table.py:107
-#, fuzzy
-#| msgid "Changed"
 msgid "Changes"
-msgstr "Geändert"
+msgstr "Änderungen"
 
 #: basxbread/layout/components/notification.py:131
 msgid "Time stamp"
@@ -1371,6 +1393,7 @@ msgid "Forbidden"
 msgstr "Nicht erlaubt"
 
 #: basxbread/views/error.py:73
+#, fuzzy
 msgid "You do not have permission to access this resource."
 msgstr ""
 "Ihr Benutzer hat nicht die benötigten Berechtigungnen um auf '%s' zuzugreifen"
@@ -1397,7 +1420,7 @@ msgstr ""
 "Ein Problem ist aufgetreten während dem laden der Seite auf %s.<br>Falls das "
 "Problem weiterhin besteht, wenden Sie sich an den Serveradministrator."
 
-#: basxbread/views/read.py:44
+#: basxbread/views/read.py:44 basxbread/views/read.py:38
 msgid "Value"
 msgstr "Wert"
 
