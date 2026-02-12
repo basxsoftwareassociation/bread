@@ -780,6 +780,10 @@ FILTER_OVERRIDES = {
         "filter_class": django_filters.CharFilter,
         "extra": lambda f: {"lookup_expr": "icontains"},
     },
+    models.JSONField: {
+        "filter_class": django_filters.CharFilter,
+        "extra": lambda f: {"lookup_expr": "icontains"},
+    },
     models.EmailField: {
         "filter_class": django_filters.CharFilter,
         "extra": lambda f: {"lookup_expr": "icontains"},
