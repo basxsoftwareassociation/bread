@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-26 05:33+0000\n"
+"POT-Creation-Date: 2026-02-12 04:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,16 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: basxbread/contrib/document_templates/apps.py:11
+#: apps.py:11
 msgid "Document templates"
 msgstr "Dokumentvorlagen"
 
-#: basxbread/contrib/document_templates/models.py:27
-#: basxbread/contrib/document_templates/models.py:184
+#: models.py:27 models.py:184
 msgid "Name"
 msgstr "Name"
 
-#: basxbread/contrib/document_templates/models.py:31
+#: models.py:31
 msgid ""
 "Must be a *.docx file, use '{{ variable-name }}' to insert variables from "
 "below"
@@ -34,100 +33,100 @@ msgstr ""
 "Muss eine *.docx Datei sein, '{{ variable-name }}' kann im Dokument "
 "verwendet werden um die unten definierten Variablen einzufügen"
 
-#: basxbread/contrib/document_templates/models.py:35
+#: models.py:35
 msgid "Model"
 msgstr "Model"
 
-#: basxbread/contrib/document_templates/models.py:40
+#: models.py:40
 msgid "Filename template"
 msgstr "Dateinamen-Vorlage"
 
-#: basxbread/contrib/document_templates/models.py:44
+#: models.py:44
 msgid "PDF-Password"
 msgstr "PDF Passwort"
 
-#: basxbread/contrib/document_templates/models.py:47
+#: models.py:47
 msgid "An optional password that will be set on generated PDFs"
 msgstr "Ein optionales Passwort welches für generierte PDFs gesetzt wird"
 
-#: basxbread/contrib/document_templates/models.py:175
+#: models.py:175
 msgid "Document Template"
 msgstr "Dokumentvorlage"
 
-#: basxbread/contrib/document_templates/models.py:176
+#: models.py:176
 msgid "Document Templates"
 msgstr "Dokumentvorlagen"
 
-#: basxbread/contrib/document_templates/models.py:184
+#: models.py:184
 msgid "Name to use in the template document"
 msgstr "Name welcher in der Dokumentvorlage verwendet werden soll"
 
-#: basxbread/contrib/document_templates/models.py:187
+#: models.py:187
 msgid "Value"
 msgstr "Wert"
 
-#: basxbread/contrib/document_templates/models.py:189
+#: models.py:189
 msgid "Path to the desired value (see help)"
 msgstr "Pfad zum gewünschten Wert (siehe Hilfe)"
 
-#: basxbread/contrib/document_templates/models.py:193
+#: models.py:193
 msgid "Template"
 msgstr "Vorlage"
 
-#: basxbread/contrib/document_templates/models.py:195
+#: models.py:195
 msgid "Jinja template with 'value' in context"
 msgstr "Jinja Vorlage mit 'value' im Kontext"
 
-#: basxbread/contrib/document_templates/models.py:197
+#: models.py:197
 msgid "Raw value"
 msgstr "Roher Wert"
 
-#: basxbread/contrib/document_templates/models.py:200
+#: models.py:200
 msgid "Variable"
 msgstr "Variable"
 
-#: basxbread/contrib/document_templates/models.py:201
+#: models.py:201
 msgid "Variables"
 msgstr "Variablen"
 
-#: basxbread/contrib/document_templates/urls.py:24
+#: urls.py:24
 msgid "Delete"
 msgstr "Löschen"
 
-#: basxbread/contrib/document_templates/urls.py:28
+#: urls.py:28
 msgid "Copy"
 msgstr "Kopieren"
 
-#: basxbread/contrib/document_templates/views.py:17
+#: views.py:17
 msgid "Error"
 msgstr "Fehler"
 
-#: basxbread/contrib/document_templates/views.py:22
+#: views.py:22
 msgid "Field explorer"
 msgstr "Feldexplorer"
 
-#: basxbread/contrib/document_templates/views.py:32
+#: views.py:32
 msgid "Error in template: "
 msgstr "Fehler in der Vorlage: "
 
-#: basxbread/contrib/document_templates/views.py:44
+#: views.py:44
 msgid "Missing system fonts, used in the docx template: "
 msgstr "Fehlende System-Fonts welche im docx-Template verwendet werden: "
 
-#: basxbread/contrib/document_templates/views.py:52
+#: views.py:52
 msgid "Unable to detect document fonts: "
 msgstr "Kann verwendete Fonts im Dokument nicht detektieren: "
 
-#: basxbread/contrib/document_templates/views.py:59
+#: views.py:59
 msgid "Variables in document but not defined below: "
 msgstr ""
 "Variablen in der Dokumentvorlage verwendet aber nicht definiert unten: "
 
-#: basxbread/contrib/document_templates/views.py:67
+#: views.py:67
 msgid "Variables defined below but not used in document: "
 msgstr ""
 "Variablen unten definiert aber nicht verwendet in der Dokumentvorlage: "
 
-#: basxbread/contrib/document_templates/views.py:93
+#: views.py:93
 msgid "Help"
 msgstr "Hilfe"

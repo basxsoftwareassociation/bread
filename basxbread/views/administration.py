@@ -153,8 +153,10 @@ def maintenance_database_optimization(request):
             # try adding some message here.
             messages.info(
                 request,
-                _("The database size has been minimized from %.2f kB to %.2f kB.")
-                % (previous_size, current_db_size),
+                _(
+                    "The database size has been minimized from %(previous_size).2f kB to %(current_size).2f kB."
+                )
+                % {"previous_size": previous_size, "current_size": current_db_size},
             )
 
             ret.append(

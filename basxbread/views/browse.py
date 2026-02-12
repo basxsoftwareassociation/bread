@@ -336,7 +336,8 @@ class BrowseView(BaseView, LoginRequiredMixin, PermissionRequiredMixin, ListView
                 except DjangoQLError as e:
                     messages.error(
                         self.request,
-                        _("Bad filter string '%s': '%s'") % (searchquery, e),
+                        _("Bad filter string '%(query)s': '%(error)s'")
+                        % {"query": searchquery, "error": e},
                     )
 
             else:
@@ -492,7 +493,8 @@ def delete(request, queryset, softdeletefield=None, required_permissions=None):
         except Exception as e:
             messages.error(
                 request,
-                _("%s could not be deleted: %s") % (object, e),
+                _("%(object)s could not be deleted: %(error)s")
+                % {"object": object, "error": e},
             )
 
     messages.success(
@@ -532,7 +534,8 @@ def restore(request, queryset, softdeletefield, required_permissions=None):
         except Exception as e:
             messages.error(
                 request,
-                _("%s could not be restored: %s") % (object, e),
+                _("%(object)s could not be restored: %(error)s")
+                % {"object": object, "error": e},
             )
 
     messages.success(

@@ -1,0 +1,106 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-12 04:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: apps.py:8 models.py:84
+msgid "Public URLs"
+msgstr ""
+
+#: models.py:17
+#, python-format
+msgid "%(value)s is not a valid regex"
+msgstr ""
+
+#: models.py:27
+#, python-format
+msgid "%(value)s is not a valid internal URL"
+msgstr ""
+
+#: models.py:33
+msgid "Name"
+msgstr ""
+
+#: models.py:35
+msgid "URL"
+msgstr ""
+
+#: models.py:38
+msgid "Internal URL"
+msgstr ""
+
+#: models.py:40
+msgid "Salt"
+msgstr ""
+
+#: models.py:41
+msgid "Created"
+msgstr ""
+
+#: models.py:42
+msgid "Valid for"
+msgstr ""
+
+#: models.py:43
+msgid "Has form"
+msgstr ""
+
+#: models.py:45
+msgid "Create new entry from response"
+msgstr ""
+
+#: models.py:49
+msgid ""
+"If 'Has Form' is set and the response is a redirect, the redirect URL is "
+"checked against this field (as regex). If it matches, a new public URL entry "
+"will automatically be created which allows the user to access the newly "
+"created and redirecte-to resource."
+msgstr ""
+
+#: models.py:54
+msgid "Thank-you text"
+msgstr ""
+
+#: models.py:55
+msgid "Thank you"
+msgstr ""
+
+#: models.py:56
+msgid "Will be shown if a form has successfully been submitted."
+msgstr ""
+
+#: models.py:67 models.py:83 urls.py:83
+msgid "Public URL"
+msgstr ""
+
+#: urls.py:34
+msgid "Link has expired"
+msgstr ""
+
+#: urls.py:57
+#, python-format
+msgid "Created from %s"
+msgstr ""
+
+#: urls.py:62
+msgid "Data has been submitted"
+msgstr ""
+
+#: urls.py:64
+msgid "Back"
+msgstr ""

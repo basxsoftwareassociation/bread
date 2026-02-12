@@ -1,0 +1,175 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-12 04:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: apps.py:8 models.py:30
+msgid "Custom forms"
+msgstr ""
+
+#: models.py:10
+msgid "Title"
+msgstr ""
+
+#: models.py:12
+msgid "Model"
+msgstr ""
+
+#: models.py:15
+msgid "PK fields"
+msgstr ""
+
+#: models.py:19
+msgid ""
+"If the form should be used to update items,\n"
+"this fields specifies the fields that are used to\n"
+"filter for the instance to update"
+msgstr ""
+
+#: models.py:29 models.py:37
+msgid "Custom form"
+msgstr ""
+
+#: models.py:42
+msgid "Field name"
+msgstr ""
+
+#: models.py:44
+msgid "See help for list of possible fiel name"
+msgstr ""
+
+#: models.py:47
+msgid "Label"
+msgstr ""
+
+#: models.py:49
+msgid "Only use to override default label"
+msgstr ""
+
+#: models.py:53
+msgid "Help text"
+msgstr ""
+
+#: models.py:54
+msgid "Only use to override default help text"
+msgstr ""
+
+#: models.py:63
+msgid "Custom form field"
+msgstr ""
+
+#: models.py:64
+msgid "Custom form fields"
+msgstr ""
+
+#: models.py:80
+msgid "PDF form"
+msgstr ""
+
+#: models.py:98
+#, python-format
+msgid "PDF import for %s"
+msgstr ""
+
+#: models.py:101
+msgid "PDF import"
+msgstr ""
+
+#: models.py:102
+msgid "PDF imports"
+msgstr ""
+
+#: models.py:109
+msgid "PDF form field"
+msgstr ""
+
+#: models.py:113
+msgid "PDF field name"
+msgstr ""
+
+#: models.py:125
+msgid "Join"
+msgstr ""
+
+#: models.py:126
+msgid "Join multiple fields with character, use \\n for newline"
+msgstr ""
+
+#: models.py:133
+msgid "Map value"
+msgstr ""
+
+#: models.py:133
+msgid "Map PDF-field value"
+msgstr ""
+
+#: models.py:145
+msgid "PDF import field"
+msgstr ""
+
+#: models.py:146
+msgid "PDF import fields"
+msgstr ""
+
+#: urls.py:19
+msgid "Add form entry"
+msgstr ""
+
+#: urls.py:46
+msgid "Import new PDF"
+msgstr ""
+
+#: views.py:35
+msgid "Error"
+msgstr ""
+
+#: views.py:36
+msgid "More than one instance was selected by the query elements"
+msgstr ""
+
+#: views.py:39
+msgid "The following arguments were passed to the query:"
+msgstr ""
+
+#: views.py:43
+msgid "Query field name"
+msgstr ""
+
+#: views.py:46
+msgid "Query field value"
+msgstr ""
+
+#: views.py:50
+msgid "Model: "
+msgstr ""
+
+#: views.py:52
+msgid "Produced results (should only produce 1)"
+msgstr ""
+
+#: views.py:103
+msgid "PDF password"
+msgstr ""
+
+#: views.py:174
+msgid "Import filled out version of {}"
+msgstr ""
+
+#: views.py:183
+msgid "Import"
+msgstr ""

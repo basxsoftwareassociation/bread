@@ -79,16 +79,20 @@ class Report(models.Model):
             if not isinstance(ret, models.QuerySet):
                 raise ValueError(
                     _(
-                        'settings.REPORT_FILTERS["%s"] did not return a queryset but returned: %s'
+                        'settings.REPORT_FILTERS["%(qs)s"] did not return a queryset but returned: %(ret)s'
                     )
-                    % (self.custom_queryset, ret)
+                    % {"qs": self.custom_queryset, "ret": ret}
                 )
             if ret.model != self.model.model_class():
                 raise ValueError(
                     _(
-                        'settings.REPORT_FILTERS["%s"] did not return a queryset for %s but for %s'
+                        'settings.REPORT_FILTERS["%(qs)s"] did not return a queryset for %(modelclass)s but for %(model)s'
                     )
-                    % (self.custom_queryset, self.model.model_class(), ret.model)
+                    % {
+                        "qs": self.custom_queryset,
+                        "modelclass": self.model.model_class(),
+                        "model": ret.model,
+                    }
                 )
             return parsequeryexpression(ret, self.filter.raw).queryset
         return self.filter.queryset
