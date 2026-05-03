@@ -1,0 +1,187 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-12 04:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: apps.py:8
+msgid "Model editing (WIP)"
+msgstr ""
+
+#: parser.py:17
+#, python-format
+msgid "%(value)s is not a list or tuple"
+msgstr ""
+
+#: parser.py:22
+#, python-format
+msgid "%(value)s does not only contain 2-tuples"
+msgstr ""
+
+#: parser.py:31 parser.py:37
+#, python-format
+msgid "%(value)s does not only contain list of fields"
+msgstr ""
+
+#: parser.py:45
+#, python-format
+msgid "%(value)s is not a valid Python identifier"
+msgstr ""
+
+#: parser.py:54
+#, python-format
+msgid "%(value)s is not a valid Python literal"
+msgstr ""
+
+#: parser.py:60
+msgid "Model name"
+msgstr ""
+
+#: parser.py:62
+msgid ""
+"Python identifier for the model (no spaces and special characters). Only "
+"used internally."
+msgstr ""
+
+#: parser.py:70 parser.py:170
+msgid "Verbose name"
+msgstr ""
+
+#: parser.py:71
+msgid "Name that will be used as label for the model."
+msgstr ""
+
+#: parser.py:77
+msgid "Verbose name plural"
+msgstr ""
+
+#: parser.py:78
+msgid "Name that will be used as label for the model in plural form."
+msgstr ""
+
+#: parser.py:84
+msgid "Ordering"
+msgstr ""
+
+#: parser.py:86
+msgid ""
+"List of space separated fields that determine the default ordering for the "
+"objects of this model type"
+msgstr ""
+
+#: parser.py:95
+msgid "Order with respect to"
+msgstr ""
+
+#: parser.py:96
+msgid "Order with respect to foreign key field"
+msgstr ""
+
+#: parser.py:157
+msgid "Field name"
+msgstr ""
+
+#: parser.py:159
+msgid ""
+"Python identifier for the field (no spaces and special characters). Only "
+"used internally."
+msgstr ""
+
+#: parser.py:171
+msgid "Name that will be used as label for the field."
+msgstr ""
+
+#: parser.py:177
+msgid "Null"
+msgstr ""
+
+#: parser.py:178
+msgid "Allo this field to be null (not same as empty string)"
+msgstr ""
+
+#: parser.py:183
+msgid "Blank"
+msgstr ""
+
+#: parser.py:184
+msgid "Do not require this field to be filled out on forms"
+msgstr ""
+
+#: parser.py:189
+msgid "Editable"
+msgstr ""
+
+#: parser.py:190
+msgid "Allow this field to be edited via forms"
+msgstr ""
+
+#: parser.py:195
+msgid "Primary key"
+msgstr ""
+
+#: parser.py:196
+msgid "Make this field the primary key"
+msgstr ""
+
+#: parser.py:201
+msgid "Unique"
+msgstr ""
+
+#: parser.py:202
+msgid "Ensure this field is unique over all instances of the model"
+msgstr ""
+
+#: parser.py:207
+msgid "Help text"
+msgstr ""
+
+#: parser.py:208
+msgid "Additional text to be displayed with the field"
+msgstr ""
+
+#: parser.py:213
+msgid "Default"
+msgstr ""
+
+#: parser.py:214
+msgid "Default value for this field, must be a Python literal"
+msgstr ""
+
+#: parser.py:220
+msgid "Choices"
+msgstr ""
+
+#: parser.py:222
+msgid ""
+"Iterable of 2-tuples with (value, label) literals, generates a select input"
+msgstr ""
+
+#: urls.py:16 urls.py:18
+msgid "Modeledit"
+msgstr ""
+
+#: views.py:138
+msgid "Fields"
+msgstr ""
+
+#: views.py:149
+msgid "<New field>"
+msgstr ""
+
+#: views.py:162
+msgid "Add new field"
+msgstr ""

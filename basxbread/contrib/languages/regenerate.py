@@ -5,6 +5,7 @@ Subtag Registry, either call this module directly from the command line
 (``python regenenerate.py``), or call the ``regenerate`` method.
 
 """
+
 import os
 import re
 import urllib

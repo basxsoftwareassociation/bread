@@ -4,7 +4,9 @@ pip:
 	twine upload dist/*
 
 locale:
-	./manage.py makemessages -l de -l th -l nb_NO -l fr -l pt -l en
+	./manage.py makemessages -l de -l th -l fr -l pt -l en
+	for i in customforms document_templates languages modeledit publicurls reports taxonomy triggers; \
+		do cd basxbread/contrib/$$i && ../../../manage.py makemessages -l de -l th -l fr -l pt -l en ; cd ../../../ ; done
 
 checks:
 	black --check basxbread

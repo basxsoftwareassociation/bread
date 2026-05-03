@@ -149,8 +149,7 @@ class QuerysetFormWidget(layout.forms.widgets.Textarea):
             self.append(
                 hg.SCRIPT(
                     hg.format(
-                        hg.mark_safe(
-                            """
+                        hg.mark_safe("""
 document.addEventListener("DOMContentLoaded", () => DjangoQL.DOMReady(function () {{
     new DjangoQL({{
     introspections: {},
@@ -158,8 +157,7 @@ document.addEventListener("DOMContentLoaded", () => DjangoQL.DOMReady(function (
     syntaxHelp: '{}',
     autoResize: false
     }});
-}}));"""
-                        ),
+}}));"""),
                         hg.F(introspections),
                         inputelement_attrs.get("name"),
                         reverse("reporthelp"),

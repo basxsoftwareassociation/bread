@@ -3,7 +3,7 @@ import subprocess  # nosec because we covered everything
 from io import StringIO
 
 import htmlgenerator as hg
-import pkg_resources
+import importlib.metadata
 import requests
 from django import forms
 from django.conf import settings
@@ -83,8 +83,8 @@ def maintainance_package_layout(request):
     for package_name in PACKAGE_NAMES:
         newer_version = _("unable to load")
         try:
-            current_version = pkg_resources.get_distribution(package_name).version
-        except pkg_resources.DistributionNotFound:
+            current_version = importlib.metadata.version(package_name)
+        except importlib.metadata.PackageNotFoundError:
             continue
 
         # load the latest package info from the PyPI API
@@ -153,8 +153,10 @@ def maintenance_database_optimization(request):
             # try adding some message here.
             messages.info(
                 request,
-                _("The database size has been minimized from %.2f kB to %.2f kB.")
-                % (previous_size, current_db_size),
+                _(
+                    "The database size has been minimized from %(previous_size).2f kB to %(current_size).2f kB."
+                )
+                % {"previous_size": previous_size, "current_size": current_db_size},
             )
 
             ret.append(
@@ -281,6 +283,11 @@ def systeminformation(request):
             getattr(e, "stderr", b"").decode(),
         )
 
+    unique_distributions = {}
+    for dist in importlib.metadata.distributions():
+        if dist.metadata["Name"] not in unique_distributions:
+            unique_distributions[dist.metadata["Name"]] = dist
+
     return hg.BaseElement(
         hg.H3(_("System information")),
         hg.H4("Git log"),
@@ -289,7 +296,10 @@ def systeminformation(request):
         hg.UL(
             hg.Iterator(
                 sorted(
-                    ["%s==%s" % (i.key, i.version) for i in pkg_resources.working_set]
+                    [
+                        f"{d.metadata['Name'].lower()}=={d.version}"
+                        for d in unique_distributions.values()
+                    ]
                 ),
                 "package",
                 hg.LI(hg.C("package")),
