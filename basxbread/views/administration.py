@@ -296,7 +296,7 @@ def systeminformation(request):
         hg.UL(
             hg.Iterator(
                 sorted(
-                    [f"{d.metadata['Name']}=={d.version}" for d in unique_distributions.values()]
+                    [f"{d.metadata['Name'].lower()}=={d.version}" for d in unique_distributions.values()]
                 ),
                 "package",
                 hg.LI(hg.C("package")),
