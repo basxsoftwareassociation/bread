@@ -15,11 +15,9 @@ class CustomForm(models.Model):
         _("PK fields"),
         max_length=1024,
         blank=True,
-        help_text=_(
-            """If the form should be used to update items,
+        help_text=_("""If the form should be used to update items,
 this fields specifies the fields that are used to
-filter for the instance to update"""
-        ),
+filter for the instance to update"""),
     )
 
     def __str__(self):
