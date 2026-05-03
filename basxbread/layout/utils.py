@@ -158,9 +158,7 @@ class ObjectFieldValue(hg.Lazy):
 def store_scrollposition_js():
     # stores current scroll position on page, as long as user reload
     # the same page (going to a new page will clear this)
-    return hg.SCRIPT(
-        hg.mark_safe(
-            r"""
+    return hg.SCRIPT(hg.mark_safe(r"""
     document.addEventListener("DOMContentLoaded", function(event) {
         let scrollposPage = localStorage.getItem('scrollposPage');
         if(!scrollposPage || scrollposPage != window.location.href) {
@@ -177,9 +175,7 @@ def store_scrollposition_js():
         localStorage.setItem('scrollposPage', window.location.href);
         localStorage.setItem('scrollposX', window.scrollX);
         localStorage.setItem('scrollposY', window.scrollY);
-    };"""
-        )
-    )
+    };"""))
 
 
 localize = hg.lazify(djangolocalize)

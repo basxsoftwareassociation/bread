@@ -100,9 +100,7 @@ def test(request):
     )
 
     return hg.DIV(
-        hg.SCRIPT(
-            hg.mark_safe(
-                """
+        hg.SCRIPT(hg.mark_safe("""
 function add_newfield_tab(prefix){
     console.log($("#fieldformset-" + prefix + "-container div:nth-child(1)"));
     let container = $("#fieldformset-" + prefix + "-container div:nth-child(1)");
@@ -114,9 +112,7 @@ function add_newfield_tab(prefix){
     container.appendChild(newbutton);
     container.appendChild(addbutton);
 }
-"""
-            )
-        ),
+""")),
         hg.H1("ModelEdit test page"),
         hg.DIV(
             layout.forms.Form(
