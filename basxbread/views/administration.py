@@ -285,8 +285,8 @@ def systeminformation(request):
 
     unique_distributions = {}
     for dist in importlib.metadata.distributions():
-        if dist.metadata['Name'] not in unique_distributions:
-            unique_distributions[dist.metadata['Name']] = dist
+        if dist.metadata["Name"] not in unique_distributions:
+            unique_distributions[dist.metadata["Name"]] = dist
 
     return hg.BaseElement(
         hg.H3(_("System information")),
@@ -296,7 +296,10 @@ def systeminformation(request):
         hg.UL(
             hg.Iterator(
                 sorted(
-                    [f"{d.metadata['Name'].lower()}=={d.version}" for d in unique_distributions.values()]
+                    [
+                        f"{d.metadata['Name'].lower()}=={d.version}"
+                        for d in unique_distributions.values()
+                    ]
                 ),
                 "package",
                 hg.LI(hg.C("package")),
