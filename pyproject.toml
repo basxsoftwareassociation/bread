@@ -1,2 +1,60 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "basx-bread"
+description = "Engine to create database applications based on Django and the IBM Carbon Design System"
+readme = "README.md"
+license = { text = "BSD-3-Clause" }
+authors = [{ name = "basx Software Association", email = "sam@basx.dev" }]
+dynamic = ["version"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+]
+dependencies = [
+    "Django>=3.2",
+    "htmlgenerator",
+    "django-extensions",
+    "django-dynamic-preferences",
+    "django-countries",
+    "django-money[exchange]",
+    "django-phonenumber-field",
+    "phonenumbers",
+    "django-simple-history",
+    "openpyxl",
+    "djangoql",
+    "requests",
+    "django-filter",
+    "Pillow",
+    "celery",
+    "django-celery-results",
+    "django-haystack",
+    "celery-haystack-ng",
+    "whoosh",
+    "jinja2",
+]
+
+[project.optional-dependencies]
+all = ["docxtpl", "pymupdf", "hypothesis[django]", "django_dynamic_fixture", "defusedxml"]
+testing = ["hypothesis[django]", "django_dynamic_fixture"]
+document_templates = ["docxtpl", "defusedxml"]
+pdf = ["pymupdf"]
+
+[project.urls]
+Homepage = "https://github.com/basxsoftwareassociation/bread"
+
+[tool.setuptools.dynamic]
+version = { attr = "basxbread.__version__" }
+
+[tool.setuptools.packages.find]
+# mirrors find_packages() — discovers all importable packages from project root
+
 [tool.black]
 exclude = '(migrations|\.hg|\.venv|\.eggs|\.tox|version.py)'

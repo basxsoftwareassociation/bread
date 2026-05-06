@@ -1,9 +1,9 @@
+import importlib.metadata
 import os
 import subprocess  # nosec because we covered everything
 from io import StringIO
 
 import htmlgenerator as hg
-import importlib.metadata
 import requests
 from django import forms
 from django.conf import settings
