@@ -60,3 +60,4 @@ version = { attr = "basxbread.__version__" }
 exclude = '(migrations|\.hg|\.venv|\.eggs|\.tox|version.py)'
 
 [tool.setuptools_scm]
+
