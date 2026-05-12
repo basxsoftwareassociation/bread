@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61", "wheel"]
+requires = ["setuptools>=61", "wheel", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -58,3 +58,5 @@ version = { attr = "basxbread.__version__" }
 
 [tool.black]
 exclude = '(migrations|\.hg|\.venv|\.eggs|\.tox|version.py)'
+
+[tool.setuptools_scm]
