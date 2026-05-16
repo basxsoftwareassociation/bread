@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 04:00+0000\n"
+"POT-Creation-Date: 2026-05-16 04:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: apps.py:8 models.py:30
+#: apps.py:8 models.py:28
 msgid "Custom forms"
 msgstr ""
 
@@ -34,95 +34,95 @@ msgstr ""
 msgid "PK fields"
 msgstr ""
 
-#: models.py:19
+#: models.py:18
 msgid ""
 "If the form should be used to update items,\n"
 "this fields specifies the fields that are used to\n"
 "filter for the instance to update"
 msgstr ""
 
-#: models.py:29 models.py:37
+#: models.py:27 models.py:35
 msgid "Custom form"
 msgstr ""
 
-#: models.py:42
+#: models.py:40
 msgid "Field name"
 msgstr ""
 
-#: models.py:44
+#: models.py:42
 msgid "See help for list of possible fiel name"
 msgstr ""
 
-#: models.py:47
+#: models.py:45
 msgid "Label"
 msgstr ""
 
-#: models.py:49
+#: models.py:47
 msgid "Only use to override default label"
 msgstr ""
 
-#: models.py:53
+#: models.py:51
 msgid "Help text"
 msgstr ""
 
-#: models.py:54
+#: models.py:52
 msgid "Only use to override default help text"
 msgstr ""
 
-#: models.py:63
+#: models.py:61
 msgid "Custom form field"
 msgstr ""
 
-#: models.py:64
+#: models.py:62
 msgid "Custom form fields"
 msgstr ""
 
-#: models.py:80
+#: models.py:78
 msgid "PDF form"
 msgstr ""
 
-#: models.py:98
+#: models.py:96
 #, python-format
 msgid "PDF import for %s"
 msgstr ""
 
-#: models.py:101
+#: models.py:99
 msgid "PDF import"
 msgstr ""
 
-#: models.py:102
+#: models.py:100
 msgid "PDF imports"
 msgstr ""
 
-#: models.py:109
+#: models.py:107
 msgid "PDF form field"
 msgstr ""
 
-#: models.py:113
+#: models.py:111
 msgid "PDF field name"
 msgstr ""
 
-#: models.py:125
+#: models.py:123
 msgid "Join"
 msgstr ""
 
-#: models.py:126
+#: models.py:124
 msgid "Join multiple fields with character, use \\n for newline"
 msgstr ""
 
-#: models.py:133
+#: models.py:131
 msgid "Map value"
 msgstr ""
 
-#: models.py:133
+#: models.py:131
 msgid "Map PDF-field value"
 msgstr ""
 
-#: models.py:145
+#: models.py:143
 msgid "PDF import field"
 msgstr ""
 
-#: models.py:146
+#: models.py:144
 msgid "PDF import fields"
 msgstr ""
 

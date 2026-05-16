@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 04:00+0000\n"
+"POT-Creation-Date: 2026-05-16 04:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: apps.py:8 models.py:101
+#: apps.py:8 models.py:105
 msgid "Reports"
 msgstr ""
 
@@ -75,45 +75,45 @@ msgid ""
 "%(modelclass)s but for %(model)s"
 msgstr ""
 
-#: models.py:100
+#: models.py:104
 msgid "Report"
 msgstr ""
 
-#: models.py:111
+#: models.py:115
 msgid "Header"
 msgstr ""
 
-#: models.py:113 models.py:157
+#: models.py:117 models.py:161
 msgid "Column"
 msgstr ""
 
-#: models.py:113
+#: models.py:117
 msgid "Value expression (see 'Help')"
 msgstr ""
 
-#: models.py:116
+#: models.py:120
 msgid "Cell template"
 msgstr ""
 
-#: models.py:120
+#: models.py:124
 msgid ""
 "Optional Jinja template with 'value' in context.<br/>Use e.g. {{ value }} to "
 "simply display the value."
 msgstr ""
 
-#: models.py:125
+#: models.py:129
 msgid "Allow HTML"
 msgstr ""
 
-#: models.py:128
+#: models.py:132
 msgid "Do render HTML code inside the cell template instead of escaping it."
 msgstr ""
 
-#: models.py:133
+#: models.py:137
 msgid "Aggregation"
 msgstr ""
 
-#: models.py:158
+#: models.py:162
 msgid "Columns"
 msgstr ""
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 04:00+0000\n"
+"POT-Creation-Date: 2026-05-16 04:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -174,14 +174,14 @@ msgstr ""
 msgid "Modeledit"
 msgstr ""
 
-#: views.py:138
+#: views.py:134
 msgid "Fields"
 msgstr ""
 
-#: views.py:149
+#: views.py:145
 msgid "<New field>"
 msgstr ""
 
-#: views.py:162
+#: views.py:158
 msgid "Add new field"
 msgstr ""

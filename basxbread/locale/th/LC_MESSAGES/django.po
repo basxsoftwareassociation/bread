@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 04:00+0000\n"
+"POT-Creation-Date: 2026-05-16 04:25+0000\n"
 "PO-Revision-Date: 2023-04-05 02:46+0000\n"
 "Last-Translator: Tidaphan <tida@basx.dev>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/basxconnect/bread/"
@@ -70,7 +70,7 @@ msgstr "พิมพ์"
 
 #: basxbread/layout/components/datatable.py:263
 #: basxbread/layout/components/modal.py:107 basxbread/views/auth.py:29
-#: basxbread/views/browse.py:724
+#: basxbread/views/browse.py:727
 msgid "Cancel"
 msgstr "ยกเลิก"
 
@@ -136,7 +136,7 @@ msgstr "คำสั่ง"
 
 #: basxbread/layout/components/forms/__init__.py:417
 #: basxbread/layout/components/forms/__init__.py:445
-#: basxbread/views/browse.py:65 basxbread/views/browse.py:420
+#: basxbread/views/browse.py:65 basxbread/views/browse.py:421
 #: basxbread/views/util.py:38
 msgid "Delete"
 msgstr "ลบ"
@@ -335,7 +335,7 @@ msgstr "ล่าสุด"
 msgid "Database optimization is currently only available for sqlite databases"
 msgstr "ขณะนี้การเพิ่มประสิทธิภาพฐานข้อมูลใช้ได้กับฐานข้อมูล sqlite เท่านั้น"
 
-#: basxbread/views/administration.py:156
+#: basxbread/views/administration.py:157
 #, fuzzy, python-format
 #| msgid "The database size has been minimized from %.2f kB to %.2f kB."
 msgid ""
@@ -343,41 +343,41 @@ msgid ""
 "%(current_size).2f kB."
 msgstr "ขนาดฐานข้อมูลถูกย่อจาก %.2f kB เป็น %.2f kB"
 
-#: basxbread/views/administration.py:161
+#: basxbread/views/administration.py:163
 #, python-format
 msgid "Previous Size: %.2f kB"
 msgstr "ขนาดก่อนหน้า: %.2f kB"
 
-#: basxbread/views/administration.py:171
+#: basxbread/views/administration.py:173
 msgid "Optimize"
 msgstr "เพิ่มประสิทธิภาพ"
 
-#: basxbread/views/administration.py:176
+#: basxbread/views/administration.py:178
 #, python-format
 msgid "Current Size: %.2f kB"
 msgstr "ขนาดปัจจุบัน: %.2f kB"
 
-#: basxbread/views/administration.py:203
+#: basxbread/views/administration.py:205
 msgid "Rebuilt search index"
 msgstr "สร้างดัชนีการค้นหาใหม่"
 
-#: basxbread/views/administration.py:212
+#: basxbread/views/administration.py:214
 msgid "Rebuild"
 msgstr "สร้างใหม่"
 
-#: basxbread/views/administration.py:233
+#: basxbread/views/administration.py:235
 msgid "Log from the server"
 msgstr "บันทึกจากเซิร์ฟเวอร์"
 
-#: basxbread/views/administration.py:247
+#: basxbread/views/administration.py:249
 msgid "Restarted application server"
 msgstr "รีสตาร์ทแอ็พพลิเคชันเซิร์ฟเวอร์"
 
-#: basxbread/views/administration.py:256
+#: basxbread/views/administration.py:258
 msgid "Restart"
 msgstr "รีสตาร์ท"
 
-#: basxbread/views/administration.py:285
+#: basxbread/views/administration.py:292
 msgid "System information"
 msgstr "ข้อมูลระบบ"
 
@@ -454,61 +454,61 @@ msgstr "ไม่ได้กำหนดค่าการกระทำ '%s' 
 msgid "Bad filter string '%(query)s': '%(error)s'"
 msgstr "สตริงตัวกรองไม่ถูกต้อง '%s': '%s'"
 
-#: basxbread/views/browse.py:400 basxbread/views/read.py:66
+#: basxbread/views/browse.py:401 basxbread/views/read.py:66
 #: basxbread/views/userprofile.py:119 basxbread/views/userprofile.py:147
 #: basxbread/views/userprofile.py:179 basxbread/views/util.py:25
 msgid "Edit"
 msgstr "แก้ไข"
 
-#: basxbread/views/browse.py:410 basxbread/views/util.py:31
+#: basxbread/views/browse.py:411 basxbread/views/util.py:31
 msgid "Read"
 msgstr "อ่าน"
 
-#: basxbread/views/browse.py:425 basxbread/views/util.py:46
+#: basxbread/views/browse.py:426 basxbread/views/util.py:46
 msgid "Are you sure you want to delete {}?"
 msgstr "คุณแน่ใจหรือว่าต้องการลบ {}?"
 
-#: basxbread/views/browse.py:482
+#: basxbread/views/browse.py:483
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่สามารถทำการลบได้%s"
 
-#: basxbread/views/browse.py:495
+#: basxbread/views/browse.py:496
 #, fuzzy, python-format
 #| msgid "%s could not be deleted: %s"
 msgid "%(object)s could not be deleted: %(error)s"
 msgstr "%s ไม่ควรลบเพราะ: %s"
 
-#: basxbread/views/browse.py:500
+#: basxbread/views/browse.py:502
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr "ลบ %(count)s %(modelname)s"
 
-#: basxbread/views/browse.py:526
+#: basxbread/views/browse.py:528
 #, python-format
 msgid "Your user has not the permissions to restore %s"
 msgstr "ชื่อผู้ใช้ของคุณไม่มีสิทธิ์กู้คืน%s"
 
-#: basxbread/views/browse.py:535
+#: basxbread/views/browse.py:537
 #, fuzzy, python-format
 #| msgid "%s could not be deleted: %s"
 msgid "%(object)s could not be restored: %(error)s"
 msgstr "%s ไม่ควรลบเพราะ: %s"
 
-#: basxbread/views/browse.py:540
+#: basxbread/views/browse.py:543
 #, python-format
 msgid "Restored %(count)s %(modelname)s"
 msgstr "กู้คืน %(count)s %(modelname)s"
 
-#: basxbread/views/browse.py:703
+#: basxbread/views/browse.py:706
 msgid "Filter"
 msgstr "ค้นหา"
 
-#: basxbread/views/browse.py:730
+#: basxbread/views/browse.py:733
 msgid "Reset"
 msgstr "รีเซ็ต"
 
-#: basxbread/views/browse.py:737
+#: basxbread/views/browse.py:740
 msgctxt "apply filter"
 msgid "Filter"
 msgstr "กรอง"

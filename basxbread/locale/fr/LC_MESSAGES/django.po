@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 04:00+0000\n"
+"POT-Creation-Date: 2026-05-16 04:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,7 +69,7 @@ msgstr ""
 
 #: basxbread/layout/components/datatable.py:263
 #: basxbread/layout/components/modal.py:107 basxbread/views/auth.py:29
-#: basxbread/views/browse.py:724
+#: basxbread/views/browse.py:727
 msgid "Cancel"
 msgstr ""
 
@@ -135,7 +135,7 @@ msgstr ""
 
 #: basxbread/layout/components/forms/__init__.py:417
 #: basxbread/layout/components/forms/__init__.py:445
-#: basxbread/views/browse.py:65 basxbread/views/browse.py:420
+#: basxbread/views/browse.py:65 basxbread/views/browse.py:421
 #: basxbread/views/util.py:38
 msgid "Delete"
 msgstr ""
@@ -328,48 +328,48 @@ msgstr ""
 msgid "Database optimization is currently only available for sqlite databases"
 msgstr ""
 
-#: basxbread/views/administration.py:156
+#: basxbread/views/administration.py:157
 #, python-format
 msgid ""
 "The database size has been minimized from %(previous_size).2f kB to "
 "%(current_size).2f kB."
 msgstr ""
 
-#: basxbread/views/administration.py:161
+#: basxbread/views/administration.py:163
 #, python-format
 msgid "Previous Size: %.2f kB"
 msgstr ""
 
-#: basxbread/views/administration.py:171
+#: basxbread/views/administration.py:173
 msgid "Optimize"
 msgstr ""
 
-#: basxbread/views/administration.py:176
+#: basxbread/views/administration.py:178
 #, python-format
 msgid "Current Size: %.2f kB"
 msgstr ""
 
-#: basxbread/views/administration.py:203
+#: basxbread/views/administration.py:205
 msgid "Rebuilt search index"
 msgstr ""
 
-#: basxbread/views/administration.py:212
+#: basxbread/views/administration.py:214
 msgid "Rebuild"
 msgstr ""
 
-#: basxbread/views/administration.py:233
+#: basxbread/views/administration.py:235
 msgid "Log from the server"
 msgstr ""
 
-#: basxbread/views/administration.py:247
+#: basxbread/views/administration.py:249
 msgid "Restarted application server"
 msgstr ""
 
-#: basxbread/views/administration.py:256
+#: basxbread/views/administration.py:258
 msgid "Restart"
 msgstr ""
 
-#: basxbread/views/administration.py:285
+#: basxbread/views/administration.py:292
 msgid "System information"
 msgstr ""
 
@@ -445,59 +445,59 @@ msgstr ""
 msgid "Bad filter string '%(query)s': '%(error)s'"
 msgstr ""
 
-#: basxbread/views/browse.py:400 basxbread/views/read.py:66
+#: basxbread/views/browse.py:401 basxbread/views/read.py:66
 #: basxbread/views/userprofile.py:119 basxbread/views/userprofile.py:147
 #: basxbread/views/userprofile.py:179 basxbread/views/util.py:25
 msgid "Edit"
 msgstr ""
 
-#: basxbread/views/browse.py:410 basxbread/views/util.py:31
+#: basxbread/views/browse.py:411 basxbread/views/util.py:31
 msgid "Read"
 msgstr ""
 
-#: basxbread/views/browse.py:425 basxbread/views/util.py:46
+#: basxbread/views/browse.py:426 basxbread/views/util.py:46
 msgid "Are you sure you want to delete {}?"
 msgstr ""
 
-#: basxbread/views/browse.py:482
+#: basxbread/views/browse.py:483
 #, python-format
 msgid "Your user has not the permissions to delete %s"
 msgstr ""
 
-#: basxbread/views/browse.py:495
+#: basxbread/views/browse.py:496
 #, python-format
 msgid "%(object)s could not be deleted: %(error)s"
 msgstr ""
 
-#: basxbread/views/browse.py:500
+#: basxbread/views/browse.py:502
 #, python-format
 msgid "Deleted %(count)s %(modelname)s"
 msgstr ""
 
-#: basxbread/views/browse.py:526
+#: basxbread/views/browse.py:528
 #, python-format
 msgid "Your user has not the permissions to restore %s"
 msgstr ""
 
-#: basxbread/views/browse.py:535
+#: basxbread/views/browse.py:537
 #, python-format
 msgid "%(object)s could not be restored: %(error)s"
 msgstr ""
 
-#: basxbread/views/browse.py:540
+#: basxbread/views/browse.py:543
 #, python-format
 msgid "Restored %(count)s %(modelname)s"
 msgstr ""
 
-#: basxbread/views/browse.py:703
+#: basxbread/views/browse.py:706
 msgid "Filter"
 msgstr ""
 
-#: basxbread/views/browse.py:730
+#: basxbread/views/browse.py:733
 msgid "Reset"
 msgstr ""
 
-#: basxbread/views/browse.py:737
+#: basxbread/views/browse.py:740
 msgctxt "apply filter"
 msgid "Filter"
 msgstr ""
