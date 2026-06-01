@@ -651,7 +651,13 @@ def parse_filterconfig(basemodel, filterconfig, prefix):
                 continue
             # ignore filefields
             if not isinstance(
-                modelfield, (models.FileField, GenericForeignKey, GenericRelation)
+                modelfield,
+                (
+                    models.FileField,
+                    GenericForeignKey,
+                    GenericRelation,
+                    models.BinaryField,
+                ),
             ):
                 fields.append(f)
         elif isinstance(f, Iterable):
