@@ -184,7 +184,7 @@ def _can_use_in_form(model, field):
     return (
         field.editable
         or isinstance(field, GenericForeignKey)
-        or field.many_to_many
+        or (field.many_to_many and field.editable)
         or field.one_to_many
         or field.one_to_one
     )
